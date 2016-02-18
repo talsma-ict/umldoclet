@@ -51,7 +51,7 @@ public class ClassRenderer extends Renderer {
     }
 
     public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
-        out.println(String.format("' Klasse \"%s.%s\":", classDoc.containingPackage().name(), classDoc.name()));
+        out.println(String.format("' Class \"%s.%s\":", classDoc.containingPackage().name(), classDoc.name()));
         out.append(classType()).append(' ').append(classDoc.name()).append(" {").newline();
         return writeChildrenTo(out).append("}").newline();
     }
