@@ -64,6 +64,7 @@
         <maven-source-plugin.version>2.4</maven-source-plugin.version>
         <maven-javadoc-plugin.version>2.10.1</maven-javadoc-plugin.version>
         <maven-scm-plugin.version>1.9</maven-scm-plugin.version>
+        <buildnumber-maven-plugin.version>1.1</buildnumber-maven-plugin.version>
         <cobertura-maven-plugin.version>2.6</cobertura-maven-plugin.version>
         <jgitflow-maven-plugin.version>1.0-m4.3</jgitflow-maven-plugin.version>
     </properties>
@@ -85,6 +86,23 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>${buildnumber-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                        <configuration>
+                            <buildNumberPropertyName>git.revision</buildNumberPropertyName>
+                            <timestampPropertyName>build.timestamp</timestampPropertyName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
