@@ -26,15 +26,18 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Created on 17-02-2016.
+ * Class containing all possible Doclet options for the UML doclet.
+ * This configuration class is also responsible for providing suitable default values in the accessor-methods.
  *
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
 public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> {
 
     enum Setting {
-        INDENTATION("-umlIndentation", 1),
-        CREATE_PACKAGES("-umlCreatePackages", 1),;
+        UML_INDENTATION("-umlIndentation", 1),
+        UML_FILE_EXTENSION("-umlFileExtension", 1),
+        UML_FILE_ENCODING("-umlFileEncoding", 1),
+        UML_CREATE_PACKAGES("-umlCreatePackages", 1);
 
         private final String optionName;
         private final int optionLength;
@@ -97,11 +100,26 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
     }
 
     public int indentation() {
-        return Integer.valueOf(stringValue(Setting.INDENTATION, "-1"));
+        return Integer.valueOf(stringValue(Setting.UML_INDENTATION, "-1"));
+    }
+
+    /**
+     * @return The file extension for the PlantUML files (defaults to {@code ".puml"}).
+     */
+    public String umlFileExtension() {
+        final String extension = stringValue(Setting.UML_FILE_EXTENSION, ".puml");
+        return extension.startsWith(".") ? extension : "." + extension;
+    }
+
+    /**
+     * @return The file character encoding for the PlantUML files (defaults to {@code "UTF-8"}).
+     */
+    public String umlFileEncoding() {
+        return stringValue(Setting.UML_FILE_ENCODING, "UTF-8");
     }
 
     public boolean createPackages() {
-        return Boolean.valueOf(stringValue(Setting.CREATE_PACKAGES, "false"));
+        return Boolean.valueOf(stringValue(Setting.UML_CREATE_PACKAGES, "false"));
     }
 
     public static int optionLength(String option) {

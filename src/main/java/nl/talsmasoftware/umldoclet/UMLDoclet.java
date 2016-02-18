@@ -22,9 +22,10 @@ import com.sun.tools.doclets.standard.Standard;
 import nl.talsmasoftware.umldoclet.rendering.UMLDiagram;
 
 import java.io.*;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Eerste aanzet tot een UML doclet die plantuml klassediagrammen kan produceren voor documentatie.
@@ -38,7 +39,7 @@ public class UMLDoclet extends Standard {
     private final UMLDocletConfig config;
 
     public UMLDoclet(RootDoc rootDoc) {
-        this.rootDoc = Objects.requireNonNull(rootDoc, "No root document received.");
+        this.rootDoc = requireNonNull(rootDoc, "No root document received.");
         this.config = new UMLDocletConfig(rootDoc.options(), rootDoc);
     }
 
@@ -57,7 +58,7 @@ public class UMLDoclet extends Standard {
 
     public boolean generateUMLDocumentation() {
         boolean result = true;
-        // Maak voor elke gedocumenteerde klasse een .puml klassendiagram aan.
+        // Let's start by adding a separate class diagram for every individual class.
         final ClassDoc[] classes = rootDoc.classes();
         for (ClassDoc classDoc : classes) {
             if (!generateClassDiagram(classDoc)) {
@@ -68,33 +69,42 @@ public class UMLDoclet extends Standard {
         return result;
     }
 
-    protected Writer createPumlFileWriterFor(ClassDoc classDoc, String encoding) throws IOException {
-        File pumlfile = new File(config.basePath());
-        for (String packageNm : classDoc.containingPackage().name().split("\\.")) {
-            if (packageNm.trim().length() > 0) {
-                pumlfile = new File(pumlfile, packageNm);
-            }
-        }
-        if (pumlfile.exists() || pumlfile.mkdirs()) {
-            pumlfile = new File(pumlfile, classDoc.name() + ".puml");
-            if (pumlfile.exists() || pumlfile.createNewFile()) {
-                return new OutputStreamWriter(new FileOutputStream(pumlfile), encoding);
-            }
-        }
-        throw new IllegalStateException("Error creating: " + pumlfile);
-    }
-
     protected boolean generateClassDiagram(ClassDoc classDoc) {
-        try (Writer out = createPumlFileWriterFor(classDoc, "UTF-8")) {
+        try (Writer out = createWriterForNewClassFile(classDoc)) {
 
             new UMLDiagram(config).singleClassDiagram(classDoc).writeTo(out);
             return true;
 
         } catch (IOException | RuntimeException ioe) {
-            LOGGER.log(Level.SEVERE, "Error writing to .puml file for {0}: {1}", new Object[]{classDoc, ioe.getMessage(), ioe});
-            rootDoc.printError(classDoc.position(), String.format("Error writing to .puml file for %s: %s", classDoc, ioe.getMessage()));
+            final String message = String.format("Error writing to %s file for %s: %s",
+                    config.umlFileExtension(), classDoc, ioe.getMessage());
+            LOGGER.log(Level.SEVERE, message, ioe);
+            rootDoc.printError(classDoc.position(), message);
             return false;
         }
+    }
+
+    /**
+     * Create a new plant UML file for the given documented class and return a new {@link Writer} object to it.
+     *
+     * @param documentedClass The class that should be documented in a new PlantUML definition file.
+     * @return The created Writer to the correct PlantUML file.
+     * @throws IOException In case there were I/O errors creating a new plantUML file or opening a Writer to it.
+     */
+    protected Writer createWriterForNewClassFile(ClassDoc documentedClass) throws IOException {
+        File pumlfile = new File(config.basePath());
+        for (String packageNm : documentedClass.containingPackage().name().split("\\.")) {
+            if (packageNm.trim().length() > 0) {
+                pumlfile = new File(pumlfile, packageNm);
+            }
+        }
+        if (pumlfile.exists() || pumlfile.mkdirs()) {
+            pumlfile = new File(pumlfile, documentedClass.name() + config.umlFileExtension());
+            if (pumlfile.exists() || pumlfile.createNewFile()) {
+                return new OutputStreamWriter(new FileOutputStream(pumlfile), config.umlFileEncoding());
+            }
+        }
+        throw new IllegalStateException("Error creating: " + pumlfile);
     }
 
 
