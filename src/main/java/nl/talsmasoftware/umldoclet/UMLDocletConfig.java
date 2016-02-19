@@ -46,7 +46,15 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
         UML_INCLUDE_PACKAGE_PRIVATE_FIELDS("-umlIncludePackagePrivateFields", 1),
         UML_INCLUDE_PROTECTED_FIELDS("-umlIncludeProtectedFields", 1),
         UML_INCLUDE_PUBLIC_FIELDS("-umlIncludePublicFields", 1),
-        UML_INCLUDE_FIELD_TYPES("-umlIncludeFieldTypes", 1);
+        UML_INCLUDE_FIELD_TYPES("-umlIncludeFieldTypes", 1),
+        UML_INCLUDE_METHOD_PARAM_NAMES("-umlIncludeMethodParamNames", 1),
+        UML_INCLUDE_METHOD_PARAM_TYPES("-umlIncludeMethodParamTypes", 1),
+        UML_INCLUDE_PRIVATE_METHODS("-umlIncludePrivateMethods", 1),
+        UML_INCLUDE_PACKAGE_PRIVATE_METHODS("-umlIncludePackagePrivateMethods", 1),
+        UML_INCLUDE_PROTECTED_METHODS("-umlIncludeProtectedMethods", 1),
+        UML_INCLUDE_PUBLIC_METHODS("-umlIncludePublicMethods", 1),
+
+        ;
 
         private final String optionName;
         private final int optionLength;
@@ -203,6 +211,58 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
      */
     public boolean includeFieldTypes() {
         return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_FIELD_TYPES, "true"));
+    }
+
+    /**
+     * This configuration setting cannot be directly provided via a single option.
+     * This is a combination of the {@code "-umlIncludeMethodParamNames"} OR {@code "-umlIncludeMethodParamTypes"}.
+     *
+     * @return Whether or not to include method parameters in the UML diagrams (either by name, type or both).
+     */
+    public boolean includeMethodParams() {
+        return includeMethodParamNames() || includeMethodParamTypes();
+    }
+
+    /**
+     * @return Whether or not to include method parameter names in the UML diagrams (defaults to {@code false}).
+     */
+    public boolean includeMethodParamNames() {
+        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_METHOD_PARAM_NAMES, "false"));
+    }
+
+    /**
+     * @return Whether or not to include method parameter types in the UML diagrams (defaults to {@code true}).
+     */
+    public boolean includeMethodParamTypes() {
+        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_METHOD_PARAM_TYPES, "true"));
+    }
+
+    /**
+     * @return Whether or not to include private methods in the UML diagrams (defaults to {@code false}).
+     */
+    public boolean includePrivateMethods() {
+        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PRIVATE_METHODS, "false"));
+    }
+
+    /**
+     * @return Whether or not to include package-private methods in the UML diagrams (defaults to {@code false}).
+     */
+    public boolean includePackagePrivateMethods() {
+        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PACKAGE_PRIVATE_METHODS, "false"));
+    }
+
+    /**
+     * @return Whether or not to include private methods in the UML diagrams (defaults to {@code true}).
+     */
+    public boolean includeProtectedMethods() {
+        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PROTECTED_METHODS, "true"));
+    }
+
+    /**
+     * @return Whether or not to include public methods in the UML diagrams (defaults to {@code true}).
+     */
+    public boolean includePublicMethods() {
+        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PUBLIC_METHODS, "true"));
     }
 
     public boolean createPackages() {
