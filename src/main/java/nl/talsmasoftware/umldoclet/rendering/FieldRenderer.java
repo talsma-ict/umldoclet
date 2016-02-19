@@ -16,9 +16,13 @@
 package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.FieldDoc;
+import com.sun.javadoc.ParameterizedType;
 import com.sun.javadoc.ProgramElementDoc;
 import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static java.util.Objects.requireNonNull;
 
@@ -28,6 +32,7 @@ import static java.util.Objects.requireNonNull;
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
 public class FieldRenderer extends Renderer {
+    private static final Logger LOGGER = Logger.getLogger(FieldRenderer.class.getName());
 
     private final FieldDoc fieldDoc;
 
@@ -46,15 +51,40 @@ public class FieldRenderer extends Renderer {
                 : out.append("+");
     }
 
-    public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
-        writeAccessibility(out, fieldDoc).append(fieldDoc.name());
-        if (!fieldDoc.isEnumConstant()) {
-//            fieldDoc.type().
-//            fieldDoc.type().dimension()
-//            fieldDoc.type().asParameterizedType()
-            out.append(": ").append(fieldDoc.type().typeName());
+    protected boolean includeFieldType() {
+        return config.includeFieldTypes() && !fieldDoc.isEnumConstant();
+    }
+
+    protected boolean includeField() {
+        boolean exclude = (fieldDoc.isPrivate() && !config.includePrivateFields())
+                || (fieldDoc.isPackagePrivate() && !config.includePackagePrivateFields())
+                || (fieldDoc.isProtected() && !config.includeProtectedFields())
+                || (fieldDoc.isPublic() && !config.includePublicFields());
+        if (LOGGER.isLoggable(Level.FINEST)) {
+            LOGGER.log(Level.FINEST, "{0} \"{1}\" {2}{3} included.",
+                    new Object[]{
+                            fieldDoc.isStatic() ? "Static field" : "Field",
+                            fieldDoc.qualifiedName(),
+                            fieldDoc.isPrivate() ? "is private and "
+                                    : fieldDoc.isPackagePrivate() ? "is package private and "
+                                    : fieldDoc.isProtected() ? "is protected and "
+                                    : fieldDoc.isPublic() ? "is public and " : "",
+                            exclude ? "will not be" : "will be"});
         }
-        return out.newline();
+        return !exclude;
+    }
+
+    public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
+        if (includeField()) {
+            writeAccessibility(out, fieldDoc).append(fieldDoc.name());
+            if (includeFieldType()) {
+                out.append(": ").append(fieldDoc.type().typeName());
+                ParameterizedType parameterizedType = fieldDoc.type().asParameterizedType();
+                // TODO add parameterized type for generics.
+            }
+            out.newline();
+        }
+        return out;
     }
 
 }

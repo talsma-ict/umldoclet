@@ -18,12 +18,13 @@ package nl.talsmasoftware.umldoclet;
 import com.sun.javadoc.DocErrorReporter;
 import com.sun.tools.doclets.standard.Standard;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Objects;
+import java.io.InputStream;
+import java.util.*;
+import java.util.logging.*;
+import java.util.logging.Formatter;
 
 /**
  * Class containing all possible Doclet options for the UML doclet.
@@ -31,13 +32,21 @@ import java.util.Objects;
  *
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
-public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> {
+public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> implements Closeable {
+    private static final String UML_ROOTLOGGER_NAME = UMLDoclet.class.getPackage().getName();
 
     enum Setting {
+        UML_LOGLEVEL("-umlLogLevel", 1),
         UML_INDENTATION("-umlIndentation", 1),
+        UML_BASE_PATH("-umlBasePath", 1),
         UML_FILE_EXTENSION("-umlFileExtension", 1),
         UML_FILE_ENCODING("-umlFileEncoding", 1),
-        UML_CREATE_PACKAGES("-umlCreatePackages", 1);
+        UML_CREATE_PACKAGES("-umlCreatePackages", 1),
+        UML_INCLUDE_PRIVATE_FIELDS("-umlIncludePrivateFields", 1),
+        UML_INCLUDE_PACKAGE_PRIVATE_FIELDS("-umlIncludePackagePrivateFields", 1),
+        UML_INCLUDE_PROTECTED_FIELDS("-umlIncludeProtectedFields", 1),
+        UML_INCLUDE_PUBLIC_FIELDS("-umlIncludePublicFields", 1),
+        UML_INCLUDE_FIELD_TYPES("-umlIncludeFieldTypes", 1);
 
         private final String optionName;
         private final int optionLength;
@@ -71,7 +80,9 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
         }
     }
 
-    private final String basePath;
+    private final String defaultBasePath;
+    private Properties properties;
+    private Handler umlLogHandler;
 
     public UMLDocletConfig(String[][] options, DocErrorReporter reporter) {
         super(Setting.class);
@@ -87,7 +98,20 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
         } catch (IOException ioe) {
             reporter.printError("Could not determine base path: " + ioe.getMessage());
         }
-        this.basePath = basePath;
+        this.defaultBasePath = basePath;
+        this.initializeUmlLogging();
+    }
+
+    private Properties properties() {
+        if (properties == null) {
+            properties = new Properties();
+            try (InputStream in = getClass().getResourceAsStream("/META-INF/umldoclet.properties")) {
+                properties.load(in);
+            } catch (IOException ioe) {
+                throw new IllegalStateException("I/O exception loading properties: " + ioe.getMessage(), ioe);
+            }
+        }
+        return properties;
     }
 
     String stringValue(Setting setting, String defaultValue) {
@@ -95,10 +119,38 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
         return Objects.toString(option == null || option.length < 2 ? null : option[1], defaultValue);
     }
 
-    public String basePath() {
-        return basePath;
+    public String version() {
+        return properties().getProperty("version");
     }
 
+    public Level umlLogLevel() {
+        final String level = stringValue(Setting.UML_LOGLEVEL, "INFO").toUpperCase(Locale.ENGLISH);
+        switch (level) {
+            case "TRACE":
+                return Level.FINEST;
+            case "DEBUG":
+                return Level.FINE;
+            case "WARN":
+                return Level.WARNING;
+            case "ERROR":
+            case "FATAL":
+                return Level.SEVERE;
+            default:
+                return Level.parse(level);
+        }
+    }
+
+    /**
+     * @return The base path where the documentation should be created.
+     */
+    public String basePath() {
+        return stringValue(Setting.UML_BASE_PATH, defaultBasePath);
+    }
+
+    /**
+     * @return The indentation (in number of spaces) to use for generated UML files
+     * (defaults to {@code -1} which leaves the indentation unspecified).
+     */
     public int indentation() {
         return Integer.valueOf(stringValue(Setting.UML_INDENTATION, "-1"));
     }
@@ -116,6 +168,41 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
      */
     public String umlFileEncoding() {
         return stringValue(Setting.UML_FILE_ENCODING, "UTF-8");
+    }
+
+    /**
+     * @return Whether or not to include private fields in the UML diagrams (defaults to {@code false}).
+     */
+    public boolean includePrivateFields() {
+        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PRIVATE_FIELDS, "false"));
+    }
+
+    /**
+     * @return Whether or not to include package-private fields in the UML diagrams (defaults to {@code false}).
+     */
+    public boolean includePackagePrivateFields() {
+        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PACKAGE_PRIVATE_FIELDS, "false"));
+    }
+
+    /**
+     * @return Whether or not to include private fields in the UML diagrams (defaults to {@code true}).
+     */
+    public boolean includeProtectedFields() {
+        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PROTECTED_FIELDS, "true"));
+    }
+
+    /**
+     * @return Whether or not to include public fields in the UML diagrams (defaults to {@code true}).
+     */
+    public boolean includePublicFields() {
+        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PUBLIC_FIELDS, "true"));
+    }
+
+    /**
+     * @return Whether or not to include field type details in the UML diagrams (defaults to {@code true}).
+     */
+    public boolean includeFieldTypes() {
+        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_FIELD_TYPES, "true"));
     }
 
     public boolean createPackages() {
@@ -149,4 +236,38 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
         return allValid;
     }
 
+    private void initializeUmlLogging() {
+        // Clear levels on any previously instantiated sub-loggers.
+        for (Enumeration<String> en = LogManager.getLogManager().getLoggerNames(); en.hasMoreElements(); ) {
+            String loggerName = en.nextElement();
+            if (loggerName.startsWith(UML_ROOTLOGGER_NAME)) {
+                Logger.getLogger(loggerName).setLevel(null);
+            }
+        }
+        // Configure the umldoclet root logger.
+        this.umlLogHandler = new UmlLogHandler();
+        Logger.getLogger(UML_ROOTLOGGER_NAME).setLevel(this.umlLogLevel());
+        Logger.getLogger(UML_ROOTLOGGER_NAME).addHandler(this.umlLogHandler);
+    }
+
+    @Override
+    public synchronized void close() {
+        if (umlLogHandler != null) {
+            Logger.getLogger(UML_ROOTLOGGER_NAME).removeHandler(umlLogHandler);
+            umlLogHandler = null;
+        }
+    }
+
+    private static class UmlLogHandler extends ConsoleHandler {
+        private UmlLogHandler() {
+            super.setLevel(Level.ALL);
+            super.setOutputStream(System.out);
+            super.setFormatter(new Formatter() {
+                @Override
+                public String format(LogRecord record) {
+                    return String.format("%s%n", super.formatMessage(record));
+                }
+            });
+        }
+    }
 }

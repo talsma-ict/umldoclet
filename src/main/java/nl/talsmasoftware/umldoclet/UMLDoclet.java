@@ -28,11 +28,13 @@ import java.util.logging.Logger;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Eerste aanzet tot een UML doclet die plantuml klassediagrammen kan produceren voor documentatie.
+ * UML doclet that generates <a href="http://plantuml.com">PlantUML</a> class diagrams from your java code just as
+ * easily as creating proper JavaDoc comments. It actually does that too by delegating to JavaDoc's {@link Standard}
+ * doclet for the 'regular' HTML documentation.
  *
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
-public class UMLDoclet extends Standard {
+public class UMLDoclet extends Standard implements Closeable {
     private static final Logger LOGGER = Logger.getLogger(UMLDoclet.class.getName());
 
     private final RootDoc rootDoc;
@@ -41,6 +43,7 @@ public class UMLDoclet extends Standard {
     public UMLDoclet(RootDoc rootDoc) {
         this.rootDoc = requireNonNull(rootDoc, "No root document received.");
         this.config = new UMLDocletConfig(rootDoc.options(), rootDoc);
+        LOGGER.log(Level.INFO, "{0} version {1}.", new Object[]{getClass().getSimpleName(), config.version()});
     }
 
     public static int optionLength(String option) {
@@ -52,36 +55,32 @@ public class UMLDoclet extends Standard {
     }
 
     public static boolean start(RootDoc rootDoc) {
-        boolean result = new UMLDoclet(rootDoc).generateUMLDocumentation();
-        return result && Standard.start(rootDoc);
-    }
-
-    public boolean generateUMLDocumentation() {
-        boolean result = true;
-        // Let's start by adding a separate class diagram for every individual class.
-        final ClassDoc[] classes = rootDoc.classes();
-        for (ClassDoc classDoc : classes) {
-            if (!generateClassDiagram(classDoc)) {
-                result = false;
-                break;
-            }
+        try (UMLDoclet umlDoclet = new UMLDoclet(rootDoc)) {
+            return umlDoclet.generateUMLDiagrams() && Standard.start(rootDoc);
         }
-        return result;
     }
 
-    protected boolean generateClassDiagram(ClassDoc classDoc) {
-        try (Writer out = createWriterForNewClassFile(classDoc)) {
-
-            new UMLDiagram(config).singleClassDiagram(classDoc).writeTo(out);
-            return true;
-
-        } catch (IOException | RuntimeException ioe) {
-            final String message = String.format("Error writing to %s file for %s: %s",
-                    config.umlFileExtension(), classDoc, ioe.getMessage());
-            LOGGER.log(Level.SEVERE, message, ioe);
-            rootDoc.printError(classDoc.position(), message);
+    public boolean generateUMLDiagrams() {
+        try {
+            return generateIndividualClassDiagrams(rootDoc.classes());
+        } catch (RuntimeException rte) {
+            LOGGER.log(Level.SEVERE, rte.getMessage(), rte);
+            rootDoc.printError(rootDoc.position(), rte.getMessage());
             return false;
         }
+    }
+
+    protected boolean generateIndividualClassDiagrams(ClassDoc... classDocs) {
+        for (ClassDoc classDoc : classDocs) {
+            try (Writer out = createWriterForNewClassFile(classDoc)) {
+                new UMLDiagram(config).singleClassDiagram(classDoc).writeTo(out);
+            } catch (IOException | RuntimeException exception) {
+                throw new IllegalStateException(String.format("Error writing to %s file for %s: %s",
+                        config.umlFileExtension(), classDoc, exception.getMessage()), exception);
+            }
+        }
+        LOGGER.log(Level.INFO, "All individual class diagrams have been generated.");
+        return true;
     }
 
     /**
@@ -92,20 +91,26 @@ public class UMLDoclet extends Standard {
      * @throws IOException In case there were I/O errors creating a new plantUML file or opening a Writer to it.
      */
     protected Writer createWriterForNewClassFile(ClassDoc documentedClass) throws IOException {
-        File pumlfile = new File(config.basePath());
+        File umlFile = new File(config.basePath());
         for (String packageNm : documentedClass.containingPackage().name().split("\\.")) {
             if (packageNm.trim().length() > 0) {
-                pumlfile = new File(pumlfile, packageNm);
+                umlFile = new File(umlFile, packageNm);
             }
         }
-        if (pumlfile.exists() || pumlfile.mkdirs()) {
-            pumlfile = new File(pumlfile, documentedClass.name() + config.umlFileExtension());
-            if (pumlfile.exists() || pumlfile.createNewFile()) {
-                return new OutputStreamWriter(new FileOutputStream(pumlfile), config.umlFileEncoding());
+        if (umlFile.exists() || umlFile.mkdirs()) {
+            umlFile = new File(umlFile, documentedClass.name() + config.umlFileExtension());
+            if (umlFile.exists() || umlFile.createNewFile()) {
+                LOGGER.log(Level.INFO, "Generating {0}...", umlFile);
+                return new OutputStreamWriter(new FileOutputStream(umlFile), config.umlFileEncoding());
             }
         }
-        throw new IllegalStateException("Error creating: " + pumlfile);
+        throw new IllegalStateException("Error creating: " + umlFile);
     }
 
+    @Override
+    public void close() {
+        LOGGER.log(Level.FINE, "{0} done.", getClass().getSimpleName());
+        config.close();
+    }
 
 }
