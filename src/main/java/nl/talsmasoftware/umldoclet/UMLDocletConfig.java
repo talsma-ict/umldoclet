@@ -36,25 +36,23 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
     private static final String UML_ROOTLOGGER_NAME = UMLDoclet.class.getPackage().getName();
 
     enum Setting {
-        UML_LOGLEVEL("-umlLogLevel", 1),
-        UML_INDENTATION("-umlIndentation", 1),
-        UML_BASE_PATH("-umlBasePath", 1),
-        UML_FILE_EXTENSION("-umlFileExtension", 1),
-        UML_FILE_ENCODING("-umlFileEncoding", 1),
-        UML_CREATE_PACKAGES("-umlCreatePackages", 1),
-        UML_INCLUDE_PRIVATE_FIELDS("-umlIncludePrivateFields", 1),
-        UML_INCLUDE_PACKAGE_PRIVATE_FIELDS("-umlIncludePackagePrivateFields", 1),
-        UML_INCLUDE_PROTECTED_FIELDS("-umlIncludeProtectedFields", 1),
-        UML_INCLUDE_PUBLIC_FIELDS("-umlIncludePublicFields", 1),
-        UML_INCLUDE_FIELD_TYPES("-umlIncludeFieldTypes", 1),
-        UML_INCLUDE_METHOD_PARAM_NAMES("-umlIncludeMethodParamNames", 1),
-        UML_INCLUDE_METHOD_PARAM_TYPES("-umlIncludeMethodParamTypes", 1),
-        UML_INCLUDE_PRIVATE_METHODS("-umlIncludePrivateMethods", 1),
-        UML_INCLUDE_PACKAGE_PRIVATE_METHODS("-umlIncludePackagePrivateMethods", 1),
-        UML_INCLUDE_PROTECTED_METHODS("-umlIncludeProtectedMethods", 1),
-        UML_INCLUDE_PUBLIC_METHODS("-umlIncludePublicMethods", 1),
-
-        ;
+        UML_LOGLEVEL("-umlLogLevel", 2),
+        UML_INDENTATION("-umlIndentation", 2),
+        UML_BASE_PATH("-umlBasePath", 2),
+        UML_FILE_EXTENSION("-umlFileExtension", 2),
+        UML_FILE_ENCODING("-umlFileEncoding", 2),
+        UML_CREATE_PACKAGES("-umlCreatePackages", 2),
+        UML_INCLUDE_PRIVATE_FIELDS("-umlIncludePrivateFields", 2),
+        UML_INCLUDE_PACKAGE_PRIVATE_FIELDS("-umlIncludePackagePrivateFields", 2),
+        UML_INCLUDE_PROTECTED_FIELDS("-umlIncludeProtectedFields", 2),
+        UML_INCLUDE_PUBLIC_FIELDS("-umlIncludePublicFields", 2),
+        UML_INCLUDE_FIELD_TYPES("-umlIncludeFieldTypes", 2),
+        UML_INCLUDE_METHOD_PARAM_NAMES("-umlIncludeMethodParamNames", 2),
+        UML_INCLUDE_METHOD_PARAM_TYPES("-umlIncludeMethodParamTypes", 2),
+        UML_INCLUDE_PRIVATE_METHODS("-umlIncludePrivateMethods", 2),
+        UML_INCLUDE_PACKAGE_PRIVATE_METHODS("-umlIncludePackagePrivateMethods", 2),
+        UML_INCLUDE_PROTECTED_METHODS("-umlIncludeProtectedMethods", 2),
+        UML_INCLUDE_PUBLIC_METHODS("-umlIncludePublicMethods", 2),;
 
         private final String optionName;
         private final int optionLength;
@@ -76,14 +74,10 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
         }
 
         void validate(String[] optionValue) {
-            final int valueCount = optionValue.length - 1;
-            if (optionLength != valueCount) {
+            if (optionLength != optionValue.length) {
                 throw new IllegalArgumentException(String.format(
-                        "Unexpected number of values provided for option \"%s\". Expected %s but received %s.",
-                        optionName, optionLength, valueCount));
-            } else if (!optionName.equalsIgnoreCase(optionValue[0])) {
-                throw new IllegalArgumentException(String.format("Option mismatch. Expected \"%s\", but was \"%s\".",
-                        optionName, optionValue[0]));
+                        "Unexpected length for option \"%s\". Expected %s but received %s: %s.",
+                        optionName, optionLength, optionValue.length, Arrays.toString(optionValue)));
             }
         }
     }

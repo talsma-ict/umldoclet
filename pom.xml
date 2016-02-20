@@ -144,8 +144,9 @@
                                 <artifactId>${project.artifactId}</artifactId>
                                 <version>${project.version}</version>
                             </docletArtifact>
-                            <!--TODO make this work!-->
-                            <!--<additionalparam>-umlLogLevel trace</additionalparam>-->
+                            <additionalparam>
+                                -umlLogLevel debug
+                            </additionalparam>
                             <useStandardDocletOptions>true</useStandardDocletOptions>
                         </configuration>
                     </execution>
