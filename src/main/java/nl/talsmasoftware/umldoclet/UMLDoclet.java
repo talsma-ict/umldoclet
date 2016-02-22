@@ -17,11 +17,15 @@ package nl.talsmasoftware.umldoclet;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.DocErrorReporter;
+import com.sun.javadoc.PackageDoc;
 import com.sun.javadoc.RootDoc;
 import com.sun.tools.doclets.standard.Standard;
 import nl.talsmasoftware.umldoclet.rendering.UMLDiagram;
 
 import java.io.*;
+import java.util.Comparator;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,6 +43,13 @@ public class UMLDoclet extends Standard implements Closeable {
 
     private final RootDoc rootDoc;
     private final UMLDocletConfig config;
+    private final SortedSet<PackageDoc> encounteredPackages = new TreeSet<>(new Comparator<PackageDoc>() {
+        public int compare(PackageDoc o1, PackageDoc o2) {
+            return o1 == null ? (o2 == null ? 0 : -1)
+                    : o2 == null ? 1
+                    : o1.name().compareToIgnoreCase(o2.name());
+        }
+    });
 
     public UMLDoclet(RootDoc rootDoc) {
         this.rootDoc = requireNonNull(rootDoc, "No root document received.");
@@ -75,11 +86,12 @@ public class UMLDoclet extends Standard implements Closeable {
     protected boolean generateIndividualClassDiagrams(ClassDoc... classDocs) {
         LOGGER.log(Level.FINE, "Generating class diagrams for all individual classes...");
         for (ClassDoc classDoc : classDocs) {
+            encounteredPackages.add(classDoc.containingPackage());
             try (Writer out = createWriterForNewClassFile(classDoc)) {
                 new UMLDiagram(config).singleClassDiagram(classDoc).writeTo(out);
             } catch (IOException | RuntimeException exception) {
                 throw new IllegalStateException(String.format("Error writing to %s file for %s: %s",
-                        config.umlFileExtension(), classDoc, exception.getMessage()), exception);
+                        config.umlFileExtension(), classDoc.qualifiedName(), exception.getMessage()), exception);
             }
         }
         LOGGER.log(Level.FINE, "All individual class diagrams have been generated.");
@@ -88,6 +100,14 @@ public class UMLDoclet extends Standard implements Closeable {
 
     protected boolean generatePackageDiagrams() {
         LOGGER.log(Level.FINE, "Generating package diagrams for all packages...");
+        for (PackageDoc packageDoc : encounteredPackages) {
+            try (Writer out = createWriterForNewPackageFile(packageDoc)) {
+                new UMLDiagram(config).singlePackageDiagram(packageDoc).writeTo(out);
+            } catch (IOException | RuntimeException exception) {
+                throw new IllegalStateException(String.format("Error writing to %s file for package %s: %s",
+                        config.umlFileExtension(), packageDoc.name(), exception.getMessage()), exception);
+            }
+        }
         LOGGER.log(Level.FINE, "All package diagrams have been generated.");
         return true;
     }
@@ -108,6 +128,30 @@ public class UMLDoclet extends Standard implements Closeable {
         }
         if (umlFile.exists() || umlFile.mkdirs()) {
             umlFile = new File(umlFile, documentedClass.name() + config.umlFileExtension());
+            if (umlFile.exists() || umlFile.createNewFile()) {
+                LOGGER.log(Level.INFO, "Generating {0}...", umlFile);
+                return new OutputStreamWriter(new FileOutputStream(umlFile), config.umlFileEncoding());
+            }
+        }
+        throw new IllegalStateException("Error creating: " + umlFile);
+    }
+
+    /**
+     * Create a new plant UML file for the given documented package and return a new {@link Writer} object to it.
+     *
+     * @param documentedPackage The package that should be documented in a new PlantUML definition file.
+     * @return The created Writer to the correct PlantUML file.
+     * @throws IOException In case there were I/O errors creating a new plantUML file or opening a Writer to it.
+     */
+    protected Writer createWriterForNewPackageFile(PackageDoc documentedPackage) throws IOException {
+        File umlFile = new File(config.basePath());
+        for (String packageNm : documentedPackage.name().split("\\.")) {
+            if (packageNm.trim().length() > 0) {
+                umlFile = new File(umlFile, packageNm);
+            }
+        }
+        if (umlFile.exists() || umlFile.mkdirs()) {
+            umlFile = new File(umlFile, "package" + config.umlFileExtension());
             if (umlFile.exists() || umlFile.createNewFile()) {
                 LOGGER.log(Level.INFO, "Generating {0}...", umlFile);
                 return new OutputStreamWriter(new FileOutputStream(umlFile), config.umlFileEncoding());
