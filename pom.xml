@@ -144,8 +144,9 @@
                                 <artifactId>${project.artifactId}</artifactId>
                                 <version>${project.version}</version>
                             </docletArtifact>
+                            <docencoding>UTF-8</docencoding>
                             <additionalparam>
-                                -umlLogLevel debug
+                                -umlLogLevel INFO
                             </additionalparam>
                             <useStandardDocletOptions>true</useStandardDocletOptions>
                         </configuration>

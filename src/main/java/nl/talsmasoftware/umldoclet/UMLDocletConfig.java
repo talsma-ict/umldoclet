@@ -34,31 +34,38 @@ import java.util.logging.Formatter;
  */
 public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> implements Closeable {
     private static final String UML_ROOTLOGGER_NAME = UMLDoclet.class.getPackage().getName();
+    private static final Logger LOGGER = Logger.getLogger(UMLDocletConfig.class.getName());
 
     enum Setting {
-        UML_LOGLEVEL("-umlLogLevel", 2),
-        UML_INDENTATION("-umlIndentation", 2),
-        UML_BASE_PATH("-umlBasePath", 2),
-        UML_FILE_EXTENSION("-umlFileExtension", 2),
-        UML_FILE_ENCODING("-umlFileEncoding", 2),
-        UML_CREATE_PACKAGES("-umlCreatePackages", 2),
-        UML_INCLUDE_PRIVATE_FIELDS("-umlIncludePrivateFields", 2),
-        UML_INCLUDE_PACKAGE_PRIVATE_FIELDS("-umlIncludePackagePrivateFields", 2),
-        UML_INCLUDE_PROTECTED_FIELDS("-umlIncludeProtectedFields", 2),
-        UML_INCLUDE_PUBLIC_FIELDS("-umlIncludePublicFields", 2),
-        UML_INCLUDE_FIELD_TYPES("-umlIncludeFieldTypes", 2),
-        UML_INCLUDE_METHOD_PARAM_NAMES("-umlIncludeMethodParamNames", 2),
-        UML_INCLUDE_METHOD_PARAM_TYPES("-umlIncludeMethodParamTypes", 2),
-        UML_INCLUDE_PRIVATE_METHODS("-umlIncludePrivateMethods", 2),
-        UML_INCLUDE_PACKAGE_PRIVATE_METHODS("-umlIncludePackagePrivateMethods", 2),
-        UML_INCLUDE_PROTECTED_METHODS("-umlIncludeProtectedMethods", 2),
-        UML_INCLUDE_PUBLIC_METHODS("-umlIncludePublicMethods", 2),;
+        UML_LOGLEVEL("-umlLogLevel", String.class),
+        UML_INDENTATION("-umlIndentation", Integer.class),
+        UML_BASE_PATH("-umlBasePath", String.class),
+        UML_FILE_EXTENSION("-umlFileExtension", String.class),
+        UML_FILE_ENCODING("-umlFileEncoding", String.class),
+        UML_CREATE_PACKAGES("-umlCreatePackages", Boolean.class),
+        UML_INCLUDE_PRIVATE_FIELDS("-umlIncludePrivateFields", Boolean.class),
+        UML_INCLUDE_PACKAGE_PRIVATE_FIELDS("-umlIncludePackagePrivateFields", Boolean.class),
+        UML_INCLUDE_PROTECTED_FIELDS("-umlIncludeProtectedFields", Boolean.class),
+        UML_INCLUDE_PUBLIC_FIELDS("-umlIncludePublicFields", Boolean.class),
+        UML_INCLUDE_FIELD_TYPES("-umlIncludeFieldTypes", Boolean.class),
+        UML_INCLUDE_METHOD_PARAM_NAMES("-umlIncludeMethodParamNames", Boolean.class),
+        UML_INCLUDE_METHOD_PARAM_TYPES("-umlIncludeMethodParamTypes", Boolean.class),
+        UML_INCLUDE_PRIVATE_METHODS("-umlIncludePrivateMethods", Boolean.class),
+        UML_INCLUDE_PACKAGE_PRIVATE_METHODS("-umlIncludePackagePrivateMethods", Boolean.class),
+        UML_INCLUDE_PROTECTED_METHODS("-umlIncludeProtectedMethods", Boolean.class),
+        UML_INCLUDE_PUBLIC_METHODS("-umlIncludePublicMethods", Boolean.class);
 
         private final String optionName;
+        private final Class<?> optionType;
         private final int optionLength;
 
-        Setting(String option, int optionLength) {
+        Setting(String option, Class<?> type) {
+            this(option, type, 2); // By default, declare one option and one parameter string.
+        }
+
+        Setting(String option, Class<?> type, int optionLength) {
             this.optionName = option;
+            this.optionType = type;
             this.optionLength = optionLength;
         }
 
@@ -73,27 +80,34 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
             return null;
         }
 
-        void validate(String[] optionValue) {
+        String[] validate(String[] optionValue) {
             if (optionLength != optionValue.length) {
                 throw new IllegalArgumentException(String.format(
-                        "Unexpected length for option \"%s\". Expected %s but received %s: %s.",
-                        optionName, optionLength, optionValue.length, Arrays.toString(optionValue)));
+                        "Expected %s but received %s: %s.",
+                        optionLength, optionValue.length, Arrays.toString(optionValue)));
             }
+            final String value = optionLength > 1 ? optionValue[1].trim() : null;
+            if (Boolean.class.equals(optionType)
+                    && !"true".equalsIgnoreCase(value)
+                    && !"false".equalsIgnoreCase(value)) {
+                throw new IllegalArgumentException(
+                        String.format("Expected \"true\" or \"false\", but received \"%s\".", value));
+            } else if (Integer.class.equals(optionType) && !value.isEmpty() && !value.matches("\\d+")) {
+                throw new IllegalArgumentException(
+                        String.format("Expected a numerical value, but received \"%s\".", value));
+            }
+            return optionValue;
         }
     }
 
     private final String defaultBasePath;
+    private final String[][] invalidOptions;
+    private final String[][] standardOptions;
     private Properties properties;
     private Handler umlLogHandler;
 
     public UMLDocletConfig(String[][] options, DocErrorReporter reporter) {
         super(Setting.class);
-        for (String[] option : options) {
-            final Setting setting = Setting.forOption(option);
-            if (setting != null) {
-                super.put(setting, option);
-            }
-        }
         String basePath = ".";
         try {
             basePath = new File(".").getCanonicalPath();
@@ -101,7 +115,23 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
             reporter.printError("Could not determine base path: " + ioe.getMessage());
         }
         this.defaultBasePath = basePath;
-        this.initializeUmlLogging();
+        List<String[]> stdOpts = new ArrayList<>(), invalidOpts = new ArrayList<>();
+        for (String[] option : options) {
+            try {
+                final Setting setting = Setting.forOption(option);
+                if (setting == null) {
+                    stdOpts.add(option);
+                } else {
+                    super.put(setting, setting.validate(option));
+                }
+            } catch (RuntimeException invalid) {
+                reporter.printError(String.format("Invalid option \"%s\". %s", option[0], invalid.getMessage()));
+                invalidOpts.add(option);
+            }
+        }
+        this.standardOptions = stdOpts.toArray(new String[stdOpts.size()][]);
+        this.invalidOptions = invalidOpts.toArray(new String[invalidOpts.size()][]);
+        initializeUmlLogging();
     }
 
     private Properties properties() {
@@ -116,9 +146,21 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
         return properties;
     }
 
-    String stringValue(Setting setting, String defaultValue) {
+    String stringValue(Setting setting, String defaultValue, String... standardOpts) {
         final String[] option = super.get(setting);
-        return Objects.toString(option == null || option.length < 2 ? null : option[1], defaultValue);
+        String value = Objects.toString(option == null || option.length < 2 ? null : option[1], null);
+        for (int i = 0; value == null && i < standardOpts.length; i++) {
+            for (int j = 0; j < standardOptions.length; j++) {
+                if (standardOptions[j].length > 1
+                        && standardOpts[i].equalsIgnoreCase(standardOptions[j][0])) {
+                    value = standardOptions[j][1];
+                    LOGGER.log(Level.FINEST, "Using standard option \"{0}\" for setting \"{1}\": \"{2}\".",
+                            new Object[] {standardOpts[i], setting, value});
+                    break;
+                }
+            }
+        }
+        return Objects.toString(value, defaultValue);
     }
 
     public String version() {
@@ -169,7 +211,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
      * @return The file character encoding for the PlantUML files (defaults to {@code "UTF-8"}).
      */
     public String umlFileEncoding() {
-        return stringValue(Setting.UML_FILE_ENCODING, "UTF-8");
+        return stringValue(Setting.UML_FILE_ENCODING, "UTF-8", "-docEncoding");
     }
 
     /**
@@ -269,25 +311,10 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
     }
 
     public static boolean validOptions(String[][] options, DocErrorReporter reporter) {
-        boolean allValid = true;
-        final List<String[]> standardOptions = new ArrayList<>();
-        for (final String[] option : options) {
-            try {
-                final Setting setting = Setting.forOption(option);
-                if (setting == null) {
-                    standardOptions.add(option);
-                } else {
-                    setting.validate(option);
-                }
-            } catch (RuntimeException invalid) {
-                reporter.printError(invalid.getMessage());
-                allValid = false;
-            }
+        try (UMLDocletConfig config = new UMLDocletConfig(options, reporter)) {
+            return Standard.validOptions(config.standardOptions, reporter)
+                    && config.invalidOptions.length == 0;
         }
-        if (!standardOptions.isEmpty()) {
-            allValid &= Standard.validOptions(standardOptions.toArray(new String[standardOptions.size()][]), reporter);
-        }
-        return allValid;
     }
 
     private void initializeUmlLogging() {
@@ -310,6 +337,31 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
             Logger.getLogger(UML_ROOTLOGGER_NAME).removeHandler(umlLogHandler);
             umlLogHandler = null;
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder(getClass().getSimpleName()).append('{');
+        String sep = "";
+        for (String[] option : super.values()) {
+            if (option.length > 0) {
+                result.append(sep).append(option[0]);
+                if (option.length > 1) result.append(":").append(option[1]);
+                for (int i = 2; i < option.length; i++) result.append(' ').append(option[i]);
+                sep = ", ";
+            }
+        }
+        result.append("},StandardOptions{");
+        sep = "";
+        for (String[] option : standardOptions) {
+            if (option.length > 0) {
+                result.append(sep).append(option[0]);
+                if (option.length > 1) result.append(":").append(option[1]);
+                for (int i = 2; i < option.length; i++) result.append(' ').append(option[i]);
+                sep = ", ";
+            }
+        }
+        return result.append('}').toString();
     }
 
     private static class UmlLogHandler extends ConsoleHandler {

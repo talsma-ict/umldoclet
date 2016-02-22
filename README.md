@@ -13,5 +13,8 @@ _(before 1.0.0)_
 - Add package class-diagrams for each package-level.
 - Add dependency diagrams showing all dependencies on package level.
 - Additional doclet options to fine-tune the uml content (use / respect Standard doclet options as defaults?)
+
+_(eventually)_
+
 - Include Plantuml rendering of .puml files to .png images if Graphviz is detected.
 - Add custom tag support to Standard doclet to support @classdiagram javadoc

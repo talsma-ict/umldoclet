@@ -44,6 +44,7 @@ public class UMLDoclet extends Standard implements Closeable {
         this.rootDoc = requireNonNull(rootDoc, "No root document received.");
         this.config = new UMLDocletConfig(rootDoc.options(), rootDoc);
         LOGGER.log(Level.INFO, "{0} version {1}.", new Object[]{getClass().getSimpleName(), config.version()});
+        LOGGER.log(Level.FINE, "Initialized {0}...", config);
     }
 
     public static int optionLength(String option) {
@@ -62,7 +63,8 @@ public class UMLDoclet extends Standard implements Closeable {
 
     public boolean generateUMLDiagrams() {
         try {
-            return generateIndividualClassDiagrams(rootDoc.classes());
+            return generateIndividualClassDiagrams(rootDoc.classes())
+                    && generatePackageDiagrams();
         } catch (RuntimeException rte) {
             LOGGER.log(Level.SEVERE, rte.getMessage(), rte);
             rootDoc.printError(rootDoc.position(), rte.getMessage());
@@ -71,6 +73,7 @@ public class UMLDoclet extends Standard implements Closeable {
     }
 
     protected boolean generateIndividualClassDiagrams(ClassDoc... classDocs) {
+        LOGGER.log(Level.FINE, "Generating class diagrams for all individual classes...");
         for (ClassDoc classDoc : classDocs) {
             try (Writer out = createWriterForNewClassFile(classDoc)) {
                 new UMLDiagram(config).singleClassDiagram(classDoc).writeTo(out);
@@ -79,7 +82,13 @@ public class UMLDoclet extends Standard implements Closeable {
                         config.umlFileExtension(), classDoc, exception.getMessage()), exception);
             }
         }
-        LOGGER.log(Level.INFO, "All individual class diagrams have been generated.");
+        LOGGER.log(Level.FINE, "All individual class diagrams have been generated.");
+        return true;
+    }
+
+    protected boolean generatePackageDiagrams() {
+        LOGGER.log(Level.FINE, "Generating package diagrams for all packages...");
+        LOGGER.log(Level.FINE, "All package diagrams have been generated.");
         return true;
     }
 
