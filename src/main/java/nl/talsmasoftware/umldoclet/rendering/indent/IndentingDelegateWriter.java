@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Created on 17-02-2016.
  *
@@ -50,7 +52,7 @@ public class IndentingDelegateWriter extends Writer {
     }
 
     private IndentingDelegateWriter(Writer delegate, int indentationWidth, char[] indentation, boolean isBeginningOfLine) {
-        this.delegate = delegate;
+        this.delegate = requireNonNull(delegate, "Delegate writer is required.");
         this.indentationWidth = indentationWidth < 0 ? DEFAULT_INDENTATION_WIDTH : indentationWidth;
         this.indentation = indentation == null ? NO_INDENTATION : indentation;
         this.isBeginningOfLine = isBeginningOfLine;

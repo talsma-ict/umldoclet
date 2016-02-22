@@ -15,8 +15,12 @@
  */
 package nl.talsmasoftware.umldoclet.rendering.indent;
 
-
+import org.junit.Assert;
 import org.junit.Test;
+
+import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.fail;
 
 /**
  * Created on 17-02-2016.
@@ -27,7 +31,12 @@ public class IndentingPrintWriterTest {
 
     @Test
     public void testIndentingPrintWriter_nullWriter() {
-        new IndentingPrintWriter(null, -1);
+        try {
+            new IndentingPrintWriter(null, -1);
+            fail("Exception expected.");
+        } catch (NullPointerException expected) {
+            assertThat("Exception message", expected.getMessage(), is(not(nullValue())));
+        }
     }
 
 }
