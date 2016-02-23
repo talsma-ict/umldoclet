@@ -32,14 +32,14 @@ public class ClassRenderer extends Renderer {
 
     private final ClassDoc classDoc;
 
-    public ClassRenderer(UMLDocletConfig config, ClassDoc classDoc) {
-        super(config);
+    public ClassRenderer(UMLDocletConfig config, UMLDiagram diagram, ClassDoc classDoc) {
+        super(config, diagram);
         this.classDoc = requireNonNull(classDoc, "No class documentation provided.");
         for (FieldDoc field : classDoc.fields(false)) {
-            children.add(new FieldRenderer(config, field));
+            children.add(new FieldRenderer(config, diagram, field));
         }
         for (MethodDoc method : classDoc.methods(false)) {
-            children.add(new MethodRenderer(config, method));
+            children.add(new MethodRenderer(config, diagram, method));
         }
     }
 
@@ -51,6 +51,7 @@ public class ClassRenderer extends Renderer {
     }
 
     public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
+        currentDiagram().encounteredTypes.add(classDoc.qualifiedTypeName());
         out.println(String.format("' Class \"%s.%s\":", classDoc.containingPackage().name(), classDoc.name()));
         out.append(classType()).append(' ').append(classDoc.name()).append(" {").newline();
         return writeChildrenTo(out).append("}").newline();

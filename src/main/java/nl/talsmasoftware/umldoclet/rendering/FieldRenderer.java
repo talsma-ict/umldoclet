@@ -36,8 +36,8 @@ public class FieldRenderer extends Renderer {
 
     private final FieldDoc fieldDoc;
 
-    public FieldRenderer(UMLDocletConfig config, FieldDoc fieldDoc) {
-        super(config);
+    public FieldRenderer(UMLDocletConfig config, UMLDiagram diagram, FieldDoc fieldDoc) {
+        super(config, diagram);
         this.fieldDoc = requireNonNull(fieldDoc, "No field documentation provided.");
     }
 

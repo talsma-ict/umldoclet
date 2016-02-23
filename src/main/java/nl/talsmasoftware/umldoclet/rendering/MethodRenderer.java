@@ -36,8 +36,8 @@ public class MethodRenderer extends Renderer {
 
     private final MethodDoc methodDoc;
 
-    public MethodRenderer(UMLDocletConfig config, MethodDoc methodDoc) {
-        super(config);
+    public MethodRenderer(UMLDocletConfig config, UMLDiagram diagram, MethodDoc methodDoc) {
+        super(config, diagram);
         this.methodDoc = requireNonNull(methodDoc, "No method documentation provided.");
     }
 

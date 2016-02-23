@@ -33,10 +33,19 @@ import static java.util.Objects.requireNonNull;
 public abstract class Renderer {
 
     protected final UMLDocletConfig config;
+    private final UMLDiagram currentDiagram;
     protected final List<Renderer> children = new ArrayList<>();
 
-    public Renderer(UMLDocletConfig config) {
+    protected Renderer(UMLDocletConfig config, UMLDiagram currentDiagram) {
         this.config = requireNonNull(config, "No UML doclet configuration provided.");
+        this.currentDiagram = currentDiagram;
+    }
+
+    protected UMLDiagram currentDiagram() {
+        if (currentDiagram == null) {
+            throw new IllegalStateException("There is no current diagram available in this context.");
+        }
+        return currentDiagram;
     }
 
     public abstract IndentingPrintWriter writeTo(IndentingPrintWriter output);

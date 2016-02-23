@@ -20,6 +20,9 @@ import com.sun.javadoc.PackageDoc;
 import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 /**
  * Created on 17-02-2016.
  *
@@ -27,19 +30,26 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
  */
 public class UMLDiagram extends Renderer {
 
+    final Set<String> encounteredTypes = new LinkedHashSet<>();
+
     public UMLDiagram(UMLDocletConfig config) {
-        super(config);
+        super(config, null);
+    }
+
+    @Override
+    protected UMLDiagram currentDiagram() {
+        return this;
     }
 
     public UMLDiagram singleClassDiagram(ClassDoc classDoc) {
         UMLDiagram classDiagram = new UMLDiagram(config);
-        classDiagram.children.add(new ClassRenderer(config, classDoc));
+        classDiagram.children.add(new ClassRenderer(config, this, classDoc));
         return classDiagram;
     }
 
     public UMLDiagram singlePackageDiagram(PackageDoc packageDoc) {
         UMLDiagram packageDiagram = new UMLDiagram(config);
-        packageDiagram.children.add(new PackageRenderer(config, packageDoc));
+        packageDiagram.children.add(new PackageRenderer(config, this, packageDoc));
         return packageDiagram;
     }
 

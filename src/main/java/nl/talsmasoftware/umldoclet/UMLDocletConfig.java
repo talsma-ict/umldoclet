@@ -32,7 +32,7 @@ import java.util.logging.Formatter;
  *
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
-public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> implements Closeable {
+public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> implements Cloneable, Closeable {
     private static final String UML_ROOTLOGGER_NAME = UMLDoclet.class.getPackage().getName();
     private static final Logger LOGGER = Logger.getLogger(UMLDocletConfig.class.getName());
 
@@ -155,7 +155,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
                         && standardOpts[i].equalsIgnoreCase(standardOptions[j][0])) {
                     value = standardOptions[j][1];
                     LOGGER.log(Level.FINEST, "Using standard option \"{0}\" for setting \"{1}\": \"{2}\".",
-                            new Object[] {standardOpts[i], setting, value});
+                            new Object[]{standardOpts[i], setting, value});
                     break;
                 }
             }

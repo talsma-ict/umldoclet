@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.rendering;
 
+import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.PackageDoc;
 import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
@@ -30,18 +31,21 @@ public class PackageRenderer extends Renderer {
 
     private final PackageDoc packageDoc;
 
-    public PackageRenderer(UMLDocletConfig config, PackageDoc packageDoc) {
-        super(config);
+    public PackageRenderer(UMLDocletConfig config, UMLDiagram diagram, PackageDoc packageDoc) {
+        super(config, diagram);
         this.packageDoc = requireNonNull(packageDoc, "No package documentation provided.");
+        for (ClassDoc classDoc : packageDoc.allClasses(false)) {
+            children.add(new ClassRenderer(config, diagram, classDoc));
+        }
+        for (ClassDoc classDoc : packageDoc.allClasses(false)) {
+            children.add(new TypeReferences(config, diagram, classDoc));
+        }
     }
 
     public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
-        out.println(String.format("' Package \"%s\":", packageDoc.name()));
-
-        // TODO obviously:
-        out.println("TODO: Create package diagram!");
-
-        return out;
+        out.append("' Package \"").append(packageDoc.name()).append("\":").newline()
+                .append("namespace ").append(packageDoc.name()).append(" {").newline();
+        return writeChildrenTo(out).append("}").newline();
     }
 
 }
