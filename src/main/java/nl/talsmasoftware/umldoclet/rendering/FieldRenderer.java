@@ -34,7 +34,7 @@ import static java.util.Objects.requireNonNull;
 public class FieldRenderer extends Renderer {
     private static final Logger LOGGER = Logger.getLogger(FieldRenderer.class.getName());
 
-    private final FieldDoc fieldDoc;
+    protected final FieldDoc fieldDoc;
 
     public FieldRenderer(UMLDocletConfig config, UMLDiagram diagram, FieldDoc fieldDoc) {
         super(config, diagram);

@@ -36,11 +36,6 @@ public class UMLDiagram extends Renderer {
         super(config, null);
     }
 
-    @Override
-    protected UMLDiagram currentDiagram() {
-        return this;
-    }
-
     public UMLDiagram singleClassDiagram(ClassDoc classDoc) {
         UMLDiagram classDiagram = new UMLDiagram(config);
         classDiagram.children.add(new ClassRenderer(config, this, classDoc));
@@ -54,7 +49,7 @@ public class UMLDiagram extends Renderer {
     }
 
     public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
-        out.append("@startuml").newline();
+        out.append("@startuml").newline().newline();
         writeChildrenTo(out);
         return out.append("@enduml").newline();
     }

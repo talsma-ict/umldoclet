@@ -30,7 +30,7 @@ import static java.util.Objects.requireNonNull;
  */
 public class ClassRenderer extends Renderer {
 
-    private final ClassDoc classDoc;
+    protected final ClassDoc classDoc;
 
     public ClassRenderer(UMLDocletConfig config, UMLDiagram diagram, ClassDoc classDoc) {
         super(config, diagram);
@@ -43,7 +43,7 @@ public class ClassRenderer extends Renderer {
         }
     }
 
-    protected String classType() {
+    protected String umlType() {
         return classDoc.isEnum() ? "enum"
                 : classDoc.isInterface() ? "interface"
                 : classDoc.isAbstract() ? "abstract class"
@@ -51,10 +51,10 @@ public class ClassRenderer extends Renderer {
     }
 
     public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
-        currentDiagram().encounteredTypes.add(classDoc.qualifiedTypeName());
-        out.println(String.format("' Class \"%s.%s\":", classDoc.containingPackage().name(), classDoc.name()));
-        out.append(classType()).append(' ').append(classDoc.name()).append(" {").newline();
-        return writeChildrenTo(out).append("}").newline();
+        currentDiagram.encounteredTypes.add(classDoc.qualifiedTypeName());
+        // out.println(String.format("' Class \"%s.%s\":", classDoc.containingPackage().name(), classDoc.name()));
+        out.append(umlType()).append(' ').append(classDoc.qualifiedTypeName()).append(" {").newline();
+        return writeChildrenTo(out).append("}").newline().newline();
     }
 
 }

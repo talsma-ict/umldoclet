@@ -33,19 +33,12 @@ import static java.util.Objects.requireNonNull;
 public abstract class Renderer {
 
     protected final UMLDocletConfig config;
-    private final UMLDiagram currentDiagram;
+    protected final UMLDiagram currentDiagram;
     protected final List<Renderer> children = new ArrayList<>();
 
     protected Renderer(UMLDocletConfig config, UMLDiagram currentDiagram) {
         this.config = requireNonNull(config, "No UML doclet configuration provided.");
-        this.currentDiagram = currentDiagram;
-    }
-
-    protected UMLDiagram currentDiagram() {
-        if (currentDiagram == null) {
-            throw new IllegalStateException("There is no current diagram available in this context.");
-        }
-        return currentDiagram;
+        this.currentDiagram = validateDiagram(currentDiagram);
     }
 
     public abstract IndentingPrintWriter writeTo(IndentingPrintWriter output);
@@ -66,6 +59,20 @@ public abstract class Renderer {
 
     public String toString() {
         return writeTo(new StringWriter()).toString();
+    }
+
+    /**
+     * Validates the given diagram. There is only one situation where a {@code null} diagram is accepted; for the
+     * {@link UMLDiagram} class itself.
+     *
+     * @param currentDiagram The current diagram to be validated.
+     * @return The guaranteed non-{@code null} current diagram value.
+     */
+    private UMLDiagram validateDiagram(UMLDiagram currentDiagram) {
+        if (currentDiagram == null && !(this instanceof UMLDiagram)) {
+            throw new IllegalArgumentException("No current UML diagram provided.");
+        }
+        return currentDiagram == null ? (UMLDiagram) this : currentDiagram;
     }
 
 }

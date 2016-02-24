@@ -34,14 +34,14 @@ import static java.util.Objects.requireNonNull;
 public class MethodRenderer extends Renderer {
     private static final Logger LOGGER = Logger.getLogger(MethodRenderer.class.getName());
 
-    private final MethodDoc methodDoc;
+    protected final MethodDoc methodDoc;
 
     public MethodRenderer(UMLDocletConfig config, UMLDiagram diagram, MethodDoc methodDoc) {
         super(config, diagram);
         this.methodDoc = requireNonNull(methodDoc, "No method documentation provided.");
     }
 
-    public static IndentingPrintWriter writeParametersTo(IndentingPrintWriter out, ExecutableMemberDoc method, UMLDocletConfig config) {
+    static IndentingPrintWriter writeParametersTo(IndentingPrintWriter out, ExecutableMemberDoc method, UMLDocletConfig config) {
         if (config.includeMethodParams()) {
             String separator = "";
             for (Parameter parameter : method.parameters()) {

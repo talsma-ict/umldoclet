@@ -20,6 +20,9 @@ import com.sun.javadoc.PackageDoc;
 import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -29,7 +32,7 @@ import static java.util.Objects.requireNonNull;
  */
 public class PackageRenderer extends Renderer {
 
-    private final PackageDoc packageDoc;
+    protected final PackageDoc packageDoc;
 
     public PackageRenderer(UMLDocletConfig config, UMLDiagram diagram, PackageDoc packageDoc) {
         super(config, diagram);
@@ -37,15 +40,20 @@ public class PackageRenderer extends Renderer {
         for (ClassDoc classDoc : packageDoc.allClasses(false)) {
             children.add(new ClassRenderer(config, diagram, classDoc));
         }
-        for (ClassDoc classDoc : packageDoc.allClasses(false)) {
-            children.add(new TypeReferences(config, diagram, classDoc));
+        List<ClassReferenceRenderer> references = new ArrayList<>();
+        for (Renderer child : children) {
+            if (child instanceof ClassRenderer) {
+                references.addAll(ClassReferenceRenderer.referencesFor((ClassRenderer) child));
+            }
         }
+        children.addAll(references);
     }
 
     public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
-        out.append("' Package \"").append(packageDoc.name()).append("\":").newline()
-                .append("namespace ").append(packageDoc.name()).append(" {").newline();
-        return writeChildrenTo(out).append("}").newline();
+        // out.append("' Package \"").append(packageDoc.name()).append("\":").newline();
+        out.append("namespace ").append(packageDoc.name()).append(" {").newline().newline();
+        writeChildrenTo(out);
+        return out.append("}").newline().newline();
     }
 
 }
