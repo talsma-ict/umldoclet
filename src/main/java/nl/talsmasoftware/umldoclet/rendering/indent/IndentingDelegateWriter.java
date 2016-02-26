@@ -27,6 +27,7 @@ import static java.util.Objects.requireNonNull;
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
 public class IndentingDelegateWriter extends Writer {
+
     public static final int DEFAULT_INDENTATION_WIDTH = 4;
     private static final String EOL_CHARS = "\r\n";
     private static final char[] NO_INDENTATION = {};
@@ -37,18 +38,8 @@ public class IndentingDelegateWriter extends Writer {
 
     private boolean isBeginningOfLine;
 
-    public IndentingDelegateWriter(Writer delegate) {
-        this(delegate, -1);
-    }
-
-    public IndentingDelegateWriter(Writer delegate, int indentationWidth) {
+    protected IndentingDelegateWriter(Writer delegate, int indentationWidth) {
         this(delegate, indentationWidth, null, true);
-    }
-
-    public static IndentingDelegateWriter wrap(Writer writer) {
-        return writer instanceof IndentingDelegateWriter
-                ? (IndentingDelegateWriter) writer
-                : new IndentingDelegateWriter(writer);
     }
 
     private IndentingDelegateWriter(Writer delegate, int indentationWidth, char[] indentation, boolean isBeginningOfLine) {
@@ -56,6 +47,46 @@ public class IndentingDelegateWriter extends Writer {
         this.indentationWidth = indentationWidth < 0 ? DEFAULT_INDENTATION_WIDTH : indentationWidth;
         this.indentation = indentation == null ? NO_INDENTATION : indentation;
         this.isBeginningOfLine = isBeginningOfLine;
+    }
+
+    /**
+     * Returns an indenting writer around the given {@code delegate}.
+     * If the {@code delegate} writer is already an indenting writer, it will simply be returned as-is.
+     * If the {@code delegate} writer is not yet an indending writer, a new indenting writer class will be created to
+     * wrap the delegate using the {@link #DEFAULT_INDENTATION_WIDTH} and no initial {@link #currentIndentationLevel()}.
+     *
+     * @param delegate The delegate to turn into an indenting writer.
+     * @return The indenting delegate writer.
+     */
+    public static IndentingDelegateWriter wrap(Writer delegate) {
+        return delegate instanceof IndentingDelegateWriter
+                ? (IndentingDelegateWriter) delegate
+                : new IndentingDelegateWriter(delegate, -1);
+    }
+
+    /**
+     * Returns an indenting writer with the new indentation width.
+     * Please note: already written lines will not be modified to accomodate the new indentation width.
+     * Negative indentation widths will have no effect; the same indentation writer will be returned.
+     *
+     * @param newIndentationWidth
+     * @return
+     */
+    public IndentingDelegateWriter withIndentationWidth(int newIndentationWidth) {
+        return newIndentationWidth < 0 || indentationWidth == newIndentationWidth ? this :
+                new IndentingDelegateWriter(delegate, newIndentationWidth, indentation, isBeginningOfLine)
+                        .withIndentationLevel(currentIndentationLevel());
+    }
+
+    public IndentingDelegateWriter withIndentationLevel(int newIndentationLevel) {
+        if (newIndentationLevel < 0) {
+            throw new IllegalArgumentException(String.format("Indentation level cannot be a negative value: %s.", newIndentationLevel));
+        } else if (currentIndentationLevel() == newIndentationLevel) {
+            return this;
+        }
+        final char[] newIndentation = new char[newIndentationLevel * indentationWidth];
+        Arrays.fill(newIndentation, ' ');
+        return new IndentingDelegateWriter(delegate, indentationWidth, newIndentation, isBeginningOfLine);
     }
 
     public int indentationWith() {
@@ -66,35 +97,12 @@ public class IndentingDelegateWriter extends Writer {
         return indentationWidth == 0 ? 0 : indentation.length / indentationWidth;
     }
 
-    /**
-     * Geeft een {@link IndentingDelegateWriter} terug met het level aangepast met de opgegeven delta.
-     *
-     * <p>
-     * Level verlaging naar negatieve indentatie zal niet worden uitgevoerd.`
-     *
-     * @param levelChange De verhoging of verlaging van het indentation level (meestal {@code +1} of {@code -1}).
-     * @return De writer met het aangepaste indent level.
-     * @see #indent()
-     * @see #unindent()
-     */
-    public IndentingDelegateWriter indent(final int levelChange) {
-        final int newSize = indentation.length + levelChange * indentationWidth;
-        if (indentation.length == newSize) {
-            return this;
-        } else if (newSize > 0) {
-            final char[] newIndentation = new char[newSize];
-            Arrays.fill(newIndentation, ' ');
-            return new IndentingDelegateWriter(delegate, indentationWidth, newIndentation, isBeginningOfLine);
-        }
-        return new IndentingDelegateWriter(delegate, indentationWidth, NO_INDENTATION, isBeginningOfLine);
-    }
-
     public IndentingDelegateWriter indent() {
-        return indent(1);
+        return withIndentationLevel(Math.max(0, currentIndentationLevel() + 1));
     }
 
     public IndentingDelegateWriter unindent() {
-        return indent(-1);
+        return withIndentationLevel(Math.max(0, currentIndentationLevel() - 1));
     }
 
     @Override

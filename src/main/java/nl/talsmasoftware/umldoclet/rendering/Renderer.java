@@ -16,6 +16,7 @@
 package nl.talsmasoftware.umldoclet.rendering;
 
 import nl.talsmasoftware.umldoclet.UMLDocletConfig;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingDelegateWriter;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.io.StringWriter;
@@ -44,9 +45,9 @@ public abstract class Renderer {
     public abstract IndentingPrintWriter writeTo(IndentingPrintWriter output);
 
     public final Writer writeTo(Writer output) {
-        return this.writeTo(output instanceof IndentingPrintWriter
-                ? (IndentingPrintWriter) output
-                : new IndentingPrintWriter(output, config.indentation()));
+        return this.writeTo(output instanceof IndentingPrintWriter ? (IndentingPrintWriter) output :
+                IndentingPrintWriter.wrap(
+                        IndentingDelegateWriter.wrap(output).withIndentationWidth(config.indentation())));
     }
 
     protected IndentingPrintWriter writeChildrenTo(IndentingPrintWriter output) {

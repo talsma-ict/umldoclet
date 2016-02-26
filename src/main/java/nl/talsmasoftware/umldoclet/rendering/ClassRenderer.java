@@ -16,6 +16,7 @@
 package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.ClassDoc;
+import com.sun.javadoc.ConstructorDoc;
 import com.sun.javadoc.FieldDoc;
 import com.sun.javadoc.MethodDoc;
 import nl.talsmasoftware.umldoclet.UMLDocletConfig;
@@ -24,7 +25,7 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Created on 17-02-2016.
+ * Renderer to produce PlantUML output for a single class.
  *
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
@@ -37,6 +38,9 @@ public class ClassRenderer extends Renderer {
         this.classDoc = requireNonNull(classDoc, "No class documentation provided.");
         for (FieldDoc field : classDoc.fields(false)) {
             children.add(new FieldRenderer(config, diagram, field));
+        }
+        for (ConstructorDoc constructor : classDoc.constructors(false)) {
+            children.add(new MethodRenderer(config, diagram, constructor));
         }
         for (MethodDoc method : classDoc.methods(false)) {
             children.add(new MethodRenderer(config, diagram, method));
