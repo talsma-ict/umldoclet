@@ -52,10 +52,12 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
         UML_INCLUDE_FIELD_TYPES("-umlIncludeFieldTypes", Boolean.class, "true"),
         UML_INCLUDE_METHOD_PARAM_NAMES("-umlIncludeMethodParamNames", Boolean.class, "false"),
         UML_INCLUDE_METHOD_PARAM_TYPES("-umlIncludeMethodParamTypes", Boolean.class, "true"),
+        UML_INCLUDE_CONSTRUCTORS("-umlIncludeConstructors", Boolean.class, "true"),
         UML_INCLUDE_PRIVATE_METHODS("-umlIncludePrivateMethods", Boolean.class, "false"),
         UML_INCLUDE_PACKAGE_PRIVATE_METHODS("-umlIncludePackagePrivateMethods", Boolean.class, "false"),
         UML_INCLUDE_PROTECTED_METHODS("-umlIncludeProtectedMethods", Boolean.class, "true"),
-        UML_INCLUDE_PUBLIC_METHODS("-umlIncludePublicMethods", Boolean.class, "true");
+        UML_INCLUDE_PUBLIC_METHODS("-umlIncludePublicMethods", Boolean.class, "true"),
+        UML_EXCLUDED_REFERENCES("-umlExcludedReferences", String.class, "java.lang.Object");
 
         private final String optionName;
         private final Class<?> optionType;
@@ -98,6 +100,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
                 throw new IllegalArgumentException(
                         String.format("Expected a numerical value, but received \"%s\".", value));
             }
+            // TODO support List type?
             return optionValue;
         }
     }
@@ -276,6 +279,17 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
     }
 
     /**
+     * Please note that even when constructors are included, they are either rendered or not, based on the various
+     * method visibility settings such as {@code "-includePrivateMethods", "-includePackagePrivateMethods",
+     * "-includeProtectedMethods"} and {@code "-includePublicMethods"}.
+     *
+     * @return Whether or not to include any constructors in the UML diagrams (defaults to {@code true}).
+     */
+    public boolean includeConstructors() {
+        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_CONSTRUCTORS));
+    }
+
+    /**
      * @return Whether or not to include private methods in the UML diagrams (defaults to {@code false}).
      */
     public boolean includePrivateMethods() {
@@ -301,6 +315,20 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
      */
     public boolean includePublicMethods() {
         return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PUBLIC_METHODS));
+    }
+
+    /**
+     * @return The excluded references which should not be rendered.
+     */
+    public List<String> excludedReferences() {
+        List<String> excludedReferences = new ArrayList<>();
+        for (String excludedRef : Objects.toString(stringValue(Setting.UML_EXCLUDED_REFERENCES), "").split(",")) {
+            if (excludedRef.trim().length() > 0) {
+                excludedReferences.add(excludedRef.trim());
+            }
+        }
+        LOGGER.log(Level.FINEST, "Excluding the following references: {0}.", excludedReferences);
+        return excludedReferences;
     }
 
     public boolean createPackages() {

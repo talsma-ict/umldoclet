@@ -22,6 +22,8 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static java.util.Objects.requireNonNull;
 
@@ -31,6 +33,7 @@ import static java.util.Objects.requireNonNull;
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
 public class PackageRenderer extends Renderer {
+    private final static Logger LOGGER = Logger.getLogger(PackageRenderer.class.getName());
 
     protected final PackageDoc packageDoc;
 
@@ -38,7 +41,11 @@ public class PackageRenderer extends Renderer {
         super(config, diagram);
         this.packageDoc = requireNonNull(packageDoc, "No package documentation provided.");
         for (ClassDoc classDoc : packageDoc.allClasses(false)) {
-            children.add(new ClassRenderer(config, diagram, classDoc));
+            if (classDoc != null) {
+                children.add(new ClassRenderer(config, diagram, classDoc));
+            } else {
+                LOGGER.log(Level.WARNING, "Encountered <null> class doc in package \"{0}\"!", packageDoc.name());
+            }
         }
         List<ClassReferenceRenderer> references = new ArrayList<>();
         for (Renderer child : children) {

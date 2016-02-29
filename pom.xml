@@ -8,7 +8,7 @@
     <!-- Artifact identification -->
     <groupId>nl.talsmasoftware</groupId>
     <artifactId>umldoclet</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
     <packaging>jar</packaging>
 
     <!-- Project information -->
@@ -148,7 +148,8 @@
                             </docletArtifact>
                             <docencoding>UTF-8</docencoding>
                             <additionalparam>
-                                -umlLogLevel INFO
+                                -umlLogLevel DEBUG
+                                -umlIncludeConstructors true
                             </additionalparam>
                             <useStandardDocletOptions>true</useStandardDocletOptions>
                         </configuration>
@@ -166,6 +167,11 @@
                         <goals>
                             <goal>sign</goal>
                         </goals>
+                        <configuration>
+                            <gpgArguments>
+                                <gpgArgument>--batch</gpgArgument>
+                            </gpgArguments>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

@@ -25,8 +25,8 @@ import java.io.Writer;
  */
 public class IndentingPrintWriter extends PrintWriter {
 
-    public IndentingPrintWriter(Writer writer, int indentationWidth) {
-        this(new IndentingDelegateWriter(writer, indentationWidth));
+    protected IndentingPrintWriter(Writer writer, int indentationWidth) {
+        this(IndentingDelegateWriter.wrap(writer).withIndentationWidth(indentationWidth));
     }
 
     private IndentingPrintWriter(IndentingDelegateWriter delegate) {
@@ -34,21 +34,39 @@ public class IndentingPrintWriter extends PrintWriter {
     }
 
     /**
-     * @param levelChange De wijziging in het indentatie niveau (zal meestal {@code +1} of {@code -1} zijn).
-     * @return De printwriter met aangepaste indentatie.
-     * @see IndentingDelegateWriter#indent(int)
+     * Returns an indenting printwriter around the given {@code delegate}.
+     * If the {@code delegate} printwriter is already an indenting printwriter, it will simply be returned as-is.
+     * If the {@code delegate} printwriter is not yet an indending printwriter, a new indenting printwriter class
+     * will be created to wrap the delegate using the {@link IndentingDelegateWriter#DEFAULT_INDENTATION_WIDTH}
+     * and no initial {@link IndentingDelegateWriter#currentIndentationLevel()}.
+     *
+     * @param delegate The delegate to turn into an indenting printwriter.
+     * @return The indenting delegate writer.
      */
-    public IndentingPrintWriter indent(final int levelChange) {
-        IndentingDelegateWriter indented = ((IndentingDelegateWriter) out).indent(levelChange);
-        return out.equals(indented) ? this : new IndentingPrintWriter(indented);
+    public static IndentingPrintWriter wrap(Writer delegate) {
+        return delegate instanceof IndentingPrintWriter
+                ? (IndentingPrintWriter) delegate
+                : new IndentingPrintWriter(delegate, -1);
+    }
+
+    private IndentingPrintWriter changeIndentation(final boolean up) {
+        if (out instanceof IndentingDelegateWriter) {
+            IndentingDelegateWriter delegate = (IndentingDelegateWriter) this.out;
+            int newIndentationLevel = Math.max(0, delegate.currentIndentationLevel() + (up ? 1 : -1));
+            delegate = delegate.withIndentationLevel(newIndentationLevel);
+            if (!out.equals(delegate)) {
+                return new IndentingPrintWriter(delegate);
+            }
+        }
+        return this;
     }
 
     public IndentingPrintWriter indent() {
-        return indent(1);
+        return changeIndentation(true);
     }
 
     public IndentingPrintWriter unindent() {
-        return indent(-1);
+        return changeIndentation(false);
     }
 
     public IndentingPrintWriter newline() {

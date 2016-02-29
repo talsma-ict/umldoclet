@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.rendering;
 
+import com.sun.javadoc.ConstructorDoc;
 import com.sun.javadoc.ExecutableMemberDoc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.Parameter;
@@ -27,16 +28,19 @@ import java.util.logging.Logger;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Created on 17-02-2016.
+ * Method renderer.
+ * <p/>
+ * For the moment this renderer is also used for rendering Constructors.
+ * If this turns out to be too complex, constructors may be separated into their own specialized renderer class.
  *
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
 public class MethodRenderer extends Renderer {
     private static final Logger LOGGER = Logger.getLogger(MethodRenderer.class.getName());
 
-    protected final MethodDoc methodDoc;
+    protected final ExecutableMemberDoc methodDoc;
 
-    public MethodRenderer(UMLDocletConfig config, UMLDiagram diagram, MethodDoc methodDoc) {
+    public MethodRenderer(UMLDocletConfig config, UMLDiagram diagram, ExecutableMemberDoc methodDoc) {
         super(config, diagram);
         this.methodDoc = requireNonNull(methodDoc, "No method documentation provided.");
     }
@@ -61,25 +65,37 @@ public class MethodRenderer extends Renderer {
         return out;
     }
 
+    private boolean isConstructor() {
+        return methodDoc instanceof ConstructorDoc;
+    }
+
+    protected IndentingPrintWriter writeReturnTypeTo(IndentingPrintWriter out) {
+        if (methodDoc instanceof MethodDoc) {
+            out.append(": ").append(((MethodDoc) methodDoc).returnType().typeName());
+        }
+        return out;
+    }
+
     public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         if (includeMethod()) {
             FieldRenderer.writeAccessibility(out, methodDoc)
                     .append(methodDoc.name()).append("(");
-            return writeParametersTo(out, methodDoc, config)
-                    .append("): ").append(methodDoc.returnType().typeName()).newline();
+            writeParametersTo(out, methodDoc, config).append(')');
+            return writeReturnTypeTo(out).newline();
         }
         return out;
     }
 
     protected boolean includeMethod() {
-        boolean exclude = (methodDoc.isPrivate() && !config.includePrivateMethods())
+        boolean exclude = (isConstructor() && !config.includeConstructors())
+                || (methodDoc.isPrivate() && !config.includePrivateMethods())
                 || (methodDoc.isPackagePrivate() && !config.includePackagePrivateMethods())
                 || (methodDoc.isProtected() && !config.includeProtectedMethods())
                 || (methodDoc.isPublic() && !config.includePublicMethods());
         if (LOGGER.isLoggable(Level.FINEST)) {
             LOGGER.log(Level.FINEST, "{0} \"{1}()\" {2}{3} included.",
                     new Object[]{
-                            methodDoc.isStatic() ? "Static method" : "Method",
+                            methodDoc.isStatic() ? "Static method" : (isConstructor() ? "Constructor" : "Method"),
                             methodDoc.qualifiedName(),
                             methodDoc.isPrivate() ? "is private and "
                                     : methodDoc.isPackagePrivate() ? "is package private and "
