@@ -20,6 +20,7 @@ import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,18 +48,33 @@ public class ClassReferenceRenderer extends ClassRenderer {
     static List<ClassReferenceRenderer> referencesFor(ClassRenderer includedClass) {
         requireNonNull(includedClass, "Included class is required in order to find its references.");
         final ClassDoc referent = includedClass.classDoc;
-        LOGGER.log(Level.FINEST, "Adding references for included class {0}...", referent.qualifiedName());
+        final String referentName = referent.qualifiedName();
+        LOGGER.log(Level.FINEST, "Adding references for included class {0}...", referentName);
         List<ClassReferenceRenderer> references = new ArrayList<>();
 
         // Add extended superclass reference.
-        ClassDoc superclass = referent.superclass();
-        references.add(new ClassReferenceRenderer(
-                includedClass.config, includedClass.currentDiagram, superclass, "<|--", referent));
+        final Collection<String> excludedReferences = includedClass.config.excludedReferences();
+        if (referent.superclass() == null) {
+            LOGGER.log(Level.FINE, "Encountered <null> as superclass of \"{0}\".", referentName);
+        } else if (excludedReferences.contains(referent.superclass().qualifiedName())) {
+            LOGGER.log(Level.FINEST, "Excluding superclass \"{0}\" of \"{1}\"...",
+                    new Object[]{referent.superclass().qualifiedName(), referentName});
+        } else {
+            references.add(new ClassReferenceRenderer(
+                    includedClass.config, includedClass.currentDiagram, referent.superclass(), "<|--", referent));
+        }
 
         // Add implemented interface references.
         for (ClassDoc interfaceDoc : referent.interfaces()) {
-            references.add(new ClassReferenceRenderer(
-                    includedClass.config, includedClass.currentDiagram, interfaceDoc, "<|--", referent));
+            if (interfaceDoc == null) {
+                LOGGER.log(Level.INFO, "Encountered <null> as implemented interface of \"{0}\".", referentName);
+            } else if (excludedReferences.contains(interfaceDoc.qualifiedName())) {
+                LOGGER.log(Level.FINEST, "Excluding interface \"{0}\" of \"{1}\"...",
+                        new Object[]{interfaceDoc.qualifiedName(), referentName});
+            } else {
+                references.add(new ClassReferenceRenderer(
+                        includedClass.config, includedClass.currentDiagram, interfaceDoc, "<|--", referent));
+            }
         }
 
         return references;

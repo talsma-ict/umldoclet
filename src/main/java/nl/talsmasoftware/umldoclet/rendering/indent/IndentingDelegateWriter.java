@@ -69,8 +69,9 @@ public class IndentingDelegateWriter extends Writer {
      * Please note: already written lines will not be modified to accomodate the new indentation width.
      * Negative indentation widths will have no effect; the same indentation writer will be returned.
      *
-     * @param newIndentationWidth
-     * @return
+     * @param newIndentationWidth The new indentation width to use on the indenting delegate.
+     * @return Either this writer if the indentation width is already equal to the requested new width,
+     * or a new IndentingDelegateWriter with the specified width otherwise.
      */
     public IndentingDelegateWriter withIndentationWidth(int newIndentationWidth) {
         return newIndentationWidth < 0 || indentationWidth == newIndentationWidth ? this :
