@@ -22,6 +22,9 @@ import com.sun.javadoc.MethodDoc;
 import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -42,9 +45,15 @@ public class ClassRenderer extends Renderer {
         for (ConstructorDoc constructor : classDoc.constructors(false)) {
             children.add(new MethodRenderer(config, diagram, constructor));
         }
+        List<MethodRenderer> abstractMethods = new ArrayList<>();
         for (MethodDoc method : classDoc.methods(false)) {
-            children.add(new MethodRenderer(config, diagram, method));
+            if (method.isAbstract()) {
+                abstractMethods.add(new MethodRenderer(config, diagram, method));
+            } else {
+                children.add(new MethodRenderer(config, diagram, method));
+            }
         }
+        children.addAll(abstractMethods); // abstract methods come last in our UML diagrams.
     }
 
     protected String umlType() {

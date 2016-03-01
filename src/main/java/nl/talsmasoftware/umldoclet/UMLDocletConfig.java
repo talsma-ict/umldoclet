@@ -57,7 +57,9 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
         UML_INCLUDE_PACKAGE_PRIVATE_METHODS("-umlIncludePackagePrivateMethods", Boolean.class, "false"),
         UML_INCLUDE_PROTECTED_METHODS("-umlIncludeProtectedMethods", Boolean.class, "true"),
         UML_INCLUDE_PUBLIC_METHODS("-umlIncludePublicMethods", Boolean.class, "true"),
-        UML_EXCLUDED_REFERENCES("-umlExcludedReferences", String.class, "java.lang.Object");
+        UML_INCLUDE_ABSTRACT_SUPERCLASS_METHODS("-umlIncludeAbstractSuperclassMethods", Boolean.class, "true"),
+        UML_EXCLUDED_REFERENCES("-umlExcludedReferences", String.class, "java.lang.Object"),
+        UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES("-umlIncludeOverridesFromExcludedReferences", Boolean.class, "false");
 
         private final String optionName;
         private final Class<?> optionType;
@@ -151,21 +153,26 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
         return properties;
     }
 
+    final EnumMap<Setting, String> cachedResults = new EnumMap(Setting.class);
+
     String stringValue(Setting setting, String... standardOpts) {
-        final String[] option = super.get(setting);
-        String value = Objects.toString(option == null || option.length < 2 ? null : option[1], null);
-        for (int i = 0; value == null && i < standardOpts.length; i++) {
-            for (int j = 0; j < standardOptions.length; j++) {
-                if (standardOptions[j].length > 1
-                        && standardOpts[i].equalsIgnoreCase(standardOptions[j][0])) {
-                    value = standardOptions[j][1];
-                    LOGGER.log(Level.FINEST, "Using standard option \"{0}\" for setting \"{1}\": \"{2}\".",
-                            new Object[]{standardOpts[i], setting, value});
-                    break;
+        if (!cachedResults.containsKey(setting)) {
+            final String[] option = super.get(setting);
+            String value = Objects.toString(option == null || option.length < 2 ? null : option[1], null);
+            for (int i = 0; value == null && i < standardOpts.length; i++) {
+                for (int j = 0; j < standardOptions.length; j++) {
+                    if (standardOptions[j].length > 1
+                            && standardOpts[i].equalsIgnoreCase(standardOptions[j][0])) {
+                        value = standardOptions[j][1];
+                        LOGGER.log(Level.FINEST, "Using standard option \"{0}\" for setting \"{1}\": \"{2}\".",
+                                new Object[]{standardOpts[i], setting, value});
+                        break;
+                    }
                 }
             }
+            cachedResults.put(setting, Objects.toString(value, setting.defaultValue));
         }
-        return Objects.toString(value, setting.defaultValue);
+        return cachedResults.get(setting);
     }
 
     public String version() {
@@ -318,17 +325,37 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
     }
 
     /**
+     * @return Whether or not to include abstract methods from interfaces and abstract classes
+     * (from referenced external packages) in the UML diagrams (defaults to {@code true}).
+     */
+    public boolean includeAbstractSuperclassMethods() {
+        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_ABSTRACT_SUPERCLASS_METHODS));
+    }
+
+    private Collection<String> excludedReferences = null;
+
+    /**
      * @return The excluded references which should not be rendered.
      */
-    public List<String> excludedReferences() {
-        List<String> excludedReferences = new ArrayList<>();
-        for (String excludedRef : Objects.toString(stringValue(Setting.UML_EXCLUDED_REFERENCES), "").split(",")) {
-            if (excludedRef.trim().length() > 0) {
-                excludedReferences.add(excludedRef.trim());
+    public synchronized Collection<String> excludedReferences() {
+        if (excludedReferences == null) {
+            excludedReferences = new ArrayList<>();
+            for (String excludedRef : Objects.toString(stringValue(Setting.UML_EXCLUDED_REFERENCES), "").split(",")) {
+                if (excludedRef.trim().length() > 0) {
+                    excludedReferences.add(excludedRef.trim());
+                }
             }
+            LOGGER.log(Level.FINEST, "Excluding the following references: {0}.", excludedReferences);
         }
-        LOGGER.log(Level.FINEST, "Excluding the following references: {0}.", excludedReferences);
         return excludedReferences;
+    }
+
+    /**
+     * @return Whether or not to include overridden methods declared by excluded references
+     * (i.e. include java.lang.Object methods?), defaults to {@code false}.
+     */
+    public boolean includeOverridesFromExcludedReferences() {
+        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES));
     }
 
     public boolean createPackages() {
