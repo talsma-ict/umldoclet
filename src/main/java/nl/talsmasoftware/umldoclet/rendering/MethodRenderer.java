@@ -79,9 +79,13 @@ public class MethodRenderer extends Renderer {
                 || (methodDoc.isPublic() && !config.includePublicMethods());
 
         if (LOGGER.isLoggable(Level.FINEST)) {
+            String designation = methodDoc.isStatic() ? "Static method"
+                    : isConstructor() ? "Constructor"
+                    : isAbstract() ? "Abstract method"
+                    : "Method";
             LOGGER.log(Level.FINEST, "{0} \"{1}{2}\" {3}{4}.",
                     new Object[]{
-                            methodDoc.isStatic() ? "Static method" : (isConstructor() ? "Constructor" : "Method"),
+                            designation,
                             methodDoc.qualifiedName(),
                             methodDoc.flatSignature(),
                             methodDoc.isPrivate() ? "is private and "
@@ -103,6 +107,9 @@ public class MethodRenderer extends Renderer {
 
     public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         if (includeMethod()) {
+            if (isAbstract()) {
+                out.write("{abstract} ");
+            }
             FieldRenderer.writeAccessibility(out, methodDoc)
                     .append(methodDoc.name()).append("(");
             writeParametersTo(out, methodDoc, config).append(')');
@@ -113,6 +120,10 @@ public class MethodRenderer extends Renderer {
 
     private boolean isConstructor() {
         return methodDoc instanceof ConstructorDoc;
+    }
+
+    private boolean isAbstract() {
+        return methodDoc instanceof MethodDoc && ((MethodDoc) methodDoc).isAbstract();
     }
 
     private static MethodDoc findMethod(ClassDoc classDoc, String methodName, String flatSignature) {
