@@ -16,6 +16,7 @@
 package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.ClassDoc;
+import com.sun.javadoc.MethodDoc;
 import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
@@ -43,6 +44,13 @@ public class ClassReferenceRenderer extends ClassRenderer {
         super.children.clear();
         this.umlreference = umlreference;
         this.referent = referent;
+        if (config.includeAbstractSuperclassMethods()) {
+            for (MethodDoc methodDoc : classDoc.methods(false)) {
+                if (methodDoc.isAbstract()) {
+                    children.add(new MethodRenderer(config, diagram, methodDoc));
+                }
+            }
+        }
     }
 
     static List<ClassReferenceRenderer> referencesFor(ClassRenderer includedClass) {
@@ -80,16 +88,26 @@ public class ClassReferenceRenderer extends ClassRenderer {
         return references;
     }
 
-    public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
-        // Write type declaration if necessary.
-        final String referenceTypename = classDoc.qualifiedTypeName();
-        if (currentDiagram.encounteredTypes.add(referenceTypename)) {
-            LOGGER.log(Level.FINEST, "Generating type declaration for \"{0}\"...", referenceTypename);
-            out.append(umlType()).append(' ').append(referenceTypename).newline();
-        } else {
+    protected IndentingPrintWriter writeTypeDeclarationTo(IndentingPrintWriter out) {
+        final String referenceTypename = classDoc.qualifiedName();
+        if (!currentDiagram.encounteredTypes.add(referenceTypename)) {
             LOGGER.log(Level.FINEST, "Not generating type declaration for \"{0}\"; " +
                     "type was previously encountered in this diagram.", referenceTypename);
+            return out;
         }
+
+        LOGGER.log(Level.FINEST, "Generating type declaration for \"{0}\"...", referenceTypename);
+        out.append(umlType()).append(' ').append(referenceTypename);
+        if (!children.isEmpty()) {
+            writeChildrenTo(out.append('{').newline()).append('}');
+        }
+        return out.newline();
+    }
+
+    public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
+        // Write type declaration if necessary.
+        writeTypeDeclarationTo(out);
+        final String referenceTypename = classDoc.qualifiedTypeName();
 
         // Write UML reference itself.
         LOGGER.log(Level.FINEST, "Generating reference: \"{0}\" {1} \"{2}\"...",

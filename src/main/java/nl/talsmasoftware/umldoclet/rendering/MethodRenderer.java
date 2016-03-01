@@ -42,26 +42,6 @@ public class MethodRenderer extends Renderer {
         this.methodDoc = requireNonNull(methodDoc, "No method documentation provided.");
     }
 
-    static IndentingPrintWriter writeParametersTo(IndentingPrintWriter out, ExecutableMemberDoc method, UMLDocletConfig config) {
-        if (config.includeMethodParams()) {
-            String separator = "";
-            for (Parameter parameter : method.parameters()) {
-                out.append(separator);
-                if (config.includeMethodParamNames()) {
-                    out.append(parameter.name());
-                    if (config.includeMethodParamTypes()) {
-                        out.append(':');
-                    }
-                }
-                if (config.includeMethodParamTypes()) {
-                    out.append(parameter.type().simpleTypeName());
-                }
-                separator = ", ";
-            }
-        }
-        return out;
-    }
-
     /**
      * Important method that determines whether or not the documented method or constructor should be included in the
      * UML diagram.
@@ -98,6 +78,26 @@ public class MethodRenderer extends Renderer {
         return !exclude;
     }
 
+    protected IndentingPrintWriter writeParametersTo(IndentingPrintWriter out) {
+        if (config.includeMethodParams()) {
+            String separator = "";
+            for (Parameter parameter : methodDoc.parameters()) {
+                out.append(separator);
+                if (config.includeMethodParamNames()) {
+                    out.append(parameter.name());
+                    if (config.includeMethodParamTypes()) {
+                        out.append(':');
+                    }
+                }
+                if (config.includeMethodParamTypes()) {
+                    out.append(parameter.type().simpleTypeName());
+                }
+                separator = ", ";
+            }
+        }
+        return out;
+    }
+
     protected IndentingPrintWriter writeReturnTypeTo(IndentingPrintWriter out) {
         if (methodDoc instanceof MethodDoc) {
             out.append(": ").append(((MethodDoc) methodDoc).returnType().typeName());
@@ -110,9 +110,8 @@ public class MethodRenderer extends Renderer {
             if (isAbstract()) {
                 out.write("{abstract} ");
             }
-            FieldRenderer.writeAccessibility(out, methodDoc)
-                    .append(methodDoc.name()).append("(");
-            writeParametersTo(out, methodDoc, config).append(')');
+            FieldRenderer.writeAccessibility(out, methodDoc).append(methodDoc.name());
+            writeParametersTo(out.append("(")).append(')');
             return writeReturnTypeTo(out).newline();
         }
         return out;
