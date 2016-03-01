@@ -15,10 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.rendering;
 
-import com.sun.javadoc.ConstructorDoc;
-import com.sun.javadoc.ExecutableMemberDoc;
-import com.sun.javadoc.MethodDoc;
-import com.sun.javadoc.Parameter;
+import com.sun.javadoc.*;
 import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
@@ -65,8 +62,36 @@ public class MethodRenderer extends Renderer {
         return out;
     }
 
-    private boolean isConstructor() {
-        return methodDoc instanceof ConstructorDoc;
+    /**
+     * Important method that determines whether or not the documented method or constructor should be included in the
+     * UML diagram.
+     * <p/>
+     * This method is rather complex because it is highly configurable whether or not a method should be rendered.
+     *
+     * @return Whether this method or constructor should be included in the UML diagram.
+     */
+    protected boolean includeMethod() {
+        boolean exclude = isMethodFromExcludedClass()
+                || (isConstructor() && !config.includeConstructors())
+                || (methodDoc.isPrivate() && !config.includePrivateMethods())
+                || (methodDoc.isPackagePrivate() && !config.includePackagePrivateMethods())
+                || (methodDoc.isProtected() && !config.includeProtectedMethods())
+                || (methodDoc.isPublic() && !config.includePublicMethods());
+
+        if (LOGGER.isLoggable(Level.FINEST)) {
+            LOGGER.log(Level.FINEST, "{0} \"{1}{2}\" {3}{4}.",
+                    new Object[]{
+                            methodDoc.isStatic() ? "Static method" : (isConstructor() ? "Constructor" : "Method"),
+                            methodDoc.qualifiedName(),
+                            methodDoc.flatSignature(),
+                            methodDoc.isPrivate() ? "is private and "
+                                    : methodDoc.isPackagePrivate() ? "is package private and "
+                                    : methodDoc.isProtected() ? "is protected and "
+                                    : methodDoc.isPublic() ? "is public and "
+                                    : "",
+                            exclude ? "will not be included" : "will be included"});
+        }
+        return !exclude;
     }
 
     protected IndentingPrintWriter writeReturnTypeTo(IndentingPrintWriter out) {
@@ -86,25 +111,37 @@ public class MethodRenderer extends Renderer {
         return out;
     }
 
-    protected boolean includeMethod() {
-        boolean exclude = (isConstructor() && !config.includeConstructors())
-                || (methodDoc.isPrivate() && !config.includePrivateMethods())
-                || (methodDoc.isPackagePrivate() && !config.includePackagePrivateMethods())
-                || (methodDoc.isProtected() && !config.includeProtectedMethods())
-                || (methodDoc.isPublic() && !config.includePublicMethods());
-        if (LOGGER.isLoggable(Level.FINEST)) {
-            LOGGER.log(Level.FINEST, "{0} \"{1}()\" {2}{3} included.",
-                    new Object[]{
-                            methodDoc.isStatic() ? "Static method" : (isConstructor() ? "Constructor" : "Method"),
-                            methodDoc.qualifiedName(),
-                            methodDoc.isPrivate() ? "is private and "
-                                    : methodDoc.isPackagePrivate() ? "is package private and "
-                                    : methodDoc.isProtected() ? "is protected and "
-                                    : methodDoc.isPublic() ? "is public and " : "",
-                            exclude ? "will not be" : "will be"});
-        }
-        return !exclude;
+    private boolean isConstructor() {
+        return methodDoc instanceof ConstructorDoc;
     }
 
+    private static MethodDoc findMethod(ClassDoc classDoc, String methodName, String flatSignature) {
+        for (MethodDoc method : classDoc.methods(false)) {
+            if (method != null && method.name().equals(methodName) && method.flatSignature().equals(flatSignature)) {
+                return method;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @return Whether overridden methods from excluded classes (such as java.lang.Object normally)
+     * and this method happens to be such a method.
+     */
+    private boolean isMethodFromExcludedClass() {
+        if (methodDoc instanceof MethodDoc && !config.includeOverridesFromExcludedReferences()) {
+            ClassDoc overriddenClass = ((MethodDoc) methodDoc).overriddenClass();
+            while (overriddenClass != null) {
+                if (config.excludedReferences().contains(overriddenClass.qualifiedName())) {
+                    LOGGER.log(Level.FINEST, "Method \"{0}{1}\" overrides method from excluded reference \"{2}\".",
+                            new Object[]{methodDoc.qualifiedName(), methodDoc.flatSignature(), overriddenClass.qualifiedName()});
+                    return true;
+                }
+                MethodDoc foundMethod = findMethod(overriddenClass, methodDoc.name(), methodDoc.flatSignature());
+                overriddenClass = foundMethod == null ? null : foundMethod.overriddenClass();
+            }
+        }
+        return false;
+    }
 
 }

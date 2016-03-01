@@ -148,8 +148,7 @@
                             </docletArtifact>
                             <docencoding>UTF-8</docencoding>
                             <additionalparam>
-                                -umlLogLevel DEBUG
-                                -umlIncludeConstructors true
+                                -umlLogLevel INFO
                             </additionalparam>
                             <useStandardDocletOptions>true</useStandardDocletOptions>
                         </configuration>

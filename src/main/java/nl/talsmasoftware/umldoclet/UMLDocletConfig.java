@@ -57,7 +57,8 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
         UML_INCLUDE_PACKAGE_PRIVATE_METHODS("-umlIncludePackagePrivateMethods", Boolean.class, "false"),
         UML_INCLUDE_PROTECTED_METHODS("-umlIncludeProtectedMethods", Boolean.class, "true"),
         UML_INCLUDE_PUBLIC_METHODS("-umlIncludePublicMethods", Boolean.class, "true"),
-        UML_EXCLUDED_REFERENCES("-umlExcludedReferences", String.class, "java.lang.Object");
+        UML_EXCLUDED_REFERENCES("-umlExcludedReferences", String.class, "java.lang.Object"),
+        UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES("-umlIncludeOverridesFromExcludedReferences", Boolean.class, "false");
 
         private final String optionName;
         private final Class<?> optionType;
@@ -329,6 +330,14 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
         }
         LOGGER.log(Level.FINEST, "Excluding the following references: {0}.", excludedReferences);
         return excludedReferences;
+    }
+
+    /**
+     * @return Whether or not to include overridden methods declared by excluded references
+     * (i.e. include java.lang.Object methods?), defaults to {@code false}.
+     */
+    public boolean includeOverridesFromExcludedReferences() {
+        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES));
     }
 
     public boolean createPackages() {
