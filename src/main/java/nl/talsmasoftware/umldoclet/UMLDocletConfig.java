@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet;
 
+import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.DocErrorReporter;
 import com.sun.tools.doclets.standard.Standard;
 
@@ -30,7 +31,7 @@ import static java.util.Arrays.asList;
 
 /**
  * Class containing all possible Doclet options for the UML doclet.
- * This configuration class is also responsible for providing suitable default values in the accessor-methods.
+ * This configuration class is also responsible for providing suitable default values in a central location.
  *
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
@@ -38,13 +39,12 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
     private static final String UML_ROOTLOGGER_NAME = UMLDoclet.class.getPackage().getName();
     private static final Logger LOGGER = Logger.getLogger(UMLDocletConfig.class.getName());
 
-    enum Setting {
+    public enum Setting {
         UML_LOGLEVEL("-umlLogLevel", String.class, "INFO"),
         UML_INDENTATION("-umlIndentation", Integer.class, "-1"),
         UML_BASE_PATH("-umlBasePath", String.class, null),
         UML_FILE_EXTENSION("-umlFileExtension", String.class, ".puml"),
         UML_FILE_ENCODING("-umlFileEncoding", String.class, "UTF-8"),
-        UML_CREATE_PACKAGES("-umlCreatePackages", Boolean.class, "false"),
         UML_INCLUDE_PRIVATE_FIELDS("-umlIncludePrivateFields", Boolean.class, "false"),
         UML_INCLUDE_PACKAGE_PRIVATE_FIELDS("-umlIncludePackagePrivateFields", Boolean.class, "false"),
         UML_INCLUDE_PROTECTED_FIELDS("-umlIncludeProtectedFields", Boolean.class, "true"),
@@ -58,7 +58,13 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
         UML_INCLUDE_PROTECTED_METHODS("-umlIncludeProtectedMethods", Boolean.class, "true"),
         UML_INCLUDE_PUBLIC_METHODS("-umlIncludePublicMethods", Boolean.class, "true"),
         UML_INCLUDE_ABSTRACT_SUPERCLASS_METHODS("-umlIncludeAbstractSuperclassMethods", Boolean.class, "true"),
-        UML_EXCLUDED_REFERENCES("-umlExcludedReferences", String.class, "java.lang.Object"),
+        UML_INCLUDE_PRIVATE_CLASSES("-umlIncludePrivateClasses", Boolean.class, "false"),
+        UML_INCLUDE_PACKAGE_PRIVATE_CLASSES("-umlIncludePackagePrivateClasses", Boolean.class, "true"),
+        UML_INCLUDE_PROTECTED_CLASSES("-umlIncludeProtectedClasses", Boolean.class, "true"),
+        UML_INCLUDE_PRIVATE_INNERCLASSES("-umlIncludePrivateInnerClasses", Boolean.class, "false"),
+        UML_INCLUDE_PACKAGE_PRIVATE_INNERCLASSES("-umlIncludePackagePrivateInnerClasses", Boolean.class, "false"),
+        UML_INCLUDE_PROTECTED_INNERCLASSES("-umlIncludeProtectedInnerClasses", Boolean.class, "false"),
+        UML_EXCLUDED_REFERENCES("-umlExcludedReferences", String.class, "java.lang.Object,java.lang.Enum"),
         UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES("-umlIncludeOverridesFromExcludedReferences", Boolean.class, "false");
 
         private final String optionName;
@@ -332,6 +338,54 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
         return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_ABSTRACT_SUPERCLASS_METHODS));
     }
 
+    private boolean includePrivateClasses() {
+        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PRIVATE_CLASSES));
+    }
+
+    private boolean includePackagePrivateClasses() {
+        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PACKAGE_PRIVATE_CLASSES));
+    }
+
+    private boolean includeProtectedClasses() {
+        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PROTECTED_CLASSES));
+    }
+
+    private boolean includePrivateInnerclasses() {
+        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PRIVATE_INNERCLASSES));
+    }
+
+    private boolean includePackagePrivateInnerclasses() {
+        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PACKAGE_PRIVATE_INNERCLASSES));
+    }
+
+    private boolean includeProtectedInnerclasses() {
+        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PROTECTED_INNERCLASSES));
+    }
+
+    public boolean includeClass(ClassDoc classDoc) {
+        boolean included = true;
+        if (classDoc == null) {
+            LOGGER.log(Level.WARNING, "Encountered <null> class documentation!");
+            included = false;
+        }
+        final boolean isInnerclass = classDoc.containingClass() != null;
+        if (classDoc.isPrivate() && (!includePrivateClasses() || (isInnerclass && !includePrivateInnerclasses()))) {
+            LOGGER.log(Level.FINEST, "Not including private class \"{0}\".", classDoc.qualifiedName());
+            included = false;
+        } else if (classDoc.isPackagePrivate()
+                && (!includePackagePrivateClasses() || isInnerclass && !includePackagePrivateInnerclasses())) {
+            LOGGER.log(Level.FINER, "Not including package-private class \"{0}\".", classDoc.qualifiedName());
+            included = false;
+        } else if (classDoc.isProtected()
+                && (!includeProtectedClasses() || isInnerclass && !includeProtectedInnerclasses())) {
+            LOGGER.log(Level.FINE, "Not including protected class \"{0}\".", classDoc.qualifiedName());
+            included = false;
+        }
+        LOGGER.log(Level.FINEST, "{0} class \"{1}\".",
+                new Object[]{included ? "Including" : "Not including", classDoc.qualifiedName()});
+        return included;
+    }
+
     private Collection<String> excludedReferences = null;
 
     /**
@@ -356,10 +410,6 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
      */
     public boolean includeOverridesFromExcludedReferences() {
         return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES));
-    }
-
-    public boolean createPackages() {
-        return Boolean.valueOf(stringValue(Setting.UML_CREATE_PACKAGES));
     }
 
     public static int optionLength(String option) {

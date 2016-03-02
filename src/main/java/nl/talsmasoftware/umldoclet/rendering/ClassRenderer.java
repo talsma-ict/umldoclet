@@ -39,6 +39,9 @@ public class ClassRenderer extends Renderer {
     public ClassRenderer(UMLDocletConfig config, UMLDiagram diagram, ClassDoc classDoc) {
         super(config, diagram);
         this.classDoc = requireNonNull(classDoc, "No class documentation provided.");
+        for (FieldDoc enumConstant : classDoc.enumConstants()) {
+            children.add(new FieldRenderer(config, diagram, enumConstant));
+        }
         for (FieldDoc field : classDoc.fields(false)) {
             children.add(new FieldRenderer(config, diagram, field));
         }
@@ -65,7 +68,6 @@ public class ClassRenderer extends Renderer {
 
     public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         currentDiagram.encounteredTypes.add(classDoc.qualifiedTypeName());
-        // out.println(String.format("' Class \"%s.%s\":", classDoc.containingPackage().name(), classDoc.name()));
         out.append(umlType()).append(' ').append(classDoc.qualifiedTypeName()).append(" {").newline();
         return writeChildrenTo(out).append("}").newline().newline();
     }

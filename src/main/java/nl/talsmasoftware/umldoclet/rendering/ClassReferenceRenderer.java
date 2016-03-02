@@ -85,6 +85,12 @@ public class ClassReferenceRenderer extends ClassRenderer {
             }
         }
 
+        // Add reference to containing classes.
+        if (referent.containingClass() != null) {
+            references.add(new ClassReferenceRenderer(
+                    includedClass.config, includedClass.currentDiagram, referent.containingClass(), "+--", referent));
+        }
+
         return references;
     }
 
