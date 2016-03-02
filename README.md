@@ -13,6 +13,7 @@ _(before 1.0.0)_
 - [Handle inner classes properly.](https://github.com/talsma-ict/umldoclet/issues/1)
 - [Handle deprecation properly.](https://github.com/talsma-ict/umldoclet/issues/2)
 - [Handle generics properly.](https://github.com/talsma-ict/umldoclet/issues/3)
+- [Fix class visibility.](https://github.com/talsma-ict/umldoclet/issues/4)
 - Add dependency diagrams showing all dependencies on package level.
 - Additional doclet options to fine-tune the uml content (use / respect Standard doclet options as defaults?)
 
