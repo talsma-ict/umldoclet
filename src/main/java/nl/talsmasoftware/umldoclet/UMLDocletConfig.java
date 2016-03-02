@@ -45,6 +45,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
         UML_BASE_PATH("-umlBasePath", String.class, null),
         UML_FILE_EXTENSION("-umlFileExtension", String.class, ".puml"),
         UML_FILE_ENCODING("-umlFileEncoding", String.class, "UTF-8"),
+        UML_SKIP_STANDARD_DOCLET("-umlSkipStandardDoclet", Boolean.class, "false"),
         UML_INCLUDE_PRIVATE_FIELDS("-umlIncludePrivateFields", Boolean.class, "false"),
         UML_INCLUDE_PACKAGE_PRIVATE_FIELDS("-umlIncludePackagePrivateFields", Boolean.class, "false"),
         UML_INCLUDE_PROTECTED_FIELDS("-umlIncludeProtectedFields", Boolean.class, "true"),
@@ -230,6 +231,10 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
      */
     public String umlFileEncoding() {
         return stringValue(Setting.UML_FILE_ENCODING, "-docEncoding");
+    }
+
+    public boolean skipStandardDoclet() {
+        return Boolean.valueOf(stringValue(Setting.UML_SKIP_STANDARD_DOCLET));
     }
 
     /**

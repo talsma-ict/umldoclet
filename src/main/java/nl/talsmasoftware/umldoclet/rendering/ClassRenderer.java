@@ -15,10 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.rendering;
 
-import com.sun.javadoc.ClassDoc;
-import com.sun.javadoc.ConstructorDoc;
-import com.sun.javadoc.FieldDoc;
-import com.sun.javadoc.MethodDoc;
+import com.sun.javadoc.*;
 import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
@@ -66,9 +63,23 @@ public class ClassRenderer extends Renderer {
                 : "class";
     }
 
+    protected IndentingPrintWriter writeGenericsTo(IndentingPrintWriter out) {
+        if (classDoc.typeParameters().length > 0) {
+            out.append('<');
+            String sep = "";
+            for (TypeVariable generic : classDoc.typeParameters()) {
+                out.append(sep).append(generic.typeName());
+                sep = ", ";
+            }
+            out.append('>');
+        }
+        return out;
+    }
+
     public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         currentDiagram.encounteredTypes.add(classDoc.qualifiedTypeName());
-        out.append(umlType()).append(' ').append(classDoc.qualifiedTypeName()).append(" {").newline();
+        out.append(umlType()).append(' ').append(classDoc.qualifiedTypeName());
+        writeGenericsTo(out).append(" {").newline();
         return writeChildrenTo(out).append("}").newline().newline();
     }
 
