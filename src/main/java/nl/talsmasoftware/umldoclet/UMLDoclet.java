@@ -68,7 +68,8 @@ public class UMLDoclet extends Standard implements Closeable {
 
     public static boolean start(RootDoc rootDoc) {
         try (UMLDoclet umlDoclet = new UMLDoclet(rootDoc)) {
-            return umlDoclet.generateUMLDiagrams() && Standard.start(rootDoc);
+            return umlDoclet.generateUMLDiagrams()
+                    && (umlDoclet.config.skipStandardDoclet() || Standard.start(rootDoc));
         }
     }
 

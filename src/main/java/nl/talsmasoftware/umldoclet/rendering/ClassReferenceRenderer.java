@@ -85,6 +85,12 @@ public class ClassReferenceRenderer extends ClassRenderer {
             }
         }
 
+        // Add reference to containing classes.
+        if (referent.containingClass() != null) {
+            references.add(new ClassReferenceRenderer(
+                    includedClass.config, includedClass.currentDiagram, referent.containingClass(), "+--", referent));
+        }
+
         return references;
     }
 
@@ -98,6 +104,7 @@ public class ClassReferenceRenderer extends ClassRenderer {
 
         LOGGER.log(Level.FINEST, "Generating type declaration for \"{0}\"...", referenceTypename);
         out.append(umlType()).append(' ').append(referenceTypename);
+        super.writeGenericsTo(out);
         if (!children.isEmpty()) {
             writeChildrenTo(out.append('{').newline()).append('}');
         }

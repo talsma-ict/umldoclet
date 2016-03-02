@@ -41,10 +41,10 @@ public class PackageRenderer extends Renderer {
         super(config, diagram);
         this.packageDoc = requireNonNull(packageDoc, "No package documentation provided.");
         for (ClassDoc classDoc : packageDoc.allClasses(false)) {
-            if (classDoc != null) {
-                children.add(new ClassRenderer(config, diagram, classDoc));
-            } else {
+            if (classDoc == null) {
                 LOGGER.log(Level.WARNING, "Encountered <null> class doc in package \"{0}\"!", packageDoc.name());
+            } else if (config.includeClass(classDoc)) {
+                children.add(new ClassRenderer(config, diagram, classDoc));
             }
         }
         List<ClassReferenceRenderer> references = new ArrayList<>();
@@ -57,7 +57,6 @@ public class PackageRenderer extends Renderer {
     }
 
     public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
-        // out.append("' Package \"").append(packageDoc.name()).append("\":").newline();
         out.append("namespace ").append(packageDoc.name()).append(" {").newline().newline();
         writeChildrenTo(out);
         return out.append("}").newline().newline();

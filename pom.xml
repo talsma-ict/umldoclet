@@ -8,7 +8,7 @@
     <!-- Artifact identification -->
     <groupId>nl.talsmasoftware</groupId>
     <artifactId>umldoclet</artifactId>
-    <version>0.1.2</version>
+    <version>0.1.3</version>
     <packaging>jar</packaging>
 
     <!-- Project information -->
@@ -151,6 +151,26 @@
                                 -umlLogLevel INFO
                             </additionalparam>
                             <useStandardDocletOptions>true</useStandardDocletOptions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-test-uml</id>
+                        <goals>
+                            <goal>test-javadoc</goal>
+                        </goals>
+                        <phase>compile</phase>
+                        <configuration>
+                            <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
+                            <docletArtifact>
+                                <groupId>${project.groupId}</groupId>
+                                <artifactId>${project.artifactId}</artifactId>
+                                <version>${project.version}</version>
+                            </docletArtifact>
+                            <docencoding>UTF-8</docencoding>
+                            <additionalparam>
+                                -umlBasePath ${project.build.directory}${file.separator}test-uml
+                                -umlSkipStandardDoclet true
+                            </additionalparam>
                         </configuration>
                     </execution>
                 </executions>
