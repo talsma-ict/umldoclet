@@ -53,6 +53,7 @@ public class MethodRenderer extends Renderer {
     protected boolean includeMethod() {
         boolean exclude = isMethodFromExcludedClass()
                 || (isConstructor() && !config.includeConstructors())
+                || (isDefaultAndOnlyConstructor() && !config.includeDefaultConstructors())
                 || (methodDoc.isPrivate() && !config.includePrivateMethods())
                 || (methodDoc.isPackagePrivate() && !config.includePackagePrivateMethods())
                 || (methodDoc.isProtected() && !config.includeProtectedMethods())
@@ -61,6 +62,7 @@ public class MethodRenderer extends Renderer {
 
         if (LOGGER.isLoggable(Level.FINEST)) {
             String designation = methodDoc.isStatic() ? "Static method"
+                    : isDefaultConstructor() ? "Default constructor"
                     : isConstructor() ? "Constructor"
                     : isAbstract() ? "Abstract method"
                     : "Method";
@@ -136,6 +138,15 @@ public class MethodRenderer extends Renderer {
 
     private boolean isConstructor() {
         return methodDoc instanceof ConstructorDoc;
+    }
+
+    private boolean isDefaultConstructor() {
+        return isConstructor() && methodDoc.parameters().length == 0;
+    }
+
+    private boolean isDefaultAndOnlyConstructor() {
+        return isDefaultConstructor()
+                && methodDoc.containingClass().constructors(false).length == 1;
     }
 
     private boolean isAbstract() {

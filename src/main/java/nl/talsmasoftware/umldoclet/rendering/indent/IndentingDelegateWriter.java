@@ -97,7 +97,7 @@ public class IndentingDelegateWriter extends Writer {
     /**
      * @return The current indentation level (in concrete steps) of this indenting delegate writer.
      */
-    public int indentationLevel() {
+    protected int indentationLevel() {
         return indentationWidth == 0 ? 0 : indentation.length / indentationWidth;
     }
 

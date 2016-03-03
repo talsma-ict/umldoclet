@@ -56,6 +56,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
         UML_INCLUDE_METHOD_PARAM_NAMES("-umlIncludeMethodParamNames", Boolean.class, "false"),
         UML_INCLUDE_METHOD_PARAM_TYPES("-umlIncludeMethodParamTypes", Boolean.class, "true"),
         UML_INCLUDE_CONSTRUCTORS("-umlIncludeConstructors", Boolean.class, "true"),
+        UML_INCLUDE_DEFAULT_CONSTRUCTORS("-umlIncludeDefaultConstructors", Boolean.class, "false"),
         UML_INCLUDE_PRIVATE_METHODS("-umlIncludePrivateMethods", Boolean.class, "false"),
         UML_INCLUDE_PACKAGE_PRIVATE_METHODS("-umlIncludePackagePrivateMethods", Boolean.class, "false"),
         UML_INCLUDE_PROTECTED_METHODS("-umlIncludeProtectedMethods", Boolean.class, "true"),
@@ -316,6 +317,10 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
      */
     public boolean includeConstructors() {
         return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_CONSTRUCTORS));
+    }
+
+    public boolean includeDefaultConstructors() {
+        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_DEFAULT_CONSTRUCTORS));
     }
 
     /**
