@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.rendering;
 
+import com.sun.javadoc.*;
 import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingDelegateWriter;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
@@ -56,6 +57,44 @@ public abstract class Renderer {
             child.writeTo(indented);
         }
         return output;
+    }
+
+    protected IndentingPrintWriter writeTypeTo(IndentingPrintWriter out, Type type) {
+        if (type != null) {
+            out.append(type.typeName());
+            ParameterizedType parameterizedType = type.asParameterizedType();
+            if (parameterizedType != null) {
+                Type[] generics = parameterizedType.typeArguments();
+                if (generics.length > 0) {
+                    out.append("<");
+                    String sep = "";
+                    for (Type generic : generics) {
+                        writeTypeTo(out.append(sep), generic);
+                        sep = ", ";
+                    }
+                    out.append(">");
+                }
+            }
+        }
+        return out;
+    }
+
+    public static boolean isDeprecated(ProgramElementDoc element) {
+        // Is the element itself deprecated?
+        if (element == null) {
+            return false;
+        } else if (element.tags("deprecated").length > 0) {
+            return true;
+        }
+        for (AnnotationDesc annotation : element.annotations()) {
+            if (Deprecated.class.getName().equals(annotation.annotationType().qualifiedName())) {
+                return true;
+            }
+        }
+        // Element itself is not deprecated.
+        // Could it be contained in a deprecated class or extend a deprecated superclass?
+        return isDeprecated(element.containingClass())
+                || (element instanceof ClassDoc && isDeprecated(((ClassDoc) element).superclass()));
     }
 
     public String toString() {

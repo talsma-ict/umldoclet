@@ -1,16 +1,13 @@
 package nl.talsmasoftware.umldoclet.testing.generics;
 
-import java.util.AbstractList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by sjoerd on 02-03-16.
  */
 public class ConstantList<T, X extends CharSequence> extends AbstractList<T> {
 
-    private final List<T> delegate;
+    public final List<T> delegate;
 
     public ConstantList(T... values) {
         if (values == null) {
@@ -19,7 +16,7 @@ public class ConstantList<T, X extends CharSequence> extends AbstractList<T> {
             delegate = Collections.unmodifiableList(Arrays.asList(values));
         }
     }
-    
+
     public X getX() {
         return null;
     }
@@ -27,6 +24,10 @@ public class ConstantList<T, X extends CharSequence> extends AbstractList<T> {
     @Override
     public T get(int index) {
         return delegate.get(index);
+    }
+
+    protected Collection<T> delegateCollection() {
+        return delegate;
     }
 
     @Override

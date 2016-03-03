@@ -79,7 +79,11 @@ public class ClassRenderer extends Renderer {
     public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         currentDiagram.encounteredTypes.add(classDoc.qualifiedTypeName());
         out.append(umlType()).append(' ').append(classDoc.qualifiedTypeName());
-        writeGenericsTo(out).append(" {").newline();
+        writeGenericsTo(out);
+        if (isDeprecated(classDoc)) {
+            out.append(" <<deprecated>>"); // I don't know how to strikethrough a class name!
+        }
+        out.append(" {").newline();
         return writeChildrenTo(out).append("}").newline().newline();
     }
 
