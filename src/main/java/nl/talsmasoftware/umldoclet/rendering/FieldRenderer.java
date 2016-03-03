@@ -16,7 +16,6 @@
 package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.FieldDoc;
-import com.sun.javadoc.ParameterizedType;
 import com.sun.javadoc.ProgramElementDoc;
 import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
@@ -59,11 +58,17 @@ public class FieldRenderer extends Renderer {
         boolean exclude = (fieldDoc.isPrivate() && !config.includePrivateFields())
                 || (fieldDoc.isPackagePrivate() && !config.includePackagePrivateFields())
                 || (fieldDoc.isProtected() && !config.includeProtectedFields())
-                || (fieldDoc.isPublic() && !config.includePublicFields());
+                || (fieldDoc.isPublic() && !config.includePublicFields()
+                || (!config.includeDeprecatedFields() && isDeprecated(fieldDoc) && !isDeprecated(fieldDoc.containingClass()))
+        );
         if (LOGGER.isLoggable(Level.FINEST)) {
+            String designation = fieldDoc.isStatic() ? "Static field" : "Field";
+            if (isDeprecated(fieldDoc)) {
+                designation = "Deprecated " + Character.toLowerCase(designation.charAt(0)) + designation.substring(1);
+            }
             LOGGER.log(Level.FINEST, "{0} \"{1}\" {2}{3} included.",
                     new Object[]{
-                            fieldDoc.isStatic() ? "Static field" : "Field",
+                            designation,
                             fieldDoc.qualifiedName(),
                             fieldDoc.isPrivate() ? "is private and "
                                     : fieldDoc.isPackagePrivate() ? "is package private and "
@@ -74,13 +79,18 @@ public class FieldRenderer extends Renderer {
         return !exclude;
     }
 
+    protected IndentingPrintWriter writeNameTo(IndentingPrintWriter out) {
+        return isDeprecated(fieldDoc)
+                ? out.append(" --").append(fieldDoc.name()).append("-- ")
+                : out.append(fieldDoc.name());
+    }
+
     public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         if (includeField()) {
-            writeAccessibility(out, fieldDoc).append(fieldDoc.name());
+            writeAccessibility(out, fieldDoc);
+            writeNameTo(out);
             if (includeFieldType()) {
-                out.append(": ").append(fieldDoc.type().typeName());
-                ParameterizedType parameterizedType = fieldDoc.type().asParameterizedType();
-                // TODO add parameterized type for generics.
+                writeTypeTo(out.append(": "), fieldDoc.type());
             }
             out.newline();
         }

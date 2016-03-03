@@ -56,13 +56,17 @@ public class MethodRenderer extends Renderer {
                 || (methodDoc.isPrivate() && !config.includePrivateMethods())
                 || (methodDoc.isPackagePrivate() && !config.includePackagePrivateMethods())
                 || (methodDoc.isProtected() && !config.includeProtectedMethods())
-                || (methodDoc.isPublic() && !config.includePublicMethods());
+                || (methodDoc.isPublic() && !config.includePublicMethods())
+                || (!config.includeDeprecatedMethods() && isDeprecated(methodDoc) && !isDeprecated(methodDoc.containingClass()));
 
         if (LOGGER.isLoggable(Level.FINEST)) {
             String designation = methodDoc.isStatic() ? "Static method"
                     : isConstructor() ? "Constructor"
                     : isAbstract() ? "Abstract method"
                     : "Method";
+            if (isDeprecated(methodDoc)) {
+                designation = "Deprecated " + Character.toLowerCase(designation.charAt(0)) + designation.substring(1);
+            }
             LOGGER.log(Level.FINEST, "{0} \"{1}{2}\" {3}{4}.",
                     new Object[]{
                             designation,
@@ -76,6 +80,12 @@ public class MethodRenderer extends Renderer {
                             exclude ? "will not be included" : "will be included"});
         }
         return !exclude;
+    }
+
+    protected IndentingPrintWriter writeNameTo(IndentingPrintWriter out) {
+        return isDeprecated(methodDoc)
+                ? out.append(" --").append(methodDoc.name()).append("-- ")
+                : out.append(methodDoc.name());
     }
 
     protected IndentingPrintWriter writeParametersTo(IndentingPrintWriter out) {
@@ -107,12 +117,19 @@ public class MethodRenderer extends Renderer {
 
     public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         if (includeMethod()) {
+            // deprecation:
+            //        + --deprecatedString--(): String <<deprecated>>
+
             if (isAbstract()) {
                 out.write("{abstract} ");
             }
-            FieldRenderer.writeAccessibility(out, methodDoc).append(methodDoc.name());
+            FieldRenderer.writeAccessibility(out, methodDoc);
+            writeNameTo(out);
             writeParametersTo(out.append("(")).append(')');
-            return writeReturnTypeTo(out).newline();
+            if (methodDoc instanceof MethodDoc) {
+                writeTypeTo(out.append(": "), ((MethodDoc) methodDoc).returnType());
+            }
+            return out.newline();
         }
         return out;
     }

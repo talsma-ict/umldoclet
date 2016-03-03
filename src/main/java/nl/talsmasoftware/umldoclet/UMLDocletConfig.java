@@ -28,6 +28,7 @@ import java.util.logging.*;
 import java.util.logging.Formatter;
 
 import static java.util.Arrays.asList;
+import static nl.talsmasoftware.umldoclet.rendering.Renderer.isDeprecated;
 
 /**
  * Class containing all possible Doclet options for the UML doclet.
@@ -50,6 +51,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
         UML_INCLUDE_PACKAGE_PRIVATE_FIELDS("-umlIncludePackagePrivateFields", Boolean.class, "false"),
         UML_INCLUDE_PROTECTED_FIELDS("-umlIncludeProtectedFields", Boolean.class, "true"),
         UML_INCLUDE_PUBLIC_FIELDS("-umlIncludePublicFields", Boolean.class, "true"),
+        UML_INCLUDE_DEPRECATED_FIELDS("-umlIncludeDeprecatedFields", Boolean.class, "false"),
         UML_INCLUDE_FIELD_TYPES("-umlIncludeFieldTypes", Boolean.class, "true"),
         UML_INCLUDE_METHOD_PARAM_NAMES("-umlIncludeMethodParamNames", Boolean.class, "false"),
         UML_INCLUDE_METHOD_PARAM_TYPES("-umlIncludeMethodParamTypes", Boolean.class, "true"),
@@ -58,10 +60,12 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
         UML_INCLUDE_PACKAGE_PRIVATE_METHODS("-umlIncludePackagePrivateMethods", Boolean.class, "false"),
         UML_INCLUDE_PROTECTED_METHODS("-umlIncludeProtectedMethods", Boolean.class, "true"),
         UML_INCLUDE_PUBLIC_METHODS("-umlIncludePublicMethods", Boolean.class, "true"),
+        UML_INCLUDE_DEPRECATED_METHODS("-umlIncludeDeprecatedMethods", Boolean.class, "false"),
         UML_INCLUDE_ABSTRACT_SUPERCLASS_METHODS("-umlIncludeAbstractSuperclassMethods", Boolean.class, "true"),
         UML_INCLUDE_PRIVATE_CLASSES("-umlIncludePrivateClasses", Boolean.class, "false"),
         UML_INCLUDE_PACKAGE_PRIVATE_CLASSES("-umlIncludePackagePrivateClasses", Boolean.class, "true"),
         UML_INCLUDE_PROTECTED_CLASSES("-umlIncludeProtectedClasses", Boolean.class, "true"),
+        UML_INCLUDE_DEPRECATED_CLASSES("-umlIncludeDeprecatedClasses", Boolean.class, "false"),
         UML_INCLUDE_PRIVATE_INNERCLASSES("-umlIncludePrivateInnerClasses", Boolean.class, "false"),
         UML_INCLUDE_PACKAGE_PRIVATE_INNERCLASSES("-umlIncludePackagePrivateInnerClasses", Boolean.class, "false"),
         UML_INCLUDE_PROTECTED_INNERCLASSES("-umlIncludeProtectedInnerClasses", Boolean.class, "false"),
@@ -266,6 +270,13 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
     }
 
     /**
+     * @return Whether or not to include deprecated fields in the UML diagrams (defaults to {@code false}).
+     */
+    public boolean includeDeprecatedFields() {
+        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_DEPRECATED_FIELDS));
+    }
+
+    /**
      * @return Whether or not to include field type details in the UML diagrams (defaults to {@code true}).
      */
     public boolean includeFieldTypes() {
@@ -336,6 +347,13 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
     }
 
     /**
+     * @return Whether or not to include deprecated methods in the UML diagrams (defaults to {@code false}).
+     */
+    public boolean includeDeprecatedMethods() {
+        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_DEPRECATED_METHODS));
+    }
+
+    /**
      * @return Whether or not to include abstract methods from interfaces and abstract classes
      * (from referenced external packages) in the UML diagrams (defaults to {@code true}).
      */
@@ -355,6 +373,10 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
         return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PROTECTED_CLASSES));
     }
 
+    private boolean includeDeprecatedClasses() {
+        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_DEPRECATED_CLASSES));
+    }
+
     private boolean includePrivateInnerclasses() {
         return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PRIVATE_INNERCLASSES));
     }
@@ -368,11 +390,11 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
     }
 
     public boolean includeClass(ClassDoc classDoc) {
-        boolean included = true;
         if (classDoc == null) {
             LOGGER.log(Level.WARNING, "Encountered <null> class documentation!");
-            included = false;
+            return false;
         }
+        boolean included = true;
         final boolean isInnerclass = classDoc.containingClass() != null;
         if (classDoc.isPrivate() && (!includePrivateClasses() || (isInnerclass && !includePrivateInnerclasses()))) {
             LOGGER.log(Level.FINEST, "Not including private class \"{0}\".", classDoc.qualifiedName());
@@ -385,7 +407,11 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
                 && (!includeProtectedClasses() || isInnerclass && !includeProtectedInnerclasses())) {
             LOGGER.log(Level.FINE, "Not including protected class \"{0}\".", classDoc.qualifiedName());
             included = false;
+        } else if (isDeprecated(classDoc) && !includeDeprecatedClasses()) {
+            LOGGER.log(Level.FINE, "Not including deprecated class \"{0}\".", classDoc.qualifiedName());
+            included = false;
         }
+
         LOGGER.log(Level.FINEST, "{0} class \"{1}\".",
                 new Object[]{included ? "Including" : "Not including", classDoc.qualifiedName()});
         return included;

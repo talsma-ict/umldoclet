@@ -168,6 +168,7 @@
                             </docletArtifact>
                             <docencoding>UTF-8</docencoding>
                             <additionalparam>
+                                -umlLogLevel TRACE
                                 -umlBasePath ${project.build.directory}${file.separator}test-uml
                                 -umlSkipStandardDoclet true
                             </additionalparam>
