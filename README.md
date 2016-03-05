@@ -17,6 +17,6 @@ _(before 1.0.0)_
 
 _(eventually)_
 
-- Include Plantuml rendering of .puml files to .png images if Graphviz is detected.
+- [Include Plantuml rendering of .puml files to .png images if Graphviz is detected.](https://github.com/talsma-ict/umldoclet/issues/11)
+- [Add custom tag support to Standard doclet to support @classdiagram javadoc](https://github.com/talsma-ict/umldoclet/issues/12)
 - [Add dependency diagrams showing all dependencies on package level.](https://github.com/talsma-ict/umldoclet/issues/10)
-- Add custom tag support to Standard doclet to support @classdiagram javadoc
