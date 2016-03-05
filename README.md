@@ -11,10 +11,6 @@ Doclet for the JavaDoc tool that generates UML diagrams from the code.
 _(before 1.0.0)_
 
 - [Fix class visibility.](https://github.com/talsma-ict/umldoclet/issues/4)
-- Add dependency diagrams showing all dependencies on package level.
-- Additional doclet options to fine-tune the uml content (use / respect Standard doclet options as defaults?)
-
-_(eventually)_
-
-- Include Plantuml rendering of .puml files to .png images if Graphviz is detected.
-- Add custom tag support to Standard doclet to support @classdiagram javadoc
+- [Sanitize and/or group the many settings for this doclet.](https://github.com/talsma-ict/umldoclet/issues/7)
+- [Document usage for initial release of this doclet.](https://github.com/talsma-ict/umldoclet/issues/8)
+- [Ability to influence the style of generated diagrams.](https://github.com/talsma-ict/umldoclet/issues/6)
