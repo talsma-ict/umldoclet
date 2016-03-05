@@ -37,12 +37,21 @@ public class ClassRenderer extends Renderer {
     public ClassRenderer(UMLDocletConfig config, UMLDiagram diagram, ClassDoc classDoc) {
         super(config, diagram);
         this.classDoc = requireNonNull(classDoc, "No class documentation provided.");
+        // Enum constants are added first.
         for (FieldDoc enumConstant : classDoc.enumConstants()) {
             children.add(new FieldRenderer(config, diagram, enumConstant));
         }
+        // TODO: Couldn't we make Renderer Comparable and have 'children' become a TreeSet?
+        // --> Probably, after more tests are in place!
+        List<FieldRenderer> fields = new ArrayList<>(); // static fields come before non-static fields.
         for (FieldDoc field : classDoc.fields(false)) {
-            children.add(new FieldRenderer(config, diagram, field));
+            if (field.isStatic()) {
+                children.add(new FieldRenderer(config, diagram, field));
+            } else {
+                fields.add(new FieldRenderer(config, diagram, field));
+            }
         }
+        children.addAll(fields);
         for (ConstructorDoc constructor : classDoc.constructors(false)) {
             children.add(new MethodRenderer(config, diagram, constructor));
         }
@@ -54,7 +63,22 @@ public class ClassRenderer extends Renderer {
                 children.add(new MethodRenderer(config, diagram, method));
             }
         }
-        children.addAll(abstractMethods); // abstract methods come last in our UML diagrams.
+        children.addAll(abstractMethods); // abstract methods come after regular methods in our UML diagrams.
+
+        // Support for tags defined in legacy doclet.
+        // TODO: Depending on the amount of code this generates this should be refactored away (after unit testing).
+        addLegacyNoteTag();
+    }
+
+    private void addLegacyNoteTag() {
+        // for (String tagname : new String[] {"note"}) {
+        final String tagname = "note";
+        for (Tag notetag : classDoc.tags(tagname)) {
+            String note = notetag.text();
+            if (note != null) {
+                children.add(new NoteRenderer(config, currentDiagram, note));
+            }
+        }
     }
 
     protected String umlType() {

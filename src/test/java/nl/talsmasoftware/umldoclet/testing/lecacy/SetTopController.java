@@ -6,6 +6,7 @@ package nl.talsmasoftware.umldoclet.testing.lecacy;
  * @implements URLStreamHandler
  * @navassoc - - 1..* PowerManager
  * @note this is a note
+ * over multiple lines <i>and *containing* markup</i>
  */
 public abstract class SetTopController implements URLStreamHandler {
 

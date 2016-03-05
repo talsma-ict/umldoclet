@@ -35,6 +35,8 @@ import static java.util.Objects.requireNonNull;
  */
 public abstract class Renderer {
 
+    // TODO: Refactor 'config' to 'currentDiagram.config'.
+    // -> Probably easier to accomplish after we have more extensive unit tests in place.
     protected final UMLDocletConfig config;
     protected final UMLDiagram currentDiagram;
     protected final Collection<Renderer> children = new LinkedHashSet<>();
