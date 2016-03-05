@@ -1,4 +1,4 @@
-package nl.talsmasoftware.umldoclet.testing.lecacy;
+package nl.talsmasoftware.umldoclet.testing.legacy;
 
 public interface URLStreamHandler {
     void OpenConnection();

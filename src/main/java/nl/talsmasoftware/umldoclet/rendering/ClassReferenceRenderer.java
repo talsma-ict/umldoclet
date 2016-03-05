@@ -145,6 +145,10 @@ public class ClassReferenceRenderer extends ClassRenderer {
             LOGGER.log(Level.FINEST, "Not generating type declaration for \"{0}\"; " +
                     "type was previously encountered in this diagram.", qualifiedName);
             return out;
+        } else if (!qualifiedName.equals(classDoc.qualifiedName())) {
+            LOGGER.log(Level.FINEST, "Generating 'unknown' class type declaration for \"{0}\"; " +
+                    "we only have a class name reference as declaration.", qualifiedName);
+            return out.append("class ").append(qualifiedName).append(" <<(?,orchid)>>").newline();
         }
 
         LOGGER.log(Level.FINEST, "Generating type declaration for \"{0}\"...", qualifiedName);
