@@ -20,6 +20,7 @@ import com.sun.javadoc.ProgramElementDoc;
 import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -95,6 +96,17 @@ public class FieldRenderer extends Renderer {
             out.newline();
         }
         return out;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fieldDoc.qualifiedName());
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return this == other || (other instanceof FieldRenderer
+                && Objects.equals(fieldDoc.qualifiedName(), ((FieldRenderer) other).fieldDoc.qualifiedName()));
     }
 
 }

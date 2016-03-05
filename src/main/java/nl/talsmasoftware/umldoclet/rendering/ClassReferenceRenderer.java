@@ -17,12 +17,14 @@ package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
+import com.sun.javadoc.Tag;
 import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,8 +44,8 @@ public class ClassReferenceRenderer extends ClassRenderer {
     protected ClassReferenceRenderer(UMLDocletConfig config, UMLDiagram diagram, ClassDoc classDoc, String umlreference, ClassDoc referent) {
         super(config, diagram, classDoc);
         super.children.clear();
-        this.umlreference = umlreference;
-        this.referent = referent;
+        this.umlreference = requireNonNull(umlreference, "No UML reference type provided.");
+        this.referent = requireNonNull(referent, "No referent provided.");
         if (config.includeAbstractSuperclassMethods()) {
             for (MethodDoc methodDoc : classDoc.methods(false)) {
                 if (methodDoc.isAbstract()) {
@@ -58,10 +60,10 @@ public class ClassReferenceRenderer extends ClassRenderer {
         final ClassDoc referent = includedClass.classDoc;
         final String referentName = referent.qualifiedName();
         LOGGER.log(Level.FINEST, "Adding references for included class {0}...", referentName);
-        List<ClassReferenceRenderer> references = new ArrayList<>();
+        final List<ClassReferenceRenderer> references = new ArrayList<>();
+        final Collection<String> excludedReferences = includedClass.config.excludedReferences();
 
         // Add extended superclass reference.
-        final Collection<String> excludedReferences = includedClass.config.excludedReferences();
         if (referent.superclass() == null) {
             LOGGER.log(Level.FINE, "Encountered <null> as superclass of \"{0}\".", referentName);
         } else if (excludedReferences.contains(referent.superclass().qualifiedName())) {
@@ -94,6 +96,16 @@ public class ClassReferenceRenderer extends ClassRenderer {
         return references;
     }
 
+    static void addLegacyExtendsTag(Collection<ClassReferenceRenderer> references, ClassRenderer includedClass) {
+        if (references != null && includedClass != null && includedClass.config.supportLegacyTags()) {
+            // add support for: @extends Controller
+            for (Tag extendsTag : includedClass.classDoc.tags("extends")) {
+                String extendedTypeName = extendsTag.text().trim();
+
+            }
+        }
+    }
+
     protected IndentingPrintWriter writeTypeDeclarationTo(IndentingPrintWriter out) {
         final String referenceTypename = classDoc.qualifiedName();
         if (!currentDiagram.encounteredTypes.add(referenceTypename)) {
@@ -122,6 +134,20 @@ public class ClassReferenceRenderer extends ClassRenderer {
         return out.append(referenceTypename)
                 .append(' ').append(umlreference).append(' ')
                 .append(referent.qualifiedTypeName()).newline().newline();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(classDoc, umlreference, referent);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return this == other || (other instanceof ClassReferenceRenderer
+                && Objects.equals(classDoc, ((ClassReferenceRenderer) other).classDoc)
+                && Objects.equals(umlreference, ((ClassReferenceRenderer) other).umlreference)
+                && Objects.equals(referent, ((ClassReferenceRenderer) other).referent)
+        );
     }
 
 }

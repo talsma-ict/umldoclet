@@ -36,14 +36,16 @@ public class UMLDiagram extends Renderer {
         super(config, null);
     }
 
-    public UMLDiagram singleClassDiagram(ClassDoc classDoc) {
+    public UMLDiagram addClass(ClassDoc classDoc) {
         UMLDiagram classDiagram = new UMLDiagram(config);
+        classDiagram.children.addAll(children);
         classDiagram.children.add(new ClassRenderer(config, this, classDoc));
         return classDiagram;
     }
 
-    public UMLDiagram singlePackageDiagram(PackageDoc packageDoc) {
+    public UMLDiagram addPackage(PackageDoc packageDoc) {
         UMLDiagram packageDiagram = new UMLDiagram(config);
+        packageDiagram.children.addAll(children);
         packageDiagram.children.add(new PackageRenderer(config, this, packageDoc));
         return packageDiagram;
     }

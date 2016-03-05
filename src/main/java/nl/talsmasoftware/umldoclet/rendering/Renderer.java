@@ -22,8 +22,9 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
@@ -36,7 +37,7 @@ public abstract class Renderer {
 
     protected final UMLDocletConfig config;
     protected final UMLDiagram currentDiagram;
-    protected final List<Renderer> children = new ArrayList<>();
+    protected final Collection<Renderer> children = new LinkedHashSet<>();
 
     protected Renderer(UMLDocletConfig config, UMLDiagram currentDiagram) {
         this.config = requireNonNull(config, "No UML doclet configuration provided.");
@@ -97,6 +98,31 @@ public abstract class Renderer {
                 || (element instanceof ClassDoc && isDeprecated(((ClassDoc) element).superclass()));
     }
 
+    /**
+     * @return Hashcode implementation based on the children of this renderer.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(children);
+    }
+
+    /**
+     * Equals implementation based on 'instanceof' test and children equality.
+     *
+     * @param other The object to compare this renderer with.
+     * @return {@code true} if the other object is an instance of this renderers class and its children are equal, {@code false} otherwise.
+     */
+    public boolean equals(Object other) {
+        return this == other || (getClass().isInstance(other)
+                && Objects.equals(children, ((Renderer) other).children)
+        );
+    }
+
+    /**
+     * Renders the entire content of this renderer and returns it as a String value.
+     *
+     * @return The rendered content of this renderer.
+     */
     public String toString() {
         return writeTo(new StringWriter()).toString();
     }

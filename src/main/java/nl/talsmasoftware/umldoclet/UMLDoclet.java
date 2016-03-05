@@ -89,7 +89,7 @@ public class UMLDoclet extends Standard implements Closeable {
         for (ClassDoc classDoc : classDocs) {
             encounteredPackages.add(classDoc.containingPackage());
             try (Writer out = createWriterForNewClassFile(classDoc)) {
-                new UMLDiagram(config).singleClassDiagram(classDoc).writeTo(out);
+                new UMLDiagram(config).addClass(classDoc).writeTo(out);
             } catch (IOException | RuntimeException exception) {
                 throw new IllegalStateException(String.format("Error writing to %s file for %s: %s",
                         config.umlFileExtension(), classDoc.qualifiedName(), exception.getMessage()), exception);
@@ -103,7 +103,7 @@ public class UMLDoclet extends Standard implements Closeable {
         LOGGER.log(Level.FINE, "Generating package diagrams for all packages...");
         for (PackageDoc packageDoc : encounteredPackages) {
             try (Writer out = createWriterForNewPackageFile(packageDoc)) {
-                new UMLDiagram(config).singlePackageDiagram(packageDoc).writeTo(out);
+                new UMLDiagram(config).addPackage(packageDoc).writeTo(out);
             } catch (IOException | RuntimeException exception) {
                 throw new IllegalStateException(String.format("Error writing to %s file for package %s: %s",
                         config.umlFileExtension(), packageDoc.name(), exception.getMessage()), exception);

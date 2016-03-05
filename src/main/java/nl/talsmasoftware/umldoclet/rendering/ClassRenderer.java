@@ -21,6 +21,7 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
@@ -85,6 +86,18 @@ public class ClassRenderer extends Renderer {
         }
         out.append(" {").newline();
         return writeChildrenTo(out).append("}").newline().newline();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(classDoc.qualifiedName());
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return this == other || (other != null && ClassRenderer.class.equals(other.getClass())
+                && Objects.equals(classDoc.qualifiedName(), ((ClassRenderer) other).classDoc.qualifiedName()));
+        // || super.equals(other);
     }
 
 }

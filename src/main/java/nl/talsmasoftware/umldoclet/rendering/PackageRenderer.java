@@ -22,6 +22,7 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -60,6 +61,17 @@ public class PackageRenderer extends Renderer {
         out.append("namespace ").append(packageDoc.name()).append(" {").newline().newline();
         writeChildrenTo(out);
         return out.append("}").newline().newline();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(packageDoc.name());
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return this == other || (other instanceof PackageRenderer
+                && Objects.equals(packageDoc.name(), ((PackageRenderer) other).packageDoc.name()));
     }
 
 }
