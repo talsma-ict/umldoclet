@@ -113,12 +113,15 @@ public class IndentingDelegateWriter extends Writer {
     public void write(char[] cbuf, int off, int len) throws IOException {
         if (len > 0) {
             synchronized (lock) {
-                if (isBeginningOfLine) {
-                    delegate.write(indentation);
-                    isBeginningOfLine = false;
+                for (int i = off; i < len; i++) {
+                    final boolean isEolChar = EOL_CHARS.indexOf(cbuf[i]) >= 0;
+                    if (isBeginningOfLine && !isEolChar) {
+                        delegate.write(indentation);
+                        isBeginningOfLine = false;
+                    }
+                    delegate.write(cbuf[i]);
+                    isBeginningOfLine = isEolChar;
                 }
-                delegate.write(cbuf, off, len);
-                isBeginningOfLine = EOL_CHARS.indexOf(cbuf[off + len - 1]) >= 0;
             }
         }
     }

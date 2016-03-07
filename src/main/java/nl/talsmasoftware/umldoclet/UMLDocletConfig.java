@@ -448,6 +448,10 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
         return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES));
     }
 
+    public boolean supportLegacyTags() {
+        return true;
+    }
+
     public static int optionLength(String option) {
         final Setting setting = Setting.forOption(option);
         return setting == null ? Standard.optionLength(option) : setting.optionLength;

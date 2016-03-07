@@ -15,10 +15,14 @@
  */
 package nl.talsmasoftware.umldoclet.rendering.indent;
 
-import org.junit.Assert;
 import org.junit.Test;
 
-import static org.hamcrest.MatcherAssert.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
+
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 
@@ -29,6 +33,17 @@ import static org.junit.Assert.fail;
  */
 public class IndentingPrintWriterTest {
 
+    /**
+     * Determine the newline for this OS.
+     */
+    private static final String NEWLINE;
+
+    static {
+        Writer writer = new StringWriter();
+        new PrintWriter(writer).println();
+        NEWLINE = writer.toString();
+    }
+
     @Test
     public void testIndentingPrintWriter_nullWriter() {
         try {
@@ -37,6 +52,19 @@ public class IndentingPrintWriterTest {
         } catch (NullPointerException expected) {
             assertThat("Exception message", expected.getMessage(), is(not(nullValue())));
         }
+    }
+
+    @Test
+    public void testIndentingWithNewlinesWithinString() throws IOException {
+        StringWriter target = new StringWriter();
+        IndentingPrintWriter.wrap(target)
+                .indent().append("text").newline()
+                .append("plus a test" + NEWLINE + "with contained newline")
+                .flush();
+        assertThat(target, hasToString(equalTo(
+                "    text" + NEWLINE +
+                        "    plus a test" + NEWLINE +
+                        "    with contained newline")));
     }
 
 }

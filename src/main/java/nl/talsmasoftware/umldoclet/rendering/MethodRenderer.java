@@ -19,6 +19,7 @@ import com.sun.javadoc.*;
 import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -145,8 +146,7 @@ public class MethodRenderer extends Renderer {
     }
 
     private boolean isDefaultAndOnlyConstructor() {
-        return isDefaultConstructor()
-                && methodDoc.containingClass().constructors(false).length == 1;
+        return isDefaultConstructor() && methodDoc.containingClass().constructors(false).length == 1;
     }
 
     private boolean isAbstract() {
@@ -180,6 +180,19 @@ public class MethodRenderer extends Renderer {
             }
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(methodDoc.qualifiedName(), methodDoc.flatSignature());
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return this == other || (other instanceof MethodRenderer
+                && Objects.equals(methodDoc.qualifiedName(), ((MethodRenderer) other).methodDoc.qualifiedName())
+                && Objects.equals(methodDoc.flatSignature(), ((MethodRenderer) other).methodDoc.flatSignature())
+        );
     }
 
 }
