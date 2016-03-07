@@ -125,12 +125,21 @@ public class ClassReferenceRenderer extends ClassRenderer {
             for (String tagname : new String[]{"extends", "implements"}) {
                 for (Tag tag : includedClass.classDoc.tags(tagname)) {
                     String extendedTypeName = tag.text().trim();
-                    if (!extendedTypeName.contains(".") && includedClass.classDoc.containingPackage() != null) {
+                    if (extendedTypeName.indexOf(' ') > 0) {
+                        extendedTypeName = extendedTypeName.substring(0, extendedTypeName.indexOf(' '));
+                    }
+                    ClassDoc extendedType = includedClass.classDoc.findClass(extendedTypeName);
+                    if (extendedType != null) {
+                        extendedTypeName = extendedType.qualifiedTypeName();
+                    } else if (!extendedTypeName.contains(".") && includedClass.classDoc.containingPackage() != null) {
                         extendedTypeName = includedClass.classDoc.containingPackage().name() + "." + extendedTypeName;
                     }
+
                     if (includedClass.config.excludedReferences().contains(extendedTypeName)) {
                         LOGGER.log(Level.FINE, "Excluding @{0} tag \"{1}\"; the reference is configured as \"excluded\".", new Object[]{tagname, extendedTypeName});
-                    } else if (references.add(new ClassReferenceRenderer(includedClass.config, includedClass.currentDiagram, extendedTypeName, "<|--", includedClass.classDoc))) {
+                        break;
+                    }
+                    if (references.add(new ClassReferenceRenderer(includedClass.config, includedClass.currentDiagram, extendedType, extendedTypeName, "<|--", includedClass.classDoc))) {
                         LOGGER.log(Level.FINEST, "Added @{0} reference to \"{1}\" from \"{2}\".", new Object[]{tagname, extendedTypeName, includedClass.classDoc.qualifiedName()});
                     } else {
                         LOGGER.log(Level.FINE, "Excluding @{0} tag \"{1}\"; the reference was already generated.", new Object[]{tagname, extendedTypeName});

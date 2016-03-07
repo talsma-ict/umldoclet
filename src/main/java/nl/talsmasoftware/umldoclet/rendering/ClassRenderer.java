@@ -20,6 +20,7 @@ import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -33,6 +34,7 @@ import static java.util.Objects.requireNonNull;
 public class ClassRenderer extends Renderer {
 
     protected final ClassDoc classDoc;
+    private final Collection<NoteRenderer> notes = new ArrayList<>();
 
     public ClassRenderer(UMLDocletConfig config, UMLDiagram diagram, ClassDoc classDoc) {
         super(config, diagram);
@@ -76,7 +78,7 @@ public class ClassRenderer extends Renderer {
         for (Tag notetag : classDoc.tags(tagname)) {
             String note = notetag.text();
             if (note != null) {
-                children.add(new NoteRenderer(config, currentDiagram, note));
+                notes.add(new NoteRenderer(config, currentDiagram, note, classDoc.qualifiedName()));
             }
         }
     }
@@ -101,6 +103,13 @@ public class ClassRenderer extends Renderer {
         return out;
     }
 
+    protected IndentingPrintWriter writeNotesTo(IndentingPrintWriter out) {
+        for (NoteRenderer note : notes) {
+            note.writeTo(out);
+        }
+        return out;
+    }
+
     public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         currentDiagram.encounteredTypes.add(classDoc.qualifiedTypeName());
         out.append(umlType()).append(' ').append(classDoc.qualifiedTypeName());
@@ -108,8 +117,8 @@ public class ClassRenderer extends Renderer {
         if (isDeprecated(classDoc)) {
             out.append(" <<deprecated>>"); // I don't know how to strikethrough a class name!
         }
-        out.append(" {").newline();
-        return writeChildrenTo(out).append("}").newline().newline();
+        writeChildrenTo(out.append(" {").newline()).append("}").newline().newline();
+        return writeNotesTo(out);
     }
 
     @Override
