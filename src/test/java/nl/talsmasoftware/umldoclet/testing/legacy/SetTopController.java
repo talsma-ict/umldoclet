@@ -1,7 +1,7 @@
 package nl.talsmasoftware.umldoclet.testing.legacy;
 
 /**
- * @extends Controller      (undefined)
+ * @extends com.unavailable.api.Controller      (undefined)
  * @extends EmbeddedAgent   (available in documented classes)
  * @implements URLStreamHandler
  * @navassoc - - 1..* PowerManager

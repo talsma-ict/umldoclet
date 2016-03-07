@@ -98,7 +98,7 @@ public class ClassReferenceRenderer extends ClassRenderer {
                 LOGGER.log(Level.FINEST, "Excluding interface \"{0}\" of \"{1}\"...",
                         new Object[]{interfaceName, referentName});
             } else if (references.add(new ClassReferenceRenderer(
-                    includedClass.config, includedClass.currentDiagram, interfaceDoc, "<|--", referent))) {
+                    includedClass.config, includedClass.currentDiagram, interfaceDoc, "<|..", referent))) {
                 LOGGER.log(Level.FINEST, "Added reference to interface \"{0}\" from \"{1}\".", new Object[]{interfaceName, referentName});
             } else {
                 LOGGER.log(Level.FINE, "Excluding reference to interface \"{0}\" from \"{1}\"; the reference was already generated.", new Object[]{interfaceName, referentName});
@@ -113,16 +113,16 @@ public class ClassReferenceRenderer extends ClassRenderer {
 
         // Support for tags defined in legacy doclet.
         // TODO: Depending on the amount of code this generates this should be refactored away (after unit testing).
-        addLegacyExtendsImplementsTag(references, includedClass);
+        addLegacyReferenceTags(references, includedClass);
 
         return references;
     }
 
-    static void addLegacyExtendsImplementsTag(Collection<ClassReferenceRenderer> references, ClassRenderer includedClass) {
+    static void addLegacyReferenceTags(Collection<ClassReferenceRenderer> references, ClassRenderer includedClass) {
         if (references != null && includedClass != null && includedClass.config.supportLegacyTags()) {
             // add support for: @extends Controlle
             // add support for: @implements Interface
-            for (String tagname : new String[]{"extends", "implements"}) {
+            for (String tagname : new String[]{"extends", "implements" /* , "navassoc" TODO requires Tag pattern support!! */}) {
                 for (Tag tag : includedClass.classDoc.tags(tagname)) {
                     String extendedTypeName = tag.text().trim();
                     if (extendedTypeName.indexOf(' ') > 0) {
@@ -139,7 +139,17 @@ public class ClassReferenceRenderer extends ClassRenderer {
                         LOGGER.log(Level.FINE, "Excluding @{0} tag \"{1}\"; the reference is configured as \"excluded\".", new Object[]{tagname, extendedTypeName});
                         break;
                     }
-                    if (references.add(new ClassReferenceRenderer(includedClass.config, includedClass.currentDiagram, extendedType, extendedTypeName, "<|--", includedClass.classDoc))) {
+
+                    ClassReferenceRenderer reference = new ClassReferenceRenderer(
+                            includedClass.config,
+                            includedClass.currentDiagram,
+                            extendedType,
+                            extendedTypeName,
+                            "implements".equals(tagname) ? "<|.."
+                                    : "extends".equals(tagname) ? "<|--"
+                                    : "--", //assoc
+                            includedClass.classDoc);
+                    if (references.add(reference)) {
                         LOGGER.log(Level.FINEST, "Added @{0} reference to \"{1}\" from \"{2}\".", new Object[]{tagname, extendedTypeName, includedClass.classDoc.qualifiedName()});
                     } else {
                         LOGGER.log(Level.FINE, "Excluding @{0} tag \"{1}\"; the reference was already generated.", new Object[]{tagname, extendedTypeName});
