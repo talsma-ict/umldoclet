@@ -17,7 +17,6 @@ package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
-import com.sun.javadoc.Tag;
 import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
@@ -112,51 +111,9 @@ public class ClassReferenceRenderer extends ClassRenderer {
         }
 
         // Support for tags defined in legacy doclet.
-        // TODO: Depending on the amount of code this generates this should be refactored away (after unit testing).
-        addLegacyReferenceTags(references, includedClass);
+        references.addAll(LegacyTag.legacyReferencesFor(includedClass));
 
         return references;
-    }
-
-    static void addLegacyReferenceTags(Collection<ClassReferenceRenderer> references, ClassRenderer includedClass) {
-        if (references != null && includedClass != null && includedClass.config.supportLegacyTags()) {
-            // add support for: @extends Controlle
-            // add support for: @implements Interface
-            for (String tagname : new String[]{"extends", "implements" /* , "navassoc" TODO requires Tag pattern support!! */}) {
-                for (Tag tag : includedClass.classDoc.tags(tagname)) {
-                    String extendedTypeName = tag.text().trim();
-                    if (extendedTypeName.indexOf(' ') > 0) {
-                        extendedTypeName = extendedTypeName.substring(0, extendedTypeName.indexOf(' '));
-                    }
-                    ClassDoc extendedType = includedClass.classDoc.findClass(extendedTypeName);
-                    if (extendedType != null) {
-                        extendedTypeName = extendedType.qualifiedTypeName();
-                    } else if (!extendedTypeName.contains(".") && includedClass.classDoc.containingPackage() != null) {
-                        extendedTypeName = includedClass.classDoc.containingPackage().name() + "." + extendedTypeName;
-                    }
-
-                    if (includedClass.config.excludedReferences().contains(extendedTypeName)) {
-                        LOGGER.log(Level.FINE, "Excluding @{0} tag \"{1}\"; the reference is configured as \"excluded\".", new Object[]{tagname, extendedTypeName});
-                        break;
-                    }
-
-                    ClassReferenceRenderer reference = new ClassReferenceRenderer(
-                            includedClass.config,
-                            includedClass.currentDiagram,
-                            extendedType,
-                            extendedTypeName,
-                            "implements".equals(tagname) ? "<|.."
-                                    : "extends".equals(tagname) ? "<|--"
-                                    : "--", //assoc
-                            includedClass.classDoc);
-                    if (references.add(reference)) {
-                        LOGGER.log(Level.FINEST, "Added @{0} reference to \"{1}\" from \"{2}\".", new Object[]{tagname, extendedTypeName, includedClass.classDoc.qualifiedName()});
-                    } else {
-                        LOGGER.log(Level.FINE, "Excluding @{0} tag \"{1}\"; the reference was already generated.", new Object[]{tagname, extendedTypeName});
-                    }
-                }
-            }
-        }
     }
 
     protected IndentingPrintWriter writeTypeDeclarationTo(IndentingPrintWriter out) {
