@@ -36,7 +36,6 @@ public enum LegacyTag {
 
     /**
      * Add support for @extends Controller
-     * <p/>
      * <p>
      * Pattern: <associated class>
      * </p>
@@ -51,7 +50,6 @@ public enum LegacyTag {
 
     /**
      * Add support for @navassoc
-     * <p/>
      * <p>
      * Pattern: <cardinality> - <cardinality> <assoziated class>
      * </p>
@@ -64,12 +62,15 @@ public enum LegacyTag {
 
     private final String tagname;
     private final String umlreference;
-    private final int classPos;
+    private final int fromCardPos, notePos, classPos, refCardPos;
 
     private LegacyTag(String umlreference, int classPos) {
         this.tagname = name().toLowerCase(Locale.ENGLISH);
         this.umlreference = umlreference;
+        this.fromCardPos = classPos == 3 ? 0 : -1;
+        this.notePos = classPos == 3 ? 1 : -1;
         this.classPos = classPos;
+        this.refCardPos = classPos == 3 ? 2 : -1;
     }
 
     private ClassReferenceRenderer createReferenceFrom(UMLDocletConfig config, UMLDiagram diagram, ClassDoc includedClassDoc, Tag tag) {
@@ -79,6 +80,7 @@ public enum LegacyTag {
             String[] parts = tag.text().trim().split("\\s");
             if (classPos >= parts.length) {
                 LOGGER.log(Level.FINE, "No associated class found in @{0} tag \"{1}\".", new Object[]{tagname, tag.text()});
+                // TODO: Mark this as a JavaDoc error?
                 return null;
             }
 
@@ -98,11 +100,14 @@ public enum LegacyTag {
                 return null;
             }
 
-            // TODO Do something with the cardinality!
             reference = referenceDoc == null
                     ? new ClassReferenceRenderer(config, diagram, typename, umlreference, includedClassDoc)
                     : new ClassReferenceRenderer(config, diagram, referenceDoc, umlreference, includedClassDoc);
 
+            // TODO Do something with the cardinality!
+            if (fromCardPos >= 0) {
+                // Subclass CardinalityClassReferenceRenderer ??
+            }
         }
         return reference;
     }
