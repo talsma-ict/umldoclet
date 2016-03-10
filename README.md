@@ -6,10 +6,13 @@ Doclet for the JavaDoc tool that generates UML diagrams from the code.
 - JDK version 1.7 or newer.
 - Availability of tools.jar containing the Sun JavaDoc API.
 
-## To do:
+## Usage
 
-_(before 1.0.0)_
+- Please refer to [the wiki](https://github.com/talsma-ict/umldoclet/wiki/UML-Doclet-usage) on how to use this doclet.
 
-- [Sanitize and/or group the many settings for this doclet.](https://github.com/talsma-ict/umldoclet/issues/7)
-- [Document usage for initial release of this doclet.](https://github.com/talsma-ict/umldoclet/issues/8)
-- [Ability to influence the style of generated diagrams.](https://github.com/talsma-ict/umldoclet/issues/6)
+## Feedback
+
+- Please search the [open issues](https://github.com/talsma-ict/umldoclet/issues)
+  before you [file a new ssue](https://github.com/talsma-ict/umldoclet/issues/new)
+  or contact me through Github.  
+_Thank you!_
