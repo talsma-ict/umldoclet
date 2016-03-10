@@ -62,15 +62,12 @@ public enum LegacyTag {
 
     private final String tagname;
     private final String umlreference;
-    private final int fromCardPos, notePos, classPos, refCardPos;
+    private final int classPos;
 
     private LegacyTag(String umlreference, int classPos) {
         this.tagname = name().toLowerCase(Locale.ENGLISH);
         this.umlreference = umlreference;
-        this.fromCardPos = classPos == 3 ? 0 : -1;
-        this.notePos = classPos == 3 ? 1 : -1;
         this.classPos = classPos;
-        this.refCardPos = classPos == 3 ? 2 : -1;
     }
 
     private ClassReferenceRenderer createReferenceFrom(UMLDocletConfig config, UMLDiagram diagram, ClassDoc includedClassDoc, Tag tag) {
@@ -104,12 +101,18 @@ public enum LegacyTag {
                     ? new ClassReferenceRenderer(config, diagram, typename, umlreference, includedClassDoc)
                     : new ClassReferenceRenderer(config, diagram, referenceDoc, umlreference, includedClassDoc);
 
-            // TODO Do something with the cardinality!
-            if (fromCardPos >= 0) {
-                // Subclass CardinalityClassReferenceRenderer ??
+            // Support for Pattern: <cardinality> - <cardinality> <associated class>
+            if (classPos == 3) {
+                reference.cardinality1 = emptyToNull(parts[0]);
+                reference.note = emptyToNull(parts[1]);
+                reference.cardinality2 = emptyToNull(parts[2]);
             }
         }
         return reference;
+    }
+
+    private String emptyToNull(String value) {
+        return value == null || value.trim().isEmpty() || "-".equals(value.trim()) ? null : value.trim();
     }
 
     static Collection<ClassReferenceRenderer> legacyReferencesFor(ClassRenderer includedClass) {

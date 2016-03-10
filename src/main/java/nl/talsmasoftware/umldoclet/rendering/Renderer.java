@@ -120,6 +120,10 @@ public abstract class Renderer {
         );
     }
 
+    protected String quoted(String value) {
+        return value == null ? "" : '"' + value.replaceAll("\"", "\\\"") + '"';
+    }
+
     /**
      * Renders the entire content of this renderer and returns it as a String value.
      *

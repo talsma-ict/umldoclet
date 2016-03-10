@@ -40,6 +40,9 @@ public class ClassReferenceRenderer extends ClassRenderer {
     protected final String umlreference;
     protected final ClassDoc referent;
 
+    // Additiona info fields to be added to the reference.
+    String cardinality1, cardinality2, note;
+
     protected ClassReferenceRenderer(UMLDocletConfig config, UMLDiagram diagram, ClassDoc documentedClass, String umlreference, ClassDoc referent) {
         this(config, diagram, documentedClass, null, umlreference, referent);
     }
@@ -116,6 +119,10 @@ public class ClassReferenceRenderer extends ClassRenderer {
         return references;
     }
 
+    private String guessClassOrInterface() {
+        return "<|..".equals(umlreference) ? "interface" : "class";
+    }
+
     protected IndentingPrintWriter writeTypeDeclarationTo(IndentingPrintWriter out) {
         if (!currentDiagram.encounteredTypes.add(qualifiedName)) {
             LOGGER.log(Level.FINEST, "Not generating type declaration for \"{0}\"; " +
@@ -124,7 +131,7 @@ public class ClassReferenceRenderer extends ClassRenderer {
         } else if (!qualifiedName.equals(classDoc.qualifiedName())) {
             LOGGER.log(Level.FINEST, "Generating 'unknown' class type declaration for \"{0}\"; " +
                     "we only have a class name reference as declaration.", qualifiedName);
-            return out.append("class ").append(qualifiedName).append(" <<(?,orchid)>>").newline();
+            return out.append(guessClassOrInterface()).append(' ').append(qualifiedName).append(" <<(?,orchid)>>").newline();
         }
 
         LOGGER.log(Level.FINEST, "Generating type declaration for \"{0}\"...", qualifiedName);
@@ -143,9 +150,14 @@ public class ClassReferenceRenderer extends ClassRenderer {
         // Write UML reference itself.
         LOGGER.log(Level.FINEST, "Generating reference: \"{0}\" {1} \"{2}\"...",
                 new Object[]{qualifiedName, umlreference, referent.qualifiedName()});
-        return out.append(qualifiedName)
-                .append(' ').append(umlreference).append(' ')
-                .append(referent.qualifiedTypeName()).newline().newline();
+        out.append(qualifiedName).append(' ')
+                .append(quoted(cardinality2)).append(' ')
+                .append(umlreference).append(' ').append(quoted(cardinality1)).append(' ')
+                .append(referent.qualifiedTypeName());
+        if (note != null) {
+            out.append(": ").append(note);
+        }
+        return out.newline().newline();
     }
 
     @Override
