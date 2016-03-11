@@ -71,7 +71,8 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
         UML_INCLUDE_PACKAGE_PRIVATE_INNERCLASSES("-umlIncludePackagePrivateInnerClasses", Boolean.class, "false"),
         UML_INCLUDE_PROTECTED_INNERCLASSES("-umlIncludeProtectedInnerClasses", Boolean.class, "false"),
         UML_EXCLUDED_REFERENCES("-umlExcludedReferences", String.class, "java.lang.Object,java.lang.Enum"),
-        UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES("-umlIncludeOverridesFromExcludedReferences", Boolean.class, "false");
+        UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES("-umlIncludeOverridesFromExcludedReferences", Boolean.class, "false"),
+        UML_COMMAND("-umlCommand", String.class, "");
 
         private final String optionName;
         private final Class<?> optionType;
@@ -141,7 +142,16 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
                 if (setting == null) {
                     stdOpts.add(option);
                 } else {
-                    super.put(setting, setting.validate(option));
+                    String[] validated = setting.validate(option);
+                    String[] current = super.get(option);
+                    if (current != null && current.length > 1 && validated.length > 1) {
+                        String currVal = current[1], newVal = validated[1];
+                        if (currVal != null && !currVal.trim().isEmpty()) {
+                            validated[1] = newVal == null || newVal.trim().isEmpty()
+                                    ? currVal : currVal + "\n" + newVal;
+                        }
+                    }
+                    super.put(setting, validated);
                 }
             } catch (RuntimeException invalid) {
                 reporter.printError(String.format("Invalid option \"%s\". %s", option[0], invalid.getMessage()));
@@ -194,6 +204,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
     public Level umlLogLevel() {
         final String level = stringValue(Setting.UML_LOGLEVEL).toUpperCase(Locale.ENGLISH);
         switch (level) {
+            case "ALL":
             case "TRACE":
                 return Level.FINEST;
             case "DEBUG":
@@ -446,6 +457,17 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
      */
     public boolean includeOverridesFromExcludedReferences() {
         return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES));
+    }
+
+    public List<String> umlCommands() {
+        List<String> umlCommands = new ArrayList<>();
+        for (String umlCommand : stringValue(Setting.UML_COMMAND).split("[\\n\\;]")) {
+            umlCommand = umlCommand.trim();
+            if (!umlCommand.isEmpty()) {
+                umlCommands.add(umlCommand);
+            }
+        }
+        return umlCommands;
     }
 
     public boolean supportLegacyTags() {

@@ -20,6 +20,7 @@ import com.sun.javadoc.PackageDoc;
 import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -40,6 +41,7 @@ public class UMLDiagram extends Renderer {
         UMLDiagram classDiagram = new UMLDiagram(config);
         classDiagram.children.addAll(children);
         classDiagram.children.add(new ClassRenderer(config, this, classDoc));
+        addGlobalCommandsTo(classDiagram.children);
         return classDiagram;
     }
 
@@ -47,6 +49,7 @@ public class UMLDiagram extends Renderer {
         UMLDiagram packageDiagram = new UMLDiagram(config);
         packageDiagram.children.addAll(children);
         packageDiagram.children.add(new PackageRenderer(config, this, packageDoc));
+        addGlobalCommandsTo(packageDiagram.children);
         return packageDiagram;
     }
 
@@ -54,6 +57,12 @@ public class UMLDiagram extends Renderer {
         out.append("@startuml").newline().newline();
         writeChildrenTo(out);
         return out.append("@enduml").newline();
+    }
+
+    private void addGlobalCommandsTo(Collection<Renderer> renderers) {
+        for (String umlCommand : config.umlCommands()) {
+            renderers.add(new CommandRenderer(config, this, umlCommand));
+        }
     }
 
 }

@@ -22,11 +22,12 @@ import java.util.Arrays;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Created on 17-02-2016.
+ * Writer implementation that will indent each new line with a specified number of whitespace
+ * characters. The writing itself can be delegated to any other {@link Writer} implementation.
  *
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
-public class IndentingDelegateWriter extends Writer {
+public class IndentingWriter extends Writer {
 
     public static final int DEFAULT_INDENTATION_WIDTH = 4;
     private static final String EOL_CHARS = "\r\n";
@@ -38,11 +39,11 @@ public class IndentingDelegateWriter extends Writer {
 
     private boolean isBeginningOfLine;
 
-    protected IndentingDelegateWriter(Writer delegate, int indentationWidth) {
+    protected IndentingWriter(Writer delegate, int indentationWidth) {
         this(delegate, indentationWidth, null, true);
     }
 
-    private IndentingDelegateWriter(Writer delegate, int indentationWidth, char[] indentation, boolean isBeginningOfLine) {
+    private IndentingWriter(Writer delegate, int indentationWidth, char[] indentation, boolean isBeginningOfLine) {
         this.delegate = requireNonNull(delegate, "Delegate writer is required.");
         this.indentationWidth = indentationWidth < 0 ? DEFAULT_INDENTATION_WIDTH : indentationWidth;
         this.indentation = indentation == null ? NO_INDENTATION : indentation;
@@ -58,10 +59,10 @@ public class IndentingDelegateWriter extends Writer {
      * @param delegate The delegate to turn into an indenting writer.
      * @return The indenting delegate writer.
      */
-    public static IndentingDelegateWriter wrap(Writer delegate) {
-        return delegate instanceof IndentingDelegateWriter
-                ? (IndentingDelegateWriter) delegate
-                : new IndentingDelegateWriter(delegate, -1);
+    public static IndentingWriter wrap(Writer delegate) {
+        return delegate instanceof IndentingWriter
+                ? (IndentingWriter) delegate
+                : new IndentingWriter(delegate, -1);
     }
 
     /**
@@ -71,15 +72,15 @@ public class IndentingDelegateWriter extends Writer {
      *
      * @param newIndentationWidth The new indentation width to use on the indenting delegate.
      * @return Either this writer if the indentation width is already equal to the requested new width,
-     * or a new IndentingDelegateWriter with the specified width otherwise.
+     * or a new IndentingWriter with the specified width otherwise.
      */
-    public IndentingDelegateWriter withIndentationWidth(int newIndentationWidth) {
+    public IndentingWriter withIndentationWidth(int newIndentationWidth) {
         return newIndentationWidth < 0 || indentationWidth == newIndentationWidth ? this :
-                new IndentingDelegateWriter(delegate, newIndentationWidth, indentation, isBeginningOfLine)
+                new IndentingWriter(delegate, newIndentationWidth, indentation, isBeginningOfLine)
                         .withIndentationLevel(indentationLevel());
     }
 
-    public IndentingDelegateWriter withIndentationLevel(int newIndentationLevel) {
+    public IndentingWriter withIndentationLevel(int newIndentationLevel) {
         if (newIndentationLevel < 0) {
             throw new IllegalArgumentException(String.format("Indentation level cannot be a negative value: %s.", newIndentationLevel));
         } else if (indentationLevel() == newIndentationLevel) {
@@ -87,7 +88,7 @@ public class IndentingDelegateWriter extends Writer {
         }
         final char[] newIndentation = new char[newIndentationLevel * indentationWidth];
         Arrays.fill(newIndentation, ' ');
-        return new IndentingDelegateWriter(delegate, indentationWidth, newIndentation, isBeginningOfLine);
+        return new IndentingWriter(delegate, indentationWidth, newIndentation, isBeginningOfLine);
     }
 
     protected int indentationWidth() {
@@ -101,11 +102,11 @@ public class IndentingDelegateWriter extends Writer {
         return indentationWidth == 0 ? 0 : indentation.length / indentationWidth;
     }
 
-    public IndentingDelegateWriter indent() {
+    public IndentingWriter indent() {
         return withIndentationLevel(Math.max(0, indentationLevel() + 1));
     }
 
-    public IndentingDelegateWriter unindent() {
+    public IndentingWriter unindent() {
         return withIndentationLevel(Math.max(0, indentationLevel() - 1));
     }
 
