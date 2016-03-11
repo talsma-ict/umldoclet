@@ -194,6 +194,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
     public Level umlLogLevel() {
         final String level = stringValue(Setting.UML_LOGLEVEL).toUpperCase(Locale.ENGLISH);
         switch (level) {
+            case "ALL":
             case "TRACE":
                 return Level.FINEST;
             case "DEBUG":

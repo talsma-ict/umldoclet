@@ -13,6 +13,6 @@ Doclet for the JavaDoc tool that generates UML diagrams from the code.
 ## Feedback
 
 - Please search the [open issues](https://github.com/talsma-ict/umldoclet/issues)
-  before you [file a new ssue](https://github.com/talsma-ict/umldoclet/issues/new)
+  before you [file a new issue](https://github.com/talsma-ict/umldoclet/issues/new)
   or contact me through Github.  
 _Thank you!_
