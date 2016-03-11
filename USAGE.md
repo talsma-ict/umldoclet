@@ -55,7 +55,7 @@ chosen in such a manner, that the options rarely need to be overridden.
 | Parameter name                    | Possible values   | Default value | Description |
 | --------------------------------- | ----------------- | ------------- | ----------- |
 | -umlLogLevel                      | `ALL`, `TRACE`, `DEBUG`, `INFO`, `WARN`, `ERROR`, `FATAL` | `INFO` | The log level defined in common level definitions |
-| -umlIndentation                   | _integer number_  | `-1`          | The indentation level to use for the generated UML. A negative value uses whatever the default indentation is and zero obviously will not indent the UML. |
+| -umlIndentation                   | _integer_         | `-1`          | The indentation level to use for the generated UML. A negative value uses whatever the default indentation is and zero obviously will not indent the UML. |
 | -umlBasePath                      | filesystem path   | `<null>`      | The base path where the UML diagrams should be generated, by default the UML Doclet generates the diagrams in the same location as the regular HTML documentation. |
 | -umlFileExtension                 | file extention    | `".puml"`     | The file extension to use for generated UML diagrams. |
 | -umlFileEncoding                  | encoding name     | `"UTF-8"`     | The file encoding to use for generated UML diagrams. Note however, before the default value is applied, the standard doclet option `-docEncoding` is inspected to obtain a value. |
