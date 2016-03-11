@@ -85,4 +85,4 @@ chosen in such a manner, that the options rarely need to be overridden.
 | -umlIncludeProtectedInnerClasses  | _boolean_         | `false`       | Whether `protected` inner-classes will be included in the rendered diagrams. |
 | -umlExcludedReferences            | list of classes   | `java.lang.Object`, `java.lang.Enum` | List of classes that will not be rendered as an external reference in the diagrams. Please mind that there should be no spaces in this setting for the JavaDoc tool to be able to parse this as a single value. |
 | -umlIncludeOverridesFromExcludedReferences | _boolean_ | `false`      | Whether inherited methods from classes defined in `-umlExcludedReferences` should be rendered in the diagrams. |
-
+| -umlCommand                       | _commands_        | _none_        | This setting allows custom `commands` to be added to the diagrams. Commands containing whitespaces must be provided within double-quotes. Multiple commands can be separated by a semicolon. An example value could be `"hide class circle; hide empty members"` (be sure to include the quotes). For more information, please see (http://plantuml.com/classes.html). |

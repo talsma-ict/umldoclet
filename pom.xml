@@ -197,6 +197,7 @@
                                 -umlLogLevel INFO
                                 -umlBasePath ${project.build.directory}${file.separator}test-uml
                                 -umlSkipStandardDoclet true
+                                -umlCommand "hide empty members; hide &lt;&lt;Stereotype&gt;&gt; circle"
                             </additionalparam>
                         </configuration>
                     </execution>
