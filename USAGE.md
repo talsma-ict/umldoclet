@@ -26,7 +26,7 @@ Since Maven is the build tool used by the the umldoclet project itself, it will 
                         <docletArtifact>
                             <groupId>nl.talsmasoftware</groupId>
                             <artifactId>umldoclet</artifactId>
-                            <version>0.1.6-SNAPSHOT</version>
+                            <version>0.1.6</version>
                         </docletArtifact>
                         <additionalParam>
                             ...
