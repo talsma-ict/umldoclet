@@ -19,17 +19,21 @@ import java.io.PrintWriter;
 import java.io.Writer;
 
 /**
- * Created on 17-02-2016.
+ * PrintWriter implementation that will indent each new line with a specified number of whitespace
+ * characters. The writing itself can be delegated to any other {@link Writer} implementation.
+ * <p/>
+ * Care was taken to ensure that not only lines ended by calls to {@link #println()} methods trigger indentation,
+ * but self-written newline characters as well.
  *
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
 public class IndentingPrintWriter extends PrintWriter {
 
     protected IndentingPrintWriter(Writer writer, int indentationWidth) {
-        this(IndentingDelegateWriter.wrap(writer).withIndentationWidth(indentationWidth));
+        this(IndentingWriter.wrap(writer).withIndentationWidth(indentationWidth));
     }
 
-    private IndentingPrintWriter(IndentingDelegateWriter delegate) {
+    private IndentingPrintWriter(IndentingWriter delegate) {
         super(delegate);
     }
 
@@ -37,8 +41,8 @@ public class IndentingPrintWriter extends PrintWriter {
      * Returns an indenting printwriter around the given {@code delegate}.
      * If the {@code delegate} printwriter is already an indenting printwriter, it will simply be returned as-is.
      * If the {@code delegate} printwriter is not yet an indending printwriter, a new indenting printwriter class
-     * will be created to wrap the delegate using the {@link IndentingDelegateWriter#DEFAULT_INDENTATION_WIDTH}
-     * and no initial {@link IndentingDelegateWriter#indentationLevel()}.
+     * will be created to wrap the delegate using the {@link IndentingWriter#DEFAULT_INDENTATION_WIDTH}
+     * and no initial {@link IndentingWriter#indentationLevel()}.
      *
      * @param delegate The delegate to turn into an indenting printwriter.
      * @return The indenting delegate writer.
@@ -50,8 +54,8 @@ public class IndentingPrintWriter extends PrintWriter {
     }
 
     private IndentingPrintWriter changeIndentation(final boolean up) {
-        if (out instanceof IndentingDelegateWriter) {
-            IndentingDelegateWriter delegate = (IndentingDelegateWriter) this.out;
+        if (out instanceof IndentingWriter) {
+            IndentingWriter delegate = (IndentingWriter) this.out;
             int newIndentationLevel = Math.max(0, delegate.indentationLevel() + (up ? 1 : -1));
             delegate = delegate.withIndentationLevel(newIndentationLevel);
             if (!out.equals(delegate)) {
