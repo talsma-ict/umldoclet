@@ -27,7 +27,9 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 
 /**
- * Created on 17-02-2016.
+ * Tests for the intenting print writer.
+ * By unit-testing this class, we effectively also test the IndentingWriter implementation
+ * that provides the actual indenting functionality.
  *
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */

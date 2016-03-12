@@ -138,7 +138,7 @@ public class ClassReferenceRenderer extends ClassRenderer {
         out.append(umlType()).append(' ').append(qualifiedName);
         super.writeGenericsTo(out);
         if (!children.isEmpty()) {
-            writeChildrenTo(out.append('{').newline()).append('}');
+            writeChildrenTo(out.append(" {").newline()).append('}');
         }
         return out.newline();
     }

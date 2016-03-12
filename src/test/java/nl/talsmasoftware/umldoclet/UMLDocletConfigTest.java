@@ -31,7 +31,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 
 /**
- * This test class verifies that each UMLDocletConfig Setting value has been documented.
+ * This test class verifies that each UMLDocletConfig Setting value has been documented
+ * in the USAGE.md file.
  *
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
