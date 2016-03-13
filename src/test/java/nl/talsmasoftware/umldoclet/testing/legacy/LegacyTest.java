@@ -31,7 +31,6 @@ public class LegacyTest {
     private final String setTopControllerName = SetTopController.class.getName();
 
     @Test
-//    @Ignore //TODO figure out and fix the double whitespace around the uml reference!
     public void testDependTag() {
         String packageUml = Testing.readFile("testing/legacy/package.puml");
         assertThat(packageUml, is(not(nullValue())));
