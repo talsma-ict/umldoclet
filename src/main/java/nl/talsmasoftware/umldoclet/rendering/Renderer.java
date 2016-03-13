@@ -121,7 +121,7 @@ public abstract class Renderer {
     }
 
     protected String quoted(String value) {
-        return value == null ? "" : '"' + value.replaceAll("\"", "\\\"") + '"';
+        return value == null || value.trim().isEmpty() ? "" : '"' + value.replaceAll("\"", "\\\"") + '"';
     }
 
     /**

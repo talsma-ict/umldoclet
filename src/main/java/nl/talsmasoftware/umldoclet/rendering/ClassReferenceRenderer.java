@@ -150,11 +150,17 @@ public class ClassReferenceRenderer extends ClassRenderer {
         // Write UML reference itself.
         LOGGER.log(Level.FINEST, "Generating reference: \"{0}\" {1} \"{2}\"...",
                 new Object[]{qualifiedName, umlreference, referent.qualifiedName()});
-        out.append(qualifiedName).append(' ')
-                .append(quoted(cardinality2)).append(' ')
-                .append(umlreference).append(' ').append(quoted(cardinality1)).append(' ')
-                .append(referent.qualifiedTypeName());
-        if (note != null) {
+        out.append(qualifiedName).append(' ');
+        String c1 = quoted(cardinality1), c2 = quoted(cardinality2);
+        if (!c2.isEmpty()) {
+            out.append(c2).append(' ');
+        }
+        out.append(umlreference).append(' ');
+        if (!c1.isEmpty()) {
+            out.append(quoted(cardinality1)).append(' ');
+        }
+        out.append(referent.qualifiedTypeName());
+        if (note != null && !note.trim().isEmpty()) {
             out.append(": ").append(note);
         }
         return out.newline().newline();
