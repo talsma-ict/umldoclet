@@ -25,6 +25,8 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Base implementation for any 'renderer' subclass.
  * <p/>
@@ -39,7 +41,9 @@ public abstract class Renderer {
     protected final Collection<Renderer> children = new LinkedHashSet<>();
 
     protected Renderer(UMLDiagram diagram) {
-        this.diagram = validateDiagram(diagram);
+        // Validates the given diagram.
+        // There is only one situation where a <null> diagram is accepted; for the UMLDiagram class itself.
+        this.diagram = requireNonNull(this instanceof UMLDiagram ? (UMLDiagram) this : diagram, "No UML diagram provided.");
     }
 
     public abstract IndentingPrintWriter writeTo(IndentingPrintWriter output);
@@ -153,20 +157,6 @@ public abstract class Renderer {
      */
     public String toString() {
         return writeTo(new StringWriter()).toString();
-    }
-
-    /**
-     * Validates the given diagram. There is only one situation where a {@code null} diagram is accepted; for the
-     * {@link UMLDiagram} class itself.
-     *
-     * @param currentDiagram The current diagram to be validated.
-     * @return The guaranteed non-{@code null} current diagram value.
-     */
-    private UMLDiagram validateDiagram(UMLDiagram currentDiagram) {
-        if (currentDiagram == null && !(this instanceof UMLDiagram)) {
-            throw new IllegalArgumentException("No current UML diagram provided.");
-        }
-        return currentDiagram == null ? (UMLDiagram) this : currentDiagram;
     }
 
 }
