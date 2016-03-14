@@ -43,12 +43,12 @@ public class FieldRenderer extends Renderer {
 
     static IndentingPrintWriter writeAccessibility(IndentingPrintWriter out, ProgramElementDoc element) {
         if (element.isStatic()) {
-            out.append("{static} ");
+            out.append("{static}").whitespace();
         }
-        return element.isPrivate() ? out.append("-")
-                : element.isProtected() ? out.append("#")
-                : element.isPackagePrivate() ? out.append("~")
-                : out.append("+");
+        return element.isPrivate() ? out.append('-')
+                : element.isProtected() ? out.append('#')
+                : element.isPackagePrivate() ? out.append('~')
+                : out.append('+');
     }
 
     protected boolean includeFieldType() {
@@ -82,7 +82,7 @@ public class FieldRenderer extends Renderer {
 
     protected IndentingPrintWriter writeNameTo(IndentingPrintWriter out) {
         return isDeprecated(fieldDoc)
-                ? out.append(" --").append(fieldDoc.name()).append("-- ")
+                ? out.whitespace().append("--").append(fieldDoc.name()).append("--").whitespace()
                 : out.append(fieldDoc.name());
     }
 
@@ -91,7 +91,7 @@ public class FieldRenderer extends Renderer {
             writeAccessibility(out, fieldDoc);
             writeNameTo(out);
             if (includeFieldType()) {
-                writeTypeTo(out.append(": "), fieldDoc.type());
+                writeTypeTo(out.append(":").whitespace(), fieldDoc.type());
             }
             out.newline();
         }

@@ -87,7 +87,7 @@ public class MethodRenderer extends Renderer {
 
     protected IndentingPrintWriter writeNameTo(IndentingPrintWriter out) {
         return isDeprecated(methodDoc)
-                ? out.append(" --").append(methodDoc.name()).append("-- ")
+                ? out.whitespace().append("--").append(methodDoc.name()).append("--").whitespace()
                 : out.append(methodDoc.name());
     }
 
@@ -111,12 +111,12 @@ public class MethodRenderer extends Renderer {
         return out;
     }
 
-    protected IndentingPrintWriter writeReturnTypeTo(IndentingPrintWriter out) {
-        if (methodDoc instanceof MethodDoc) {
-            out.append(": ").append(((MethodDoc) methodDoc).returnType().typeName());
-        }
-        return out;
-    }
+//    protected IndentingPrintWriter writeReturnTypeTo(IndentingPrintWriter out) {
+//        if (methodDoc instanceof MethodDoc) {
+//            out.append(": ").append(((MethodDoc) methodDoc).returnType().typeName());
+//        }
+//        return out;
+//    }
 
     public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         if (includeMethod()) {
@@ -124,13 +124,13 @@ public class MethodRenderer extends Renderer {
             //        + --deprecatedString--(): String <<deprecated>>
 
             if (isAbstract()) {
-                out.write("{abstract} ");
+                out.append("{abstract}").whitespace();
             }
             FieldRenderer.writeAccessibility(out, methodDoc);
             writeNameTo(out);
-            writeParametersTo(out.append("(")).append(')');
+            writeParametersTo(out.append('(')).append(')');
             if (methodDoc instanceof MethodDoc) {
-                writeTypeTo(out.append(": "), ((MethodDoc) methodDoc).returnType());
+                writeTypeTo(out.append(':').whitespace(), ((MethodDoc) methodDoc).returnType());
             }
             return out.newline();
         }

@@ -69,4 +69,17 @@ public class IndentingPrintWriterTest {
                         "    with contained newline")));
     }
 
+    @Test
+    public void testWhitespaceRendering() throws IOException {
+        StringWriter target = new StringWriter();
+        IndentingPrintWriter.wrap(target)
+                .whitespace().whitespace()
+                .indent().whitespace().append("Text ending in whitespace ").whitespace().append("!").newline()
+                .whitespace().whitespace().append("Whitespace on beginning of line.")
+                .flush();
+        assertThat(target, hasToString(equalTo(
+                "    Text ending in whitespace !" + NEWLINE +
+                        "    Whitespace on beginning of line.")));
+    }
+
 }

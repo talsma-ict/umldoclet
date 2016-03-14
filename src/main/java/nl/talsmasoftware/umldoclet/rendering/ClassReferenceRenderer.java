@@ -131,11 +131,11 @@ public class ClassReferenceRenderer extends ClassRenderer {
         } else if (!qualifiedName.equals(classDoc.qualifiedName())) {
             LOGGER.log(Level.FINEST, "Generating 'unknown' class type declaration for \"{0}\"; " +
                     "we only have a class name reference as declaration.", qualifiedName);
-            return out.append(guessClassOrInterface()).append(' ').append(qualifiedName).append(" <<(?,orchid)>>").newline();
+            return out.append(guessClassOrInterface()).whitespace().append(qualifiedName).append(" <<(?,orchid)>>").newline();
         }
 
         LOGGER.log(Level.FINEST, "Generating type declaration for \"{0}\"...", qualifiedName);
-        out.append(umlType()).append(' ').append(qualifiedName);
+        out.append(umlType()).whitespace().append(qualifiedName);
         super.writeGenericsTo(out);
         if (!children.isEmpty()) {
             writeChildrenTo(out.append(" {").newline()).append('}');
@@ -150,16 +150,11 @@ public class ClassReferenceRenderer extends ClassRenderer {
         // Write UML reference itself.
         LOGGER.log(Level.FINEST, "Generating reference: \"{0}\" {1} \"{2}\"...",
                 new Object[]{qualifiedName, umlreference, referent.qualifiedName()});
-        out.append(qualifiedName).append(' ');
-        String c1 = quoted(cardinality1), c2 = quoted(cardinality2);
-        if (!c2.isEmpty()) {
-            out.append(c2).append(' ');
-        }
-        out.append(umlreference).append(' ');
-        if (!c1.isEmpty()) {
-            out.append(quoted(cardinality1)).append(' ');
-        }
-        out.append(referent.qualifiedTypeName());
+        out.append(qualifiedName).whitespace()
+                .append(quoted(cardinality2)).whitespace()
+                .append(umlreference).whitespace()
+                .append(quoted(cardinality1)).whitespace()
+                .append(referent.qualifiedTypeName());
         if (note != null && !note.trim().isEmpty()) {
             out.append(": ").append(note);
         }

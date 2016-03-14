@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
 
+import static java.lang.Character.isWhitespace;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -37,16 +38,17 @@ public class IndentingWriter extends Writer {
     protected final int indentationWidth;
     private final char[] indentation;
 
-    private boolean isBeginningOfLine;
+    private boolean wasWhitespace, isBeginningOfLine;
 
     protected IndentingWriter(Writer delegate, int indentationWidth) {
-        this(delegate, indentationWidth, null, true);
+        this(delegate, indentationWidth, null, true, true);
     }
 
-    private IndentingWriter(Writer delegate, int indentationWidth, char[] indentation, boolean isBeginningOfLine) {
+    private IndentingWriter(Writer delegate, int indentationWidth, char[] indentation, boolean wasWhitespace, boolean isBeginningOfLine) {
         this.delegate = requireNonNull(delegate, "Delegate writer is required.");
         this.indentationWidth = indentationWidth < 0 ? DEFAULT_INDENTATION_WIDTH : indentationWidth;
         this.indentation = indentation == null ? NO_INDENTATION : indentation;
+        this.wasWhitespace = wasWhitespace;
         this.isBeginningOfLine = isBeginningOfLine;
     }
 
@@ -76,7 +78,7 @@ public class IndentingWriter extends Writer {
      */
     public IndentingWriter withIndentationWidth(int newIndentationWidth) {
         return newIndentationWidth < 0 || indentationWidth == newIndentationWidth ? this :
-                new IndentingWriter(delegate, newIndentationWidth, indentation, isBeginningOfLine)
+                new IndentingWriter(delegate, newIndentationWidth, indentation, wasWhitespace, isBeginningOfLine)
                         .withIndentationLevel(indentationLevel());
     }
 
@@ -88,7 +90,7 @@ public class IndentingWriter extends Writer {
         }
         final char[] newIndentation = new char[newIndentationLevel * indentationWidth];
         Arrays.fill(newIndentation, ' ');
-        return new IndentingWriter(delegate, indentationWidth, newIndentation, isBeginningOfLine);
+        return new IndentingWriter(delegate, indentationWidth, newIndentation, wasWhitespace, isBeginningOfLine);
     }
 
     protected int indentationWidth() {
@@ -110,18 +112,42 @@ public class IndentingWriter extends Writer {
         return withIndentationLevel(Math.max(0, indentationLevel() - 1));
     }
 
+    /**
+     * Makes sure there is at least one whitespace character between the last charater and the next.
+     * <p/>
+     * This method attempts to avoid appending a whitespace character if it knows the last character was in fact a
+     * whitespace character.
+     *
+     * @return Reference to this writer for chaining purposes.
+     * @throws IOException
+     */
+    public IndentingWriter whitespace() throws IOException {
+        return wasWhitespace ? this : (IndentingWriter) append(' ');
+    }
+
+    /**
+     * Tests whether the character is an end-of-line character.
+     *
+     * @param ch The character to be tested.
+     * @return {@code true} if the character was an end-of-line character, {@code false} otherwise.
+     */
+    private static boolean isEol(char ch) {
+        return EOL_CHARS.indexOf(ch) >= 0;
+    }
+
     @Override
     public void write(char[] cbuf, int off, int len) throws IOException {
         if (len > 0) {
             synchronized (lock) {
                 for (int i = off; i < len; i++) {
-                    final boolean isEolChar = EOL_CHARS.indexOf(cbuf[i]) >= 0;
-                    if (isBeginningOfLine && !isEolChar) {
+                    final boolean isEol = isEol(cbuf[i]);
+                    if (isBeginningOfLine && !isEol) {
                         delegate.write(indentation);
                         isBeginningOfLine = false;
                     }
                     delegate.write(cbuf[i]);
-                    isBeginningOfLine = isEolChar;
+                    wasWhitespace = isWhitespace(cbuf[i]);
+                    isBeginningOfLine = isEol;
                 }
             }
         }

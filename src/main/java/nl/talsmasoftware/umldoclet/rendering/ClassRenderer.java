@@ -112,12 +112,12 @@ public class ClassRenderer extends Renderer {
 
     public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         currentDiagram.encounteredTypes.add(classDoc.qualifiedTypeName());
-        out.append(umlType()).append(' ').append(classDoc.qualifiedTypeName());
+        out.append(umlType()).whitespace().append(classDoc.qualifiedTypeName());
         writeGenericsTo(out);
         if (isDeprecated(classDoc)) {
-            out.append(" <<deprecated>>"); // I don't know how to strikethrough a class name!
+            out.whitespace().append("<<deprecated>>"); // I don't know how to strikethrough a class name!
         }
-        writeChildrenTo(out.append(" {").newline()).append("}").newline().newline();
+        writeChildrenTo(out.whitespace().append('{').newline()).append('}').newline().newline();
         return writeNotesTo(out);
     }
 
@@ -130,7 +130,6 @@ public class ClassRenderer extends Renderer {
     public boolean equals(Object other) {
         return this == other || (other != null && ClassRenderer.class.equals(other.getClass())
                 && Objects.equals(classDoc.qualifiedName(), ((ClassRenderer) other).classDoc.qualifiedName()));
-        // || super.equals(other);
     }
 
 }

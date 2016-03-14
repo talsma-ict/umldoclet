@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.rendering.indent;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 
@@ -71,6 +72,19 @@ public class IndentingPrintWriter extends PrintWriter {
 
     public IndentingPrintWriter unindent() {
         return changeIndentation(false);
+    }
+
+    public IndentingPrintWriter whitespace() {
+        try {
+            if (out instanceof IndentingWriter) {
+                ((IndentingWriter) out).whitespace();
+            } else {
+                out.append(' ');
+            }
+            return this;
+        } catch (IOException ioe) {
+            throw new IllegalStateException("Error writing whitespace: " + ioe.getMessage(), ioe);
+        }
     }
 
     public IndentingPrintWriter newline() {

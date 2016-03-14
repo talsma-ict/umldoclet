@@ -11,7 +11,7 @@ import static java.util.Objects.requireNonNull;
 public class NoteRenderer extends Renderer {
 
     private final String note;
-    private final String position = null;
+    private final String position = "bottom";
     private final String targetName;
 
     protected NoteRenderer(UMLDocletConfig config, UMLDiagram currentDiagram, String note, String targetName) {
@@ -24,8 +24,7 @@ public class NoteRenderer extends Renderer {
     public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         output.append("note");
         if (targetName != null) {
-            final String pos = position == null ? "bottom" : position;
-            output.append(' ').append(pos).append(" of ").append(targetName);
+            output.whitespace().append(position).whitespace().append("of").whitespace().append(targetName);
         }
         output.newline().indent().append(note).newline();
         return output.append("end note").newline().newline();

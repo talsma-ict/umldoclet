@@ -58,9 +58,11 @@ public class PackageRenderer extends Renderer {
     }
 
     public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
-        out.append("namespace ").append(packageDoc.name()).append(" {").newline().newline();
+        out.append("namespace").whitespace()
+                .append(packageDoc.name()).whitespace()
+                .append('{').newline().newline();
         writeChildrenTo(out);
-        return out.append("}").newline().newline();
+        return out.append('}').newline().newline();
     }
 
     @Override
