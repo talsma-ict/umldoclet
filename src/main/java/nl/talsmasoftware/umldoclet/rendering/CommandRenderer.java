@@ -17,7 +17,6 @@
 
 package nl.talsmasoftware.umldoclet.rendering;
 
-import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Objects;
@@ -35,8 +34,8 @@ public class CommandRenderer extends Renderer {
 
     private final String command;
 
-    protected CommandRenderer(UMLDocletConfig config, UMLDiagram currentDiagram, String command) {
-        super(config, currentDiagram);
+    protected CommandRenderer(UMLDiagram currentDiagram, String command) {
+        super(currentDiagram);
         this.command = Objects.requireNonNull(command, "No command provided.");
     }
 

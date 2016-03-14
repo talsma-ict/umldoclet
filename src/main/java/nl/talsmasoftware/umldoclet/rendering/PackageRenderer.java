@@ -17,7 +17,6 @@ package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.PackageDoc;
-import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.ArrayList;
@@ -38,14 +37,14 @@ public class PackageRenderer extends Renderer {
 
     protected final PackageDoc packageDoc;
 
-    public PackageRenderer(UMLDocletConfig config, UMLDiagram diagram, PackageDoc packageDoc) {
-        super(config, diagram);
+    public PackageRenderer(UMLDiagram diagram, PackageDoc packageDoc) {
+        super(diagram);
         this.packageDoc = requireNonNull(packageDoc, "No package documentation provided.");
         for (ClassDoc classDoc : packageDoc.allClasses(false)) {
             if (classDoc == null) {
                 LOGGER.log(Level.WARNING, "Encountered <null> class doc in package \"{0}\"!", packageDoc.name());
-            } else if (config.includeClass(classDoc)) {
-                children.add(new ClassRenderer(config, diagram, classDoc));
+            } else if (diagram.config.includeClass(classDoc)) {
+                children.add(new ClassRenderer(diagram, classDoc));
             }
         }
         List<ClassReferenceRenderer> references = new ArrayList<>();

@@ -16,7 +16,6 @@
 package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.*;
-import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingWriter;
 
@@ -26,32 +25,34 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 
-import static java.util.Objects.requireNonNull;
-
 /**
- * Created on 17-02-2016.
+ * Base implementation for any 'renderer' subclass.
+ * <p/>
+ * Renderers are capable of rendering themselves to {@link IndentingPrintWriter} instances and have
+ * chaining methods returning these writers for easier appending.
  *
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
 public abstract class Renderer {
 
-    // TODO: Refactor 'config' to 'currentDiagram.config'.
-    // -> Probably easier to accomplish after we have more extensive unit tests in place.
-    protected final UMLDocletConfig config;
-    protected final UMLDiagram currentDiagram;
+    protected final UMLDiagram diagram;
     protected final Collection<Renderer> children = new LinkedHashSet<>();
 
-    protected Renderer(UMLDocletConfig config, UMLDiagram currentDiagram) {
-        this.config = requireNonNull(config, "No UML doclet configuration provided.");
-        this.currentDiagram = validateDiagram(currentDiagram);
+    protected Renderer(UMLDiagram diagram) {
+        this.diagram = validateDiagram(diagram);
     }
 
     public abstract IndentingPrintWriter writeTo(IndentingPrintWriter output);
 
     public final Writer writeTo(Writer output) {
-        return this.writeTo(output instanceof IndentingPrintWriter ? (IndentingPrintWriter) output :
-                IndentingPrintWriter.wrap(
-                        IndentingWriter.wrap(output).withIndentationWidth(config.indentation())));
+        if (output instanceof IndentingPrintWriter) {
+            return writeTo((IndentingPrintWriter) output);
+        } else {
+            return writeTo(IndentingPrintWriter.wrap(
+                    IndentingWriter.wrap(output)
+                            .withIndentationWidth(
+                                    diagram.config.indentation())));
+        }
     }
 
     protected IndentingPrintWriter writeChildrenTo(IndentingPrintWriter output) {
@@ -62,7 +63,7 @@ public abstract class Renderer {
         return output;
     }
 
-    protected IndentingPrintWriter writeTypeTo(IndentingPrintWriter out, Type type) {
+    protected static IndentingPrintWriter writeTypeTo(IndentingPrintWriter out, Type type) {
         if (type != null) {
             out.append(type.typeName());
             ParameterizedType parameterizedType = type.asParameterizedType();
@@ -82,6 +83,31 @@ public abstract class Renderer {
         return out;
     }
 
+    /**
+     * This method puts the given {@code value} within double-quotes
+     * and escapes any double-quotes that may be already in the string.
+     * <p/>
+     * The method returns an empty String ({@code ""}) when the given {@code value}
+     * is either {@code null} or empty. This is intentional as it allows for unconditional appending.
+     *
+     * @param value The value to be quoted.
+     * @return The value within double quotes or an empty string if the value was null or empty.
+     */
+    protected static String quoted(String value) {
+        return value == null || value.trim().isEmpty() ? "" : '"' + value.replaceAll("\"", "\\\"") + '"';
+    }
+
+    /**
+     * Returns whether the the given element is deprecated;
+     * it has the {@literal @}{@link Deprecated} annotation
+     * or the {@literal @}deprecated JavaDoc tag.
+     * <p/>
+     * If the element itself is not deprecated, the method checks whether the superclass or containing class
+     * is deprecated.
+     *
+     * @param element The element being inspected for deprecation.
+     * @return {@code true} if the specified {@code element} is deprecated, {@code false} if it is not.
+     */
     public static boolean isDeprecated(ProgramElementDoc element) {
         // Is the element itself deprecated?
         if (element == null) {
@@ -112,16 +138,12 @@ public abstract class Renderer {
      * Equals implementation based on 'instanceof' test and children equality.
      *
      * @param other The object to compare this renderer with.
-     * @return {@code true} if the other object is an instance of this renderers class and its children are equal, {@code false} otherwise.
+     * @return {@code true} if the other object is an instance of this renderers class and its children are equal,{@code false} otherwise.
      */
     public boolean equals(Object other) {
         return this == other || (getClass().isInstance(other)
                 && Objects.equals(children, ((Renderer) other).children)
         );
-    }
-
-    protected String quoted(String value) {
-        return value == null || value.trim().isEmpty() ? "" : '"' + value.replaceAll("\"", "\\\"") + '"';
     }
 
     /**

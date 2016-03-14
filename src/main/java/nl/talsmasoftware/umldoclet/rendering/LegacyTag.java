@@ -70,9 +70,9 @@ public enum LegacyTag {
         this.classPos = classPos;
     }
 
-    private ClassReferenceRenderer createReferenceFrom(UMLDocletConfig config, UMLDiagram diagram, ClassDoc includedClassDoc, Tag tag) {
+    private ClassReferenceRenderer createReferenceFrom(UMLDiagram diagram, ClassDoc includedClassDoc, Tag tag) {
         ClassReferenceRenderer reference = null;
-        if (tag != null) {
+        if (diagram != null && tag != null) {
             // Split tag content.
             String[] parts = tag.text().trim().split("\\s");
             if (classPos >= parts.length) {
@@ -92,14 +92,14 @@ public enum LegacyTag {
 
             // TODO: Maybe leave this concern to the ReferenceRenderer at rendering time?
             // Check if the type is not excluded from the UML rendering.
-            if (config.excludedReferences().contains(typename)) {
+            if (diagram.config.excludedReferences().contains(typename)) {
                 LOGGER.log(Level.FINE, "Excluding @{0} tag \"{1}\"; the reference is configured as \"excluded\".", new Object[]{tagname, typename});
                 return null;
             }
 
             reference = referenceDoc == null
-                    ? new ClassReferenceRenderer(config, diagram, typename, umlreference, includedClassDoc)
-                    : new ClassReferenceRenderer(config, diagram, referenceDoc, umlreference, includedClassDoc);
+                    ? new ClassReferenceRenderer(diagram, typename, umlreference, includedClassDoc)
+                    : new ClassReferenceRenderer(diagram, referenceDoc, umlreference, includedClassDoc);
 
             // Support for Pattern: <cardinality> - <cardinality> <associated class>
             if (classPos == 3) {
@@ -117,11 +117,12 @@ public enum LegacyTag {
 
     static Collection<ClassReferenceRenderer> legacyReferencesFor(ClassRenderer includedClass) {
         Collection<ClassReferenceRenderer> legacyReferences = new LinkedHashSet<>();
-        if (includedClass != null && includedClass.config.supportLegacyTags()) {
+        UMLDocletConfig config = includedClass == null ? null : includedClass.diagram.config;
+        if (config != null && config.supportLegacyTags()) {
             for (LegacyTag legacytag : values()) {
                 for (Tag tag : includedClass.classDoc.tags(legacytag.tagname)) {
                     ClassReferenceRenderer reference = legacytag.createReferenceFrom(
-                            includedClass.config, includedClass.currentDiagram, includedClass.classDoc, tag);
+                            includedClass.diagram, includedClass.classDoc, tag);
                     if (reference == null) {
                         LOGGER.log(Level.FINEST, "Tag @{0} did not result in a reference from \"{1}\"...",
                                 new Object[]{legacytag.tagname, tag.text()});

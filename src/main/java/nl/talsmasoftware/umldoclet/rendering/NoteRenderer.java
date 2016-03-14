@@ -1,6 +1,5 @@
 package nl.talsmasoftware.umldoclet.rendering;
 
-import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import static java.util.Objects.requireNonNull;
@@ -14,8 +13,8 @@ public class NoteRenderer extends Renderer {
     private final String position = "bottom";
     private final String targetName;
 
-    protected NoteRenderer(UMLDocletConfig config, UMLDiagram currentDiagram, String note, String targetName) {
-        super(config, currentDiagram);
+    protected NoteRenderer(UMLDiagram currentDiagram, String note, String targetName) {
+        super(currentDiagram);
         this.note = requireNonNull(note, "Note to render may not be <null>!").trim();
         this.targetName = targetName;
     }

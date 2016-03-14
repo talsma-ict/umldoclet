@@ -18,10 +18,9 @@ package nl.talsmasoftware.umldoclet.rendering.indent;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.io.Writer;
 
+import static nl.talsmasoftware.umldoclet.testing.Testing.NEWLINE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
@@ -34,17 +33,6 @@ import static org.junit.Assert.fail;
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
 public class IndentingPrintWriterTest {
-
-    /**
-     * Determine the newline for this OS.
-     */
-    private static final String NEWLINE;
-
-    static {
-        Writer writer = new StringWriter();
-        new PrintWriter(writer).println();
-        NEWLINE = writer.toString();
-    }
 
     @Test
     public void testIndentingPrintWriter_nullWriter() {

@@ -17,7 +17,6 @@ package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.FieldDoc;
 import com.sun.javadoc.ProgramElementDoc;
-import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Objects;
@@ -36,8 +35,8 @@ public class FieldRenderer extends Renderer {
 
     protected final FieldDoc fieldDoc;
 
-    public FieldRenderer(UMLDocletConfig config, UMLDiagram diagram, FieldDoc fieldDoc) {
-        super(config, diagram);
+    public FieldRenderer(UMLDiagram diagram, FieldDoc fieldDoc) {
+        super(diagram);
         this.fieldDoc = requireNonNull(fieldDoc, "No field documentation provided.");
     }
 
@@ -52,15 +51,15 @@ public class FieldRenderer extends Renderer {
     }
 
     protected boolean includeFieldType() {
-        return config.includeFieldTypes() && !fieldDoc.isEnumConstant();
+        return diagram.config.includeFieldTypes() && !fieldDoc.isEnumConstant();
     }
 
     protected boolean includeField() {
-        boolean exclude = (fieldDoc.isPrivate() && !config.includePrivateFields())
-                || (fieldDoc.isPackagePrivate() && !config.includePackagePrivateFields())
-                || (fieldDoc.isProtected() && !config.includeProtectedFields())
-                || (fieldDoc.isPublic() && !config.includePublicFields()
-                || (!config.includeDeprecatedFields() && isDeprecated(fieldDoc) && !isDeprecated(fieldDoc.containingClass()))
+        boolean exclude = (fieldDoc.isPrivate() && !diagram.config.includePrivateFields())
+                || (fieldDoc.isPackagePrivate() && !diagram.config.includePackagePrivateFields())
+                || (fieldDoc.isProtected() && !diagram.config.includeProtectedFields())
+                || (fieldDoc.isPublic() && !diagram.config.includePublicFields()
+                || (!diagram.config.includeDeprecatedFields() && isDeprecated(fieldDoc) && !isDeprecated(fieldDoc.containingClass()))
         );
         if (LOGGER.isLoggable(Level.FINEST)) {
             String designation = fieldDoc.isStatic() ? "Static field" : "Field";
