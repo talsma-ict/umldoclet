@@ -9,7 +9,7 @@ import static java.util.Objects.requireNonNull;
  */
 public class NoteRenderer extends Renderer {
 
-    private final String note;
+    protected final String note;
     private final String position = "bottom";
     private final String targetName;
 
@@ -20,7 +20,7 @@ public class NoteRenderer extends Renderer {
     }
 
     @Override
-    public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
+    protected IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         output.append("note");
         if (targetName != null) {
             output.whitespace().append(position).whitespace().append("of").whitespace().append(targetName);

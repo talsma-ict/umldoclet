@@ -33,7 +33,7 @@ import static java.util.Objects.requireNonNull;
  */
 public class UMLDiagram extends Renderer {
 
-    final UMLDocletConfig config;
+    protected final UMLDocletConfig config;
     final Set<String> encounteredTypes = new LinkedHashSet<>();
 
     public UMLDiagram(UMLDocletConfig config) {
@@ -57,7 +57,7 @@ public class UMLDiagram extends Renderer {
         return packageDiagram;
     }
 
-    public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
+    protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         out.append("@startuml").newline().newline();
         writeChildrenTo(out);
         return out.append("@enduml").newline();

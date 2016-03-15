@@ -37,7 +37,7 @@ public class PackageRenderer extends Renderer {
 
     protected final PackageDoc packageDoc;
 
-    public PackageRenderer(UMLDiagram diagram, PackageDoc packageDoc) {
+    protected PackageRenderer(UMLDiagram diagram, PackageDoc packageDoc) {
         super(diagram);
         this.packageDoc = requireNonNull(packageDoc, "No package documentation provided.");
         for (ClassDoc classDoc : packageDoc.allClasses(false)) {
@@ -56,7 +56,7 @@ public class PackageRenderer extends Renderer {
         children.addAll(references);
     }
 
-    public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
+    protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         out.append("namespace").whitespace()
                 .append(packageDoc.name()).whitespace()
                 .append('{').newline().newline();

@@ -142,7 +142,7 @@ public class ClassReferenceRenderer extends ClassRenderer {
         return out.newline();
     }
 
-    public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
+    protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         // Write type declaration if necessary.
         writeTypeDeclarationTo(out);
 

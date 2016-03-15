@@ -46,7 +46,7 @@ public abstract class Renderer {
         this.diagram = requireNonNull(this instanceof UMLDiagram ? (UMLDiagram) this : diagram, "No UML diagram provided.");
     }
 
-    public abstract IndentingPrintWriter writeTo(IndentingPrintWriter output);
+    protected abstract IndentingPrintWriter writeTo(IndentingPrintWriter output);
 
     public final Writer writeTo(Writer output) {
         if (output instanceof IndentingPrintWriter) {
@@ -97,7 +97,7 @@ public abstract class Renderer {
      * @param value The value to be quoted.
      * @return The value within double quotes or an empty string if the value was null or empty.
      */
-    protected static String quoted(String value) {
+    public static String quoted(String value) {
         return value == null || value.trim().isEmpty() ? "" : '"' + value.replaceAll("\"", "\\\"") + '"';
     }
 

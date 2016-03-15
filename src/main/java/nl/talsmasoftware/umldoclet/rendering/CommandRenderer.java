@@ -32,7 +32,7 @@ import java.util.logging.Logger;
 public class CommandRenderer extends Renderer {
     private static final Logger LOGGER = Logger.getLogger(CommandRenderer.class.getName());
 
-    private final String command;
+    protected final String command;
 
     protected CommandRenderer(UMLDiagram currentDiagram, String command) {
         super(currentDiagram);
@@ -40,7 +40,7 @@ public class CommandRenderer extends Renderer {
     }
 
     @Override
-    public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
+    protected IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         LOGGER.log(Level.FINEST, "Writing command \"{0}\"...", command);
         return output.append(command).newline();
     }

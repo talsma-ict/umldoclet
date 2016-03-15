@@ -35,7 +35,7 @@ public class FieldRenderer extends Renderer {
 
     protected final FieldDoc fieldDoc;
 
-    public FieldRenderer(UMLDiagram diagram, FieldDoc fieldDoc) {
+    protected FieldRenderer(UMLDiagram diagram, FieldDoc fieldDoc) {
         super(diagram);
         this.fieldDoc = requireNonNull(fieldDoc, "No field documentation provided.");
     }
@@ -85,7 +85,7 @@ public class FieldRenderer extends Renderer {
                 : out.append(fieldDoc.name());
     }
 
-    public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
+    protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         if (includeField()) {
             writeAccessibility(out, fieldDoc);
             writeNameTo(out);

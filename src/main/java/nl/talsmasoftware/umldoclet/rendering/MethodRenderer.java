@@ -37,7 +37,7 @@ public class MethodRenderer extends Renderer {
 
     protected final ExecutableMemberDoc methodDoc;
 
-    public MethodRenderer(UMLDiagram diagram, ExecutableMemberDoc methodDoc) {
+    protected MethodRenderer(UMLDiagram diagram, ExecutableMemberDoc methodDoc) {
         super(diagram);
         this.methodDoc = requireNonNull(methodDoc, "No method documentation provided.");
     }
@@ -110,7 +110,7 @@ public class MethodRenderer extends Renderer {
         return out;
     }
 
-    public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
+    protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         if (includeMethod()) {
             // deprecation:
             //        + --deprecatedString--(): String <<deprecated>>

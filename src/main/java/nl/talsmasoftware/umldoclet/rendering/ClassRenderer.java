@@ -35,7 +35,7 @@ public class ClassRenderer extends Renderer {
     protected final ClassDoc classDoc;
     private final Collection<NoteRenderer> notes = new ArrayList<>();
 
-    public ClassRenderer(UMLDiagram diagram, ClassDoc classDoc) {
+    protected ClassRenderer(UMLDiagram diagram, ClassDoc classDoc) {
         super(diagram);
         this.classDoc = requireNonNull(classDoc, "No class documentation provided.");
         // Enum constants are added first.
@@ -109,7 +109,7 @@ public class ClassRenderer extends Renderer {
         return out;
     }
 
-    public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
+    protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         diagram.encounteredTypes.add(classDoc.qualifiedTypeName());
         out.append(umlType()).whitespace().append(classDoc.qualifiedTypeName());
         writeGenericsTo(out);
