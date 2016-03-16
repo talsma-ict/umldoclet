@@ -28,6 +28,8 @@ import java.util.logging.*;
 import java.util.logging.Formatter;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static nl.talsmasoftware.umldoclet.rendering.Renderer.isDeprecated;
 
 /**
@@ -70,9 +72,9 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
         UML_INCLUDE_PRIVATE_INNERCLASSES("-umlIncludePrivateInnerClasses", Boolean.class, "false"),
         UML_INCLUDE_PACKAGE_PRIVATE_INNERCLASSES("-umlIncludePackagePrivateInnerClasses", Boolean.class, "false"),
         UML_INCLUDE_PROTECTED_INNERCLASSES("-umlIncludeProtectedInnerClasses", Boolean.class, "false"),
-        UML_EXCLUDED_REFERENCES("-umlExcludedReferences", String.class, "java.lang.Object,java.lang.Enum"),
+        UML_EXCLUDED_REFERENCES("-umlExcludedReferences", List.class, "java.lang.Object, java.lang.Enum"),
         UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES("-umlIncludeOverridesFromExcludedReferences", Boolean.class, "false"),
-        UML_COMMAND("-umlCommand", String.class, "");
+        UML_COMMAND("-umlCommand", List.class, "");
 
         private final String optionName;
         private final Class<?> optionType;
@@ -115,7 +117,6 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
                 throw new IllegalArgumentException(
                         String.format("Expected a numerical value, but received \"%s\".", value));
             }
-            // TODO support List type?
             return optionValue;
         }
     }
@@ -141,17 +142,27 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
                 final Setting setting = Setting.forOption(option);
                 if (setting == null) {
                     stdOpts.add(option);
-                } else {
-                    String[] validated = setting.validate(option);
-                    String[] current = super.get(option);
-                    if (current != null && current.length > 1 && validated.length > 1) {
-                        String currVal = current[1], newVal = validated[1];
-                        if (currVal != null && !currVal.trim().isEmpty()) {
-                            validated[1] = newVal == null || newVal.trim().isEmpty()
-                                    ? currVal : currVal + "\n" + newVal;
+                } else if (Collection.class.isAssignableFrom(setting.optionType)) {
+                    List<String> values = new ArrayList<>();
+                    if (super.containsKey(setting)) {
+                        for (String value : super.get(setting)) {
+                            values.add(value);
                         }
                     }
-                    super.put(setting, validated);
+                    boolean skip = !values.isEmpty();
+                    for (String validated : setting.validate(option)) {
+                        if (!skip) { // skip first
+                            for (String value : split(validated)) {
+                                if (!value.trim().isEmpty()) {
+                                    values.add(value.trim());
+                                }
+                            }
+                        }
+                        skip = false;
+                    }
+                    super.put(setting, values.toArray(new String[values.size()]));
+                } else {
+                    super.put(setting, setting.validate(option));
                 }
             } catch (RuntimeException invalid) {
                 reporter.printError(String.format("Invalid option \"%s\". %s", option[0], invalid.getMessage()));
@@ -195,6 +206,20 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
             cachedResults.put(setting, Objects.toString(value, setting.defaultValue));
         }
         return cachedResults.get(setting);
+    }
+
+    List<String> stringValues(Setting setting) {
+        if (super.containsKey(setting)) {
+            List<String> values = emptyList();
+            final String[] strings = super.get(setting);
+            if (strings != null && strings.length > 1) {
+                for (int i = 1; i < strings.length; i++) {
+                    values = add(values, strings[i]);
+                }
+            }
+            return values;
+        }
+        return split(setting.defaultValue);
     }
 
     public String version() {
@@ -460,14 +485,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
     }
 
     public List<String> umlCommands() {
-        List<String> umlCommands = new ArrayList<>();
-        for (String umlCommand : stringValue(Setting.UML_COMMAND).split("[\\n\\;]")) {
-            umlCommand = umlCommand.trim();
-            if (!umlCommand.isEmpty()) {
-                umlCommands.add(umlCommand);
-            }
-        }
-        return umlCommands;
+        return stringValues(Setting.UML_COMMAND);
     }
 
     public boolean supportLegacyTags() {
@@ -545,4 +563,31 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
             });
         }
     }
+
+    private static List<String> split(String... values) {
+        List<String> result = emptyList();
+        for (String value : values) {
+            for (String elem : value.split("[,;\\n]")) {
+                elem = elem.trim();
+                if (!elem.isEmpty()) {
+                    result = add(result, elem.trim());
+                }
+            }
+        }
+        return result;
+    }
+
+    private static List<String> add(List<String> list, String elem) {
+        switch (list.size()) {
+            case 0:
+                return singletonList(elem);
+            case 1:
+                String curr = list.get(0);
+                list = new ArrayList<>();
+                list.add(curr);
+        }
+        list.add(elem);
+        return list;
+    }
+
 }
