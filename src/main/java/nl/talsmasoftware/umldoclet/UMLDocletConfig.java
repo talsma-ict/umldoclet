@@ -35,6 +35,8 @@ import static nl.talsmasoftware.umldoclet.rendering.Renderer.isDeprecated;
 /**
  * Class containing all possible Doclet options for the UML doclet.
  * This configuration class is also responsible for providing suitable default values in a central location.
+ * <p/>
+ * TODO: this class needs to be refactored and the String[] representation needs to be replaced by the configured type.
  *
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
@@ -465,12 +467,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
      */
     public synchronized Collection<String> excludedReferences() {
         if (excludedReferences == null) {
-            excludedReferences = new ArrayList<>();
-            for (String excludedRef : Objects.toString(stringValue(Setting.UML_EXCLUDED_REFERENCES), "").split(",")) {
-                if (excludedRef.trim().length() > 0) {
-                    excludedReferences.add(excludedRef.trim());
-                }
-            }
+            excludedReferences = stringValues(Setting.UML_EXCLUDED_REFERENCES);
             LOGGER.log(Level.FINEST, "Excluding the following references: {0}.", excludedReferences);
         }
         return excludedReferences;

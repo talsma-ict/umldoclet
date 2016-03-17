@@ -25,6 +25,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
@@ -53,6 +54,18 @@ public class UMLDocletConfigTest {
         UMLDocletConfig config = new UMLDocletConfig(new String[0][], mock(DocErrorReporter.class));
         assertThat(config.stringValues(UMLDocletConfig.Setting.UML_EXCLUDED_REFERENCES),
                 is(equalTo(asList(Object.class.getName(), Enum.class.getName()))));
+    }
+
+    @Test
+    public void testSplitMultipleOccurrances() {
+        UMLDocletConfig config = new UMLDocletConfig(new String[][]{
+                {"-umlExcludedReferences", Object.class.getName()},
+                {"-umlExcludedReferences", Enum.class.getName()}
+        }, mock(DocErrorReporter.class));
+
+        assertThat(config.excludedReferences(), is(equalTo((Collection<String>) asList(
+                Object.class.getName(), Enum.class.getName()
+        ))));
     }
 
     private void assertSettingIsDocumented(UMLDocletConfig.Setting setting) {
