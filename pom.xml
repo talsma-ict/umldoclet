@@ -175,9 +175,6 @@
                                 <version>${project.version}</version>
                             </docletArtifact>
                             <docencoding>UTF-8</docencoding>
-                            <additionalparam>
-                                -umlLogLevel INFO
-                            </additionalparam>
                             <useStandardDocletOptions>true</useStandardDocletOptions>
                         </configuration>
                     </execution>
