@@ -17,6 +17,7 @@
 
 package nl.talsmasoftware.umldoclet;
 
+import com.sun.javadoc.DocErrorReporter;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -24,14 +25,18 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.regex.Pattern;
 
+import static java.util.Arrays.asList;
 import static nl.talsmasoftware.umldoclet.testing.PatternMatcher.containsPattern;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.mock;
 
 /**
- * This test class verifies that each UMLDocletConfig Setting value has been documented.
+ * This test class verifies that each UMLDocletConfig Setting value has been documented
+ * in the USAGE.md file.
  *
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
@@ -42,6 +47,25 @@ public class UMLDocletConfigTest {
         for (UMLDocletConfig.Setting setting : UMLDocletConfig.Setting.values()) {
             assertSettingIsDocumented(setting);
         }
+    }
+
+    @Test
+    public void testSplitDefaultValue() {
+        UMLDocletConfig config = new UMLDocletConfig(new String[0][], mock(DocErrorReporter.class));
+        assertThat(config.stringValues(UMLDocletConfig.Setting.UML_EXCLUDED_REFERENCES),
+                is(equalTo(asList(Object.class.getName(), Enum.class.getName()))));
+    }
+
+    @Test
+    public void testSplitMultipleOccurrances() {
+        UMLDocletConfig config = new UMLDocletConfig(new String[][]{
+                {"-umlExcludedReferences", Object.class.getName()},
+                {"-umlExcludedReferences", Enum.class.getName()}
+        }, mock(DocErrorReporter.class));
+
+        assertThat(config.excludedReferences(), is(equalTo((Collection<String>) asList(
+                Object.class.getName(), Enum.class.getName()
+        ))));
     }
 
     private void assertSettingIsDocumented(UMLDocletConfig.Setting setting) {

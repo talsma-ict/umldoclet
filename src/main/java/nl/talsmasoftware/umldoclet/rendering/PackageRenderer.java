@@ -17,7 +17,6 @@ package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.PackageDoc;
-import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.ArrayList;
@@ -38,14 +37,14 @@ public class PackageRenderer extends Renderer {
 
     protected final PackageDoc packageDoc;
 
-    public PackageRenderer(UMLDocletConfig config, UMLDiagram diagram, PackageDoc packageDoc) {
-        super(config, diagram);
+    protected PackageRenderer(UMLDiagram diagram, PackageDoc packageDoc) {
+        super(diagram);
         this.packageDoc = requireNonNull(packageDoc, "No package documentation provided.");
         for (ClassDoc classDoc : packageDoc.allClasses(false)) {
             if (classDoc == null) {
                 LOGGER.log(Level.WARNING, "Encountered <null> class doc in package \"{0}\"!", packageDoc.name());
-            } else if (config.includeClass(classDoc)) {
-                children.add(new ClassRenderer(config, diagram, classDoc));
+            } else if (diagram.config.includeClass(classDoc)) {
+                children.add(new ClassRenderer(diagram, classDoc));
             }
         }
         List<ClassReferenceRenderer> references = new ArrayList<>();
@@ -57,10 +56,12 @@ public class PackageRenderer extends Renderer {
         children.addAll(references);
     }
 
-    public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
-        out.append("namespace ").append(packageDoc.name()).append(" {").newline().newline();
+    protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
+        out.append("namespace").whitespace()
+                .append(packageDoc.name()).whitespace()
+                .append('{').newline().newline();
         writeChildrenTo(out);
-        return out.append("}").newline().newline();
+        return out.append('}').newline().newline();
     }
 
     @Override

@@ -4,7 +4,7 @@
 
 ### Maven
 
-Since Maven is the build tool used by the the umldoclet project itself, it will be described first.
+Since Maven is the build tool used by the the UML Doclet project itself, it will be described first.
 
 1. First of all, tell Maven to generate JavaDoc for your project
    by declaring the 'maven-javadoc-plugin' to use the UML Doclet:  
@@ -22,11 +22,11 @@ Since Maven is the build tool used by the the umldoclet project itself, it will 
                         <goal>jar</goal>
                     </goals>
                     <configuration>
-                        <doclet>nl.talsmasoftware.umldoclet.umldoclet</doclet>
+                        <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
                         <docletArtifact>
                             <groupId>nl.talsmasoftware</groupId>
                             <artifactId>umldoclet</artifactId>
-                            <version>0.1.6</version>
+                            <version>1.0.0</version>
                         </docletArtifact>
                         <additionalParam>
                             ...

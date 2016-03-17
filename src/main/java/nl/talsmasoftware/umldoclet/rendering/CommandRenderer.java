@@ -17,7 +17,6 @@
 
 package nl.talsmasoftware.umldoclet.rendering;
 
-import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Objects;
@@ -33,15 +32,15 @@ import java.util.logging.Logger;
 public class CommandRenderer extends Renderer {
     private static final Logger LOGGER = Logger.getLogger(CommandRenderer.class.getName());
 
-    private final String command;
+    protected final String command;
 
-    protected CommandRenderer(UMLDocletConfig config, UMLDiagram currentDiagram, String command) {
-        super(config, currentDiagram);
+    protected CommandRenderer(UMLDiagram currentDiagram, String command) {
+        super(currentDiagram);
         this.command = Objects.requireNonNull(command, "No command provided.");
     }
 
     @Override
-    public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
+    protected IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         LOGGER.log(Level.FINEST, "Writing command \"{0}\"...", command);
         return output.append(command).newline();
     }

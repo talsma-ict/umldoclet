@@ -24,6 +24,8 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Created on 17-02-2016.
  *
@@ -31,16 +33,18 @@ import java.util.Set;
  */
 public class UMLDiagram extends Renderer {
 
+    protected final UMLDocletConfig config;
     final Set<String> encounteredTypes = new LinkedHashSet<>();
 
     public UMLDiagram(UMLDocletConfig config) {
-        super(config, null);
+        super(null);
+        this.config = requireNonNull(config, "No UML doclet configuration provided.");
     }
 
     public UMLDiagram addClass(ClassDoc classDoc) {
         UMLDiagram classDiagram = new UMLDiagram(config);
         classDiagram.children.addAll(children);
-        classDiagram.children.add(new ClassRenderer(config, this, classDoc));
+        classDiagram.children.add(new ClassRenderer(this, classDoc));
         addGlobalCommandsTo(classDiagram.children);
         return classDiagram;
     }
@@ -48,12 +52,12 @@ public class UMLDiagram extends Renderer {
     public UMLDiagram addPackage(PackageDoc packageDoc) {
         UMLDiagram packageDiagram = new UMLDiagram(config);
         packageDiagram.children.addAll(children);
-        packageDiagram.children.add(new PackageRenderer(config, this, packageDoc));
+        packageDiagram.children.add(new PackageRenderer(this, packageDoc));
         addGlobalCommandsTo(packageDiagram.children);
         return packageDiagram;
     }
 
-    public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
+    protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         out.append("@startuml").newline().newline();
         writeChildrenTo(out);
         return out.append("@enduml").newline();
@@ -61,7 +65,7 @@ public class UMLDiagram extends Renderer {
 
     private void addGlobalCommandsTo(Collection<Renderer> renderers) {
         for (String umlCommand : config.umlCommands()) {
-            renderers.add(new CommandRenderer(config, this, umlCommand));
+            renderers.add(new CommandRenderer(this, umlCommand));
         }
     }
 

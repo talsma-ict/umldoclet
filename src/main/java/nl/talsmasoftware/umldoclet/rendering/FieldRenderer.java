@@ -17,7 +17,6 @@ package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.FieldDoc;
 import com.sun.javadoc.ProgramElementDoc;
-import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Objects;
@@ -36,31 +35,31 @@ public class FieldRenderer extends Renderer {
 
     protected final FieldDoc fieldDoc;
 
-    public FieldRenderer(UMLDocletConfig config, UMLDiagram diagram, FieldDoc fieldDoc) {
-        super(config, diagram);
+    protected FieldRenderer(UMLDiagram diagram, FieldDoc fieldDoc) {
+        super(diagram);
         this.fieldDoc = requireNonNull(fieldDoc, "No field documentation provided.");
     }
 
     static IndentingPrintWriter writeAccessibility(IndentingPrintWriter out, ProgramElementDoc element) {
         if (element.isStatic()) {
-            out.append("{static} ");
+            out.append("{static}").whitespace();
         }
-        return element.isPrivate() ? out.append("-")
-                : element.isProtected() ? out.append("#")
-                : element.isPackagePrivate() ? out.append("~")
-                : out.append("+");
+        return element.isPrivate() ? out.append('-')
+                : element.isProtected() ? out.append('#')
+                : element.isPackagePrivate() ? out.append('~')
+                : out.append('+');
     }
 
     protected boolean includeFieldType() {
-        return config.includeFieldTypes() && !fieldDoc.isEnumConstant();
+        return diagram.config.includeFieldTypes() && !fieldDoc.isEnumConstant();
     }
 
     protected boolean includeField() {
-        boolean exclude = (fieldDoc.isPrivate() && !config.includePrivateFields())
-                || (fieldDoc.isPackagePrivate() && !config.includePackagePrivateFields())
-                || (fieldDoc.isProtected() && !config.includeProtectedFields())
-                || (fieldDoc.isPublic() && !config.includePublicFields()
-                || (!config.includeDeprecatedFields() && isDeprecated(fieldDoc) && !isDeprecated(fieldDoc.containingClass()))
+        boolean exclude = (fieldDoc.isPrivate() && !diagram.config.includePrivateFields())
+                || (fieldDoc.isPackagePrivate() && !diagram.config.includePackagePrivateFields())
+                || (fieldDoc.isProtected() && !diagram.config.includeProtectedFields())
+                || (fieldDoc.isPublic() && !diagram.config.includePublicFields()
+                || (!diagram.config.includeDeprecatedFields() && isDeprecated(fieldDoc) && !isDeprecated(fieldDoc.containingClass()))
         );
         if (LOGGER.isLoggable(Level.FINEST)) {
             String designation = fieldDoc.isStatic() ? "Static field" : "Field";
@@ -82,16 +81,16 @@ public class FieldRenderer extends Renderer {
 
     protected IndentingPrintWriter writeNameTo(IndentingPrintWriter out) {
         return isDeprecated(fieldDoc)
-                ? out.append(" --").append(fieldDoc.name()).append("-- ")
+                ? out.whitespace().append("--").append(fieldDoc.name()).append("--").whitespace()
                 : out.append(fieldDoc.name());
     }
 
-    public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
+    protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         if (includeField()) {
             writeAccessibility(out, fieldDoc);
             writeNameTo(out);
             if (includeFieldType()) {
-                writeTypeTo(out.append(": "), fieldDoc.type());
+                writeTypeTo(out.append(":").whitespace(), fieldDoc.type());
             }
             out.newline();
         }

@@ -8,6 +8,18 @@ import java.io.*;
 public class Testing {
 
     /**
+     * Determine the newline for this OS.
+     */
+    public static final String NEWLINE;
+
+    static {
+        Writer writer = new StringWriter();
+        new PrintWriter(writer).println();
+        NEWLINE = writer.toString();
+    }
+
+
+    /**
      * Reads a file with a relative path from the test-uml "umldoclet" path.
      *
      * @param name the relative path to the file from the "umldoclet" directory.

@@ -16,7 +16,6 @@
 package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.*;
-import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Objects;
@@ -38,8 +37,8 @@ public class MethodRenderer extends Renderer {
 
     protected final ExecutableMemberDoc methodDoc;
 
-    public MethodRenderer(UMLDocletConfig config, UMLDiagram diagram, ExecutableMemberDoc methodDoc) {
-        super(config, diagram);
+    protected MethodRenderer(UMLDiagram diagram, ExecutableMemberDoc methodDoc) {
+        super(diagram);
         this.methodDoc = requireNonNull(methodDoc, "No method documentation provided.");
     }
 
@@ -53,13 +52,13 @@ public class MethodRenderer extends Renderer {
      */
     protected boolean includeMethod() {
         boolean exclude = isMethodFromExcludedClass()
-                || (isConstructor() && !config.includeConstructors())
-                || (isDefaultAndOnlyConstructor() && !config.includeDefaultConstructors())
-                || (methodDoc.isPrivate() && !config.includePrivateMethods())
-                || (methodDoc.isPackagePrivate() && !config.includePackagePrivateMethods())
-                || (methodDoc.isProtected() && !config.includeProtectedMethods())
-                || (methodDoc.isPublic() && !config.includePublicMethods())
-                || (!config.includeDeprecatedMethods() && isDeprecated(methodDoc) && !isDeprecated(methodDoc.containingClass()));
+                || (isConstructor() && !diagram.config.includeConstructors())
+                || (isDefaultAndOnlyConstructor() && !diagram.config.includeDefaultConstructors())
+                || (methodDoc.isPrivate() && !diagram.config.includePrivateMethods())
+                || (methodDoc.isPackagePrivate() && !diagram.config.includePackagePrivateMethods())
+                || (methodDoc.isProtected() && !diagram.config.includeProtectedMethods())
+                || (methodDoc.isPublic() && !diagram.config.includePublicMethods())
+                || (!diagram.config.includeDeprecatedMethods() && isDeprecated(methodDoc) && !isDeprecated(methodDoc.containingClass()));
 
         if (LOGGER.isLoggable(Level.FINEST)) {
             String designation = methodDoc.isStatic() ? "Static method"
@@ -87,22 +86,22 @@ public class MethodRenderer extends Renderer {
 
     protected IndentingPrintWriter writeNameTo(IndentingPrintWriter out) {
         return isDeprecated(methodDoc)
-                ? out.append(" --").append(methodDoc.name()).append("-- ")
+                ? out.whitespace().append("--").append(methodDoc.name()).append("--").whitespace()
                 : out.append(methodDoc.name());
     }
 
     protected IndentingPrintWriter writeParametersTo(IndentingPrintWriter out) {
-        if (config.includeMethodParams()) {
+        if (diagram.config.includeMethodParams()) {
             String separator = "";
             for (Parameter parameter : methodDoc.parameters()) {
                 out.append(separator);
-                if (config.includeMethodParamNames()) {
+                if (diagram.config.includeMethodParamNames()) {
                     out.append(parameter.name());
-                    if (config.includeMethodParamTypes()) {
+                    if (diagram.config.includeMethodParamTypes()) {
                         out.append(':');
                     }
                 }
-                if (config.includeMethodParamTypes()) {
+                if (diagram.config.includeMethodParamTypes()) {
                     out.append(parameter.type().simpleTypeName());
                 }
                 separator = ", ";
@@ -111,26 +110,19 @@ public class MethodRenderer extends Renderer {
         return out;
     }
 
-    protected IndentingPrintWriter writeReturnTypeTo(IndentingPrintWriter out) {
-        if (methodDoc instanceof MethodDoc) {
-            out.append(": ").append(((MethodDoc) methodDoc).returnType().typeName());
-        }
-        return out;
-    }
-
-    public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
+    protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         if (includeMethod()) {
             // deprecation:
             //        + --deprecatedString--(): String <<deprecated>>
 
             if (isAbstract()) {
-                out.write("{abstract} ");
+                out.append("{abstract}").whitespace();
             }
             FieldRenderer.writeAccessibility(out, methodDoc);
             writeNameTo(out);
-            writeParametersTo(out.append("(")).append(')');
+            writeParametersTo(out.append('(')).append(')');
             if (methodDoc instanceof MethodDoc) {
-                writeTypeTo(out.append(": "), ((MethodDoc) methodDoc).returnType());
+                writeTypeTo(out.append(':').whitespace(), ((MethodDoc) methodDoc).returnType());
             }
             return out.newline();
         }
@@ -167,10 +159,10 @@ public class MethodRenderer extends Renderer {
      * and this method happens to be such a method.
      */
     private boolean isMethodFromExcludedClass() {
-        if (methodDoc instanceof MethodDoc && !config.includeOverridesFromExcludedReferences()) {
+        if (methodDoc instanceof MethodDoc && !diagram.config.includeOverridesFromExcludedReferences()) {
             ClassDoc overriddenClass = ((MethodDoc) methodDoc).overriddenClass();
             while (overriddenClass != null) {
-                if (config.excludedReferences().contains(overriddenClass.qualifiedName())) {
+                if (diagram.config.excludedReferences().contains(overriddenClass.qualifiedName())) {
                     LOGGER.log(Level.FINEST, "Method \"{0}{1}\" overrides method from excluded reference \"{2}\".",
                             new Object[]{methodDoc.qualifiedName(), methodDoc.flatSignature(), overriddenClass.qualifiedName()});
                     return true;

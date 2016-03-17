@@ -18,31 +18,21 @@ package nl.talsmasoftware.umldoclet.rendering.indent;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.io.Writer;
 
+import static nl.talsmasoftware.umldoclet.testing.Testing.NEWLINE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 
 /**
- * Created on 17-02-2016.
+ * Tests for the intenting print writer.
+ * By unit-testing this class, we effectively also test the IndentingWriter implementation
+ * that provides the actual indenting functionality.
  *
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
 public class IndentingPrintWriterTest {
-
-    /**
-     * Determine the newline for this OS.
-     */
-    private static final String NEWLINE;
-
-    static {
-        Writer writer = new StringWriter();
-        new PrintWriter(writer).println();
-        NEWLINE = writer.toString();
-    }
 
     @Test
     public void testIndentingPrintWriter_nullWriter() {
@@ -65,6 +55,19 @@ public class IndentingPrintWriterTest {
                 "    text" + NEWLINE +
                         "    plus a test" + NEWLINE +
                         "    with contained newline")));
+    }
+
+    @Test
+    public void testWhitespaceRendering() throws IOException {
+        StringWriter target = new StringWriter();
+        IndentingPrintWriter.wrap(target)
+                .whitespace().whitespace()
+                .indent().whitespace().append("Text ending in whitespace ").whitespace().append("!").newline()
+                .whitespace().whitespace().append("Whitespace on beginning of line.")
+                .flush();
+        assertThat(target, hasToString(equalTo(
+                "    Text ending in whitespace !" + NEWLINE +
+                        "    Whitespace on beginning of line.")));
     }
 
 }

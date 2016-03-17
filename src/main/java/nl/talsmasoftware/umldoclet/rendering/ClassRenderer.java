@@ -16,7 +16,6 @@
 package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.*;
-import nl.talsmasoftware.umldoclet.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.ArrayList;
@@ -36,33 +35,33 @@ public class ClassRenderer extends Renderer {
     protected final ClassDoc classDoc;
     private final Collection<NoteRenderer> notes = new ArrayList<>();
 
-    public ClassRenderer(UMLDocletConfig config, UMLDiagram diagram, ClassDoc classDoc) {
-        super(config, diagram);
+    protected ClassRenderer(UMLDiagram diagram, ClassDoc classDoc) {
+        super(diagram);
         this.classDoc = requireNonNull(classDoc, "No class documentation provided.");
         // Enum constants are added first.
         for (FieldDoc enumConstant : classDoc.enumConstants()) {
-            children.add(new FieldRenderer(config, diagram, enumConstant));
+            children.add(new FieldRenderer(diagram, enumConstant));
         }
         // TODO: Couldn't we make Renderer Comparable and have 'children' become a TreeSet?
         // --> Probably, after more tests are in place!
         List<FieldRenderer> fields = new ArrayList<>(); // static fields come before non-static fields.
         for (FieldDoc field : classDoc.fields(false)) {
             if (field.isStatic()) {
-                children.add(new FieldRenderer(config, diagram, field));
+                children.add(new FieldRenderer(diagram, field));
             } else {
-                fields.add(new FieldRenderer(config, diagram, field));
+                fields.add(new FieldRenderer(diagram, field));
             }
         }
         children.addAll(fields);
         for (ConstructorDoc constructor : classDoc.constructors(false)) {
-            children.add(new MethodRenderer(config, diagram, constructor));
+            children.add(new MethodRenderer(diagram, constructor));
         }
         List<MethodRenderer> abstractMethods = new ArrayList<>();
         for (MethodDoc method : classDoc.methods(false)) {
             if (method.isAbstract()) {
-                abstractMethods.add(new MethodRenderer(config, diagram, method));
+                abstractMethods.add(new MethodRenderer(diagram, method));
             } else {
-                children.add(new MethodRenderer(config, diagram, method));
+                children.add(new MethodRenderer(diagram, method));
             }
         }
         children.addAll(abstractMethods); // abstract methods come after regular methods in our UML diagrams.
@@ -78,7 +77,7 @@ public class ClassRenderer extends Renderer {
         for (Tag notetag : classDoc.tags(tagname)) {
             String note = notetag.text();
             if (note != null) {
-                notes.add(new NoteRenderer(config, currentDiagram, note, classDoc.qualifiedName()));
+                notes.add(new NoteRenderer(diagram, note, classDoc.qualifiedName()));
             }
         }
     }
@@ -110,14 +109,14 @@ public class ClassRenderer extends Renderer {
         return out;
     }
 
-    public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
-        currentDiagram.encounteredTypes.add(classDoc.qualifiedTypeName());
-        out.append(umlType()).append(' ').append(classDoc.qualifiedTypeName());
+    protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
+        diagram.encounteredTypes.add(classDoc.qualifiedTypeName());
+        out.append(umlType()).whitespace().append(classDoc.qualifiedTypeName());
         writeGenericsTo(out);
         if (isDeprecated(classDoc)) {
-            out.append(" <<deprecated>>"); // I don't know how to strikethrough a class name!
+            out.whitespace().append("<<deprecated>>"); // I don't know how to strikethrough a class name!
         }
-        writeChildrenTo(out.append(" {").newline()).append("}").newline().newline();
+        writeChildrenTo(out.whitespace().append('{').newline()).append('}').newline().newline();
         return writeNotesTo(out);
     }
 
@@ -130,7 +129,6 @@ public class ClassRenderer extends Renderer {
     public boolean equals(Object other) {
         return this == other || (other != null && ClassRenderer.class.equals(other.getClass())
                 && Objects.equals(classDoc.qualifiedName(), ((ClassRenderer) other).classDoc.qualifiedName()));
-        // || super.equals(other);
     }
 
 }
