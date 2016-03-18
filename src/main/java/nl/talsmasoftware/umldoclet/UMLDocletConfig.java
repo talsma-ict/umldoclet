@@ -59,6 +59,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
         UML_INCLUDE_FIELD_TYPES("-umlIncludeFieldTypes", Boolean.class, "true"),
         UML_INCLUDE_METHOD_PARAM_NAMES("-umlIncludeMethodParamNames", Boolean.class, "false"),
         UML_INCLUDE_METHOD_PARAM_TYPES("-umlIncludeMethodParamTypes", Boolean.class, "true"),
+        UML_INCLUDE_METHOD_RETURNTYPES("-umlIncludeMethodReturntypes", Boolean.class, "true"),
         UML_INCLUDE_CONSTRUCTORS("-umlIncludeConstructors", Boolean.class, "true"),
         UML_INCLUDE_DEFAULT_CONSTRUCTORS("-umlIncludeDefaultConstructors", Boolean.class, "false"),
         UML_INCLUDE_PRIVATE_METHODS("-umlIncludePrivateMethods", Boolean.class, "false"),
@@ -344,6 +345,10 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
      */
     public boolean includeMethodParamTypes() {
         return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_METHOD_PARAM_TYPES));
+    }
+
+    public boolean includeMethodReturntypes() {
+        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_METHOD_RETURNTYPES));
     }
 
     /**

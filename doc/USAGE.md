@@ -68,6 +68,7 @@ chosen in such a manner, that the options rarely need to be overridden.
 | -umlIncludeFieldTypes             | _boolean_         | `true`        | Whether the field types will be included in the rendered diagrams. |
 | -umlIncludeMethodParamNames       | _boolean_         | `false`       | Whether the names of method parameters will be included in the rendered diagrams. |
 | -umlIncludeMethodParamTypes       | _boolean_         | `true`        | Whether the types of method parameters will be included in the rendered diagrams. |
+| -umlIncludeMethodReturntypes      | _boolean_         | `true`        | Whether the returntypes of methods will be included in the rendered diagrams. |
 | -umlIncludeConstructors           | _boolean_         | `true`        | Whether the class constructors will be included in the rendered diagrams. |
 | -umlIncludeDefaultConstructors    | _boolean_         | `false`       | (_only applicable when `-umlIncludeConstructors` is `true`_) Whether the class constructors will still be included in the rendered diagrams if the only constructor is the default constructor without parameters. |
 | -umlIncludePrivateMethods         | _boolean_         | `false`       | Whether `private` methods will be included in the rendered diagrams. |

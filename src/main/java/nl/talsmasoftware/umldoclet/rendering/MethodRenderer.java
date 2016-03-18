@@ -121,7 +121,7 @@ public class MethodRenderer extends Renderer {
             FieldRenderer.writeAccessibility(out, methodDoc);
             writeNameTo(out);
             writeParametersTo(out.append('(')).append(')');
-            if (methodDoc instanceof MethodDoc) {
+            if (methodDoc instanceof MethodDoc && diagram.config.includeMethodReturntypes()) {
                 writeTypeTo(out.append(':').whitespace(), ((MethodDoc) methodDoc).returnType());
             }
             return out.newline();
