@@ -40,7 +40,7 @@ import static nl.talsmasoftware.umldoclet.rendering.Renderer.isDeprecated;
  *
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
-public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> implements Cloneable, Closeable {
+public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> implements Cloneable, Closeable {
     private static final String UML_ROOTLOGGER_NAME = UMLDoclet.class.getPackage().getName();
     private static final Logger LOGGER = Logger.getLogger(UMLDocletConfig.class.getName());
 
@@ -142,30 +142,20 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
         List<String[]> stdOpts = new ArrayList<>(), invalidOpts = new ArrayList<>();
         for (String[] option : options) {
             try {
+                // TODO: Refactor into Setting class.
                 final Setting setting = Setting.forOption(option);
                 if (setting == null) {
                     stdOpts.add(option);
                 } else if (Collection.class.isAssignableFrom(setting.optionType)) {
                     List<String> values = new ArrayList<>();
                     if (super.containsKey(setting)) {
-                        for (String value : super.get(setting)) {
-                            values.add(value);
-                        }
+                        values.addAll((Collection<String>) super.get(setting));
                     }
-                    boolean skip = !values.isEmpty();
-                    for (String validated : setting.validate(option)) {
-                        if (!skip) { // skip first
-                            for (String value : split(validated)) {
-                                if (!value.trim().isEmpty()) {
-                                    values.add(value.trim());
-                                }
-                            }
-                        }
-                        skip = false;
-                    }
-                    super.put(setting, values.toArray(new String[values.size()]));
+                    List<String> split = split(setting.validate(option));
+                    values.addAll(split.subList(1, split.size()));
+                    super.put(setting, values);
                 } else {
-                    super.put(setting, setting.validate(option));
+                    super.put(setting, setting.validate(option)[1]);
                 }
             } catch (RuntimeException invalid) {
                 reporter.printError(String.format("Invalid option \"%s\". %s", option[0], invalid.getMessage()));
@@ -189,38 +179,29 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
         return properties;
     }
 
-    final EnumMap<Setting, String> cachedResults = new EnumMap(Setting.class);
-
     String stringValue(Setting setting, String... standardOpts) {
-        if (!cachedResults.containsKey(setting)) {
-            final String[] option = super.get(setting);
-            String value = Objects.toString(option == null || option.length < 2 ? null : option[1], null);
-            for (int i = 0; value == null && i < standardOpts.length; i++) {
-                for (int j = 0; j < standardOptions.length; j++) {
-                    if (standardOptions[j].length > 1
-                            && standardOpts[i].equalsIgnoreCase(standardOptions[j][0])) {
-                        value = standardOptions[j][1];
-                        LOGGER.log(Level.FINEST, "Using standard option \"{0}\" for setting \"{1}\": \"{2}\".",
-                                new Object[]{standardOpts[i], setting, value});
-                        break;
-                    }
+        String value = Objects.toString(super.get(setting), null);
+        for (int i = 0; value == null && i < standardOpts.length; i++) {
+            for (int j = 0; j < standardOptions.length; j++) {
+                if (standardOptions[j].length > 1
+                        && standardOpts[i].equalsIgnoreCase(standardOptions[j][0])) {
+                    value = standardOptions[j][1];
+                    LOGGER.log(Level.FINEST, "Using standard option \"{0}\" for setting \"{1}\": \"{2}\".",
+                            new Object[]{standardOpts[i], setting, value});
+                    break;
                 }
             }
-            cachedResults.put(setting, Objects.toString(value, setting.defaultValue));
         }
-        return cachedResults.get(setting);
+        return Objects.toString(value, setting.defaultValue);
     }
 
     List<String> stringValues(Setting setting) {
         if (super.containsKey(setting)) {
-            List<String> values = emptyList();
-            final String[] strings = super.get(setting);
-            if (strings != null && strings.length > 1) {
-                for (int i = 1; i < strings.length; i++) {
-                    values = add(values, strings[i]);
-                }
+            Object value = super.get(setting);
+            if (value instanceof List) {
+                return (List<String>) value;
             }
-            return values;
+            return split(value.toString());
         }
         return split(setting.defaultValue);
     }
@@ -530,18 +511,10 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, String[]> 
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder(getClass().getSimpleName()).append('{');
+        StringBuilder result = new StringBuilder(getClass().getSimpleName())
+                .append(super.toString())
+                .append(",StandardOptions{");
         String sep = "";
-        for (String[] option : super.values()) {
-            if (option.length > 0) {
-                result.append(sep).append(option[0]);
-                if (option.length > 1) result.append(":").append(option[1]);
-                for (int i = 2; i < option.length; i++) result.append(' ').append(option[i]);
-                sep = ", ";
-            }
-        }
-        result.append("},StandardOptions{");
-        sep = "";
         for (String[] option : standardOptions) {
             if (option.length > 0) {
                 result.append(sep).append(option[0]);
