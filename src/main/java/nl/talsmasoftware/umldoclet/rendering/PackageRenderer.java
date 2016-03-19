@@ -44,7 +44,7 @@ public class PackageRenderer extends Renderer {
             if (classDoc == null) {
                 LOGGER.log(Level.WARNING, "Encountered <null> class doc in package \"{0}\"!", packageDoc.name());
             } else if (diagram.config.includeClass(classDoc)) {
-                children.add(new ClassRenderer(diagram, classDoc));
+                children.add(new ClassRenderer(this, classDoc));
             }
         }
         List<ClassReferenceRenderer> references = new ArrayList<>();

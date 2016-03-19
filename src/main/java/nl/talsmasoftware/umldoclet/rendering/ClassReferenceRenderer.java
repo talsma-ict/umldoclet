@@ -37,28 +37,24 @@ public class ClassReferenceRenderer extends ClassRenderer {
 
     protected final String qualifiedName;
     protected final String umlreference;
-    protected final ClassDoc referent;
 
     // Additiona info fields to be added to the reference.
     String cardinality1, cardinality2, note;
 
-    protected ClassReferenceRenderer(UMLDiagram diagram, ClassDoc documentedClass, String umlreference, ClassDoc referent) {
-        this(diagram, documentedClass, null, umlreference, referent);
+    protected ClassReferenceRenderer(ClassRenderer parent, ClassDoc documentedClass, String umlreference) {
+        this(parent, documentedClass, null, umlreference);
     }
 
-    protected ClassReferenceRenderer(UMLDiagram diagram, String documentedClassQualifiedName, String umlreference, ClassDoc referent) {
-        this(diagram, null, documentedClassQualifiedName, umlreference, referent);
+    protected ClassReferenceRenderer(ClassRenderer parent, String documentedClassQualifiedName, String umlreference) {
+        this(parent, null, documentedClassQualifiedName, umlreference);
     }
 
-    private ClassReferenceRenderer(UMLDiagram diagram, ClassDoc documentedClass, String qualifiedName,
-                                   String umlreference, ClassDoc referent) {
-
-        super(diagram, documentedClass == null ? referent : documentedClass);
+    private ClassReferenceRenderer(ClassRenderer parent, ClassDoc documentedClass, String qualifiedName, String umlreference) {
+        super(parent, documentedClass == null ? parent.classDoc : documentedClass);
         super.children.clear();
         this.qualifiedName = requireNonNull(documentedClass == null ? qualifiedName : documentedClass.qualifiedName(),
                 "Qualified name of documented reference is required.");
         this.umlreference = requireNonNull(umlreference, "No UML reference type provided.");
-        this.referent = requireNonNull(referent, "No referent provided.");
         if (diagram.config.includeAbstractSuperclassMethods() && documentedClass != null) {
             for (MethodDoc methodDoc : documentedClass.methods(false)) {
                 if (methodDoc.isAbstract()) {
@@ -68,38 +64,39 @@ public class ClassReferenceRenderer extends ClassRenderer {
         }
     }
 
-    static Collection<ClassReferenceRenderer> referencesFor(ClassRenderer includedClass) {
-        requireNonNull(includedClass, "Included class is required in order to find its references.");
-        final ClassDoc referent = includedClass.classDoc;
-        final String referentName = referent.qualifiedName();
+    static Collection<ClassReferenceRenderer> referencesFor(ClassRenderer parent) {
+        requireNonNull(parent, "Included class is required in order to find its references.");
+//        final ClassDoc referent = includedClass.classDoc;
+        final String referentName = parent.classDoc.qualifiedName();
         LOGGER.log(Level.FINEST, "Adding references for included class {0}...", referentName);
         final Collection<ClassReferenceRenderer> references = new LinkedHashSet<>();
-        final Collection<String> excludedReferences = includedClass.diagram.config.excludedReferences();
+        final Collection<String> excludedReferences = parent.diagram.config.excludedReferences();
 
         // Add extended superclass reference.
-        final String superclassName = referent.superclass() == null ? null : referent.superclass().qualifiedName();
+        ClassDoc superclass = parent.classDoc.superclass();
+        final String superclassName = superclass == null ? null : superclass.qualifiedName();
         if (superclassName == null) {
             LOGGER.log(Level.FINE, "Encountered <null> as superclass of \"{0}\".", referentName);
         } else if (excludedReferences.contains(superclassName)) {
             LOGGER.log(Level.FINEST, "Excluding superclass \"{0}\" of \"{1}\"...",
                     new Object[]{superclassName, referentName});
-        } else if (references.add(new ClassReferenceRenderer(
-                includedClass.diagram, referent.superclass(), "<|--", referent))) {
-            LOGGER.log(Level.FINEST, "Added reference to superclass \"{0}\" from \"{1}\".", new Object[]{superclassName, referentName});
+        } else if (references.add(new ClassReferenceRenderer(parent, superclass, "<|--"))) {
+            LOGGER.log(Level.FINEST, "Added reference to superclass \"{0}\" from \"{1}\".",
+                    new Object[]{superclassName, referentName});
         } else {
-            LOGGER.log(Level.FINE, "Excluding reference to superclass \"{0}\" from \"{1}\"; the reference was already generated.", new Object[]{superclassName, referentName});
+            LOGGER.log(Level.FINE, "Excluding reference to superclass \"{0}\" from \"{1}\"; the reference was already generated.",
+                    new Object[]{superclassName, referentName});
         }
 
         // Add implemented interface references.
-        for (ClassDoc interfaceDoc : referent.interfaces()) {
+        for (ClassDoc interfaceDoc : parent.classDoc.interfaces()) {
             final String interfaceName = interfaceDoc == null ? null : interfaceDoc.qualifiedName();
             if (interfaceName == null) {
                 LOGGER.log(Level.INFO, "Encountered <null> as implemented interface of \"{0}\".", referentName);
             } else if (excludedReferences.contains(interfaceName)) {
                 LOGGER.log(Level.FINEST, "Excluding interface \"{0}\" of \"{1}\"...",
                         new Object[]{interfaceName, referentName});
-            } else if (references.add(new ClassReferenceRenderer(
-                    includedClass.diagram, interfaceDoc, "<|..", referent))) {
+            } else if (references.add(new ClassReferenceRenderer(parent, interfaceDoc, "<|.."))) {
                 LOGGER.log(Level.FINEST, "Added reference to interface \"{0}\" from \"{1}\".", new Object[]{interfaceName, referentName});
             } else {
                 LOGGER.log(Level.FINE, "Excluding reference to interface \"{0}\" from \"{1}\"; the reference was already generated.", new Object[]{interfaceName, referentName});
@@ -107,13 +104,12 @@ public class ClassReferenceRenderer extends ClassRenderer {
         }
 
         // Add reference to containing classes.
-        if (referent.containingClass() != null) {
-            references.add(new ClassReferenceRenderer(
-                    includedClass.diagram, referent.containingClass(), "+--", referent));
+        if (parent.classDoc.containingClass() != null) {
+            references.add(new ClassReferenceRenderer(parent, parent.classDoc.containingClass(), "+--"));
         }
 
         // Support for tags defined in legacy doclet.
-        references.addAll(LegacyTag.legacyReferencesFor(includedClass));
+        references.addAll(LegacyTag.legacyReferencesFor(parent));
 
         return references;
     }
@@ -147,13 +143,14 @@ public class ClassReferenceRenderer extends ClassRenderer {
         writeTypeDeclarationTo(out);
 
         // Write UML reference itself.
+        String parentName = ((ClassRenderer) parent).classDoc.qualifiedTypeName();
         LOGGER.log(Level.FINEST, "Generating reference: \"{0}\" {1} \"{2}\"...",
-                new Object[]{qualifiedName, umlreference, referent.qualifiedName()});
+                new Object[]{qualifiedName, umlreference, parentName});
         out.append(qualifiedName).whitespace()
                 .append(quoted(cardinality2)).whitespace()
                 .append(umlreference).whitespace()
                 .append(quoted(cardinality1)).whitespace()
-                .append(referent.qualifiedTypeName());
+                .append(parentName);
         if (note != null && !note.trim().isEmpty()) {
             out.append(": ").append(note);
         }
@@ -162,15 +159,15 @@ public class ClassReferenceRenderer extends ClassRenderer {
 
     @Override
     public int hashCode() {
-        return Objects.hash(qualifiedName, umlreference, referent.qualifiedName());
+        return Objects.hash(qualifiedName, parent, umlreference);
     }
 
     @Override
     public boolean equals(Object other) {
         return this == other || (other instanceof ClassReferenceRenderer
+                && Objects.equals(parent, ((ClassReferenceRenderer) other).parent)
                 && Objects.equals(qualifiedName, ((ClassReferenceRenderer) other).qualifiedName)
                 && Objects.equals(umlreference, ((ClassReferenceRenderer) other).umlreference)
-                && Objects.equals(referent.qualifiedName(), ((ClassReferenceRenderer) other).referent.qualifiedName())
         );
     }
 

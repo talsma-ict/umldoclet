@@ -29,7 +29,7 @@ public class DeprecationTest {
 
     @Test
     public void testClassDeprecatedByAnnotation() {
-        final String className = DeprecatedByAnnotationClass.class.getName();
+        final String className = DeprecatedByAnnotationClass.class.getSimpleName();
         String classUml = Testing.readFile("testing/deprecation/DeprecatedByAnnotationClass.puml");
         assertThat(classUml, is(not(nullValue())));
 
@@ -43,7 +43,7 @@ public class DeprecationTest {
 
     @Test
     public void testClassDeprecatedByJavadocTag() {
-        final String className = DeprecatedByJavadocTagAbstractClass.class.getName();
+        final String className = DeprecatedByJavadocTagAbstractClass.class.getSimpleName();
         String classUml = Testing.readFile("testing/deprecation/DeprecatedByJavadocTagAbstractClass.puml");
         assertThat(classUml, is(not(nullValue())));
 
@@ -57,7 +57,7 @@ public class DeprecationTest {
 
     @Test
     public void testDeprecationBySuperclass() {
-        final String className = DeprecatedBySuperclass.class.getName();
+        final String className = DeprecatedBySuperclass.class.getSimpleName();
         String classUml = Testing.readFile("testing/deprecation/DeprecatedBySuperclass.puml");
         assertThat(classUml, is(not(nullValue())));
 

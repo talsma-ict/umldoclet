@@ -1,7 +1,7 @@
 package nl.talsmasoftware.umldoclet.testing.legacy;
 
 public interface URLStreamHandler {
-    void OpenConnection();
+    void openConnection();
 
     void parseURL();
 

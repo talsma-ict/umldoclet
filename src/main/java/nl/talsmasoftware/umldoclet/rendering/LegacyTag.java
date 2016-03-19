@@ -70,9 +70,9 @@ public enum LegacyTag {
         this.classPos = classPos;
     }
 
-    private ClassReferenceRenderer createReferenceFrom(UMLDiagram diagram, ClassDoc includedClassDoc, Tag tag) {
+    private ClassReferenceRenderer createReferenceFrom(ClassRenderer parent, Tag tag) {
         ClassReferenceRenderer reference = null;
-        if (diagram != null && tag != null) {
+        if (parent != null && tag != null) {
             // Split tag content.
             String[] parts = tag.text().trim().split("\\s");
             if (classPos >= parts.length) {
@@ -83,23 +83,23 @@ public enum LegacyTag {
 
             // Figure out the referred type name.
             String typename = parts[classPos].trim();
-            ClassDoc referenceDoc = includedClassDoc.findClass(typename);
+            ClassDoc referenceDoc = parent.classDoc.findClass(typename);
             if (referenceDoc != null) {
                 typename = referenceDoc.qualifiedName();
-            } else if (!typename.contains(".") && includedClassDoc.containingPackage() != null) {
-                typename = includedClassDoc.containingPackage().name() + "." + typename;
+            } else if (!typename.contains(".") && parent.classDoc.containingPackage() != null) {
+                typename = parent.classDoc.containingPackage().name() + "." + typename;
             }
 
             // TODO: Maybe leave this concern to the ReferenceRenderer at rendering time?
             // Check if the type is not excluded from the UML rendering.
-            if (diagram.config.excludedReferences().contains(typename)) {
+            if (parent.diagram.config.excludedReferences().contains(typename)) {
                 LOGGER.log(Level.FINE, "Excluding @{0} tag \"{1}\"; the reference is configured as \"excluded\".", new Object[]{tagname, typename});
                 return null;
             }
 
             reference = referenceDoc == null
-                    ? new ClassReferenceRenderer(diagram, typename, umlreference, includedClassDoc)
-                    : new ClassReferenceRenderer(diagram, referenceDoc, umlreference, includedClassDoc);
+                    ? new ClassReferenceRenderer(parent, typename, umlreference)
+                    : new ClassReferenceRenderer(parent, referenceDoc, umlreference);
 
             // Support for Pattern: <cardinality> - <cardinality> <associated class>
             if (classPos == 3) {
@@ -122,7 +122,7 @@ public enum LegacyTag {
             for (LegacyTag legacytag : values()) {
                 for (Tag tag : includedClass.classDoc.tags(legacytag.tagname)) {
                     ClassReferenceRenderer reference = legacytag.createReferenceFrom(
-                            includedClass.diagram, includedClass.classDoc, tag);
+                            includedClass, tag);
                     if (reference == null) {
                         LOGGER.log(Level.FINEST, "Tag @{0} did not result in a reference from \"{1}\"...",
                                 new Object[]{legacytag.tagname, tag.text()});

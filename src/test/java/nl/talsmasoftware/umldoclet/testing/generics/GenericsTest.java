@@ -15,8 +15,7 @@ public class GenericsTest {
     public void testGeneratedGenerics() {
         String constantListUml = Testing.readFile("testing/generics/ConstantList.puml");
         assertThat(constantListUml, is(not(nullValue())));
-        assertThat(constantListUml, containsString(
-                "class nl.talsmasoftware.umldoclet.testing.generics.ConstantList<T, X>"));
+        assertThat(constantListUml, containsString("class ConstantList<T, X>"));
         assertThat(constantListUml, containsString("+delegate: List<T>"));
         assertThat(constantListUml, containsString("+ConstantList(T)"));
         assertThat(constantListUml, containsString("+getX(): X"));

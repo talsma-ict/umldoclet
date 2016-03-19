@@ -32,11 +32,13 @@ import static java.util.Objects.requireNonNull;
  */
 public class ClassRenderer extends Renderer {
 
+    protected final Renderer parent;
     protected final ClassDoc classDoc;
     private final Collection<NoteRenderer> notes = new ArrayList<>();
 
-    protected ClassRenderer(UMLDiagram diagram, ClassDoc classDoc) {
-        super(diagram);
+    protected ClassRenderer(Renderer parent, ClassDoc classDoc) {
+        super(requireNonNull(parent, "No parent renderer for class provided.").diagram);
+        this.parent = parent;
         this.classDoc = requireNonNull(classDoc, "No class documentation provided.");
         // Enum constants are added first.
         for (FieldDoc enumConstant : classDoc.enumConstants()) {
@@ -77,7 +79,10 @@ public class ClassRenderer extends Renderer {
         for (Tag notetag : classDoc.tags(tagname)) {
             String note = notetag.text();
             if (note != null) {
-                notes.add(new NoteRenderer(diagram, note, classDoc.qualifiedName()));
+                String myName = parent instanceof UMLDiagram
+                        ? classDoc.name()
+                        : classDoc.qualifiedTypeName();
+                notes.add(new NoteRenderer(diagram, note, myName));
             }
         }
     }
@@ -109,9 +114,16 @@ public class ClassRenderer extends Renderer {
         return out;
     }
 
+    protected IndentingPrintWriter writeNameTo(IndentingPrintWriter out) {
+        String name = parent instanceof UMLDiagram
+                ? classDoc.name()
+                : classDoc.qualifiedTypeName();
+        diagram.encounteredTypes.add(name);
+        return out.append(name);
+    }
+
     protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
-        diagram.encounteredTypes.add(classDoc.qualifiedTypeName());
-        out.append(umlType()).whitespace().append(classDoc.qualifiedTypeName());
+        writeNameTo(out.append(umlType()).whitespace());
         writeGenericsTo(out);
         if (isDeprecated(classDoc)) {
             out.whitespace().append("<<deprecated>>"); // I don't know how to strikethrough a class name!
