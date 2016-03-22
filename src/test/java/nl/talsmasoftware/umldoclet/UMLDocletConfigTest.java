@@ -18,6 +18,7 @@
 package nl.talsmasoftware.umldoclet;
 
 import com.sun.javadoc.DocErrorReporter;
+import nl.talsmasoftware.umldoclet.config.AbstractSetting;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -78,15 +79,18 @@ public class UMLDocletConfigTest {
 
     private static String optionName(UMLDocletConfig.Setting setting) {
         try {
-            final Field field = setting.getClass().getDeclaredField("optionName");
-            synchronized (field) {
-                final boolean accessible = field.isAccessible();
+            final Field delegateField = UMLDocletConfig.Setting.class.getDeclaredField("delegate");
+            final Field nameField = AbstractSetting.class.getDeclaredField("name");
+            try {
+                delegateField.setAccessible(true);
                 try {
-                    field.setAccessible(true);
-                    return (String) field.get(setting);
+                    nameField.setAccessible(true);
+                    return "-" + nameField.get(delegateField.get(setting));
                 } finally {
-                    field.setAccessible(accessible);
+                    nameField.setAccessible(false);
                 }
+            } finally {
+                delegateField.setAccessible(false);
             }
         } catch (ReflectiveOperationException | RuntimeException e) {
             throw new AssertionError("Could not read \"optionName\" field from setting " + setting + ".", e);

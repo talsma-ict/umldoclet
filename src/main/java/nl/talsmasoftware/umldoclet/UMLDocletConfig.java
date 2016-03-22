@@ -18,6 +18,7 @@ package nl.talsmasoftware.umldoclet;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.DocErrorReporter;
 import com.sun.tools.doclets.standard.Standard;
+import nl.talsmasoftware.umldoclet.config.*;
 
 import java.io.Closeable;
 import java.io.File;
@@ -45,52 +46,54 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> im
     private static final Logger LOGGER = Logger.getLogger(UMLDocletConfig.class.getName());
 
     public enum Setting {
-        UML_LOGLEVEL("-umlLogLevel", String.class, "INFO"),
-        UML_INDENTATION("-umlIndentation", Integer.class, "-1"),
-        UML_BASE_PATH("-umlBasePath", String.class, null),
-        UML_FILE_EXTENSION("-umlFileExtension", String.class, ".puml"),
-        UML_FILE_ENCODING("-umlFileEncoding", String.class, "UTF-8"),
-        UML_SKIP_STANDARD_DOCLET("-umlSkipStandardDoclet", Boolean.class, "false"),
-        UML_INCLUDE_PRIVATE_FIELDS("-umlIncludePrivateFields", Boolean.class, "false"),
-        UML_INCLUDE_PACKAGE_PRIVATE_FIELDS("-umlIncludePackagePrivateFields", Boolean.class, "false"),
-        UML_INCLUDE_PROTECTED_FIELDS("-umlIncludeProtectedFields", Boolean.class, "true"),
-        UML_INCLUDE_PUBLIC_FIELDS("-umlIncludePublicFields", Boolean.class, "true"),
-        UML_INCLUDE_DEPRECATED_FIELDS("-umlIncludeDeprecatedFields", Boolean.class, "false"),
-        UML_INCLUDE_FIELD_TYPES("-umlIncludeFieldTypes", Boolean.class, "true"),
-        UML_INCLUDE_METHOD_PARAM_NAMES("-umlIncludeMethodParamNames", Boolean.class, "false"),
-        UML_INCLUDE_METHOD_PARAM_TYPES("-umlIncludeMethodParamTypes", Boolean.class, "true"),
-        UML_INCLUDE_METHOD_RETURNTYPES("-umlIncludeMethodReturntypes", Boolean.class, "true"),
-        UML_INCLUDE_CONSTRUCTORS("-umlIncludeConstructors", Boolean.class, "true"),
-        UML_INCLUDE_DEFAULT_CONSTRUCTORS("-umlIncludeDefaultConstructors", Boolean.class, "false"),
-        UML_INCLUDE_PRIVATE_METHODS("-umlIncludePrivateMethods", Boolean.class, "false"),
-        UML_INCLUDE_PACKAGE_PRIVATE_METHODS("-umlIncludePackagePrivateMethods", Boolean.class, "false"),
-        UML_INCLUDE_PROTECTED_METHODS("-umlIncludeProtectedMethods", Boolean.class, "true"),
-        UML_INCLUDE_PUBLIC_METHODS("-umlIncludePublicMethods", Boolean.class, "true"),
-        UML_INCLUDE_DEPRECATED_METHODS("-umlIncludeDeprecatedMethods", Boolean.class, "false"),
-        UML_INCLUDE_ABSTRACT_SUPERCLASS_METHODS("-umlIncludeAbstractSuperclassMethods", Boolean.class, "true"),
-        UML_INCLUDE_PRIVATE_CLASSES("-umlIncludePrivateClasses", Boolean.class, "false"),
-        UML_INCLUDE_PACKAGE_PRIVATE_CLASSES("-umlIncludePackagePrivateClasses", Boolean.class, "true"),
-        UML_INCLUDE_PROTECTED_CLASSES("-umlIncludeProtectedClasses", Boolean.class, "true"),
-        UML_INCLUDE_DEPRECATED_CLASSES("-umlIncludeDeprecatedClasses", Boolean.class, "false"),
-        UML_INCLUDE_PRIVATE_INNERCLASSES("-umlIncludePrivateInnerClasses", Boolean.class, "false"),
-        UML_INCLUDE_PACKAGE_PRIVATE_INNERCLASSES("-umlIncludePackagePrivateInnerClasses", Boolean.class, "false"),
-        UML_INCLUDE_PROTECTED_INNERCLASSES("-umlIncludeProtectedInnerClasses", Boolean.class, "false"),
-        UML_EXCLUDED_REFERENCES("-umlExcludedReferences", List.class, "java.lang.Object, java.lang.Enum"),
-        UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES("-umlIncludeOverridesFromExcludedReferences", Boolean.class, "false"),
-        UML_COMMAND("-umlCommand", List.class, "");
+        UML_LOGLEVEL(new StringSetting("umlLogLevel"), "INFO"),
+        UML_INDENTATION(new IntegerSetting("umlIndentation"), "-1"),
+        UML_BASE_PATH(new StringSetting("umlBasePath"), null),
+        UML_FILE_EXTENSION(new StringSetting("umlFileExtension"), ".puml"),
+        UML_FILE_ENCODING(new StringSetting("umlFileEncoding"), "UTF-8"),
+        UML_SKIP_STANDARD_DOCLET("umlSkipStandardDoclet", false),
+        UML_INCLUDE_PRIVATE_FIELDS("umlIncludePrivateFields", false),
+        UML_INCLUDE_PACKAGE_PRIVATE_FIELDS("umlIncludePackagePrivateFields", false),
+        UML_INCLUDE_PROTECTED_FIELDS("umlIncludeProtectedFields", true),
+        UML_INCLUDE_PUBLIC_FIELDS("umlIncludePublicFields", true),
+        UML_INCLUDE_DEPRECATED_FIELDS("umlIncludeDeprecatedFields", false),
+        UML_INCLUDE_FIELD_TYPES("umlIncludeFieldTypes", true),
+        UML_INCLUDE_METHOD_PARAM_NAMES("umlIncludeMethodParamNames", false),
+        UML_INCLUDE_METHOD_PARAM_TYPES("umlIncludeMethodParamTypes", true),
+        UML_INCLUDE_METHOD_RETURNTYPES("umlIncludeMethodReturntypes", true),
+        UML_INCLUDE_CONSTRUCTORS("umlIncludeConstructors", true),
+        UML_INCLUDE_DEFAULT_CONSTRUCTORS("umlIncludeDefaultConstructors", false),
+        UML_INCLUDE_PRIVATE_METHODS("umlIncludePrivateMethods", false),
+        UML_INCLUDE_PACKAGE_PRIVATE_METHODS("umlIncludePackagePrivateMethods", false),
+        UML_INCLUDE_PROTECTED_METHODS("umlIncludeProtectedMethods", true),
+        UML_INCLUDE_PUBLIC_METHODS("umlIncludePublicMethods", true),
+        UML_INCLUDE_DEPRECATED_METHODS("umlIncludeDeprecatedMethods", false),
+        UML_INCLUDE_ABSTRACT_SUPERCLASS_METHODS("umlIncludeAbstractSuperclassMethods", true),
+        UML_INCLUDE_PRIVATE_CLASSES("umlIncludePrivateClasses", false),
+        UML_INCLUDE_PACKAGE_PRIVATE_CLASSES("umlIncludePackagePrivateClasses", true),
+        UML_INCLUDE_PROTECTED_CLASSES("umlIncludeProtectedClasses", true),
+        UML_INCLUDE_DEPRECATED_CLASSES("umlIncludeDeprecatedClasses", false),
+        UML_INCLUDE_PRIVATE_INNERCLASSES("umlIncludePrivateInnerClasses", false),
+        UML_INCLUDE_PACKAGE_PRIVATE_INNERCLASSES("umlIncludePackagePrivateInnerClasses", false),
+        UML_INCLUDE_PROTECTED_INNERCLASSES("umlIncludeProtectedInnerClasses", false),
+        UML_EXCLUDED_REFERENCES(new ListSetting("umlExcludedReferences"), "java.lang.Object, java.lang.Enum"),
+        UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES("umlIncludeOverridesFromExcludedReferences", false),
+        UML_COMMAND(new ListSetting("umlCommand"), "");
 
-        private final String optionName;
-        private final Class<?> optionType;
+        private final AbstractSetting delegate;
         private final String defaultValue;
         private final int optionLength;
 
-        Setting(String option, Class<?> type, String defaultValue) {
-            this(option, type, defaultValue, 2); // By default, declare one option and one parameter string.
+        Setting(String name, boolean defaultValue) {
+            this(new BooleanSetting(name, defaultValue), Boolean.toString(defaultValue));
         }
 
-        Setting(String option, Class<?> type, String defaultValue, int optionLength) {
-            this.optionName = option;
-            this.optionType = type;
+        Setting(AbstractSetting delegate, String defaultValue) {
+            this(delegate, defaultValue, 2); // By default, declare one option and one parameter string.
+        }
+
+        Setting(AbstractSetting delegate, String defaultValue, int optionLength) {
+            this.delegate = delegate;
             this.defaultValue = defaultValue;
             this.optionLength = optionLength;
         }
@@ -98,7 +101,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> im
         private static Setting forOption(String... option) {
             if (option != null && option.length > 0) {
                 for (Setting setting : values()) {
-                    if (setting.optionName.equalsIgnoreCase(option[0].trim())) {
+                    if (setting.delegate.matches(option[0])) {
                         return setting;
                     }
                 }
@@ -112,11 +115,12 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> im
                         "Expected %s but received %s: %s.",
                         optionLength, optionValue.length, Arrays.toString(optionValue)));
             }
+            // TODO MOVE to AbstractSetting API.
             final String value = optionLength > 1 ? optionValue[1].trim() : null;
-            if (Boolean.class.equals(optionType) && value != null && !asList("true", "false").contains(value.toLowerCase(Locale.ENGLISH))) {
+            if (delegate instanceof BooleanSetting && value != null && !asList("true", "false").contains(value.toLowerCase(Locale.ENGLISH))) {
                 throw new IllegalArgumentException(
                         String.format("Expected \"true\" or \"false\", but received \"%s\".", value));
-            } else if (Integer.class.equals(optionType) && value != null && !value.matches("\\d+")) {
+            } else if (delegate instanceof IntegerSetting && value != null && !value.matches("\\d+")) {
                 throw new IllegalArgumentException(
                         String.format("Expected a numerical value, but received \"%s\".", value));
             }
@@ -146,7 +150,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> im
                 final Setting setting = Setting.forOption(option);
                 if (setting == null) {
                     stdOpts.add(option);
-                } else if (Collection.class.isAssignableFrom(setting.optionType)) {
+                } else if (setting.delegate instanceof ListSetting) {
                     List<String> values = new ArrayList<>();
                     if (super.containsKey(setting)) {
                         values.addAll((Collection<String>) super.get(setting));
@@ -186,7 +190,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> im
                 if (standardOptions[j].length > 1
                         && standardOpts[i].equalsIgnoreCase(standardOptions[j][0])) {
                     value = standardOptions[j][1];
-                    LOGGER.log(Level.FINEST, "Using standard option \"{0}\" for setting \"{1}\": \"{2}\".",
+                    LOGGER.log(Level.FINEST, "Using standard option \"{0}\" for delegate \"{1}\": \"{2}\".",
                             new Object[]{standardOpts[i], setting, value});
                     break;
                 }
@@ -305,7 +309,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> im
     }
 
     /**
-     * This configuration setting cannot be directly provided via a single option.
+     * This configuration delegate cannot be directly provided via a single option.
      * This is a combination of the {@code "-umlIncludeMethodParamNames"} OR {@code "-umlIncludeMethodParamTypes"}.
      *
      * @return Whether or not to include method parameters in the UML diagrams (either by name, type or both).
