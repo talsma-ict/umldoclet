@@ -17,6 +17,7 @@ package nl.talsmasoftware.umldoclet;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.DocErrorReporter;
+import com.sun.javadoc.SourcePosition;
 import com.sun.tools.doclets.standard.Standard;
 import nl.talsmasoftware.umldoclet.config.*;
 
@@ -41,16 +42,16 @@ import static nl.talsmasoftware.umldoclet.rendering.Renderer.isDeprecated;
  *
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
-public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> implements Cloneable, Closeable {
+public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> implements DocErrorReporter, Cloneable, Closeable {
     private static final String UML_ROOTLOGGER_NAME = UMLDoclet.class.getPackage().getName();
     private static final Logger LOGGER = Logger.getLogger(UMLDocletConfig.class.getName());
 
     public enum Setting {
-        UML_LOGLEVEL(new StringSetting("umlLogLevel"), "INFO"),
-        UML_INDENTATION(new IntegerSetting("umlIndentation"), "-1"),
-        UML_BASE_PATH(new StringSetting("umlBasePath"), null),
-        UML_FILE_EXTENSION(new StringSetting("umlFileExtension"), ".puml"),
-        UML_FILE_ENCODING(new StringSetting("umlFileEncoding"), "UTF-8"),
+        UML_LOGLEVEL("umlLogLevel", "INFO"),
+        UML_INDENTATION("umlIndentation", -1),
+        UML_BASE_PATH("umlBasePath", (String) null),
+        UML_FILE_EXTENSION("umlFileExtension", ".puml"),
+        UML_FILE_ENCODING("umlFileEncoding", "UTF-8"),
         UML_SKIP_STANDARD_DOCLET("umlSkipStandardDoclet", false),
         UML_INCLUDE_PRIVATE_FIELDS("umlIncludePrivateFields", false),
         UML_INCLUDE_PACKAGE_PRIVATE_FIELDS("umlIncludePackagePrivateFields", false),
@@ -80,22 +81,24 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> im
         UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES("umlIncludeOverridesFromExcludedReferences", false),
         UML_COMMAND(new ListSetting("umlCommand"), "");
 
-        private final AbstractSetting delegate;
+        private final AbstractSetting<?> delegate;
         private final String defaultValue;
-        private final int optionLength;
+
+        Setting(String name, String defaultValue) {
+            this(new StringSetting(name, defaultValue), defaultValue);
+        }
 
         Setting(String name, boolean defaultValue) {
             this(new BooleanSetting(name, defaultValue), Boolean.toString(defaultValue));
         }
 
-        Setting(AbstractSetting delegate, String defaultValue) {
-            this(delegate, defaultValue, 2); // By default, declare one option and one parameter string.
+        Setting(String name, int defaultValue) {
+            this(new IntegerSetting(name, defaultValue), Integer.toString(defaultValue));
         }
 
-        Setting(AbstractSetting delegate, String defaultValue, int optionLength) {
+        Setting(AbstractSetting delegate, String defaultValue) {
             this.delegate = delegate;
             this.defaultValue = defaultValue;
-            this.optionLength = optionLength;
         }
 
         private static Setting forOption(String... option) {
@@ -110,17 +113,17 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> im
         }
 
         String[] validate(String[] optionValue) {
-            if (optionLength != optionValue.length) {
+            if (2 != optionValue.length) {
                 throw new IllegalArgumentException(String.format(
                         "Expected %s but received %s: %s.",
-                        optionLength, optionValue.length, Arrays.toString(optionValue)));
+                        2, optionValue.length, Arrays.toString(optionValue)));
             }
             // TODO MOVE to AbstractSetting API.
-            final String value = optionLength > 1 ? optionValue[1].trim() : null;
-            if (delegate instanceof BooleanSetting && value != null && !asList("true", "false").contains(value.toLowerCase(Locale.ENGLISH))) {
+            final String value = optionValue[1].trim();
+            if (delegate instanceof BooleanSetting && !asList("true", "false").contains(value.toLowerCase(Locale.ENGLISH))) {
                 throw new IllegalArgumentException(
                         String.format("Expected \"true\" or \"false\", but received \"%s\".", value));
-            } else if (delegate instanceof IntegerSetting && value != null && !value.matches("\\d+")) {
+            } else if (delegate instanceof IntegerSetting && !value.matches("\\d+")) {
                 throw new IllegalArgumentException(
                         String.format("Expected a numerical value, but received \"%s\".", value));
             }
@@ -129,13 +132,14 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> im
     }
 
     private final String defaultBasePath;
-    private final String[][] invalidOptions;
     private final String[][] standardOptions;
+    private final DocErrorReporter reporterDelegate;
     private Properties properties;
     private Handler umlLogHandler;
 
     public UMLDocletConfig(String[][] options, DocErrorReporter reporter) {
         super(Setting.class);
+        this.reporterDelegate = reporter;
         String basePath = ".";
         try {
             basePath = new File(".").getCanonicalPath();
@@ -143,31 +147,16 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> im
             reporter.printError("Could not determine base path: " + ioe.getMessage());
         }
         this.defaultBasePath = basePath;
-        List<String[]> stdOpts = new ArrayList<>(), invalidOpts = new ArrayList<>();
+        List<String[]> stdOpts = new ArrayList<>();
         for (String[] option : options) {
-            try {
-                // TODO: Refactor into Setting class.
-                final Setting setting = Setting.forOption(option);
-                if (setting == null) {
-                    stdOpts.add(option);
-                } else if (setting.delegate instanceof ListSetting) {
-                    List<String> values = new ArrayList<>();
-                    if (super.containsKey(setting)) {
-                        values.addAll((Collection<String>) super.get(setting));
-                    }
-                    List<String> split = split(setting.validate(option));
-                    values.addAll(split.subList(1, split.size()));
-                    super.put(setting, values);
-                } else {
-                    super.put(setting, setting.validate(option)[1]);
-                }
-            } catch (RuntimeException invalid) {
-                reporter.printError(String.format("Invalid option \"%s\". %s", option[0], invalid.getMessage()));
-                invalidOpts.add(option);
+            final Setting setting = Setting.forOption(option);
+            if (setting == null) {
+                stdOpts.add(option);
+            } else {
+                this.put(setting, ((AbstractSetting<Object>) setting.delegate).parse(option, get(setting)));
             }
         }
         this.standardOptions = stdOpts.toArray(new String[stdOpts.size()][]);
-        this.invalidOptions = invalidOpts.toArray(new String[invalidOpts.size()][]);
         initializeUmlLogging();
     }
 
@@ -481,13 +470,12 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> im
 
     public static int optionLength(String option) {
         final Setting setting = Setting.forOption(option);
-        return setting == null ? Standard.optionLength(option) : setting.optionLength;
+        return setting == null ? Standard.optionLength(option) : 2;
     }
 
     public static boolean validOptions(String[][] options, DocErrorReporter reporter) {
         try (UMLDocletConfig config = new UMLDocletConfig(options, reporter)) {
-            return Standard.validOptions(config.standardOptions, reporter)
-                    && config.invalidOptions.length == 0;
+            return Standard.validOptions(config.standardOptions, reporter);
         }
     }
 
@@ -568,5 +556,37 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> im
         list.add(elem);
         return list;
     }
+
+    // DocErrorReporter delegation:
+    @Override
+    public void printError(String msg) {
+        reporterDelegate.printError(msg);
+    }
+
+    @Override
+    public void printError(SourcePosition pos, String msg) {
+        reporterDelegate.printError(pos, msg);
+    }
+
+    @Override
+    public void printWarning(String msg) {
+        reporterDelegate.printWarning(msg);
+    }
+
+    @Override
+    public void printWarning(SourcePosition pos, String msg) {
+        reporterDelegate.printWarning(pos, msg);
+    }
+
+    @Override
+    public void printNotice(String msg) {
+        reporterDelegate.printNotice(msg);
+    }
+
+    @Override
+    public void printNotice(SourcePosition pos, String msg) {
+        reporterDelegate.printNotice(pos, msg);
+    }
+
 
 }

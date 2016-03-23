@@ -20,10 +20,17 @@ package nl.talsmasoftware.umldoclet.config;
 /**
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
-public class StringSetting extends AbstractSetting {
+public class StringSetting extends AbstractSetting<String> {
 
-    public StringSetting(String name) {
+    private final String defaultValue;
+
+    public StringSetting(String name, String defaultValue) {
         super(name);
+        this.defaultValue = defaultValue;
     }
 
+    @Override
+    public String parse(String[] option, String currentValue) {
+        return option.length > 1 ? option[1] : currentValue;
+    }
 }

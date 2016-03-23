@@ -20,10 +20,17 @@ package nl.talsmasoftware.umldoclet.config;
 /**
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
-public class IntegerSetting extends AbstractSetting {
+public class IntegerSetting extends AbstractSetting<Integer> {
 
-    public IntegerSetting(String name) {
+    private final int defaultValue;
+
+    public IntegerSetting(String name, int defaultValue) {
         super(name);
+        this.defaultValue = defaultValue;
     }
 
+    @Override
+    public Integer parse(String[] option, Integer currentValue) {
+        return option.length > 1 ? Integer.valueOf(option[1]) : currentValue;
+    }
 }

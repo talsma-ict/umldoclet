@@ -17,13 +17,37 @@
 
 package nl.talsmasoftware.umldoclet.config;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 /**
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
-public class ListSetting extends AbstractSetting {
+public class ListSetting extends AbstractSetting<List<String>> {
 
     public ListSetting(String name) {
         super(name);
+    }
+
+    @Override
+    public List<String> parse(String[] option, List<String> currentValue) {
+        List<String> values = new ArrayList<>();
+        if (option.length > 1) {
+            if (currentValue != null) {
+                for (Object val : currentValue) {
+                    values.add(Objects.toString(val));
+                }
+            }
+            for (int i = 1; i < option.length; i++) {
+                for (String part : option[i].split("\\s*[,;\\n]\\s*")) {
+                    if (!part.isEmpty()) {
+                        values.add(part);
+                    }
+                }
+            }
+        }
+        return values.isEmpty() ? currentValue : values;
     }
 
 }
