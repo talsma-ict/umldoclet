@@ -17,8 +17,6 @@
 
 package nl.talsmasoftware.umldoclet.config;
 
-import nl.talsmasoftware.umldoclet.UMLDocletConfig;
-
 /**
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
@@ -32,9 +30,15 @@ public class BooleanSetting extends AbstractSetting<Boolean> {
     }
 
     @Override
-    public Boolean parse(String[] option, Boolean currentValue) {
+    public Boolean parse(String[] option, Object currentValue) {
         // TODO: Error reporting!
-        return option.length > 1 ? Boolean.valueOf(option[1]) : currentValue;
+        return option.length > 1 ? Boolean.valueOf(option[1]) : value(currentValue);
+    }
+
+    @Override
+    public Boolean value(Object configured) {
+        return configured instanceof Boolean ? (Boolean) configured
+                : defaultValue;
     }
 
 }

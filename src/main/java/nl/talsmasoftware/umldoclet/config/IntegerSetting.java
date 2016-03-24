@@ -30,7 +30,13 @@ public class IntegerSetting extends AbstractSetting<Integer> {
     }
 
     @Override
-    public Integer parse(String[] option, Integer currentValue) {
-        return option.length > 1 ? Integer.valueOf(option[1]) : currentValue;
+    public Integer parse(String[] option, Object currentValue) {
+        return option.length > 1 ? Integer.valueOf(option[1]) : value(currentValue);
+    }
+
+    @Override
+    public Integer value(Object configured) {
+        return configured instanceof Integer ? (Integer) configured
+                : defaultValue;
     }
 }

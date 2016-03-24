@@ -17,11 +17,10 @@
 
 package nl.talsmasoftware.umldoclet.rendering;
 
+import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * This could well be the simplest renderer of them all; it simply renders the command that was
@@ -30,8 +29,6 @@ import java.util.logging.Logger;
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
 public class CommandRenderer extends Renderer {
-    private static final Logger LOGGER = Logger.getLogger(CommandRenderer.class.getName());
-
     protected final String command;
 
     protected CommandRenderer(UMLDiagram currentDiagram, String command) {
@@ -41,7 +38,7 @@ public class CommandRenderer extends Renderer {
 
     @Override
     protected IndentingPrintWriter writeTo(IndentingPrintWriter output) {
-        LOGGER.log(Level.FINEST, "Writing command \"{0}\"...", command);
+        LogSupport.trace("Writing command \"{0}\"...", command);
         return output.append(command).newline();
     }
 

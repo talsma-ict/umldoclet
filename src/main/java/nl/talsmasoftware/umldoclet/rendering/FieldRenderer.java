@@ -17,11 +17,10 @@ package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.FieldDoc;
 import com.sun.javadoc.ProgramElementDoc;
+import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static java.util.Objects.requireNonNull;
 
@@ -31,8 +30,6 @@ import static java.util.Objects.requireNonNull;
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
 public class FieldRenderer extends Renderer {
-    private static final Logger LOGGER = Logger.getLogger(FieldRenderer.class.getName());
-
     protected final FieldDoc fieldDoc;
 
     protected FieldRenderer(UMLDiagram diagram, FieldDoc fieldDoc) {
@@ -61,20 +58,19 @@ public class FieldRenderer extends Renderer {
                 || (fieldDoc.isPublic() && !diagram.config.includePublicFields()
                 || (!diagram.config.includeDeprecatedFields() && isDeprecated(fieldDoc) && !isDeprecated(fieldDoc.containingClass()))
         );
-        if (LOGGER.isLoggable(Level.FINEST)) {
+        if (LogSupport.isTraceEnabled()) {
             String designation = fieldDoc.isStatic() ? "Static field" : "Field";
             if (isDeprecated(fieldDoc)) {
                 designation = "Deprecated " + Character.toLowerCase(designation.charAt(0)) + designation.substring(1);
             }
-            LOGGER.log(Level.FINEST, "{0} \"{1}\" {2}{3} included.",
-                    new Object[]{
-                            designation,
-                            fieldDoc.qualifiedName(),
-                            fieldDoc.isPrivate() ? "is private and "
-                                    : fieldDoc.isPackagePrivate() ? "is package private and "
-                                    : fieldDoc.isProtected() ? "is protected and "
-                                    : fieldDoc.isPublic() ? "is public and " : "",
-                            exclude ? "will not be" : "will be"});
+            LogSupport.trace("{0} \"{1}\" {2}{3} included.",
+                    designation,
+                    fieldDoc.qualifiedName(),
+                    fieldDoc.isPrivate() ? "is private and "
+                            : fieldDoc.isPackagePrivate() ? "is package private and "
+                            : fieldDoc.isProtected() ? "is protected and "
+                            : fieldDoc.isPublic() ? "is public and " : "",
+                    exclude ? "will not be" : "will be");
         }
         return !exclude;
     }

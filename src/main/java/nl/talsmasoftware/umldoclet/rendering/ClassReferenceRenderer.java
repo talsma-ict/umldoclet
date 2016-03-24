@@ -17,13 +17,12 @@ package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
+import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static java.util.Objects.requireNonNull;
 
@@ -33,8 +32,6 @@ import static java.util.Objects.requireNonNull;
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
 public class ClassReferenceRenderer extends ClassRenderer {
-    private static final Logger LOGGER = Logger.getLogger(ClassReferenceRenderer.class.getName());
-
     protected final String qualifiedName;
     protected final String umlreference;
 
@@ -66,9 +63,8 @@ public class ClassReferenceRenderer extends ClassRenderer {
 
     static Collection<ClassReferenceRenderer> referencesFor(ClassRenderer parent) {
         requireNonNull(parent, "Included class is required in order to find its references.");
-//        final ClassDoc referent = includedClass.classDoc;
         final String referentName = parent.classDoc.qualifiedName();
-        LOGGER.log(Level.FINEST, "Adding references for included class {0}...", referentName);
+        LogSupport.trace("Adding references for included class {0}...", referentName);
         final Collection<ClassReferenceRenderer> references = new LinkedHashSet<>();
         final Collection<String> excludedReferences = parent.diagram.config.excludedReferences();
 
@@ -76,15 +72,15 @@ public class ClassReferenceRenderer extends ClassRenderer {
         ClassDoc superclass = parent.classDoc.superclass();
         final String superclassName = superclass == null ? null : superclass.qualifiedName();
         if (superclassName == null) {
-            LOGGER.log(Level.FINE, "Encountered <null> as superclass of \"{0}\".", referentName);
+            LogSupport.debug("Encountered <null> as superclass of \"{0}\".", referentName);
         } else if (excludedReferences.contains(superclassName)) {
-            LOGGER.log(Level.FINEST, "Excluding superclass \"{0}\" of \"{1}\"...",
+            LogSupport.trace("Excluding superclass \"{0}\" of \"{1}\"...",
                     new Object[]{superclassName, referentName});
         } else if (references.add(new ClassReferenceRenderer(parent, superclass, "<|--"))) {
-            LOGGER.log(Level.FINEST, "Added reference to superclass \"{0}\" from \"{1}\".",
+            LogSupport.trace("Added reference to superclass \"{0}\" from \"{1}\".",
                     new Object[]{superclassName, referentName});
         } else {
-            LOGGER.log(Level.FINE, "Excluding reference to superclass \"{0}\" from \"{1}\"; the reference was already generated.",
+            LogSupport.trace("Excluding reference to superclass \"{0}\" from \"{1}\"; the reference was already generated.",
                     new Object[]{superclassName, referentName});
         }
 
@@ -92,14 +88,14 @@ public class ClassReferenceRenderer extends ClassRenderer {
         for (ClassDoc interfaceDoc : parent.classDoc.interfaces()) {
             final String interfaceName = interfaceDoc == null ? null : interfaceDoc.qualifiedName();
             if (interfaceName == null) {
-                LOGGER.log(Level.INFO, "Encountered <null> as implemented interface of \"{0}\".", referentName);
+                LogSupport.info("Encountered <null> as implemented interface of \"{0}\".", referentName);
             } else if (excludedReferences.contains(interfaceName)) {
-                LOGGER.log(Level.FINEST, "Excluding interface \"{0}\" of \"{1}\"...",
+                LogSupport.trace("Excluding interface \"{0}\" of \"{1}\"...",
                         new Object[]{interfaceName, referentName});
             } else if (references.add(new ClassReferenceRenderer(parent, interfaceDoc, "<|.."))) {
-                LOGGER.log(Level.FINEST, "Added reference to interface \"{0}\" from \"{1}\".", new Object[]{interfaceName, referentName});
+                LogSupport.trace("Added reference to interface \"{0}\" from \"{1}\".", new Object[]{interfaceName, referentName});
             } else {
-                LOGGER.log(Level.FINE, "Excluding reference to interface \"{0}\" from \"{1}\"; the reference was already generated.", new Object[]{interfaceName, referentName});
+                LogSupport.debug("Excluding reference to interface \"{0}\" from \"{1}\"; the reference was already generated.", new Object[]{interfaceName, referentName});
             }
         }
 
@@ -120,16 +116,16 @@ public class ClassReferenceRenderer extends ClassRenderer {
 
     protected IndentingPrintWriter writeTypeDeclarationTo(IndentingPrintWriter out) {
         if (!diagram.encounteredTypes.add(qualifiedName)) {
-            LOGGER.log(Level.FINEST, "Not generating type declaration for \"{0}\"; " +
+            LogSupport.trace("Not generating type declaration for \"{0}\"; " +
                     "type was previously encountered in this diagram.", qualifiedName);
             return out;
         } else if (!qualifiedName.equals(classDoc.qualifiedName())) {
-            LOGGER.log(Level.FINEST, "Generating 'unknown' class type declaration for \"{0}\"; " +
+            LogSupport.trace("Generating 'unknown' class type declaration for \"{0}\"; " +
                     "we only have a class name reference as declaration.", qualifiedName);
             return out.append(guessClassOrInterface()).whitespace().append(qualifiedName).append(" <<(?,orchid)>>").newline();
         }
 
-        LOGGER.log(Level.FINEST, "Generating type declaration for \"{0}\"...", qualifiedName);
+        LogSupport.trace("Generating type declaration for \"{0}\"...", qualifiedName);
         out.append(umlType()).whitespace().append(qualifiedName);
         super.writeGenericsTo(out);
         if (!children.isEmpty()) {
@@ -144,7 +140,7 @@ public class ClassReferenceRenderer extends ClassRenderer {
 
         // Write UML reference itself.
         String parentName = ((ClassRenderer) parent).classDoc.qualifiedTypeName();
-        LOGGER.log(Level.FINEST, "Generating reference: \"{0}\" {1} \"{2}\"...",
+        LogSupport.trace("Generating reference: \"{0}\" {1} \"{2}\"...",
                 new Object[]{qualifiedName, umlreference, parentName});
         out.append(qualifiedName).whitespace()
                 .append(quoted(cardinality2)).whitespace()

@@ -17,21 +17,19 @@ package nl.talsmasoftware.umldoclet;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.DocErrorReporter;
-import com.sun.javadoc.SourcePosition;
 import com.sun.tools.doclets.standard.Standard;
 import nl.talsmasoftware.umldoclet.config.*;
+import nl.talsmasoftware.umldoclet.logging.LogSupport;
 
-import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.logging.*;
-import java.util.logging.Formatter;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static nl.talsmasoftware.umldoclet.UMLDocletConfig.Setting.UML_LOGLEVEL;
 import static nl.talsmasoftware.umldoclet.rendering.Renderer.isDeprecated;
 
 /**
@@ -42,9 +40,7 @@ import static nl.talsmasoftware.umldoclet.rendering.Renderer.isDeprecated;
  *
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
-public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> implements DocErrorReporter, Cloneable, Closeable {
-    private static final String UML_ROOTLOGGER_NAME = UMLDoclet.class.getPackage().getName();
-    private static final Logger LOGGER = Logger.getLogger(UMLDocletConfig.class.getName());
+public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
 
     public enum Setting {
         UML_LOGLEVEL("umlLogLevel", "INFO"),
@@ -133,13 +129,11 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> im
 
     private final String defaultBasePath;
     private final String[][] standardOptions;
-    private final DocErrorReporter reporterDelegate;
     private Properties properties;
-    private Handler umlLogHandler;
 
     public UMLDocletConfig(String[][] options, DocErrorReporter reporter) {
         super(Setting.class);
-        this.reporterDelegate = reporter;
+        LogSupport.setReporter(reporter);
         String basePath = ".";
         try {
             basePath = new File(".").getCanonicalPath();
@@ -153,11 +147,11 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> im
             if (setting == null) {
                 stdOpts.add(option);
             } else {
-                this.put(setting, ((AbstractSetting<Object>) setting.delegate).parse(option, get(setting)));
+                this.put(setting, setting.delegate.parse(option, get(setting)));
             }
         }
         this.standardOptions = stdOpts.toArray(new String[stdOpts.size()][]);
-        initializeUmlLogging();
+        LogSupport.setLevel(UML_LOGLEVEL.delegate.value(get(UML_LOGLEVEL)));
     }
 
     private Properties properties() {
@@ -179,8 +173,8 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> im
                 if (standardOptions[j].length > 1
                         && standardOpts[i].equalsIgnoreCase(standardOptions[j][0])) {
                     value = standardOptions[j][1];
-                    LOGGER.log(Level.FINEST, "Using standard option \"{0}\" for delegate \"{1}\": \"{2}\".",
-                            new Object[]{standardOpts[i], setting, value});
+                    LogSupport.trace("Using standard option \"{0}\" for delegate \"{1}\": \"{2}\".",
+                            standardOpts[i], setting, value);
                     break;
                 }
             }
@@ -201,24 +195,6 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> im
 
     public String version() {
         return properties().getProperty("version");
-    }
-
-    public Level umlLogLevel() {
-        final String level = stringValue(Setting.UML_LOGLEVEL).toUpperCase(Locale.ENGLISH);
-        switch (level) {
-            case "ALL":
-            case "TRACE":
-                return Level.FINEST;
-            case "DEBUG":
-                return Level.FINE;
-            case "WARN":
-                return Level.WARNING;
-            case "ERROR":
-            case "FATAL":
-                return Level.SEVERE;
-            default:
-                return Level.parse(level);
-        }
     }
 
     /**
@@ -413,29 +389,28 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> im
 
     public boolean includeClass(ClassDoc classDoc) {
         if (classDoc == null) {
-            LOGGER.log(Level.WARNING, "Encountered <null> class documentation!");
+            LogSupport.warn("Encountered <null> class documentation!");
             return false;
         }
         boolean included = true;
         final boolean isInnerclass = classDoc.containingClass() != null;
         if (classDoc.isPrivate() && (!includePrivateClasses() || (isInnerclass && !includePrivateInnerclasses()))) {
-            LOGGER.log(Level.FINEST, "Not including private class \"{0}\".", classDoc.qualifiedName());
+            LogSupport.trace("Not including private class \"{0}\".", classDoc.qualifiedName());
             included = false;
         } else if (classDoc.isPackagePrivate()
                 && (!includePackagePrivateClasses() || isInnerclass && !includePackagePrivateInnerclasses())) {
-            LOGGER.log(Level.FINER, "Not including package-private class \"{0}\".", classDoc.qualifiedName());
+            LogSupport.debug("Not including package-private class \"{0}\".", classDoc.qualifiedName());
             included = false;
         } else if (classDoc.isProtected()
                 && (!includeProtectedClasses() || isInnerclass && !includeProtectedInnerclasses())) {
-            LOGGER.log(Level.FINE, "Not including protected class \"{0}\".", classDoc.qualifiedName());
+            LogSupport.debug("Not including protected class \"{0}\".", classDoc.qualifiedName());
             included = false;
         } else if (isDeprecated(classDoc) && !includeDeprecatedClasses()) {
-            LOGGER.log(Level.FINE, "Not including deprecated class \"{0}\".", classDoc.qualifiedName());
+            LogSupport.debug("Not including deprecated class \"{0}\".", classDoc.qualifiedName());
             included = false;
         }
 
-        LOGGER.log(Level.FINEST, "{0} class \"{1}\".",
-                new Object[]{included ? "Including" : "Not including", classDoc.qualifiedName()});
+        LogSupport.trace("{0} class \"{1}\".", included ? "Including" : "Not including", classDoc.qualifiedName());
         return included;
     }
 
@@ -447,7 +422,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> im
     public synchronized Collection<String> excludedReferences() {
         if (excludedReferences == null) {
             excludedReferences = stringValues(Setting.UML_EXCLUDED_REFERENCES);
-            LOGGER.log(Level.FINEST, "Excluding the following references: {0}.", excludedReferences);
+            LogSupport.trace("Excluding the following references: {0}.", excludedReferences);
         }
         return excludedReferences;
     }
@@ -474,31 +449,8 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> im
     }
 
     public static boolean validOptions(String[][] options, DocErrorReporter reporter) {
-        try (UMLDocletConfig config = new UMLDocletConfig(options, reporter)) {
-            return Standard.validOptions(config.standardOptions, reporter);
-        }
-    }
-
-    private void initializeUmlLogging() {
-        // Clear levels on any previously instantiated sub-loggers.
-        for (Enumeration<String> en = LogManager.getLogManager().getLoggerNames(); en.hasMoreElements(); ) {
-            String loggerName = en.nextElement();
-            if (loggerName.startsWith(UML_ROOTLOGGER_NAME)) {
-                Logger.getLogger(loggerName).setLevel(null);
-            }
-        }
-        // Configure the umldoclet root logger.
-        this.umlLogHandler = new UmlLogHandler();
-        Logger.getLogger(UML_ROOTLOGGER_NAME).setLevel(this.umlLogLevel());
-        Logger.getLogger(UML_ROOTLOGGER_NAME).addHandler(this.umlLogHandler);
-    }
-
-    @Override
-    public synchronized void close() {
-        if (umlLogHandler != null) {
-            Logger.getLogger(UML_ROOTLOGGER_NAME).removeHandler(umlLogHandler);
-            umlLogHandler = null;
-        }
+        UMLDocletConfig config = new UMLDocletConfig(options, reporter);
+        return Standard.validOptions(config.standardOptions, reporter);
     }
 
     @Override
@@ -516,19 +468,6 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> im
             }
         }
         return result.append('}').toString();
-    }
-
-    private static class UmlLogHandler extends ConsoleHandler {
-        private UmlLogHandler() {
-            super.setLevel(Level.ALL);
-            super.setOutputStream(System.out);
-            super.setFormatter(new Formatter() {
-                @Override
-                public String format(LogRecord record) {
-                    return String.format("%s%n", super.formatMessage(record));
-                }
-            });
-        }
     }
 
     private static List<String> split(String... values) {
@@ -556,37 +495,5 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> im
         list.add(elem);
         return list;
     }
-
-    // DocErrorReporter delegation:
-    @Override
-    public void printError(String msg) {
-        reporterDelegate.printError(msg);
-    }
-
-    @Override
-    public void printError(SourcePosition pos, String msg) {
-        reporterDelegate.printError(pos, msg);
-    }
-
-    @Override
-    public void printWarning(String msg) {
-        reporterDelegate.printWarning(msg);
-    }
-
-    @Override
-    public void printWarning(SourcePosition pos, String msg) {
-        reporterDelegate.printWarning(pos, msg);
-    }
-
-    @Override
-    public void printNotice(String msg) {
-        reporterDelegate.printNotice(msg);
-    }
-
-    @Override
-    public void printNotice(SourcePosition pos, String msg) {
-        reporterDelegate.printNotice(pos, msg);
-    }
-
 
 }

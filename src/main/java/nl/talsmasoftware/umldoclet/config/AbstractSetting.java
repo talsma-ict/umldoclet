@@ -32,6 +32,8 @@ public abstract class AbstractSetting<T> {
         return option != null && this.name.equalsIgnoreCase(option.startsWith("-") ? option.substring(1) : option);
     }
 
-    public abstract T parse(String[] option, T currentValue);
+    public abstract T parse(String[] option, Object currentValue);
+
+    public abstract T value(Object configured);
 
 }

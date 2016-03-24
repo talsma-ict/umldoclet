@@ -46,7 +46,7 @@
                             <docletArtifact>
                                 <groupId>nl.talsmasoftware</groupId>
                                 <artifactId>umldoclet</artifactId>
-                                <version>0.1.6</version>
+                                <version>1.0.1-SNAPSHOT</version>
                             </docletArtifact>
                             <additionalparam>
                                 -umlLogLevel TRACE

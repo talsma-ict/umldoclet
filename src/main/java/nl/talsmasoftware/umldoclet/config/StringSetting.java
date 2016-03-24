@@ -30,7 +30,12 @@ public class StringSetting extends AbstractSetting<String> {
     }
 
     @Override
-    public String parse(String[] option, String currentValue) {
-        return option.length > 1 ? option[1] : currentValue;
+    public String parse(String[] option, Object currentValue) {
+        return option.length > 1 ? option[1] : value(currentValue);
+    }
+
+    @Override
+    public String value(Object configured) {
+        return configured == null ? defaultValue : configured.toString();
     }
 }

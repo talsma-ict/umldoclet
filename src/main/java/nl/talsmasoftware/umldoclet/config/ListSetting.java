@@ -31,11 +31,11 @@ public class ListSetting extends AbstractSetting<List<String>> {
     }
 
     @Override
-    public List<String> parse(String[] option, List<String> currentValue) {
+    public List<String> parse(String[] option, Object currentValue) {
         List<String> values = new ArrayList<>();
         if (option.length > 1) {
-            if (currentValue != null) {
-                for (Object val : currentValue) {
+            if (currentValue instanceof Iterable) {
+                for (Object val : (Iterable<?>) currentValue) {
                     values.add(Objects.toString(val));
                 }
             }
@@ -47,7 +47,12 @@ public class ListSetting extends AbstractSetting<List<String>> {
                 }
             }
         }
-        return values.isEmpty() ? currentValue : values;
+        return values.isEmpty() ? value(currentValue) : values;
+    }
+
+    @Override
+    public List<String> value(Object configured) {
+        return configured instanceof List ? (List<String>) configured : null;
     }
 
 }

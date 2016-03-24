@@ -20,12 +20,11 @@ package nl.talsmasoftware.umldoclet.rendering;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.Tag;
 import nl.talsmasoftware.umldoclet.UMLDocletConfig;
+import nl.talsmasoftware.umldoclet.logging.LogSupport;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * This class is here to support references that were available from JavaDoc tags from the old PlantUML doclet.
@@ -58,8 +57,6 @@ public enum LegacyTag {
 
     DEPEND("<..", 3);
 
-    private static final Logger LOGGER = Logger.getLogger(LegacyTag.class.getName());
-
     private final String tagname;
     private final String umlreference;
     private final int classPos;
@@ -76,7 +73,7 @@ public enum LegacyTag {
             // Split tag content.
             String[] parts = tag.text().trim().split("\\s");
             if (classPos >= parts.length) {
-                LOGGER.log(Level.FINE, "No associated class found in @{0} tag \"{1}\".", new Object[]{tagname, tag.text()});
+                LogSupport.trace("No associated class found in @{0} tag \"{1}\".", tagname, tag.text());
                 // TODO: Mark this as a JavaDoc error?
                 return null;
             }
@@ -93,7 +90,7 @@ public enum LegacyTag {
             // TODO: Maybe leave this concern to the ReferenceRenderer at rendering time?
             // Check if the type is not excluded from the UML rendering.
             if (parent.diagram.config.excludedReferences().contains(typename)) {
-                LOGGER.log(Level.FINE, "Excluding @{0} tag \"{1}\"; the reference is configured as \"excluded\".", new Object[]{tagname, typename});
+                LogSupport.debug("Excluding @{0} tag \"{1}\"; the reference is configured as \"excluded\".", tagname, typename);
                 return null;
             }
 
@@ -124,20 +121,19 @@ public enum LegacyTag {
                     ClassReferenceRenderer reference = legacytag.createReferenceFrom(
                             includedClass, tag);
                     if (reference == null) {
-                        LOGGER.log(Level.FINEST, "Tag @{0} did not result in a reference from \"{1}\"...",
-                                new Object[]{legacytag.tagname, tag.text()});
+                        LogSupport.trace("Tag @{0} did not result in a reference from \"{1}\"...",
+                                legacytag.tagname, tag.text());
                     } else if (legacyReferences.add(reference)) {
-                        LOGGER.log(Level.FINEST, "Tag @{0} resulted in a \"{1}\" reference to {2}...",
-                                new Object[]{legacytag.tagname, legacytag.umlreference, reference.qualifiedName});
+                        LogSupport.trace("Tag @{0} resulted in a \"{1}\" reference to {2}...",
+                                legacytag.tagname, legacytag.umlreference, reference.qualifiedName);
                     } else {
-                        LOGGER.log(Level.FINEST, "Tag @{0} reference already existed to {1}...",
-                                new Object[]{legacytag.tagname, reference.qualifiedName});
+                        LogSupport.trace("Tag @{0} reference already existed to {1}...",
+                                legacytag.tagname, reference.qualifiedName);
                     }
                 }
             }
         }
         return legacyReferences;
     }
-
 
 }

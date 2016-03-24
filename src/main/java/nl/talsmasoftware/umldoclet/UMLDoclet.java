@@ -20,14 +20,13 @@ import com.sun.javadoc.DocErrorReporter;
 import com.sun.javadoc.PackageDoc;
 import com.sun.javadoc.RootDoc;
 import com.sun.tools.doclets.standard.Standard;
+import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.rendering.UMLDiagram;
 
 import java.io.*;
 import java.util.Comparator;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static java.util.Objects.requireNonNull;
 
@@ -38,9 +37,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
-public class UMLDoclet extends Standard implements Closeable {
-    private static final Logger LOGGER = Logger.getLogger(UMLDoclet.class.getName());
-
+public class UMLDoclet extends Standard {
     private final RootDoc rootDoc;
     private final UMLDocletConfig config;
     private final SortedSet<PackageDoc> encounteredPackages = new TreeSet<>(new Comparator<PackageDoc>() {
@@ -54,8 +51,8 @@ public class UMLDoclet extends Standard implements Closeable {
     public UMLDoclet(RootDoc rootDoc) {
         this.rootDoc = requireNonNull(rootDoc, "No root document received.");
         this.config = new UMLDocletConfig(rootDoc.options(), rootDoc);
-        LOGGER.log(Level.INFO, "{0} version {1}.", new Object[]{getClass().getSimpleName(), config.version()});
-        LOGGER.log(Level.FINE, "Initialized {0}...", config);
+        LogSupport.info("{0} version {1}", getClass().getSimpleName(), config.version());
+        LogSupport.debug("Initialized {0}...", config);
     }
 
     public static int optionLength(String option) {
@@ -67,10 +64,9 @@ public class UMLDoclet extends Standard implements Closeable {
     }
 
     public static boolean start(RootDoc rootDoc) {
-        try (UMLDoclet umlDoclet = new UMLDoclet(rootDoc)) {
-            return umlDoclet.generateUMLDiagrams()
-                    && (umlDoclet.config.skipStandardDoclet() || Standard.start(rootDoc));
-        }
+        UMLDoclet umlDoclet = new UMLDoclet(rootDoc);
+        return umlDoclet.generateUMLDiagrams()
+                && (umlDoclet.config.skipStandardDoclet() || Standard.start(rootDoc));
     }
 
     public boolean generateUMLDiagrams() {
@@ -78,38 +74,39 @@ public class UMLDoclet extends Standard implements Closeable {
             return generateIndividualClassDiagrams(rootDoc.classes())
                     && generatePackageDiagrams();
         } catch (RuntimeException rte) {
-            LOGGER.log(Level.SEVERE, rte.getMessage(), rte);
-            rootDoc.printError(rootDoc.position(), rte.getMessage());
+            LogSupport.INSTANCE.printError(rootDoc.position(), rte.getMessage());
             return false;
         }
     }
 
     protected boolean generateIndividualClassDiagrams(ClassDoc... classDocs) {
-        LOGGER.log(Level.FINE, "Generating class diagrams for all individual classes...");
+        LogSupport.debug("Generating class diagrams for all individual classes...");
         for (ClassDoc classDoc : classDocs) {
             encounteredPackages.add(classDoc.containingPackage());
             try (Writer out = createWriterForNewClassFile(classDoc)) {
                 new UMLDiagram(config).addClass(classDoc).writeTo(out);
             } catch (IOException | RuntimeException exception) {
+                // TODO Log error at current position and return false?
                 throw new IllegalStateException(String.format("Error writing to %s file for %s: %s",
                         config.umlFileExtension(), classDoc.qualifiedName(), exception.getMessage()), exception);
             }
         }
-        LOGGER.log(Level.FINE, "All individual class diagrams have been generated.");
+        LogSupport.debug("All individual class diagrams have been generated.");
         return true;
     }
 
     protected boolean generatePackageDiagrams() {
-        LOGGER.log(Level.FINE, "Generating package diagrams for all packages...");
+        LogSupport.debug("Generating package diagrams for all packages...");
         for (PackageDoc packageDoc : encounteredPackages) {
             try (Writer out = createWriterForNewPackageFile(packageDoc)) {
                 new UMLDiagram(config).addPackage(packageDoc).writeTo(out);
             } catch (IOException | RuntimeException exception) {
+                // TODO Log error at current position and return false?
                 throw new IllegalStateException(String.format("Error writing to %s file for package %s: %s",
                         config.umlFileExtension(), packageDoc.name(), exception.getMessage()), exception);
             }
         }
-        LOGGER.log(Level.FINE, "All package diagrams have been generated.");
+        LogSupport.debug("All package diagrams have been generated.");
         return true;
     }
 
@@ -130,7 +127,7 @@ public class UMLDoclet extends Standard implements Closeable {
         if (umlFile.exists() || umlFile.mkdirs()) {
             umlFile = new File(umlFile, documentedClass.name() + config.umlFileExtension());
             if (umlFile.exists() || umlFile.createNewFile()) {
-                LOGGER.log(Level.INFO, "Generating {0}...", umlFile);
+                LogSupport.info("Generating {0}...", umlFile);
                 return new OutputStreamWriter(new FileOutputStream(umlFile), config.umlFileEncoding());
             }
         }
@@ -154,17 +151,11 @@ public class UMLDoclet extends Standard implements Closeable {
         if (umlFile.exists() || umlFile.mkdirs()) {
             umlFile = new File(umlFile, "package" + config.umlFileExtension());
             if (umlFile.exists() || umlFile.createNewFile()) {
-                LOGGER.log(Level.INFO, "Generating {0}...", umlFile);
+                LogSupport.info("Generating {0}...", umlFile);
                 return new OutputStreamWriter(new FileOutputStream(umlFile), config.umlFileEncoding());
             }
         }
         throw new IllegalStateException("Error creating: " + umlFile);
-    }
-
-    @Override
-    public void close() {
-        LOGGER.log(Level.FINE, "{0} done.", getClass().getSimpleName());
-        config.close();
     }
 
 }
