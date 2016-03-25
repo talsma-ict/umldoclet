@@ -74,14 +74,12 @@ public class ClassReferenceRenderer extends ClassRenderer {
         if (superclassName == null) {
             LogSupport.debug("Encountered <null> as superclass of \"{0}\".", referentName);
         } else if (excludedReferences.contains(superclassName)) {
-            LogSupport.trace("Excluding superclass \"{0}\" of \"{1}\"...",
-                    new Object[]{superclassName, referentName});
+            LogSupport.trace("Excluding superclass \"{0}\" of \"{1}\"...", superclassName, referentName);
         } else if (references.add(new ClassReferenceRenderer(parent, superclass, "<|--"))) {
-            LogSupport.trace("Added reference to superclass \"{0}\" from \"{1}\".",
-                    new Object[]{superclassName, referentName});
+            LogSupport.trace("Added reference to superclass \"{0}\" from \"{1}\".", superclassName, referentName);
         } else {
             LogSupport.trace("Excluding reference to superclass \"{0}\" from \"{1}\"; the reference was already generated.",
-                    new Object[]{superclassName, referentName});
+                    superclassName, referentName);
         }
 
         // Add implemented interface references.
@@ -90,8 +88,7 @@ public class ClassReferenceRenderer extends ClassRenderer {
             if (interfaceName == null) {
                 LogSupport.info("Encountered <null> as implemented interface of \"{0}\".", referentName);
             } else if (excludedReferences.contains(interfaceName)) {
-                LogSupport.trace("Excluding interface \"{0}\" of \"{1}\"...",
-                        new Object[]{interfaceName, referentName});
+                LogSupport.trace("Excluding interface \"{0}\" of \"{1}\"...", interfaceName, referentName);
             } else if (references.add(new ClassReferenceRenderer(parent, interfaceDoc, "<|.."))) {
                 LogSupport.trace("Added reference to interface \"{0}\" from \"{1}\".", new Object[]{interfaceName, referentName});
             } else {
@@ -140,8 +137,7 @@ public class ClassReferenceRenderer extends ClassRenderer {
 
         // Write UML reference itself.
         String parentName = ((ClassRenderer) parent).classDoc.qualifiedTypeName();
-        LogSupport.trace("Generating reference: \"{0}\" {1} \"{2}\"...",
-                new Object[]{qualifiedName, umlreference, parentName});
+        LogSupport.trace("Generating reference: \"{0}\" {1} \"{2}\"...", qualifiedName, umlreference, parentName);
         out.append(qualifiedName).whitespace()
                 .append(quoted(cardinality2)).whitespace()
                 .append(umlreference).whitespace()

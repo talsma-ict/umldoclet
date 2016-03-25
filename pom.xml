@@ -176,6 +176,11 @@
                             </docletArtifact>
                             <docencoding>UTF-8</docencoding>
                             <useStandardDocletOptions>true</useStandardDocletOptions>
+<!--
+                            <additionalparam>
+                                -umlLogLevel TRACE
+                            </additionalparam>
+-->
                         </configuration>
                     </execution>
                     <execution>

@@ -86,9 +86,15 @@ public class UMLDoclet extends Standard {
             try (Writer out = createWriterForNewClassFile(classDoc)) {
                 new UMLDiagram(config).addClass(classDoc).writeTo(out);
             } catch (IOException | RuntimeException exception) {
+                String message = String.format("Error writing to %s file for %s: %s",
+                        config.umlFileExtension(), classDoc.qualifiedName(), exception.getMessage());
+                if (LogSupport.isTraceEnabled()) {
+                    StringWriter stacktrace = new StringWriter();
+                    exception.printStackTrace(new PrintWriter(stacktrace));
+                    LogSupport.trace("{0}\n{1}", message, stacktrace);
+                }
                 // TODO Log error at current position and return false?
-                throw new IllegalStateException(String.format("Error writing to %s file for %s: %s",
-                        config.umlFileExtension(), classDoc.qualifiedName(), exception.getMessage()), exception);
+                throw new IllegalStateException(message, exception);
             }
         }
         LogSupport.debug("All individual class diagrams have been generated.");
@@ -101,9 +107,15 @@ public class UMLDoclet extends Standard {
             try (Writer out = createWriterForNewPackageFile(packageDoc)) {
                 new UMLDiagram(config).addPackage(packageDoc).writeTo(out);
             } catch (IOException | RuntimeException exception) {
+                String message = String.format("Error writing to %s file for package %s: %s",
+                        config.umlFileExtension(), packageDoc.name(), exception.getMessage());
+                if (LogSupport.isTraceEnabled()) {
+                    StringWriter stacktrace = new StringWriter();
+                    exception.printStackTrace(new PrintWriter(stacktrace));
+                    LogSupport.trace("{0}\n{1}", message, stacktrace);
+                }
                 // TODO Log error at current position and return false?
-                throw new IllegalStateException(String.format("Error writing to %s file for package %s: %s",
-                        config.umlFileExtension(), packageDoc.name(), exception.getMessage()), exception);
+                throw new IllegalStateException(message, exception);
             }
         }
         LogSupport.debug("All package diagrams have been generated.");
@@ -117,6 +129,7 @@ public class UMLDoclet extends Standard {
      * @return The created Writer to the correct PlantUML file.
      * @throws IOException In case there were I/O errors creating a new plantUML file or opening a Writer to it.
      */
+
     protected Writer createWriterForNewClassFile(ClassDoc documentedClass) throws IOException {
         File umlFile = new File(config.basePath());
         for (String packageNm : documentedClass.containingPackage().name().split("\\.")) {

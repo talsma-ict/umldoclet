@@ -27,16 +27,13 @@ import java.io.InputStream;
 import java.util.*;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
+import static nl.talsmasoftware.umldoclet.UMLDocletConfig.Setting.UML_BASE_PATH;
 import static nl.talsmasoftware.umldoclet.UMLDocletConfig.Setting.UML_LOGLEVEL;
 import static nl.talsmasoftware.umldoclet.rendering.Renderer.isDeprecated;
 
 /**
  * Class containing all possible Doclet options for the UML doclet.
  * This configuration class is also responsible for providing suitable default values in a central location.
- * <p/>
- * TODO: this class needs to be refactored and the String[] representation needs to be replaced by the configured type.
  *
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
@@ -45,9 +42,9 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
     public enum Setting {
         UML_LOGLEVEL("umlLogLevel", "INFO"),
         UML_INDENTATION("umlIndentation", -1),
-        UML_BASE_PATH("umlBasePath", (String) null),
+        UML_BASE_PATH("umlBasePath", "."),
         UML_FILE_EXTENSION("umlFileExtension", ".puml"),
-        UML_FILE_ENCODING("umlFileEncoding", "UTF-8"),
+        UML_FILE_ENCODING("umlFileEncoding", null),
         UML_SKIP_STANDARD_DOCLET("umlSkipStandardDoclet", false),
         UML_INCLUDE_PRIVATE_FIELDS("umlIncludePrivateFields", false),
         UML_INCLUDE_PACKAGE_PRIVATE_FIELDS("umlIncludePackagePrivateFields", false),
@@ -73,28 +70,26 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
         UML_INCLUDE_PRIVATE_INNERCLASSES("umlIncludePrivateInnerClasses", false),
         UML_INCLUDE_PACKAGE_PRIVATE_INNERCLASSES("umlIncludePackagePrivateInnerClasses", false),
         UML_INCLUDE_PROTECTED_INNERCLASSES("umlIncludeProtectedInnerClasses", false),
-        UML_EXCLUDED_REFERENCES(new ListSetting("umlExcludedReferences"), "java.lang.Object, java.lang.Enum"),
+        UML_EXCLUDED_REFERENCES(new ListSetting("umlExcludedReferences", "java.lang.Object", "java.lang.Enum")),
         UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES("umlIncludeOverridesFromExcludedReferences", false),
-        UML_COMMAND(new ListSetting("umlCommand"), "");
+        UML_COMMAND(new ListSetting("umlCommand"));
 
         private final AbstractSetting<?> delegate;
-        private final String defaultValue;
 
         Setting(String name, String defaultValue) {
-            this(new StringSetting(name, defaultValue), defaultValue);
+            this(new StringSetting(name, defaultValue));
         }
 
         Setting(String name, boolean defaultValue) {
-            this(new BooleanSetting(name, defaultValue), Boolean.toString(defaultValue));
+            this(new BooleanSetting(name, defaultValue));
         }
 
         Setting(String name, int defaultValue) {
-            this(new IntegerSetting(name, defaultValue), Integer.toString(defaultValue));
+            this(new IntegerSetting(name, defaultValue));
         }
 
-        Setting(AbstractSetting delegate, String defaultValue) {
+        Setting(AbstractSetting delegate) {
             this.delegate = delegate;
-            this.defaultValue = defaultValue;
         }
 
         private static Setting forOption(String... option) {
@@ -106,6 +101,11 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
                 }
             }
             return null;
+        }
+
+        @SuppressWarnings("unchecked")
+        <T> T value(UMLDocletConfig config) {
+            return (T) delegate.value(config.get(this));
         }
 
         String[] validate(String[] optionValue) {
@@ -127,20 +127,13 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
         }
     }
 
-    private final String defaultBasePath;
+    //    private final String defaultBasePath;
     private final String[][] standardOptions;
-    private Properties properties;
+    private final Properties properties;
 
     public UMLDocletConfig(String[][] options, DocErrorReporter reporter) {
         super(Setting.class);
         LogSupport.setReporter(reporter);
-        String basePath = ".";
-        try {
-            basePath = new File(".").getCanonicalPath();
-        } catch (IOException ioe) {
-            reporter.printError("Could not determine base path: " + ioe.getMessage());
-        }
-        this.defaultBasePath = basePath;
         List<String[]> stdOpts = new ArrayList<>();
         for (String[] option : options) {
             final Setting setting = Setting.forOption(option);
@@ -150,58 +143,35 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
                 this.put(setting, setting.delegate.parse(option, get(setting)));
             }
         }
-        this.standardOptions = stdOpts.toArray(new String[stdOpts.size()][]);
-        LogSupport.setLevel(UML_LOGLEVEL.delegate.value(get(UML_LOGLEVEL)));
-    }
-
-    private Properties properties() {
-        if (properties == null) {
-            properties = new Properties();
-            try (InputStream in = getClass().getResourceAsStream("/META-INF/umldoclet.properties")) {
-                properties.load(in);
-            } catch (IOException ioe) {
-                throw new IllegalStateException("I/O exception loading properties: " + ioe.getMessage(), ioe);
-            }
+        standardOptions = stdOpts.toArray(new String[stdOpts.size()][]);
+        LogSupport.setLevel(UML_LOGLEVEL.value(this));
+        try {
+            String basePath = UML_BASE_PATH.value(this);
+            this.put(UML_BASE_PATH, new File(basePath).getCanonicalPath());
+        } catch (IOException ioe) {
+            LogSupport.warn("Error converting base path \"{0}\" to a canonical path: {1}",
+                    UML_BASE_PATH.value(this), ioe);
         }
-        return properties;
-    }
-
-    String stringValue(Setting setting, String... standardOpts) {
-        String value = Objects.toString(super.get(setting), null);
-        for (int i = 0; value == null && i < standardOpts.length; i++) {
-            for (int j = 0; j < standardOptions.length; j++) {
-                if (standardOptions[j].length > 1
-                        && standardOpts[i].equalsIgnoreCase(standardOptions[j][0])) {
-                    value = standardOptions[j][1];
-                    LogSupport.trace("Using standard option \"{0}\" for delegate \"{1}\": \"{2}\".",
-                            standardOpts[i], setting, value);
-                    break;
-                }
-            }
+        properties = new Properties();
+        try (InputStream in = getClass().getResourceAsStream("/META-INF/umldoclet.properties")) {
+            properties.load(in);
+        } catch (IOException ioe) {
+            throw new IllegalStateException("I/O exception loading properties: " + ioe.getMessage(), ioe);
         }
-        return Objects.toString(value, setting.defaultValue);
     }
 
-    List<String> stringValues(Setting setting) {
-        if (super.containsKey(setting)) {
-            Object value = super.get(setting);
-            if (value instanceof List) {
-                return (List<String>) value;
-            }
-            return split(value.toString());
-        }
-        return split(setting.defaultValue);
-    }
-
+    /**
+     * @return The version of the doclet, so it can be printed as a notice.
+     */
     public String version() {
-        return properties().getProperty("version");
+        return properties.getProperty("version", "<unknown version>");
     }
 
     /**
      * @return The base path where the documentation should be created.
      */
     public String basePath() {
-        return Objects.toString(stringValue(Setting.UML_BASE_PATH), defaultBasePath);
+        return Setting.UML_BASE_PATH.value(this);
     }
 
     /**
@@ -209,14 +179,14 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
      * (defaults to {@code -1} which leaves the indentation unspecified).
      */
     public int indentation() {
-        return Integer.valueOf(stringValue(Setting.UML_INDENTATION));
+        return Setting.UML_INDENTATION.value(this);
     }
 
     /**
      * @return The file extension for the PlantUML files (defaults to {@code ".puml"}).
      */
     public String umlFileExtension() {
-        final String extension = stringValue(Setting.UML_FILE_EXTENSION);
+        final String extension = Setting.UML_FILE_EXTENSION.value(this);
         return extension.startsWith(".") ? extension : "." + extension;
     }
 
@@ -224,53 +194,54 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
      * @return The file character encoding for the PlantUML files (defaults to {@code "UTF-8"}).
      */
     public String umlFileEncoding() {
-        return stringValue(Setting.UML_FILE_ENCODING, "-docEncoding");
+        // TODO: look for default setting "-docEncoding" as fallback..
+        return Objects.toString(Setting.UML_FILE_ENCODING.value(this), "UTF-8");
     }
 
     public boolean skipStandardDoclet() {
-        return Boolean.valueOf(stringValue(Setting.UML_SKIP_STANDARD_DOCLET));
+        return Setting.UML_SKIP_STANDARD_DOCLET.value(this);
     }
 
     /**
      * @return Whether or not to include private fields in the UML diagrams (defaults to {@code false}).
      */
     public boolean includePrivateFields() {
-        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PRIVATE_FIELDS));
+        return Setting.UML_INCLUDE_PRIVATE_FIELDS.value(this);
     }
 
     /**
      * @return Whether or not to include package-private fields in the UML diagrams (defaults to {@code false}).
      */
     public boolean includePackagePrivateFields() {
-        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PACKAGE_PRIVATE_FIELDS));
+        return Setting.UML_INCLUDE_PACKAGE_PRIVATE_FIELDS.value(this);
     }
 
     /**
      * @return Whether or not to include private fields in the UML diagrams (defaults to {@code true}).
      */
     public boolean includeProtectedFields() {
-        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PROTECTED_FIELDS));
+        return Setting.UML_INCLUDE_PROTECTED_FIELDS.value(this);
     }
 
     /**
      * @return Whether or not to include public fields in the UML diagrams (defaults to {@code true}).
      */
     public boolean includePublicFields() {
-        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PUBLIC_FIELDS));
+        return Setting.UML_INCLUDE_PUBLIC_FIELDS.value(this);
     }
 
     /**
      * @return Whether or not to include deprecated fields in the UML diagrams (defaults to {@code false}).
      */
     public boolean includeDeprecatedFields() {
-        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_DEPRECATED_FIELDS));
+        return Setting.UML_INCLUDE_DEPRECATED_FIELDS.value(this);
     }
 
     /**
      * @return Whether or not to include field type details in the UML diagrams (defaults to {@code true}).
      */
     public boolean includeFieldTypes() {
-        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_FIELD_TYPES));
+        return Setting.UML_INCLUDE_FIELD_TYPES.value(this);
     }
 
     /**
@@ -287,18 +258,18 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
      * @return Whether or not to include method parameter names in the UML diagrams (defaults to {@code false}).
      */
     public boolean includeMethodParamNames() {
-        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_METHOD_PARAM_NAMES));
+        return Setting.UML_INCLUDE_METHOD_PARAM_NAMES.value(this);
     }
 
     /**
      * @return Whether or not to include method parameter types in the UML diagrams (defaults to {@code true}).
      */
     public boolean includeMethodParamTypes() {
-        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_METHOD_PARAM_TYPES));
+        return Setting.UML_INCLUDE_METHOD_PARAM_TYPES.value(this);
     }
 
     public boolean includeMethodReturntypes() {
-        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_METHOD_RETURNTYPES));
+        return Setting.UML_INCLUDE_METHOD_RETURNTYPES.value(this);
     }
 
     /**
@@ -309,46 +280,46 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
      * @return Whether or not to include any constructors in the UML diagrams (defaults to {@code true}).
      */
     public boolean includeConstructors() {
-        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_CONSTRUCTORS));
+        return Setting.UML_INCLUDE_CONSTRUCTORS.value(this);
     }
 
     public boolean includeDefaultConstructors() {
-        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_DEFAULT_CONSTRUCTORS));
+        return Setting.UML_INCLUDE_DEFAULT_CONSTRUCTORS.value(this);
     }
 
     /**
      * @return Whether or not to include private methods in the UML diagrams (defaults to {@code false}).
      */
     public boolean includePrivateMethods() {
-        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PRIVATE_METHODS));
+        return Setting.UML_INCLUDE_PRIVATE_METHODS.value(this);
     }
 
     /**
      * @return Whether or not to include package-private methods in the UML diagrams (defaults to {@code false}).
      */
     public boolean includePackagePrivateMethods() {
-        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PACKAGE_PRIVATE_METHODS));
+        return Setting.UML_INCLUDE_PACKAGE_PRIVATE_METHODS.value(this);
     }
 
     /**
      * @return Whether or not to include private methods in the UML diagrams (defaults to {@code true}).
      */
     public boolean includeProtectedMethods() {
-        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PROTECTED_METHODS));
+        return Setting.UML_INCLUDE_PROTECTED_METHODS.value(this);
     }
 
     /**
      * @return Whether or not to include public methods in the UML diagrams (defaults to {@code true}).
      */
     public boolean includePublicMethods() {
-        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PUBLIC_METHODS));
+        return Setting.UML_INCLUDE_PUBLIC_METHODS.value(this);
     }
 
     /**
      * @return Whether or not to include deprecated methods in the UML diagrams (defaults to {@code false}).
      */
     public boolean includeDeprecatedMethods() {
-        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_DEPRECATED_METHODS));
+        return Setting.UML_INCLUDE_DEPRECATED_METHODS.value(this);
     }
 
     /**
@@ -356,35 +327,35 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
      * (from referenced external packages) in the UML diagrams (defaults to {@code true}).
      */
     public boolean includeAbstractSuperclassMethods() {
-        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_ABSTRACT_SUPERCLASS_METHODS));
+        return Setting.UML_INCLUDE_ABSTRACT_SUPERCLASS_METHODS.value(this);
     }
 
     private boolean includePrivateClasses() {
-        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PRIVATE_CLASSES));
+        return Setting.UML_INCLUDE_PRIVATE_CLASSES.value(this);
     }
 
     private boolean includePackagePrivateClasses() {
-        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PACKAGE_PRIVATE_CLASSES));
+        return Setting.UML_INCLUDE_PACKAGE_PRIVATE_CLASSES.value(this);
     }
 
     private boolean includeProtectedClasses() {
-        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PROTECTED_CLASSES));
+        return Setting.UML_INCLUDE_PROTECTED_CLASSES.value(this);
     }
 
     private boolean includeDeprecatedClasses() {
-        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_DEPRECATED_CLASSES));
+        return Setting.UML_INCLUDE_DEPRECATED_CLASSES.value(this);
     }
 
     private boolean includePrivateInnerclasses() {
-        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PRIVATE_INNERCLASSES));
+        return Setting.UML_INCLUDE_PRIVATE_INNERCLASSES.value(this);
     }
 
     private boolean includePackagePrivateInnerclasses() {
-        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PACKAGE_PRIVATE_INNERCLASSES));
+        return Setting.UML_INCLUDE_PACKAGE_PRIVATE_INNERCLASSES.value(this);
     }
 
     private boolean includeProtectedInnerclasses() {
-        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_PROTECTED_INNERCLASSES));
+        return Setting.UML_INCLUDE_PROTECTED_INNERCLASSES.value(this);
     }
 
     public boolean includeClass(ClassDoc classDoc) {
@@ -414,16 +385,12 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
         return included;
     }
 
-    private Collection<String> excludedReferences = null;
-
     /**
      * @return The excluded references which should not be rendered.
      */
     public synchronized Collection<String> excludedReferences() {
-        if (excludedReferences == null) {
-            excludedReferences = stringValues(Setting.UML_EXCLUDED_REFERENCES);
-            LogSupport.trace("Excluding the following references: {0}.", excludedReferences);
-        }
+        Collection<String> excludedReferences = Setting.UML_EXCLUDED_REFERENCES.value(this);
+        LogSupport.trace("Excluding the following references: {0}.", excludedReferences);
         return excludedReferences;
     }
 
@@ -432,11 +399,11 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
      * (i.e. include java.lang.Object methods?), defaults to {@code false}.
      */
     public boolean includeOverridesFromExcludedReferences() {
-        return Boolean.valueOf(stringValue(Setting.UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES));
+        return Setting.UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES.value(this);
     }
 
     public List<String> umlCommands() {
-        return stringValues(Setting.UML_COMMAND);
+        return Setting.UML_COMMAND.value(this);
     }
 
     public boolean supportLegacyTags() {
@@ -468,32 +435,6 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
             }
         }
         return result.append('}').toString();
-    }
-
-    private static List<String> split(String... values) {
-        List<String> result = emptyList();
-        for (String value : values) {
-            for (String elem : value.split("[,;\\n]")) {
-                elem = elem.trim();
-                if (!elem.isEmpty()) {
-                    result = add(result, elem.trim());
-                }
-            }
-        }
-        return result;
-    }
-
-    private static List<String> add(List<String> list, String elem) {
-        switch (list.size()) {
-            case 0:
-                return singletonList(elem);
-            case 1:
-                String curr = list.get(0);
-                list = new ArrayList<>();
-                list.add(curr);
-        }
-        list.add(elem);
-        return list;
     }
 
 }

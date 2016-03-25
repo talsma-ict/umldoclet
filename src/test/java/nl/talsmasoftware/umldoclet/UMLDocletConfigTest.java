@@ -53,8 +53,9 @@ public class UMLDocletConfigTest {
     @Test
     public void testSplitDefaultValue() {
         UMLDocletConfig config = new UMLDocletConfig(new String[0][], mock(DocErrorReporter.class));
-        assertThat(config.stringValues(UMLDocletConfig.Setting.UML_EXCLUDED_REFERENCES),
-                is(equalTo(asList(Object.class.getName(), Enum.class.getName()))));
+        assertThat(config.excludedReferences(), is(equalTo((Collection<String>) asList(
+                Object.class.getName(), Enum.class.getName()
+        ))));
     }
 
     @Test

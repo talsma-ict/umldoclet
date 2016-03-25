@@ -90,7 +90,7 @@ public class LogSupport implements DocErrorReporter {
     public static void trace(String msg, Object... args) {
         if (isTraceEnabled()) {
             if (reporter == null) {
-                LOGGER.finest(format(msg, args));
+                LOGGER.log(Level.FINEST, format(msg, args), exception(args));
             } else {
                 reporter.printNotice(POS.get(), format(msg, args));
             }
@@ -100,7 +100,7 @@ public class LogSupport implements DocErrorReporter {
     public static void debug(String msg, Object... args) {
         if (LOGGER.isLoggable(Level.FINE)) {
             if (reporter == null) {
-                LOGGER.fine(format(msg, args));
+                LOGGER.log(Level.FINE, format(msg, args), exception(args));
             } else {
                 reporter.printNotice(POS.get(), format(msg, args));
             }
@@ -110,7 +110,7 @@ public class LogSupport implements DocErrorReporter {
     public static void info(String msg, Object... args) {
         if (LOGGER.isLoggable(Level.INFO)) {
             if (reporter == null) {
-                LOGGER.info(format(msg, args));
+                LOGGER.log(Level.INFO, format(msg, args), exception(args));
             } else {
                 reporter.printNotice(POS.get(), format(msg, args));
             }
@@ -120,7 +120,7 @@ public class LogSupport implements DocErrorReporter {
     public static void warn(String msg, Object... args) {
         if (LOGGER.isLoggable(Level.WARNING)) {
             if (reporter == null) {
-                LOGGER.warning(format(msg, args));
+                LOGGER.log(Level.WARNING, format(msg, args), exception(args));
             } else {
                 reporter.printWarning(POS.get(), format(msg, args));
             }
@@ -130,7 +130,7 @@ public class LogSupport implements DocErrorReporter {
     public static void error(String msg, Object... args) {
         if (LOGGER.isLoggable(Level.SEVERE)) {
             if (reporter == null) {
-                LOGGER.severe(format(msg, args));
+                LOGGER.log(Level.SEVERE, format(msg, args), exception(args));
             } else {
                 reporter.printError(POS.get(), format(msg, args));
             }
@@ -172,6 +172,15 @@ public class LogSupport implements DocErrorReporter {
         try (GlobalPosition gp = new GlobalPosition(pos)) {
             error(msg);
         }
+    }
+
+    private static Throwable exception(Object... args) {
+        for (int i = args.length - 1; i >= 0; i--) {
+            if (args[i] instanceof Throwable) {
+                return (Throwable) args[i];
+            }
+        }
+        return null;
     }
 
     /**

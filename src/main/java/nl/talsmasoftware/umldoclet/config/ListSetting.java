@@ -18,16 +18,23 @@
 package nl.talsmasoftware.umldoclet.config;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
 
 /**
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
 public class ListSetting extends AbstractSetting<List<String>> {
 
-    public ListSetting(String name) {
+    private final List<String> defaultValue;
+
+    public ListSetting(String name, String... defaultValue) {
         super(name);
+        this.defaultValue = unmodifiableCopy(split(false, defaultValue));
     }
 
     @Override
@@ -39,20 +46,46 @@ public class ListSetting extends AbstractSetting<List<String>> {
                     values.add(Objects.toString(val));
                 }
             }
-            for (int i = 1; i < option.length; i++) {
-                for (String part : option[i].split("\\s*[,;\\n]\\s*")) {
-                    if (!part.isEmpty()) {
-                        values.add(part);
-                    }
-                }
-            }
+            values.addAll(split(true, option));
         }
-        return values.isEmpty() ? value(currentValue) : values;
+        if (values.isEmpty()) {
+            return value(currentValue);
+        }
+        return unmodifiableCopy(values);
     }
 
     @Override
     public List<String> value(Object configured) {
-        return configured instanceof List ? (List<String>) configured : null;
+        return configured instanceof List ? (List<String>) configured : defaultValue;
+    }
+
+    private static List<String> split(boolean skipfirst, String... values) {
+        List<String> result = new ArrayList<>();
+        boolean skip = skipfirst;
+        for (String val : values) {
+            if (!skip) {
+                for (String part : val.split("\\s*[,;\\n]\\s*")) {
+                    result.add(part);
+                }
+            }
+            skip = false;
+        }
+        return result;
+    }
+
+    private static List<String> unmodifiableCopy(Collection<?> source) {
+        if (source == null) {
+            return null;
+        } else if (source.isEmpty()) {
+            return emptyList();
+        }
+        List<String> copy = new ArrayList<>();
+        for (Object value : source) {
+            if (value != null) {
+                copy.add(value.toString());
+            }
+        }
+        return unmodifiableList(copy);
     }
 
 }
