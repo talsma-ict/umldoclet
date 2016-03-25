@@ -22,7 +22,7 @@ package nl.talsmasoftware.umldoclet.config;
  */
 public abstract class AbstractSetting<T> {
 
-    private final String name;
+    final String name;
 
     protected AbstractSetting(String name) {
         this.name = name;
@@ -31,6 +31,8 @@ public abstract class AbstractSetting<T> {
     public boolean matches(String option) {
         return option != null && this.name.equalsIgnoreCase(option.startsWith("-") ? option.substring(1) : option);
     }
+
+    public abstract boolean validate(String[] option);
 
     public abstract T parse(String[] option, Object currentValue);
 

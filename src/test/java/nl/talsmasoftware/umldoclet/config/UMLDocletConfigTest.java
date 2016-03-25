@@ -15,10 +15,11 @@
  *
  */
 
-package nl.talsmasoftware.umldoclet;
+package nl.talsmasoftware.umldoclet.config;
 
 import com.sun.javadoc.DocErrorReporter;
 import nl.talsmasoftware.umldoclet.config.AbstractSetting;
+import nl.talsmasoftware.umldoclet.config.UMLDocletConfig;
 import org.junit.Test;
 
 import java.io.IOException;

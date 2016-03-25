@@ -17,6 +17,10 @@
 
 package nl.talsmasoftware.umldoclet.config;
 
+import nl.talsmasoftware.umldoclet.logging.LogSupport;
+
+import java.util.Arrays;
+
 /**
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
@@ -27,6 +31,18 @@ public class BooleanSetting extends AbstractSetting<Boolean> {
     public BooleanSetting(String name, boolean defaultValue) {
         super(name);
         this.defaultValue = defaultValue;
+    }
+
+    @Override
+    public boolean validate(String[] option) {
+        if (option.length != 2) {
+            LogSupport.error("Expected {0} but received {1} values: {2}.", 2, option.length, Arrays.toString(option));
+            return false;
+        } else if (!"true".equalsIgnoreCase(option[1]) && !"false".equalsIgnoreCase(option[1])) {
+            LogSupport.error("Expected boolean value, but got \"{0}\" for option \"{1}\".", option[1], option[0]);
+            return false;
+        }
+        return true;
     }
 
     @Override

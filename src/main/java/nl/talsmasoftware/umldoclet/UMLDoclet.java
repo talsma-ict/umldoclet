@@ -20,6 +20,7 @@ import com.sun.javadoc.DocErrorReporter;
 import com.sun.javadoc.PackageDoc;
 import com.sun.javadoc.RootDoc;
 import com.sun.tools.doclets.standard.Standard;
+import nl.talsmasoftware.umldoclet.config.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.rendering.UMLDiagram;
 
@@ -56,11 +57,13 @@ public class UMLDoclet extends Standard {
     }
 
     public static int optionLength(String option) {
-        return UMLDocletConfig.optionLength(option);
+        final int optionLength = UMLDocletConfig.optionLength(option);
+        return optionLength > 0 ? optionLength : Standard.optionLength(option);
     }
 
     public static boolean validOptions(String[][] options, DocErrorReporter reporter) {
-        return UMLDocletConfig.validOptions(options, reporter);
+        final UMLDocletConfig config = new UMLDocletConfig(options, reporter);
+        return Standard.validOptions(config.standardOptions(), reporter) && config.isValid();
     }
 
     public static boolean start(RootDoc rootDoc) {

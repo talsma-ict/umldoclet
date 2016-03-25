@@ -19,7 +19,7 @@ package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.Tag;
-import nl.talsmasoftware.umldoclet.UMLDocletConfig;
+import nl.talsmasoftware.umldoclet.config.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.logging.LogSupport;
 
 import java.util.Collection;

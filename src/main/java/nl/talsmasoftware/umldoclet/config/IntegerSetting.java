@@ -17,6 +17,10 @@
 
 package nl.talsmasoftware.umldoclet.config;
 
+import nl.talsmasoftware.umldoclet.logging.LogSupport;
+
+import java.util.Arrays;
+
 /**
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
@@ -27,6 +31,22 @@ public class IntegerSetting extends AbstractSetting<Integer> {
     public IntegerSetting(String name, int defaultValue) {
         super(name);
         this.defaultValue = defaultValue;
+    }
+
+    @Override
+    public boolean validate(String[] option) {
+        if (option.length != 2) {
+            LogSupport.error("Expected {0} but received {1} values: {2}.", 2, option.length, Arrays.toString(option));
+            return false;
+        }
+        try {
+            LogSupport.trace("Valid integer option \"{0}\": {1}", option[0], Integer.valueOf(option[1]));
+        } catch (NumberFormatException badInteger) {
+            LogSupport.trace("Invalid integer option \"{0}\": {1}", option[0], badInteger);
+            LogSupport.error("Expected boolean value, but got \"{0}\" for option \"{1}\".", option[1], option[0]);
+            return false;
+        }
+        return true;
     }
 
     @Override

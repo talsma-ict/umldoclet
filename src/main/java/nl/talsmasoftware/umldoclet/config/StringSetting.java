@@ -17,6 +17,10 @@
 
 package nl.talsmasoftware.umldoclet.config;
 
+import nl.talsmasoftware.umldoclet.logging.LogSupport;
+
+import java.util.Arrays;
+
 /**
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
@@ -27,6 +31,15 @@ public class StringSetting extends AbstractSetting<String> {
     public StringSetting(String name, String defaultValue) {
         super(name);
         this.defaultValue = defaultValue;
+    }
+
+    @Override
+    public boolean validate(String[] option) {
+        if (option.length != 2) {
+            LogSupport.error("Expected {0} but received {1} values: {2}.", 2, option.length, Arrays.toString(option));
+            return false;
+        }
+        return true;
     }
 
     @Override

@@ -17,10 +17,9 @@
 
 package nl.talsmasoftware.umldoclet.config;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import nl.talsmasoftware.umldoclet.logging.LogSupport;
+
+import java.util.*;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
@@ -35,6 +34,15 @@ public class ListSetting extends AbstractSetting<List<String>> {
     public ListSetting(String name, String... defaultValue) {
         super(name);
         this.defaultValue = unmodifiableCopy(split(false, defaultValue));
+    }
+
+    @Override
+    public boolean validate(String[] option) {
+        if (option.length < 2) {
+            LogSupport.error("Expected at least {0} but received {1} values: {2}.", 2, option.length, Arrays.toString(option));
+            return false;
+        }
+        return true;
     }
 
     @Override
