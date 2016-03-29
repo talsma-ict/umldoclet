@@ -68,8 +68,16 @@ public class UMLDoclet extends Standard {
 
     public static boolean start(RootDoc rootDoc) {
         UMLDoclet umlDoclet = new UMLDoclet(rootDoc);
-        return umlDoclet.generateUMLDiagrams()
-                && (umlDoclet.config.skipStandardDoclet() || Standard.start(rootDoc));
+        boolean umlDocletResult = umlDoclet.generateUMLDiagrams();
+        // Regarding issue #13: I don't understand why the Standard doclet will run on a 'bad' javadoc
+        // contained in RootDoc somewhere after UMLDoclet has done it's thing, but
+        // send us a (correct) JavaDoc ERROR if ran on the same rootDoc 'untouched'...
+        // Think about this; Is there some way to 'clone' it and pass the original rootDoc to the
+        // Standard doclet??
+        if (umlDocletResult && !umlDoclet.config.skipStandardDoclet()) {
+            return Standard.start(rootDoc);
+        }
+        return umlDocletResult;
     }
 
     public boolean generateUMLDiagrams() {
