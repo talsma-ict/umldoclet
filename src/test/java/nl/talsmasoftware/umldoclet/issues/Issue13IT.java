@@ -19,33 +19,47 @@ package nl.talsmasoftware.umldoclet.issues;
 
 import nl.talsmasoftware.umldoclet.testing.PatternMatcher;
 import org.apache.maven.shared.invoker.*;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
+import java.util.Properties;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
- * Test for Issue 13; Doclet seems to suppress JavaDoc errors.
+ * Integration Test for Issue 13; Doclet seems to suppress JavaDoc errors.
  *
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
-public class Issue13Test {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Issue13Test.class);
+public class Issue13IT {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Issue13IT.class);
+
+    private Properties mavenProps;
+
+    @Before
+    public void setUp() throws IOException {
+        mavenProps = new Properties();
+        try (InputStream in = Issue13IT.class.getResourceAsStream("/META-INF/umldoclet.properties")) {
+            mavenProps.load(in);
+        }
+        String jarfile = "target/umldoclet-" + mavenProps.getProperty("version") + ".jar";
+        mavenProps.setProperty("docletPath", new File(jarfile).getCanonicalPath());
+        LOGGER.debug("Set docletPath maven property to \"{}\".", mavenProps.getProperty("docletPath"));
+    }
 
     @Test
     @Ignore // Issue 13 still needs to be fixed! Test passes witout umldoclet and fails with it.
-    public void testJavaDocErrors() throws MavenInvocationException {
+    public void testJavaDocErrors() throws MavenInvocationException, IOException {
         InvocationRequest request = new DefaultInvocationRequest();
         request.setPomFile(new File("src/test/resources/issue-13/pom.xml"));
         request.setGoals(asList("clean", "verify"));
-        request.setDebug(true);
+        request.setProperties(mavenProps);
+//        request.setDebug(true);
         OutputHandler outputHandler = new OutputHandler();
         request.setOutputHandler(outputHandler);
 
