@@ -32,6 +32,7 @@ import static java.util.Objects.requireNonNull;
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
 public class ClassReferenceRenderer extends ClassRenderer {
+    protected final ClassRenderer parent;
     protected final String qualifiedName;
     protected final String umlreference;
 
@@ -48,6 +49,7 @@ public class ClassReferenceRenderer extends ClassRenderer {
 
     private ClassReferenceRenderer(ClassRenderer parent, ClassDoc documentedClass, String qualifiedName, String umlreference) {
         super(parent, documentedClass == null ? parent.classDoc : documentedClass);
+        this.parent = requireNonNull(parent, "No parent renderer for class reference provided.");
         super.children.clear();
         this.qualifiedName = requireNonNull(documentedClass == null ? qualifiedName : documentedClass.qualifiedName(),
                 "Qualified name of documented reference is required.");
@@ -131,18 +133,31 @@ public class ClassReferenceRenderer extends ClassRenderer {
         return out.newline();
     }
 
+    @Override
+    protected String name() {
+        String name = qualifiedName;
+        // TODO investigate NullPointerException right here:
+//        LogSupport.trace("Parent name: {0}, parent classDoc: {1}", parent.name(), parent.classDoc);
+//        if (!parent.classDoc.qualifiedName().equals(parent.name())) {
+//            String parentPackagePrefix = parent.classDoc.containingPackage().name() + ".";
+//            if (name.startsWith(parentPackagePrefix)) {
+//                name = name.substring(parentPackagePrefix.length());
+//            }
+//        }
+        return name;
+    }
+
     protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         // Write type declaration if necessary.
         writeTypeDeclarationTo(out);
 
         // Write UML reference itself.
-        String parentName = ((ClassRenderer) parent).classDoc.qualifiedTypeName();
-        LogSupport.trace("Generating reference: \"{0}\" {1} \"{2}\"...", qualifiedName, umlreference, parentName);
-        out.append(qualifiedName).whitespace()
+        LogSupport.trace("Generating reference: \"{0}\" {1} \"{2}\"...", qualifiedName, umlreference, parent.name());
+        out.append(name()).whitespace()
                 .append(quoted(cardinality2)).whitespace()
                 .append(umlreference).whitespace()
                 .append(quoted(cardinality1)).whitespace()
-                .append(parentName);
+                .append(parent.name());
         if (note != null && !note.trim().isEmpty()) {
             out.append(": ").append(note);
         }

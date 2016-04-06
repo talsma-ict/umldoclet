@@ -1,5 +1,6 @@
 package nl.talsmasoftware.umldoclet.testing.deprecation;
 
+import nl.talsmasoftware.umldoclet.config.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.testing.Testing;
 import org.junit.Test;
 
@@ -11,6 +12,8 @@ import static org.hamcrest.Matchers.*;
  */
 @SuppressWarnings("deprecation")
 public class DeprecationTest {
+
+    private static final boolean QUALIFIED = new UMLDocletConfig(new String[0][], null).alwaysUseQualifiedClassnames();
 
     @Test
     public void testClassWithDeprecatedItems() {
@@ -82,7 +85,10 @@ public class DeprecationTest {
         assertThat(packageUml, not(containsString(DeprecatedBySuperclass.class.getName())));
 
         // Non-deprecated classes and members should be rendered.
-        assertThat(packageUml, containsString("class nl.talsmasoftware.umldoclet.testing.deprecation.ClassWithDeprecatedItems"));
+        String classdef = QUALIFIED
+                ? "class nl.talsmasoftware.umldoclet.testing.deprecation.ClassWithDeprecatedItems"
+                : "class ClassWithDeprecatedItems";
+        assertThat(packageUml, containsString(classdef));
         assertThat(packageUml, containsString("+notDeprecatedField: int"));
         assertThat(packageUml, containsString("+notDeprecatedMethod(): int"));
 

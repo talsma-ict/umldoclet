@@ -399,9 +399,6 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
      * @return The excluded references which should not be rendered.
      */
     public synchronized Collection<String> excludedReferences() {
-//        Collection<String> excludedReferences = UML_EXCLUDED_REFERENCES.value(this);
-//        LogSupport.trace("Excluding the following references: {0}.", excludedReferences);
-//        return excludedReferences;
         return UML_EXCLUDED_REFERENCES.value(this);
     }
 
@@ -411,6 +408,10 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
      */
     public boolean includeOverridesFromExcludedReferences() {
         return UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES.value(this);
+    }
+
+    public boolean alwaysUseQualifiedClassnames() {
+        return true;
     }
 
     public List<String> umlCommands() {

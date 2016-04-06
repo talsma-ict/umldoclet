@@ -17,6 +17,7 @@
 
 package nl.talsmasoftware.umldoclet.testing.legacy;
 
+import nl.talsmasoftware.umldoclet.config.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.testing.Testing;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -32,16 +33,33 @@ import static org.hamcrest.Matchers.*;
  * @navassoc 1 tests - SetTopController
  */
 public class LegacyTest {
-    private static final String channelIteratorName = ChannelIterator.class.getName();
-    private static final String setTopControllerName = SetTopController.class.getName();
-    private static final String embeddedAgentName = EmbeddedAgent.class.getName();
-    private static final String urlStreamHandlerName = URLStreamHandler.class.getName();
+
+    private static final boolean QUALIFIED = new UMLDocletConfig(new String[0][], null).alwaysUseQualifiedClassnames();
+
+    private static final String channelIteratorName = QUALIFIED
+            ? ChannelIterator.class.getName()
+            : ChannelIterator.class.getSimpleName();
+    private static final String setTopControllerName = QUALIFIED
+            ? SetTopController.class.getName()
+            : SetTopController.class.getSimpleName();
+    private static final String embeddedAgentName = QUALIFIED
+            ? EmbeddedAgent.class.getName()
+            : EmbeddedAgent.class.getSimpleName();
+    private static final String urlStreamHandlerName = QUALIFIED
+            ? URLStreamHandler.class.getName()
+            : URLStreamHandler.class.getSimpleName();
     private static final String autoCloseableName = AutoCloseable.class.getName();
-    private static final String legacytestName = LegacyTest.class.getName();
+    private static final String legacytestName = QUALIFIED
+            ? LegacyTest.class.getName()
+            : LegacyTest.class.getSimpleName();
     private static final String agentName = "com.unavailable.api.Agent";
     private static final String controllerName = "com.unavailable.api.Controller";
-    private static final String powermanagerName = "nl.talsmasoftware.umldoclet.testing.legacy.PowerManager";
-    private static final String targetName = "nl.talsmasoftware.umldoclet.testing.legacy.Target";
+    private static final String powermanagerName = QUALIFIED
+            ? "nl.talsmasoftware.umldoclet.testing.legacy.PowerManager"
+            : "PowerManager";
+    private static final String targetName = QUALIFIED
+            ? "nl.talsmasoftware.umldoclet.testing.legacy.Target"
+            : "Target";
 
     private static String packageUml;
 

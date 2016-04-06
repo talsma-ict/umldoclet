@@ -79,14 +79,18 @@ public class ClassRenderer extends Renderer {
         for (Tag notetag : classDoc.tags(tagname)) {
             String note = notetag.text();
             if (note != null) {
-                String myName = parent instanceof UMLDiagram
-                        ? classDoc.name()
-                        : classDoc.qualifiedTypeName();
-                notes.add(new NoteRenderer(diagram, note, myName));
+                notes.add(new NoteRenderer(diagram, note, name()));
             }
         }
     }
 
+    /**
+     * Determines the 'UML' type for the class to be rendered.
+     * Currently, this can return one of the following: {@code "enum"}, {@code "interface"}, {@code "abstract class"}
+     * or (obviously) {@code "class"}.
+     *
+     * @return The UML type for the class to be rendered.
+     */
     protected String umlType() {
         return classDoc.isEnum() ? "enum"
                 : classDoc.isInterface() ? "interface"
@@ -94,6 +98,13 @@ public class ClassRenderer extends Renderer {
                 : "class";
     }
 
+    /**
+     * This method writes the 'generic' information to the writer, if available in the class documentation.
+     * If data is written, starts with {@code '<'} and ends with {@code '>'}.
+     *
+     * @param out The writer to write to.
+     * @return The writer so more content can easily be written.
+     */
     protected IndentingPrintWriter writeGenericsTo(IndentingPrintWriter out) {
         if (classDoc.typeParameters().length > 0) {
             out.append('<');
@@ -107,6 +118,12 @@ public class ClassRenderer extends Renderer {
         return out;
     }
 
+    /**
+     * This method writes the notes for this class to the output.
+     *
+     * @param out The writer to write the notes to.
+     * @return The writer so more content can easily be written.
+     */
     protected IndentingPrintWriter writeNotesTo(IndentingPrintWriter out) {
         for (NoteRenderer note : notes) {
             note.writeTo(out);
@@ -114,14 +131,44 @@ public class ClassRenderer extends Renderer {
         return out;
     }
 
-    protected IndentingPrintWriter writeNameTo(IndentingPrintWriter out) {
-        String name = parent instanceof UMLDiagram
-                ? classDoc.name()
-                : classDoc.qualifiedTypeName();
-        diagram.encounteredTypes.add(name);
-        return out.append(name);
+    /**
+     * Determines the name of the class to be rendered.
+     * This method considers whether to use the fully qualified class name (including package denomination etc) or
+     * a shorter simple name.
+     *
+     * @return The name of the class to be rendered.
+     */
+    protected String name() {
+        String name = classDoc.qualifiedName();
+        if (parent instanceof UMLDiagram) {
+            name = classDoc.name();
+        } else if (parent instanceof PackageRenderer && !diagram.config.alwaysUseQualifiedClassnames()) {
+            String packagePrefix = classDoc.containingPackage().name() + ".";
+            if (name.startsWith(packagePrefix)) {
+                name = name.substring(packagePrefix.length());
+            }
+        }
+        return name;
     }
 
+    /**
+     * This method writes the name of the class to the output and marks (the fully qualified name of) the class as
+     * an 'encountered type'.
+     *
+     * @param out The writer to write the class name to.
+     * @return The writer so more content can easily be written.
+     */
+    protected IndentingPrintWriter writeNameTo(IndentingPrintWriter out) {
+        diagram.encounteredTypes.add(classDoc.qualifiedName());
+        return out.append(this.name());
+    }
+
+    /**
+     * This method renders the class information to the specified output.
+     *
+     * @param out The writer to write the class name to.
+     * @return The writer so more content can easily be written.
+     */
     protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         writeNameTo(out.append(umlType()).whitespace());
         writeGenericsTo(out);
