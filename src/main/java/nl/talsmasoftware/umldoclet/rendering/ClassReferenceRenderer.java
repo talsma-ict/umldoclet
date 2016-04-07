@@ -120,12 +120,12 @@ public class ClassReferenceRenderer extends ClassRenderer {
             return out;
         } else if (!qualifiedName.equals(classDoc.qualifiedName())) {
             LogSupport.trace("Generating 'unknown' class type declaration for \"{0}\"; " +
-                    "we only have a class name reference as declaration.", qualifiedName);
-            return out.append(guessClassOrInterface()).whitespace().append(qualifiedName).append(" <<(?,orchid)>>").newline();
+                    "we only have a class name reference as declaration.", name());
+            return out.append(guessClassOrInterface()).whitespace().append(name()).append(" <<(?,orchid)>>").newline();
         }
 
-        LogSupport.trace("Generating type declaration for \"{0}\"...", qualifiedName);
-        out.append(umlType()).whitespace().append(qualifiedName);
+        LogSupport.trace("Generating type declaration for \"{0}\"...", name());
+        out.append(umlType()).whitespace().append(name());
         super.writeGenericsTo(out);
         if (!children.isEmpty()) {
             writeChildrenTo(out.append(" {").newline()).append('}');
@@ -136,14 +136,12 @@ public class ClassReferenceRenderer extends ClassRenderer {
     @Override
     protected String name() {
         String name = qualifiedName;
-        // TODO investigate NullPointerException right here:
-//        LogSupport.trace("Parent name: {0}, parent classDoc: {1}", parent.name(), parent.classDoc);
-//        if (!parent.classDoc.qualifiedName().equals(parent.name())) {
-//            String parentPackagePrefix = parent.classDoc.containingPackage().name() + ".";
-//            if (name.startsWith(parentPackagePrefix)) {
-//                name = name.substring(parentPackagePrefix.length());
-//            }
-//        }
+        if (!parent.classDoc.qualifiedName().equals(parent.name())) {
+            String parentPackagePrefix = parent.classDoc.containingPackage().name() + ".";
+            if (name.startsWith(parentPackagePrefix)) {
+                name = name.substring(parentPackagePrefix.length());
+            }
+        }
         return name;
     }
 

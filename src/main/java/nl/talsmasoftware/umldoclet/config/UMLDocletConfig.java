@@ -69,7 +69,8 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
         UML_INCLUDE_PROTECTED_INNERCLASSES("umlIncludeProtectedInnerClasses", false),
         UML_EXCLUDED_REFERENCES(new ListSetting("umlExcludedReferences", "java.lang.Object", "java.lang.Enum")),
         UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES("umlIncludeOverridesFromExcludedReferences", false),
-        UML_COMMAND(new ListSetting("umlCommand"));
+        UML_COMMAND(new ListSetting("umlCommand")),
+        UML_ALWAYS_USE_QUALIFIED_CLASSNAMES("umlAlwaysUseQualifiedClassnames", false);
 
         private final AbstractSetting<?> delegate;
 
@@ -411,7 +412,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
     }
 
     public boolean alwaysUseQualifiedClassnames() {
-        return true;
+        return UML_ALWAYS_USE_QUALIFIED_CLASSNAMES.value(this);
     }
 
     public List<String> umlCommands() {

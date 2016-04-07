@@ -79,7 +79,7 @@ public class ClassRenderer extends Renderer {
         for (Tag notetag : classDoc.tags(tagname)) {
             String note = notetag.text();
             if (note != null) {
-                notes.add(new NoteRenderer(diagram, note, name()));
+                notes.add(new NoteRenderer(this, note));
             }
         }
     }
