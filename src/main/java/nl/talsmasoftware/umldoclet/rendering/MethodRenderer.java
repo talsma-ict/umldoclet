@@ -98,7 +98,7 @@ public class MethodRenderer extends Renderer {
                     }
                 }
                 if (diagram.config.includeMethodParamTypes()) {
-                    out.append(parameter.type().simpleTypeName());
+                    out.append(parameter.type().simpleTypeName()).append(parameter.type().dimension());
                 }
                 separator = ", ";
             }
