@@ -16,6 +16,7 @@
 package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.*;
+import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.ArrayList;
@@ -142,13 +143,47 @@ public class ClassRenderer extends Renderer {
         String name = classDoc.qualifiedName();
         if (parent instanceof UMLDiagram) {
             name = classDoc.name();
-        } else if (parent instanceof PackageRenderer && !diagram.config.alwaysUseQualifiedClassnames()) {
-            String packagePrefix = classDoc.containingPackage().name() + ".";
-            if (name.startsWith(packagePrefix)) {
-                name = name.substring(packagePrefix.length());
-            }
+        } else if (parent instanceof PackageRenderer) {
+            name = simplifyClassnameWithinPackage(name);
         }
         return name;
+    }
+
+    /**
+     * This method simplifies the given className within the containing package under certain conditions:
+     * <ol>
+     * <li>The class must start with: the containing package name followed by a dot ({@code '.'})</li>
+     * <li>The remaining simplified name may not contain any more dot characters
+     * (plantUML cannot distinguish these outer classes from packages).</li>
+     * <li>The setting {@code "-umlAlwaysUseQualifiedClassnames"} is {@code false}.</li>
+     * </ol>
+     * <p>
+     * This method was introduced as a result of improvement documented in
+     * <a href="https://github.com/talsma-ict/umldoclet/issues/15">issue 15</a>
+     * </p>
+     *
+     * @param className The (qualified) class name to potentially simplify within the containing package.
+     * @return The simplified class name or the specified (qualified) name if any condition was not met.
+     */
+    protected String simplifyClassnameWithinPackage(final String className) {
+        final String packageName = classDoc.containingPackage().name();
+        final String packagePrefix = packageName + ".";
+        if (!className.startsWith(packagePrefix)) {
+            LogSupport.trace("Cannot simplify classname \"{0}\" as it does not belong in package \"{1}\".", className, packageName);
+        } else if (className.lastIndexOf('.') >= packagePrefix.length()) {
+            LogSupport.trace("Inner-class \"{0}\" within package \"{1}\" could be simplified but will be left as-is because " +
+                            "the remaining dot will make plantUML unable to distinguish the outer class from another package.",
+                    className, packageName);
+        } else if (diagram.config.alwaysUseQualifiedClassnames()) {
+            LogSupport.debug("Not simplifying classname \"{0}\" to \"{1}\" because doclet parameters told us not to...",
+                    className, className.substring(packagePrefix.length()));
+        } else {
+            String simpleClassname = className.substring(packagePrefix.length());
+            LogSupport.trace("Simplifying class name \"{0}\" to \"{1}\" because it is contained within package \"{2}\"...",
+                    className, simpleClassname, packageName);
+            return simpleClassname;
+        }
+        return className;
     }
 
     /**

@@ -135,14 +135,10 @@ public class ClassReferenceRenderer extends ClassRenderer {
 
     @Override
     protected String name() {
-        String name = qualifiedName;
-        if (!parent.classDoc.qualifiedName().equals(parent.name())) {
-            String parentPackagePrefix = parent.classDoc.containingPackage().name() + ".";
-            if (name.startsWith(parentPackagePrefix)) {
-                name = name.substring(parentPackagePrefix.length());
-            }
+        if (parent.classDoc.qualifiedName().equals(parent.name())) {
+            return qualifiedName;
         }
-        return name;
+        return simplifyClassnameWithinPackage(qualifiedName);
     }
 
     protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
