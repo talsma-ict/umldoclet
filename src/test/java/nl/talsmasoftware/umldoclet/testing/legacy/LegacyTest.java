@@ -35,6 +35,7 @@ import static org.hamcrest.Matchers.*;
 public class LegacyTest {
 
     private static final boolean QUALIFIED = new UMLDocletConfig(new String[0][], null).alwaysUseQualifiedClassnames();
+    private static final String NEWLINE_MATCH = "(\\\r)?\\\n";
 
     private static final String channelIteratorName = QUALIFIED
             ? ChannelIterator.class.getName()
@@ -112,9 +113,9 @@ public class LegacyTest {
     @Test
     public void testNoteTag() {
         assertThat(packageUml, containsPattern(
-                "note bottom of " + setTopControllerName + "\\\n" +
-                        "\\s+this is a note\\\n" +
-                        "\\s+over multiple lines <i>and <b>containing</b> markup</i>\\\n" +
+                "note bottom of " + setTopControllerName + NEWLINE_MATCH +
+                        "\\s+this is a note" + NEWLINE_MATCH +
+                        "\\s+over multiple lines <i>and <b>containing</b> markup</i>" + NEWLINE_MATCH +
                         "\\s*end note"));
     }
 

@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.regex.Matcher;
 
 import static nl.talsmasoftware.umldoclet.config.UMLDocletConfig.Setting.*;
 import static nl.talsmasoftware.umldoclet.rendering.Renderer.isDeprecated;
@@ -131,6 +132,14 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
         LogSupport.setLevel(UML_LOGLEVEL.value(this));
         try {
             String basePath = UML_BASE_PATH.value(this);
+            LogSupport.trace("Configured UML base path: \"{0}\".", basePath);
+            if (basePath.startsWith("file:")) {
+                basePath = basePath.substring("file:".length());
+                if (!"/".equals(File.separator)) {
+                    basePath = basePath.replaceAll("/", Matcher.quoteReplacement(File.separator));
+                }
+                LogSupport.trace("Translated UML base path: \"{0}\".", basePath);
+            }
             this.put(UML_BASE_PATH, new File(basePath).getCanonicalPath());
         } catch (IOException ioe) {
             LogSupport.warn("Error converting base path \"{0}\" to a canonical path: {1}",
