@@ -1,5 +1,6 @@
 package nl.talsmasoftware.umldoclet.testing.generics;
 
+import nl.talsmasoftware.umldoclet.config.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.testing.Testing;
 import org.junit.Test;
 
@@ -11,14 +12,15 @@ import static org.hamcrest.Matchers.*;
  */
 public class GenericsTest {
 
+    private static final boolean QUALIFIED = new UMLDocletConfig(new String[0][], null).alwaysUseQualifiedClassnames();
+
     @Test
     public void testGeneratedGenerics() {
         String constantListUml = Testing.readFile("testing/generics/ConstantList.puml");
         assertThat(constantListUml, is(not(nullValue())));
-        assertThat(constantListUml, containsString(
-                "class nl.talsmasoftware.umldoclet.testing.generics.ConstantList<T, X>"));
+        assertThat(constantListUml, containsString("class ConstantList<T, X>"));
         assertThat(constantListUml, containsString("+delegate: List<T>"));
-        assertThat(constantListUml, containsString("+ConstantList(T)"));
+        assertThat(constantListUml, containsString("+ConstantList(T[])"));
         assertThat(constantListUml, containsString("+getX(): X"));
         assertThat(constantListUml, containsString("+get(int): T"));
         assertThat(constantListUml, containsString("#delegateCollection(): Collection<T>"));
@@ -29,10 +31,12 @@ public class GenericsTest {
         String packageUml = Testing.readFile("testing/generics/package.puml");
         // First test whether the class details are rendered, as above:
         assertThat(packageUml, is(not(nullValue())));
-        assertThat(packageUml, containsString(
-                "class nl.talsmasoftware.umldoclet.testing.generics.ConstantList<T, X>"));
+        String classdef = QUALIFIED
+                ? "class nl.talsmasoftware.umldoclet.testing.generics.ConstantList<T, X>"
+                : "class ConstantList<T, X>";
+        assertThat(packageUml, containsString(classdef));
         assertThat(packageUml, containsString("+delegate: List<T>"));
-        assertThat(packageUml, containsString("+ConstantList(T)"));
+        assertThat(packageUml, containsString("+ConstantList(T[])"));
         assertThat(packageUml, containsString("+getX(): X"));
         assertThat(packageUml, containsString("+get(int): T"));
         assertThat(packageUml, containsString("#delegateCollection(): Collection<T>"));

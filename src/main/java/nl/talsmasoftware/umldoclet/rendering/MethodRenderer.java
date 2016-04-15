@@ -16,11 +16,10 @@
 package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.*;
+import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static java.util.Objects.requireNonNull;
 
@@ -33,8 +32,6 @@ import static java.util.Objects.requireNonNull;
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
 public class MethodRenderer extends Renderer {
-    private static final Logger LOGGER = Logger.getLogger(MethodRenderer.class.getName());
-
     protected final ExecutableMemberDoc methodDoc;
 
     protected MethodRenderer(UMLDiagram diagram, ExecutableMemberDoc methodDoc) {
@@ -60,7 +57,7 @@ public class MethodRenderer extends Renderer {
                 || (methodDoc.isPublic() && !diagram.config.includePublicMethods())
                 || (!diagram.config.includeDeprecatedMethods() && isDeprecated(methodDoc) && !isDeprecated(methodDoc.containingClass()));
 
-        if (LOGGER.isLoggable(Level.FINEST)) {
+        if (LogSupport.isTraceEnabled()) {
             String designation = methodDoc.isStatic() ? "Static method"
                     : isDefaultConstructor() ? "Default constructor"
                     : isConstructor() ? "Constructor"
@@ -69,17 +66,16 @@ public class MethodRenderer extends Renderer {
             if (isDeprecated(methodDoc)) {
                 designation = "Deprecated " + Character.toLowerCase(designation.charAt(0)) + designation.substring(1);
             }
-            LOGGER.log(Level.FINEST, "{0} \"{1}{2}\" {3}{4}.",
-                    new Object[]{
-                            designation,
-                            methodDoc.qualifiedName(),
-                            methodDoc.flatSignature(),
-                            methodDoc.isPrivate() ? "is private and "
-                                    : methodDoc.isPackagePrivate() ? "is package private and "
-                                    : methodDoc.isProtected() ? "is protected and "
-                                    : methodDoc.isPublic() ? "is public and "
-                                    : "",
-                            exclude ? "will not be included" : "will be included"});
+            LogSupport.trace("{0} \"{1}{2}\" {3}{4}.",
+                    designation,
+                    methodDoc.qualifiedName(),
+                    methodDoc.flatSignature(),
+                    methodDoc.isPrivate() ? "is private and "
+                            : methodDoc.isPackagePrivate() ? "is package private and "
+                            : methodDoc.isProtected() ? "is protected and "
+                            : methodDoc.isPublic() ? "is public and "
+                            : "",
+                    exclude ? "will not be included" : "will be included");
         }
         return !exclude;
     }
@@ -102,7 +98,7 @@ public class MethodRenderer extends Renderer {
                     }
                 }
                 if (diagram.config.includeMethodParamTypes()) {
-                    out.append(parameter.type().simpleTypeName());
+                    out.append(parameter.type().simpleTypeName()).append(parameter.type().dimension());
                 }
                 separator = ", ";
             }
@@ -121,7 +117,7 @@ public class MethodRenderer extends Renderer {
             FieldRenderer.writeAccessibility(out, methodDoc);
             writeNameTo(out);
             writeParametersTo(out.append('(')).append(')');
-            if (methodDoc instanceof MethodDoc) {
+            if (methodDoc instanceof MethodDoc && diagram.config.includeMethodReturntypes()) {
                 writeTypeTo(out.append(':').whitespace(), ((MethodDoc) methodDoc).returnType());
             }
             return out.newline();
@@ -163,8 +159,8 @@ public class MethodRenderer extends Renderer {
             ClassDoc overriddenClass = ((MethodDoc) methodDoc).overriddenClass();
             while (overriddenClass != null) {
                 if (diagram.config.excludedReferences().contains(overriddenClass.qualifiedName())) {
-                    LOGGER.log(Level.FINEST, "Method \"{0}{1}\" overrides method from excluded reference \"{2}\".",
-                            new Object[]{methodDoc.qualifiedName(), methodDoc.flatSignature(), overriddenClass.qualifiedName()});
+                    LogSupport.trace("Method \"{0}{1}\" overrides method from excluded reference \"{2}\".",
+                            methodDoc.qualifiedName(), methodDoc.flatSignature(), overriddenClass.qualifiedName());
                     return true;
                 }
                 MethodDoc foundMethod = findMethod(overriddenClass, methodDoc.name(), methodDoc.flatSignature());

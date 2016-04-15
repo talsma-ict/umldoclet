@@ -42,7 +42,7 @@ public class IndentingPrintWriter extends PrintWriter {
      * Returns an indenting printwriter around the given {@code delegate}.
      * If the {@code delegate} printwriter is already an indenting printwriter, it will simply be returned as-is.
      * If the {@code delegate} printwriter is not yet an indending printwriter, a new indenting printwriter class
-     * will be created to wrap the delegate using the {@link IndentingWriter#DEFAULT_INDENTATION_WIDTH}
+     * will be created to wrap the delegate using the {@link IndentingWriter}'s {@code default indentation width}
      * and no initial {@link IndentingWriter#indentationLevel()}.
      *
      * @param delegate The delegate to turn into an indenting printwriter.

@@ -20,14 +20,14 @@ import com.sun.javadoc.DocErrorReporter;
 import com.sun.javadoc.PackageDoc;
 import com.sun.javadoc.RootDoc;
 import com.sun.tools.doclets.standard.Standard;
+import nl.talsmasoftware.umldoclet.config.UMLDocletConfig;
+import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.rendering.UMLDiagram;
 
 import java.io.*;
 import java.util.Comparator;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static java.util.Objects.requireNonNull;
 
@@ -38,9 +38,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
-public class UMLDoclet extends Standard implements Closeable {
-    private static final Logger LOGGER = Logger.getLogger(UMLDoclet.class.getName());
-
+public class UMLDoclet extends Standard {
     private final RootDoc rootDoc;
     private final UMLDocletConfig config;
     private final SortedSet<PackageDoc> encounteredPackages = new TreeSet<>(new Comparator<PackageDoc>() {
@@ -54,23 +52,32 @@ public class UMLDoclet extends Standard implements Closeable {
     public UMLDoclet(RootDoc rootDoc) {
         this.rootDoc = requireNonNull(rootDoc, "No root document received.");
         this.config = new UMLDocletConfig(rootDoc.options(), rootDoc);
-        LOGGER.log(Level.INFO, "{0} version {1}.", new Object[]{getClass().getSimpleName(), config.version()});
-        LOGGER.log(Level.FINE, "Initialized {0}...", config);
+        LogSupport.info("{0} version {1}", getClass().getSimpleName(), config.version());
+        LogSupport.debug("Initialized {0}...", config);
     }
 
     public static int optionLength(String option) {
-        return UMLDocletConfig.optionLength(option);
+        final int optionLength = UMLDocletConfig.optionLength(option);
+        return optionLength > 0 ? optionLength : Standard.optionLength(option);
     }
 
     public static boolean validOptions(String[][] options, DocErrorReporter reporter) {
-        return UMLDocletConfig.validOptions(options, reporter);
+        final UMLDocletConfig config = new UMLDocletConfig(options, reporter);
+        return Standard.validOptions(config.standardOptions(), reporter) && config.isValid();
     }
 
     public static boolean start(RootDoc rootDoc) {
-        try (UMLDoclet umlDoclet = new UMLDoclet(rootDoc)) {
-            return umlDoclet.generateUMLDiagrams()
-                    && (umlDoclet.config.skipStandardDoclet() || Standard.start(rootDoc));
+        UMLDoclet umlDoclet = new UMLDoclet(rootDoc);
+        boolean umlDocletResult = umlDoclet.generateUMLDiagrams();
+        // Regarding issue #13: I don't understand why the Standard doclet will run on a 'bad' javadoc
+        // contained in RootDoc somewhere after UMLDoclet has done it's thing, but
+        // send us a (correct) JavaDoc ERROR if ran on the same rootDoc 'untouched'...
+        // Think about this; Is there some way to 'clone' it and pass the original rootDoc to the
+        // Standard doclet??
+        if (umlDocletResult && !umlDoclet.config.skipStandardDoclet()) {
+            return Standard.start(rootDoc);
         }
+        return umlDocletResult;
     }
 
     public boolean generateUMLDiagrams() {
@@ -78,38 +85,51 @@ public class UMLDoclet extends Standard implements Closeable {
             return generateIndividualClassDiagrams(rootDoc.classes())
                     && generatePackageDiagrams();
         } catch (RuntimeException rte) {
-            LOGGER.log(Level.SEVERE, rte.getMessage(), rte);
-            rootDoc.printError(rootDoc.position(), rte.getMessage());
+            LogSupport.INSTANCE.printError(rootDoc.position(), rte.getMessage());
             return false;
         }
     }
 
     protected boolean generateIndividualClassDiagrams(ClassDoc... classDocs) {
-        LOGGER.log(Level.FINE, "Generating class diagrams for all individual classes...");
+        LogSupport.debug("Generating class diagrams for all individual classes...");
         for (ClassDoc classDoc : classDocs) {
             encounteredPackages.add(classDoc.containingPackage());
             try (Writer out = createWriterForNewClassFile(classDoc)) {
                 new UMLDiagram(config).addClass(classDoc).writeTo(out);
             } catch (IOException | RuntimeException exception) {
-                throw new IllegalStateException(String.format("Error writing to %s file for %s: %s",
-                        config.umlFileExtension(), classDoc.qualifiedName(), exception.getMessage()), exception);
+                String message = String.format("Error writing to %s file for %s: %s",
+                        config.umlFileExtension(), classDoc.qualifiedName(), exception.getMessage());
+                if (LogSupport.isTraceEnabled()) {
+                    StringWriter stacktrace = new StringWriter();
+                    exception.printStackTrace(new PrintWriter(stacktrace));
+                    LogSupport.trace("{0}\n{1}", message, stacktrace);
+                }
+                // TODO Log error at current position and return false?
+                throw new IllegalStateException(message, exception);
             }
         }
-        LOGGER.log(Level.FINE, "All individual class diagrams have been generated.");
+        LogSupport.debug("All individual class diagrams have been generated.");
         return true;
     }
 
     protected boolean generatePackageDiagrams() {
-        LOGGER.log(Level.FINE, "Generating package diagrams for all packages...");
+        LogSupport.debug("Generating package diagrams for all packages...");
         for (PackageDoc packageDoc : encounteredPackages) {
             try (Writer out = createWriterForNewPackageFile(packageDoc)) {
                 new UMLDiagram(config).addPackage(packageDoc).writeTo(out);
             } catch (IOException | RuntimeException exception) {
-                throw new IllegalStateException(String.format("Error writing to %s file for package %s: %s",
-                        config.umlFileExtension(), packageDoc.name(), exception.getMessage()), exception);
+                String message = String.format("Error writing to %s file for package %s: %s",
+                        config.umlFileExtension(), packageDoc.name(), exception.getMessage());
+                if (LogSupport.isTraceEnabled()) {
+                    StringWriter stacktrace = new StringWriter();
+                    exception.printStackTrace(new PrintWriter(stacktrace));
+                    LogSupport.trace("{0}\n{1}", message, stacktrace);
+                }
+                // TODO Log error at current position and return false?
+                throw new IllegalStateException(message, exception);
             }
         }
-        LOGGER.log(Level.FINE, "All package diagrams have been generated.");
+        LogSupport.debug("All package diagrams have been generated.");
         return true;
     }
 
@@ -120,6 +140,7 @@ public class UMLDoclet extends Standard implements Closeable {
      * @return The created Writer to the correct PlantUML file.
      * @throws IOException In case there were I/O errors creating a new plantUML file or opening a Writer to it.
      */
+
     protected Writer createWriterForNewClassFile(ClassDoc documentedClass) throws IOException {
         File umlFile = new File(config.basePath());
         for (String packageNm : documentedClass.containingPackage().name().split("\\.")) {
@@ -130,7 +151,7 @@ public class UMLDoclet extends Standard implements Closeable {
         if (umlFile.exists() || umlFile.mkdirs()) {
             umlFile = new File(umlFile, documentedClass.name() + config.umlFileExtension());
             if (umlFile.exists() || umlFile.createNewFile()) {
-                LOGGER.log(Level.INFO, "Generating {0}...", umlFile);
+                LogSupport.info("Generating {0}...", umlFile);
                 return new OutputStreamWriter(new FileOutputStream(umlFile), config.umlFileEncoding());
             }
         }
@@ -154,17 +175,11 @@ public class UMLDoclet extends Standard implements Closeable {
         if (umlFile.exists() || umlFile.mkdirs()) {
             umlFile = new File(umlFile, "package" + config.umlFileExtension());
             if (umlFile.exists() || umlFile.createNewFile()) {
-                LOGGER.log(Level.INFO, "Generating {0}...", umlFile);
+                LogSupport.info("Generating {0}...", umlFile);
                 return new OutputStreamWriter(new FileOutputStream(umlFile), config.umlFileEncoding());
             }
         }
         throw new IllegalStateException("Error creating: " + umlFile);
-    }
-
-    @Override
-    public void close() {
-        LOGGER.log(Level.FINE, "{0} done.", getClass().getSimpleName());
-        config.close();
     }
 
 }

@@ -17,13 +17,12 @@ package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.PackageDoc;
+import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static java.util.Objects.requireNonNull;
 
@@ -33,8 +32,6 @@ import static java.util.Objects.requireNonNull;
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
 public class PackageRenderer extends Renderer {
-    private final static Logger LOGGER = Logger.getLogger(PackageRenderer.class.getName());
-
     protected final PackageDoc packageDoc;
 
     protected PackageRenderer(UMLDiagram diagram, PackageDoc packageDoc) {
@@ -42,9 +39,9 @@ public class PackageRenderer extends Renderer {
         this.packageDoc = requireNonNull(packageDoc, "No package documentation provided.");
         for (ClassDoc classDoc : packageDoc.allClasses(false)) {
             if (classDoc == null) {
-                LOGGER.log(Level.WARNING, "Encountered <null> class doc in package \"{0}\"!", packageDoc.name());
+                LogSupport.warn("Encountered <null> class doc in package \"{0}\"!", packageDoc.name());
             } else if (diagram.config.includeClass(classDoc)) {
-                children.add(new ClassRenderer(diagram, classDoc));
+                children.add(new ClassRenderer(this, classDoc));
             }
         }
         List<ClassReferenceRenderer> references = new ArrayList<>();

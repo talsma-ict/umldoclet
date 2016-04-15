@@ -30,12 +30,12 @@ import static java.util.Objects.requireNonNull;
  */
 public class IndentingWriter extends Writer {
 
-    public static final int DEFAULT_INDENTATION_WIDTH = 4;
+    private static final int DEFAULT_INDENTATION_WIDTH = 4;
     private static final String EOL_CHARS = "\r\n";
     private static final char[] NO_INDENTATION = {};
 
     private final Writer delegate;
-    protected final int indentationWidth;
+    private final int indentationWidth;
     private final char[] indentation;
 
     private boolean wasWhitespace, isBeginningOfLine;
@@ -56,7 +56,7 @@ public class IndentingWriter extends Writer {
      * Returns an indenting writer around the given {@code delegate}.
      * If the {@code delegate} writer is already an indenting writer, it will simply be returned as-is.
      * If the {@code delegate} writer is not yet an indending writer, a new indenting writer class will be created to
-     * wrap the delegate using the {@link #DEFAULT_INDENTATION_WIDTH} and no initial {@link #indentationLevel()}.
+     * wrap the delegate using the {@code default indentation width} and no initial {@link #indentationLevel()}.
      *
      * @param delegate The delegate to turn into an indenting writer.
      * @return The indenting delegate writer.

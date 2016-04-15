@@ -25,6 +25,11 @@
     <artifactId>issue</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -39,15 +44,12 @@
                         </goals>
                         <!-- Comment the configuration below out to see the javadoc error in the log -->
                         <configuration>
+<!--
                             <debug>true</debug>
                             <verbose>true</verbose>
-                            <!-- -->
+-->
                             <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
-                            <docletArtifact>
-                                <groupId>nl.talsmasoftware</groupId>
-                                <artifactId>umldoclet</artifactId>
-                                <version>0.1.6</version>
-                            </docletArtifact>
+                            <docletPath>${docletPath}</docletPath>
                             <additionalparam>
                                 -umlLogLevel TRACE
                             </additionalparam>
@@ -57,4 +59,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

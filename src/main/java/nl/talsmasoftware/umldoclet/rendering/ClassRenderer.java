@@ -16,6 +16,7 @@
 package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.*;
+import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.ArrayList;
@@ -32,11 +33,13 @@ import static java.util.Objects.requireNonNull;
  */
 public class ClassRenderer extends Renderer {
 
+    protected final Renderer parent;
     protected final ClassDoc classDoc;
     private final Collection<NoteRenderer> notes = new ArrayList<>();
 
-    protected ClassRenderer(UMLDiagram diagram, ClassDoc classDoc) {
-        super(diagram);
+    protected ClassRenderer(Renderer parent, ClassDoc classDoc) {
+        super(requireNonNull(parent, "No parent renderer for class provided.").diagram);
+        this.parent = parent;
         this.classDoc = requireNonNull(classDoc, "No class documentation provided.");
         // Enum constants are added first.
         for (FieldDoc enumConstant : classDoc.enumConstants()) {
@@ -77,11 +80,18 @@ public class ClassRenderer extends Renderer {
         for (Tag notetag : classDoc.tags(tagname)) {
             String note = notetag.text();
             if (note != null) {
-                notes.add(new NoteRenderer(diagram, note, classDoc.qualifiedName()));
+                notes.add(new NoteRenderer(this, note));
             }
         }
     }
 
+    /**
+     * Determines the 'UML' type for the class to be rendered.
+     * Currently, this can return one of the following: {@code "enum"}, {@code "interface"}, {@code "abstract class"}
+     * or (obviously) {@code "class"}.
+     *
+     * @return The UML type for the class to be rendered.
+     */
     protected String umlType() {
         return classDoc.isEnum() ? "enum"
                 : classDoc.isInterface() ? "interface"
@@ -89,6 +99,13 @@ public class ClassRenderer extends Renderer {
                 : "class";
     }
 
+    /**
+     * This method writes the 'generic' information to the writer, if available in the class documentation.
+     * If data is written, starts with {@code '<'} and ends with {@code '>'}.
+     *
+     * @param out The writer to write to.
+     * @return The writer so more content can easily be written.
+     */
     protected IndentingPrintWriter writeGenericsTo(IndentingPrintWriter out) {
         if (classDoc.typeParameters().length > 0) {
             out.append('<');
@@ -102,6 +119,12 @@ public class ClassRenderer extends Renderer {
         return out;
     }
 
+    /**
+     * This method writes the notes for this class to the output.
+     *
+     * @param out The writer to write the notes to.
+     * @return The writer so more content can easily be written.
+     */
     protected IndentingPrintWriter writeNotesTo(IndentingPrintWriter out) {
         for (NoteRenderer note : notes) {
             note.writeTo(out);
@@ -109,9 +132,80 @@ public class ClassRenderer extends Renderer {
         return out;
     }
 
+    /**
+     * Determines the name of the class to be rendered.
+     * This method considers whether to use the fully qualified class name (including package denomination etc) or
+     * a shorter simple name.
+     *
+     * @return The name of the class to be rendered.
+     */
+    protected String name() {
+        String name = classDoc.qualifiedName();
+        if (parent instanceof UMLDiagram) {
+            name = classDoc.name();
+        } else if (parent instanceof PackageRenderer) {
+            name = simplifyClassnameWithinPackage(name);
+        }
+        return name;
+    }
+
+    /**
+     * This method simplifies the given className within the containing package under certain conditions:
+     * <ol>
+     * <li>The class must start with: the containing package name followed by a dot ({@code '.'})</li>
+     * <li>The remaining simplified name may not contain any more dot characters
+     * (plantUML cannot distinguish these outer classes from packages).</li>
+     * <li>The setting {@code "-umlAlwaysUseQualifiedClassnames"} is {@code false}.</li>
+     * </ol>
+     * <p>
+     * This method was introduced as a result of improvement documented in
+     * <a href="https://github.com/talsma-ict/umldoclet/issues/15">issue 15</a>
+     * </p>
+     *
+     * @param className The (qualified) class name to potentially simplify within the containing package.
+     * @return The simplified class name or the specified (qualified) name if any condition was not met.
+     */
+    protected String simplifyClassnameWithinPackage(final String className) {
+        final String packageName = classDoc.containingPackage().name();
+        final String packagePrefix = packageName + ".";
+        if (!className.startsWith(packagePrefix)) {
+            LogSupport.trace("Cannot simplify classname \"{0}\" as it does not belong in package \"{1}\".", className, packageName);
+        } else if (className.lastIndexOf('.') >= packagePrefix.length()) {
+            LogSupport.trace("Inner-class \"{0}\" within package \"{1}\" could be simplified but will be left as-is because " +
+                            "the remaining dot will make plantUML unable to distinguish the outer class from another package.",
+                    className, packageName);
+        } else if (diagram.config.alwaysUseQualifiedClassnames()) {
+            LogSupport.debug("Not simplifying classname \"{0}\" to \"{1}\" because doclet parameters told us not to...",
+                    className, className.substring(packagePrefix.length()));
+        } else {
+            String simpleClassname = className.substring(packagePrefix.length());
+            LogSupport.trace("Simplifying class name \"{0}\" to \"{1}\" because it is contained within package \"{2}\"...",
+                    className, simpleClassname, packageName);
+            return simpleClassname;
+        }
+        return className;
+    }
+
+    /**
+     * This method writes the name of the class to the output and marks (the fully qualified name of) the class as
+     * an 'encountered type'.
+     *
+     * @param out The writer to write the class name to.
+     * @return The writer so more content can easily be written.
+     */
+    protected IndentingPrintWriter writeNameTo(IndentingPrintWriter out) {
+        diagram.encounteredTypes.add(classDoc.qualifiedName());
+        return out.append(this.name());
+    }
+
+    /**
+     * This method renders the class information to the specified output.
+     *
+     * @param out The writer to write the class name to.
+     * @return The writer so more content can easily be written.
+     */
     protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
-        diagram.encounteredTypes.add(classDoc.qualifiedTypeName());
-        out.append(umlType()).whitespace().append(classDoc.qualifiedTypeName());
+        writeNameTo(out.append(umlType()).whitespace());
         writeGenericsTo(out);
         if (isDeprecated(classDoc)) {
             out.whitespace().append("<<deprecated>>"); // I don't know how to strikethrough a class name!

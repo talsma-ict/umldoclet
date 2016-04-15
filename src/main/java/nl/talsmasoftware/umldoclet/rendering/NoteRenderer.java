@@ -9,21 +9,22 @@ import static java.util.Objects.requireNonNull;
  */
 public class NoteRenderer extends Renderer {
 
+    protected final Renderer parent;
     protected final String note;
     private final String position = "bottom";
-    private final String targetName;
 
-    protected NoteRenderer(UMLDiagram currentDiagram, String note, String targetName) {
-        super(currentDiagram);
+    protected NoteRenderer(Renderer parent, String note) {
+        super(requireNonNull(parent, "No parent renderer for note provided.").diagram);
+        this.parent = parent;
         this.note = requireNonNull(note, "Note to render may not be <null>!").trim();
-        this.targetName = targetName;
     }
 
     @Override
     protected IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         output.append("note");
-        if (targetName != null) {
-            output.whitespace().append(position).whitespace().append("of").whitespace().append(targetName);
+        if (parent instanceof ClassRenderer) {
+            output.whitespace().append(position).whitespace().append("of").whitespace()
+                    .append(((ClassRenderer) parent).name());
         }
         output.newline().indent().append(note).newline();
         return output.append("end note").newline().newline();
