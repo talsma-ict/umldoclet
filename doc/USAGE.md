@@ -85,14 +85,14 @@ In ant, the javadoc task needs to be told to use the UML Doclet in a similar way
 </javadoc>
 ```
 
-Make sure a path reference is defined for `umlDoclet.classpath` pointing to `umldoclet-_VERSION_.jar`. [Ivy](http://ant.apache.org/ivy) may be a good idea to use in this case.   
+Make sure a path reference is defined for `umlDoclet.classpath` pointing to `umldoclet-{VERSION}.jar`. It may be a good idea to use [Ivy](http://ant.apache.org/ivy) in this case.   
 Replace `additionalParamName` and `additionalParamValue` with the name and value of each additional parameter you need.  
   
 The additional parameters for this doclet are described below.
 
 ### Commandline
 
-Probably not many people run JavaDoc regularly from the commandline, but in case you do, make sure to provide the `-doclet nl.talsmasoftware.umldoclet.UMLDoclet` and `-docletpath _PATH_TO_JAR_` options, where _PATH_TO_JAR_ is the location of the `umldoclet-_VERSION_.jar`.  
+Probably not many people run JavaDoc regularly from the commandline, but in case you do, make sure to provide the options `-doclet nl.talsmasoftware.umldoclet.UMLDoclet` and `-docletpath {PATH_TO_JAR}`, where _{PATH_TO_JAR}_ is the location of the `umldoclet-{VERSION}.jar`.  
 The latest version of the jar file can be found on http://repo.maven.apache.org/maven2/nl/talsmasoftware/umldoclet/  
   
 For more details on commandline javadoc, please see the [official documentation from Oracle](http://docs.oracle.com/javase/1.5.0/docs/tooldocs/windows/javadoc.html "Oracle documentation").
@@ -138,4 +138,4 @@ However, please know that all attempts have been made to keep the defaults chose
 | -umlIncludeOverridesFromExcludedReferences | _boolean_ | `false`      | Whether inherited methods from classes defined in `-umlExcludedReferences` should be rendered in the diagrams. |
 | -umlCommand                       | _commands_        | _none_        | This setting allows custom `commands` to be added to the diagrams. Commands containing whitespaces must be provided within double-quotes. Multiple commands can be specified by specifying the `-umlCommand` parameter repeatedly. An example value could be a `-umlCommand "hide class circle"` parameter and a `-umlCommand "hide empty members"` to hide class circles and empty members (be sure to include the quotes). For more information, please see (http://plantuml.com/classes.html). |
 | Since _version 1.0.1_:            ||||
-| -umlAlwaysUseQualifiedClassnames  | _boolean_         | `false`       | Whether the new simplified classnames within packages (namespaces) must be disabled. Simplified names should have no effect on the rendered diagrams, but instead only result in more easily readable `.puml` sources. This setting was introduced to be able to turn off the changes from enhancement https://github.com/talsma-ict/umldoclet/issues/15 |
+| -umlAlwaysUseQualifiedClassnames  | _boolean_         | `false`       | Whether the new simplified classnames within packages (namespaces) must be disabled. Simplified names should have no effect on the rendered diagrams, but instead only result in more easily readable `.puml` sources. This setting was introduced to be able to turn off the changes from [enhancement 15](https://github.com/talsma-ict/umldoclet/issues/15). |
