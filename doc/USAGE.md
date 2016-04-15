@@ -2,12 +2,14 @@
 
 ## Usage
 
+This page describes how to use the UML Doclet together with the Oracle JavaDoc tool to generate standard HTML documentation for your project, with [PlantUML](http://plantuml.com) source files for each Java class and package.
+
 ### Maven
 
-Since Maven is the build tool used by the the UML Doclet project itself, it will be described first.
+Since Maven is the build tool used by the the UML Doclet project itself, it will be described first.  
+  
+First tell Maven to generate JavaDoc for your project by declaring the 'maven-javadoc-plugin' to use the UML Doclet:
 
-1. First of all, tell Maven to generate JavaDoc for your project
-   by declaring the 'maven-javadoc-plugin' to use the UML Doclet:  
 ```xml
 <build>
     <plugins>
@@ -39,18 +41,66 @@ Since Maven is the build tool used by the the UML Doclet project itself, it will
 </build>
 ```
 
-This creates standard HTML documentation for your project,
-with [PlantUML](http://plantuml.com) source files for each Java class and package.
-
 There are many ways to tune the detail of the UML diagrams.  
-These can be provided as additional parameters within the `additionalParam` tag,
-(each parameter may be on a new line within the XML).
+These can be provided as additional parameters within the `additionalParam` tag, (each parameter may be on a new line within the XML).  
+The additional parameters for this doclet are described below.
+
+### Gradle
+
+In gradle, the doclet and its dependency need to be declared. From there on, the configuration is the same as your regular JavaDoc configuration.
+
+```groovy
+apply plugin: 'java'
+
+configurations {
+    umlDoclet
+}
+
+dependencies {
+    umlDoclet "${project.groupId}:${project.artifactId}:${project.version}"
+}
+
+javadoc {
+    source = sourceSets.main.allJava
+    options.docletPath = configurations.umlDoclet.files.asType(List)
+    options.doclet = "nl.talsmasoftware.umldoclet.UMLDoclet"
+    options.addStringOption "additionalParamName", "additionalParamValue"
+}
+```
+
+Replace `additionalParamName` and `additionalParamValue` with the name and value of each additional parameter you need.  
+_Note:_ The initial dash `-` of additional parameters will automatically be added by the Gradle javadoc task and should therefore be omitted from the configuration.  
+  
+The additional parameters for this doclet are described below.
+
+### Ant
+
+In ant, the javadoc task needs to be told to use the UML Doclet in a similar way.
+
+```xml
+<javadoc destdir="target/javadoc" sourcepath="src">
+    <doclet name="nl.talsmasoftware.umldoclet.UMLDoclet" pathref="umlDoclet.classpath"> 
+        <param name="additionalParamName" value="additionalParamValue" />
+    </doclet>
+</javadoc>
+```
+
+Make sure a path reference is defined for `umlDoclet.classpath` pointing to `umldoclet-_VERSION_.jar`. [Ivy](http://ant.apache.org/ivy) may be a good idea to use in this case.   
+Replace `additionalParamName` and `additionalParamValue` with the name and value of each additional parameter you need.  
+  
+The additional parameters for this doclet are described below.
+
+### Commandline
+
+Probably not many people run JavaDoc regularly from the commandline, but in case you do, make sure to provide the `-doclet nl.talsmasoftware.umldoclet.UMLDoclet` and `-docletpath _PATH_TO_JAR_` options, where _PATH_TO_JAR_ is the location of the `umldoclet-_VERSION_.jar`.  
+The latest version of the jar file can be found on http://repo.maven.apache.org/maven2/nl/talsmasoftware/umldoclet/  
+  
+For more details on commandline javadoc, please see the [official documentation from Oracle](http://docs.oracle.com/javase/1.5.0/docs/tooldocs/windows/javadoc.html "Oracle documentation").
 
 ### Additional parameters
 
 The UML Doclet supports many additional parameters to be configured.  
-However, please know that all attempts have been made to keep the defaults
-chosen in such a manner, that the options rarely need to be overridden.
+However, please know that all attempts have been made to keep the defaults chosen in such a manner, that the options rarely need to be overridden.
 
 | Parameter name                    | Possible values   | Default value | Description |
 | --------------------------------- | ----------------- | ------------- | ----------- |
