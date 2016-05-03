@@ -23,6 +23,8 @@ import com.sun.tools.doclets.standard.Standard;
 import nl.talsmasoftware.umldoclet.config.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.rendering.UMLDiagram;
+import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlPngWriter;
+import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlSupport;
 
 import java.io.*;
 import java.util.Comparator;
@@ -148,14 +150,7 @@ public class UMLDoclet extends Standard {
                 umlFile = new File(umlFile, packageNm);
             }
         }
-        if (umlFile.exists() || umlFile.mkdirs()) {
-            umlFile = new File(umlFile, documentedClass.name() + config.umlFileExtension());
-            if (umlFile.exists() || umlFile.createNewFile()) {
-                LogSupport.info("Generating {0}...", umlFile);
-                return new OutputStreamWriter(new FileOutputStream(umlFile), config.umlFileEncoding());
-            }
-        }
-        throw new IllegalStateException("Error creating: " + umlFile);
+        return createWriterForUmlFile(umlFile, documentedClass.name());
     }
 
     /**
@@ -172,11 +167,32 @@ public class UMLDoclet extends Standard {
                 umlFile = new File(umlFile, packageNm);
             }
         }
+        return createWriterForUmlFile(umlFile, "package");
+    }
+
+    /**
+     * Creates a new Writer for a new UML file in the given directory with the specified baseName.
+     * The {@link UMLDocletConfig#umlFileExtension() UML file extension} will be added to the file.
+     * <p>
+     * Also, if PlantUML is detected on the classpath, an attempt will be made to automatically generate a binary
+     * image with the same name.
+     *
+     * @param directory The directory where to create the new UML file to render to.
+     * @param baseName  The base filename (without extension) to render to.
+     * @return The writer to render the UML diagram with.
+     * @throws IOException in case there were I/O errors creating a new PlantUML file for opening a Writer to it.
+     */
+    private Writer createWriterForUmlFile(File directory, String baseName) throws IOException {
+        File umlFile = requireNonNull(directory, "Directory was null.");
         if (umlFile.exists() || umlFile.mkdirs()) {
-            umlFile = new File(umlFile, "package" + config.umlFileExtension());
+            umlFile = new File(umlFile, baseName + config.umlFileExtension());
             if (umlFile.exists() || umlFile.createNewFile()) {
                 LogSupport.info("Generating {0}...", umlFile);
-                return new OutputStreamWriter(new FileOutputStream(umlFile), config.umlFileEncoding());
+                Writer writer = new OutputStreamWriter(new FileOutputStream(umlFile), config.umlFileEncoding());
+                if (PlantumlSupport.isPlantumlDetected()) {
+                    writer = new PlantumlPngWriter(writer, directory, baseName);
+                }
+                return writer;
             }
         }
         throw new IllegalStateException("Error creating: " + umlFile);

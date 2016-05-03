@@ -51,6 +51,7 @@
         <build.java.version>1.7</build.java.version>
 
         <!-- runtime -->
+        <plantuml.version>8039</plantuml.version>
 
         <!-- optional provided -->
 
@@ -270,6 +271,13 @@
     </build>
 
     <dependencies>
+        <!-- Runtime dependencies: -->
+        <dependency>
+            <groupId>net.sourceforge.plantuml</groupId>
+            <artifactId>plantuml</artifactId>
+            <version>${plantuml.version}</version>
+        </dependency>
+
         <!-- Test dependencies: -->
         <dependency>
             <groupId>junit</groupId>
