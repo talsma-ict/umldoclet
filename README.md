@@ -28,4 +28,5 @@ To use the doclet together with the JavaDoc tool, the following is required.
   This will make fixing them that much easier!
   
   
-_Thanks for using my code, I hope this doclet may be of benefit to your project!_
+_Thanks for using the doclet, I hope it may be of benefit to your project!_
+_Also a big thanks go to de developers of the excellent [PlantUML project](http://plantuml.com/)._
