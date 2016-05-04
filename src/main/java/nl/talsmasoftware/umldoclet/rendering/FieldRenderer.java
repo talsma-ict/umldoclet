@@ -22,7 +22,9 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Objects;
 
+import static java.lang.Character.toLowerCase;
 import static java.util.Objects.requireNonNull;
+import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
 
 /**
  * Created on 17-02-2016.
@@ -56,12 +58,12 @@ public class FieldRenderer extends Renderer {
                 || (fieldDoc.isPackagePrivate() && !diagram.config.includePackagePrivateFields())
                 || (fieldDoc.isProtected() && !diagram.config.includeProtectedFields())
                 || (fieldDoc.isPublic() && !diagram.config.includePublicFields()
-                || (!diagram.config.includeDeprecatedFields() && isDeprecated(fieldDoc) && !isDeprecated(fieldDoc.containingClass()))
-        );
+                || (!diagram.config.includeDeprecatedFields() && isDeprecated(fieldDoc) && !isDeprecated(fieldDoc.containingClass())));
+
         if (LogSupport.isTraceEnabled()) {
             String designation = fieldDoc.isStatic() ? "Static field" : "Field";
             if (isDeprecated(fieldDoc)) {
-                designation = "Deprecated " + Character.toLowerCase(designation.charAt(0)) + designation.substring(1);
+                designation = "Deprecated " + toLowerCase(designation.charAt(0)) + designation.substring(1);
             }
             LogSupport.trace("{0} \"{1}\" {2}{3} included.",
                     designation,

@@ -23,7 +23,7 @@ import com.sun.tools.doclets.standard.Standard;
 import nl.talsmasoftware.umldoclet.config.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.rendering.UMLDiagram;
-import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlPngWriter;
+import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlImageWriter;
 import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlSupport;
 
 import java.io.*;
@@ -55,6 +55,7 @@ public class UMLDoclet extends Standard {
         this.rootDoc = requireNonNull(rootDoc, "No root document received.");
         this.config = new UMLDocletConfig(rootDoc.options(), rootDoc);
         LogSupport.info("{0} version {1}", getClass().getSimpleName(), config.version());
+        LogSupport.trace("Plantuml {0} detected.", PlantumlSupport.isPlantumlDetected() ? "was" : "was not");
         LogSupport.debug("Initialized {0}...", config);
     }
 
@@ -190,7 +191,7 @@ public class UMLDoclet extends Standard {
                 LogSupport.info("Generating {0}...", umlFile);
                 Writer writer = new OutputStreamWriter(new FileOutputStream(umlFile), config.umlFileEncoding());
                 if (PlantumlSupport.isPlantumlDetected()) {
-                    writer = new PlantumlPngWriter(writer, directory, baseName);
+                    writer = new PlantumlImageWriter(config, writer, directory, baseName);
                 }
                 return writer;
             }

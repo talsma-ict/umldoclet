@@ -17,11 +17,13 @@ package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.*;
 import nl.talsmasoftware.umldoclet.logging.LogSupport;
+import nl.talsmasoftware.umldoclet.model.Model;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
+import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
 
 /**
  * Method renderer.

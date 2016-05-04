@@ -27,7 +27,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 
 import static nl.talsmasoftware.umldoclet.config.UMLDocletConfig.Setting.*;
-import static nl.talsmasoftware.umldoclet.rendering.Renderer.isDeprecated;
+import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
 
 /**
  * Class containing all possible Doclet options for the UML doclet.
@@ -71,7 +71,8 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
         UML_EXCLUDED_REFERENCES(new ListSetting("umlExcludedReferences", "java.lang.Object", "java.lang.Enum")),
         UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES("umlIncludeOverridesFromExcludedReferences", false),
         UML_COMMAND(new ListSetting("umlCommand")),
-        UML_ALWAYS_USE_QUALIFIED_CLASSNAMES("umlAlwaysUseQualifiedClassnames", false);
+        UML_ALWAYS_USE_QUALIFIED_CLASSNAMES("umlAlwaysUseQualifiedClassnames", false),
+        UML_IMAGE_FORMAT(new ListSetting("umlImageFormat", "PNG"));
 
         private final AbstractSetting<?> delegate;
 
@@ -432,6 +433,10 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
         return true;
     }
 
+    public List<String> imageFormats() {
+        return UML_IMAGE_FORMAT.value(this);
+    }
+
     /**
      * @return The options that were specified to the UML Doclet, but were not recognized by it.
      */
@@ -441,8 +446,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder(getClass().getSimpleName())
-                .append(super.toString())
+        StringBuilder result = new StringBuilder(getClass().getSimpleName()).append(super.toString())
                 .append(",StandardOptions{");
         String sep = "";
         for (String[] option : standardOptions) {
