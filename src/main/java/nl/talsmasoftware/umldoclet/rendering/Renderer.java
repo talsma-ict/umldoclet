@@ -83,6 +83,7 @@ public abstract class Renderer {
                     out.append(">");
                 }
             }
+            out.append(type.dimension());
         }
         return out;
     }

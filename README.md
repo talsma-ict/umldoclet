@@ -1,4 +1,4 @@
-# UMLDoclet
+# UMLDoclet 1.0.2-SNAPSHOT
 Doclet for the JavaDoc tool that generates UML diagrams from the code.
 
 ## Requirements:

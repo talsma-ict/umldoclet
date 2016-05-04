@@ -17,7 +17,6 @@ package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.*;
 import nl.talsmasoftware.umldoclet.logging.LogSupport;
-import nl.talsmasoftware.umldoclet.model.Model;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Objects;
@@ -100,7 +99,7 @@ public class MethodRenderer extends Renderer {
                     }
                 }
                 if (diagram.config.includeMethodParamTypes()) {
-                    out.append(parameter.type().simpleTypeName()).append(parameter.type().dimension());
+                    writeTypeTo(out, parameter.type());
                 }
                 separator = ", ";
             }
@@ -110,9 +109,6 @@ public class MethodRenderer extends Renderer {
 
     protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         if (includeMethod()) {
-            // deprecation:
-            //        + --deprecatedString--(): String <<deprecated>>
-
             if (isAbstract()) {
                 out.append("{abstract}").whitespace();
             }

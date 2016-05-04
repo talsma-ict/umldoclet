@@ -1,4 +1,4 @@
-# UMLDoclet
+# UMLDoclet ${project.version}
 Doclet for the JavaDoc tool that generates UML diagrams from the code.
 
 ## Requirements:
