@@ -42,12 +42,8 @@ public class PlantumlSupport {
         if (plantumlVersion == null) {
             plantumlVersion = determinePlantumlVersion();
         }
-        if (plantumlVersion.isEmpty()) {
-            LogSupport.trace("Plantuml library not detected.");
-            return false;
-        }
-        LogSupport.trace("Plantuml library version {0} detected.", plantumlVersion);
-        return true;
+        LogSupport.trace("Detected plantuml version: \"{0}\".", plantumlVersion);
+        return !plantumlVersion.isEmpty();
     }
 
     /**
