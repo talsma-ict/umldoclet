@@ -271,10 +271,14 @@
 
     <dependencies>
         <!-- Runtime dependencies: -->
+
+        <!-- Optionally provided dependencies: -->
         <dependency>
             <groupId>net.sourceforge.plantuml</groupId>
             <artifactId>plantuml</artifactId>
             <version>${plantuml.version}</version>
+            <optional>true</optional>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Test dependencies: -->
