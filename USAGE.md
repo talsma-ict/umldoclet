@@ -28,7 +28,7 @@ First tell Maven to generate JavaDoc for your project by declaring the 'maven-ja
                         <docletArtifact>
                             <groupId>nl.talsmasoftware</groupId>
                             <artifactId>umldoclet</artifactId>
-                            <version>1.0.1</version>
+                            <version>1.0.2</version>
                         </docletArtifact>
                         <additionalParam>
                             ...
@@ -57,7 +57,7 @@ configurations {
 }
 
 dependencies {
-    umlDoclet "nl.talsmasoftware:umldoclet:1.0.1"
+    umlDoclet "nl.talsmasoftware:umldoclet:1.0.2"
 }
 
 javadoc {
@@ -139,3 +139,5 @@ However, please know that all attempts have been made to keep the defaults chose
 | -umlCommand                       | _commands_        | _none_        | This setting allows custom `commands` to be added to the diagrams. Commands containing whitespaces must be provided within double-quotes. Multiple commands can be specified by specifying the `-umlCommand` parameter repeatedly. An example value could be a `-umlCommand "hide class circle"` parameter and a `-umlCommand "hide empty members"` to hide class circles and empty members (be sure to include the quotes). For more information, please see (http://plantuml.com/classes.html). |
 | Since _version 1.0.1_:            ||||
 | -umlAlwaysUseQualifiedClassnames  | _boolean_         | `false`       | Whether the new simplified classnames within packages (namespaces) must be disabled. Simplified names should have no effect on the rendered diagrams, but instead only result in more easily readable `.puml` sources. This setting was introduced to be able to turn off the changes from [enhancement 15](https://github.com/talsma-ict/umldoclet/issues/15). |
+| Since _version 1.0.2_:            ||||
+| -umlImageFormat                   | image formats     | `"PNG"`       | The image formats to be generated in case the plantuml library is detected on the classpath. Options that are supported out of the box include: `PNG`, `SVG`, `EPS` and `LATEX` (see `net.sourceforge.plantuml.FileFormat`). To generate rendered diagrams in multiple formats, simply provide the `-umlImageFormat` parameter more than once. |

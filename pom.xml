@@ -8,7 +8,7 @@
     <!-- Artifact identification -->
     <groupId>nl.talsmasoftware</groupId>
     <artifactId>umldoclet</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <packaging>jar</packaging>
 
     <!-- Project information -->
@@ -51,6 +51,7 @@
         <build.java.version>1.7</build.java.version>
 
         <!-- runtime -->
+        <plantuml.version>8039</plantuml.version>
 
         <!-- optional provided -->
 
@@ -191,11 +192,10 @@
                             </docletArtifact>
                             <docencoding>UTF-8</docencoding>
                             <useStandardDocletOptions>true</useStandardDocletOptions>
-<!--
                             <additionalparam>
                                 -umlLogLevel TRACE
+                                -umlImageFormat PNG;SVG
                             </additionalparam>
--->
                         </configuration>
                     </execution>
                     <execution>
@@ -270,6 +270,17 @@
     </build>
 
     <dependencies>
+        <!-- Runtime dependencies: -->
+
+        <!-- Optionally provided dependencies: -->
+        <dependency>
+            <groupId>net.sourceforge.plantuml</groupId>
+            <artifactId>plantuml</artifactId>
+            <version>${plantuml.version}</version>
+            <optional>true</optional>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Test dependencies: -->
         <dependency>
             <groupId>junit</groupId>

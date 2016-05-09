@@ -83,6 +83,7 @@ public abstract class Renderer {
                     out.append(">");
                 }
             }
+            out.append(type.dimension());
         }
         return out;
     }
@@ -97,37 +98,8 @@ public abstract class Renderer {
      * @param value The value to be quoted.
      * @return The value within double quotes or an empty string if the value was null or empty.
      */
-    public static String quoted(String value) {
+    protected static String quoted(String value) {
         return value == null || value.trim().isEmpty() ? "" : '"' + value.replaceAll("\"", "\\\"") + '"';
-    }
-
-    /**
-     * Returns whether the the given element is deprecated;
-     * it has the {@literal @}{@link Deprecated} annotation
-     * or the {@literal @}deprecated JavaDoc tag.
-     * <p/>
-     * If the element itself is not deprecated, the method checks whether the superclass or containing class
-     * is deprecated.
-     *
-     * @param element The element being inspected for deprecation.
-     * @return {@code true} if the specified {@code element} is deprecated, {@code false} if it is not.
-     */
-    public static boolean isDeprecated(ProgramElementDoc element) {
-        // Is the element itself deprecated?
-        if (element == null) {
-            return false;
-        } else if (element.tags("deprecated").length > 0) {
-            return true;
-        }
-        for (AnnotationDesc annotation : element.annotations()) {
-            if (Deprecated.class.getName().equals(annotation.annotationType().qualifiedName())) {
-                return true;
-            }
-        }
-        // Element itself is not deprecated.
-        // Could it be contained in a deprecated class or extend a deprecated superclass?
-        return isDeprecated(element.containingClass())
-                || (element instanceof ClassDoc && isDeprecated(((ClassDoc) element).superclass()));
     }
 
     /**

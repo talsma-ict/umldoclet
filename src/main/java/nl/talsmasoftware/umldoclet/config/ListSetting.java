@@ -21,8 +21,7 @@ import nl.talsmasoftware.umldoclet.logging.LogSupport;
 
 import java.util.*;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.*;
 
 /**
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
@@ -93,7 +92,7 @@ public class ListSetting extends AbstractSetting<List<String>> {
                 copy.add(value.toString());
             }
         }
-        return unmodifiableList(copy);
+        return copy.size() == 1 ? singletonList(copy.get(0)) : unmodifiableList(copy);
     }
 
 }

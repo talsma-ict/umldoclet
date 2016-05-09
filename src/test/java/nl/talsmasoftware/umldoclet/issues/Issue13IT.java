@@ -53,13 +53,11 @@ public class Issue13IT {
     }
 
     @Test
-    @Ignore // Issue 13 still needs to be fixed! Test passes witout umldoclet and fails with it.
     public void testJavaDocErrors() throws MavenInvocationException, IOException {
         InvocationRequest request = new DefaultInvocationRequest();
         request.setPomFile(new File("src/test/resources/issue-13/pom.xml"));
         request.setGoals(asList("clean", "verify"));
         request.setProperties(mavenProps);
-//        request.setDebug(true);
         OutputHandler outputHandler = new OutputHandler();
         request.setOutputHandler(outputHandler);
 
