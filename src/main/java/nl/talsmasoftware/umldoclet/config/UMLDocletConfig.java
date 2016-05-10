@@ -433,8 +433,12 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
         return true;
     }
 
-    public List<String> imageFormats() {
-        return UML_IMAGE_FORMAT.value(this);
+    /**
+     * @return The configured image formats to be generated when PlantUmL is detected (e.g. "PNG", "SVG", etc).
+     */
+    public String[] imageFormats() {
+        final List<String> imageFormats = UML_IMAGE_FORMAT.value(this);
+        return imageFormats.toArray(new String[imageFormats.size()]);
     }
 
     /**

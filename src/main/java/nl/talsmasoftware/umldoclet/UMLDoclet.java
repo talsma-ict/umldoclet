@@ -191,7 +191,7 @@ public class UMLDoclet extends Standard {
                 LogSupport.info("Generating {0}...", umlFile);
                 Writer writer = new OutputStreamWriter(new FileOutputStream(umlFile), config.umlFileEncoding());
                 if (PlantumlSupport.isPlantumlDetected()) {
-                    writer = new PlantumlImageWriter(config, writer, directory, baseName);
+                    writer = new PlantumlImageWriter(writer, directory, baseName, config.imageFormats());
                 }
                 return writer;
             }
