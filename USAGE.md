@@ -28,7 +28,7 @@ First tell Maven to generate JavaDoc for your project by declaring the 'maven-ja
                         <docletArtifact>
                             <groupId>nl.talsmasoftware</groupId>
                             <artifactId>umldoclet</artifactId>
-                            <version>1.0.3</version>
+                            <version>1.0.4-SNAPSHOT</version>
                         </docletArtifact>
                         <additionalParam>
                             ...
@@ -57,7 +57,7 @@ configurations {
 }
 
 dependencies {
-    umlDoclet "nl.talsmasoftware:umldoclet:1.0.3"
+    umlDoclet "nl.talsmasoftware:umldoclet:1.0.4-SNAPSHOT"
 }
 
 javadoc {
