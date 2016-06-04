@@ -72,7 +72,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
         UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES("umlIncludeOverridesFromExcludedReferences", false),
         UML_COMMAND(new ListSetting("umlCommand")),
         UML_ALWAYS_USE_QUALIFIED_CLASSNAMES("umlAlwaysUseQualifiedClassnames", false),
-        UML_IMAGE_FORMAT(new ListSetting("umlImageFormat", "PNG"));
+        UML_IMAGE_FORMAT(new ListSetting("umlImageFormat"));
 
         private final AbstractSetting<?> delegate;
 

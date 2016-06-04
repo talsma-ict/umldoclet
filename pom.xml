@@ -193,8 +193,8 @@
                             <docencoding>UTF-8</docencoding>
                             <useStandardDocletOptions>true</useStandardDocletOptions>
                             <additionalparam>
-                                -umlLogLevel TRACE
-                                -umlImageFormat PNG;SVG
+                                -umlLogLevel DEBUG
+                                -umlImageFormat SVG
                             </additionalparam>
                         </configuration>
                     </execution>
@@ -214,6 +214,7 @@
                             <docencoding>UTF-8</docencoding>
                             <additionalparam>
                                 -umlLogLevel INFO
+                                -umlImageFormat PNG;SVG
                                 -umlBasePath "${project.baseUri}target/test-uml"
                                 -umlSkipStandardDoclet true
                                 -umlCommand "hide empty members"
