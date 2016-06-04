@@ -72,7 +72,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
         UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES("umlIncludeOverridesFromExcludedReferences", false),
         UML_COMMAND(new ListSetting("umlCommand")),
         UML_ALWAYS_USE_QUALIFIED_CLASSNAMES("umlAlwaysUseQualifiedClassnames", false),
-        UML_IMAGE_FORMAT(new ListSetting("umlImageFormat", "PNG"));
+        UML_IMAGE_FORMAT(new ListSetting("umlImageFormat"));
 
         private final AbstractSetting<?> delegate;
 
@@ -433,8 +433,12 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
         return true;
     }
 
-    public List<String> imageFormats() {
-        return UML_IMAGE_FORMAT.value(this);
+    /**
+     * @return The configured image formats to be generated when PlantUmL is detected (e.g. "PNG", "SVG", etc).
+     */
+    public String[] imageFormats() {
+        final List<String> imageFormats = UML_IMAGE_FORMAT.value(this);
+        return imageFormats.toArray(new String[imageFormats.size()]);
     }
 
     /**

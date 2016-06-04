@@ -8,7 +8,7 @@
     <!-- Artifact identification -->
     <groupId>nl.talsmasoftware</groupId>
     <artifactId>umldoclet</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <packaging>jar</packaging>
 
     <!-- Project information -->
@@ -51,9 +51,9 @@
         <build.java.version>1.7</build.java.version>
 
         <!-- runtime -->
-        <plantuml.version>8039</plantuml.version>
 
         <!-- optional provided -->
+        <plantuml.version>8039</plantuml.version>
 
         <!-- test -->
         <junit.version>4.12</junit.version>
@@ -193,8 +193,8 @@
                             <docencoding>UTF-8</docencoding>
                             <useStandardDocletOptions>true</useStandardDocletOptions>
                             <additionalparam>
-                                -umlLogLevel TRACE
-                                -umlImageFormat PNG;SVG
+                                -umlLogLevel DEBUG
+                                -umlImageFormat SVG
                             </additionalparam>
                         </configuration>
                     </execution>
@@ -214,6 +214,7 @@
                             <docencoding>UTF-8</docencoding>
                             <additionalparam>
                                 -umlLogLevel INFO
+                                -umlImageFormat PNG;SVG
                                 -umlBasePath "${project.baseUri}target/test-uml"
                                 -umlSkipStandardDoclet true
                                 -umlCommand "hide empty members"
