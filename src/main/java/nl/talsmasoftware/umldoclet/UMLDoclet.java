@@ -190,8 +190,9 @@ public class UMLDoclet extends Standard {
             if (umlFile.exists() || umlFile.createNewFile()) {
                 LogSupport.info("Generating {0}...", umlFile);
                 Writer writer = new OutputStreamWriter(new FileOutputStream(umlFile), config.umlFileEncoding());
-                if (PlantumlSupport.isPlantumlDetected()) {
-                    writer = new PlantumlImageWriter(writer, directory, baseName, config.imageFormats());
+                String[] imageFormats = config.imageFormats();
+                if (imageFormats.length > 0 && PlantumlSupport.isPlantumlDetected()) {
+                    writer = new PlantumlImageWriter(writer, directory, baseName, imageFormats);
                 }
                 return writer;
             }
