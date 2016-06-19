@@ -53,7 +53,7 @@
         <!-- runtime -->
 
         <!-- optional provided -->
-        <plantuml.version>8039</plantuml.version>
+        <plantuml.version>8042</plantuml.version>
 
         <!-- test -->
         <junit.version>4.12</junit.version>

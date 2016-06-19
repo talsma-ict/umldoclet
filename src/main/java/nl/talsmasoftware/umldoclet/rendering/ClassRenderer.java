@@ -38,6 +38,7 @@ public class ClassRenderer extends Renderer {
     protected final ClassDoc classDoc;
     private final Collection<NoteRenderer> notes = new ArrayList<>();
 
+    // TODO: Decompose this constructor to be able to contain the complexity!
     protected ClassRenderer(Renderer parent, ClassDoc classDoc) {
         super(requireNonNull(parent, "No parent renderer for class provided.").diagram);
         this.parent = parent;
@@ -60,15 +61,23 @@ public class ClassRenderer extends Renderer {
         for (ConstructorDoc constructor : classDoc.constructors(false)) {
             children.add(new MethodRenderer(diagram, constructor));
         }
+        boolean nonAbstractMethods = false;
         List<MethodRenderer> abstractMethods = new ArrayList<>();
         for (MethodDoc method : classDoc.methods(false)) {
             if (method.isAbstract()) {
                 abstractMethods.add(new MethodRenderer(diagram, method));
             } else {
+                nonAbstractMethods = true;
                 children.add(new MethodRenderer(diagram, method));
             }
         }
-        children.addAll(abstractMethods); // abstract methods come after regular methods in our UML diagrams.
+        if (!abstractMethods.isEmpty()) {
+            // TODO: Make this configurable.
+            if (nonAbstractMethods /* && config? */)
+                children.add(new SeparatorRenderer(diagram, ".."));
+            // abstract methods come after regular methods in our UML diagrams.
+            children.addAll(abstractMethods);
+        }
 
         // Support for tags defined in legacy doclet.
         // TODO: Depending on the amount of code this generates this should be refactored away (after unit testing).
