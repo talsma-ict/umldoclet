@@ -24,11 +24,12 @@ import java.util.Arrays;
 /**
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
-public class StringSetting extends AbstractSetting<String> {
+class StringSetting extends AbstractSetting<String> {
+    private static final String NONE = "none";
 
     private final String defaultValue;
 
-    public StringSetting(String name, String defaultValue) {
+    StringSetting(String name, String defaultValue) {
         super(name);
         this.defaultValue = defaultValue;
     }

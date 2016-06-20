@@ -17,6 +17,7 @@ package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.*;
 import nl.talsmasoftware.umldoclet.logging.LogSupport;
+import nl.talsmasoftware.umldoclet.logging.LogSupport.GlobalPosition;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.ArrayList;
@@ -36,63 +37,80 @@ public class ClassRenderer extends Renderer {
 
     protected final Renderer parent;
     protected final ClassDoc classDoc;
-    private final Collection<NoteRenderer> notes = new ArrayList<>();
+    private final Collection<NoteRenderer> notes;
 
-    // TODO: Decompose this constructor to be able to contain the complexity!
     protected ClassRenderer(Renderer parent, ClassDoc classDoc) {
         super(requireNonNull(parent, "No parent renderer for class provided.").diagram);
         this.parent = parent;
         this.classDoc = requireNonNull(classDoc, "No class documentation provided.");
-        // Enum constants are added first.
+        this.notes = findLegacyNoteTags();
+
+        // Add the various parts of the class UML, order matters here, obviously!
+        initChildren_AddEnumConstants();
+        initChildren_AddFields();
+        // TODO add 'smart' separator
+        initChildren_AddConstructors();
+        initChildren_AddMethods();
+    }
+
+    private void initChildren_AddEnumConstants() {
         for (FieldDoc enumConstant : classDoc.enumConstants()) {
             children.add(new FieldRenderer(diagram, enumConstant));
         }
-        // TODO: Couldn't we make Renderer Comparable and have 'children' become a TreeSet?
-        // --> Probably, after more tests are in place!
-        List<FieldRenderer> fields = new ArrayList<>(); // static fields come before non-static fields.
-        for (FieldDoc field : classDoc.fields(false)) {
+    }
+
+    private void initChildren_AddFields() {
+        // static fields come before non-static fields.
+        final FieldDoc[] allFields = classDoc.fields(false);
+        final List<FieldRenderer> nonStaticFields = new ArrayList<>(allFields.length);
+        for (FieldDoc field : allFields) {
             if (field.isStatic()) {
                 children.add(new FieldRenderer(diagram, field));
             } else {
-                fields.add(new FieldRenderer(diagram, field));
+                nonStaticFields.add(new FieldRenderer(diagram, field));
             }
         }
-        children.addAll(fields);
+        children.addAll(nonStaticFields);
+    }
+
+    private void initChildren_AddConstructors() {
         for (ConstructorDoc constructor : classDoc.constructors(false)) {
             children.add(new MethodRenderer(diagram, constructor));
         }
-        boolean nonAbstractMethods = false;
-        List<MethodRenderer> abstractMethods = new ArrayList<>();
-        for (MethodDoc method : classDoc.methods(false)) {
+    }
+
+    private void initChildren_AddMethods() {
+        final MethodDoc[] allMethods = classDoc.methods(false);
+        List<MethodRenderer> abstractMethods = new ArrayList<>(allMethods.length);
+//        boolean concreteMethods = false;
+        for (MethodDoc method : allMethods) {
             if (method.isAbstract()) {
                 abstractMethods.add(new MethodRenderer(diagram, method));
             } else {
-                nonAbstractMethods = true;
+//                concreteMethods = true;
                 children.add(new MethodRenderer(diagram, method));
             }
         }
         if (!abstractMethods.isEmpty()) {
-            // TODO: Make this configurable.
-            if (nonAbstractMethods /* && config? */)
-                children.add(new SeparatorRenderer(diagram, ".."));
+//            if (concreteMethods) {
+//                // TODO convert into 'smart' separator.
+//                String methodSeparator = diagram.config.abstractMethodSeparator();
+//                if (methodSeparator.length() > 0) children.add(new SeparatorRenderer(diagram, methodSeparator));
+//            }
             // abstract methods come after regular methods in our UML diagrams.
             children.addAll(abstractMethods);
         }
-
-        // Support for tags defined in legacy doclet.
-        // TODO: Depending on the amount of code this generates this should be refactored away (after unit testing).
-        addLegacyNoteTag();
     }
 
-    private void addLegacyNoteTag() {
-        // for (String tagname : new String[] {"note"}) {
-        final String tagname = "note";
-        for (Tag notetag : classDoc.tags(tagname)) {
-            String note = notetag.text();
-            if (note != null) {
-                notes.add(new NoteRenderer(this, note));
-            }
+    private Collection<NoteRenderer> findLegacyNoteTags() {
+        Tag[] allNotes = classDoc.tags("note");
+        ArrayList<NoteRenderer> legacyNoteTags = new ArrayList<>(allNotes.length);
+        for (Tag notetag : allNotes) {
+            final String note = notetag.text();
+            if (note != null) legacyNoteTags.add(new NoteRenderer(this, note));
         }
+        legacyNoteTags.trimToSize();
+        return legacyNoteTags;
     }
 
     /**
@@ -215,13 +233,15 @@ public class ClassRenderer extends Renderer {
      * @return The writer so more content can easily be written.
      */
     protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
-        writeNameTo(out.append(umlType()).whitespace());
-        writeGenericsTo(out);
-        if (isDeprecated(classDoc)) {
-            out.whitespace().append("<<deprecated>>"); // I don't know how to strikethrough a class name!
+        try (GlobalPosition gp = new GlobalPosition(classDoc.position())) {
+            writeNameTo(out.append(umlType()).whitespace());
+            writeGenericsTo(out);
+            if (isDeprecated(classDoc)) {
+                out.whitespace().append("<<deprecated>>"); // I don't know how to strikethrough a class name!
+            }
+            writeChildrenTo(out.whitespace().append('{').newline()).append('}').newline().newline();
+            return writeNotesTo(out);
         }
-        writeChildrenTo(out.whitespace().append('{').newline()).append('}').newline().newline();
-        return writeNotesTo(out);
     }
 
     @Override

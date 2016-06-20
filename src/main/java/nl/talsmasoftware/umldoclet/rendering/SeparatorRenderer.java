@@ -36,4 +36,10 @@ public class SeparatorRenderer extends Renderer {
     protected IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         return output.append(separator).newline();
     }
+
+    @Override
+    public boolean equals(Object other) {
+        return this == other;
+    }
+
 }

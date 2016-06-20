@@ -26,11 +26,11 @@ import static java.util.Collections.*;
 /**
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
-public class ListSetting extends AbstractSetting<List<String>> {
+class ListSetting extends AbstractSetting<List<String>> {
 
     private final List<String> defaultValue;
 
-    public ListSetting(String name, String... defaultValue) {
+    ListSetting(String name, String... defaultValue) {
         super(name);
         this.defaultValue = unmodifiableCopy(split(false, defaultValue));
     }

@@ -24,11 +24,11 @@ import java.util.Arrays;
 /**
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
-public class IntegerSetting extends AbstractSetting<Integer> {
+class IntegerSetting extends AbstractSetting<Integer> {
 
     private final int defaultValue;
 
-    public IntegerSetting(String name, int defaultValue) {
+    IntegerSetting(String name, int defaultValue) {
         super(name);
         this.defaultValue = defaultValue;
     }

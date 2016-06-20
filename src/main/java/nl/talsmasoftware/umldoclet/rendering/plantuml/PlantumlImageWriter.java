@@ -36,9 +36,9 @@ import static java.util.Objects.requireNonNull;
  */
 public class PlantumlImageWriter extends StringBufferingWriter {
 
-    private final Collection<FileFormat> imageFormats;
     private final File directory;
     private final String baseName;
+    private final Collection<FileFormat> imageFormats;
 
     /**
      * Constructor. Creates a new writer that delegates all writes to the specified writer,
@@ -55,9 +55,9 @@ public class PlantumlImageWriter extends StringBufferingWriter {
      */
     public PlantumlImageWriter(Writer delegate, File directory, String baseName, String... imageFormats) {
         super(delegate);
-        this.imageFormats = parseFileFormats(imageFormats);
         this.directory = directory;
         this.baseName = baseName;
+        this.imageFormats = parseFileFormats(imageFormats);
     }
 
     /**

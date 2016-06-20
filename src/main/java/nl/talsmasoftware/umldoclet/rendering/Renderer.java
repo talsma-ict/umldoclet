@@ -15,7 +15,8 @@
  */
 package nl.talsmasoftware.umldoclet.rendering;
 
-import com.sun.javadoc.*;
+import com.sun.javadoc.ParameterizedType;
+import com.sun.javadoc.Type;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingWriter;
 
@@ -65,6 +66,13 @@ public abstract class Renderer {
             child.writeTo(indented);
         }
         return output;
+    }
+
+    protected Renderer lastChild() {
+        // TODO: Check what the impact would be to change children into a List.
+        Renderer last = null;
+        for (Renderer child : children) last = child;
+        return last;
     }
 
     protected static IndentingPrintWriter writeTypeTo(IndentingPrintWriter out, Type type) {

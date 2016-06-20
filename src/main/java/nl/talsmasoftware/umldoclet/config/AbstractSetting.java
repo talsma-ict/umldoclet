@@ -20,7 +20,7 @@ package nl.talsmasoftware.umldoclet.config;
 /**
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
-public abstract class AbstractSetting<T> {
+abstract class AbstractSetting<T> {
 
     final String name;
 
