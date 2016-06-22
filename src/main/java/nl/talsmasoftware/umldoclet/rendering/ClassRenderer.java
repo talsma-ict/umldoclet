@@ -48,7 +48,6 @@ public class ClassRenderer extends Renderer {
         // Add the various parts of the class UML, order matters here, obviously!
         initChildren_AddEnumConstants();
         initChildren_AddFields();
-        // TODO add 'smart' separator
         initChildren_AddConstructors();
         initChildren_AddMethods();
     }
@@ -82,22 +81,15 @@ public class ClassRenderer extends Renderer {
     private void initChildren_AddMethods() {
         final MethodDoc[] allMethods = classDoc.methods(false);
         List<MethodRenderer> abstractMethods = new ArrayList<>(allMethods.length);
-//        boolean concreteMethods = false;
         for (MethodDoc method : allMethods) {
             if (method.isAbstract()) {
                 abstractMethods.add(new MethodRenderer(diagram, method));
             } else {
-//                concreteMethods = true;
                 children.add(new MethodRenderer(diagram, method));
             }
         }
+        // abstract methods come after regular methods in our UML diagrams.
         if (!abstractMethods.isEmpty()) {
-//            if (concreteMethods) {
-//                // TODO convert into 'smart' separator.
-//                String methodSeparator = diagram.config.abstractMethodSeparator();
-//                if (methodSeparator.length() > 0) children.add(new SeparatorRenderer(diagram, methodSeparator));
-//            }
-            // abstract methods come after regular methods in our UML diagrams.
             children.addAll(abstractMethods);
         }
     }
