@@ -29,7 +29,6 @@ public class SeparatorRenderer extends Renderer {
     protected SeparatorRenderer(UMLDiagram diagram, String separator) {
         super(diagram);
         this.separator = separator;
-
     }
 
     @Override
