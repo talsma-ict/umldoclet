@@ -73,7 +73,7 @@ public class UMLDocletConfigTest {
 
     private void assertSettingIsDocumented(UMLDocletConfig.Setting setting) {
         final String optionName = optionName(setting);
-        final String optionPattern = "\\|\\s+" + optionName + "\\s+\\|";
+        final String optionPattern = "^\\|\\s+" + optionName + "\\s+";
 
         assertThat(usageDocumentation(), containsString(optionName));
         assertThat(usageDocumentation(), containsPattern(optionPattern, Pattern.MULTILINE));
