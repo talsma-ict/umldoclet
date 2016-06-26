@@ -24,6 +24,9 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
  */
 public class SeparatorRenderer extends Renderer {
 
+    // TODO Think about how to maintain state between what was just rendered
+    // and what still needs to be rendered
+
     protected final String separator;
 
     protected SeparatorRenderer(UMLDiagram diagram, String separator) {
