@@ -7,15 +7,13 @@ import static java.util.Objects.requireNonNull;
 /**
  * Created by sjoerd on 05-03-16.
  */
-public class NoteRenderer extends Renderer {
+public class NoteRenderer extends ParentAwareRenderer {
 
-    protected final Renderer parent;
     protected final String note;
     private final String position = "bottom";
 
     protected NoteRenderer(Renderer parent, String note) {
-        super(requireNonNull(parent, "No parent renderer for note provided.").diagram);
-        this.parent = parent;
+        super(parent);
         this.note = requireNonNull(note, "Note to render may not be <null>!").trim();
     }
 

@@ -19,49 +19,16 @@ package nl.talsmasoftware.umldoclet.rendering;
 
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
-import java.util.Iterator;
-
 /**
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
-public class SeparatorRenderer extends Renderer {
+public class SeparatorRenderer extends ParentAwareRenderer {
 
-    // TODO Think about how to maintain state between what was just rendered
-    // and what still needs to be rendered
-
-    protected final Renderer parent;
     protected final String separator;
 
-    private volatile Renderer previousSibling, nextSibling;
-
     protected SeparatorRenderer(Renderer parent, String separator) {
-        super(parent.diagram);
-        this.parent = parent;
+        super(parent);
         this.separator = separator;
-    }
-
-    /**
-     * @return The renderer that is before this renderer within the parent, if any. Otherwise <code>null</code>.
-     */
-    protected Renderer previousSibling() {
-        if (previousSibling == null) for (Renderer current : parent.children) {
-            if (equals(current)) break;
-            else previousSibling = current;
-        }
-        return previousSibling;
-    }
-
-    /**
-     * @return The renderer that is after this renderer within the parent, if any. Otherwise <code>null</code>.
-     */
-    protected Renderer nextSibling() {
-        if (nextSibling == null) for (Iterator<Renderer> it = parent.children.iterator(); it.hasNext(); ) {
-            if (equals(it.next()) && it.hasNext()) {
-                nextSibling = it.next();
-                break;
-            }
-        }
-        return nextSibling;
     }
 
     @Override

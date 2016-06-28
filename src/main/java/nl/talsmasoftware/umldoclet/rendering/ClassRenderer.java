@@ -33,15 +33,13 @@ import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
  *
  * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
  */
-public class ClassRenderer extends Renderer {
+public class ClassRenderer extends ParentAwareRenderer {
 
-    protected final Renderer parent;
     protected final ClassDoc classDoc;
     private final Collection<NoteRenderer> notes;
 
     protected ClassRenderer(Renderer parent, ClassDoc classDoc) {
-        super(requireNonNull(parent, "No parent renderer for class provided.").diagram);
-        this.parent = parent;
+        super(parent);
         this.classDoc = requireNonNull(classDoc, "No class documentation provided.");
         this.notes = findLegacyNoteTags();
 
