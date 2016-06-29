@@ -33,7 +33,8 @@ public class SeparatorRenderer extends ParentAwareRenderer {
 
     @Override
     protected IndentingPrintWriter writeTo(IndentingPrintWriter output) {
-        return output.append(separator).newline();
+//        return output.append(separator).newline();
+        return output; // think about conditionals later on!
     }
 
     @Override
