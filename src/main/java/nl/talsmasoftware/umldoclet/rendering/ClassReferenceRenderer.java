@@ -39,6 +39,9 @@ public class ClassReferenceRenderer extends ClassRenderer {
     // Additiona info fields to be added to the reference.
     String cardinality1, cardinality2, note;
 
+    /**
+     * //TODO Document constructors for this class.
+     */
     protected ClassReferenceRenderer(ClassRenderer parent, ClassDoc documentedClass, String umlreference) {
         this(parent, documentedClass, null, umlreference);
     }
