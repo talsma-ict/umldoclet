@@ -46,6 +46,7 @@ public class ClassReferenceRenderer extends ClassRenderer {
         this(parent, documentedClass, null, umlreference);
     }
 
+    // this one too I guess
     protected ClassReferenceRenderer(ClassRenderer parent, String documentedClassQualifiedName, String umlreference) {
         this(parent, null, documentedClassQualifiedName, umlreference);
     }
