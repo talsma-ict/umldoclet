@@ -57,6 +57,10 @@ public class UMLDiagram extends Renderer {
         return packageDiagram;
     }
 
+    public UMLDiagram addDependencyDiagram(Object dontKnowYet) {
+        return this;
+    }
+
     protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         out.append("@startuml").newline().newline();
         writeChildrenTo(out);
