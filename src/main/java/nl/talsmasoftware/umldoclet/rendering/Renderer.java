@@ -78,9 +78,9 @@ public abstract class Renderer {
     protected static IndentingPrintWriter writeTypeTo(IndentingPrintWriter out, Type type) {
         if (type != null) {
             out.append(type.typeName());
-            ParameterizedType parameterizedType = type.asParameterizedType();
+            final ParameterizedType parameterizedType = type.asParameterizedType();
             if (parameterizedType != null) {
-                Type[] generics = parameterizedType.typeArguments();
+                final Type[] generics = parameterizedType.typeArguments();
                 if (generics.length > 0) {
                     out.append("<");
                     String sep = "";
