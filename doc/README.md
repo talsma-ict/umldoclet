@@ -22,8 +22,7 @@ To use the doclet together with the JavaDoc tool, the following is required.
 ## Feedback
 
 - Please search the [open issues](https://github.com/talsma-ict/umldoclet/issues)
-  before you [file a new issue](https://github.com/talsma-ict/umldoclet/issues/new)
-  or contact me through Github.  
+  before you [file a new issue](https://github.com/talsma-ict/umldoclet/issues/new).
 - If possible, please provide a working example when sending in bugs.
   This will make fixing them that much easier!
   
