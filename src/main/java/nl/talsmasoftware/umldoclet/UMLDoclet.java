@@ -143,15 +143,8 @@ public class UMLDoclet extends Standard {
      * @return The created Writer to the correct PlantUML file.
      * @throws IOException In case there were I/O errors creating a new plantUML file or opening a Writer to it.
      */
-
     protected Writer createWriterForNewClassFile(ClassDoc documentedClass) throws IOException {
-        File umlFile = new File(config.basePath());
-        for (String packageNm : documentedClass.containingPackage().name().split("\\.")) {
-            if (packageNm.trim().length() > 0) {
-                umlFile = new File(umlFile, packageNm);
-            }
-        }
-        return createWriterForUmlFile(umlFile, documentedClass.name());
+        return createImageWriterFor(documentedClass.containingPackage().name(), documentedClass.name());
     }
 
     /**
@@ -162,13 +155,18 @@ public class UMLDoclet extends Standard {
      * @throws IOException In case there were I/O errors creating a new plantUML file or opening a Writer to it.
      */
     protected Writer createWriterForNewPackageFile(PackageDoc documentedPackage) throws IOException {
+        return createImageWriterFor(documentedPackage.name(), "package");
+    }
+
+    private Writer createImageWriterFor(String qualifiedPackageName, String baseName) throws IOException {
+        // TODO Enhancement #25
         File umlFile = new File(config.basePath());
-        for (String packageNm : documentedPackage.name().split("\\.")) {
+        for (String packageNm : qualifiedPackageName.split("\\.")) {
             if (packageNm.trim().length() > 0) {
                 umlFile = new File(umlFile, packageNm);
             }
         }
-        return createWriterForUmlFile(umlFile, "package");
+        return createWriterForUmlFile(umlFile, baseName);
     }
 
     /**

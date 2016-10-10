@@ -72,9 +72,8 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
         UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES("umlIncludeOverridesFromExcludedReferences", false),
         UML_COMMAND(new ListSetting("umlCommand")),
         UML_ALWAYS_USE_QUALIFIED_CLASSNAMES("umlAlwaysUseQualifiedClassnames", false),
-        UML_IMAGE_FORMAT(new ListSetting("umlImageFormat"));
-//        UML_FIELD_SEPARATOR("umlFieldSeparator", "__"),
-//        UML_ABSTRACT_METHOD_SEPARATOR("umlAbstractMethodSeparator", "..");
+        UML_IMAGE_FORMAT(new ListSetting("umlImageFormat")),
+        UML_IMAGE_DIRECTORY("umlImageDirectory", null);
 
         private final AbstractSetting<?> delegate;
 
@@ -352,26 +351,6 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
     public boolean includeAbstractSuperclassMethods() {
         return UML_INCLUDE_ABSTRACT_SUPERCLASS_METHODS.value(this);
     }
-
-//    private static String emptyIfNone(String value) {
-//        return value == null || "none".equalsIgnoreCase(value) ? "" : value;
-//    }
-//
-//    /**
-//     * @return The separator to use between fields and methods in a class definition
-//     * (defaults to <code>"__"</code>, will be empty for the value <code>"none"</code>).
-//     */
-//    public String fieldSeparator() {
-//        return emptyIfNone((String) UML_FIELD_SEPARATOR.value(this));
-//    }
-//
-//    /**
-//     * @return The separator to use between concrete and abstract methods in a class definition
-//     * (defaults to <code>".."</code>, will be empty for the value <code>"none"</code>).
-//     */
-//    public String abstractMethodSeparator() {
-//        return emptyIfNone((String) UML_ABSTRACT_METHOD_SEPARATOR.value(this));
-//    }
 
     private boolean includePrivateClasses() {
         return UML_INCLUDE_PRIVATE_CLASSES.value(this);
