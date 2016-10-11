@@ -26,7 +26,7 @@ import static java.util.Objects.requireNonNull;
  * Writer implementation that will indent each new line with a specified number of whitespace
  * characters. The writing itself can be delegated to any other {@link Writer} implementation.
  *
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public class IndentingWriter extends Writer {
 

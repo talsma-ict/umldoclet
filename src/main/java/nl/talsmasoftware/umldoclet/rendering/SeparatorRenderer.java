@@ -20,7 +20,7 @@ package nl.talsmasoftware.umldoclet.rendering;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 /**
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public class SeparatorRenderer extends ParentAwareRenderer {
 

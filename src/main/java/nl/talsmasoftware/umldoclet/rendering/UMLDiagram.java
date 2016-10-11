@@ -29,7 +29,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * Created on 17-02-2016.
  *
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public class UMLDiagram extends Renderer {
 

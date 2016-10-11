@@ -28,7 +28,7 @@ import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
 /**
  * Renderer to produce PlantUML output for a single class.
  *
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public class ClassRenderer extends ParentAwareRenderer {
 

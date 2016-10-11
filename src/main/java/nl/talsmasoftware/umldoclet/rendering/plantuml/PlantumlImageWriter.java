@@ -32,7 +32,7 @@ import static java.util.Objects.requireNonNull;
  * Writer that delegates to a regular writer for the UML itself, but when finished (i.e. when close is called), also
  * attempt to generate image files using the PlantUML library.
  *
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public class PlantumlImageWriter extends StringBufferingWriter {
 

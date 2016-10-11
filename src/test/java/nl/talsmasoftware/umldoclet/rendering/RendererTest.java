@@ -32,7 +32,7 @@ import static org.hamcrest.Matchers.hasToString;
 /**
  * Unit tests for the base Renderer functionality.
  *
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public class RendererTest {
 

@@ -22,7 +22,7 @@ import java.util.Iterator;
 import static java.util.Objects.requireNonNull;
 
 /**
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public abstract class ParentAwareRenderer extends Renderer {
 

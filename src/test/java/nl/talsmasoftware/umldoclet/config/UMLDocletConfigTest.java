@@ -40,7 +40,7 @@ import static org.mockito.Mockito.mock;
  * This test class verifies that each UMLDocletConfig Setting value has been documented
  * in the USAGE.md file.
  *
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public class UMLDocletConfigTest {
 

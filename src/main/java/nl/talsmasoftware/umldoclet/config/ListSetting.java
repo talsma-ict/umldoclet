@@ -21,10 +21,11 @@ import nl.talsmasoftware.umldoclet.logging.LogSupport;
 
 import java.util.*;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.*;
 
 /**
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 class ListSetting extends AbstractSetting<List<String>> {
 
@@ -55,9 +56,7 @@ class ListSetting extends AbstractSetting<List<String>> {
             }
             values.addAll(split(true, option));
         }
-        if (values.isEmpty()) {
-            return value(currentValue);
-        }
+        if (values.isEmpty()) return value(currentValue);
         return unmodifiableCopy(values);
     }
 
@@ -70,27 +69,18 @@ class ListSetting extends AbstractSetting<List<String>> {
         List<String> result = new ArrayList<>();
         boolean skip = skipfirst;
         for (String val : values) {
-            if (!skip) {
-                for (String part : val.split("\\s*[,;\\n]\\s*")) {
-                    result.add(part);
-                }
-            }
+            if (!skip) result.addAll(asList(val.trim().split("\\s*[,;\\n]\\s*")));
             skip = false;
         }
         return result;
     }
 
     private static List<String> unmodifiableCopy(Collection<?> source) {
-        if (source == null) {
-            return null;
-        } else if (source.isEmpty()) {
-            return emptyList();
-        }
-        List<String> copy = new ArrayList<>();
+        if (source == null) return null;
+        else if (source.isEmpty()) return emptyList();
+        List<String> copy = new ArrayList<>(source.size());
         for (Object value : source) {
-            if (value != null) {
-                copy.add(value.toString());
-            }
+            if (value != null) copy.add(value.toString());
         }
         return copy.size() == 1 ? singletonList(copy.get(0)) : unmodifiableList(copy);
     }

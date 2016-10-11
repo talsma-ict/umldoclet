@@ -22,7 +22,7 @@ import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import java.util.Arrays;
 
 /**
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 class StringSetting extends AbstractSetting<String> {
     private static final String NONE = "none";
@@ -50,6 +50,6 @@ class StringSetting extends AbstractSetting<String> {
 
     @Override
     public String value(Object configured) {
-        return configured == null ? defaultValue : configured.toString();
+        return configured == null || NONE.equals(configured) ? defaultValue : configured.toString();
     }
 }

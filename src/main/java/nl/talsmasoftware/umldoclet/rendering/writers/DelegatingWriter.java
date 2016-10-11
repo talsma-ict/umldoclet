@@ -27,7 +27,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * Base implementation that delegates writing to one or more delegate writers.
  *
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public class DelegatingWriter extends Writer {
     /**

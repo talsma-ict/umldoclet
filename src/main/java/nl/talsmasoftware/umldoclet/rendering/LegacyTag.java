@@ -29,7 +29,7 @@ import java.util.Locale;
 /**
  * This class is here to support references that were available from JavaDoc tags from the old PlantUML doclet.
  *
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public enum LegacyTag {
 

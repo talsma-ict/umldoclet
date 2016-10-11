@@ -34,7 +34,7 @@ import static java.util.Objects.requireNonNull;
  * Renderers are capable of rendering themselves to {@link IndentingPrintWriter} instances and have
  * chaining methods returning these writers for easier appending.
  *
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public abstract class Renderer {
 

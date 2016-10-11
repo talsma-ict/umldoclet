@@ -22,7 +22,7 @@ import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import java.util.Arrays;
 
 /**
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 class IntegerSetting extends AbstractSetting<Integer> {
 

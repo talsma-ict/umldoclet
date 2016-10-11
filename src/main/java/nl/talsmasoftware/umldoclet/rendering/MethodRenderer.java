@@ -31,7 +31,7 @@ import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
  * For the moment this renderer is also used for rendering Constructors.
  * If this turns out to be too complex, constructors may be separated into their own specialized renderer class.
  *
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public class MethodRenderer extends Renderer {
     protected final ExecutableMemberDoc methodDoc;
