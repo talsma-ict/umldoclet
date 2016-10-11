@@ -21,6 +21,7 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 /**
  * @author Sjoerd Talsma
+ * @deprecated This idea is not quite ready for production code yet.
  */
 public class SeparatorRenderer extends ParentAwareRenderer {
 
