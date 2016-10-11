@@ -22,13 +22,13 @@ import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import java.util.Arrays;
 
 /**
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
-public class BooleanSetting extends AbstractSetting<Boolean> {
+class BooleanSetting extends AbstractSetting<Boolean> {
 
     private final boolean defaultValue;
 
-    public BooleanSetting(String name, boolean defaultValue) {
+    BooleanSetting(String name, boolean defaultValue) {
         super(name);
         this.defaultValue = defaultValue;
     }

@@ -18,6 +18,7 @@ package nl.talsmasoftware.umldoclet.rendering;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.PackageDoc;
 import nl.talsmasoftware.umldoclet.logging.LogSupport;
+import nl.talsmasoftware.umldoclet.logging.LogSupport.GlobalPosition;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * Created on 22-02-2016.
  *
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public class PackageRenderer extends Renderer {
     protected final PackageDoc packageDoc;
@@ -54,11 +55,13 @@ public class PackageRenderer extends Renderer {
     }
 
     protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
-        out.append("namespace").whitespace()
-                .append(packageDoc.name()).whitespace()
-                .append('{').newline().newline();
-        writeChildrenTo(out);
-        return out.append('}').newline().newline();
+        try (GlobalPosition pos = new GlobalPosition(packageDoc.position())) {
+            out.append("namespace").whitespace()
+                    .append(packageDoc.name()).whitespace()
+                    .append('{').newline().newline();
+            writeChildrenTo(out);
+            return out.append('}').newline().newline();
+        }
     }
 
     @Override

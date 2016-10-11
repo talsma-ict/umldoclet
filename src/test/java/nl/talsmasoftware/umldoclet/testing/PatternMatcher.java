@@ -27,7 +27,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * A hamcrest matcher that matches regular expression patterns.
  *
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public class PatternMatcher extends TypeSafeMatcher<String> {
     private final Pattern pattern;

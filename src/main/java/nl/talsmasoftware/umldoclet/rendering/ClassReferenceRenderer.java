@@ -29,7 +29,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * Created on 23-02-2016.
  *
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public class ClassReferenceRenderer extends ClassRenderer {
     protected final ClassRenderer parent;
@@ -39,10 +39,14 @@ public class ClassReferenceRenderer extends ClassRenderer {
     // Additiona info fields to be added to the reference.
     String cardinality1, cardinality2, note;
 
+    /**
+     * //TODO Document constructors for this class.
+     */
     protected ClassReferenceRenderer(ClassRenderer parent, ClassDoc documentedClass, String umlreference) {
         this(parent, documentedClass, null, umlreference);
     }
 
+    // this one too I guess
     protected ClassReferenceRenderer(ClassRenderer parent, String documentedClassQualifiedName, String umlreference) {
         this(parent, null, documentedClassQualifiedName, umlreference);
     }

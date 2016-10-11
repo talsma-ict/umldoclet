@@ -25,7 +25,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * Test whether the UML commands are processed the correct way.
  *
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public class UmlCommandTest {
 

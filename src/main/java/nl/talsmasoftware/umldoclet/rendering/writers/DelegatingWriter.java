@@ -21,14 +21,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 
 /**
  * Base implementation that delegates writing to one or more delegate writers.
  *
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public class DelegatingWriter extends Writer {
     /**
@@ -42,10 +41,11 @@ public class DelegatingWriter extends Writer {
      * @param delegates The delegates to write to.
      */
     public DelegatingWriter(Writer... delegates) {
-        for (Writer delegate : requireNonNull(delegates, "Delegates were null!")) {
-            requireNonNull(delegate, "Delegate writer was null!");
+        final List<Writer> writers = new ArrayList<>(requireNonNull(delegates, "Delegates were null!").length);
+        for (Writer delegate : delegates) {
+            writers.add(requireNonNull(delegate, "Delegate writer was null!"));
         }
-        this.delegates = unmodifiableList(asList(delegates));
+        this.delegates = unmodifiableList(writers);
     }
 
     /**
@@ -59,7 +59,7 @@ public class DelegatingWriter extends Writer {
      */
     @Override
     public void write(char[] cbuf, int off, int len) throws IOException {
-        List<Exception> writeExceptions = new ArrayList<>();
+        List<Exception> writeExceptions = new ArrayList<>(delegates.size());
         for (Writer delegate : delegates) {
             try {
                 delegate.write(cbuf, off, len);
@@ -79,7 +79,7 @@ public class DelegatingWriter extends Writer {
      */
     @Override
     public void flush() throws IOException {
-        List<Exception> flushExceptions = new ArrayList<>();
+        List<Exception> flushExceptions = new ArrayList<>(delegates.size());
         for (Writer delegate : delegates) {
             try {
                 delegate.flush();
@@ -100,7 +100,7 @@ public class DelegatingWriter extends Writer {
      */
     @Override
     public void close() throws IOException {
-        List<Exception> closeExceptions = new ArrayList<>();
+        List<Exception> closeExceptions = new ArrayList<>(delegates.size());
         for (Writer delegate : delegates) {
             try {
                 delegate.close();

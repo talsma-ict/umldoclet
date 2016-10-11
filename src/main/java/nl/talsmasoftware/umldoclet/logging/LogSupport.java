@@ -28,7 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public class LogSupport implements DocErrorReporter {
     private static final Logger LOGGER = Logger.getLogger(LogSupport.class.getName());

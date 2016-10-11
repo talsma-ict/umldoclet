@@ -26,7 +26,7 @@ import java.io.Writer;
  * Care was taken to ensure that not only lines ended by calls to {@link #println()} methods trigger indentation,
  * but self-written newline characters as well.
  *
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public class IndentingPrintWriter extends PrintWriter {
 

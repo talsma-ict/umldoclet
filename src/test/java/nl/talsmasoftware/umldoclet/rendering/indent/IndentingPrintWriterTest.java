@@ -30,7 +30,7 @@ import static org.junit.Assert.fail;
  * By unit-testing this class, we effectively also test the IndentingWriter implementation
  * that provides the actual indenting functionality.
  *
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public class IndentingPrintWriterTest {
 

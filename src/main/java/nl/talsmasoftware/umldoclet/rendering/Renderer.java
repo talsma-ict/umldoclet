@@ -15,7 +15,8 @@
  */
 package nl.talsmasoftware.umldoclet.rendering;
 
-import com.sun.javadoc.*;
+import com.sun.javadoc.ParameterizedType;
+import com.sun.javadoc.Type;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingWriter;
 
@@ -33,7 +34,7 @@ import static java.util.Objects.requireNonNull;
  * Renderers are capable of rendering themselves to {@link IndentingPrintWriter} instances and have
  * chaining methods returning these writers for easier appending.
  *
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public abstract class Renderer {
 
@@ -67,12 +68,19 @@ public abstract class Renderer {
         return output;
     }
 
+    protected Renderer lastChild() {
+        // TODO: Check what the impact would be to change children into a List.
+        Renderer last = null;
+        for (Renderer child : children) last = child;
+        return last;
+    }
+
     protected static IndentingPrintWriter writeTypeTo(IndentingPrintWriter out, Type type) {
         if (type != null) {
             out.append(type.typeName());
-            ParameterizedType parameterizedType = type.asParameterizedType();
+            final ParameterizedType parameterizedType = type.asParameterizedType();
             if (parameterizedType != null) {
-                Type[] generics = parameterizedType.typeArguments();
+                final Type[] generics = parameterizedType.typeArguments();
                 if (generics.length > 0) {
                     out.append("<");
                     String sep = "";

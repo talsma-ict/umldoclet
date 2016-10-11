@@ -26,7 +26,7 @@ import java.util.Objects;
  * This could well be the simplest renderer of them all; it simply renders the command that was
  * given on the appropriate position in the output.
  *
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public class CommandRenderer extends Renderer {
     protected final String command;

@@ -12,38 +12,35 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
+
 package nl.talsmasoftware.umldoclet.rendering;
 
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
-import static java.util.Objects.requireNonNull;
-
 /**
- * Renderer for UML notes.
- *
  * @author Sjoerd Talsma
+ * @deprecated This idea is not quite ready for production code yet.
  */
-public class NoteRenderer extends ParentAwareRenderer {
+public class SeparatorRenderer extends ParentAwareRenderer {
 
-    protected final String note;
-    private final String position = "bottom";
+    protected final String separator;
 
-    protected NoteRenderer(Renderer parent, String note) {
+    protected SeparatorRenderer(Renderer parent, String separator) {
         super(parent);
-        this.note = requireNonNull(note, "Note to render may not be <null>!").trim();
+        this.separator = separator;
     }
 
     @Override
     protected IndentingPrintWriter writeTo(IndentingPrintWriter output) {
-        output.append("note");
-        if (parent instanceof ClassRenderer) {
-            output.whitespace().append(position)
-                    .whitespace().append("of")
-                    .whitespace().append(((ClassRenderer) parent).name());
-        }
-        output.newline().indent().append(note).newline();
-        return output.append("end note").newline().newline();
+//        return output.append(separator).newline();
+        return output; // think about conditionals later on!
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return this == other;
     }
 
 }

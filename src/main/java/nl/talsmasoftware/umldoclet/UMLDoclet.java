@@ -38,7 +38,7 @@ import static java.util.Objects.requireNonNull;
  * easily as creating proper JavaDoc comments. It actually does that too by delegating to JavaDoc's {@link Standard}
  * doclet for the 'regular' HTML documentation.
  *
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public class UMLDoclet extends Standard {
     private final RootDoc rootDoc;
@@ -143,15 +143,8 @@ public class UMLDoclet extends Standard {
      * @return The created Writer to the correct PlantUML file.
      * @throws IOException In case there were I/O errors creating a new plantUML file or opening a Writer to it.
      */
-
     protected Writer createWriterForNewClassFile(ClassDoc documentedClass) throws IOException {
-        File umlFile = new File(config.basePath());
-        for (String packageNm : documentedClass.containingPackage().name().split("\\.")) {
-            if (packageNm.trim().length() > 0) {
-                umlFile = new File(umlFile, packageNm);
-            }
-        }
-        return createWriterForUmlFile(umlFile, documentedClass.name());
+        return createUmlWriterFor(documentedClass.containingPackage().name(), documentedClass.name());
     }
 
     /**
@@ -162,13 +155,28 @@ public class UMLDoclet extends Standard {
      * @throws IOException In case there were I/O errors creating a new plantUML file or opening a Writer to it.
      */
     protected Writer createWriterForNewPackageFile(PackageDoc documentedPackage) throws IOException {
-        File umlFile = new File(config.basePath());
-        for (String packageNm : documentedPackage.name().split("\\.")) {
-            if (packageNm.trim().length() > 0) {
-                umlFile = new File(umlFile, packageNm);
-            }
+        return createUmlWriterFor(documentedPackage.name(), "package");
+    }
+
+    private Writer createUmlWriterFor(String qualifiedPackageName, String baseName) throws IOException {
+        final File basePath = new File(config.basePath());
+        final File umlDirectory = subDirectory(basePath, qualifiedPackageName, "\\.");
+        File imageDirectory = umlDirectory;
+        String imageBaseName = baseName;
+        if (config.imageDirectory() != null) { // Enhancement #25: Use a single directory for images.
+            imageDirectory = subDirectory(basePath, config.imageDirectory(), "[/\\\\]");
+            if (qualifiedPackageName.length() > 0) imageBaseName = qualifiedPackageName + "." + baseName;
         }
-        return createWriterForUmlFile(umlFile, "package");
+        return createWriterForUmlFile(umlDirectory, baseName, imageDirectory, imageBaseName);
+    }
+
+    private static File subDirectory(File baseDirectory, String subDirectoryName, String separatorRegex) {
+        File subDirectory = baseDirectory;
+        if (subDirectoryName != null) for (String subdir : subDirectoryName.split(separatorRegex)) {
+            subdir = subdir.trim();
+            if (subdir.length() > 0) subDirectory = new File(subDirectory, subdir);
+        }
+        return subDirectory;
     }
 
     /**
@@ -178,21 +186,26 @@ public class UMLDoclet extends Standard {
      * Also, if PlantUML is detected on the classpath, an attempt will be made to automatically generate a binary
      * image with the same name.
      *
-     * @param directory The directory where to create the new UML file to render to.
-     * @param baseName  The base filename (without extension) to render to.
+     * @param umlDirectory The directory where to create the new UML file to render to.
+     * @param umlBaseName  The base filename (without extension) to render to.
+     * @param imgDirectory The directory where images need to be created.
+     * @param imgBaseName  The base filename for the image(s) to create.
      * @return The writer to render the UML diagram with.
      * @throws IOException in case there were I/O errors creating a new PlantUML file for opening a Writer to it.
      */
-    private Writer createWriterForUmlFile(File directory, String baseName) throws IOException {
-        File umlFile = requireNonNull(directory, "Directory was null.");
+    private Writer createWriterForUmlFile(File umlDirectory, String umlBaseName, File imgDirectory, String imgBaseName) throws IOException {
+        File umlFile = requireNonNull(umlDirectory, "Directory was null.");
         if (umlFile.exists() || umlFile.mkdirs()) {
-            umlFile = new File(umlFile, baseName + config.umlFileExtension());
+            umlFile = new File(umlFile, umlBaseName + config.umlFileExtension());
             if (umlFile.exists() || umlFile.createNewFile()) {
                 LogSupport.info("Generating {0}...", umlFile);
                 Writer writer = new OutputStreamWriter(new FileOutputStream(umlFile), config.umlFileEncoding());
                 String[] imageFormats = config.imageFormats();
                 if (imageFormats.length > 0 && PlantumlSupport.isPlantumlDetected()) {
-                    writer = new PlantumlImageWriter(writer, directory, baseName, imageFormats);
+                    if (!imgDirectory.exists() && !imgDirectory.mkdirs()) {
+                        throw new IllegalStateException("Error creating: " + imgDirectory.getPath());
+                    }
+                    writer = new PlantumlImageWriter(writer, imgDirectory, imgBaseName, imageFormats);
                 }
                 return writer;
             }

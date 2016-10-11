@@ -33,7 +33,7 @@ import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
  * Class containing all possible Doclet options for the UML doclet.
  * This configuration class is also responsible for providing suitable default values in a central location.
  *
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
 
@@ -72,7 +72,8 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
         UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES("umlIncludeOverridesFromExcludedReferences", false),
         UML_COMMAND(new ListSetting("umlCommand")),
         UML_ALWAYS_USE_QUALIFIED_CLASSNAMES("umlAlwaysUseQualifiedClassnames", false),
-        UML_IMAGE_FORMAT(new ListSetting("umlImageFormat"));
+        UML_IMAGE_FORMAT(new ListSetting("umlImageFormat")),
+        UML_IMAGE_DIRECTORY("umlImageDirectory", null);
 
         private final AbstractSetting<?> delegate;
 
@@ -439,6 +440,13 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
     public String[] imageFormats() {
         final List<String> imageFormats = UML_IMAGE_FORMAT.value(this);
         return imageFormats.toArray(new String[imageFormats.size()]);
+    }
+
+    /**
+     * @return The configured image directory or <code>null</code> if none is configured.
+     */
+    public String imageDirectory() {
+        return UML_IMAGE_DIRECTORY.value(this);
     }
 
     /**

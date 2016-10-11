@@ -20,7 +20,7 @@ import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.ProgramElementDoc;
 
 /**
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public class Model {
 

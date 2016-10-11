@@ -12,38 +12,32 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
+
 package nl.talsmasoftware.umldoclet.rendering;
 
+import com.sun.javadoc.ProgramElementDoc;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import static java.util.Objects.requireNonNull;
 
 /**
- * Renderer for UML notes.
- *
  * @author Sjoerd Talsma
  */
-public class NoteRenderer extends ParentAwareRenderer {
+public class DependencyRenderer extends ParentAwareRenderer {
 
-    protected final String note;
-    private final String position = "bottom";
+    protected final ProgramElementDoc element;
 
-    protected NoteRenderer(Renderer parent, String note) {
+    protected DependencyRenderer(Renderer parent, ProgramElementDoc element) {
         super(parent);
-        this.note = requireNonNull(note, "Note to render may not be <null>!").trim();
+        this.element = requireNonNull(element);
     }
 
     @Override
     protected IndentingPrintWriter writeTo(IndentingPrintWriter output) {
-        output.append("note");
-        if (parent instanceof ClassRenderer) {
-            output.whitespace().append(position)
-                    .whitespace().append("of")
-                    .whitespace().append(((ClassRenderer) parent).name());
-        }
-        output.newline().indent().append(note).newline();
-        return output.append("end note").newline().newline();
+        // Todo render dependencies.
+        return output;
     }
 
 }

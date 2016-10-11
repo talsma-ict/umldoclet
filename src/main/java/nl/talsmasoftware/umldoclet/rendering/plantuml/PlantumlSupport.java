@@ -22,7 +22,7 @@ import nl.talsmasoftware.umldoclet.logging.LogSupport;
  * Detection happens without a runtime dependency on plantuml itself, so we can cleanly avoid attempts
  * to generate images if the required library is not on the classpath at all.
  *
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public class PlantumlSupport {
 

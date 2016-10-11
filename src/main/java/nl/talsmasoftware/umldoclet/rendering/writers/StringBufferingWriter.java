@@ -22,7 +22,7 @@ import java.io.Writer;
  * This writer delegates to another {@link Writer} implementation while retaining a {@link StringBuffer} of all written
  * characters.
  *
- * @author <a href="mailto:info@talsma-software.nl">Sjoerd Talsma</a>
+ * @author Sjoerd Talsma
  */
 public class StringBufferingWriter extends DelegatingWriter {
 
