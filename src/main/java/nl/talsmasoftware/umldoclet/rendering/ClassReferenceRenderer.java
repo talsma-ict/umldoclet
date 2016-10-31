@@ -16,6 +16,7 @@
 package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.ClassDoc;
+import com.sun.javadoc.FieldDoc;
 import com.sun.javadoc.MethodDoc;
 import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
@@ -23,8 +24,12 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
+import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
+import static nl.talsmasoftware.umldoclet.model.Model.find;
+import static nl.talsmasoftware.umldoclet.model.Model.isInSameOrSubPackage;
 
 /**
  * Created on 23-02-2016.
@@ -36,17 +41,27 @@ public class ClassReferenceRenderer extends ClassRenderer {
     protected final String qualifiedName;
     protected final String umlreference;
 
-    // Additiona info fields to be added to the reference.
+    // Additional info fields to be added to the reference.
     String cardinality1, cardinality2, note;
 
     /**
-     * //TODO Document constructors for this class.
+     * Creates a new class reference to be rendered.
+     *
+     * @param parent          The class the reference is from (which is the parent of this referencerenderer).
+     * @param documentedClass The class the reference is to.
+     * @param umlreference    The UML reference itself (reversed, so inheritance is <code>&lt;|--</code>).
      */
     protected ClassReferenceRenderer(ClassRenderer parent, ClassDoc documentedClass, String umlreference) {
         this(parent, documentedClass, null, umlreference);
     }
 
-    // this one too I guess
+    /**
+     * Creates a new class reference, but the referred class is not (yet) available for documentation.
+     *
+     * @param parent                       The class the reference is from (which is the parent of this referencerenderer).
+     * @param documentedClassQualifiedName The qualified of the referred class.
+     * @param umlreference                 The UML reference itself (reversed, so inheritance is <code>&lt;|--</code>).
+     */
     protected ClassReferenceRenderer(ClassRenderer parent, String documentedClassQualifiedName, String umlreference) {
         this(parent, null, documentedClassQualifiedName, umlreference);
     }
@@ -67,6 +82,29 @@ public class ClassReferenceRenderer extends ClassRenderer {
         }
     }
 
+    void addNote(final String note) {
+        if (note != null) {
+            if (this.note == null) this.note = note;
+            else {
+                final Set<String> notes = new LinkedHashSet<>(asList(this.note.split("\\\\n")));
+                if (notes.add(note)) {
+                    final StringBuilder nwNote = new StringBuilder();
+                    for (String n : notes) {
+                        if (nwNote.length() > 0) nwNote.append("\\n");
+                        nwNote.append("<size:9>" + n);
+                    }
+                    this.note = nwNote.toString();
+                }
+            }
+        }
+    }
+
+    /**
+     * This generator method creates a collection of references for a given class.
+     *
+     * @param parent The rendered class to create references for.
+     * @return The references.
+     */
     static Collection<ClassReferenceRenderer> referencesFor(ClassRenderer parent) {
         requireNonNull(parent, "Included class is required in order to find its references.");
         final String referentName = parent.classDoc.qualifiedName();
@@ -96,9 +134,9 @@ public class ClassReferenceRenderer extends ClassRenderer {
             } else if (excludedReferences.contains(interfaceName)) {
                 LogSupport.trace("Excluding interface \"{0}\" of \"{1}\"...", interfaceName, referentName);
             } else if (references.add(new ClassReferenceRenderer(parent, interfaceDoc, "<|.."))) {
-                LogSupport.trace("Added reference to interface \"{0}\" from \"{1}\".", new Object[]{interfaceName, referentName});
+                LogSupport.trace("Added reference to interface \"{0}\" from \"{1}\".", interfaceName, referentName);
             } else {
-                LogSupport.debug("Excluding reference to interface \"{0}\" from \"{1}\"; the reference was already generated.", new Object[]{interfaceName, referentName});
+                LogSupport.debug("Excluding reference to interface \"{0}\" from \"{1}\"; the reference was already generated.", interfaceName, referentName);
             }
         }
 
@@ -110,7 +148,56 @@ public class ClassReferenceRenderer extends ClassRenderer {
         // Support for tags defined in legacy doclet.
         references.addAll(LegacyTag.legacyReferencesFor(parent));
 
+        // issue #19: Testing with intra-package references.
+        addClassRelationships(references, parent);
+
         return references;
+    }
+
+    private static void addClassRelationships(Collection<ClassReferenceRenderer> references, ClassRenderer fromClass) {
+        if (fromClass.diagram.config.includeAbstractSuperclassMethods()) {
+            final String classPackage = fromClass.classDoc.containingPackage().name();
+            // Add public field relationships.
+            for (FieldDoc field : fromClass.classDoc.fields()) {
+                if (field.isPublic() || field.isPackagePrivate()) {
+                    ClassDoc fieldType = field.type().asClassDoc();
+                    if (isInSameOrSubPackage(classPackage, fieldType)) {
+                        try {
+                            ClassReferenceRenderer ref = new ClassReferenceRenderer(fromClass, fieldType, "<..");
+//                            ref.note = field.name();
+                            references.add(ref);
+                            addNote(references, ref, field.name());
+                        } catch (RuntimeException rte) {
+                            LogSupport.error("Exception while rendering reference from {0} to type of {1}: {2}", fromClass, fieldType, rte.getMessage(), rte);
+                        }
+                    }
+                    // TODO: arrays & Iterables of types.
+                }
+            }
+
+            for (MethodDoc method : fromClass.classDoc.methods()) {
+                if (method.isPublic() || method.isPackagePrivate()) {
+                    ClassDoc returnType = method.returnType().asClassDoc();
+                    if (isInSameOrSubPackage(classPackage, returnType)) {
+                        try {
+                            ClassReferenceRenderer ref = new ClassReferenceRenderer(fromClass, returnType, "<..");
+//                            ref.note = method.name();
+                            references.add(ref);
+                            addNote(references, ref, method.name());
+                        } catch (RuntimeException rte) {
+                            LogSupport.error("Exception while rendering reference from {0} to type of {1}: {2}", fromClass, returnType, rte.getMessage(), rte);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static void addNote(Iterable<ClassReferenceRenderer> refs, ClassReferenceRenderer ref, String note) {
+        if (note != null) {
+            final ClassReferenceRenderer found = find(refs, ref);
+            found.addNote(note);
+        }
     }
 
     private String guessClassOrInterface() {

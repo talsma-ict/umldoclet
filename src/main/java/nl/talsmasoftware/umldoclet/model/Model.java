@@ -18,6 +18,9 @@ package nl.talsmasoftware.umldoclet.model;
 import com.sun.javadoc.AnnotationDesc;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.ProgramElementDoc;
+import com.sun.javadoc.Type;
+import nl.talsmasoftware.umldoclet.logging.LogSupport;
+import nl.talsmasoftware.umldoclet.rendering.Renderer;
 
 /**
  * @author Sjoerd Talsma
@@ -53,4 +56,26 @@ public class Model {
                 || (element instanceof ClassDoc && isDeprecated(((ClassDoc) element).superclass()));
     }
 
+    /**
+     * Return whether tested type is in the same package or a subpackage of the given package name.
+     *
+     * @param packageName The name of the package to be tested for.
+     * @param testedType  The tested type.
+     * @return whether the tested type is within the specified package.
+     */
+    public static boolean isInSameOrSubPackage(String packageName, Type testedType) {
+        if (packageName != null && testedType != null) try {
+            String testedPackageNm = testedType.asClassDoc().containingPackage().name();
+            return packageName.equals(testedPackageNm) || testedPackageNm.startsWith(packageName + ".");
+        } catch (RuntimeException rte) {
+            LogSupport.warn("Cannot determine whether type \"{0}\" is within the package \"{1}\".",
+                    testedType, packageName, rte);
+        }
+        return false;
+    }
+
+    public static <R extends Renderer> R find(Iterable<? extends R> haystack, R needle) {
+        if (haystack != null && needle != null) for (R straw : haystack) if (needle.equals(straw)) return straw;
+        return null;
+    }
 }

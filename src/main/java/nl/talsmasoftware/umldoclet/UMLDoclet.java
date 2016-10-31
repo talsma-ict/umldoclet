@@ -15,10 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet;
 
-import com.sun.javadoc.ClassDoc;
-import com.sun.javadoc.DocErrorReporter;
-import com.sun.javadoc.PackageDoc;
-import com.sun.javadoc.RootDoc;
+import com.sun.javadoc.*;
 import com.sun.tools.doclets.standard.Standard;
 import nl.talsmasoftware.umldoclet.config.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.logging.LogSupport;
@@ -41,8 +38,10 @@ import static java.util.Objects.requireNonNull;
  * @author Sjoerd Talsma
  */
 public class UMLDoclet extends Standard {
+
     private final RootDoc rootDoc;
     private final UMLDocletConfig config;
+
     private final SortedSet<PackageDoc> encounteredPackages = new TreeSet<>(new Comparator<PackageDoc>() {
         public int compare(PackageDoc o1, PackageDoc o2) {
             return o1 == null ? (o2 == null ? 0 : -1)
@@ -57,6 +56,10 @@ public class UMLDoclet extends Standard {
         LogSupport.info("{0} version {1}", getClass().getSimpleName(), config.version());
         LogSupport.trace("Plantuml {0} detected.", PlantumlSupport.isPlantumlDetected() ? "was" : "was not");
         LogSupport.debug("Initialized {0}...", config);
+    }
+
+    public static LanguageVersion languageVersion() {
+        return Standard.languageVersion();
     }
 
     public static int optionLength(String option) {
