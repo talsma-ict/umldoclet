@@ -21,11 +21,12 @@ import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.logging.LogSupport.GlobalPosition;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
+import static nl.talsmasoftware.umldoclet.rendering.ClassDependencyRenderer.addDiagramDependenciesTo;
 
 /**
  * Created on 22-02-2016.
@@ -38,19 +39,25 @@ public class PackageRenderer extends Renderer {
     protected PackageRenderer(UMLDiagram diagram, PackageDoc packageDoc) {
         super(diagram);
         this.packageDoc = requireNonNull(packageDoc, "No package documentation provided.");
+        // Phase 1: find all classes in the package.
+        Collection<ClassRenderer> classes = new LinkedHashSet<>();
         for (ClassDoc classDoc : packageDoc.allClasses(false)) {
             if (classDoc == null) {
                 LogSupport.warn("Encountered <null> class doc in package \"{0}\"!", packageDoc.name());
             } else if (diagram.config.includeClass(classDoc)) {
-                children.add(new ClassRenderer(this, classDoc));
+                classes.add(new ClassRenderer(this, classDoc));
             }
         }
-        List<ClassReferenceRenderer> references = new ArrayList<>();
-        for (Renderer child : children) {
-            if (child instanceof ClassRenderer) {
-                references.addAll(ClassReferenceRenderer.referencesFor((ClassRenderer) child));
-            }
+
+        // Phase 2: find all references within the package.
+        Collection<ClassReferenceRenderer> references = new LinkedHashSet<>();
+        for (ClassRenderer child : classes) {
+            references.addAll(ClassReferenceRenderer.referencesFor(child));
+            addDiagramDependenciesTo(references, child, classes);
         }
+
+        // Finally, compose the diagram in the order we want things rendered.
+        children.addAll(classes);
         children.addAll(references);
     }
 

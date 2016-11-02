@@ -78,4 +78,5 @@ public class Model {
         if (haystack != null && needle != null) for (R straw : haystack) if (needle.equals(straw)) return straw;
         return null;
     }
+
 }

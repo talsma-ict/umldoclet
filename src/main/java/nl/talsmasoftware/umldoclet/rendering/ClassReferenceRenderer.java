@@ -12,11 +12,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.ClassDoc;
-import com.sun.javadoc.FieldDoc;
 import com.sun.javadoc.MethodDoc;
 import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
@@ -24,12 +24,8 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.Set;
 
-import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
-import static nl.talsmasoftware.umldoclet.model.Model.find;
-import static nl.talsmasoftware.umldoclet.model.Model.isInSameOrSubPackage;
 
 /**
  * Created on 23-02-2016.
@@ -42,7 +38,8 @@ public class ClassReferenceRenderer extends ClassRenderer {
     protected final String umlreference;
 
     // Additional info fields to be added to the reference.
-    String cardinality1, cardinality2, note;
+    String cardinality1, cardinality2;
+    final Collection<String> notes = new LinkedHashSet<>();
 
     /**
      * Creates a new class reference to be rendered.
@@ -77,23 +74,6 @@ public class ClassReferenceRenderer extends ClassRenderer {
             for (MethodDoc methodDoc : documentedClass.methods(false)) {
                 if (methodDoc.isAbstract()) {
                     children.add(new MethodRenderer(diagram, methodDoc));
-                }
-            }
-        }
-    }
-
-    void addNote(final String note) {
-        if (note != null) {
-            if (this.note == null) this.note = note;
-            else {
-                final Set<String> notes = new LinkedHashSet<>(asList(this.note.split("\\\\n")));
-                if (notes.add(note)) {
-                    final StringBuilder nwNote = new StringBuilder();
-                    for (String n : notes) {
-                        if (nwNote.length() > 0) nwNote.append("\\n");
-                        nwNote.append("<size:9>" + n);
-                    }
-                    this.note = nwNote.toString();
                 }
             }
         }
@@ -148,57 +128,50 @@ public class ClassReferenceRenderer extends ClassRenderer {
         // Support for tags defined in legacy doclet.
         references.addAll(LegacyTag.legacyReferencesFor(parent));
 
-        // issue #19: Testing with intra-package references.
-        addClassRelationships(references, parent);
+//        // issue #19: Testing with intra-package references.
+//        addClassRelationships(references, parent);
 
         return references;
     }
 
-    private static void addClassRelationships(Collection<ClassReferenceRenderer> references, ClassRenderer fromClass) {
-        if (fromClass.diagram.config.includeAbstractSuperclassMethods()) {
-            final String classPackage = fromClass.classDoc.containingPackage().name();
-            // Add public field relationships.
-            for (FieldDoc field : fromClass.classDoc.fields()) {
-                if (field.isPublic() || field.isPackagePrivate()) {
-                    ClassDoc fieldType = field.type().asClassDoc();
-                    if (isInSameOrSubPackage(classPackage, fieldType)) {
-                        try {
-                            ClassReferenceRenderer ref = new ClassReferenceRenderer(fromClass, fieldType, "<..");
-//                            ref.note = field.name();
-                            references.add(ref);
-                            addNote(references, ref, field.name());
-                        } catch (RuntimeException rte) {
-                            LogSupport.error("Exception while rendering reference from {0} to type of {1}: {2}", fromClass, fieldType, rte.getMessage(), rte);
-                        }
-                    }
-                    // TODO: arrays & Iterables of types.
-                }
-            }
-
-            for (MethodDoc method : fromClass.classDoc.methods()) {
-                if (method.isPublic() || method.isPackagePrivate()) {
-                    ClassDoc returnType = method.returnType().asClassDoc();
-                    if (isInSameOrSubPackage(classPackage, returnType)) {
-                        try {
-                            ClassReferenceRenderer ref = new ClassReferenceRenderer(fromClass, returnType, "<..");
-//                            ref.note = method.name();
-                            references.add(ref);
-                            addNote(references, ref, method.name());
-                        } catch (RuntimeException rte) {
-                            LogSupport.error("Exception while rendering reference from {0} to type of {1}: {2}", fromClass, returnType, rte.getMessage(), rte);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private static void addNote(Iterable<ClassReferenceRenderer> refs, ClassReferenceRenderer ref, String note) {
-        if (note != null) {
-            final ClassReferenceRenderer found = find(refs, ref);
-            found.addNote(note);
-        }
-    }
+//    private static void addClassRelationships(Collection<ClassReferenceRenderer> references, ClassRenderer fromClass) {
+//        if (fromClass.diagram.config.includeAbstractSuperclassMethods()) {
+//            final String classPackage = fromClass.classDoc.containingPackage().name();
+//            // Add public field relationships.
+//            for (FieldDoc field : fromClass.classDoc.fields()) {
+//                if (field.isPublic() || field.isPackagePrivate()) {
+//                    ClassDoc fieldType = field.type().asClassDoc();
+//                    if (isInSameOrSubPackage(classPackage, fieldType)) {
+//                        try {
+//                            ClassReferenceRenderer ref = new ClassReferenceRenderer(fromClass, fieldType, "<..");
+////                            ref.note = field.name();
+//                            references.add(ref);
+//                            find(references, ref).notes.add(field.name());
+//                        } catch (RuntimeException rte) {
+//                            LogSupport.error("Exception while rendering reference from {0} to type of {1}: {2}", fromClass, fieldType, rte.getMessage(), rte);
+//                        }
+//                    }
+//                    // TODO: arrays & Iterables of types.
+//                }
+//            }
+//
+//            for (MethodDoc method : fromClass.classDoc.methods()) {
+//                if (method.isPublic() || method.isPackagePrivate()) {
+//                    ClassDoc returnType = method.returnType().asClassDoc();
+//                    if (isInSameOrSubPackage(classPackage, returnType)) {
+//                        try {
+//                            ClassReferenceRenderer ref = new ClassReferenceRenderer(fromClass, returnType, "<..");
+////                            ref.note = method.name();
+//                            references.add(ref);
+//                            find(references, ref).notes.add(method.name()); // find MUST return a ref.
+//                        } catch (RuntimeException rte) {
+//                            LogSupport.error("Exception while rendering reference from {0} to type of {1}: {2}", fromClass, returnType, rte.getMessage(), rte);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     private String guessClassOrInterface() {
         return "<|..".equals(umlreference) ? "interface" : "class";
@@ -241,15 +214,19 @@ public class ClassReferenceRenderer extends ClassRenderer {
                 .append(umlreference).whitespace()
                 .append(quoted(cardinality1)).whitespace()
                 .append(parent.name());
-        if (note != null && !note.trim().isEmpty()) {
-            out.append(": ").append(note);
+        if (!notes.isEmpty()) {
+            String sep = ": <size:9>";
+            for (String note : notes) {
+                out.append(sep).append(note);
+                sep = "\\n<size:9>";
+            }
         }
         return out.newline().newline();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(qualifiedName, parent, umlreference);
+        return Objects.hash(qualifiedName, parent, umlreference, cardinality1, cardinality2);
     }
 
     @Override
@@ -258,6 +235,8 @@ public class ClassReferenceRenderer extends ClassRenderer {
                 && Objects.equals(parent, ((ClassReferenceRenderer) other).parent)
                 && Objects.equals(qualifiedName, ((ClassReferenceRenderer) other).qualifiedName)
                 && Objects.equals(umlreference, ((ClassReferenceRenderer) other).umlreference)
+                && Objects.equals(cardinality1, ((ClassReferenceRenderer) other).cardinality1)
+                && Objects.equals(cardinality2, ((ClassReferenceRenderer) other).cardinality2)
         );
     }
 
