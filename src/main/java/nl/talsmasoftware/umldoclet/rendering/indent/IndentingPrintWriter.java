@@ -19,59 +19,61 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * PrintWriter implementation that will indent each new line with a specified number of whitespace
  * characters. The writing itself can be delegated to any other {@link Writer} implementation.
- * <p/>
+ * <p>
  * Care was taken to ensure that not only lines ended by calls to {@link #println()} methods trigger indentation,
- * but self-written newline characters as well.
+ * but any other newline characters as well.
  *
  * @author Sjoerd Talsma
  */
 public class IndentingPrintWriter extends PrintWriter {
 
-    protected IndentingPrintWriter(Writer writer, int indentationWidth) {
-        this(IndentingWriter.wrap(writer).withIndentationWidth(indentationWidth));
-    }
-
-    private IndentingPrintWriter(IndentingWriter delegate) {
-        super(delegate);
+    protected IndentingPrintWriter(Writer writer, Indentation indentation) {
+        super(IndentingWriter.wrap(writer, indentation));
     }
 
     /**
      * Returns an indenting printwriter around the given {@code delegate}.
      * If the {@code delegate} printwriter is already an indenting printwriter, it will simply be returned as-is.
      * If the {@code delegate} printwriter is not yet an indending printwriter, a new indenting printwriter class
-     * will be created to wrap the delegate using the {@link IndentingWriter}'s {@code default indentation width}
-     * and no initial {@link IndentingWriter#indentationLevel()}.
+     * will be created to wrap the delegate using the specified <code>indentation</code>.
      *
-     * @param delegate The delegate to turn into an indenting printwriter.
+     * @param delegate    The delegate to turn into an indenting printwriter.
+     * @param indentation The indentation to use for the indenting printwriter
+     *                    (optional, specify <code>null</code> to use the default indentation).
      * @return The indenting delegate writer.
+     * @see Indentation#DEFAULT
      */
-    public static IndentingPrintWriter wrap(Writer delegate) {
-        return delegate instanceof IndentingPrintWriter
-                ? (IndentingPrintWriter) delegate
-                : new IndentingPrintWriter(delegate, -1);
+    public static IndentingPrintWriter wrap(Writer delegate, Indentation indentation) {
+        return delegate instanceof IndentingPrintWriter ? (IndentingPrintWriter) delegate
+                : new IndentingPrintWriter(delegate, null);
     }
 
-    private IndentingPrintWriter changeIndentation(final boolean up) {
-        if (out instanceof IndentingWriter) {
-            IndentingWriter delegate = (IndentingWriter) this.out;
-            int newIndentationLevel = Math.max(0, delegate.indentationLevel() + (up ? 1 : -1));
-            delegate = delegate.withIndentationLevel(newIndentationLevel);
-            if (!out.equals(delegate)) {
-                return new IndentingPrintWriter(delegate);
-            }
-        }
-        return this;
+    /**
+     * The indentation; must be non-<code>null</code> in all practical instances of this object.
+     *
+     * @return The indentation (non-<code>null</code>).
+     */
+    private Indentation getIndentation() {
+        return requireNonNull(out instanceof IndentingWriter ? ((IndentingWriter) out).getIndentation() : null,
+                "No indentation detected in IndentingPrintWriter!");
+    }
+
+    private IndentingPrintWriter withIndentation(Indentation indentation) {
+        return indentation == null || indentation.equals(getIndentation()) ? this
+                : new IndentingPrintWriter(out, indentation);
     }
 
     public IndentingPrintWriter indent() {
-        return changeIndentation(true);
+        return withIndentation(getIndentation().increase());
     }
 
     public IndentingPrintWriter unindent() {
-        return changeIndentation(false);
+        return withIndentation(getIndentation().decrease());
     }
 
     public IndentingPrintWriter whitespace() {
@@ -111,4 +113,5 @@ public class IndentingPrintWriter extends PrintWriter {
     public String toString() {
         return out.toString();
     }
+
 }

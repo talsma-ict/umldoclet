@@ -19,6 +19,7 @@ package nl.talsmasoftware.umldoclet.config;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.DocErrorReporter;
 import nl.talsmasoftware.umldoclet.logging.LogSupport;
+import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +29,8 @@ import java.util.regex.Matcher;
 
 import static nl.talsmasoftware.umldoclet.config.UMLDocletConfig.Setting.*;
 import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
+import static nl.talsmasoftware.umldoclet.rendering.indent.Indentation.spaces;
+import static nl.talsmasoftware.umldoclet.rendering.indent.Indentation.tabs;
 
 /**
  * Class containing all possible Doclet options for the UML doclet.
@@ -39,7 +42,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
 
     public enum Setting {
         UML_LOGLEVEL("umlLogLevel", "INFO"),
-        UML_INDENTATION("umlIndentation", -1),
+        UML_INDENTATION("umlIndentation", "-1"),
         UML_BASE_PATH("umlBasePath", "."),
         UML_FILE_EXTENSION("umlFileExtension", ".puml"),
         UML_FILE_ENCODING("umlFileEncoding", null),
@@ -184,8 +187,16 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
      * @return The indentation (in number of spaces) to use for generated UML files
      * (defaults to {@code -1} which leaves the indentation unspecified).
      */
-    public int indentation() {
-        return UML_INDENTATION.value(this);
+    public Indentation indentation() {
+        final String value = UML_INDENTATION.value(this);
+        try {
+            return "tabs".equalsIgnoreCase(value) ? tabs(0) : spaces(Integer.valueOf(value), 0);
+        } catch (NumberFormatException badInteger) {
+            LogSupport.trace("Invalid integer option \"{0}\": {1}", value, badInteger);
+            LogSupport.error("Expected boolean value, but got \"{0}\" for option \"{1}\".",
+                    value, UML_INDENTATION.delegate.name);
+            return Indentation.DEFAULT;
+        }
     }
 
     /**

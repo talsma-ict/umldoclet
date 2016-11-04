@@ -19,6 +19,8 @@ package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.Type;
+import nl.talsmasoftware.umldoclet.logging.LogSupport;
+import nl.talsmasoftware.umldoclet.model.Model;
 
 import java.util.Collection;
 
@@ -35,17 +37,20 @@ public class ClassDependencyRenderer extends ClassReferenceRenderer {
         super(fromClass, toClass, "<..");
     }
 
+    // TODO encounteredTypes is already in diagram.encounteredClasses but only populated at render-time.
     static void addDiagramDependenciesTo(Collection<ClassReferenceRenderer> references, ClassRenderer theClass, Collection<ClassRenderer> diagramClasses) {
         if (theClass != null) for (final Renderer child : theClass.children) {
             if (child instanceof FieldRenderer) {
                 final FieldRenderer field = (FieldRenderer) child;
-                if (field.includeField()) {
-                    final ClassRenderer toClass = findTypeInDiagram(field.fieldDoc.type(), diagramClasses);
+                if (field.includeField() && !field.fieldDoc.isStatic()) {
+                    Type fieldType = Model.optionalType(field.fieldDoc.type());
+                    final boolean optional = fieldType != null;
+                    if (!optional) fieldType = field.fieldDoc.type();
+                    final ClassRenderer toClass = findTypeInDiagram(fieldType, diagramClasses);
                     if (toClass != null) { // Disable field in class and add dependency.
-                        field.disabled = true;
                         final ClassDependencyRenderer dep = new ClassDependencyRenderer(theClass, toClass.classDoc);
-                        references.add(dep);
-                        find(references, dep).notes.add(field.fieldDoc.name());
+                        if (optional) dep.cardinality2 = "0..1";
+                        if (addDependency(field.fieldDoc.name(), references, dep)) field.disabled = true;
                     }
                 }
             }
@@ -53,13 +58,22 @@ public class ClassDependencyRenderer extends ClassReferenceRenderer {
     }
 
     private static ClassRenderer findTypeInDiagram(Type type, Collection<ClassRenderer> diagramClasses) {
-        // TODO Add support for Optionals, Arrays and known Collections.
-        // TODO remove self-reference for Enums
+        // TODO Add support for Arrays and known Collections.
 
         if (type != null) for (ClassRenderer renderedClass : diagramClasses) {
             if (type.qualifiedTypeName().equals(renderedClass.classDoc.qualifiedTypeName())) return renderedClass;
         }
         return null;
+    }
+
+    private static boolean addDependency(String name, Collection<ClassReferenceRenderer> refs, ClassDependencyRenderer dep) {
+        if (dep.isSelfReference() && dep.classDoc.isEnum()) {
+            LogSupport.debug("Not adding self-referencing Enum dependency {0}...", dep);
+            return false;
+        }
+        refs.add(dep);
+        find(refs, dep).notes.add(name);
+        return true;
     }
 
 }

@@ -20,6 +20,7 @@ package nl.talsmasoftware.umldoclet.issues;
 import nl.talsmasoftware.umldoclet.testing.PatternMatcher;
 import org.apache.maven.shared.invoker.*;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  *
  * @author Sjoerd Talsma
  */
+@Ignore
 public class Issue13IT {
     private static final Logger LOGGER = LoggerFactory.getLogger(Issue13IT.class);
 

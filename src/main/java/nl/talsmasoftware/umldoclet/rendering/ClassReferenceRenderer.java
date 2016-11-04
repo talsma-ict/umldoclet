@@ -128,50 +128,8 @@ public class ClassReferenceRenderer extends ClassRenderer {
         // Support for tags defined in legacy doclet.
         references.addAll(LegacyTag.legacyReferencesFor(parent));
 
-//        // issue #19: Testing with intra-package references.
-//        addClassRelationships(references, parent);
-
         return references;
     }
-
-//    private static void addClassRelationships(Collection<ClassReferenceRenderer> references, ClassRenderer fromClass) {
-//        if (fromClass.diagram.config.includeAbstractSuperclassMethods()) {
-//            final String classPackage = fromClass.classDoc.containingPackage().name();
-//            // Add public field relationships.
-//            for (FieldDoc field : fromClass.classDoc.fields()) {
-//                if (field.isPublic() || field.isPackagePrivate()) {
-//                    ClassDoc fieldType = field.type().asClassDoc();
-//                    if (isInSameOrSubPackage(classPackage, fieldType)) {
-//                        try {
-//                            ClassReferenceRenderer ref = new ClassReferenceRenderer(fromClass, fieldType, "<..");
-////                            ref.note = field.name();
-//                            references.add(ref);
-//                            find(references, ref).notes.add(field.name());
-//                        } catch (RuntimeException rte) {
-//                            LogSupport.error("Exception while rendering reference from {0} to type of {1}: {2}", fromClass, fieldType, rte.getMessage(), rte);
-//                        }
-//                    }
-//                    // TODO: arrays & Iterables of types.
-//                }
-//            }
-//
-//            for (MethodDoc method : fromClass.classDoc.methods()) {
-//                if (method.isPublic() || method.isPackagePrivate()) {
-//                    ClassDoc returnType = method.returnType().asClassDoc();
-//                    if (isInSameOrSubPackage(classPackage, returnType)) {
-//                        try {
-//                            ClassReferenceRenderer ref = new ClassReferenceRenderer(fromClass, returnType, "<..");
-////                            ref.note = method.name();
-//                            references.add(ref);
-//                            find(references, ref).notes.add(method.name()); // find MUST return a ref.
-//                        } catch (RuntimeException rte) {
-//                            LogSupport.error("Exception while rendering reference from {0} to type of {1}: {2}", fromClass, returnType, rte.getMessage(), rte);
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     private String guessClassOrInterface() {
         return "<|..".equals(umlreference) ? "interface" : "class";
@@ -203,6 +161,13 @@ public class ClassReferenceRenderer extends ClassRenderer {
         return parent.simplifyClassnameWithinPackage(qualifiedName);
     }
 
+    /**
+     * @return Whether this reference is to the class itself.
+     */
+    protected boolean isSelfReference() {
+        return this.qualifiedName.equals(this.parent.classDoc.qualifiedName());
+    }
+
     protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         // Write type declaration if necessary.
         writeTypeDeclarationTo(out);
@@ -215,10 +180,10 @@ public class ClassReferenceRenderer extends ClassRenderer {
                 .append(quoted(cardinality1)).whitespace()
                 .append(parent.name());
         if (!notes.isEmpty()) {
-            String sep = ": <size:9>";
+            String sep = ": ";
             for (String note : notes) {
                 out.append(sep).append(note);
-                sep = "\\n<size:9>";
+                sep = "\\n";
             }
         }
         return out.newline().newline();

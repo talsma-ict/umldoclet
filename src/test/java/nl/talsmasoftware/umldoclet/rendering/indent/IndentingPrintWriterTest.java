@@ -37,7 +37,7 @@ public class IndentingPrintWriterTest {
     @Test
     public void testIndentingPrintWriter_nullWriter() {
         try {
-            new IndentingPrintWriter(null, -1);
+            new IndentingPrintWriter(null, Indentation.DEFAULT);
             fail("Exception expected.");
         } catch (NullPointerException expected) {
             assertThat("Exception message", expected.getMessage(), is(not(nullValue())));
@@ -47,7 +47,7 @@ public class IndentingPrintWriterTest {
     @Test
     public void testIndentingWithNewlinesWithinString() throws IOException {
         StringWriter target = new StringWriter();
-        IndentingPrintWriter.wrap(target)
+        IndentingPrintWriter.wrap(target, null)
                 .indent().append("text").newline()
                 .append("plus a test" + NEWLINE + "with contained newline")
                 .flush();
@@ -60,7 +60,7 @@ public class IndentingPrintWriterTest {
     @Test
     public void testWhitespaceRendering() throws IOException {
         StringWriter target = new StringWriter();
-        IndentingPrintWriter.wrap(target)
+        IndentingPrintWriter.wrap(target, null)
                 .whitespace().whitespace()
                 .indent().whitespace().append("Text ending in whitespace ").whitespace().append("!").newline()
                 .whitespace().whitespace().append("Whitespace on beginning of line.")

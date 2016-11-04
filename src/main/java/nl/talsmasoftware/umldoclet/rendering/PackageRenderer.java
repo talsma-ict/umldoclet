@@ -39,6 +39,7 @@ public class PackageRenderer extends Renderer {
     protected PackageRenderer(UMLDiagram diagram, PackageDoc packageDoc) {
         super(diagram);
         this.packageDoc = requireNonNull(packageDoc, "No package documentation provided.");
+
         // Phase 1: find all classes in the package.
         Collection<ClassRenderer> classes = new LinkedHashSet<>();
         for (ClassDoc classDoc : packageDoc.allClasses(false)) {

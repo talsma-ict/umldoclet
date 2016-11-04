@@ -15,17 +15,22 @@
  */
 package nl.talsmasoftware.umldoclet.model;
 
-import com.sun.javadoc.AnnotationDesc;
-import com.sun.javadoc.ClassDoc;
-import com.sun.javadoc.ProgramElementDoc;
-import com.sun.javadoc.Type;
+import com.sun.javadoc.*;
 import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.rendering.Renderer;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableSet;
 
 /**
  * @author Sjoerd Talsma
  */
 public class Model {
+    private static final Set<String> OPTIONAL_TYPES = unmodifiableSet(new LinkedHashSet<>(asList(
+            "java.util.Optional", "com.google.common.base.Optional")));
 
     /**
      * Returns whether the the given element is deprecated;
@@ -79,4 +84,24 @@ public class Model {
         return null;
     }
 
+    /**
+     * This method returns the parameterized type of the generic optional type, if it is an optional type.<br>
+     * Both java 8 <code>Optional</code> objects and google Guava's <code>Optional</code> objects are supported.
+     *
+     * @param type The type to check if it is an optional type.
+     * @return The type of the optional object, or <code>null</code> if the specified type was not an optional.
+     */
+    public static Type optionalType(final Type type) {
+        if (type != null) {
+            if (OPTIONAL_TYPES.contains(type.qualifiedTypeName())) {
+                final ParameterizedType parameterizedType = type.asParameterizedType();
+                if (parameterizedType != null && parameterizedType.typeArguments().length == 1) {
+                    return parameterizedType.typeArguments()[0];
+                }
+            } else if (type.asClassDoc() != null) {
+                return optionalType(type.asClassDoc().superclassType());
+            }
+        }
+        return null;
+    }
 }

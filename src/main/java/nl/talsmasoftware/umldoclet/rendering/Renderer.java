@@ -18,7 +18,6 @@ package nl.talsmasoftware.umldoclet.rendering;
 import com.sun.javadoc.ParameterizedType;
 import com.sun.javadoc.Type;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingWriter;
 
 import java.io.StringWriter;
 import java.io.Writer;
@@ -50,14 +49,10 @@ public abstract class Renderer {
     protected abstract IndentingPrintWriter writeTo(IndentingPrintWriter output);
 
     public final Writer writeTo(Writer output) {
-        if (output instanceof IndentingPrintWriter) {
-            return writeTo((IndentingPrintWriter) output);
-        } else {
-            return writeTo(IndentingPrintWriter.wrap(
-                    IndentingWriter.wrap(output)
-                            .withIndentationWidth(
-                                    diagram.config.indentation())));
-        }
+        final IndentingPrintWriter indentingPrintWriter =
+                output instanceof IndentingPrintWriter ? (IndentingPrintWriter) output
+                        : IndentingPrintWriter.wrap(output, diagram.config.indentation());
+        return writeTo(indentingPrintWriter);
     }
 
     protected IndentingPrintWriter writeChildrenTo(IndentingPrintWriter output) {
@@ -69,7 +64,7 @@ public abstract class Renderer {
     }
 
     protected Renderer lastChild() {
-        // TODO: Check what the impact would be to change children into a List.
+        // TODO: Check what the impact would be to change children into a List (is that even desirable?).
         Renderer last = null;
         for (Renderer child : children) last = child;
         return last;
