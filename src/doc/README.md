@@ -32,5 +32,5 @@ _Also a big thanks go to de developers of the excellent [PlantUML project](http:
 
 ## Example
 
-The `nl.talsmasoftware.umldoclet.rendering` package leads to the following class diagram:
-![Rendering package](/example/rendering-package.svg?raw=true "Rendering package")
+See the rendered .SVG image of this doclet's [rendering package](example/rendering-package.svg).
+Or, look at the [the generated plantuml source file](example/rendering-package.puml).
