@@ -19,6 +19,12 @@ To use the doclet together with the JavaDoc tool, the following is required.
 
 - Please refer to [the usage page](USAGE.md) on how to use this doclet.
 
+## Example
+
+Please take a look at the rendered .SVG image of this doclet's 
+[rendering package](example/rendering-package.svg).  
+Or, look at the [the generated plantuml source file](example/rendering-package.puml).
+
 ## Feedback
 
 - Please search the [open issues](https://github.com/talsma-ict/umldoclet/issues)
@@ -29,8 +35,3 @@ To use the doclet together with the JavaDoc tool, the following is required.
   
 _Thanks for using the doclet, I hope it may be of benefit to your project!_  
 _Also a big thanks go to de developers of the excellent [PlantUML project](http://plantuml.com/)._
-
-## Example
-
-See the rendered .SVG image of this doclet's [rendering package](example/rendering-package.svg).
-Or, look at the [the generated plantuml source file](example/rendering-package.puml).
