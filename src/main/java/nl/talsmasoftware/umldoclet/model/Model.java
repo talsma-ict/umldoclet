@@ -19,7 +19,9 @@ import com.sun.javadoc.*;
 import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.rendering.Renderer;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
@@ -31,6 +33,14 @@ import static java.util.Collections.unmodifiableSet;
 public class Model {
     private static final Set<String> OPTIONAL_TYPES = unmodifiableSet(new LinkedHashSet<>(asList(
             "java.util.Optional", "com.google.common.base.Optional")));
+    // TODO: Obviously this is far from ideal! also missing all classes from j.u.concurrent
+    private static final Set<String> ITERABLE_TYPES = unmodifiableSet(new LinkedHashSet<>(asList(
+            "java.lang.Iterable", "java.util.Collection", "java.util.AbstractCollection",
+            "java.util.AbstractList", "java.util.AbstractQueue", "java.util.AbstractSequenctialList",
+            "java.util.AbstractSet", "java.util.Set", "java.util.List", "java.util.Stack",
+            "java.util.SortedSet", "java.util.NavigableSet", "java.util.HashSet",
+            "java.util.TreeSet", "java.util.LinkedHashSet", "java.util.ArrayList",
+            "java.util.LinkedList", "java.util.Vector", "java.util.Queue", "java.util.EnumSet")));
 
     /**
      * Returns whether the the given element is deprecated;
@@ -92,16 +102,57 @@ public class Model {
      * @return The type of the optional object, or <code>null</code> if the specified type was not an optional.
      */
     public static Type optionalType(final Type type) {
-        if (type != null) {
-            if (OPTIONAL_TYPES.contains(type.qualifiedTypeName())) {
-                final ParameterizedType parameterizedType = type.asParameterizedType();
-                if (parameterizedType != null && parameterizedType.typeArguments().length == 1) {
-                    return parameterizedType.typeArguments()[0];
+        final List<Type> chain = superclassChainTo(type, new ArrayList<Type>(), OPTIONAL_TYPES);
+        if (chain != null) {
+            for (int i = chain.size() - 1; i >= 0; i--) {
+                ParameterizedType genericTp = chain.get(i).asParameterizedType();
+                Type[] typeArgs = genericTp != null ? genericTp.typeArguments() : null;
+                if (typeArgs != null && typeArgs.length == 1) {
+                    return typeArgs[0];
                 }
-            } else if (type.asClassDoc() != null) {
-                return optionalType(type.asClassDoc().superclassType());
             }
         }
         return null;
     }
+
+    public static Type iterableType(final Type type) {
+        // check for T[] ...
+        if (type != null && "[]".equals(type.dimension())) return type;
+        // then theck for Iterable<T> ...
+        final List<Type> chain = superclassChainTo(type, new ArrayList<Type>(), ITERABLE_TYPES);
+        if (chain != null) {
+            for (int i = chain.size() - 1; i >= 0; i--) {
+                ParameterizedType genericTp = chain.get(i).asParameterizedType();
+                Type[] typeArgs = genericTp != null ? genericTp.typeArguments() : null;
+                if (typeArgs != null && typeArgs.length == 1) {
+                    return typeArgs[0];
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the supertype of the given type.<br>
+     * However, there is a BIG caveat: The supertype must be in the set of documented classes for this to work.
+     * For instance, there is no guarantee to be able to check whether some type is subclass of java.util.Collection.
+     *
+     * @param type The type to return the supertype of (if known / documented).
+     * @return The supertype of the given type, or <code>null</code> if not available.
+     */
+    public static Type supertypeOf(Type type) {
+        if (type != null) {
+            final ClassDoc classDoc = type.asClassDoc();
+            if (classDoc != null) return classDoc.superclassType();
+        }
+        return null;
+    }
+
+    private static List<Type> superclassChainTo(final Type type, List<Type> chain, Set<String> requestedTypes) {
+        if (type == null || chain == null || requestedTypes == null) return null;
+        chain.add(type);
+        return requestedTypes.contains(type.qualifiedTypeName()) ? chain
+                : superclassChainTo(supertypeOf(type), chain, requestedTypes);
+    }
+
 }

@@ -18,6 +18,7 @@
 package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.ClassDoc;
+import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.Type;
 import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.model.Model;
@@ -38,30 +39,49 @@ public class ClassDependencyRenderer extends ClassReferenceRenderer {
     }
 
     // TODO encounteredTypes is already in diagram.encounteredClasses but only populated at render-time.
-    static void addDiagramDependenciesTo(Collection<ClassReferenceRenderer> references, ClassRenderer theClass, Collection<ClassRenderer> diagramClasses) {
+    static void addDiagramDependenciesTo(Collection<ClassReferenceRenderer> references, ClassRenderer theClass, Collection<ClassDoc> diagramClasses) {
         if (theClass != null) for (final Renderer child : theClass.children) {
             if (child instanceof FieldRenderer) {
                 final FieldRenderer field = (FieldRenderer) child;
                 if (field.includeField() && !field.fieldDoc.isStatic()) {
                     Type fieldType = Model.optionalType(field.fieldDoc.type());
                     final boolean optional = fieldType != null;
-                    if (!optional) fieldType = field.fieldDoc.type();
-                    final ClassRenderer toClass = findTypeInDiagram(fieldType, diagramClasses);
+                    if (!optional) fieldType = Model.iterableType(field.fieldDoc.type());
+                    final boolean iterable = !optional && fieldType != null;
+                    if (fieldType == null) fieldType = field.fieldDoc.type();
+                    final ClassDoc toClass = findTypeInDiagram(fieldType, diagramClasses);
                     if (toClass != null) { // Disable field in class and add dependency.
-                        final ClassDependencyRenderer dep = new ClassDependencyRenderer(theClass, toClass.classDoc);
+                        final ClassDependencyRenderer dep = new ClassDependencyRenderer(theClass, toClass);
                         if (optional) dep.cardinality2 = "0..1";
+                        if (iterable) dep.cardinality2 = "*";
                         if (addDependency(field.fieldDoc.name(), references, dep)) field.disabled = true;
+                    }
+                }
+            } else if (child instanceof MethodRenderer) {
+                final MethodRenderer method = (MethodRenderer) child;
+                final String propertyname = method.propertyName();
+                if (propertyname != null && method.methodDoc instanceof MethodDoc) {
+                    final Type type = ((MethodDoc) method.methodDoc).returnType();
+                    Type propertyType = Model.optionalType(type);
+                    final boolean optional = propertyType != null;
+                    if (!optional) propertyType = Model.iterableType(type);
+                    final boolean iterable = !optional && propertyType != null;
+                    if (propertyType == null) propertyType = type;
+                    final ClassDoc toClass = findTypeInDiagram(propertyType, diagramClasses);
+                    if (toClass != null) { // Disable accessor method and add dependency.
+                        final ClassDependencyRenderer dep = new ClassDependencyRenderer(theClass, toClass);
+                        if (optional) dep.cardinality2 = "0..1";
+                        if (iterable) dep.cardinality2 = "*";
+                        if (addDependency(propertyname, references, dep)) method.disabled = true;
                     }
                 }
             }
         }
     }
 
-    private static ClassRenderer findTypeInDiagram(Type type, Collection<ClassRenderer> diagramClasses) {
-        // TODO Add support for Arrays and known Collections.
-
-        if (type != null) for (ClassRenderer renderedClass : diagramClasses) {
-            if (type.qualifiedTypeName().equals(renderedClass.classDoc.qualifiedTypeName())) return renderedClass;
+    private static ClassDoc findTypeInDiagram(Type type, Collection<ClassDoc> diagramClasses) {
+        if (type != null) for (ClassDoc renderedClass : diagramClasses) {
+            if (type.qualifiedTypeName().equals(renderedClass.qualifiedTypeName())) return renderedClass;
         }
         return null;
     }

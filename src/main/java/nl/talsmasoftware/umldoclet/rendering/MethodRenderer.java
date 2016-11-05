@@ -22,12 +22,13 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Objects;
 
+import static java.lang.Character.toLowerCase;
 import static java.util.Objects.requireNonNull;
 import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
 
 /**
  * Method renderer.
- * <p/>
+ * <p>
  * For the moment this renderer is also used for rendering Constructors.
  * If this turns out to be too complex, constructors may be separated into their own specialized renderer class.
  *
@@ -35,6 +36,7 @@ import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
  */
 public class MethodRenderer extends Renderer {
     protected final ExecutableMemberDoc methodDoc;
+    boolean disabled = false;
 
     protected MethodRenderer(UMLDiagram diagram, ExecutableMemberDoc methodDoc) {
         super(diagram);
@@ -66,7 +68,7 @@ public class MethodRenderer extends Renderer {
                     : isAbstract() ? "Abstract method"
                     : "Method";
             if (isDeprecated(methodDoc)) {
-                designation = "Deprecated " + Character.toLowerCase(designation.charAt(0)) + designation.substring(1);
+                designation = "Deprecated " + toLowerCase(designation.charAt(0)) + designation.substring(1);
             }
             LogSupport.trace("{0} \"{1}{2}\" {3}{4}.",
                     designation,
@@ -111,6 +113,7 @@ public class MethodRenderer extends Renderer {
     protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         try (GlobalPosition gp = new GlobalPosition(methodDoc.position())) {
             if (includeMethod()) {
+                if (disabled) out.append("' ");
                 if (isAbstract()) {
                     out.append("{abstract}").whitespace();
                 }
@@ -146,6 +149,28 @@ public class MethodRenderer extends Renderer {
         for (MethodDoc method : classDoc.methods(false)) {
             if (method != null && method.name().equals(methodName) && method.flatSignature().equals(flatSignature)) {
                 return method;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @return The name of the property this method is either a getter or a setter for,
+     * or <code>null</code> if this method is not a property accessor.
+     */
+    protected String propertyName() {
+        if (!methodDoc.isStatic() && methodDoc instanceof MethodDoc) {
+            String name = methodDoc.name();
+            int len = name != null ? name.length() : 0;
+            char[] propname = null;
+            if (len > 3 && (name.startsWith("get") || name.startsWith("set"))) {
+                propname = name.substring(3).toCharArray();
+            } else if (len > 2 && name.startsWith("is")) {
+                propname = name.substring(2).toCharArray();
+            }
+            if (propname != null && propname.length > 0) {
+                propname[0] = toLowerCase(propname[0]);
+                return String.valueOf(propname);
             }
         }
         return null;

@@ -73,6 +73,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
         UML_INCLUDE_PROTECTED_INNERCLASSES("umlIncludeProtectedInnerClasses", false),
         UML_EXCLUDED_REFERENCES(new ListSetting("umlExcludedReferences", "java.lang.Object", "java.lang.Enum")),
         UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES("umlIncludeOverridesFromExcludedReferences", false),
+        UML_PACKAGE_DEPENDENCIES("umlPackageDependencies", true),
         UML_COMMAND(new ListSetting("umlCommand")),
         UML_ALWAYS_USE_QUALIFIED_CLASSNAMES("umlAlwaysUseQualifiedClassnames", false),
         UML_IMAGE_FORMAT(new ListSetting("umlImageFormat")),
@@ -458,6 +459,10 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
      */
     public String imageDirectory() {
         return UML_IMAGE_DIRECTORY.value(this);
+    }
+
+    public boolean usePackageDependencies() {
+        return UML_PACKAGE_DEPENDENCIES.value(this);
     }
 
     /**

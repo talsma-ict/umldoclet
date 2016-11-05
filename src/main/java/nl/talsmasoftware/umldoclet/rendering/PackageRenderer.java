@@ -42,19 +42,26 @@ public class PackageRenderer extends Renderer {
 
         // Phase 1: find all classes in the package.
         Collection<ClassRenderer> classes = new LinkedHashSet<>();
+        Collection<ClassDoc> encounteredClasses = new LinkedHashSet<>();
         for (ClassDoc classDoc : packageDoc.allClasses(false)) {
             if (classDoc == null) {
                 LogSupport.warn("Encountered <null> class doc in package \"{0}\"!", packageDoc.name());
             } else if (diagram.config.includeClass(classDoc)) {
-                classes.add(new ClassRenderer(this, classDoc));
+                if (classes.add(new ClassRenderer(this, classDoc))) encounteredClasses.add(classDoc);
             }
         }
 
-        // Phase 2: find all references within the package.
+        // Phase 2: find all references within the package and any superclass references etc.
         Collection<ClassReferenceRenderer> references = new LinkedHashSet<>();
         for (ClassRenderer child : classes) {
-            references.addAll(ClassReferenceRenderer.referencesFor(child));
-            addDiagramDependenciesTo(references, child, classes);
+            for (ClassReferenceRenderer ref : ClassReferenceRenderer.referencesFor(child)) {
+                if (references.add(ref)) encounteredClasses.add(ref.classDoc);
+            }
+        }
+
+        // Phase 3: add dependencies within this package.
+        if (diagram.config.usePackageDependencies()) for (ClassRenderer child : classes) {
+            addDiagramDependenciesTo(references, child, encounteredClasses);
         }
 
         // Finally, compose the diagram in the order we want things rendered.
