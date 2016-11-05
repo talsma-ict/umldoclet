@@ -28,7 +28,7 @@ First tell Maven to generate JavaDoc for your project by declaring the 'maven-ja
                         <docletArtifact>
                             <groupId>nl.talsmasoftware</groupId>
                             <artifactId>umldoclet</artifactId>
-                            <version>1.0.4</version>
+                            <version>1.0.5</version>
                         </docletArtifact>
                         <additionalParam>
                             ...
@@ -57,7 +57,7 @@ configurations {
 }
 
 dependencies {
-    umlDoclet "nl.talsmasoftware:umldoclet:1.0.4"
+    umlDoclet "nl.talsmasoftware:umldoclet:1.0.5"
 }
 
 javadoc {
@@ -143,3 +143,5 @@ However, please know that all attempts have been made to keep the defaults chose
 | -umlImageFormat <br> image formats           | _none_        | The image formats to be generated in case the plantuml library is detected on the classpath. Options that are supported out of the box include: `PNG`, `SVG`, `EPS` and `LATEX` (see `net.sourceforge.plantuml.FileFormat`). To generate rendered diagrams in multiple formats, simply provide the `-umlImageFormat` parameter more than once. Please note, since version 1.0.3, the default changed from `PNG` to _none_ to avoid excessively large javadoc JAR files. `SVG` also generates considerably smaller images which scale better and allow moderate copy-paste functionality. |
 | Since _version 1.0.4_:                       |||
 | -umlImageDirectory <br> image directory      | _none_        | The (single) directory where all images will be generated to. By default images are placed in the directory containing their package documentation. When a single directory is configured for the images, the filename for the image will include the full package names (for more details, see [enhancement 25](https://github.com/talsma-ict/umldoclet/issues/25) ). |
+| Since _version 1.0.5_:                       |||
+| -umlPackageDependencies <br> _boolean_       | `true`        | Whether properties are replaced by dependencies if the type is known in the diagram. |

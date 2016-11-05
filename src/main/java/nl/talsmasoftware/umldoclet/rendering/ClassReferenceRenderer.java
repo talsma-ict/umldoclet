@@ -12,6 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 package nl.talsmasoftware.umldoclet.rendering;
 
@@ -36,17 +37,28 @@ public class ClassReferenceRenderer extends ClassRenderer {
     protected final String qualifiedName;
     protected final String umlreference;
 
-    // Additiona info fields to be added to the reference.
-    String cardinality1, cardinality2, note;
+    // Additional info fields to be added to the reference.
+    String cardinality1, cardinality2;
+    final Collection<String> notes = new LinkedHashSet<>();
 
     /**
-     * //TODO Document constructors for this class.
+     * Creates a new class reference to be rendered.
+     *
+     * @param parent          The class the reference is from (which is the parent of this referencerenderer).
+     * @param documentedClass The class the reference is to.
+     * @param umlreference    The UML reference itself (reversed, so inheritance is <code>&lt;|--</code>).
      */
     protected ClassReferenceRenderer(ClassRenderer parent, ClassDoc documentedClass, String umlreference) {
         this(parent, documentedClass, null, umlreference);
     }
 
-    // this one too I guess
+    /**
+     * Creates a new class reference, but the referred class is not (yet) available for documentation.
+     *
+     * @param parent                       The class the reference is from (which is the parent of this referencerenderer).
+     * @param documentedClassQualifiedName The qualified of the referred class.
+     * @param umlreference                 The UML reference itself (reversed, so inheritance is <code>&lt;|--</code>).
+     */
     protected ClassReferenceRenderer(ClassRenderer parent, String documentedClassQualifiedName, String umlreference) {
         this(parent, null, documentedClassQualifiedName, umlreference);
     }
@@ -67,6 +79,12 @@ public class ClassReferenceRenderer extends ClassRenderer {
         }
     }
 
+    /**
+     * This generator method creates a collection of references for a given class.
+     *
+     * @param parent The rendered class to create references for.
+     * @return The references.
+     */
     static Collection<ClassReferenceRenderer> referencesFor(ClassRenderer parent) {
         requireNonNull(parent, "Included class is required in order to find its references.");
         final String referentName = parent.classDoc.qualifiedName();
@@ -96,9 +114,9 @@ public class ClassReferenceRenderer extends ClassRenderer {
             } else if (excludedReferences.contains(interfaceName)) {
                 LogSupport.trace("Excluding interface \"{0}\" of \"{1}\"...", interfaceName, referentName);
             } else if (references.add(new ClassReferenceRenderer(parent, interfaceDoc, "<|.."))) {
-                LogSupport.trace("Added reference to interface \"{0}\" from \"{1}\".", new Object[]{interfaceName, referentName});
+                LogSupport.trace("Added reference to interface \"{0}\" from \"{1}\".", interfaceName, referentName);
             } else {
-                LogSupport.debug("Excluding reference to interface \"{0}\" from \"{1}\"; the reference was already generated.", new Object[]{interfaceName, referentName});
+                LogSupport.debug("Excluding reference to interface \"{0}\" from \"{1}\"; the reference was already generated.", interfaceName, referentName);
             }
         }
 
@@ -143,6 +161,13 @@ public class ClassReferenceRenderer extends ClassRenderer {
         return parent.simplifyClassnameWithinPackage(qualifiedName);
     }
 
+    /**
+     * @return Whether this reference is to the class itself.
+     */
+    protected boolean isSelfReference() {
+        return this.qualifiedName.equals(this.parent.classDoc.qualifiedName());
+    }
+
     protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         // Write type declaration if necessary.
         writeTypeDeclarationTo(out);
@@ -154,15 +179,19 @@ public class ClassReferenceRenderer extends ClassRenderer {
                 .append(umlreference).whitespace()
                 .append(quoted(cardinality1)).whitespace()
                 .append(parent.name());
-        if (note != null && !note.trim().isEmpty()) {
-            out.append(": ").append(note);
+        if (!notes.isEmpty()) {
+            String sep = ": ";
+            for (String note : notes) {
+                out.append(sep).append(note);
+                sep = "\\n";
+            }
         }
         return out.newline().newline();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(qualifiedName, parent, umlreference);
+        return Objects.hash(qualifiedName, parent, umlreference, cardinality1, cardinality2);
     }
 
     @Override
@@ -171,6 +200,8 @@ public class ClassReferenceRenderer extends ClassRenderer {
                 && Objects.equals(parent, ((ClassReferenceRenderer) other).parent)
                 && Objects.equals(qualifiedName, ((ClassReferenceRenderer) other).qualifiedName)
                 && Objects.equals(umlreference, ((ClassReferenceRenderer) other).umlreference)
+                && Objects.equals(cardinality1, ((ClassReferenceRenderer) other).cardinality1)
+                && Objects.equals(cardinality2, ((ClassReferenceRenderer) other).cardinality2)
         );
     }
 

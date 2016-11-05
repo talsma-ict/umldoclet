@@ -34,6 +34,7 @@ import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
  */
 public class FieldRenderer extends Renderer {
     protected final FieldDoc fieldDoc;
+    boolean disabled = false;
 
     protected FieldRenderer(UMLDiagram diagram, FieldDoc fieldDoc) {
         super(diagram);
@@ -87,6 +88,7 @@ public class FieldRenderer extends Renderer {
     protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         try (GlobalPosition gp = new GlobalPosition(fieldDoc.position())) {
             if (includeField()) {
+                if (disabled) out.append("' ");
                 writeAccessibility(out, fieldDoc);
                 writeNameTo(out);
                 if (includeFieldType()) {

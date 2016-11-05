@@ -41,19 +41,19 @@ public class ClassRenderer extends ParentAwareRenderer {
         this.notes = findLegacyNoteTags();
 
         // Add the various parts of the class UML, order matters here, obviously!
-        initChildren_AddEnumConstants();
-        initChildren_AddFields();
-        initChildren_AddConstructors();
-        initChildren_AddMethods();
+        addEnumConstants();
+        addFields();
+        addConstructors();
+        addMethods();
     }
 
-    private void initChildren_AddEnumConstants() {
+    private void addEnumConstants() {
         for (FieldDoc enumConstant : classDoc.enumConstants()) {
             children.add(new FieldRenderer(diagram, enumConstant));
         }
     }
 
-    private void initChildren_AddFields() {
+    private void addFields() {
         // static fields come before non-static fields.
         final FieldDoc[] allFields = classDoc.fields(false);
         final List<FieldRenderer> nonStaticFields = new ArrayList<>(allFields.length);
@@ -67,13 +67,13 @@ public class ClassRenderer extends ParentAwareRenderer {
         children.addAll(nonStaticFields);
     }
 
-    private void initChildren_AddConstructors() {
+    private void addConstructors() {
         for (ConstructorDoc constructor : classDoc.constructors(false)) {
             children.add(new MethodRenderer(diagram, constructor));
         }
     }
 
-    private void initChildren_AddMethods() {
+    private void addMethods() {
         final MethodDoc[] allMethods = classDoc.methods(false);
         List<MethodRenderer> abstractMethods = new ArrayList<>(allMethods.length);
         for (MethodDoc method : allMethods) {

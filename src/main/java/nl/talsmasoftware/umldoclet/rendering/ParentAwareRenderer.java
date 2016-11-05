@@ -38,7 +38,7 @@ public abstract class ParentAwareRenderer extends Renderer {
     /**
      * @return The renderer that is before this renderer within the parent, if any. Otherwise <code>null</code>.
      */
-    protected Renderer previousSibling() {
+    protected Renderer getPreviousSibling() {
         if (previousSibling == null) for (Renderer current : parent.children) {
             if (equals(current)) break;
             else previousSibling = current;
@@ -49,7 +49,7 @@ public abstract class ParentAwareRenderer extends Renderer {
     /**
      * @return The renderer that is after this renderer within the parent, if any. Otherwise <code>null</code>.
      */
-    protected Renderer nextSibling() {
+    protected Renderer getNextSibling() {
         if (nextSibling == null) for (Iterator<Renderer> it = parent.children.iterator(); it.hasNext(); ) {
             if (equals(it.next()) && it.hasNext()) {
                 nextSibling = it.next();

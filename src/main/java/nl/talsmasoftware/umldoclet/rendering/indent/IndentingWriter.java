@@ -17,137 +17,114 @@ package nl.talsmasoftware.umldoclet.rendering.indent;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.Character.isWhitespace;
 import static java.util.Objects.requireNonNull;
 
 /**
  * Writer implementation that will indent each new line with a specified number of whitespace
- * characters. The writing itself can be delegated to any other {@link Writer} implementation.
+ * characters (four by default).
+ * The writing itself can be delegated to any other {@link Writer} implementation.
  *
  * @author Sjoerd Talsma
  */
 public class IndentingWriter extends Writer {
 
-    private static final int DEFAULT_INDENTATION_WIDTH = 4;
-    private static final String EOL_CHARS = "\r\n";
-    private static final char[] NO_INDENTATION = {};
-
     private final Writer delegate;
-    private final int indentationWidth;
-    private final char[] indentation;
+    private final Indentation indentation;
 
-    private boolean wasWhitespace, isBeginningOfLine;
+    private final AtomicBoolean addWhitespace = new AtomicBoolean(false);
+    private char lastWritten;
 
-    protected IndentingWriter(Writer delegate, int indentationWidth) {
-        this(delegate, indentationWidth, null, true, true);
-    }
-
-    private IndentingWriter(Writer delegate, int indentationWidth, char[] indentation, boolean wasWhitespace, boolean isBeginningOfLine) {
-        this.delegate = requireNonNull(delegate, "Delegate writer is required.");
-        this.indentationWidth = indentationWidth < 0 ? DEFAULT_INDENTATION_WIDTH : indentationWidth;
-        this.indentation = indentation == null ? NO_INDENTATION : indentation;
-        this.wasWhitespace = wasWhitespace;
-        this.isBeginningOfLine = isBeginningOfLine;
+    private IndentingWriter(Writer delegate, Indentation indentation, char lastWritten) {
+        super(requireNonNull(delegate, "Delegate writer is required."));
+        this.delegate = delegate;
+        this.indentation = indentation != null ? indentation : Indentation.DEFAULT;
+        this.lastWritten = lastWritten;
     }
 
     /**
-     * Returns an indenting writer around the given {@code delegate}.
-     * If the {@code delegate} writer is already an indenting writer, it will simply be returned as-is.
-     * If the {@code delegate} writer is not yet an indending writer, a new indenting writer class will be created to
-     * wrap the delegate using the {@code default indentation width} and no initial {@link #indentationLevel()}.
+     * Returns an indenting writer around the given <code>delegate</code>.<br>
+     * If the <code>delegate</code> writer is already an indenting writer, it will simply be returned
+     * {@link #withIndentation(Indentation) with the specified indentation}.<br>
+     * If the <code>delegate</code> writer is not yet an indending writer, a new indenting writer class will be created
+     * to wrap the delegate using the specified <code>indentation</code>.
      *
-     * @param delegate The delegate to turn into an indenting writer.
+     * @param delegate    The delegate to turn into an indenting writer.
+     * @param indentation The indentation to use for the indenting writer
+     *                    (optional, specify <code>null</code> to use the default indentation).
      * @return The indenting delegate writer.
+     * @see Indentation#DEFAULT
      */
-    public static IndentingWriter wrap(Writer delegate) {
-        return delegate instanceof IndentingWriter
-                ? (IndentingWriter) delegate
-                : new IndentingWriter(delegate, -1);
+    public static IndentingWriter wrap(Writer delegate, Indentation indentation) {
+        return delegate instanceof IndentingWriter ? ((IndentingWriter) delegate).withIndentation(indentation)
+                : new IndentingWriter(delegate, indentation, '\n');
     }
 
     /**
-     * Returns an indenting writer with the new indentation width.
-     * Please note: already written lines will not be modified to accomodate the new indentation width.
-     * Negative indentation widths will have no effect; the same indentation writer will be returned.
+     * Returns an indenting writer with the new indentation.
+     * <p>
+     * Please note: Already written lines will not be modified to accomodate the new indentation.
      *
-     * @param newIndentationWidth The new indentation width to use on the indenting delegate.
-     * @return Either this writer if the indentation width is already equal to the requested new width,
-     * or a new IndentingWriter with the specified width otherwise.
+     * @param newIndentation The new indentation to apply to this writer (optional).
+     * @return Either this writer if the indentation is already correct,
+     * or a new IndentingWriter with the adapted indentation.
      */
-    public IndentingWriter withIndentationWidth(int newIndentationWidth) {
-        return newIndentationWidth < 0 || indentationWidth == newIndentationWidth ? this :
-                new IndentingWriter(delegate, newIndentationWidth, indentation, wasWhitespace, isBeginningOfLine)
-                        .withIndentationLevel(indentationLevel());
+    public IndentingWriter withIndentation(Indentation newIndentation) {
+        return newIndentation == null || this.indentation.equals(newIndentation) ? this
+                : new IndentingWriter(delegate, newIndentation, lastWritten);
     }
 
-    public IndentingWriter withIndentationLevel(int newIndentationLevel) {
-        if (newIndentationLevel < 0) {
-            throw new IllegalArgumentException(String.format("Indentation level cannot be a negative value: %s.", newIndentationLevel));
-        } else if (indentationLevel() == newIndentationLevel) {
-            return this;
-        }
-        final char[] newIndentation = new char[newIndentationLevel * indentationWidth];
-        Arrays.fill(newIndentation, ' ');
-        return new IndentingWriter(delegate, indentationWidth, newIndentation, wasWhitespace, isBeginningOfLine);
-    }
-
-    protected int indentationWidth() {
-        return indentationWidth;
-    }
-
-    /**
-     * @return The current indentation level (in concrete steps) of this indenting delegate writer.
-     */
-    protected int indentationLevel() {
-        return indentationWidth == 0 ? 0 : indentation.length / indentationWidth;
+    protected Indentation getIndentation() {
+        return indentation;
     }
 
     public IndentingWriter indent() {
-        return withIndentationLevel(Math.max(0, indentationLevel() + 1));
+        return withIndentation(getIndentation().increase());
     }
 
     public IndentingWriter unindent() {
-        return withIndentationLevel(Math.max(0, indentationLevel() - 1));
+        return withIndentation(getIndentation().decrease());
     }
 
     /**
      * Makes sure there is at least one whitespace character between the last charater and the next.
-     * <p/>
+     * <p>
      * This method attempts to avoid appending a whitespace character if it knows the last character was in fact a
      * whitespace character.
+     * The whitespace character will also not be written until there are other characters that need to be written.
      *
      * @return Reference to this writer for chaining purposes.
      * @throws IOException
      */
     public IndentingWriter whitespace() throws IOException {
-        return wasWhitespace ? this : (IndentingWriter) append(' ');
+//        return isWhitespace(lastWritten) ? this : (IndentingWriter) append(' ');
+        addWhitespace.set(true);
+        return this;
     }
 
     /**
      * Tests whether the character is an end-of-line character.
      *
      * @param ch The character to be tested.
-     * @return {@code true} if the character was an end-of-line character, {@code false} otherwise.
+     * @return <code>true</code> if the character was an end-of-line character, <code>false</code> otherwise.
      */
     private static boolean isEol(char ch) {
-        return EOL_CHARS.indexOf(ch) >= 0;
+        return ch == '\r' || ch == '\n';
     }
 
     @Override
     public void write(char[] cbuf, int off, int len) throws IOException {
         if (len > 0) {
             synchronized (lock) {
+                if (addWhitespace.compareAndSet(true, false) && !isEol(lastWritten) && !isWhitespace(lastWritten) && !isWhitespace(cbuf[0])) {
+                    delegate.write(' ');
+                }
                 for (int i = off; i < len; i++) {
-                    final boolean isEol = isEol(cbuf[i]);
-                    if (isBeginningOfLine && !isEol) {
-                        delegate.write(indentation);
-                        isBeginningOfLine = false;
-                    }
+                    if (isEol(lastWritten) && !isEol(cbuf[i])) indentation.writeTo(delegate);
                     delegate.write(cbuf[i]);
-                    wasWhitespace = isWhitespace(cbuf[i]);
-                    isBeginningOfLine = isEol;
+                    lastWritten = cbuf[i];
                 }
             }
         }

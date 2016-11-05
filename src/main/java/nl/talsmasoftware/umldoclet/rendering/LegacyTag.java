@@ -101,7 +101,8 @@ public enum LegacyTag {
             // Support for Pattern: <cardinality> - <cardinality> <associated class>
             if (classPos == 3) {
                 reference.cardinality1 = emptyToNull(parts[0]);
-                reference.note = emptyToNull(parts[1]);
+                final String note = emptyToNull(parts[1]);
+                if (note != null) reference.notes.add(note);
                 reference.cardinality2 = emptyToNull(parts[2]);
             }
         }
