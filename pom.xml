@@ -85,7 +85,7 @@
                 </includes>
             </resource>
             <resource>
-                <directory>${project.basedir}${file.separator}doc</directory>
+                <directory>src/doc</directory>
                 <filtering>true</filtering>
             </resource>
             <resource>
@@ -128,7 +128,7 @@
                             <outputDirectory>${project.basedir}</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${project.basedir}/doc</directory>
+                                    <directory>${project.basedir}/src/doc</directory>
                                     <filtering>true</filtering>
                                 </resource>
                             </resources>
@@ -222,6 +222,32 @@
                                 -umlIncludeMethodReturntypes true
                                 -umlImageDirectory images
                             </additionalparam>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.coderplus.maven.plugins</groupId>
+                <artifactId>copy-rename-maven-plugin</artifactId>
+                <version>1.0.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-example-uml</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <fileSets>
+                                <fileSet>
+                                    <sourceFile>target/apidocs/nl/talsmasoftware/umldoclet/rendering/package.puml</sourceFile>
+                                    <destinationFile>example/rendering-package.puml</destinationFile>
+                                </fileSet>
+                                <fileSet>
+                                    <sourceFile>target/apidocs/nl/talsmasoftware/umldoclet/rendering/package.svg</sourceFile>
+                                    <destinationFile>example/rendering-package.svg</destinationFile>
+                                </fileSet>
+                            </fileSets>
                         </configuration>
                     </execution>
                 </executions>
