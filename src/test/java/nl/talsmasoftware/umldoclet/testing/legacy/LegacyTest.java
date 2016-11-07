@@ -72,8 +72,10 @@ public class LegacyTest {
 
     @Test
     public void testDependTag() {
+//        assertThat(packageUml, containsString(
+//                setTopControllerName + " <.. " + channelIteratorName + ": friend"));
         assertThat(packageUml, containsString(
-                setTopControllerName + " <.. " + channelIteratorName + ": friend"));
+                channelIteratorName + " ..> " + setTopControllerName + ": friend"));
     }
 
     @Test
@@ -96,12 +98,18 @@ public class LegacyTest {
 
     @Test
     public void testNavassocTag() {
+//        assertThat(packageUml, containsString(
+//                powermanagerName + " \"1..*\" <-- " + setTopControllerName));
+//        assertThat(packageUml, containsString(
+//                targetName + " \"1\" <-- \"*\" " + setTopControllerName + ": has"));
+//        assertThat(packageUml, containsString(
+//                setTopControllerName + " <-- \"1\" " + legacytestName + ": tests"));
         assertThat(packageUml, containsString(
-                powermanagerName + " \"1..*\" <-- " + setTopControllerName));
+                setTopControllerName + " --> \"1..*\" " + powermanagerName));
         assertThat(packageUml, containsString(
-                targetName + " \"1\" <-- \"*\" " + setTopControllerName + ": has"));
+                setTopControllerName + " \"*\" --> \"1\" " + targetName + ": has"));
         assertThat(packageUml, containsString(
-                setTopControllerName + " <-- \"1\" " + legacytestName + ": tests"));
+                legacytestName + " \"1\" --> " + setTopControllerName + ": tests"));
     }
 
     @Test

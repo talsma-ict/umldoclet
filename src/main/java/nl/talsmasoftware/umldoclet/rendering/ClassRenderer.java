@@ -20,7 +20,10 @@ import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.logging.LogSupport.GlobalPosition;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
@@ -108,6 +111,10 @@ public class ClassRenderer extends ParentAwareRenderer {
      * @return The UML type for the class to be rendered.
      */
     protected String umlType() {
+        return umlTypeOf(classDoc);
+    }
+
+    protected static String umlTypeOf(ClassDoc classDoc) {
         return classDoc.isEnum() ? "enum"
                 : classDoc.isInterface() ? "interface"
                 : classDoc.isAbstract() ? "abstract class"
@@ -122,6 +129,10 @@ public class ClassRenderer extends ParentAwareRenderer {
      * @return The writer so more content can easily be written.
      */
     protected IndentingPrintWriter writeGenericsTo(IndentingPrintWriter out) {
+        return writeGenericsOf(classDoc, out);
+    }
+
+    protected static IndentingPrintWriter writeGenericsOf(ClassDoc classDoc, IndentingPrintWriter out) {
         if (classDoc.typeParameters().length > 0) {
             out.append('<');
             String sep = "";
@@ -155,7 +166,11 @@ public class ClassRenderer extends ParentAwareRenderer {
      * @return The name of the class to be rendered.
      */
     protected String name() {
-        String name = classDoc.qualifiedName();
+        return nameOf(classDoc.qualifiedName());
+    }
+
+    protected String nameOf(String qualifiedClassName) {
+        String name = qualifiedClassName;
         if (parent instanceof UMLDiagram) {
             name = classDoc.name();
         } else if (parent instanceof PackageRenderer) {

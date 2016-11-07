@@ -19,7 +19,7 @@
             #writeChildrenTo(IndentingPrintWriter): IndentingPrintWriter
             #lastChild(): Renderer
             {static} #writeTypeTo(IndentingPrintWriter, Type): IndentingPrintWriter
-            {static} #quoted(String): String
+            {static} +quoted(String): String
             {abstract} #writeTo(IndentingPrintWriter): IndentingPrintWriter
         }
 
@@ -81,9 +81,12 @@
             #classDoc: ClassDoc
             #ClassRenderer(Renderer, ClassDoc)
             #umlType(): String
+            {static} #umlTypeOf(ClassDoc): String
             #writeGenericsTo(IndentingPrintWriter): IndentingPrintWriter
+            {static} #writeGenericsOf(ClassDoc, IndentingPrintWriter): IndentingPrintWriter
             #writeNotesTo(IndentingPrintWriter): IndentingPrintWriter
             #name(): String
+            #nameOf(String): String
             #simplifyClassnameWithinPackage(String): String
             #writeNameTo(IndentingPrintWriter): IndentingPrintWriter
             #writeTo(IndentingPrintWriter): IndentingPrintWriter
@@ -91,18 +94,17 @@
 
         class ClassReferenceRenderer {
             ' #parent: ClassRenderer
-            #qualifiedName: String
-            #umlreference: String
-            #ClassReferenceRenderer(ClassRenderer, ClassDoc, String)
+            #reference: Reference
             #ClassReferenceRenderer(ClassRenderer, String, String)
-            #writeTypeDeclarationTo(IndentingPrintWriter): IndentingPrintWriter
-            #name(): String
+            #ClassReferenceRenderer(ClassRenderer, Reference)
+            #writeTypeDeclarationsTo(IndentingPrintWriter): IndentingPrintWriter
             #isSelfReference(): boolean
+            #addNote(String): void
             #writeTo(IndentingPrintWriter): IndentingPrintWriter
         }
 
-        class ClassDependencyRenderer {
-            #ClassDependencyRenderer(ClassRenderer, ClassDoc)
+        class ClassPropertyRenderer {
+            #ClassPropertyRenderer(ClassRenderer, ClassDoc, String)
         }
 
         Renderer <|-- UMLDiagram
@@ -123,15 +125,15 @@
 
         ClassRenderer <|-- ClassReferenceRenderer
 
-        ClassReferenceRenderer <|-- ClassDependencyRenderer
+        ClassReferenceRenderer <|-- ClassPropertyRenderer
 
-        UMLDiagram <.. Renderer: diagram
+        Renderer --> UMLDiagram: diagram
 
-        Renderer "*" <.. Renderer: children
+        Renderer --> "*" Renderer: children
 
-        Renderer <.. ParentAwareRenderer: parent\npreviousSibling\nnextSibling
+        ParentAwareRenderer --> Renderer: parent\npreviousSibling\nnextSibling
 
-        ClassRenderer <.. ClassReferenceRenderer: parent
+        ClassReferenceRenderer --> ClassRenderer: parent
 
     }
 
