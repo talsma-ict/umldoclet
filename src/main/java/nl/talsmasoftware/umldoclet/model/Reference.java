@@ -9,7 +9,6 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.*;
 import static java.util.Objects.requireNonNull;
 import static nl.talsmasoftware.umldoclet.model.Concatenation.append;
-import static nl.talsmasoftware.umldoclet.rendering.Renderer.quoted;
 
 /**
  * Model class for a type between two types.
@@ -33,7 +32,7 @@ public class Reference {
         this.to = requireNonNull(to, "Reference \"to\" side is <null>.");
 
         if (notes == null) this.notes = emptySet();
-        else { // Copy notes through an accumulator collection.
+        else { // Copy notes via an accumulator collection.
             final Set<String> notesAcc = new LinkedHashSet<>();
             for (String note : notes) {
                 final String trimmed = note != null ? note.trim() : "";
@@ -57,28 +56,6 @@ public class Reference {
 
     private Reference inverse() {
         return new Reference(to, reverseType(), from, this.notes);
-    }
-
-    private String reverseType() {
-        char[] chars = type.toCharArray();
-        char swap = chars[0];
-        for (int i = 0, j = chars.length - 1; i < j; swap = chars[i++]) {
-//            swap = chars[i];
-            chars[i] = reverseChar(chars[j]);
-            chars[j--] = reverseChar(swap);
-        }
-        return String.valueOf(chars);
-    }
-
-    private static char reverseChar(char ch) {
-        switch (ch) {
-            case '<':
-                return '>';
-            case '>':
-                return '<';
-            default:
-                return ch;
-        }
     }
 
     /**
@@ -109,7 +86,22 @@ public class Reference {
 
     @Override
     public String toString() {
-        return from + " " + type + " " + to;
+        final String toCardinality = to.cardinality.isEmpty() ? "" : to.cardinality + " ";
+        return from + " " + type + " " + toCardinality + to.qualifiedName;
+    }
+
+    private String reverseType() {
+        char[] chars = type.toCharArray();
+        char swap = chars[0];
+        for (int i = 0, j = chars.length - 1; i < j; swap = chars[i++]) {
+            chars[i] = reverseChar(chars[j]);
+            chars[j--] = reverseChar(swap);
+        }
+        return String.valueOf(chars);
+    }
+
+    private static char reverseChar(char ch) {
+        return ch == '<' ? '>' : ch == '>' ? '<' : ch;
     }
 
     public static final class Side {
@@ -151,9 +143,8 @@ public class Reference {
 
         @Override
         public String toString() {
-            return cardinality.isEmpty() ? qualifiedName : qualifiedName + ' ' + quoted(cardinality);
+            return cardinality.isEmpty() ? qualifiedName : qualifiedName + ' ' + cardinality;
         }
     }
-
 
 }

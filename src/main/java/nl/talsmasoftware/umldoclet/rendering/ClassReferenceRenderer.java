@@ -20,6 +20,7 @@ import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
 import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.model.Reference;
+import nl.talsmasoftware.umldoclet.model.Reference.Side;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Collection;
@@ -39,13 +40,6 @@ public class ClassReferenceRenderer extends ClassRenderer {
     protected final ClassRenderer parent;
     protected Reference reference;
 
-//    protected final String qualifiedName;
-//    protected final String umlreference;
-
-    // Additional info fields to be added to the type.
-//    String cardinality1, cardinality2;
-//    final Collection<String> notes = new LinkedHashSet<>();
-
     /**
      * Creates a new class type to be rendered.
      *
@@ -54,7 +48,6 @@ public class ClassReferenceRenderer extends ClassRenderer {
      * @param umlreference    The UML type itself (reversed, so inheritance is <code>&lt;|--</code>).
      */
     private ClassReferenceRenderer(ClassRenderer parent, ClassDoc documentedClass, String umlreference) {
-//        this(parent, documentedClass, null, umlreference);
         this(parent, requireNonNull(documentedClass, "Referred class was <null>.").qualifiedName(), umlreference);
     }
 
@@ -67,26 +60,9 @@ public class ClassReferenceRenderer extends ClassRenderer {
      *                         inheritance is <code>&lt;|--</code>).
      */
     protected ClassReferenceRenderer(ClassRenderer parent, String referenceFromFqn, String umlreference) {
-//        this(parent, null, documentedClassQualifiedName, umlreference);
         this(parent, new Reference(from(referenceFromFqn), umlreference,
                 to(requireNonNull(parent, "Parent was <null>.").classDoc.qualifiedName())));
     }
-
-//    private ClassReferenceRenderer(ClassRenderer parent, ClassDoc documentedClass, String qualifiedName, String umlreference) {
-//        super(parent, documentedClass == null ? parent.classDoc : documentedClass);
-//        this.parent = requireNonNull(parent, "No parent renderer for class type provided.");
-//        super.children.clear();
-//        this.qualifiedName = requireNonNull(documentedClass == null ? qualifiedName : documentedClass.qualifiedName(),
-//                "Qualified name of documented type is required.");
-//        this.umlreference = requireNonNull(umlreference, "No UML type type provided.");
-//        if (diagram.config.includeAbstractSuperclassMethods() && documentedClass != null) {
-//            for (MethodDoc methodDoc : documentedClass.methods(false)) {
-//                if (methodDoc.isAbstract()) {
-//                    children.add(new MethodRenderer(diagram, methodDoc));
-//                }
-//            }
-//        }
-//    }
 
     protected ClassReferenceRenderer(ClassRenderer parent, Reference reference) {
         super(parent, referredClassDoc(parent, reference));
@@ -104,7 +80,7 @@ public class ClassReferenceRenderer extends ClassRenderer {
 
     private static ClassDoc referredClassDoc(ClassRenderer source, Reference reference) {
         if (source == null) return null;
-        if (reference != null) for (Reference.Side side : new Reference.Side[]{reference.to, reference.from}) {
+        if (reference != null) for (Side side : new Side[]{reference.to, reference.from}) {
             if (!side.qualifiedName.equals(source.classDoc.qualifiedName())) {
                 ClassDoc referredClassDoc = source.classDoc.findClass(side.qualifiedName);
                 if (referredClassDoc != null) return referredClassDoc;
@@ -170,7 +146,7 @@ public class ClassReferenceRenderer extends ClassRenderer {
     }
 
     protected IndentingPrintWriter writeTypeDeclarationsTo(IndentingPrintWriter out) {
-        for (final Reference.Side side : new Reference.Side[]{reference.from, reference.to}) {
+        for (final Side side : new Side[]{reference.from, reference.to}) {
             if (!diagram.encounteredTypes.add(side.qualifiedName)) {
                 LogSupport.trace("Not generating type declaration for \"{0}\"; " +
                         "type was previously encountered in this diagram.", side.qualifiedName);
@@ -193,37 +169,13 @@ public class ClassReferenceRenderer extends ClassRenderer {
             if (!children.isEmpty()) writeChildrenTo(out.whitespace().append("{").newline()).append('}');
             out.newline();
         }
-//        if (!diagram.encounteredTypes.add(qualifiedName)) {
-//            LogSupport.trace("Not generating type declaration for \"{0}\"; " +
-//                    "type was previously encountered in this diagram.", qualifiedName);
-//            return out;
-//        } else if (!qualifiedName.equals(classDoc.qualifiedName())) {
-//            LogSupport.trace("Generating 'unknown' class type declaration for \"{0}\"; " +
-//                    "we only have a class name type as declaration.", name());
-//            return out.append(guessClassOrInterface()).whitespace().append(name()).append(" <<(?,orchid)>>").newline();
-//        }
-//
-//        LogSupport.trace("Generating type declaration for \"{0}\"...", name());
-//        out.append(umlType()).whitespace().append(name());
-//        super.writeGenericsTo(out);
-//        if (!children.isEmpty()) {
-//            writeChildrenTo(out.append(" {").newline()).append('}');
-//        }
-//        return out.newline();
         return out;
     }
-
-//    @Override
-//    protected String name() {
-//        // Optionally simplify the name within the referring class' package.
-//        return parent.simplifyClassnameWithinPackage(qualifiedName);
-//    }
 
     /**
      * @return Whether this type is to the class itself.
      */
     protected boolean isSelfReference() {
-//        return this.qualifiedName.equals(this.parent.classDoc.qualifiedName());
         return reference.isSelfReference();
     }
 
@@ -238,19 +190,13 @@ public class ClassReferenceRenderer extends ClassRenderer {
         // Write type declaration if necessary.
         writeTypeDeclarationsTo(out);
 
-        // Write UML type itself.
-//        LogSupport.trace("Generating type: \"{0}\" {1} \"{2}\"...", qualifiedName, umlreference, parent.name());
-//        out.append(name()).whitespace()
-//                .append(quoted(cardinality2)).whitespace()
-//                .append(umlreference).whitespace()
-//                .append(quoted(cardinality1)).whitespace()
-//                .append(parent.name());
+        // Write UML reference itself.
         LogSupport.trace("Generating type: {0}...", reference);
-        out.append(parent.simplifyClassnameWithinPackage(reference.from.qualifiedName)).whitespace()
-                .append(quoted(reference.from.cardinality)).whitespace()
-                .append(reference.type).whitespace()
-                .append(quoted(reference.to.cardinality)).whitespace()
-                .append(parent.simplifyClassnameWithinPackage(reference.to.qualifiedName));
+        out.append(parent.simplifyClassnameWithinPackage(reference.from.qualifiedName))
+                .whitespace().append(quoted(reference.from.cardinality))
+                .whitespace().append(reference.type)
+                .whitespace().append(quoted(reference.to.cardinality))
+                .whitespace().append(parent.simplifyClassnameWithinPackage(reference.to.qualifiedName));
 
         if (!reference.notes.isEmpty()) {
             String sep = ": ";

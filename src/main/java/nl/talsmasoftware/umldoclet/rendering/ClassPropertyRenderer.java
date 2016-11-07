@@ -38,7 +38,6 @@ import static nl.talsmasoftware.umldoclet.model.Reference.Side.to;
 public class ClassPropertyRenderer extends ClassReferenceRenderer {
 
     protected ClassPropertyRenderer(ClassRenderer fromClass, ClassDoc toClass, String cardinality) {
-//        super(fromClass, toClass, "<..");
         super(fromClass, new Reference(from(fromClass.classDoc.qualifiedName()), "-->", to(toClass.qualifiedName(), cardinality)));
     }
 
@@ -84,8 +83,11 @@ public class ClassPropertyRenderer extends ClassReferenceRenderer {
     }
 
     private static ClassDoc findTypeInDiagram(Type type, Collection<ClassDoc> diagramClasses) {
-        if (type != null) for (ClassDoc renderedClass : diagramClasses) {
-            if (type.qualifiedTypeName().equals(renderedClass.qualifiedTypeName())) return renderedClass;
+        if (type != null && diagramClasses != null) {
+            final String qualifiedTypeName = type.qualifiedTypeName();
+            for (ClassDoc renderedClass : diagramClasses) {
+                if (qualifiedTypeName.equals(renderedClass.qualifiedTypeName())) return renderedClass;
+            }
         }
         return null;
     }

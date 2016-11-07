@@ -238,6 +238,7 @@
                             <goal>copy</goal>
                         </goals>
                         <configuration>
+                            <overWrite>true</overWrite>
                             <fileSets>
                                 <fileSet>
                                     <sourceFile>target/apidocs/nl/talsmasoftware/umldoclet/rendering/package.puml</sourceFile>
