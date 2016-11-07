@@ -1,0 +1,140 @@
+@startuml
+
+    namespace nl.talsmasoftware.umldoclet.rendering {
+
+        class UMLDiagram {
+            #config: UMLDocletConfig
+            +UMLDiagram(UMLDocletConfig)
+            +addClass(ClassDoc): UMLDiagram
+            +addPackage(PackageDoc): UMLDiagram
+            +addDependencyDiagram(Object): UMLDiagram
+            #writeTo(IndentingPrintWriter): IndentingPrintWriter
+        }
+
+        abstract class Renderer {
+            ' #diagram: UMLDiagram
+            ' #children: Collection<Renderer>
+            #Renderer(UMLDiagram)
+            +writeTo(Writer): Writer
+            #writeChildrenTo(IndentingPrintWriter): IndentingPrintWriter
+            #lastChild(): Renderer
+            {static} #writeTypeTo(IndentingPrintWriter, Type): IndentingPrintWriter
+            {static} +quoted(String): String
+            {abstract} #writeTo(IndentingPrintWriter): IndentingPrintWriter
+        }
+
+        abstract class ParentAwareRenderer {
+            ' #parent: Renderer
+            #ParentAwareRenderer(Renderer)
+            ' #getPreviousSibling(): Renderer
+            ' #getNextSibling(): Renderer
+        }
+
+        class PackageRenderer {
+            #packageDoc: PackageDoc
+            #PackageRenderer(UMLDiagram, PackageDoc)
+            #writeTo(IndentingPrintWriter): IndentingPrintWriter
+        }
+
+        class NoteRenderer {
+            #note: String
+            #NoteRenderer(Renderer, String)
+            #writeTo(IndentingPrintWriter): IndentingPrintWriter
+        }
+
+        class MethodRenderer {
+            #methodDoc: ExecutableMemberDoc
+            #MethodRenderer(UMLDiagram, ExecutableMemberDoc)
+            #includeMethod(): boolean
+            #writeNameTo(IndentingPrintWriter): IndentingPrintWriter
+            #writeParametersTo(IndentingPrintWriter): IndentingPrintWriter
+            #writeTo(IndentingPrintWriter): IndentingPrintWriter
+            #propertyName(): String
+        }
+
+        enum LegacyTag {
+            {static} +EXTENDS
+            {static} +IMPLEMENTS
+            {static} +ASSOC
+            {static} +NAVASSOC
+            {static} +DEPEND
+            {static} +values(): LegacyTag[]
+            {static} +valueOf(String): LegacyTag
+        }
+
+        class FieldRenderer {
+            #fieldDoc: FieldDoc
+            #FieldRenderer(UMLDiagram, FieldDoc)
+            #includeFieldType(): boolean
+            #includeField(): boolean
+            #writeNameTo(IndentingPrintWriter): IndentingPrintWriter
+            #writeTo(IndentingPrintWriter): IndentingPrintWriter
+        }
+
+        class CommandRenderer {
+            #command: String
+            #CommandRenderer(UMLDiagram, String)
+            #writeTo(IndentingPrintWriter): IndentingPrintWriter
+        }
+
+        class ClassRenderer {
+            #classDoc: ClassDoc
+            #ClassRenderer(Renderer, ClassDoc)
+            #umlType(): String
+            {static} #umlTypeOf(ClassDoc): String
+            #writeGenericsTo(IndentingPrintWriter): IndentingPrintWriter
+            {static} #writeGenericsOf(ClassDoc, IndentingPrintWriter): IndentingPrintWriter
+            #writeNotesTo(IndentingPrintWriter): IndentingPrintWriter
+            #name(): String
+            #nameOf(String): String
+            #simplifyClassnameWithinPackage(String): String
+            #writeNameTo(IndentingPrintWriter): IndentingPrintWriter
+            #writeTo(IndentingPrintWriter): IndentingPrintWriter
+        }
+
+        class ClassReferenceRenderer {
+            ' #parent: ClassRenderer
+            #reference: Reference
+            #ClassReferenceRenderer(ClassRenderer, String, String)
+            #ClassReferenceRenderer(ClassRenderer, Reference)
+            #writeTypeDeclarationsTo(IndentingPrintWriter): IndentingPrintWriter
+            #isSelfReference(): boolean
+            #addNote(String): void
+            #writeTo(IndentingPrintWriter): IndentingPrintWriter
+        }
+
+        class ClassPropertyRenderer {
+            #ClassPropertyRenderer(ClassRenderer, ClassDoc, String)
+        }
+
+        Renderer <|-- UMLDiagram
+
+        Renderer <|-- ParentAwareRenderer
+
+        Renderer <|-- PackageRenderer
+
+        ParentAwareRenderer <|-- NoteRenderer
+
+        Renderer <|-- MethodRenderer
+
+        Renderer <|-- FieldRenderer
+
+        Renderer <|-- CommandRenderer
+
+        ParentAwareRenderer <|-- ClassRenderer
+
+        ClassRenderer <|-- ClassReferenceRenderer
+
+        ClassReferenceRenderer <|-- ClassPropertyRenderer
+
+        Renderer --> UMLDiagram: diagram
+
+        Renderer --> "*" Renderer: children
+
+        ParentAwareRenderer --> Renderer: parent\npreviousSibling\nnextSibling
+
+        ClassReferenceRenderer --> ClassRenderer: parent
+
+    }
+
+@enduml

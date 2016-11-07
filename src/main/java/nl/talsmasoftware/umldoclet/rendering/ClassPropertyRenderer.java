@@ -22,20 +22,23 @@ import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.Type;
 import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.model.Model;
+import nl.talsmasoftware.umldoclet.model.Reference;
 
 import java.util.Collection;
 
 import static nl.talsmasoftware.umldoclet.model.Model.find;
+import static nl.talsmasoftware.umldoclet.model.Reference.Side.from;
+import static nl.talsmasoftware.umldoclet.model.Reference.Side.to;
 
 /**
- * This class is specifically meant for class dependencies among each-other.
+ * This class is specifically meant for class dependencies among each-other from object properties..
  *
  * @author Sjoerd Talsma
  */
-public class ClassDependencyRenderer extends ClassReferenceRenderer {
+public class ClassPropertyRenderer extends ClassReferenceRenderer {
 
-    protected ClassDependencyRenderer(ClassRenderer fromClass, ClassDoc toClass) {
-        super(fromClass, toClass, "<..");
+    protected ClassPropertyRenderer(ClassRenderer fromClass, ClassDoc toClass, String cardinality) {
+        super(fromClass, new Reference(from(fromClass.classDoc.qualifiedName()), "-->", to(toClass.qualifiedName(), cardinality)));
     }
 
     // TODO encounteredTypes is already in diagram.encounteredClasses but only populated at render-time.
@@ -45,15 +48,15 @@ public class ClassDependencyRenderer extends ClassReferenceRenderer {
                 final FieldRenderer field = (FieldRenderer) child;
                 if (field.includeField() && !field.fieldDoc.isStatic()) {
                     Type fieldType = Model.optionalType(field.fieldDoc.type());
-                    final boolean optional = fieldType != null;
-                    if (!optional) fieldType = Model.iterableType(field.fieldDoc.type());
-                    final boolean iterable = !optional && fieldType != null;
+                    String cardinality = fieldType != null ? "0..1" : null;
+                    if (fieldType == null) {
+                        fieldType = Model.iterableType(field.fieldDoc.type());
+                        cardinality = fieldType != null ? "*" : null;
+                    }
                     if (fieldType == null) fieldType = field.fieldDoc.type();
                     final ClassDoc toClass = findTypeInDiagram(fieldType, diagramClasses);
                     if (toClass != null) { // Disable field in class and add dependency.
-                        final ClassDependencyRenderer dep = new ClassDependencyRenderer(theClass, toClass);
-                        if (optional) dep.cardinality2 = "0..1";
-                        if (iterable) dep.cardinality2 = "*";
+                        final ClassPropertyRenderer dep = new ClassPropertyRenderer(theClass, toClass, cardinality);
                         if (addDependency(field.fieldDoc.name(), references, dep)) field.disabled = true;
                     }
                 }
@@ -63,15 +66,15 @@ public class ClassDependencyRenderer extends ClassReferenceRenderer {
                 if (propertyname != null && method.methodDoc instanceof MethodDoc) {
                     final Type type = ((MethodDoc) method.methodDoc).returnType();
                     Type propertyType = Model.optionalType(type);
-                    final boolean optional = propertyType != null;
-                    if (!optional) propertyType = Model.iterableType(type);
-                    final boolean iterable = !optional && propertyType != null;
+                    String cardinality = propertyType != null ? "0..1" : null;
+                    if (propertyType == null) {
+                        propertyType = Model.iterableType(type);
+                        cardinality = propertyType != null ? "*" : null;
+                    }
                     if (propertyType == null) propertyType = type;
                     final ClassDoc toClass = findTypeInDiagram(propertyType, diagramClasses);
                     if (toClass != null) { // Disable accessor method and add dependency.
-                        final ClassDependencyRenderer dep = new ClassDependencyRenderer(theClass, toClass);
-                        if (optional) dep.cardinality2 = "0..1";
-                        if (iterable) dep.cardinality2 = "*";
+                        final ClassPropertyRenderer dep = new ClassPropertyRenderer(theClass, toClass, cardinality);
                         if (addDependency(propertyname, references, dep)) method.disabled = true;
                     }
                 }
@@ -80,19 +83,22 @@ public class ClassDependencyRenderer extends ClassReferenceRenderer {
     }
 
     private static ClassDoc findTypeInDiagram(Type type, Collection<ClassDoc> diagramClasses) {
-        if (type != null) for (ClassDoc renderedClass : diagramClasses) {
-            if (type.qualifiedTypeName().equals(renderedClass.qualifiedTypeName())) return renderedClass;
+        if (type != null && diagramClasses != null) {
+            final String qualifiedTypeName = type.qualifiedTypeName();
+            for (ClassDoc renderedClass : diagramClasses) {
+                if (qualifiedTypeName.equals(renderedClass.qualifiedTypeName())) return renderedClass;
+            }
         }
         return null;
     }
 
-    private static boolean addDependency(String name, Collection<ClassReferenceRenderer> refs, ClassDependencyRenderer dep) {
+    private static boolean addDependency(String name, Collection<ClassReferenceRenderer> refs, ClassPropertyRenderer dep) {
         if (dep.isSelfReference() && dep.classDoc.isEnum()) {
             LogSupport.debug("Not adding self-referencing Enum dependency {0}...", dep);
             return false;
         }
         refs.add(dep);
-        find(refs, dep).notes.add(name);
+        find(refs, dep).addNote(name);
         return true;
     }
 

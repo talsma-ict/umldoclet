@@ -99,7 +99,6 @@ public class IndentingWriter extends Writer {
      * @throws IOException
      */
     public IndentingWriter whitespace() throws IOException {
-//        return isWhitespace(lastWritten) ? this : (IndentingWriter) append(' ');
         addWhitespace.set(true);
         return this;
     }

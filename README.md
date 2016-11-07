@@ -1,6 +1,6 @@
 # UMLDoclet
 Doclet for the JavaDoc tool that generates UML diagrams from the code.  
-The current version is: `1.0.5`.  
+The current version is: `1.0.6`.  
 Released versions can be found in the [maven central repository](http://repo.maven.apache.org/maven2/nl/talsmasoftware/umldoclet/).  
 
 This doclet uses the analyzed information from the JavaDoc tool.
@@ -18,6 +18,12 @@ To use the doclet together with the JavaDoc tool, the following is required.
 ## Usage
 
 - Please refer to [the usage page](USAGE.md) on how to use this doclet.
+
+## Example
+
+Please take a look at the rendered .SVG image of this doclet's 
+[rendering package](example/rendering-package.svg).  
+Or, look at the [the generated plantuml source file](example/rendering-package.puml).
 
 ## Feedback
 

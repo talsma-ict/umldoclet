@@ -94,14 +94,14 @@ public abstract class Renderer {
     /**
      * This method puts the given {@code value} within double-quotes
      * and escapes any double-quotes that may be already in the string.
-     * <p/>
+     * <p>
      * The method returns an empty String ({@code ""}) when the given {@code value}
      * is either {@code null} or empty. This is intentional as it allows for unconditional appending.
      *
      * @param value The value to be quoted.
      * @return The value within double quotes or an empty string if the value was null or empty.
      */
-    protected static String quoted(String value) {
+    public static String quoted(String value) {
         return value == null || value.trim().isEmpty() ? "" : '"' + value.replaceAll("\"", "\\\"") + '"';
     }
 

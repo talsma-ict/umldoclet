@@ -26,7 +26,7 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
-import static nl.talsmasoftware.umldoclet.rendering.ClassDependencyRenderer.addDiagramDependenciesTo;
+import static nl.talsmasoftware.umldoclet.rendering.ClassPropertyRenderer.addDiagramDependenciesTo;
 
 /**
  * Created on 22-02-2016.

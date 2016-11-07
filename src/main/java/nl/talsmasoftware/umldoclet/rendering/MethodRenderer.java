@@ -185,7 +185,7 @@ public class MethodRenderer extends Renderer {
             ClassDoc overriddenClass = ((MethodDoc) methodDoc).overriddenClass();
             while (overriddenClass != null) {
                 if (diagram.config.excludedReferences().contains(overriddenClass.qualifiedName())) {
-                    LogSupport.trace("Method \"{0}{1}\" overrides method from excluded reference \"{2}\".",
+                    LogSupport.trace("Method \"{0}{1}\" overrides method from excluded type \"{2}\".",
                             methodDoc.qualifiedName(), methodDoc.flatSignature(), overriddenClass.qualifiedName());
                     return true;
                 }
