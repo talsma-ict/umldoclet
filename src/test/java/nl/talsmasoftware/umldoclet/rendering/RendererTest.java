@@ -44,7 +44,7 @@ public class RendererTest {
         mockReporter = Mockito.mock(DocErrorReporter.class);
         UMLDocletConfig config = new UMLDocletConfig(new String[0][], mockReporter);
 
-        renderer = new YabadabadooRenderer(new UMLDiagram(config));
+        renderer = new YabadabadooRenderer(new DiagramRenderer(config));
     }
 
     @Test
@@ -53,7 +53,7 @@ public class RendererTest {
     }
 
     private static class YabadabadooRenderer extends Renderer {
-        protected YabadabadooRenderer(UMLDiagram currentDiagram) {
+        protected YabadabadooRenderer(DiagramRenderer currentDiagram) {
             super(currentDiagram);
         }
 

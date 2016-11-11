@@ -40,14 +40,16 @@ public class ClassRenderer extends ParentAwareRenderer {
 
     protected ClassRenderer(Renderer parent, ClassDoc classDoc) {
         super(parent);
-        this.classDoc = requireNonNull(classDoc, "No class documentation provided.");
-        this.notes = findLegacyNoteTags();
+        try (GlobalPosition gp = new GlobalPosition(classDoc)) {
+            this.classDoc = requireNonNull(classDoc, "No class documentation provided.");
+            this.notes = findLegacyNoteTags();
 
-        // Add the various parts of the class UML, order matters here, obviously!
-        addEnumConstants();
-        addFields();
-        addConstructors();
-        addMethods();
+            // Add the various parts of the class UML, order matters here, obviously!
+            addEnumConstants();
+            addFields();
+            addConstructors();
+            addMethods();
+        }
     }
 
     private void addEnumConstants() {
@@ -171,7 +173,7 @@ public class ClassRenderer extends ParentAwareRenderer {
 
     protected String nameOf(String qualifiedClassName) {
         String name = qualifiedClassName;
-        if (parent instanceof UMLDiagram) {
+        if (parent instanceof DiagramRenderer) {
             name = classDoc.name();
         } else if (parent instanceof PackageRenderer) {
             name = simplifyClassnameWithinPackage(name);

@@ -36,7 +36,7 @@ public class FieldRenderer extends Renderer {
     protected final FieldDoc fieldDoc;
     boolean disabled = false;
 
-    protected FieldRenderer(UMLDiagram diagram, FieldDoc fieldDoc) {
+    protected FieldRenderer(DiagramRenderer diagram, FieldDoc fieldDoc) {
         super(diagram);
         this.fieldDoc = requireNonNull(fieldDoc, "No field documentation provided.");
     }

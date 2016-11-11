@@ -213,7 +213,7 @@
                             </docletArtifact>
                             <docencoding>UTF-8</docencoding>
                             <additionalparam>
-                                -umlLogLevel INFO
+                                -umlLogLevel TRACE
                                 -umlImageFormat PNG;SVG
                                 -umlBasePath "${project.baseUri}target/test-uml"
                                 -umlSkipStandardDoclet true

@@ -16,9 +16,12 @@
 package nl.talsmasoftware.umldoclet.model;
 
 import com.sun.javadoc.*;
+import com.sun.javadoc.ParameterizedType;
+import com.sun.javadoc.Type;
 import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.rendering.Renderer;
 
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -117,7 +120,14 @@ public class Model {
 
     public static Type iterableType(final Type type) {
         // check for T[] ...
-        if (type != null && "[]".equals(type.dimension())) return type;
+        if (type != null && "[]".equals(type.dimension())) {
+            LogSupport.trace("Iterable type found: {0} is an array!", type);
+            return type;
+        }
+        // Next, see if the type is on the classpath and it implements java.lang.Iterable.
+        Type result = reflectParameterizedTypeOf(type, Iterable.class);
+        if (result != null) return result;
+
         // then theck for Iterable<T> ...
         final List<Type> chain = superclassChainTo(type, new ArrayList<Type>(), ITERABLE_TYPES);
         if (chain != null) {
@@ -130,6 +140,43 @@ public class Model {
             }
         }
         return null;
+    }
+
+    private static Class<?> tryLoadClass(final Type type) {
+        try {
+            return Class.forName(type.qualifiedTypeName());
+        } catch (ClassNotFoundException | LinkageError | RuntimeException e) {
+            LogSupport.trace("Not a class or unavailable on the classpath: {0}", type);
+            return null;
+        }
+    }
+
+    private static Type reflectParameterizedTypeOf(final Type type, final Class<?> genericType) {
+        Class<?> result = null;
+        java.lang.reflect.Type _type = tryLoadClass(type);
+        if (_type != null && genericType.isAssignableFrom((Class) _type)) try {
+//            while (!isParameterizedType(_type, genericType)) {
+            while (!(type instanceof java.lang.reflect.ParameterizedType)
+                    || ((java.lang.reflect.ParameterizedType) type).getRawType() != genericType) {
+                LogSupport.trace("Trying to obtain generic superclass of {0}...", _type);
+                _type = _type instanceof java.lang.reflect.ParameterizedType
+                        ? ((Class<?>) ((java.lang.reflect.ParameterizedType) _type).getRawType()).getGenericSuperclass()
+                        : ((Class<?>) _type).getGenericSuperclass();
+            }
+            result = (Class<?>) ((java.lang.reflect.ParameterizedType) _type).getActualTypeArguments()[0];
+            LogSupport.debug("Found iterable generic parameter {0} from {1}.", result, _type);
+        } catch (LinkageError | RuntimeException e) {
+            LogSupport.debug("Error obtaining generic parameter from Iterable {0}: {1}", _type, e.getMessage(), e);
+        }
+        if (result == null) return null;
+        Type foundType = type.asClassDoc().findClass(result.getName());
+        LogSupport.debug("Parameterized type of {0} found from {1}: {2} -> {3}.", genericType, type, result, foundType);
+        return foundType;
+    }
+
+    private static boolean isParameterizedType(java.lang.reflect.Type type, Class<?> declaringClass) {
+        return type instanceof java.lang.reflect.ParameterizedType
+                && declaringClass.equals(((java.lang.reflect.ParameterizedType) type).getRawType());
     }
 
     /**

@@ -38,7 +38,7 @@ public class MethodRenderer extends Renderer {
     protected final ExecutableMemberDoc methodDoc;
     boolean disabled = false;
 
-    protected MethodRenderer(UMLDiagram diagram, ExecutableMemberDoc methodDoc) {
+    protected MethodRenderer(DiagramRenderer diagram, ExecutableMemberDoc methodDoc) {
         super(diagram);
         this.methodDoc = requireNonNull(methodDoc, "No method documentation provided.");
     }
@@ -183,15 +183,34 @@ public class MethodRenderer extends Renderer {
     private boolean isMethodFromExcludedClass() {
         if (methodDoc instanceof MethodDoc && !diagram.config.includeOverridesFromExcludedReferences()) {
             ClassDoc overriddenClass = ((MethodDoc) methodDoc).overriddenClass();
+            if (overriddenClass == null) overriddenClass = methodDoc.containingClass();
+
             while (overriddenClass != null) {
+//if ("values".equals(methodDoc.name())) {
+//    LogSupport.info("Method \"{0}{1}\" overriddenclass: {2}, overriddentype: {3}",
+//            methodDoc.qualifiedName(), methodDoc.flatSignature(), overriddenClass, ((MethodDoc) methodDoc).overriddenType());
+//}
                 if (diagram.config.excludedReferences().contains(overriddenClass.qualifiedName())) {
                     LogSupport.trace("Method \"{0}{1}\" overrides method from excluded type \"{2}\".",
                             methodDoc.qualifiedName(), methodDoc.flatSignature(), overriddenClass.qualifiedName());
                     return true;
                 }
                 MethodDoc foundMethod = findMethod(overriddenClass, methodDoc.name(), methodDoc.flatSignature());
+// TODO: Test how to figure out how to properly exclude java.lang.Enum methods??
+//                if ((foundMethod == null || foundMethod.overriddenClass() == null) && overriddenClass.superclass() != null) {
+//                    foundMethod = findMethod(overriddenClass.superclass(), methodDoc.name(), methodDoc.flatSignature());
+//                }
                 overriddenClass = foundMethod == null ? null : foundMethod.overriddenClass();
             }
+//        } else {
+//            ClassDoc containingClass = methodDoc.containingClass();
+//            while (containingClass != null) {
+//                if (diagram.config.excludedReferences().contains(containingClass.qualifiedName())) {
+//                    LogSupport.trace("Method \"{0}{1}\" overrides method from excluded type \"{2}\".",
+//                            methodDoc.qualifiedName(), methodDoc.flatSignature(), overriddenClass.qualifiedName());
+//                    return true;
+//                }
+//            }
         }
         return false;
     }
