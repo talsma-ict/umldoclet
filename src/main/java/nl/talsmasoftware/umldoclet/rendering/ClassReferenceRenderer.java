@@ -18,7 +18,7 @@ package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
-import nl.talsmasoftware.umldoclet.logging.LogSupport.*;
+import nl.talsmasoftware.umldoclet.logging.GlobalPosition;
 import nl.talsmasoftware.umldoclet.model.Reference;
 import nl.talsmasoftware.umldoclet.model.Reference.Side;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;

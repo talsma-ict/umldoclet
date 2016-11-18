@@ -30,7 +30,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Sjoerd Talsma
  */
-public final class Indentation implements Serializable {
+public final class Indentation implements CharSequence, Serializable {
 
     // Cache of the first 5 four-spaces indentations.
     private static final Indentation[] FOUR_SPACES = {new Indentation(4, ' ', 0), new Indentation(4, ' ', 1),
@@ -45,6 +45,11 @@ public final class Indentation implements Serializable {
      */
     public static Indentation DEFAULT = FOUR_SPACES[0];
 
+    /**
+     * A reusable constant for no indentation at all (even after calls to {@link #increase()}.
+     */
+    public static Indentation NONE = new Indentation(0, ' ', 0);
+
     // All fields of Indentation class are final.
     final int width, level;
     final char ch;
@@ -58,19 +63,39 @@ public final class Indentation implements Serializable {
         Arrays.fill(this.buf, ch);
     }
 
+    /**
+     * Returns an indentation of <code>level</code> tabs, increasing or decreasing
+     * by one tab at a time.
+     *
+     * @param level The number of tabs for this indentation.
+     * @return The indentation of <code>level</code> tabs.
+     */
     public static Indentation tabs(final int level) {
-        return level < 0 ? TABS[0] : level < TABS.length ? TABS[level] : new Indentation(1, '\t', level);
+        return level < 0 ? TABS[0]
+                : level < TABS.length ? TABS[level]
+                : new Indentation(1, '\t', level);
     }
 
+    /**
+     * Returns an indentation of <code>width</code> spaces, initially indented at
+     * <code>width * level</code> spaces.
+     * This indentation increases or decreases by <code>width</code> spaces at a time.
+     *
+     * @param width The number of spaces for a single indentation level (often 2 or 4).
+     * @param level The current indentation level (multiply this with the width for the initial number of spaces).
+     * @return The indentation level as <code>level</code> multiples of <code>width</code> spaces.
+     */
     public static Indentation spaces(final int width, final int level) {
-        if (width == 4 && level < FOUR_SPACES.length) {
+        if (width == 0) return NONE;
+        else if (width == 4 && level < FOUR_SPACES.length) {
             return level < 0 ? FOUR_SPACES[0] : FOUR_SPACES[level];
         }
         return new Indentation(width, ' ', level);
     }
 
     private static Indentation resolve(final int width, final char ch, final int level) {
-        return ch == ' ' ? spaces(width, level)
+        return width == 0 ? NONE
+                : ch == ' ' ? spaces(width, level)
                 : ch == '\t' && width == 1 ? tabs(level)
                 : new Indentation(width, ch, level);
     }
@@ -90,9 +115,9 @@ public final class Indentation implements Serializable {
     }
 
     /**
-     * Writes this indentation to the given writer object.
+     * Writes this indentation to the given writer object.<br>
      * Please be aware that usually it may prove easier to just create an {@link IndentingWriter} instead which will
-     * automatically write the indentation when needed.
+     * automatically write the indentation whenever needed (i.e. before the first character on any new line is written).
      *
      * @param writer The writer to write this indentation to.
      * @throws IOException if thrown by the writer while writing the indentation.
@@ -130,6 +155,21 @@ public final class Indentation implements Serializable {
                 && ch == ((Indentation) other).ch
                 && level == ((Indentation) other).level
         );
+    }
+
+    @Override
+    public int length() {
+        return buf.length;
+    }
+
+    @Override
+    public char charAt(int index) {
+        return buf[index];
+    }
+
+    @Override
+    public CharSequence subSequence(int start, int end) {
+        return toString().substring(start, end);
     }
 
     /**

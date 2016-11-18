@@ -28,6 +28,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 
 import static nl.talsmasoftware.umldoclet.config.UMLDocletConfig.Setting.*;
+import static nl.talsmasoftware.umldoclet.logging.LogSupport.*;
 import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
 import static nl.talsmasoftware.umldoclet.rendering.indent.Indentation.spaces;
 import static nl.talsmasoftware.umldoclet.rendering.indent.Indentation.tabs;
@@ -138,17 +139,17 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
         LogSupport.setLevel(UML_LOGLEVEL.value(this));
         try {
             String basePath = UML_BASE_PATH.value(this);
-            LogSupport.trace("Configured UML base path: \"{0}\".", basePath);
+            trace("Configured UML base path: \"{0}\".", basePath);
             if (basePath.startsWith("file:")) {
                 basePath = basePath.substring("file:".length());
                 if (!"/".equals(File.separator)) {
                     basePath = basePath.replaceAll("/", Matcher.quoteReplacement(File.separator));
                 }
-                LogSupport.trace("Translated UML base path: \"{0}\".", basePath);
+                trace("Translated UML base path: \"{0}\".", basePath);
             }
             this.put(UML_BASE_PATH, new File(basePath).getCanonicalPath());
         } catch (IOException ioe) {
-            LogSupport.warn("Error converting base path \"{0}\" to a canonical path: {1}",
+            warn("Error converting base path \"{0}\" to a canonical path: {1}",
                     UML_BASE_PATH.value(this), ioe);
         }
         this.properties = new Properties();
@@ -193,8 +194,8 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
         try {
             return "tabs".equalsIgnoreCase(value) ? tabs(0) : spaces(Integer.valueOf(value), 0);
         } catch (NumberFormatException badInteger) {
-            LogSupport.trace("Invalid integer option \"{0}\": {1}", value, badInteger);
-            LogSupport.error("Expected boolean value, but got \"{0}\" for option \"{1}\".",
+            trace("Invalid integer option \"{0}\": {1}", value, badInteger);
+            error("Expected boolean value, but got \"{0}\" for option \"{1}\".",
                     value, UML_INDENTATION.delegate.name);
             return Indentation.DEFAULT;
         }
@@ -218,14 +219,14 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
             for (String[] stdOption : standardOptions) {
                 if (stdOption.length > 1 && "-docEncoding".equalsIgnoreCase(stdOption[0])) {
                     encoding = stdOption[1];
-                    LogSupport.debug("Setting UML file encoding to \"{0}\" from standard Doclet option \"{1}\", because \"{2}\" was not specified.",
+                    debug("Setting UML file encoding to \"{0}\" from standard Doclet option \"{1}\", because \"{2}\" was not specified.",
                             encoding, "-docEncoding", "-" + UML_FILE_ENCODING.delegate.name);
                     break;
                 }
             }
             if (encoding == null) {
                 encoding = "UTF-8";
-                LogSupport.debug("Setting UML file encoding to \"{0}\" by default.", encoding);
+                debug("Setting UML file encoding to \"{0}\" by default.", encoding);
             }
             this.put(UML_FILE_ENCODING, encoding);
         }
@@ -394,28 +395,28 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
 
     public boolean includeClass(ClassDoc classDoc) {
         if (classDoc == null) {
-            LogSupport.warn("Encountered <null> class documentation!");
+            warn("Encountered <null> class documentation!");
             return false;
         }
         boolean included = true;
         final boolean isInnerclass = classDoc.containingClass() != null;
         if (classDoc.isPrivate() && (!includePrivateClasses() || (isInnerclass && !includePrivateInnerclasses()))) {
-            LogSupport.trace("Not including private class \"{0}\".", classDoc.qualifiedName());
+            trace("Not including private class \"{0}\".", classDoc.qualifiedName());
             included = false;
         } else if (classDoc.isPackagePrivate()
                 && (!includePackagePrivateClasses() || isInnerclass && !includePackagePrivateInnerclasses())) {
-            LogSupport.debug("Not including package-private class \"{0}\".", classDoc.qualifiedName());
+            debug("Not including package-private class \"{0}\".", classDoc.qualifiedName());
             included = false;
         } else if (classDoc.isProtected()
                 && (!includeProtectedClasses() || isInnerclass && !includeProtectedInnerclasses())) {
-            LogSupport.debug("Not including protected class \"{0}\".", classDoc.qualifiedName());
+            debug("Not including protected class \"{0}\".", classDoc.qualifiedName());
             included = false;
         } else if (isDeprecated(classDoc) && !includeDeprecatedClasses()) {
-            LogSupport.debug("Not including deprecated class \"{0}\".", classDoc.qualifiedName());
+            debug("Not including deprecated class \"{0}\".", classDoc.qualifiedName());
             included = false;
         }
 
-        LogSupport.trace("{0} class \"{1}\".", included ? "Including" : "Not including", classDoc.qualifiedName());
+        trace("{0} class \"{1}\".", included ? "Including" : "Not including", classDoc.qualifiedName());
         return included;
     }
 

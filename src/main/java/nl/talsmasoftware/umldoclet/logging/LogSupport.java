@@ -17,11 +17,9 @@
 
 package nl.talsmasoftware.umldoclet.logging;
 
-import com.sun.javadoc.Doc;
 import com.sun.javadoc.DocErrorReporter;
 import com.sun.javadoc.SourcePosition;
 
-import java.io.Closeable;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Objects;
@@ -29,13 +27,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Simple support class for logging towards a configured {@link DocErrorReporter}, while still being able to use
+ * convenient logging methods and having to keep track of the <code>position()</code> everywhere in the code.
+ * This is backed by a regular old-fashioned 'java.util.logging.Logger' instance.
+ * The 'doclet-global' configured log-level is also maintained in this logger instance, allowing us a convenient way
+ * to test whether we must actually write to the reporter or not.
+ * Furthermore, it is also used as a 'backup' output when there is no reporter registered (yet). This should not happen
+ * during doclet execution but may occur in exceptional situations during startup.
+ *
  * @author Sjoerd Talsma
  */
 public class LogSupport implements DocErrorReporter {
     private static final Logger LOGGER = Logger.getLogger(LogSupport.class.getName());
 
-    public static final LogSupport INSTANCE = new LogSupport();
-    private static final ThreadLocal<SourcePosition> POS = new ThreadLocal<>();
     private static volatile DocErrorReporter reporter;
 
     public static void setReporter(DocErrorReporter reporter) {
@@ -44,7 +48,8 @@ public class LogSupport implements DocErrorReporter {
 
     /**
      * Sets the loglevel for the doclet.
-     * This supports both the 'slf4j' style levels as the 'java.util.logging' style levels and breaks them up in:
+     * This supports both the 'olg.slf4j' style levels as the 'java.util.logging' style levels and breaks them up into the
+     * following 'java.util.logging' levels:
      * <ol>
      * <li><b><code>FINEST</code></b>, <code>ALL</code>, <code>TRACE</code></li>
      * <li><b><code>FINER</code></b></li>
@@ -104,7 +109,6 @@ public class LogSupport implements DocErrorReporter {
      * @return The formatted message.
      */
     private static String format(String msg, Object... args) {
-        // TODO: add message resourcebundle support
         return MessageFormat.format(msg, args);
     }
 
@@ -128,7 +132,7 @@ public class LogSupport implements DocErrorReporter {
             if (reporter == null) {
                 LOGGER.log(Level.FINEST, format(msg, args), findException(args));
             } else {
-                reporter.printNotice(POS.get(), format(msg, args));
+                reporter.printNotice(GlobalPosition.current(), format(msg, args));
             }
         }
     }
@@ -146,7 +150,7 @@ public class LogSupport implements DocErrorReporter {
             if (reporter == null) {
                 LOGGER.log(Level.FINE, format(msg, args), findException(args));
             } else {
-                reporter.printNotice(POS.get(), format(msg, args));
+                reporter.printNotice(GlobalPosition.current(), format(msg, args));
             }
         }
     }
@@ -165,7 +169,7 @@ public class LogSupport implements DocErrorReporter {
             if (reporter == null) {
                 LOGGER.log(Level.INFO, format(msg, args), findException(args));
             } else {
-                reporter.printNotice(POS.get(), format(msg, args));
+                reporter.printNotice(GlobalPosition.current(), format(msg, args));
             }
         }
     }
@@ -184,7 +188,7 @@ public class LogSupport implements DocErrorReporter {
             if (reporter == null) {
                 LOGGER.log(Level.WARNING, format(msg, args), findException(args));
             } else {
-                reporter.printWarning(POS.get(), format(msg, args));
+                reporter.printWarning(GlobalPosition.current(), format(msg, args));
             }
         }
     }
@@ -202,7 +206,7 @@ public class LogSupport implements DocErrorReporter {
             if (reporter == null) {
                 LOGGER.log(Level.SEVERE, format(msg, args), findException(args));
             } else {
-                reporter.printError(POS.get(), format(msg, args));
+                reporter.printError(GlobalPosition.current(), format(msg, args));
             }
         }
     }
@@ -294,30 +298,4 @@ public class LogSupport implements DocErrorReporter {
         return null;
     }
 
-    /**
-     * For setting a source position within a try-with-resources code block.
-     */
-    public static class GlobalPosition implements Closeable {
-        private final SourcePosition prev = POS.get();
-
-        public GlobalPosition(Doc doc) {
-            this(doc != null ? doc.position() : null);
-        }
-
-        public GlobalPosition(SourcePosition pos) {
-            if (pos != null) setPos(pos);
-        }
-
-        private void setPos(SourcePosition pos) {
-            if (pos == null) {
-                POS.remove();
-            } else {
-                POS.set(pos);
-            }
-        }
-
-        public void close() {
-            setPos(prev);
-        }
-    }
 }
