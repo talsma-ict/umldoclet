@@ -16,7 +16,6 @@
 package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.*;
-import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.logging.LogSupport.GlobalPosition;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
@@ -26,6 +25,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
+import static nl.talsmasoftware.umldoclet.logging.LogSupport.debug;
+import static nl.talsmasoftware.umldoclet.logging.LogSupport.trace;
 import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
 
 /**
@@ -201,17 +202,17 @@ public class ClassRenderer extends ParentAwareRenderer {
         final String packageName = classDoc.containingPackage().name();
         final String packagePrefix = packageName + ".";
         if (!className.startsWith(packagePrefix)) {
-            LogSupport.trace("Cannot simplify classname \"{0}\" as it does not belong in package \"{1}\".", className, packageName);
+            trace("Cannot simplify classname \"{0}\" as it does not belong in package \"{1}\".", className, packageName);
         } else if (className.lastIndexOf('.') >= packagePrefix.length()) {
-            LogSupport.trace("Inner-class \"{0}\" within package \"{1}\" could be simplified but will be left as-is because " +
+            trace("Inner-class \"{0}\" within package \"{1}\" could be simplified but will be left as-is because " +
                             "the remaining dot will make plantUML unable to distinguish the outer class from another package.",
                     className, packageName);
         } else if (diagram.config.alwaysUseQualifiedClassnames()) {
-            LogSupport.debug("Not simplifying classname \"{0}\" to \"{1}\" because doclet parameters told us not to...",
+            debug("Not simplifying classname \"{0}\" to \"{1}\" because doclet parameters told us not to...",
                     className, className.substring(packagePrefix.length()));
         } else {
             String simpleClassname = className.substring(packagePrefix.length());
-            LogSupport.trace("Simplifying class name \"{0}\" to \"{1}\" because it is contained within package \"{2}\"...",
+            trace("Simplifying class name \"{0}\" to \"{1}\" because it is contained within package \"{2}\"...",
                     className, simpleClassname, packageName);
             return simpleClassname;
         }
@@ -239,11 +240,11 @@ public class ClassRenderer extends ParentAwareRenderer {
     protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         try (GlobalPosition gp = new GlobalPosition(classDoc.position())) {
             writeNameTo(out.append(umlType()).whitespace());
-            writeGenericsTo(out);
+            writeGenericsTo(out).whitespace();
             if (isDeprecated(classDoc)) {
-                out.whitespace().append("<<deprecated>>"); // I don't know how to strikethrough a class name!
+                out.append("<<deprecated>>").whitespace(); // I don't know how to strikethrough a class name!
             }
-            writeChildrenTo(out.whitespace().append('{').newline()).append('}').newline().newline();
+            writeChildrenTo(out.append('{').newline()).append('}').newline().newline();
             return writeNotesTo(out);
         }
     }

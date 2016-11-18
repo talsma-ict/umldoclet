@@ -117,7 +117,7 @@ public class IndentingWriter extends Writer {
     public void write(char[] cbuf, int off, int len) throws IOException {
         if (len > 0) {
             synchronized (lock) {
-                if (addWhitespace.compareAndSet(true, false) && !isEol(lastWritten) && !isWhitespace(lastWritten) && !isWhitespace(cbuf[0])) {
+                if (addWhitespace.compareAndSet(true, false) && !isWhitespace(lastWritten) && !isWhitespace(cbuf[0])) {
                     delegate.write(' ');
                 }
                 for (int i = off; i < len; i++) {
