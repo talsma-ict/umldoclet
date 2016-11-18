@@ -26,6 +26,8 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static java.lang.Character.toLowerCase;
+
 /**
  * Simple support class for logging towards a configured {@link DocErrorReporter}, while still being able to use
  * convenient logging methods and having to keep track of the <code>position()</code> everywhere in the code.
@@ -296,6 +298,25 @@ public class LogSupport implements DocErrorReporter {
             }
         }
         return null;
+    }
+
+    /**
+     * This method concatenates the specified parts and separates them by a single space, while making sure that
+     * all but the first non-empty, non-null part starts with a lowercase letter.
+     *
+     * @param parts The parts to concatenate. Nulls and empty string will be skipped.
+     * @return The concatenated string.
+     */
+    public static String concatLowercaseParts(String... parts) {
+        StringBuilder result = new StringBuilder();
+        if (parts != null) for (String part : parts) {
+            part = part != null ? part.trim() : "";
+            if (part.length() > 0) {
+                if (result.length() == 0) result.append(part);
+                else result.append(' ').append(toLowerCase(part.charAt(0))).append(part.substring(1));
+            }
+        }
+        return result.toString();
     }
 
 }

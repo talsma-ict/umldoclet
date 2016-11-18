@@ -123,7 +123,7 @@ public final class Indentation implements CharSequence, Serializable {
      * @throws IOException if thrown by the writer while writing the indentation.
      * @see IndentingWriter
      */
-    public void writeTo(Writer writer) throws IOException {
+    /* package */ void writeTo(Writer writer) throws IOException {
         requireNonNull(writer, "Writer was <null>.").write(buf);
     }
 

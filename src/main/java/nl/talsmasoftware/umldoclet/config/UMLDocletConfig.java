@@ -423,7 +423,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
     /**
      * @return The excluded references which should not be rendered.
      */
-    public synchronized Collection<String> excludedReferences() {
+    public Collection<String> excludedReferences() {
         return UML_EXCLUDED_REFERENCES.value(this);
     }
 
@@ -445,6 +445,18 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
 
     public boolean supportLegacyTags() {
         return true;
+    }
+
+    /**
+     * Internal setting that can be used for troubleshooting fields that are replaced by certain references.
+     * In case references are added, the corresponding fields are 'disabled' (commented out in the class diagram).
+     * This is unnecessary, and these fields should be omitted by default,
+     * however it might be useful for troubleshooting to be able to at least include them commented the .puml output.
+     *
+     * @return Whether 'disabled' fields should be included in the class diagrams (although commented out).
+     */
+    public boolean includeDisabledFields() {
+        return false;
     }
 
     /**

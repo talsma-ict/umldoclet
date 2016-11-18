@@ -215,12 +215,12 @@
                             <additionalparam>
                                 -umlLogLevel DEBUG
                                 -umlImageFormat PNG;SVG
+                                -umlImageDirectory images
                                 -umlBasePath "${project.baseUri}target/test-uml"
                                 -umlSkipStandardDoclet true
                                 -umlCommand "hide empty members"
                                 -umlCommand "hide &lt;&lt;Stereotype&gt;&gt; circle"
                                 -umlIncludeMethodReturntypes true
-                                -umlImageDirectory images
                             </additionalparam>
                         </configuration>
                     </execution>

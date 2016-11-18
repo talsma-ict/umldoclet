@@ -17,13 +17,13 @@ package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.*;
 import nl.talsmasoftware.umldoclet.logging.GlobalPosition;
-import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Objects;
 
 import static java.lang.Character.toLowerCase;
 import static java.util.Objects.requireNonNull;
+import static nl.talsmasoftware.umldoclet.logging.LogSupport.*;
 import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
 
 /**
@@ -61,16 +61,15 @@ public class MethodRenderer extends Renderer {
                 || (methodDoc.isPublic() && !diagram.config.includePublicMethods())
                 || (!diagram.config.includeDeprecatedMethods() && isDeprecated(methodDoc) && !isDeprecated(methodDoc.containingClass()));
 
-        if (LogSupport.isTraceEnabled()) {
-            String designation = methodDoc.isStatic() ? "Static method"
-                    : isDefaultConstructor() ? "Default constructor"
-                    : isConstructor() ? "Constructor"
-                    : isAbstract() ? "Abstract method"
-                    : "Method";
-            if (isDeprecated(methodDoc)) {
-                designation = "Deprecated " + toLowerCase(designation.charAt(0)) + designation.substring(1);
-            }
-            LogSupport.trace("{0} \"{1}{2}\" {3}{4}.",
+        if (isTraceEnabled()) {
+            final String designation = concatLowercaseParts(
+                    isDeprecated(methodDoc) ? "Deprecated" : null,
+                    isAbstract() ? "Abstract" : null,
+                    methodDoc.isStatic() ? "Static" : null,
+                    isDefaultConstructor() ? "Default" : null,
+                    isConstructor() ? "Constructor" : "Method");
+
+            trace("{0} \"{1}{2}\" {3}{4}.",
                     designation,
                     methodDoc.qualifiedName(),
                     methodDoc.flatSignature(),
@@ -191,7 +190,7 @@ public class MethodRenderer extends Renderer {
 //            methodDoc.qualifiedName(), methodDoc.flatSignature(), overriddenClass, ((MethodDoc) methodDoc).overriddenType());
 //}
                 if (diagram.config.excludedReferences().contains(overriddenClass.qualifiedName())) {
-                    LogSupport.trace("Method \"{0}{1}\" overrides method from excluded type \"{2}\".",
+                    trace("Method \"{0}{1}\" overrides method from excluded type \"{2}\".",
                             methodDoc.qualifiedName(), methodDoc.flatSignature(), overriddenClass.qualifiedName());
                     return true;
                 }
@@ -226,6 +225,19 @@ public class MethodRenderer extends Renderer {
                 && Objects.equals(methodDoc.qualifiedName(), ((MethodRenderer) other).methodDoc.qualifiedName())
                 && Objects.equals(methodDoc.flatSignature(), ((MethodRenderer) other).methodDoc.flatSignature())
         );
+    }
+
+    /**
+     * Local utility method to construct field designation ".. Field" by prefixing additional parts as applicable.
+     *
+     * @param prefix  The prefix to be added.
+     * @param current The current value to prefix to.
+     * @return The new prefixed string, where the first character of current is converted into lowercase.
+     */
+    private static String prepend(String prefix, String current) {
+        return prefix == null ? current
+                : current == null || current.length() < 1 ? prefix
+                : prefix.trim() + ' ' + toLowerCase(current.trim().charAt(0)) + current.trim().substring(1);
     }
 
 }

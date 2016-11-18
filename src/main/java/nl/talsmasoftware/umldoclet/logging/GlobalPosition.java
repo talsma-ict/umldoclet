@@ -28,9 +28,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author Sjoerd Talsma
  */
 public class GlobalPosition implements Closeable {
-    private static final ThreadLocal<SourcePosition> GLOBAL_POSITION = new ThreadLocal<>();
+    private static final ThreadLocal<GlobalPosition> GLOBAL_POSITION = new ThreadLocal<>();
 
-    private final SourcePosition prev = GLOBAL_POSITION.get();
+    private final GlobalPosition prev = GLOBAL_POSITION.get();
+    private final SourcePosition pos;
     private final AtomicBoolean closed = new AtomicBoolean(false);
 
     /**
@@ -53,17 +54,19 @@ public class GlobalPosition implements Closeable {
      * @param pos The new 'current' global position (<code>null</code> will be ignored).
      */
     public GlobalPosition(SourcePosition pos) {
-        if (pos != null) setPos(pos);
+        this.pos = pos;
+        if (pos != null) setPos(this);
     }
 
     /**
      * @return The current source position in this doclet or <code>null</code> if unknown.
      */
     public static SourcePosition current() {
-        return GLOBAL_POSITION.get();
+        final GlobalPosition current = GLOBAL_POSITION.get();
+        return current != null ? current.pos : null;
     }
 
-    private void setPos(SourcePosition pos) {
+    private void setPos(GlobalPosition pos) {
         if (pos == null) {
             GLOBAL_POSITION.remove();
         } else {
@@ -74,5 +77,9 @@ public class GlobalPosition implements Closeable {
     public void close() {
         // Close only once:
         if (closed.compareAndSet(false, true)) setPos(prev);
+    }
+
+    public String toString() {
+        return getClass().getSimpleName() + "{closed: " + closed + ", pos: " + pos + '}';
     }
 }

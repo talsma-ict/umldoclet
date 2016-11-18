@@ -3,8 +3,6 @@
     namespace nl.talsmasoftware.umldoclet.rendering {
 
         abstract class Renderer {
-            ' #diagram: DiagramRenderer
-            ' #children: Collection<Renderer>
             #Renderer(DiagramRenderer)
             +writeTo(Writer): Writer
             #writeChildrenTo(IndentingPrintWriter): IndentingPrintWriter
@@ -15,7 +13,6 @@
         }
 
         abstract class ParentAwareRenderer {
-            ' #parent: Renderer
             #ParentAwareRenderer(Renderer)
             ' #getPreviousSibling(): Renderer
             ' #getNextSibling(): Renderer
@@ -93,7 +90,6 @@
         }
 
         class ClassReferenceRenderer {
-            ' #parent: ClassRenderer
             #reference: Reference
             #ClassReferenceRenderer(ClassRenderer, String, String)
             #ClassReferenceRenderer(ClassRenderer, Reference)

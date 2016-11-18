@@ -60,17 +60,14 @@ public class ClassRenderer extends ParentAwareRenderer {
     }
 
     private void addFields() {
-        // static fields come before non-static fields.
         final FieldDoc[] allFields = classDoc.fields(false);
-        final List<FieldRenderer> nonStaticFields = new ArrayList<>(allFields.length);
+        // static fields come before regular (non-static) fields.
+        final List<FieldRenderer> regularFields = new ArrayList<>(allFields.length);
         for (FieldDoc field : allFields) {
-            if (field.isStatic()) {
-                children.add(new FieldRenderer(diagram, field));
-            } else {
-                nonStaticFields.add(new FieldRenderer(diagram, field));
-            }
+            if (field.isStatic()) children.add(new FieldRenderer(diagram, field));
+            else regularFields.add(new FieldRenderer(diagram, field));
         }
-        children.addAll(nonStaticFields);
+        children.addAll(regularFields);
     }
 
     private void addConstructors() {
@@ -81,18 +78,14 @@ public class ClassRenderer extends ParentAwareRenderer {
 
     private void addMethods() {
         final MethodDoc[] allMethods = classDoc.methods(false);
-        List<MethodRenderer> abstractMethods = new ArrayList<>(allMethods.length);
-        for (MethodDoc method : allMethods) {
-            if (method.isAbstract()) {
-                abstractMethods.add(new MethodRenderer(diagram, method));
-            } else {
-                children.add(new MethodRenderer(diagram, method));
-            }
-        }
         // abstract methods come after regular methods in our UML diagrams.
-        if (!abstractMethods.isEmpty()) {
-            children.addAll(abstractMethods);
+        final List<MethodRenderer> abstractMethods = new ArrayList<>(allMethods.length);
+        for (MethodDoc method : allMethods) {
+            final MethodRenderer methodRenderer = new MethodRenderer(diagram, method);
+            if (method.isAbstract()) abstractMethods.add(methodRenderer);
+            else children.add(methodRenderer);
         }
+        children.addAll(abstractMethods);
     }
 
     private Collection<NoteRenderer> findLegacyNoteTags() {
