@@ -46,8 +46,6 @@
             {static} +ASSOC
             {static} +NAVASSOC
             {static} +DEPEND
-            {static} +values(): LegacyTag[]
-            {static} +valueOf(String): LegacyTag
         }
 
         class FieldRenderer {

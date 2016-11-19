@@ -19,9 +19,13 @@ import com.sun.javadoc.*;
 import nl.talsmasoftware.umldoclet.logging.GlobalPosition;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import static java.lang.Character.toLowerCase;
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.requireNonNull;
 import static nl.talsmasoftware.umldoclet.logging.LogSupport.*;
 import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
@@ -35,6 +39,9 @@ import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
  * @author Sjoerd Talsma
  */
 public class MethodRenderer extends Renderer {
+    private static final Set<String> IMPLICIT_ENUM_METHODS = unmodifiableSet(new LinkedHashSet<>(asList(
+            "values()", "valueOf(String)")));
+
     protected final ExecutableMemberDoc methodDoc;
     boolean disabled = false;
 
@@ -93,17 +100,16 @@ public class MethodRenderer extends Renderer {
         if (diagram.config.includeMethodParams()) {
             String separator = "";
             for (Parameter parameter : methodDoc.parameters()) {
-                out.append(separator);
                 if (diagram.config.includeMethodParamNames()) {
-                    out.append(parameter.name());
+                    out.append(separator).append(parameter.name());
                     if (diagram.config.includeMethodParamTypes()) {
-                        out.append(':');
+                        writeTypeTo(out.append(':'), parameter.type());
                     }
+                    separator = ", ";
+                } else if (diagram.config.includeMethodParamTypes()) {
+                    writeTypeTo(out.append(separator), parameter.type());
+                    separator = ", ";
                 }
-                if (diagram.config.includeMethodParamTypes()) {
-                    writeTypeTo(out, parameter.type());
-                }
-                separator = ", ";
             }
         }
         return out;
@@ -181,35 +187,35 @@ public class MethodRenderer extends Renderer {
      */
     private boolean isMethodFromExcludedClass() {
         if (methodDoc instanceof MethodDoc && !diagram.config.includeOverridesFromExcludedReferences()) {
-            ClassDoc overriddenClass = ((MethodDoc) methodDoc).overriddenClass();
-            if (overriddenClass == null) overriddenClass = methodDoc.containingClass();
+            if (isImplicitStaticEnumMethod() && diagram.config.excludedReferences().contains(Enum.class.getName())) {
+                return true;
+            }
 
-            while (overriddenClass != null) {
-//if ("values".equals(methodDoc.name())) {
-//    LogSupport.info("Method \"{0}{1}\" overriddenclass: {2}, overriddentype: {3}",
-//            methodDoc.qualifiedName(), methodDoc.flatSignature(), overriddenClass, ((MethodDoc) methodDoc).overriddenType());
-//}
-                if (diagram.config.excludedReferences().contains(overriddenClass.qualifiedName())) {
+            final MethodDoc md = (MethodDoc) methodDoc;
+            Type originatingType = md.overriddenType() != null ? md.overriddenType() : md.containingClass();
+            while (originatingType instanceof ClassDoc) {
+                final ClassDoc originatingClass = (ClassDoc) originatingType;
+
+                if (diagram.config.excludedReferences().contains(originatingClass.qualifiedName())) {
                     trace("Method \"{0}{1}\" overrides method from excluded type \"{2}\".",
-                            methodDoc.qualifiedName(), methodDoc.flatSignature(), overriddenClass.qualifiedName());
+                            methodDoc.qualifiedName(), methodDoc.flatSignature(), originatingClass.qualifiedName());
                     return true;
                 }
-                MethodDoc foundMethod = findMethod(overriddenClass, methodDoc.name(), methodDoc.flatSignature());
-// TODO: Test how to figure out how to properly exclude java.lang.Enum methods??
-//                if ((foundMethod == null || foundMethod.overriddenClass() == null) && overriddenClass.superclass() != null) {
-//                    foundMethod = findMethod(overriddenClass.superclass(), methodDoc.name(), methodDoc.flatSignature());
-//                }
-                overriddenClass = foundMethod == null ? null : foundMethod.overriddenClass();
+
+                MethodDoc foundMethod = findMethod(originatingClass, methodDoc.name(), methodDoc.flatSignature());
+                originatingType = foundMethod != null && !originatingClass.equals(foundMethod.overriddenType())
+                        ? foundMethod.overriddenType() : null;
             }
-//        } else {
-//            ClassDoc containingClass = methodDoc.containingClass();
-//            while (containingClass != null) {
-//                if (diagram.config.excludedReferences().contains(containingClass.qualifiedName())) {
-//                    LogSupport.trace("Method \"{0}{1}\" overrides method from excluded type \"{2}\".",
-//                            methodDoc.qualifiedName(), methodDoc.flatSignature(), overriddenClass.qualifiedName());
-//                    return true;
-//                }
-//            }
+        }
+        return false;
+    }
+
+    private boolean isImplicitStaticEnumMethod() {
+        if (methodDoc.isStatic() && methodDoc.containingClass().isEnum() && methodDoc instanceof MethodDoc) {
+            boolean implitEnumMethod = IMPLICIT_ENUM_METHODS.contains(methodDoc.name() + methodDoc.flatSignature());
+            trace("Method \"{0}{1}\" {2} an implicit static Enum method.",
+                    methodDoc.qualifiedName(), methodDoc.flatSignature(), implitEnumMethod ? "is" : "is not");
+            return implitEnumMethod;
         }
         return false;
     }

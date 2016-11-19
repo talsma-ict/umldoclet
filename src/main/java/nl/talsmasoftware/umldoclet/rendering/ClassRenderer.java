@@ -197,6 +197,7 @@ public class ClassRenderer extends ParentAwareRenderer {
         if (!className.startsWith(packagePrefix)) {
             trace("Cannot simplify classname \"{0}\" as it does not belong in package \"{1}\".", className, packageName);
         } else if (className.lastIndexOf('.') >= packagePrefix.length()) {
+            // Plant UML does not seem to understand class xyz.Name within a package.
             trace("Inner-class \"{0}\" within package \"{1}\" could be simplified but will be left as-is because " +
                             "the remaining dot will make plantUML unable to distinguish the outer class from another package.",
                     className, packageName);
@@ -205,7 +206,7 @@ public class ClassRenderer extends ParentAwareRenderer {
                     className, className.substring(packagePrefix.length()));
         } else {
             String simpleClassname = className.substring(packagePrefix.length());
-            trace("Simplifying class name \"{0}\" to \"{1}\" because it is contained within package \"{2}\"...",
+            trace("Simplifying class name \"{0}\" to \"{1}\" because it is contained in package \"{2}\"...",
                     className, simpleClassname, packageName);
             return simpleClassname;
         }

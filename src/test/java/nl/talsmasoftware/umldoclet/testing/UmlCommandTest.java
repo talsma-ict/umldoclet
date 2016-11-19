@@ -19,8 +19,8 @@ package nl.talsmasoftware.umldoclet.testing;
 
 import org.junit.Test;
 
-import static nl.talsmasoftware.umldoclet.testing.PatternMatcher.containsPattern;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 
 /**
  * Test whether the UML commands are processed the correct way.
@@ -32,8 +32,8 @@ public class UmlCommandTest {
     @Test
     public void testUmlCommandSetting() {
         String packageUml = Testing.readFile("testing/package.puml");
-        assertThat(packageUml, containsPattern("hide empty members"));
-        assertThat(packageUml, containsPattern("hide <<Stereotype>> circle"));
+        assertThat(packageUml, containsString("hide empty members"));
+        assertThat(packageUml, containsString("hide <<Stereotype>> circle"));
     }
 
 }

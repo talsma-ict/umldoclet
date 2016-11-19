@@ -20,6 +20,7 @@ package nl.talsmasoftware.umldoclet.testing;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.util.Objects.requireNonNull;
@@ -71,6 +72,8 @@ public class PatternMatcher extends TypeSafeMatcher<String> {
 
     @Override
     public boolean matchesSafely(final String string) {
-        return fullMatch ? pattern.matcher(string).matches() : pattern.matcher(string).find();
+        final Matcher matcher = pattern.matcher(string);
+        return fullMatch ? matcher.matches() : matcher.find();
     }
+
 }
