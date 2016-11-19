@@ -17,14 +17,15 @@ package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.FieldDoc;
 import com.sun.javadoc.ProgramElementDoc;
+import nl.talsmasoftware.umldoclet.logging.GlobalPosition;
 import nl.talsmasoftware.umldoclet.logging.LogSupport;
-import nl.talsmasoftware.umldoclet.logging.LogSupport.GlobalPosition;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Objects;
 
-import static java.lang.Character.toLowerCase;
 import static java.util.Objects.requireNonNull;
+import static nl.talsmasoftware.umldoclet.logging.LogSupport.concatLowercaseParts;
+import static nl.talsmasoftware.umldoclet.logging.LogSupport.trace;
 import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
 
 /**
@@ -36,7 +37,7 @@ public class FieldRenderer extends Renderer {
     protected final FieldDoc fieldDoc;
     boolean disabled = false;
 
-    protected FieldRenderer(UMLDiagram diagram, FieldDoc fieldDoc) {
+    protected FieldRenderer(DiagramRenderer diagram, FieldDoc fieldDoc) {
         super(diagram);
         this.fieldDoc = requireNonNull(fieldDoc, "No field documentation provided.");
     }
@@ -56,18 +57,21 @@ public class FieldRenderer extends Renderer {
     }
 
     protected boolean includeField() {
-        boolean exclude = (fieldDoc.isPrivate() && !diagram.config.includePrivateFields())
+        boolean exclude = (disabled && !diagram.config.includeDisabledFields())
+                || (fieldDoc.isPrivate() && !diagram.config.includePrivateFields())
                 || (fieldDoc.isPackagePrivate() && !diagram.config.includePackagePrivateFields())
                 || (fieldDoc.isProtected() && !diagram.config.includeProtectedFields())
                 || (fieldDoc.isPublic() && !diagram.config.includePublicFields()
                 || (!diagram.config.includeDeprecatedFields() && isDeprecated(fieldDoc) && !isDeprecated(fieldDoc.containingClass())));
 
         if (LogSupport.isTraceEnabled()) {
-            String designation = fieldDoc.isStatic() ? "Static field" : "Field";
-            if (isDeprecated(fieldDoc)) {
-                designation = "Deprecated " + toLowerCase(designation.charAt(0)) + designation.substring(1);
-            }
-            LogSupport.trace("{0} \"{1}\" {2}{3} included.",
+            final String designation = concatLowercaseParts(
+                    disabled ? "Disabled" : null,
+                    isDeprecated(fieldDoc) ? "Deprecated" : null,
+                    fieldDoc.isStatic() ? "Static" : null,
+                    "Field");
+
+            trace("{0} \"{1}\" {2}{3} included.",
                     designation,
                     fieldDoc.qualifiedName(),
                     fieldDoc.isPrivate() ? "is private and "
@@ -86,7 +90,7 @@ public class FieldRenderer extends Renderer {
     }
 
     protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
-        try (GlobalPosition gp = new GlobalPosition(fieldDoc.position())) {
+        try (GlobalPosition gp = new GlobalPosition(fieldDoc)) {
             if (includeField()) {
                 if (disabled) out.append("' ");
                 writeAccessibility(out, fieldDoc);

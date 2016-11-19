@@ -16,14 +16,18 @@
 package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.*;
-import nl.talsmasoftware.umldoclet.logging.LogSupport;
-import nl.talsmasoftware.umldoclet.logging.LogSupport.GlobalPosition;
+import nl.talsmasoftware.umldoclet.logging.GlobalPosition;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import static java.lang.Character.toLowerCase;
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.requireNonNull;
+import static nl.talsmasoftware.umldoclet.logging.LogSupport.*;
 import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
 
 /**
@@ -35,10 +39,13 @@ import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
  * @author Sjoerd Talsma
  */
 public class MethodRenderer extends Renderer {
+    private static final Set<String> IMPLICIT_ENUM_METHODS = unmodifiableSet(new LinkedHashSet<>(asList(
+            "values()", "valueOf(String)")));
+
     protected final ExecutableMemberDoc methodDoc;
     boolean disabled = false;
 
-    protected MethodRenderer(UMLDiagram diagram, ExecutableMemberDoc methodDoc) {
+    protected MethodRenderer(DiagramRenderer diagram, ExecutableMemberDoc methodDoc) {
         super(diagram);
         this.methodDoc = requireNonNull(methodDoc, "No method documentation provided.");
     }
@@ -61,16 +68,15 @@ public class MethodRenderer extends Renderer {
                 || (methodDoc.isPublic() && !diagram.config.includePublicMethods())
                 || (!diagram.config.includeDeprecatedMethods() && isDeprecated(methodDoc) && !isDeprecated(methodDoc.containingClass()));
 
-        if (LogSupport.isTraceEnabled()) {
-            String designation = methodDoc.isStatic() ? "Static method"
-                    : isDefaultConstructor() ? "Default constructor"
-                    : isConstructor() ? "Constructor"
-                    : isAbstract() ? "Abstract method"
-                    : "Method";
-            if (isDeprecated(methodDoc)) {
-                designation = "Deprecated " + toLowerCase(designation.charAt(0)) + designation.substring(1);
-            }
-            LogSupport.trace("{0} \"{1}{2}\" {3}{4}.",
+        if (isTraceEnabled()) {
+            final String designation = concatLowercaseParts(
+                    isDeprecated(methodDoc) ? "Deprecated" : null,
+                    isAbstract() ? "Abstract" : null,
+                    methodDoc.isStatic() ? "Static" : null,
+                    isDefaultConstructor() ? "Default" : null,
+                    isConstructor() ? "Constructor" : "Method");
+
+            trace("{0} \"{1}{2}\" {3}{4}.",
                     designation,
                     methodDoc.qualifiedName(),
                     methodDoc.flatSignature(),
@@ -94,17 +100,16 @@ public class MethodRenderer extends Renderer {
         if (diagram.config.includeMethodParams()) {
             String separator = "";
             for (Parameter parameter : methodDoc.parameters()) {
-                out.append(separator);
                 if (diagram.config.includeMethodParamNames()) {
-                    out.append(parameter.name());
+                    out.append(separator).append(parameter.name());
                     if (diagram.config.includeMethodParamTypes()) {
-                        out.append(':');
+                        writeTypeTo(out.append(':'), parameter.type());
                     }
+                    separator = ", ";
+                } else if (diagram.config.includeMethodParamTypes()) {
+                    writeTypeTo(out.append(separator), parameter.type());
+                    separator = ", ";
                 }
-                if (diagram.config.includeMethodParamTypes()) {
-                    writeTypeTo(out, parameter.type());
-                }
-                separator = ", ";
             }
         }
         return out;
@@ -182,16 +187,35 @@ public class MethodRenderer extends Renderer {
      */
     private boolean isMethodFromExcludedClass() {
         if (methodDoc instanceof MethodDoc && !diagram.config.includeOverridesFromExcludedReferences()) {
-            ClassDoc overriddenClass = ((MethodDoc) methodDoc).overriddenClass();
-            while (overriddenClass != null) {
-                if (diagram.config.excludedReferences().contains(overriddenClass.qualifiedName())) {
-                    LogSupport.trace("Method \"{0}{1}\" overrides method from excluded type \"{2}\".",
-                            methodDoc.qualifiedName(), methodDoc.flatSignature(), overriddenClass.qualifiedName());
+            if (isImplicitStaticEnumMethod() && diagram.config.excludedReferences().contains(Enum.class.getName())) {
+                return true;
+            }
+
+            final MethodDoc md = (MethodDoc) methodDoc;
+            Type originatingType = md.overriddenType() != null ? md.overriddenType() : md.containingClass();
+            while (originatingType instanceof ClassDoc) {
+                final ClassDoc originatingClass = (ClassDoc) originatingType;
+
+                if (diagram.config.excludedReferences().contains(originatingClass.qualifiedName())) {
+                    trace("Method \"{0}{1}\" overrides method from excluded type \"{2}\".",
+                            methodDoc.qualifiedName(), methodDoc.flatSignature(), originatingClass.qualifiedName());
                     return true;
                 }
-                MethodDoc foundMethod = findMethod(overriddenClass, methodDoc.name(), methodDoc.flatSignature());
-                overriddenClass = foundMethod == null ? null : foundMethod.overriddenClass();
+
+                MethodDoc foundMethod = findMethod(originatingClass, methodDoc.name(), methodDoc.flatSignature());
+                originatingType = foundMethod != null && !originatingClass.equals(foundMethod.overriddenType())
+                        ? foundMethod.overriddenType() : null;
             }
+        }
+        return false;
+    }
+
+    private boolean isImplicitStaticEnumMethod() {
+        if (methodDoc.isStatic() && methodDoc.containingClass().isEnum() && methodDoc instanceof MethodDoc) {
+            boolean implitEnumMethod = IMPLICIT_ENUM_METHODS.contains(methodDoc.name() + methodDoc.flatSignature());
+            trace("Method \"{0}{1}\" {2} an implicit static Enum method.",
+                    methodDoc.qualifiedName(), methodDoc.flatSignature(), implitEnumMethod ? "is" : "is not");
+            return implitEnumMethod;
         }
         return false;
     }
@@ -207,6 +231,19 @@ public class MethodRenderer extends Renderer {
                 && Objects.equals(methodDoc.qualifiedName(), ((MethodRenderer) other).methodDoc.qualifiedName())
                 && Objects.equals(methodDoc.flatSignature(), ((MethodRenderer) other).methodDoc.flatSignature())
         );
+    }
+
+    /**
+     * Local utility method to construct field designation ".. Field" by prefixing additional parts as applicable.
+     *
+     * @param prefix  The prefix to be added.
+     * @param current The current value to prefix to.
+     * @return The new prefixed string, where the first character of current is converted into lowercase.
+     */
+    private static String prepend(String prefix, String current) {
+        return prefix == null ? current
+                : current == null || current.length() < 1 ? prefix
+                : prefix.trim() + ' ' + toLowerCase(current.trim().charAt(0)) + current.trim().substring(1);
     }
 
 }

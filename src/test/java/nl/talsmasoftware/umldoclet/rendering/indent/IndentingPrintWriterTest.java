@@ -70,4 +70,33 @@ public class IndentingPrintWriterTest {
                         "    Whitespace on beginning of line.")));
     }
 
+    @Test
+    public void testWhitespaceRendering_beforeNewlines() throws IOException {
+        StringWriter output = new StringWriter();
+        final IndentingPrintWriter writer = IndentingPrintWriter.wrap(output, Indentation.DEFAULT);
+        writer.append('-').whitespace().append('\n').flush();
+        assertThat(output, hasToString(equalTo("-\n")));
+        clear(output);
+
+        writer.append('-').whitespace().append('\r').flush();
+        assertThat(output, hasToString(equalTo("-\r")));
+        clear(output);
+    }
+
+    @Test
+    public void testWhitespaceRendering_afterNewlines() throws IOException {
+        StringWriter output = new StringWriter();
+        final IndentingPrintWriter writer = IndentingPrintWriter.wrap(output, Indentation.DEFAULT);
+        writer.append('\n').whitespace().append('-').flush();
+        assertThat(output, hasToString(equalTo("\n-")));
+        clear(output);
+
+        writer.append('\r').whitespace().append('-').flush();
+        assertThat(output, hasToString(equalTo("\r-")));
+        clear(output);
+    }
+
+    static void clear(StringWriter target) {
+        target.getBuffer().delete(0, target.getBuffer().length());
+    }
 }

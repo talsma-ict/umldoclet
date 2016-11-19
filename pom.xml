@@ -8,7 +8,7 @@
     <!-- Artifact identification -->
     <groupId>nl.talsmasoftware</groupId>
     <artifactId>umldoclet</artifactId>
-    <version>1.0.6</version>
+    <version>1.0.7</version>
     <packaging>jar</packaging>
 
     <!-- Project information -->
@@ -53,7 +53,7 @@
         <!-- runtime -->
 
         <!-- optional provided -->
-        <plantuml.version>8048</plantuml.version>
+        <plantuml.version>8050</plantuml.version>
 
         <!-- test -->
         <junit.version>4.12</junit.version>
@@ -213,14 +213,14 @@
                             </docletArtifact>
                             <docencoding>UTF-8</docencoding>
                             <additionalparam>
-                                -umlLogLevel INFO
+                                -umlLogLevel DEBUG
                                 -umlImageFormat PNG;SVG
+                                -umlImageDirectory images
                                 -umlBasePath "${project.baseUri}target/test-uml"
                                 -umlSkipStandardDoclet true
                                 -umlCommand "hide empty members"
                                 -umlCommand "hide &lt;&lt;Stereotype&gt;&gt; circle"
                                 -umlIncludeMethodReturntypes true
-                                -umlImageDirectory images
                             </additionalparam>
                         </configuration>
                     </execution>

@@ -18,6 +18,7 @@ package nl.talsmasoftware.umldoclet.rendering;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.PackageDoc;
 import nl.talsmasoftware.umldoclet.config.UMLDocletConfig;
+import nl.talsmasoftware.umldoclet.logging.GlobalPosition;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Collection;
@@ -31,33 +32,37 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Sjoerd Talsma
  */
-public class UMLDiagram extends Renderer {
+public class DiagramRenderer extends Renderer {
 
     protected final UMLDocletConfig config;
     final Set<String> encounteredTypes = new LinkedHashSet<>();
 
-    public UMLDiagram(UMLDocletConfig config) {
+    public DiagramRenderer(UMLDocletConfig config) {
         super(null);
         this.config = requireNonNull(config, "No UML doclet configuration provided.");
     }
 
-    public UMLDiagram addClass(ClassDoc classDoc) {
-        UMLDiagram classDiagram = new UMLDiagram(config);
-        classDiagram.children.addAll(children);
-        classDiagram.children.add(new ClassRenderer(this, classDoc));
-        addGlobalCommandsTo(classDiagram.children);
-        return classDiagram;
+    public DiagramRenderer addClass(ClassDoc classDoc) {
+        try (GlobalPosition gp = new GlobalPosition(classDoc)) {
+            DiagramRenderer classDiagram = new DiagramRenderer(config);
+            classDiagram.children.addAll(children);
+            classDiagram.children.add(new ClassRenderer(this, classDoc));
+            addGlobalCommandsTo(classDiagram.children);
+            return classDiagram;
+        }
     }
 
-    public UMLDiagram addPackage(PackageDoc packageDoc) {
-        UMLDiagram packageDiagram = new UMLDiagram(config);
-        packageDiagram.children.addAll(children);
-        packageDiagram.children.add(new PackageRenderer(this, packageDoc));
-        addGlobalCommandsTo(packageDiagram.children);
-        return packageDiagram;
+    public DiagramRenderer addPackage(PackageDoc packageDoc) {
+        try (GlobalPosition gp = new GlobalPosition(packageDoc)) {
+            DiagramRenderer packageDiagram = new DiagramRenderer(config);
+            packageDiagram.children.addAll(children);
+            packageDiagram.children.add(new PackageRenderer(this, packageDoc));
+            addGlobalCommandsTo(packageDiagram.children);
+            return packageDiagram;
+        }
     }
 
-    public UMLDiagram addDependencyDiagram(Object dontKnowYet) {
+    public DiagramRenderer addDependencyDiagram(Object dontKnowYet) {
         return this;
     }
 

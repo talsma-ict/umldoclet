@@ -35,13 +35,19 @@ public class IndentingWriter extends Writer {
     private final Indentation indentation;
 
     private final AtomicBoolean addWhitespace = new AtomicBoolean(false);
-    private char lastWritten;
+    private char lastWritten = '\n';
 
-    private IndentingWriter(Writer delegate, Indentation indentation, char lastWritten) {
+    protected IndentingWriter(Writer delegate, Indentation indentation) {
         super(requireNonNull(delegate, "Delegate writer is required."));
         this.delegate = delegate;
         this.indentation = indentation != null ? indentation : Indentation.DEFAULT;
+        // maybe attempt to support extraction of 'lastWritten' from some types of writers?
+    }
+
+    private IndentingWriter(Writer delegate, Indentation indentation, char lastWritten, boolean addWhitespace) {
+        this(delegate, indentation);
         this.lastWritten = lastWritten;
+        this.addWhitespace.set(addWhitespace);
     }
 
     /**
@@ -59,7 +65,7 @@ public class IndentingWriter extends Writer {
      */
     public static IndentingWriter wrap(Writer delegate, Indentation indentation) {
         return delegate instanceof IndentingWriter ? ((IndentingWriter) delegate).withIndentation(indentation)
-                : new IndentingWriter(delegate, indentation, '\n');
+                : new IndentingWriter(delegate, indentation);
     }
 
     /**
@@ -73,7 +79,7 @@ public class IndentingWriter extends Writer {
      */
     public IndentingWriter withIndentation(Indentation newIndentation) {
         return newIndentation == null || this.indentation.equals(newIndentation) ? this
-                : new IndentingWriter(delegate, newIndentation, lastWritten);
+                : new IndentingWriter(delegate, newIndentation, lastWritten, addWhitespace.get());
     }
 
     protected Indentation getIndentation() {
@@ -117,7 +123,7 @@ public class IndentingWriter extends Writer {
     public void write(char[] cbuf, int off, int len) throws IOException {
         if (len > 0) {
             synchronized (lock) {
-                if (addWhitespace.compareAndSet(true, false) && !isEol(lastWritten) && !isWhitespace(lastWritten) && !isWhitespace(cbuf[0])) {
+                if (addWhitespace.compareAndSet(true, false) && !isWhitespace(lastWritten) && !isWhitespace(cbuf[0])) {
                     delegate.write(' ');
                 }
                 for (int i = off; i < len; i++) {

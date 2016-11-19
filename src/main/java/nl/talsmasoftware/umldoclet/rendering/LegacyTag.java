@@ -18,15 +18,16 @@
 package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.ClassDoc;
+import com.sun.javadoc.PackageDoc;
 import com.sun.javadoc.Tag;
 import nl.talsmasoftware.umldoclet.config.UMLDocletConfig;
-import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.model.Reference;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 
+import static nl.talsmasoftware.umldoclet.logging.LogSupport.*;
 import static nl.talsmasoftware.umldoclet.model.Reference.Side.from;
 import static nl.talsmasoftware.umldoclet.model.Reference.Side.to;
 
@@ -43,11 +44,19 @@ public enum LegacyTag {
      * Pattern: &lt;associated class>
      */
     EXTENDS("<|--", 0),
+
     /**
      * Add support for @implements Interface
+     * <p>
+     * Pattern: &lt;associated class>
      */
     IMPLEMENTS("<|..", 0),
 
+    /**
+     * Add support for @assoc
+     * <p>
+     * Pattern: &lt;cardinality> - &lt;cardinality> &lt;assoziated class>
+     */
     ASSOC("--", 3),
 
     /**
@@ -57,6 +66,11 @@ public enum LegacyTag {
      */
     NAVASSOC("<--", 3),
 
+    /**
+     * Add support for @depend
+     * <p>
+     * Pattern: &lt;cardinality> - &lt;cardinality> &lt;assoziated class>
+     */
     DEPEND("<..", 3);
 
     private final String tagname;
@@ -70,50 +84,41 @@ public enum LegacyTag {
     }
 
     private ClassReferenceRenderer createReferenceFrom(final ClassRenderer parent, final Tag tag) {
-        ClassReferenceRenderer refRenderer = null;
         if (parent != null && tag != null) {
             // Split tag content.
             String[] parts = tag.text().trim().split("\\s");
             if (classPos >= parts.length) {
-                LogSupport.trace("No associated class found in @{0} tag \"{1}\".", tagname, tag.text());
-                // TODO: Mark this as a JavaDoc error?
+                warn("No associated class found in legacy @{0} tag \"{1}\".", tagname, tag.text());
                 return null;
             }
 
             // Figure out the referred type name.
-            String referredType = parts[classPos].trim();
-            ClassDoc referenceDoc = parent.classDoc.findClass(referredType);
-            if (referenceDoc != null) {
-                referredType = referenceDoc.qualifiedName();
-            } else if (!referredType.contains(".") && parent.classDoc.containingPackage() != null) { // assume local name
-                referredType = parent.classDoc.containingPackage().name() + "." + referredType;
-            }
+            final ClassDoc referredClassDoc = parent.classDoc.findClass(parts[classPos].trim());
+            final String referredType = referredClassDoc != null ? referredClassDoc.qualifiedName()
+                    : localNameWithinPackage(parts[classPos].trim(), parent.classDoc.containingPackage());
 
             // TODO: Maybe leave this concern to the ReferenceRenderer at rendering time?
             // Check if the type is not excluded from the UML rendering.
             if (parent.diagram.config.excludedReferences().contains(referredType)) {
-                LogSupport.debug("Excluding @{0} tag \"{1}\"; the type is configured as \"excluded\".", tagname, referredType);
+                debug("Excluding @{0} tag \"{1}\"; the type is configured as \"excluded\".", tagname, referredType);
                 return null;
             }
 
-//            refRenderer = referenceDoc == null
-//                    ? new ClassReferenceRenderer(parent, referredType, umlreference)
-//                    : new ClassReferenceRenderer(parent, referenceDoc, umlreference);
-            refRenderer = new ClassReferenceRenderer(parent, referredType, umlreference);
-
-            // Support for Pattern: <cardinality> - <cardinality> <associated class>
-            if (classPos == 3) { // Add optional cardinalities and note.
-                final Reference withCardinalities = new Reference(
-                        from(refRenderer.reference.from.qualifiedName, emptyToNull(parts[2])),
-                        refRenderer.reference.type,
-                        to(refRenderer.reference.to.qualifiedName, emptyToNull(parts[0])),
-                        emptyToNull(parts[1])
-                ).canonical();
-                LogSupport.debug("Added cardinalities from legacy tag: {0}.", withCardinalities);
-                refRenderer = new ClassReferenceRenderer(parent, withCardinalities);
-            }
+            return new ClassReferenceRenderer(parent, new Reference(
+                    from(referredType, emptyToNull(classPos == 3 ? parts[2] : null)),
+                    umlreference,
+                    to(parent.classDoc.qualifiedName(), emptyToNull(classPos == 3 ? parts[0] : null)),
+                    emptyToNull(classPos == 3 ? parts[1] : null)
+            ).canonical());
         }
-        return refRenderer;
+        return null;
+    }
+
+    private static String localNameWithinPackage(String name, PackageDoc packageDoc) {
+        if (name != null && packageDoc != null && !name.contains(".")) { // name doesn't contain '.', assume local name!
+            return packageDoc.name() + "." + name;
+        }
+        return name;
     }
 
     private String emptyToNull(String value) {
@@ -129,14 +134,11 @@ public enum LegacyTag {
                 for (Tag tag : includedClass.classDoc.tags(legacytag.tagname)) {
                     ClassReferenceRenderer refRenderer = legacytag.createReferenceFrom(includedClass, tag);
                     if (refRenderer == null) {
-                        LogSupport.trace("Tag @{0} did not result in a type from \"{1}\"...",
-                                legacytag.tagname, tag.text());
+                        trace("Tag @{0} did not result in a type from \"{1}\"...", legacytag.tagname, tag.text());
                     } else if (legacyReferences.add(refRenderer)) {
-                        LogSupport.trace("Tag @{0} resulted in a \"{1}\" type: {2}.",
-                                legacytag.tagname, legacytag.umlreference, refRenderer.reference);
+                        trace("Tag @{0} resulted in a \"{1}\" type: {2}.", legacytag.tagname, legacytag.umlreference, refRenderer.reference);
                     } else {
-                        LogSupport.trace("Tag @{0} type already existed: {1}.",
-                                legacytag.tagname, refRenderer.reference);
+                        trace("Tag @{0} type already existed: {1}.", legacytag.tagname, refRenderer.reference);
                     }
                 }
             }

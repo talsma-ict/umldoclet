@@ -85,14 +85,14 @@ In ant, the javadoc task needs to be told to use the UML Doclet in a similar way
 </javadoc>
 ```
 
-Make sure a path reference is defined for `umlDoclet.classpath` pointing to `umldoclet-{VERSION}.jar`. It may be a good idea to use [Ivy](http://ant.apache.org/ivy) in this case.   
+Make sure a path reference is defined for `umlDoclet.classpath` pointing to `umldoclet-${project.version}.jar`. It may be a good idea to use [Ivy](http://ant.apache.org/ivy) in this case.   
 Replace `additionalParamName` and `additionalParamValue` with the name and value of each additional parameter you need.  
   
 The additional parameters for this doclet are described below.
 
 ### Commandline
 
-Probably not many people run JavaDoc regularly from the commandline, but in case you do, make sure to provide the options `-doclet nl.talsmasoftware.umldoclet.UMLDoclet` and `-docletpath {PATH_TO_JAR}`, where _{PATH_TO_JAR}_ is the location of the `umldoclet-{VERSION}.jar`.  
+Probably not many people run JavaDoc regularly from the commandline, but in case you do, make sure to provide the options `-doclet nl.talsmasoftware.umldoclet.UMLDoclet` and `-docletpath {PATH_TO_JAR}`, where _{PATH_TO_JAR}_ is the location of the `umldoclet-${project.version}.jar`.  
 The latest version of the jar file can be found on http://repo.maven.apache.org/maven2/nl/talsmasoftware/umldoclet/  
   
 For more details on commandline javadoc, please see the [official documentation from Oracle](http://docs.oracle.com/javase/1.5.0/docs/tooldocs/windows/javadoc.html "Oracle documentation").
@@ -101,6 +101,7 @@ For more details on commandline javadoc, please see the [official documentation 
 
 The UML Doclet supports many additional parameters to be configured.  
 However, please know that all attempts have been made to keep the defaults chosen in such a manner, that the options rarely need to be overridden.
+If you happen to come accross badly chosen default parameters, please let me know by filing a new issue.
 
 | Parameter name + <br> Possible values        | Default value | Description |
 | -------------------------------------------- | ------------- | ----------- |

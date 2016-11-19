@@ -18,8 +18,9 @@ package nl.talsmasoftware.umldoclet;
 import com.sun.javadoc.*;
 import com.sun.tools.doclets.standard.Standard;
 import nl.talsmasoftware.umldoclet.config.UMLDocletConfig;
+import nl.talsmasoftware.umldoclet.logging.GlobalPosition;
 import nl.talsmasoftware.umldoclet.logging.LogSupport;
-import nl.talsmasoftware.umldoclet.rendering.UMLDiagram;
+import nl.talsmasoftware.umldoclet.rendering.DiagramRenderer;
 import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlImageWriter;
 import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlSupport;
 
@@ -58,6 +59,11 @@ public class UMLDoclet extends Standard {
         LogSupport.debug("Initialized {0}...", config);
     }
 
+    /**
+     * Let's assume we support the java version the standard Doclet is made for!
+     *
+     * @return The same language version the Standard doclet also supports.
+     */
     public static LanguageVersion languageVersion() {
         return Standard.languageVersion();
     }
@@ -80,6 +86,7 @@ public class UMLDoclet extends Standard {
         // send us a (correct) JavaDoc ERROR if ran on the same rootDoc 'untouched'...
         // Think about this; Is there some way to 'clone' it and pass the original rootDoc to the
         // Standard doclet??
+        // TODO re-test this issue with the added 'languageVersion()' method.
         if (umlDocletResult && !umlDoclet.config.skipStandardDoclet()) {
             return Standard.start(rootDoc);
         }
@@ -87,12 +94,14 @@ public class UMLDoclet extends Standard {
     }
 
     public boolean generateUMLDiagrams() {
-        try {
-            return generateIndividualClassDiagrams(rootDoc.classes())
-                    && generatePackageDiagrams();
-        } catch (RuntimeException rte) {
-            LogSupport.INSTANCE.printError(rootDoc.position(), rte.getMessage());
-            return false;
+        try (GlobalPosition gp = new GlobalPosition(rootDoc.position())) {
+            try {
+                return generateIndividualClassDiagrams(rootDoc.classes())
+                        && generatePackageDiagrams();
+            } catch (RuntimeException rte) {
+                LogSupport.error(rte.getMessage(), rte);
+                return false;
+            }
         }
     }
 
@@ -101,7 +110,7 @@ public class UMLDoclet extends Standard {
         for (ClassDoc classDoc : classDocs) {
             encounteredPackages.add(classDoc.containingPackage());
             try (Writer out = createWriterForNewClassFile(classDoc)) {
-                new UMLDiagram(config).addClass(classDoc).writeTo(out);
+                new DiagramRenderer(config).addClass(classDoc).writeTo(out);
             } catch (IOException | RuntimeException exception) {
                 String message = String.format("Error writing to %s file for %s: %s",
                         config.umlFileExtension(), classDoc.qualifiedName(), exception.getMessage());
@@ -122,7 +131,7 @@ public class UMLDoclet extends Standard {
         LogSupport.debug("Generating package diagrams for all packages...");
         for (PackageDoc packageDoc : encounteredPackages) {
             try (Writer out = createWriterForNewPackageFile(packageDoc)) {
-                new UMLDiagram(config).addPackage(packageDoc).writeTo(out);
+                new DiagramRenderer(config).addPackage(packageDoc).writeTo(out);
             } catch (IOException | RuntimeException exception) {
                 String message = String.format("Error writing to %s file for package %s: %s",
                         config.umlFileExtension(), packageDoc.name(), exception.getMessage());

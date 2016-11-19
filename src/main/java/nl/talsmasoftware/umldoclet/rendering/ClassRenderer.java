@@ -16,8 +16,7 @@
 package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.*;
-import nl.talsmasoftware.umldoclet.logging.LogSupport;
-import nl.talsmasoftware.umldoclet.logging.LogSupport.GlobalPosition;
+import nl.talsmasoftware.umldoclet.logging.GlobalPosition;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.ArrayList;
@@ -26,6 +25,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
+import static nl.talsmasoftware.umldoclet.logging.LogSupport.debug;
+import static nl.talsmasoftware.umldoclet.logging.LogSupport.trace;
 import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
 
 /**
@@ -40,14 +41,16 @@ public class ClassRenderer extends ParentAwareRenderer {
 
     protected ClassRenderer(Renderer parent, ClassDoc classDoc) {
         super(parent);
-        this.classDoc = requireNonNull(classDoc, "No class documentation provided.");
-        this.notes = findLegacyNoteTags();
+        try (GlobalPosition gp = new GlobalPosition(classDoc)) {
+            this.classDoc = requireNonNull(classDoc, "No class documentation provided.");
+            this.notes = findLegacyNoteTags();
 
-        // Add the various parts of the class UML, order matters here, obviously!
-        addEnumConstants();
-        addFields();
-        addConstructors();
-        addMethods();
+            // Add the various parts of the class UML, order matters here, obviously!
+            addEnumConstants();
+            addFields();
+            addConstructors();
+            addMethods();
+        }
     }
 
     private void addEnumConstants() {
@@ -57,17 +60,14 @@ public class ClassRenderer extends ParentAwareRenderer {
     }
 
     private void addFields() {
-        // static fields come before non-static fields.
         final FieldDoc[] allFields = classDoc.fields(false);
-        final List<FieldRenderer> nonStaticFields = new ArrayList<>(allFields.length);
+        // static fields come before regular (non-static) fields.
+        final List<FieldRenderer> regularFields = new ArrayList<>(allFields.length);
         for (FieldDoc field : allFields) {
-            if (field.isStatic()) {
-                children.add(new FieldRenderer(diagram, field));
-            } else {
-                nonStaticFields.add(new FieldRenderer(diagram, field));
-            }
+            if (field.isStatic()) children.add(new FieldRenderer(diagram, field));
+            else regularFields.add(new FieldRenderer(diagram, field));
         }
-        children.addAll(nonStaticFields);
+        children.addAll(regularFields);
     }
 
     private void addConstructors() {
@@ -78,18 +78,14 @@ public class ClassRenderer extends ParentAwareRenderer {
 
     private void addMethods() {
         final MethodDoc[] allMethods = classDoc.methods(false);
-        List<MethodRenderer> abstractMethods = new ArrayList<>(allMethods.length);
-        for (MethodDoc method : allMethods) {
-            if (method.isAbstract()) {
-                abstractMethods.add(new MethodRenderer(diagram, method));
-            } else {
-                children.add(new MethodRenderer(diagram, method));
-            }
-        }
         // abstract methods come after regular methods in our UML diagrams.
-        if (!abstractMethods.isEmpty()) {
-            children.addAll(abstractMethods);
+        final List<MethodRenderer> abstractMethods = new ArrayList<>(allMethods.length);
+        for (MethodDoc method : allMethods) {
+            final MethodRenderer methodRenderer = new MethodRenderer(diagram, method);
+            if (method.isAbstract()) abstractMethods.add(methodRenderer);
+            else children.add(methodRenderer);
         }
+        children.addAll(abstractMethods);
     }
 
     private Collection<NoteRenderer> findLegacyNoteTags() {
@@ -171,7 +167,7 @@ public class ClassRenderer extends ParentAwareRenderer {
 
     protected String nameOf(String qualifiedClassName) {
         String name = qualifiedClassName;
-        if (parent instanceof UMLDiagram) {
+        if (parent instanceof DiagramRenderer) {
             name = classDoc.name();
         } else if (parent instanceof PackageRenderer) {
             name = simplifyClassnameWithinPackage(name);
@@ -199,17 +195,18 @@ public class ClassRenderer extends ParentAwareRenderer {
         final String packageName = classDoc.containingPackage().name();
         final String packagePrefix = packageName + ".";
         if (!className.startsWith(packagePrefix)) {
-            LogSupport.trace("Cannot simplify classname \"{0}\" as it does not belong in package \"{1}\".", className, packageName);
+            trace("Cannot simplify classname \"{0}\" as it does not belong in package \"{1}\".", className, packageName);
         } else if (className.lastIndexOf('.') >= packagePrefix.length()) {
-            LogSupport.trace("Inner-class \"{0}\" within package \"{1}\" could be simplified but will be left as-is because " +
+            // Plant UML does not seem to understand class xyz.Name within a package.
+            trace("Inner-class \"{0}\" within package \"{1}\" could be simplified but will be left as-is because " +
                             "the remaining dot will make plantUML unable to distinguish the outer class from another package.",
                     className, packageName);
         } else if (diagram.config.alwaysUseQualifiedClassnames()) {
-            LogSupport.debug("Not simplifying classname \"{0}\" to \"{1}\" because doclet parameters told us not to...",
+            debug("Not simplifying classname \"{0}\" to \"{1}\" because doclet parameters told us not to...",
                     className, className.substring(packagePrefix.length()));
         } else {
             String simpleClassname = className.substring(packagePrefix.length());
-            LogSupport.trace("Simplifying class name \"{0}\" to \"{1}\" because it is contained within package \"{2}\"...",
+            trace("Simplifying class name \"{0}\" to \"{1}\" because it is contained in package \"{2}\"...",
                     className, simpleClassname, packageName);
             return simpleClassname;
         }
@@ -237,11 +234,11 @@ public class ClassRenderer extends ParentAwareRenderer {
     protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         try (GlobalPosition gp = new GlobalPosition(classDoc.position())) {
             writeNameTo(out.append(umlType()).whitespace());
-            writeGenericsTo(out);
+            writeGenericsTo(out).whitespace();
             if (isDeprecated(classDoc)) {
-                out.whitespace().append("<<deprecated>>"); // I don't know how to strikethrough a class name!
+                out.append("<<deprecated>>").whitespace(); // I don't know how to strikethrough a class name!
             }
-            writeChildrenTo(out.whitespace().append('{').newline()).append('}').newline().newline();
+            writeChildrenTo(out.append('{').newline()).append('}').newline().newline();
             return writeNotesTo(out);
         }
     }

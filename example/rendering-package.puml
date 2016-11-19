@@ -2,19 +2,8 @@
 
     namespace nl.talsmasoftware.umldoclet.rendering {
 
-        class UMLDiagram {
-            #config: UMLDocletConfig
-            +UMLDiagram(UMLDocletConfig)
-            +addClass(ClassDoc): UMLDiagram
-            +addPackage(PackageDoc): UMLDiagram
-            +addDependencyDiagram(Object): UMLDiagram
-            #writeTo(IndentingPrintWriter): IndentingPrintWriter
-        }
-
         abstract class Renderer {
-            ' #diagram: UMLDiagram
-            ' #children: Collection<Renderer>
-            #Renderer(UMLDiagram)
+            #Renderer(DiagramRenderer)
             +writeTo(Writer): Writer
             #writeChildrenTo(IndentingPrintWriter): IndentingPrintWriter
             #lastChild(): Renderer
@@ -24,7 +13,6 @@
         }
 
         abstract class ParentAwareRenderer {
-            ' #parent: Renderer
             #ParentAwareRenderer(Renderer)
             ' #getPreviousSibling(): Renderer
             ' #getNextSibling(): Renderer
@@ -32,7 +20,7 @@
 
         class PackageRenderer {
             #packageDoc: PackageDoc
-            #PackageRenderer(UMLDiagram, PackageDoc)
+            #PackageRenderer(DiagramRenderer, PackageDoc)
             #writeTo(IndentingPrintWriter): IndentingPrintWriter
         }
 
@@ -44,7 +32,7 @@
 
         class MethodRenderer {
             #methodDoc: ExecutableMemberDoc
-            #MethodRenderer(UMLDiagram, ExecutableMemberDoc)
+            #MethodRenderer(DiagramRenderer, ExecutableMemberDoc)
             #includeMethod(): boolean
             #writeNameTo(IndentingPrintWriter): IndentingPrintWriter
             #writeParametersTo(IndentingPrintWriter): IndentingPrintWriter
@@ -58,22 +46,29 @@
             {static} +ASSOC
             {static} +NAVASSOC
             {static} +DEPEND
-            {static} +values(): LegacyTag[]
-            {static} +valueOf(String): LegacyTag
         }
 
         class FieldRenderer {
             #fieldDoc: FieldDoc
-            #FieldRenderer(UMLDiagram, FieldDoc)
+            #FieldRenderer(DiagramRenderer, FieldDoc)
             #includeFieldType(): boolean
             #includeField(): boolean
             #writeNameTo(IndentingPrintWriter): IndentingPrintWriter
             #writeTo(IndentingPrintWriter): IndentingPrintWriter
         }
 
+        class DiagramRenderer {
+            #config: UMLDocletConfig
+            +DiagramRenderer(UMLDocletConfig)
+            +addClass(ClassDoc): DiagramRenderer
+            +addPackage(PackageDoc): DiagramRenderer
+            +addDependencyDiagram(Object): DiagramRenderer
+            #writeTo(IndentingPrintWriter): IndentingPrintWriter
+        }
+
         class CommandRenderer {
             #command: String
-            #CommandRenderer(UMLDiagram, String)
+            #CommandRenderer(DiagramRenderer, String)
             #writeTo(IndentingPrintWriter): IndentingPrintWriter
         }
 
@@ -93,7 +88,6 @@
         }
 
         class ClassReferenceRenderer {
-            ' #parent: ClassRenderer
             #reference: Reference
             #ClassReferenceRenderer(ClassRenderer, String, String)
             #ClassReferenceRenderer(ClassRenderer, Reference)
@@ -107,8 +101,6 @@
             #ClassPropertyRenderer(ClassRenderer, ClassDoc, String)
         }
 
-        Renderer <|-- UMLDiagram
-
         Renderer <|-- ParentAwareRenderer
 
         Renderer <|-- PackageRenderer
@@ -119,6 +111,8 @@
 
         Renderer <|-- FieldRenderer
 
+        Renderer <|-- DiagramRenderer
+
         Renderer <|-- CommandRenderer
 
         ParentAwareRenderer <|-- ClassRenderer
@@ -127,7 +121,7 @@
 
         ClassReferenceRenderer <|-- ClassPropertyRenderer
 
-        Renderer --> UMLDiagram: diagram
+        Renderer --> DiagramRenderer: diagram
 
         Renderer --> "*" Renderer: children
 

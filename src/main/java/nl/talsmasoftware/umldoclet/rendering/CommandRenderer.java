@@ -31,7 +31,7 @@ import java.util.Objects;
 public class CommandRenderer extends Renderer {
     protected final String command;
 
-    protected CommandRenderer(UMLDiagram currentDiagram, String command) {
+    protected CommandRenderer(DiagramRenderer currentDiagram, String command) {
         super(currentDiagram);
         this.command = Objects.requireNonNull(command, "No command provided.");
     }

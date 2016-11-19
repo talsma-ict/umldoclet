@@ -46,9 +46,9 @@ public class Concatenation<T> implements Iterable<T> {
         Iterator<T> current;
 
         private Iterator<T> current() {
-            if (current == null) current = requireNonNull(iterables[cursor].iterator(), "No current iterator!");
+            if (current == null) current = requireNonNull(iterables[cursor].iterator(), "Current iterator is <null>.");
             while (!current.hasNext() && cursor < iterables.length - 1) {
-                current = requireNonNull(iterables[++cursor].iterator(), "No next iterator!");
+                current = requireNonNull(iterables[++cursor].iterator(), "Next iterator is <null>.");
             }
             return current;
         }

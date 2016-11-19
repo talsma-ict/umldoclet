@@ -37,13 +37,14 @@ import static java.util.Objects.requireNonNull;
  */
 public abstract class Renderer {
 
-    protected final UMLDiagram diagram;
+    protected final DiagramRenderer diagram;
     protected final Collection<Renderer> children = new LinkedHashSet<>();
 
-    protected Renderer(UMLDiagram diagram) {
+    protected Renderer(DiagramRenderer diagram) {
         // Validates the given diagram.
-        // There is only one situation where a <null> diagram is accepted; for the UMLDiagram class itself.
-        this.diagram = requireNonNull(this instanceof UMLDiagram ? (UMLDiagram) this : diagram, "No UML diagram provided.");
+        // There is only one situation where a <null> diagram is accepted; for the DiagramRenderer class itself.
+        this.diagram = requireNonNull(this instanceof DiagramRenderer ? (DiagramRenderer) this
+                : diagram, "Diagram renderer is <null>.");
     }
 
     protected abstract IndentingPrintWriter writeTo(IndentingPrintWriter output);
