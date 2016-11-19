@@ -19,7 +19,6 @@ import com.sun.javadoc.*;
 import com.sun.tools.doclets.standard.Standard;
 import nl.talsmasoftware.umldoclet.config.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.logging.GlobalPosition;
-import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.rendering.DiagramRenderer;
 import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlImageWriter;
 import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlSupport;
@@ -30,6 +29,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import static java.util.Objects.requireNonNull;
+import static nl.talsmasoftware.umldoclet.logging.LogSupport.*;
 
 /**
  * UML doclet that generates <a href="http://plantuml.com">PlantUML</a> class diagrams from your java code just as
@@ -54,9 +54,9 @@ public class UMLDoclet extends Standard {
     public UMLDoclet(RootDoc rootDoc) {
         this.rootDoc = requireNonNull(rootDoc, "No root document received.");
         this.config = new UMLDocletConfig(rootDoc.options(), rootDoc);
-        LogSupport.info("{0} version {1}", getClass().getSimpleName(), config.version());
-        LogSupport.trace("Plantuml {0} detected.", PlantumlSupport.isPlantumlDetected() ? "was" : "was not");
-        LogSupport.debug("Initialized {0}...", config);
+        info("{0} version {1}", getClass().getSimpleName(), config.version());
+        trace("Plantuml {0} detected.", PlantumlSupport.isPlantumlDetected() ? "was" : "was not");
+        debug("Initialized {0}...", config);
     }
 
     /**
@@ -94,57 +94,63 @@ public class UMLDoclet extends Standard {
     }
 
     public boolean generateUMLDiagrams() {
-        try (GlobalPosition gp = new GlobalPosition(rootDoc.position())) {
-            try {
-                return generateIndividualClassDiagrams(rootDoc.classes())
-                        && generatePackageDiagrams();
-            } catch (RuntimeException rte) {
-                LogSupport.error(rte.getMessage(), rte);
-                return false;
-            }
+        try (GlobalPosition gp = new GlobalPosition(rootDoc)) {
+
+            return generateIndividualClassDiagrams(rootDoc.classes())
+                    && generatePackageDiagrams();
+            
+        } catch (RuntimeException rte) {
+            error(rte.getMessage(), rte);
+            return false;
         }
     }
 
     protected boolean generateIndividualClassDiagrams(ClassDoc... classDocs) {
-        LogSupport.debug("Generating class diagrams for all individual classes...");
+        debug("Generating class diagrams for all individual classes...");
         for (ClassDoc classDoc : classDocs) {
             encounteredPackages.add(classDoc.containingPackage());
-            try (Writer out = createWriterForNewClassFile(classDoc)) {
+            try (GlobalPosition gp = new GlobalPosition(classDoc);
+                 Writer out = createWriterForNewClassFile(classDoc)) {
+
                 new DiagramRenderer(config).addClass(classDoc).writeTo(out);
+
             } catch (IOException | RuntimeException exception) {
                 String message = String.format("Error writing to %s file for %s: %s",
                         config.umlFileExtension(), classDoc.qualifiedName(), exception.getMessage());
-                if (LogSupport.isTraceEnabled()) {
+                if (isTraceEnabled()) {
                     StringWriter stacktrace = new StringWriter();
                     exception.printStackTrace(new PrintWriter(stacktrace));
-                    LogSupport.trace("{0}\n{1}", message, stacktrace);
+                    trace("{0}\n{1}", message, stacktrace);
                 }
                 // TODO Log error at current position and return false?
                 throw new IllegalStateException(message, exception);
             }
         }
-        LogSupport.debug("All individual class diagrams have been generated.");
+        debug("All individual class diagrams have been generated.");
         return true;
     }
 
     protected boolean generatePackageDiagrams() {
-        LogSupport.debug("Generating package diagrams for all packages...");
+        debug("Generating package diagrams for all packages...");
         for (PackageDoc packageDoc : encounteredPackages) {
-            try (Writer out = createWriterForNewPackageFile(packageDoc)) {
+            try (GlobalPosition gp = new GlobalPosition(packageDoc);
+                 Writer out = createWriterForNewPackageFile(packageDoc)) {
+
                 new DiagramRenderer(config).addPackage(packageDoc).writeTo(out);
+
             } catch (IOException | RuntimeException exception) {
                 String message = String.format("Error writing to %s file for package %s: %s",
                         config.umlFileExtension(), packageDoc.name(), exception.getMessage());
-                if (LogSupport.isTraceEnabled()) {
+                if (isTraceEnabled()) {
                     StringWriter stacktrace = new StringWriter();
                     exception.printStackTrace(new PrintWriter(stacktrace));
-                    LogSupport.trace("{0}\n{1}", message, stacktrace);
+                    trace("{0}\n{1}", message, stacktrace);
                 }
                 // TODO Log error at current position and return false?
                 throw new IllegalStateException(message, exception);
             }
         }
-        LogSupport.debug("All package diagrams have been generated.");
+        debug("All package diagrams have been generated.");
         return true;
     }
 
@@ -205,12 +211,13 @@ public class UMLDoclet extends Standard {
      * @return The writer to render the UML diagram with.
      * @throws IOException in case there were I/O errors creating a new PlantUML file for opening a Writer to it.
      */
-    private Writer createWriterForUmlFile(File umlDirectory, String umlBaseName, File imgDirectory, String imgBaseName) throws IOException {
+    private Writer createWriterForUmlFile(File umlDirectory, String umlBaseName, File imgDirectory, String imgBaseName)
+            throws IOException {
         File umlFile = requireNonNull(umlDirectory, "Directory was null.");
         if (umlFile.exists() || umlFile.mkdirs()) {
             umlFile = new File(umlFile, umlBaseName + config.umlFileExtension());
             if (umlFile.exists() || umlFile.createNewFile()) {
-                LogSupport.info("Generating {0}...", umlFile);
+                info("Generating {0}...", umlFile);
                 Writer writer = new OutputStreamWriter(new FileOutputStream(umlFile), config.umlFileEncoding());
                 String[] imageFormats = config.imageFormats();
                 if (imageFormats.length > 0 && PlantumlSupport.isPlantumlDetected()) {
