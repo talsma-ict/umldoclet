@@ -64,7 +64,7 @@ public class ClassPropertyRenderer extends ClassReferenceRenderer {
                 final MethodRenderer method = (MethodRenderer) child;
                 final String propertyname = method.propertyName();
                 if (propertyname != null && method.methodDoc instanceof MethodDoc) {
-                    final Type type = ((MethodDoc) method.methodDoc).returnType();
+                    final Type type = method.propertyType();
                     Type propertyType = Model.optionalType(type);
                     String cardinality = propertyType != null ? "0..1" : null;
                     if (propertyType == null) {

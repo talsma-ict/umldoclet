@@ -14,8 +14,6 @@
 
         abstract class ParentAwareRenderer {
             #ParentAwareRenderer(Renderer)
-            ' #getPreviousSibling(): Renderer
-            ' #getNextSibling(): Renderer
         }
 
         class PackageRenderer {
@@ -38,6 +36,7 @@
             #writeParametersTo(IndentingPrintWriter): IndentingPrintWriter
             #writeTo(IndentingPrintWriter): IndentingPrintWriter
             #propertyName(): String
+            #propertyType(): Type
         }
 
         enum LegacyTag {
