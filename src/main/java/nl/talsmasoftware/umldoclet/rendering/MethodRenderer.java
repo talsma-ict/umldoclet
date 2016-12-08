@@ -117,8 +117,8 @@ public class MethodRenderer extends Renderer {
 
     protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         try (GlobalPosition gp = new GlobalPosition(methodDoc.position())) {
-            if (includeMethod()) {
-                if (disabled) out.append("' ");
+            if (includeMethod() && !disabled) {
+                // if (disabled) out.append("' ");
                 if (isAbstract()) {
                     out.append("{abstract}").whitespace();
                 }
@@ -168,9 +168,12 @@ public class MethodRenderer extends Renderer {
             String name = methodDoc.name();
             int len = name != null ? name.length() : 0;
             char[] propname = null;
-            if (len > 3 && (name.startsWith("get") || name.startsWith("set"))) {
+
+            if (len > 3 && name.startsWith("get") && methodDoc.parameters().length == 0) { // prop getXyz()
                 propname = name.substring(3).toCharArray();
-            } else if (len > 2 && name.startsWith("is")) {
+            } else if (len > 3 && name.startsWith("set") && methodDoc.parameters().length == 1) { // setXyz(prop)
+                propname = name.substring(3).toCharArray();
+            } else if (len > 2 && name.startsWith("is") && methodDoc.parameters().length == 0) { // boolean isXyz()
                 propname = name.substring(2).toCharArray();
             }
             if (propname != null && propname.length > 0) {
@@ -179,6 +182,15 @@ public class MethodRenderer extends Renderer {
             }
         }
         return null;
+    }
+
+    protected Type propertyType() {
+        Type propertyType = null;
+        if (propertyName() != null) {
+            propertyType = methodDoc.name().startsWith("set") ? methodDoc.parameters()[0].type()
+                    : ((MethodDoc) methodDoc).returnType();
+        }
+        return propertyType;
     }
 
     /**
@@ -231,19 +243,6 @@ public class MethodRenderer extends Renderer {
                 && Objects.equals(methodDoc.qualifiedName(), ((MethodRenderer) other).methodDoc.qualifiedName())
                 && Objects.equals(methodDoc.flatSignature(), ((MethodRenderer) other).methodDoc.flatSignature())
         );
-    }
-
-    /**
-     * Local utility method to construct field designation ".. Field" by prefixing additional parts as applicable.
-     *
-     * @param prefix  The prefix to be added.
-     * @param current The current value to prefix to.
-     * @return The new prefixed string, where the first character of current is converted into lowercase.
-     */
-    private static String prepend(String prefix, String current) {
-        return prefix == null ? current
-                : current == null || current.length() < 1 ? prefix
-                : prefix.trim() + ' ' + toLowerCase(current.trim().charAt(0)) + current.trim().substring(1);
     }
 
 }

@@ -11,7 +11,7 @@ import static java.util.Objects.requireNonNull;
 import static nl.talsmasoftware.umldoclet.model.Concatenation.append;
 
 /**
- * Model class for a type between two types.
+ * Model class for a reference between two types.
  *
  * @author Sjoerd Talsma
  */
@@ -62,11 +62,10 @@ public class Reference {
      * @return The canonical type that can be used for equality matching.
      */
     public Reference canonical() {
-        if (type.startsWith("<--") || type.startsWith("<..")
-                || type.endsWith("--|>") || type.endsWith("..|>")) {
-            return inverse();
-        }
-        return this;
+        return type.startsWith("<--") || type.startsWith("<..")
+                || type.endsWith("--|>") || type.endsWith("..|>")
+                || type.endsWith("--*") || type.endsWith("--o")
+                ? inverse() : this;
     }
 
     @Override

@@ -55,12 +55,12 @@ public final class Indentation implements CharSequence, Serializable {
     final char ch;
     final char[] buf;
 
-    private Indentation(int width, char ch, int level) {
+    private Indentation(final int width, final char ch, final int level) {
         this.width = width > 0 ? width : 0;
         this.level = level > 0 ? level : 0;
         this.ch = ch;
-        this.buf = new char[width * level];
-        Arrays.fill(this.buf, ch);
+        this.buf = new char[this.width * this.level];
+        Arrays.fill(this.buf, this.ch);
     }
 
     /**
@@ -71,9 +71,7 @@ public final class Indentation implements CharSequence, Serializable {
      * @return The indentation of <code>level</code> tabs.
      */
     public static Indentation tabs(final int level) {
-        return level < 0 ? TABS[0]
-                : level < TABS.length ? TABS[level]
-                : new Indentation(1, '\t', level);
+        return level < TABS.length ? TABS[Math.max(0, level)] : new Indentation(1, '\t', level);
     }
 
     /**
@@ -85,18 +83,18 @@ public final class Indentation implements CharSequence, Serializable {
      * @param level The current indentation level (multiply this with the width for the initial number of spaces).
      * @return The indentation level as <code>level</code> multiples of <code>width</code> spaces.
      */
-    public static Indentation spaces(final int width, final int level) {
-        if (width == 0) return NONE;
-        else if (width == 4 && level < FOUR_SPACES.length) {
-            return level < 0 ? FOUR_SPACES[0] : FOUR_SPACES[level];
-        }
-        return new Indentation(width, ' ', level);
+    public static Indentation spaces(int width, final int level) {
+        final int defaultWidth = DEFAULT.ch == ' ' ? DEFAULT.width : 4;
+        if (width < 0) width = defaultWidth;
+        return width == 0 ? NONE
+                : width == FOUR_SPACES[0].width && level < FOUR_SPACES.length ? FOUR_SPACES[Math.max(0, level)]
+                : new Indentation(width, ' ', level);
     }
 
     private static Indentation resolve(final int width, final char ch, final int level) {
         return width == 0 ? NONE
                 : ch == ' ' ? spaces(width, level)
-                : ch == '\t' && width == 1 ? tabs(level)
+                : width == 1 && ch == '\t' ? tabs(level)
                 : new Indentation(width, ch, level);
     }
 
@@ -104,14 +102,14 @@ public final class Indentation implements CharSequence, Serializable {
      * @return This indentation with the level increased by one.
      */
     public Indentation increase() {
-        return width > 0 ? resolve(width, ch, level + 1) : this;
+        return resolve(width, ch, level + 1);
     }
 
     /**
      * @return This indentation with the level decreased by one (if there was indentation left to decrease).
      */
     public Indentation decrease() {
-        return width > 0 && level > 0 ? resolve(width, ch, level - 1) : this;
+        return resolve(width, ch, level - 1);
     }
 
     /**

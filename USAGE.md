@@ -28,7 +28,7 @@ First tell Maven to generate JavaDoc for your project by declaring the 'maven-ja
                         <docletArtifact>
                             <groupId>nl.talsmasoftware</groupId>
                             <artifactId>umldoclet</artifactId>
-                            <version>1.0.7</version>
+                            <version>1.0.8</version>
                         </docletArtifact>
                         <additionalParam>
                             ...
@@ -57,7 +57,7 @@ configurations {
 }
 
 dependencies {
-    umlDoclet "nl.talsmasoftware:umldoclet:1.0.7"
+    umlDoclet "nl.talsmasoftware:umldoclet:1.0.8"
 }
 
 javadoc {
@@ -85,14 +85,14 @@ In ant, the javadoc task needs to be told to use the UML Doclet in a similar way
 </javadoc>
 ```
 
-Make sure a path reference is defined for `umlDoclet.classpath` pointing to `umldoclet-1.0.7.jar`. It may be a good idea to use [Ivy](http://ant.apache.org/ivy) in this case.   
+Make sure a path reference is defined for `umlDoclet.classpath` pointing to `umldoclet-1.0.8.jar`. It may be a good idea to use [Ivy](http://ant.apache.org/ivy) in this case.   
 Replace `additionalParamName` and `additionalParamValue` with the name and value of each additional parameter you need.  
   
 The additional parameters for this doclet are described below.
 
 ### Commandline
 
-Probably not many people run JavaDoc regularly from the commandline, but in case you do, make sure to provide the options `-doclet nl.talsmasoftware.umldoclet.UMLDoclet` and `-docletpath {PATH_TO_JAR}`, where _{PATH_TO_JAR}_ is the location of the `umldoclet-1.0.7.jar`.  
+Probably not many people run JavaDoc regularly from the commandline, but in case you do, make sure to provide the options `-doclet nl.talsmasoftware.umldoclet.UMLDoclet` and `-docletpath {PATH_TO_JAR}`, where _{PATH_TO_JAR}_ is the location of the `umldoclet-1.0.8.jar`.  
 The latest version of the jar file can be found on http://repo.maven.apache.org/maven2/nl/talsmasoftware/umldoclet/  
   
 For more details on commandline javadoc, please see the [official documentation from Oracle](http://docs.oracle.com/javase/1.5.0/docs/tooldocs/windows/javadoc.html "Oracle documentation").
