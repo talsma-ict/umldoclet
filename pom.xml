@@ -87,14 +87,17 @@
                 </includes>
             </resource>
             <resource>
-                <directory>src/doc</directory>
-                <filtering>true</filtering>
-            </resource>
-            <resource>
                 <directory>src/main/resources</directory>
                 <excludes>
                     <exclude>**/*.properties</exclude>
                 </excludes>
+            </resource>
+            <resource>
+                <directory>${project.basedir}</directory>
+                <includes>
+                    <include>LICENSE</include>
+                    <include>README.md</include>
+                </includes>
             </resource>
         </resources>
         <plugins>
@@ -109,31 +112,12 @@
                             <goal>create</goal>
                         </goals>
                         <configuration>
+                            <revisionOnScmFailure>UNKNOWN</revisionOnScmFailure>
+                            <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
                             <buildNumberPropertyName>git.revision</buildNumberPropertyName>
+                            <scmBranchPropertyName>git.branch</scmBranchPropertyName>
+                            <timestampFormat>{0,date,yyyy-MM-dd'T'HH:mm:ss.SSSZ}</timestampFormat>
                             <timestampPropertyName>build.timestamp</timestampPropertyName>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.7</version>
-                <executions>
-                    <execution>
-                        <id>copy-documentation</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.basedir}</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${project.basedir}/src/doc</directory>
-                                    <filtering>true</filtering>
-                                </resource>
-                            </resources>
                         </configuration>
                     </execution>
                 </executions>
@@ -224,33 +208,6 @@
                                 -umlCommand "hide &lt;&lt;Stereotype&gt;&gt; circle"
                                 -umlIncludeMethodReturntypes true
                             </additionalparam>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.coderplus.maven.plugins</groupId>
-                <artifactId>copy-rename-maven-plugin</artifactId>
-                <version>1.0.1</version>
-                <executions>
-                    <execution>
-                        <id>copy-example-uml</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <overWrite>true</overWrite>
-                            <fileSets>
-                                <fileSet>
-                                    <sourceFile>target/apidocs/nl/talsmasoftware/umldoclet/rendering/package.puml</sourceFile>
-                                    <destinationFile>example/rendering-package.puml</destinationFile>
-                                </fileSet>
-                                <fileSet>
-                                    <sourceFile>target/apidocs/nl/talsmasoftware/umldoclet/rendering/package.svg</sourceFile>
-                                    <destinationFile>example/rendering-package.svg</destinationFile>
-                                </fileSet>
-                            </fileSets>
                         </configuration>
                     </execution>
                 </executions>

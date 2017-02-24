@@ -18,14 +18,9 @@
 package nl.talsmasoftware.umldoclet.config;
 
 import com.sun.javadoc.DocErrorReporter;
-import nl.talsmasoftware.umldoclet.config.AbstractSetting;
-import nl.talsmasoftware.umldoclet.config.UMLDocletConfig;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringWriter;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.regex.Pattern;
@@ -104,7 +99,7 @@ public class UMLDocletConfigTest {
     private static synchronized String usageDocumentation() {
         if (_usageDocumentation == null) {
             final String doc = "USAGE.md";
-            try (Reader reader = new InputStreamReader(UMLDocletConfig.class.getResourceAsStream("/" + doc), "UTF-8")) {
+            try (Reader reader = new InputStreamReader(new FileInputStream(doc), "UTF-8")) {
                 StringWriter writer = new StringWriter();
                 char[] buf = new char[1024];
                 for (int read = reader.read(buf); read >= 0; read = reader.read(buf)) {
