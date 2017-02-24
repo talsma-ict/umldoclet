@@ -3,8 +3,7 @@
 
 # UMLDoclet
 Doclet for the JavaDoc tool that generates UML diagrams from the code.  
-The current version is: `1.0.9-SNAPSHOT`.  
-Released versions can be found in the [maven central repository](http://repo.maven.apache.org/maven2/nl/talsmasoftware/umldoclet/).  
+Released versions can be found in the [maven central repository][maven].  
 
 This doclet uses the analyzed information from the JavaDoc tool.
 It automatically generates UML diagrams from your code as separate 
