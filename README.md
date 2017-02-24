@@ -1,3 +1,6 @@
+[![Build Status][ci-img]][ci]
+[![Released Version][maven-img]][maven]
+
 # UMLDoclet
 Doclet for the JavaDoc tool that generates UML diagrams from the code.  
 The current version is: `1.0.9-SNAPSHOT`.  
@@ -35,3 +38,8 @@ Or, look at the [the generated plantuml source file](example/rendering-package.p
   
 _Thanks for using the doclet, I hope it may be of benefit to your project!_  
 _Also a big thanks go to de developers of the excellent [PlantUML project](http://plantuml.com/)._
+
+  [ci-img]: https://img.shields.io/travis/talsma-ict/umldoclet/master.svg
+  [ci]: https://travis-ci.org/talsma-ict/umldoclet
+  [maven-img]: https://img.shields.io/maven-central/v/nl.talsmasoftware/umldoclet.svg
+  [maven]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22nl.talsmasoftware%22%20AND%20a%3A%22umldoclet%22
