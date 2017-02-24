@@ -8,7 +8,7 @@
     <!-- Artifact identification -->
     <groupId>nl.talsmasoftware</groupId>
     <artifactId>umldoclet</artifactId>
-    <version>1.0.8</version>
+    <version>1.0.9-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <!-- Project information -->
@@ -42,7 +42,8 @@
     <scm>
         <url>https://github.com/talsma-ict/umldoclet.git</url>
         <connection>scm:git:git://github.com/talsma-ict/umldoclet.git</connection>
-        <developerConnection>scm:git:git@github.com:talsma-ict/umldoclet.git</developerConnection>
+        <developerConnection>scm:git:https://github.com/talsma-ict/umldoclet.git</developerConnection>
+        <tag>HEAD</tag>
     </scm>
 
     <properties>
@@ -69,6 +70,7 @@
         <maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>1.5</maven-gpg-plugin.version>
         <maven-scm-plugin.version>1.9</maven-scm-plugin.version>
+        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.6</nexus-staging-maven-plugin.version>
         <buildnumber-maven-plugin.version>1.1</buildnumber-maven-plugin.version>
         <cobertura-maven-plugin.version>2.6</cobertura-maven-plugin.version>
@@ -85,14 +87,17 @@
                 </includes>
             </resource>
             <resource>
-                <directory>src/doc</directory>
-                <filtering>true</filtering>
-            </resource>
-            <resource>
                 <directory>src/main/resources</directory>
                 <excludes>
                     <exclude>**/*.properties</exclude>
                 </excludes>
+            </resource>
+            <resource>
+                <directory>${project.basedir}</directory>
+                <includes>
+                    <include>LICENSE</include>
+                    <include>README.md</include>
+                </includes>
             </resource>
         </resources>
         <plugins>
@@ -107,31 +112,12 @@
                             <goal>create</goal>
                         </goals>
                         <configuration>
+                            <revisionOnScmFailure>UNKNOWN</revisionOnScmFailure>
+                            <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
                             <buildNumberPropertyName>git.revision</buildNumberPropertyName>
+                            <scmBranchPropertyName>git.branch</scmBranchPropertyName>
+                            <timestampFormat>{0,date,yyyy-MM-dd'T'HH:mm:ss.SSSZ}</timestampFormat>
                             <timestampPropertyName>build.timestamp</timestampPropertyName>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.7</version>
-                <executions>
-                    <execution>
-                        <id>copy-documentation</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.basedir}</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${project.basedir}/src/doc</directory>
-                                    <filtering>true</filtering>
-                                </resource>
-                            </resources>
                         </configuration>
                     </execution>
                 </executions>
@@ -227,50 +213,15 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>com.coderplus.maven.plugins</groupId>
-                <artifactId>copy-rename-maven-plugin</artifactId>
-                <version>1.0.1</version>
-                <executions>
-                    <execution>
-                        <id>copy-example-uml</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <overWrite>true</overWrite>
-                            <fileSets>
-                                <fileSet>
-                                    <sourceFile>target/apidocs/nl/talsmasoftware/umldoclet/rendering/package.puml</sourceFile>
-                                    <destinationFile>example/rendering-package.puml</destinationFile>
-                                </fileSet>
-                                <fileSet>
-                                    <sourceFile>target/apidocs/nl/talsmasoftware/umldoclet/rendering/package.svg</sourceFile>
-                                    <destinationFile>example/rendering-package.svg</destinationFile>
-                                </fileSet>
-                            </fileSets>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>${maven-gpg-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                        <configuration>
-                            <gpgArguments>
-                                <gpgArgument>--batch</gpgArgument>
-                            </gpgArguments>
-                        </configuration>
-                    </execution>
-                </executions>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>${maven-release-plugin.version}</version>
+                <configuration>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <releaseProfiles>release</releaseProfiles>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
@@ -299,9 +250,6 @@
     </build>
 
     <dependencies>
-        <!-- Runtime dependencies: -->
-
-        <!-- Optionally provided dependencies: -->
         <dependency>
             <groupId>net.sourceforge.plantuml</groupId>
             <artifactId>plantuml</artifactId>
@@ -310,7 +258,15 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Test dependencies: -->
+        <dependency>
+            <!-- This will probably break after jigsaw becomes mainstream? -->
+            <groupId>com.sun</groupId>
+            <artifactId>tools</artifactId>
+            <version>${build.java.version}</version>
+            <scope>system</scope>
+            <systemPath>${java.home}/../lib/tools.jar</systemPath>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -372,19 +328,33 @@
 
     <profiles>
         <profile>
-            <id>default-tools.jar</id>
+            <id>release</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>com.sun</groupId>
-                    <artifactId>tools</artifactId>
-                    <version>${build.java.version}</version>
-                    <scope>system</scope>
-                    <systemPath>${java.home}/../lib/tools.jar</systemPath>
-                </dependency>
-            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven-gpg-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <gpgArguments>
+                                        <gpgArgument>--batch</gpgArgument>
+                                    </gpgArguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>
