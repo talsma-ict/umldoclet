@@ -71,7 +71,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
         UML_INCLUDE_PRIVATE_INNERCLASSES("umlIncludePrivateInnerClasses", false),
         UML_INCLUDE_PACKAGE_PRIVATE_INNERCLASSES("umlIncludePackagePrivateInnerClasses", false),
         UML_INCLUDE_PROTECTED_INNERCLASSES("umlIncludeProtectedInnerClasses", false),
-        UML_EXCLUDED_REFERENCES(new ListSetting("umlExcludedReferences", "java.lang.Object", "java.lang.Enum")),
+        UML_EXCLUDED_REFERENCES(new ListSetting("umlExcludedReferences", "java.lang.Object", "java.lang.Enum", "java.lang.annotation.Annotation")),
         UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES("umlIncludeOverridesFromExcludedReferences", false),
         UML_PACKAGE_DEPENDENCIES("umlPackageDependencies", true),
         UML_COMMAND(new ListSetting("umlCommand")),

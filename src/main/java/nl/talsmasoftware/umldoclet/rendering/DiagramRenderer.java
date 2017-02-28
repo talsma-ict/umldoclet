@@ -46,7 +46,7 @@ public class DiagramRenderer extends Renderer {
         try (GlobalPosition gp = new GlobalPosition(classDoc)) {
             DiagramRenderer classDiagram = new DiagramRenderer(config);
             classDiagram.children.addAll(children);
-            classDiagram.children.add(new ClassRenderer(this, classDoc));
+            classDiagram.children.add(ClassRenderer.create(this, classDoc));
             addGlobalCommandsTo(classDiagram.children);
             return classDiagram;
         }

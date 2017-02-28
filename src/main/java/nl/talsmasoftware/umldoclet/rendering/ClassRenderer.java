@@ -53,6 +53,11 @@ public class ClassRenderer extends ParentAwareRenderer {
         }
     }
 
+    static ClassRenderer create(Renderer parent, ClassDoc classDoc) {
+        if (classDoc.isAnnotationType()) return new AnnotationRenderer(parent, classDoc);
+        return new ClassRenderer(parent, classDoc);
+    }
+
     private void addEnumConstants() {
         for (FieldDoc enumConstant : classDoc.enumConstants()) {
             children.add(new FieldRenderer(diagram, enumConstant));
@@ -113,6 +118,7 @@ public class ClassRenderer extends ParentAwareRenderer {
     protected static String umlTypeOf(ClassDoc classDoc) {
         return classDoc.isEnum() ? "enum"
                 : classDoc.isInterface() ? "interface"
+                : classDoc.isAnnotationType() ? "annotation"
                 : classDoc.isAbstract() ? "abstract class"
                 : "class";
     }

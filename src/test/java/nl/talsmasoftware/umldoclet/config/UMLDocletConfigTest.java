@@ -19,6 +19,7 @@ import com.sun.javadoc.DocErrorReporter;
 import org.junit.Test;
 
 import java.io.*;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.regex.Pattern;
@@ -48,7 +49,7 @@ public class UMLDocletConfigTest {
     public void testSplitDefaultValue() {
         UMLDocletConfig config = new UMLDocletConfig(new String[0][], mock(DocErrorReporter.class));
         assertThat(config.excludedReferences(), is(equalTo((Collection<String>) asList(
-                Object.class.getName(), Enum.class.getName()
+                Object.class.getName(), Enum.class.getName(), Annotation.class.getName()
         ))));
     }
 
