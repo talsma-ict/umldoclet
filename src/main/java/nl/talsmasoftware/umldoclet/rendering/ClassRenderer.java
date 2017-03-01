@@ -46,6 +46,7 @@ public class ClassRenderer extends ParentAwareRenderer {
             this.notes = findLegacyNoteTags();
 
             // Add the various parts of the class UML, order matters here, obviously!
+            addClassHyperlink();
             addEnumConstants();
             addFields();
             addConstructors();
@@ -56,6 +57,26 @@ public class ClassRenderer extends ParentAwareRenderer {
     static ClassRenderer create(Renderer parent, ClassDoc classDoc) {
         if (classDoc.isAnnotationType()) return new AnnotationRenderer(parent, classDoc);
         return new ClassRenderer(parent, classDoc);
+    }
+
+    // EXPERIMENTAL Re: feature #28
+    private void addClassHyperlink() {
+        if (!diagram.config.skipStandardDoclet()) {
+            final StringBuilder path = new StringBuilder();
+            if (diagram.config.imageDirectory() != null) { // TODO factor out path logic.
+                for (String part : diagram.config.imageDirectory().trim().split("\\s*/\\s*")) {
+                    if (!part.isEmpty()) path.append("../");
+                }
+                path.append(classDoc.containingPackage().name().replace('.', '/') + '/');
+            }
+            final String htmlFile = classDoc.name() + ".html";
+            children.add(new Renderer(diagram) {
+                @Override
+                protected IndentingPrintWriter writeTo(IndentingPrintWriter output) {
+                    return output.append("[[").append(path).append(htmlFile).append("]]").newline();
+                }
+            });
+        }
     }
 
     private void addEnumConstants() {
