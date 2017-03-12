@@ -59,15 +59,12 @@ public class ClassRenderer extends ParentAwareRenderer {
         return new ClassRenderer(parent, classDoc);
     }
 
-    // EXPERIMENTAL Re: feature #28
     private void addClassHyperlink() {
         if (!diagram.config.skipStandardDoclet()) {
             final StringBuilder path = new StringBuilder();
-            if (diagram.config.imageDirectory() != null) { // TODO factor out path logic.
-                for (String part : diagram.config.imageDirectory().trim().split("\\s*/\\s*")) {
-                    if (!part.isEmpty()) path.append("../");
-                }
-                path.append(classDoc.containingPackage().name().replace('.', '/') + '/');
+            if (diagram.config.imageDirectory() != null) {
+                for (int i = countPathComponents(diagram.config.imageDirectory()); i > 0; i--) path.append("../");
+                path.append(classDoc.containingPackage().name().replace('.', '/')).append('/');
             }
             final String htmlFile = classDoc.name() + ".html";
             children.add(new Renderer(diagram) {
@@ -279,6 +276,12 @@ public class ClassRenderer extends ParentAwareRenderer {
     public boolean equals(Object other) {
         return this == other || (other != null && ClassRenderer.class.equals(other.getClass())
                 && Objects.equals(classDoc.qualifiedName(), ((ClassRenderer) other).classDoc.qualifiedName()));
+    }
+
+    private static int countPathComponents(String path) {
+        int count = 0;
+        for (String part : path.trim().split("\\s*/\\s*")) if (!part.isEmpty()) count++;
+        return count;
     }
 
 }

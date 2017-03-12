@@ -41,7 +41,23 @@ public class Testing {
      * @return The content of the file (using UTF-8 encoding).
      */
     public static String readFile(String name) {
-        try (Reader in = new InputStreamReader(new FileInputStream("target/test-uml/nl/talsmasoftware/umldoclet/" + name), "UTF-8")) {
+        try (InputStream in = new FileInputStream("target/test-uml/nl/talsmasoftware/umldoclet/" + name)) {
+            return readUml(in);
+        } catch (Exception e) {
+            throw new IllegalStateException(String.format("Cannot read from \"%s\": %s.", name, e.getMessage()), e);
+        }
+    }
+
+    public static String readClassUml(Class<?> type) {
+        try (InputStream in = new FileInputStream("target/apidocs/" + type.getName().replace('.', '/') + ".puml")) {
+            return readUml(in);
+        } catch (Exception e) {
+            throw new IllegalStateException("Cannot read .puml file of " + type, e);
+        }
+    }
+
+    public static String readUml(InputStream inputStream) {
+        try (Reader in = new InputStreamReader(inputStream, "UTF-8")) {
             StringWriter out = new StringWriter();
             char[] buf = new char[1024];
             for (int read = in.read(buf); read >= 0; read = in.read(buf)) {
@@ -49,7 +65,7 @@ public class Testing {
             }
             return out.toString();
         } catch (IOException ioe) {
-            throw new IllegalStateException(String.format("Cannot read from \"%s\": %s.", name, ioe.getMessage()), ioe);
+            throw new IllegalStateException("Cannot read from stream: " + ioe.getMessage(), ioe);
         }
     }
 
