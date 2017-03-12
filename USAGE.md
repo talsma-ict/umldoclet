@@ -47,7 +47,7 @@ First tell Maven to generate JavaDoc for your project by declaring the 'maven-ja
 ```
 
 Here `VERSION` should be replaced with the version of the doclet you wish to use
-(please see [Maven central][maven] for released versions).  
+(please see [maven central][maven] for released versions).  
 There are many ways to tune the detail of the UML diagrams.  
 These can be provided as additional parameters within the `additionalParam` tag,
 (each parameter may be on a new line within the XML).  
@@ -77,7 +77,7 @@ javadoc {
 ```
 
 Here `VERSION` should be replaced with the version of the doclet you wish to use
-(please see [Maven central][maven] for released versions).  
+(please see [maven central][maven] for released versions).  
 Replace `additionalParamName` and `additionalParamValue` with the name and value of each additional parameter you need.  
 _Note:_ The initial dash `-` of additional parameters will automatically be added by the Gradle javadoc task and should therefore be omitted from the configuration.  
   
@@ -106,7 +106,7 @@ The additional parameters for this doclet are described below.
 Probably not many people run JavaDoc regularly from the commandline, but in case you do, 
 make sure to provide the options `-doclet nl.talsmasoftware.umldoclet.UMLDoclet` 
 and `-docletpath {PATH_TO_JAR}`, where _{PATH_TO_JAR}_ is the location of the `umldoclet-x.y.z.jar`.  
-The latest version of the jar file can be found on http://repo.maven.apache.org/maven2/nl/talsmasoftware/umldoclet/  
+The latest version of the jar file can be found on [maven central][maven].  
   
 For more details on commandline javadoc, please see the [official documentation from Oracle](http://docs.oracle.com/javase/1.5.0/docs/tooldocs/windows/javadoc.html "Oracle documentation").
 
@@ -148,7 +148,7 @@ If you happen to come accross badly chosen default parameters, please let me kno
 | -umlIncludePrivateInnerClasses <br> _boolean_ | `false`      | Whether `private` inner-classes will be included in the rendered diagrams. |
 | -umlIncludePackagePrivateInnerClasses <br> _boolean_ | `false` | Whether `package-private` inner-classes will be included in the rendered diagrams. |
 | -umlIncludeProtectedInnerClasses <br> _boolean_ | `false`    | Whether `protected` inner-classes will be included in the rendered diagrams. |
-| -umlExcludedReferences <br> list of classes  | `java.lang.Object`, `java.lang.Enum`, `java.lang.annotation.Annotation` | List of classes that will not be rendered as an external reference in the diagrams. Please mind that this value must be enclosed in quotes or there should be no spaces in this setting for the JavaDoc tool to be able to parse this as a single value. |
+| -umlExcludedReferences <br> list of classes  | Standard java `Object`, `Enum`, `Annotation` | List of classes that will not be rendered as an external reference in the diagrams. Please mind that this value must be enclosed in quotes or there should be no spaces in this setting for the JavaDoc tool to be able to parse this as a single value. |
 | -umlIncludeOverridesFromExcludedReferences <br> _boolean_ | `false` | Whether inherited methods from classes defined in `-umlExcludedReferences` should be rendered in the diagrams. |
 | -umlCommand <br> _commands_                  | _none_        | This setting allows custom `commands` to be added to the diagrams. Commands containing whitespaces must be provided within double-quotes. Multiple commands can be specified by specifying the `-umlCommand` parameter repeatedly. An example value could be a `-umlCommand "hide class circle"` parameter and a `-umlCommand "hide empty members"` to hide class circles and empty members (be sure to include the quotes). For more information, please see (http://plantuml.com/classes.html). |
 | Since _version 1.0.1_:                       |||
