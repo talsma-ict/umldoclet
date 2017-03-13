@@ -3,6 +3,7 @@
     namespace nl.talsmasoftware.umldoclet.rendering {
 
         abstract class Renderer {
+            [[Renderer.html]]
             #Renderer(DiagramRenderer)
             +writeTo(Writer): Writer
             #writeChildrenTo(IndentingPrintWriter): IndentingPrintWriter
@@ -13,22 +14,26 @@
         }
 
         abstract class ParentAwareRenderer {
+            [[ParentAwareRenderer.html]]
             #ParentAwareRenderer(Renderer)
         }
 
         class PackageRenderer {
+            [[PackageRenderer.html]]
             #packageDoc: PackageDoc
             #PackageRenderer(DiagramRenderer, PackageDoc)
             #writeTo(IndentingPrintWriter): IndentingPrintWriter
         }
 
         class NoteRenderer {
+            [[NoteRenderer.html]]
             #note: String
             #NoteRenderer(Renderer, String)
             #writeTo(IndentingPrintWriter): IndentingPrintWriter
         }
 
         class MethodRenderer {
+            [[MethodRenderer.html]]
             #methodDoc: ExecutableMemberDoc
             #MethodRenderer(DiagramRenderer, ExecutableMemberDoc)
             #includeMethod(): boolean
@@ -40,6 +45,7 @@
         }
 
         enum LegacyTag {
+            [[LegacyTag.html]]
             {static} +EXTENDS
             {static} +IMPLEMENTS
             {static} +ASSOC
@@ -48,6 +54,7 @@
         }
 
         class FieldRenderer {
+            [[FieldRenderer.html]]
             #fieldDoc: FieldDoc
             #FieldRenderer(DiagramRenderer, FieldDoc)
             #includeFieldType(): boolean
@@ -57,6 +64,7 @@
         }
 
         class DiagramRenderer {
+            [[DiagramRenderer.html]]
             #config: UMLDocletConfig
             +DiagramRenderer(UMLDocletConfig)
             +addClass(ClassDoc): DiagramRenderer
@@ -66,12 +74,14 @@
         }
 
         class CommandRenderer {
+            [[CommandRenderer.html]]
             #command: String
             #CommandRenderer(DiagramRenderer, String)
             #writeTo(IndentingPrintWriter): IndentingPrintWriter
         }
 
         class ClassRenderer {
+            [[ClassRenderer.html]]
             #classDoc: ClassDoc
             #ClassRenderer(Renderer, ClassDoc)
             #umlType(): String
@@ -87,6 +97,7 @@
         }
 
         class ClassReferenceRenderer {
+            [[ClassReferenceRenderer.html]]
             #reference: Reference
             #ClassReferenceRenderer(ClassRenderer, String, String)
             #ClassReferenceRenderer(ClassRenderer, Reference)
@@ -97,10 +108,12 @@
         }
 
         class ClassPropertyRenderer {
+            [[ClassPropertyRenderer.html]]
             #ClassPropertyRenderer(ClassRenderer, ClassDoc, String)
         }
 
         class AnnotationRenderer {
+            [[AnnotationRenderer.html]]
             #AnnotationRenderer(Renderer, ClassDoc)
             #writeTo(IndentingPrintWriter): IndentingPrintWriter
         }
