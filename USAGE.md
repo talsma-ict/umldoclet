@@ -159,6 +159,8 @@ If you happen to come accross badly chosen default parameters, please let me kno
 | -umlImageDirectory <br> image directory      | _none_        | The (single) directory where all images will be generated to. By default images are placed in the directory containing their package documentation. When a single directory is configured for the images, the filename for the image will include the full package names (for more details, see [enhancement 25](https://github.com/talsma-ict/umldoclet/issues/25) ). |
 | Since _version 1.0.5_:                       |||
 | -umlPackageDependencies <br> _boolean_       | `true`        | Whether properties are replaced by dependencies if the type is known in the diagram. |
+| Since _version 1.0.9_:                       |||
+| -umlIncludeHyperlinks <br> _boolean_         | !umlSkipStandardDoclet | Whether hyperlinks to regular JavaDoc should be included in the generated uml. |
 
 
   [maven-img]: https://img.shields.io/maven-central/v/nl.talsmasoftware/umldoclet.svg

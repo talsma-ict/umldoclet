@@ -60,7 +60,7 @@ public class ClassRenderer extends ParentAwareRenderer {
     }
 
     private void addClassHyperlink() {
-        if (!diagram.config.skipStandardDoclet()) {
+        if (diagram.config.includeHyperlinks()) {
             final StringBuilder path = new StringBuilder();
             if (diagram.config.imageDirectory() != null) {
                 for (int i = countPathComponents(diagram.config.imageDirectory()); i > 0; i--) path.append("../");

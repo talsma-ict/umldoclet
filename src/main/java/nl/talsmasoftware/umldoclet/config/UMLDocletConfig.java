@@ -1,12 +1,12 @@
 /**
  * Copyright 2016-2017 Talsma ICT
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,7 +40,7 @@ import static nl.talsmasoftware.umldoclet.rendering.indent.Indentation.tabs;
  */
 public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
 
-    public enum Setting {
+    enum Setting {
         UML_LOGLEVEL("umlLogLevel", "INFO"),
         UML_INDENTATION("umlIndentation", "-1"),
         UML_BASE_PATH("umlBasePath", "."),
@@ -74,6 +74,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
         UML_EXCLUDED_REFERENCES(new ListSetting("umlExcludedReferences", "java.lang.Object", "java.lang.Enum", "java.lang.annotation.Annotation")),
         UML_INCLUDE_OVERRIDES_FROM_EXCLUDED_REFERENCES("umlIncludeOverridesFromExcludedReferences", false),
         UML_PACKAGE_DEPENDENCIES("umlPackageDependencies", true),
+        UML_INCLUDE_HYPERLINKS("umlIncludeHyperlinks", null),
         UML_COMMAND(new ListSetting("umlCommand")),
         UML_ALWAYS_USE_QUALIFIED_CLASSNAMES("umlAlwaysUseQualifiedClassnames", false),
         UML_IMAGE_FORMAT(new ListSetting("umlImageFormat")),
@@ -390,6 +391,12 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
 
     private boolean includeProtectedInnerclasses() {
         return UML_INCLUDE_PROTECTED_INNERCLASSES.value(this);
+    }
+
+    public boolean includeHyperlinks() {
+        // Hyperlinks are included when explicitly configured or when the standard doclet is not skipped.
+        String explicit = UML_INCLUDE_HYPERLINKS.value(this);
+        return explicit != null ? Boolean.valueOf(explicit) : !skipStandardDoclet();
     }
 
     public boolean includeClass(ClassDoc classDoc) {
