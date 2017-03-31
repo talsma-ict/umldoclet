@@ -1,4 +1,4 @@
-sudo: required
+sudo: false
 dist: trusty
 
 language: java
@@ -9,6 +9,7 @@ addons:
   apt:
     packages:
       - graphviz
+
 cache:
   directories:
   - $HOME/.m2/repository
