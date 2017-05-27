@@ -35,9 +35,9 @@ First tell Maven to generate JavaDoc for your project by declaring the 'maven-ja
                             <artifactId>umldoclet</artifactId>
                             <version>VERSION</version>
                         </docletArtifact>
-                        <additionalParam>
+                        <additionalparam>
                             ...
-                        </additionalParam>
+                        </additionalparam>
                     </configuration>
                 </execution>
             </executions>
