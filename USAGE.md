@@ -49,7 +49,7 @@ First tell Maven to generate JavaDoc for your project by declaring the 'maven-ja
 Here `VERSION` should be replaced with the version of the doclet you wish to use
 (please see [maven central][maven] for released versions).  
 There are many ways to tune the detail of the UML diagrams.  
-These can be provided as additional parameters within the `additionalParam` tag,
+These can be provided as additional parameters within the `additionalparam` tag,
 (each parameter may be on a new line within the XML).  
 The additional parameters for this doclet are described below.
 
