@@ -23,7 +23,7 @@
     <!-- Artifact identification -->
     <groupId>nl.talsmasoftware</groupId>
     <artifactId>umldoclet</artifactId>
-    <version>1.0.10</version>
+    <version>1.0.11-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <!-- Project information -->
@@ -58,7 +58,7 @@
         <url>https://github.com/talsma-ict/umldoclet.git</url>
         <connection>scm:git:git://github.com/talsma-ict/umldoclet.git</connection>
         <developerConnection>scm:git:https://github.com/talsma-ict/umldoclet.git</developerConnection>
-        <tag>1.0.10</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <properties>
