@@ -16,16 +16,14 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
     <!-- Artifact identification -->
     <groupId>nl.talsmasoftware</groupId>
     <artifactId>umldoclet</artifactId>
-    <version>1.0.10-SNAPSHOT</version>
+    <version>1.0.10</version>
     <packaging>jar</packaging>
 
     <!-- Project information -->
@@ -60,7 +58,7 @@
         <url>https://github.com/talsma-ict/umldoclet.git</url>
         <connection>scm:git:git://github.com/talsma-ict/umldoclet.git</connection>
         <developerConnection>scm:git:https://github.com/talsma-ict/umldoclet.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>1.0.10</tag>
     </scm>
 
     <properties>
