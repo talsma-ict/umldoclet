@@ -37,6 +37,7 @@ import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
 public class ClassRenderer extends ParentAwareRenderer {
 
     protected final ClassDoc classDoc;
+    private final String classHyperlink;
     private final Collection<NoteRenderer> notes;
 
     protected ClassRenderer(Renderer parent, ClassDoc classDoc) {
@@ -44,9 +45,9 @@ public class ClassRenderer extends ParentAwareRenderer {
         try (GlobalPosition gp = new GlobalPosition(classDoc)) {
             this.classDoc = requireNonNull(classDoc, "No class documentation provided.");
             this.notes = findLegacyNoteTags();
+            this.classHyperlink = determineClassHyperlink();
 
             // Add the various parts of the class UML, order matters here, obviously!
-            addClassHyperlink();
             addEnumConstants();
             addFields();
             addConstructors();
@@ -59,21 +60,16 @@ public class ClassRenderer extends ParentAwareRenderer {
         return new ClassRenderer(parent, classDoc);
     }
 
-    private void addClassHyperlink() {
+    private String determineClassHyperlink() {
         if (diagram.config.includeHyperlinks()) {
             final StringBuilder path = new StringBuilder();
             if (diagram.config.imageDirectory() != null) {
                 for (int i = countPathComponents(diagram.config.imageDirectory()); i > 0; i--) path.append("../");
                 path.append(classDoc.containingPackage().name().replace('.', '/')).append('/');
             }
-            final String htmlFile = classDoc.name() + ".html";
-            children.add(new Renderer(diagram) {
-                @Override
-                protected IndentingPrintWriter writeTo(IndentingPrintWriter output) {
-                    return output.append("[[").append(path).append(htmlFile).append("]]").newline();
-                }
-            });
+            return path.append(classDoc.name()).append(".html").toString();
         }
+        return null;
     }
 
     private void addEnumConstants() {
@@ -210,7 +206,6 @@ public class ClassRenderer extends ParentAwareRenderer {
      * <p>
      * This method was introduced as a result of improvement documented in
      * <a href="https://github.com/talsma-ict/umldoclet/issues/15">issue 15</a>
-     * </p>
      *
      * @param className The (qualified) class name to potentially simplify within the containing package.
      * @return The simplified class name or the specified (qualified) name if any condition was not met.
@@ -259,9 +254,10 @@ public class ClassRenderer extends ParentAwareRenderer {
         try (GlobalPosition gp = new GlobalPosition(classDoc.position())) {
             writeNameTo(out.append(umlType()).whitespace());
             writeGenericsTo(out).whitespace();
-            if (isDeprecated(classDoc)) {
-                out.append("<<deprecated>>").whitespace(); // I don't know how to strikethrough a class name!
-            }
+            // I don't know how to strikethrough a class name, so add 'deprecated' classifier.
+            if (isDeprecated(classDoc)) out.append("<<deprecated>>").whitespace();
+            if (classHyperlink != null) out.append("[[").append(classHyperlink).append("]]").whitespace();
+
             writeChildrenTo(out.append('{').newline()).append('}').newline().newline();
             return writeNotesTo(out);
         }

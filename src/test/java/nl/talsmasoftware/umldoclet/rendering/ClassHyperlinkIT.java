@@ -38,8 +38,7 @@ public class ClassHyperlinkIT {
     public void testClassRendererHyperlink() throws IOException {
         String uml = Testing.readClassUml(ClassRenderer.class);
         assertThat(uml, stringContainsInOrder(asList(
-                "class ClassRenderer {",
-                "[[ClassRenderer.html]]",
+                "class ClassRenderer [[ClassRenderer.html]] {",
                 //...
                 "}"
         )));
