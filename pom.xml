@@ -64,7 +64,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <build.java.version>1.7</build.java.version>
+        <build.java.version>1.9</build.java.version>
 
         <!-- runtime -->
 
@@ -310,14 +310,16 @@
             <scope>provided</scope>
         </dependency>
 
+<!--
         <dependency>
-            <!-- This will probably break after jigsaw becomes mainstream? -->
+            &lt;!&ndash; This will probably break after jigsaw becomes mainstream? &ndash;&gt;
             <groupId>com.sun</groupId>
             <artifactId>tools</artifactId>
             <version>${build.java.version}</version>
             <scope>system</scope>
             <systemPath>${java.home}/../lib/tools.jar</systemPath>
         </dependency>
+-->
 
         <dependency>
             <groupId>junit</groupId>
