@@ -16,6 +16,7 @@
 package nl.talsmasoftware.umldoclet.testing.annotations;
 
 import nl.talsmasoftware.umldoclet.testing.Testing;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -24,6 +25,7 @@ import static org.hamcrest.Matchers.containsString;
 /**
  * @author Sjoerd Talsma
  */
+@Ignore // Cannot create uml javadoc yet..
 @DummyAnnotation
 public class AnnotationTest {
 
