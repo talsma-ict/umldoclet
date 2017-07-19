@@ -1,17 +1,16 @@
 sudo: required
 dist: trusty
 group: edge
+jdk: oraclejdk9
 
 language: java
-jdk:
+#jdk:
 #- oraclejdk8
-- oraclejdk9
-
 
 addons:
   apt:
     packages:
-      - graphviz
+    - graphviz
 
 cache:
   directories:
