@@ -11,7 +11,7 @@ language: java
 addons:
   apt:
     packages:
-    - oracle-java9-installer
+#    - oracle-java9-installer
     - graphviz
 
 cache:
