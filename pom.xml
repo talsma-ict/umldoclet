@@ -79,6 +79,10 @@
         <logback.version>1.2.1</logback.version>
         <maven-invoker.version>2.2</maven-invoker.version>
 
+        <!--
+            This compiler plugin version fails in testComple on jdk >= jdk9-ea167:
+            https://issues.apache.org/jira/browse/MCOMPILER-294
+         -->
         <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
         <maven-failsafe-plugin.version>2.20</maven-failsafe-plugin.version>
         <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
