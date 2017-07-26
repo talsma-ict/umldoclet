@@ -70,7 +70,7 @@ dependencies {
 
 javadoc {
     source = sourceSets.main.allJava
-    options.docletPath = configurations.umlDoclet.files.asType(List)
+    options.docletpath = configurations.umlDoclet.files.asType(List)
     options.doclet = "nl.talsmasoftware.umldoclet.UMLDoclet"
     options.addStringOption "additionalParamName", "additionalParamValue"
 }
