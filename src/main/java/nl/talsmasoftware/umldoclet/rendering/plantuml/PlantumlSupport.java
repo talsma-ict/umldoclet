@@ -54,7 +54,7 @@ public class PlantumlSupport {
     private static synchronized String determinePlantumlVersion() {
         try {
             final String plantumlVersion = Class.forName("net.sourceforge.plantuml.version.Version")
-                    .getMethod("version").invoke(null).toString();
+                    .getMethod("versionString").invoke(null).toString();
             LogSupport.info("Plantuml library version \"{0}\" was detected on the classpath.", plantumlVersion);
             return plantumlVersion;
         } catch (ReflectiveOperationException | LinkageError | RuntimeException notFound) {
