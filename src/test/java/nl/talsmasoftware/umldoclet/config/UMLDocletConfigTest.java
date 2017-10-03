@@ -15,7 +15,10 @@
  */
 package nl.talsmasoftware.umldoclet.config;
 
+import com.sun.javadoc.AnnotationDesc;
+import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.DocErrorReporter;
+import com.sun.javadoc.Tag;
 import org.junit.Test;
 
 import java.io.*;
@@ -28,7 +31,9 @@ import static java.util.Arrays.asList;
 import static nl.talsmasoftware.umldoclet.testing.PatternMatcher.containsPattern;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * This test class verifies that each UMLDocletConfig Setting value has been documented
@@ -63,6 +68,17 @@ public class UMLDocletConfigTest {
         assertThat(config.excludedReferences(), is(equalTo((Collection<String>) asList(
                 Object.class.getName(), Enum.class.getName()
         ))));
+    }
+
+    @Test
+    public void testIssue37_packagePrivateClassesDefaultValue() {
+        UMLDocletConfig config = new UMLDocletConfig(new String[0][], mock(DocErrorReporter.class));
+        ClassDoc packagePrivateClassDoc = mock(ClassDoc.class);
+        when(packagePrivateClassDoc.isPackagePrivate()).thenReturn(true);
+        when(packagePrivateClassDoc.tags(anyString())).thenReturn(new Tag[0]);
+        when(packagePrivateClassDoc.annotations()).thenReturn(new AnnotationDesc[0]);
+
+        assertThat(config.includeClass(packagePrivateClassDoc), is(false));
     }
 
     private void assertSettingIsDocumented(UMLDocletConfig.Setting setting) {

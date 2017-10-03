@@ -65,7 +65,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
         UML_INCLUDE_DEPRECATED_METHODS("umlIncludeDeprecatedMethods", false),
         UML_INCLUDE_ABSTRACT_SUPERCLASS_METHODS("umlIncludeAbstractSuperclassMethods", true),
         UML_INCLUDE_PRIVATE_CLASSES("umlIncludePrivateClasses", false),
-        UML_INCLUDE_PACKAGE_PRIVATE_CLASSES("umlIncludePackagePrivateClasses", true),
+        UML_INCLUDE_PACKAGE_PRIVATE_CLASSES("umlIncludePackagePrivateClasses", false),
         UML_INCLUDE_PROTECTED_CLASSES("umlIncludeProtectedClasses", true),
         UML_INCLUDE_DEPRECATED_CLASSES("umlIncludeDeprecatedClasses", false),
         UML_INCLUDE_PRIVATE_INNERCLASSES("umlIncludePrivateInnerClasses", false),
