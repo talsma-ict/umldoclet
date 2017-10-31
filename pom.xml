@@ -69,6 +69,7 @@
         <maven.compiler.source>1.9</maven.compiler.source>
         <maven.compiler.target>1.9</maven.compiler.target>
         <maven.compiler.release>9</maven.compiler.release>
+        <maven.test.skip>true</maven.test.skip>
 
         <!-- runtime -->
 
