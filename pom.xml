@@ -16,14 +16,16 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
     <!-- Artifact identification -->
     <groupId>nl.talsmasoftware</groupId>
     <artifactId>umldoclet</artifactId>
-    <version>1.0.14-SNAPSHOT</version>
+    <version>2.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <!-- Project information -->
@@ -103,22 +105,11 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
-                <includes>
-                    <include>**/*.properties</include>
-                </includes>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <excludes>
-                    <exclude>**/*.properties</exclude>
-                </excludes>
             </resource>
             <resource>
                 <directory>${project.basedir}</directory>
                 <includes>
                     <include>LICENSE</include>
-                    <include>README.md</include>
-                    <include>USAGE.md</include>
                 </includes>
             </resource>
         </resources>
@@ -188,21 +179,21 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
-<!--
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>${maven-failsafe-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
--->
+            <!--
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-failsafe-plugin</artifactId>
+                            <version>${maven-failsafe-plugin.version}</version>
+                            <executions>
+                                <execution>
+                                    <goals>
+                                        <goal>integration-test</goal>
+                                        <goal>verify</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -216,61 +207,61 @@
                     </execution>
                 </executions>
             </plugin>
-<!--
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${maven-javadoc-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
-                            <docletArtifact>
-                                <groupId>${project.groupId}</groupId>
-                                <artifactId>${project.artifactId}</artifactId>
-                                <version>${project.version}</version>
-                            </docletArtifact>
-                            <docencoding>UTF-8</docencoding>
-                            <useStandardDocletOptions>true</useStandardDocletOptions>
-                            <additionalparam>
-                                -umlLogLevel DEBUG
-                                -umlImageFormat SVG
-                            </additionalparam>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>generate-test-uml</id>
-                        <goals>
-                            <goal>test-javadoc</goal>
-                        </goals>
-                        <phase>compile</phase>
-                        <configuration>
-                            <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
-                            <docletArtifact>
-                                <groupId>${project.groupId}</groupId>
-                                <artifactId>${project.artifactId}</artifactId>
-                                <version>${project.version}</version>
-                            </docletArtifact>
-                            <docencoding>UTF-8</docencoding>
-                            <additionalparam>
-                                -umlLogLevel DEBUG
-                                -umlImageFormat PNG;SVG
-                                -umlImageDirectory images
-                                -umlBasePath "${project.baseUri}target/test-uml"
-                                -umlSkipStandardDoclet true
-                                -umlCommand "hide empty members"
-                                -umlCommand "hide &lt;&lt;Stereotype&gt;&gt; circle"
-                                -umlIncludeMethodReturntypes true
-                            </additionalparam>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
--->
+            <!--
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-javadoc-plugin</artifactId>
+                            <version>${maven-javadoc-plugin.version}</version>
+                            <executions>
+                                <execution>
+                                    <id>attach-javadocs</id>
+                                    <goals>
+                                        <goal>jar</goal>
+                                    </goals>
+                                    <configuration>
+                                        <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
+                                        <docletArtifact>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>${project.artifactId}</artifactId>
+                                            <version>${project.version}</version>
+                                        </docletArtifact>
+                                        <docencoding>UTF-8</docencoding>
+                                        <useStandardDocletOptions>true</useStandardDocletOptions>
+                                        <additionalparam>
+                                            -umlLogLevel DEBUG
+                                            -umlImageFormat SVG
+                                        </additionalparam>
+                                    </configuration>
+                                </execution>
+                                <execution>
+                                    <id>generate-test-uml</id>
+                                    <goals>
+                                        <goal>test-javadoc</goal>
+                                    </goals>
+                                    <phase>compile</phase>
+                                    <configuration>
+                                        <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
+                                        <docletArtifact>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>${project.artifactId}</artifactId>
+                                            <version>${project.version}</version>
+                                        </docletArtifact>
+                                        <docencoding>UTF-8</docencoding>
+                                        <additionalparam>
+                                            -umlLogLevel DEBUG
+                                            -umlImageFormat PNG;SVG
+                                            -umlImageDirectory images
+                                            -umlBasePath "${project.baseUri}target/test-uml"
+                                            -umlSkipStandardDoclet true
+                                            -umlCommand "hide empty members"
+                                            -umlCommand "hide &lt;&lt;Stereotype&gt;&gt; circle"
+                                            -umlIncludeMethodReturntypes true
+                                        </additionalparam>
+                                    </configuration>
+                                </execution>
+                            </executions>
+                        </plugin>
+            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
@@ -311,17 +302,6 @@
             <optional>true</optional>
             <scope>provided</scope>
         </dependency>
-
-<!--
-        <dependency>
-            &lt;!&ndash; This will probably break after jigsaw becomes mainstream? &ndash;&gt;
-            <groupId>com.sun</groupId>
-            <artifactId>tools</artifactId>
-            <version>${build.java.version}</version>
-            <scope>system</scope>
-            <systemPath>${java.home}/../lib/tools.jar</systemPath>
-        </dependency>
--->
 
         <dependency>
             <groupId>junit</groupId>
