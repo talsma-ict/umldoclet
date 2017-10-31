@@ -2,6 +2,12 @@
 [![Released Version][maven-img]][maven]
 
 # UMLDoclet
+
+__Note:__ Version `2.0.0` of this [doclet] is a full rewrite as a Java 9 module, 
+reusing only the internal rendering of `.puml` files.  
+UMLDoclet version 2 will require a JDK 9 compatible version of `JavaDoc` to run.  
+For earlier versions of javadoc, please use the `1.x` versions of this doclet.
+
 Doclet for the JavaDoc tool that generates UML diagrams from the code.  
 Released versions can be found in the [maven central repository][maven].  
 
@@ -10,20 +16,16 @@ It automatically generates UML diagrams from your code as separate
 `.puml` diagrams of your classes and packages in the 
 [PlantUML format][plantuml].
 
-__Note:__ Version `2.0.0` of this [doclet] has been created as a full rewrite of the 
-existing `1.x` version, reusing only the internal rendering of `.puml` files.  
-For this reason, the doclet will require a JDK 9 compatible version of `JavaDoc` to run.  
-For earlier versions of javadoc, please use the `1.x` versions of this doclet.
-
 ## Requirements:
 To use the doclet together with the JavaDoc tool, the following is required.
 
-- JDK version 9 or higher.
-- This doclet jar (see [usage]).
+- JDK version 9 or higher (please use [v1.x] for older Javadoc versions).
+- This doclet jar.
 
 ## Usage
 
-- Please refer to [the usage page][usage] on how to use this doclet.
+- How to use this doclet in your poject is explained on a 
+  separate [the usage page][usage].
 
 ## Feedback
 
@@ -34,11 +36,13 @@ To use the doclet together with the JavaDoc tool, the following is required.
   
 ## Contributing
 
-- __TODO__
+- See [Contributing] (__TODO__)
 
-  
-_Thanks for using the doclet, I hope it may be of benefit to your project!_  
-_Also a big thanks go to de developers of the excellent [PlantUML project][plantuml]._
+## Thanks!
+
+- First of all, thank _you_ for using this doclet, I hope it may be of benefit to your project.
+- And of course most importantly a big thanks to the developers of the excellent [PlantUML project][plantuml]
+  withouth whom this doclet wouldn't exist!
 
 
 
@@ -47,5 +51,7 @@ _Also a big thanks go to de developers of the excellent [PlantUML project][plant
   [maven-img]: https://img.shields.io/maven-central/v/nl.talsmasoftware/umldoclet.svg
   [maven]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22nl.talsmasoftware%22%20AND%20a%3A%22umldoclet%22
   [usage]: USAGE.md
+  [contributing]: Contributing.md
+  [v1.x]: https://github.com/talsma-ict/umldoclet/tree/master
   [plantuml]: http://plantuml.com
   [doclet]: https://docs.oracle.com/javase/9/docs/api/jdk/javadoc/doclet/Doclet.html
