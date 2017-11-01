@@ -58,6 +58,8 @@ public class GlobalPosition implements Closeable {
     }
 
     /**
+     * <p>current.</p>
+     *
      * @return The current source position in this doclet or <code>null</code> if unknown.
      */
     public static SourcePosition current() {
@@ -73,11 +75,19 @@ public class GlobalPosition implements Closeable {
         }
     }
 
+    /**
+     * <p>close.</p>
+     */
     public void close() {
         // Close only once:
         if (closed.compareAndSet(false, true)) setPos(prev);
     }
 
+    /**
+     * <p>toString.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String toString() {
         return getClass().getSimpleName() + "{closed: " + closed + ", pos: " + pos + '}';
     }

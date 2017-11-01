@@ -102,9 +102,8 @@ public class IndentingWriter extends Writer {
      * The whitespace character will also not be written until there are other characters that need to be written.
      *
      * @return Reference to this writer for chaining purposes.
-     * @throws IOException
      */
-    public IndentingWriter whitespace() throws IOException {
+    public IndentingWriter whitespace() {
         addWhitespace.set(true);
         return this;
     }

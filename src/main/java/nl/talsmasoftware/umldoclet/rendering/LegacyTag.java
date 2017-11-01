@@ -39,35 +39,35 @@ public enum LegacyTag {
     /**
      * Add support for @extends Controller
      * <p>
-     * Pattern: &lt;associated class>
+     * Pattern: &lt;associated class&gt;
      */
     EXTENDS("<|--", 0),
 
     /**
      * Add support for @implements Interface
      * <p>
-     * Pattern: &lt;associated class>
+     * Pattern: &lt;associated class&gt;
      */
     IMPLEMENTS("<|..", 0),
 
     /**
      * Add support for @assoc
      * <p>
-     * Pattern: &lt;cardinality> - &lt;cardinality> &lt;assoziated class>
+     * Pattern: &lt;cardinality&gt; - &lt;cardinality&gt; &lt;assoziated class&gt;
      */
     ASSOC("--", 3),
 
     /**
      * Add support for @navassoc
      * <p>
-     * Pattern: &lt;cardinality> - &lt;cardinality> &lt;assoziated class>
+     * Pattern: &lt;cardinality&gt; - &lt;cardinality&gt; &lt;assoziated class&gt;
      */
     NAVASSOC("<--", 3),
 
     /**
      * Add support for @depend
      * <p>
-     * Pattern: &lt;cardinality> - &lt;cardinality> &lt;assoziated class>
+     * Pattern: &lt;cardinality&gt; - &lt;cardinality&gt; &lt;assoziated class&gt;
      */
     DEPEND("<..", 3);
 

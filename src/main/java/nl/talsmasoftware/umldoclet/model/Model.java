@@ -39,7 +39,7 @@ public class Model {
      * Returns whether the the given element is deprecated;
      * it has the {@literal @}{@link Deprecated} annotation
      * or the {@literal @}deprecated JavaDoc tag.
-     * <p/>
+     * <p>
      * If the element itself is not deprecated, the method checks whether the superclass or containing class
      * is deprecated.
      *
@@ -83,9 +83,9 @@ public class Model {
     /**
      * Finds a renderer in a haystack of renderers.
      *
+     * @param <R>      The type of the renderer being searched.
      * @param haystack The renderers to search through.
      * @param needle   The renderer to be found.
-     * @param <R>      The type of the renderer being searched.
      * @return The found renderer (from the haystack) or <code>null</code> if it couldn't be found.
      */
     public static <R extends Renderer> R find(Iterable<? extends R> haystack, R needle) {

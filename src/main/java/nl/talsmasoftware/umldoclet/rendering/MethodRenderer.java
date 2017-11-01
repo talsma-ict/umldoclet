@@ -53,7 +53,7 @@ public class MethodRenderer extends Renderer {
     /**
      * Important method that determines whether or not the documented method or constructor should be included in the
      * UML diagram.
-     * <p/>
+     * <p>
      * This method is rather complex because it is highly configurable whether or not a method should be rendered.
      *
      * @return Whether this method or constructor should be included in the UML diagram.

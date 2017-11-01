@@ -29,7 +29,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * Base implementation for any 'renderer' subclass.
- * <p/>
+ * <p>
  * Renderers are capable of rendering themselves to {@link IndentingPrintWriter} instances and have
  * chaining methods returning these writers for easier appending.
  *

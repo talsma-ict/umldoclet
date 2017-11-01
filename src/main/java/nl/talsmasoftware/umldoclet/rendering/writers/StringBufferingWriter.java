@@ -19,8 +19,8 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 /**
- * This writer delegates to another {@link Writer} implementation while retaining a {@link StringBuffer} of all written
- * characters.
+ * This writer delegates to another {@link Writer} implementation while retaining
+ * a {@link StringBuffer} of all written characters.
  *
  * @author Sjoerd Talsma
  */

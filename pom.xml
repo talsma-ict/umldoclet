@@ -95,6 +95,7 @@
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <maven-scm-plugin.version>1.9.5</maven-scm-plugin.version>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+        <maven-toolchains-plugin.version>1.1</maven-toolchains-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
         <license-maven-plugin.version>3.0</license-maven-plugin.version>
         <buildnumber-maven-plugin.version>1.4</buildnumber-maven-plugin.version>
@@ -208,61 +209,66 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-javadoc-plugin</artifactId>
-                            <version>${maven-javadoc-plugin.version}</version>
-                            <executions>
-                                <execution>
-                                    <id>attach-javadocs</id>
-                                    <goals>
-                                        <goal>jar</goal>
-                                    </goals>
-                                    <configuration>
-                                        <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
-                                        <docletArtifact>
-                                            <groupId>${project.groupId}</groupId>
-                                            <artifactId>${project.artifactId}</artifactId>
-                                            <version>${project.version}</version>
-                                        </docletArtifact>
-                                        <docencoding>UTF-8</docencoding>
-                                        <useStandardDocletOptions>true</useStandardDocletOptions>
-                                        <additionalparam>
-                                            -umlLogLevel DEBUG
-                                            -umlImageFormat SVG
-                                        </additionalparam>
-                                    </configuration>
-                                </execution>
-                                <execution>
-                                    <id>generate-test-uml</id>
-                                    <goals>
-                                        <goal>test-javadoc</goal>
-                                    </goals>
-                                    <phase>compile</phase>
-                                    <configuration>
-                                        <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
-                                        <docletArtifact>
-                                            <groupId>${project.groupId}</groupId>
-                                            <artifactId>${project.artifactId}</artifactId>
-                                            <version>${project.version}</version>
-                                        </docletArtifact>
-                                        <docencoding>UTF-8</docencoding>
-                                        <additionalparam>
-                                            -umlLogLevel DEBUG
-                                            -umlImageFormat PNG;SVG
-                                            -umlImageDirectory images
-                                            -umlBasePath "${project.baseUri}target/test-uml"
-                                            -umlSkipStandardDoclet true
-                                            -umlCommand "hide empty members"
-                                            -umlCommand "hide &lt;&lt;Stereotype&gt;&gt; circle"
-                                            -umlIncludeMethodReturntypes true
-                                        </additionalparam>
-                                    </configuration>
-                                </execution>
-                            </executions>
-                        </plugin>
-            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <!--<javadocVersion>1.9</javadocVersion>-->
+                            <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
+                            <docletArtifact>
+                                <groupId>${project.groupId}</groupId>
+                                <artifactId>${project.artifactId}</artifactId>
+                                <version>${project.version}</version>
+                            </docletArtifact>
+                            <docencoding>UTF-8</docencoding>
+                            <!--<useStandardDocletOptions>true</useStandardDocletOptions>-->
+<!--
+                            <additionalparam>
+                                -umlLogLevel DEBUG
+                                -umlImageFormat SVG
+                            </additionalparam>
+-->
+                        </configuration>
+                    </execution>
+<!--
+                    <execution>
+                        <id>generate-test-uml</id>
+                        <goals>
+                            <goal>test-javadoc</goal>
+                        </goals>
+                        <phase>compile</phase>
+                        <configuration>
+                            <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
+                            <docletArtifact>
+                                <groupId>${project.groupId}</groupId>
+                                <artifactId>${project.artifactId}</artifactId>
+                                <version>${project.version}</version>
+                            </docletArtifact>
+                            <docencoding>UTF-8</docencoding>
+                            &lt;!&ndash;
+                                <additionalparam>
+                                    -umlLogLevel DEBUG
+                                    -umlImageFormat PNG;SVG
+                                    -umlImageDirectory images
+                                    -umlBasePath "${project.baseUri}target/test-uml"
+                                    -umlSkipStandardDoclet true
+                                    -umlCommand "hide empty members"
+                                    -umlCommand "hide &lt;&lt;Stereotype&gt;&gt; circle"
+                                    -umlIncludeMethodReturntypes true
+                                </additionalparam>
+                            &ndash;&gt;
+                        </configuration>
+                    </execution>
+-->
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
@@ -290,6 +296,25 @@
                 <version>${maven-scm-plugin.version}</version>
                 <configuration>
                     <tag>${project.version}</tag>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-toolchains-plugin</artifactId>
+                <version>${maven-toolchains-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>toolchain</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <toolchains>
+                        <jdk>
+                            <version>${maven.compiler.source}</version>
+                        </jdk>
+                    </toolchains>
                 </configuration>
             </plugin>
         </plugins>

@@ -19,19 +19,22 @@ cache:
   - $HOME/.m2/repository
 
 before_install:
-  # import the GPG Secret Keys and Ownertrust at the beginning
+  # import the GPG secret keys and owner trust
   - if [ ! -z "$GPG_SECRET_KEYS" ]; then echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import; fi
   - if [ ! -z "$GPG_OWNERTRUST" ]; then echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust; fi
-  # allocate commits to CI
+  # allocate commits by travis to CI user
   - git config user.name "Talsma CI"
   - git config user.email "ci-user@talsma-ict.nl"
-  # setup https authentication credentials, used by ./mvnw release:prepare
+  # setup https authentication credentials for github, used by ./mvnw release:prepare
   - git config credential.helper "store --file=.git/credentials"
   - echo "https://$GH_TOKEN:@github.com" > .git/credentials
+  # copy maven settings
+  - cp .mvn/settings.xml $HOME/.m2/settings.xml
+  - cp .mvn/travis-toolchain.xml $HOME/.m2/toolchain.xml
 
 install:
-  # Override default travis to use the maven wrapper
-  - ./mvnw -s .mvn/settings.xml install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+  # use the maven wrapper instead of provided maven
+  - ./mvnw install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 
 script:
   - .travis/publish.sh
