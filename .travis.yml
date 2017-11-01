@@ -22,7 +22,7 @@ before_install:
   # import the GPG secret keys and owner trust
   - if [ ! -z "$GPG_SECRET_KEYS" ]; then echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import; fi
   - if [ ! -z "$GPG_OWNERTRUST" ]; then echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust; fi
-  # allocate commits by travis to CI user
+  # allocate commits by travis to the CI user
   - git config user.name "Talsma CI"
   - git config user.email "ci-user@talsma-ict.nl"
   # setup https authentication credentials for github, used by ./mvnw release:prepare
