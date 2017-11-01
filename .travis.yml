@@ -30,7 +30,7 @@ before_install:
   - echo "https://$GH_TOKEN:@github.com" > .git/credentials
   # copy maven settings
   - cp .mvn/settings.xml $HOME/.m2/settings.xml
-  - cp .mvn/travis-toolchain.xml $HOME/.m2/toolchain.xml
+  - cp .mvn/travis-toolchains.xml $HOME/.m2/toolchains.xml
 
 install:
   # use the maven wrapper instead of provided maven
