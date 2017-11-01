@@ -15,7 +15,14 @@
  */
 package nl.talsmasoftware.umldoclet;
 
+import jdk.javadoc.doclet.DocletEnvironment;
+import jdk.javadoc.doclet.Reporter;
 import jdk.javadoc.doclet.StandardDoclet;
+import nl.talsmasoftware.umldoclet.configuration.Configuration;
+
+import javax.lang.model.SourceVersion;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * UML doclet that generates <a href="http://plantuml.com">PlantUML</a> class diagrams from your java code just as
@@ -25,6 +32,41 @@ import jdk.javadoc.doclet.StandardDoclet;
  * @author Sjoerd Talsma
  */
 public class UMLDoclet extends StandardDoclet {
+
+    private final Configuration config;
+
+    public UMLDoclet() {
+        super();
+        this.config = new Configuration(this);
+    }
+
+    @Override
+    public void init(Locale locale, Reporter reporter) {
+        config.locale = locale;
+        config.reporter = reporter;
+        super.init(locale, reporter);
+    }
+
+    @Override
+    public String getName() {
+        return "UML";
+    }
+
+    @Override
+    public Set<Option> getSupportedOptions() {
+        return super.getSupportedOptions();
+    }
+
+    @Override
+    public SourceVersion getSupportedSourceVersion() {
+        return super.getSupportedSourceVersion();
+    }
+
+    @Override
+    public boolean run(DocletEnvironment docEnv) {
+        return super.run(docEnv);
+    }
+
 
 //    private final RootDoc rootDoc;
 //    private final UMLDocletConfig config;

@@ -3,9 +3,9 @@
 
 # UMLDoclet
 
-__Note:__ Version `2.0.0` of this [doclet] is a full rewrite as a Java 9 module, 
-reusing only the internal rendering of `.puml` files.  
-UMLDoclet version 2 will require a JDK 9 compatible version of `JavaDoc` to run.  
+__Note:__ Version `2.0.0` of this [doclet] is a full rewrite as 
+a [Javadoc 9 doclet][doclet], reusing only the internal rendering of `.puml` files.  
+UMLDoclet v2 requires a JDK 9 compatible version of `javadoc` to run.  
 For earlier versions of javadoc, please use the `1.x` versions of this doclet.
 
 Doclet for the JavaDoc tool that generates UML diagrams from the code.  
@@ -19,13 +19,12 @@ It automatically generates UML diagrams from your code as separate
 ## Requirements:
 To use the doclet together with the JavaDoc tool, the following is required.
 
-- JDK version 9 or higher (please use [v1.x] for older Javadoc versions).
+- JDK version 9 or higher (for older Javadoc versions please use [v1.x]).
 - This doclet jar.
 
 ## Usage
 
-- How to use this doclet in your poject is explained on a 
-  separate [the usage page][usage].
+- See [Usage] (__TODO__)
 
 ## Feedback
 
