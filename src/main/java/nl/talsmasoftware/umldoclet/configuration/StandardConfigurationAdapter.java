@@ -13,11 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-module talsmasoftware.umldoclet {
+package nl.talsmasoftware.umldoclet.configuration;
 
-    exports nl.talsmasoftware.umldoclet;
-
-    requires jdk.javadoc;
-    requires java.logging;
-
+/**
+ * Class that serves as an 'anti-corruption' adapter between our Doclet
+ * and the {@code internal} configuration of the StandardDoclet.
+ * <p>
+ * Although we want to use (and where possible adapt to) the standard
+ * configuration, we don't want to re-implement all standard options.
+ * <p>
+ * However, we also don't want to have the UML Doclet blow up in our
+ * face at runtime when the standard configuration implementation changes.
+ *
+ * @author Sjoerd Talsma
+ */
+public class StandardConfigurationAdapter {
 }
