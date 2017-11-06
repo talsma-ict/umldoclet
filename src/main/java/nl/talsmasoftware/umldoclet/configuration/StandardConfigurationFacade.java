@@ -39,7 +39,7 @@ final class StandardConfigurationFacade {
 
     StandardConfigurationFacade(Configuration config) {
         this.config = requireNonNull(config, "Configuration is <null>.");
-        standardConfiguration = null; // Use lazy initialization, that way the reporter may be configured in time.
+        standardConfiguration = null; // Use lazy initialization, so the reporter can be configured just in time.
     }
 
     /**
@@ -64,8 +64,8 @@ final class StandardConfigurationFacade {
                 htmlDoclet.setAccessible(false);
             }
         } catch (ReflectiveOperationException | LinkageError | RuntimeException e) {
-            if (config.reporter != null) config.reporter.print(Diagnostic.Kind.WARNING,
-                    "Skipping options from Standard doclet: Configuration no longer conforms to our expectations!");
+            config.reporter.ifPresent(reporter -> reporter.print(Diagnostic.Kind.WARNING,
+                    "Skipping options from Standard doclet: Configuration no longer conforms to our expectations!"));
             standardConfiguration = Optional.empty();
         }
         return standardConfiguration;

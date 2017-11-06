@@ -20,6 +20,7 @@ import jdk.javadoc.doclet.Reporter;
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 
 import java.util.Locale;
+import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
@@ -27,8 +28,8 @@ public class Configuration {
 
     final Doclet doclet;
     private final StandardConfigurationFacade standardConfig;
+    public Optional<Reporter> reporter = Optional.empty();
     public Locale locale;
-    public Reporter reporter;
 
     public Configuration(UMLDoclet doclet) {
         this.doclet = requireNonNull(doclet, "UML Doclet is <null>.");

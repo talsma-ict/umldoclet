@@ -22,6 +22,7 @@ import nl.talsmasoftware.umldoclet.configuration.Configuration;
 
 import javax.lang.model.SourceVersion;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -43,7 +44,7 @@ public class UMLDoclet extends StandardDoclet {
     @Override
     public void init(Locale locale, Reporter reporter) {
         config.locale = locale;
-        config.reporter = reporter;
+        config.reporter = Optional.ofNullable(reporter);
         super.init(locale, reporter);
     }
 
