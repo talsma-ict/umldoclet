@@ -17,6 +17,7 @@ package nl.talsmasoftware.umldoclet.configuration;
 
 import jdk.javadoc.doclet.Doclet;
 import jdk.javadoc.doclet.Reporter;
+import nl.talsmasoftware.umldoclet.UMLDoclet;
 
 import java.util.Locale;
 
@@ -24,12 +25,14 @@ import static java.util.Objects.requireNonNull;
 
 public class Configuration {
 
-    public final Doclet doclet;
+    final Doclet doclet;
+    private final StandardConfigurationFacade standardConfig;
     public Locale locale;
     public Reporter reporter;
 
-    public Configuration(Doclet doclet) {
-        this.doclet = requireNonNull(doclet, "Doclet is <null>.");
+    public Configuration(UMLDoclet doclet) {
+        this.doclet = requireNonNull(doclet, "UML Doclet is <null>.");
+        this.standardConfig = new StandardConfigurationFacade(this);
     }
 
 }
