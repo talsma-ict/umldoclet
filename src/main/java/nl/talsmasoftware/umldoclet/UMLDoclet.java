@@ -22,8 +22,10 @@ import nl.talsmasoftware.umldoclet.configuration.Configuration;
 
 import javax.lang.model.SourceVersion;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
+
+import static java.util.Comparator.comparing;
 
 /**
  * UML doclet that generates <a href="http://plantuml.com">PlantUML</a> class diagrams from your java code just as
@@ -43,8 +45,7 @@ public class UMLDoclet extends StandardDoclet {
 
     @Override
     public void init(Locale locale, Reporter reporter) {
-        config.locale = locale;
-        config.reporter = Optional.ofNullable(reporter);
+        config.init(locale, reporter);
         super.init(locale, reporter);
     }
 
@@ -55,7 +56,10 @@ public class UMLDoclet extends StandardDoclet {
 
     @Override
     public Set<Option> getSupportedOptions() {
-        return super.getSupportedOptions();
+        Set<Option> supportedOptions = new TreeSet<>(comparing(o -> o.getNames().get(0), String::compareTo));
+        supportedOptions.addAll(super.getSupportedOptions());
+        supportedOptions.addAll(config.getSupportedOptions());
+        return supportedOptions;
     }
 
     @Override

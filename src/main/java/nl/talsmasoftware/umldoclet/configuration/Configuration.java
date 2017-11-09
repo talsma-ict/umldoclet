@@ -19,21 +19,39 @@ import jdk.javadoc.doclet.Doclet;
 import jdk.javadoc.doclet.Reporter;
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 
+import java.util.LinkedHashSet;
 import java.util.Locale;
-import java.util.Optional;
+import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 
 public class Configuration {
 
     final Doclet doclet;
-    private final StandardConfigurationFacade standardConfig;
-    public Optional<Reporter> reporter = Optional.empty();
-    public Locale locale;
+    private final StandardConfigurationOptions standardConfig;
+    private Reporter reporter = new SysoutReporter();
 
     public Configuration(UMLDoclet doclet) {
         this.doclet = requireNonNull(doclet, "UML Doclet is <null>.");
-        this.standardConfig = new StandardConfigurationFacade(this);
+        this.standardConfig = new StandardConfigurationOptions(this);
     }
 
+    public void init(Locale locale, Reporter reporter) {
+        // this.locale = locale; // Wait until we need it.
+        if (reporter != null) this.reporter = reporter;
+    }
+
+    /**
+     * @return The reporter for the JavaDoc task.
+     */
+    public Reporter reporter() {
+        return reporter;
+    }
+
+    public Set<Doclet.Option> getSupportedOptions() {
+        Set<Doclet.Option> supportedOptions = new LinkedHashSet<>();
+        supportedOptions.addAll(standardConfig.getSupportedStandardOptions());
+        // TODO add our own custom options.
+        return supportedOptions;
+    }
 }
