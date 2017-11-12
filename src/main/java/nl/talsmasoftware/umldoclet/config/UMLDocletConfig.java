@@ -122,7 +122,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
     public UMLDocletConfig(String[][] options, DocErrorReporter reporter) {
         super(Setting.class);
         boolean allOptionsValid = true;
-        LogSupport.setReporter(reporter);
+//        LogSupport.setReporter(reporter);
         List<String[]> stdOpts = new ArrayList<>();
         for (String[] option : options) {
             final Setting setting = Setting.forOption(option);

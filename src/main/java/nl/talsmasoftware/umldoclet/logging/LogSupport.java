@@ -17,12 +17,10 @@ package nl.talsmasoftware.umldoclet.logging;
 
 import com.sun.javadoc.DocErrorReporter;
 import com.sun.javadoc.SourcePosition;
+import jdk.javadoc.doclet.Reporter;
 
+import javax.tools.Diagnostic;
 import java.text.MessageFormat;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static java.lang.Character.toLowerCase;
 
@@ -36,13 +34,14 @@ import static java.lang.Character.toLowerCase;
  * during doclet execution but may occur in exceptional situations during startup.
  *
  * @author Sjoerd Talsma
+ * @deprecated switch from logger to reporter semantics.
  */
-public class LogSupport implements DocErrorReporter {
-    private static final Logger LOGGER = Logger.getLogger(LogSupport.class.getName());
+public class LogSupport {
+//    private static final Logger LOGGER = Logger.getLogger(LogSupport.class.getName());
 
-    private static volatile DocErrorReporter reporter;
+    private static volatile Reporter reporter;
 
-    public static void setReporter(DocErrorReporter reporter) {
+    public static void setReporter(Reporter reporter) {
         LogSupport.reporter = reporter;
     }
 
@@ -62,42 +61,43 @@ public class LogSupport implements DocErrorReporter {
      * </ol>
      *
      * @param level The level to set the log support to (or <code>null</code> to default back to INFO).
+     * @deprecated switch from logger to reporter semantics.
      */
     public static void setLevel(Object level) {
-        switch (Objects.toString(level, "INFO").toUpperCase(Locale.ENGLISH).trim()) {
-            case "ALL":
-            case "TRACE":
-            case "FINEST":
-                LOGGER.setLevel(Level.FINEST);
-                break;
-            case "FINER":
-                LOGGER.setLevel(Level.FINER);
-                break;
-            case "DEBUG":
-            case "FINE":
-                LOGGER.setLevel(Level.FINE);
-                break;
-            case "CONFIG":
-                LOGGER.setLevel(Level.CONFIG);
-                break;
-            case "INFO":
-                LOGGER.setLevel(Level.INFO);
-                break;
-            case "WARN":
-            case "WARNING":
-                LOGGER.setLevel(Level.WARNING);
-                break;
-            case "ERROR":
-            case "FATAL":
-            case "SEVERE":
-                LOGGER.setLevel(Level.SEVERE);
-                break;
-            case "OFF":
-                LOGGER.setLevel(Level.OFF);
-                break;
-            default:
-                throw new IllegalArgumentException(format("Unsupported log level \"{0}\"!", level));
-        }
+//        switch (Objects.toString(level, "INFO").toUpperCase(Locale.ENGLISH).trim()) {
+//            case "ALL":
+//            case "TRACE":
+//            case "FINEST":
+//                LOGGER.setLevel(Level.FINEST);
+//                break;
+//            case "FINER":
+//                LOGGER.setLevel(Level.FINER);
+//                break;
+//            case "DEBUG":
+//            case "FINE":
+//                LOGGER.setLevel(Level.FINE);
+//                break;
+//            case "CONFIG":
+//                LOGGER.setLevel(Level.CONFIG);
+//                break;
+//            case "INFO":
+//                LOGGER.setLevel(Level.INFO);
+//                break;
+//            case "WARN":
+//            case "WARNING":
+//                LOGGER.setLevel(Level.WARNING);
+//                break;
+//            case "ERROR":
+//            case "FATAL":
+//            case "SEVERE":
+//                LOGGER.setLevel(Level.SEVERE);
+//                break;
+//            case "OFF":
+//                LOGGER.setLevel(Level.OFF);
+//                break;
+//            default:
+//                throw new IllegalArgumentException(format("Unsupported log level \"{0}\"!", level));
+//        }
     }
 
     /**
@@ -114,9 +114,11 @@ public class LogSupport implements DocErrorReporter {
 
     /**
      * @return Whether trace logging is enabled.
+     * @deprecated Switch from logger to reporter semantics.
      */
     public static boolean isTraceEnabled() {
-        return LOGGER.isLoggable(Level.FINEST);
+//        return LOGGER.isLoggable(Level.FINEST);
+        return false;
     }
 
     /**
@@ -126,15 +128,16 @@ public class LogSupport implements DocErrorReporter {
      * @param msg  The message or message pattern in case of arguments.
      * @param args The message arguments, if any.
      * @see MessageFormat
+     * @deprecated Switch from logger to reporter semantics.
      */
     public static void trace(String msg, Object... args) {
-        if (isTraceEnabled()) {
-            if (reporter == null) {
-                LOGGER.log(Level.FINEST, format(msg, args), findException(args));
-            } else {
-                reporter.printNotice(GlobalPosition.current(), format(msg, args));
-            }
-        }
+//        if (isTraceEnabled()) {
+//            if (reporter == null) {
+//                LOGGER.log(Level.FINEST, format(msg, args), findException(args));
+//            } else {
+//                reporter.printNotice(GlobalPosition.current(), format(msg, args));
+//            }
+//        }
     }
 
     /**
@@ -144,15 +147,17 @@ public class LogSupport implements DocErrorReporter {
      * @param msg  The message or message pattern in case of arguments.
      * @param args The message arguments, if any.
      * @see MessageFormat
+     * @deprecated Switch from logger to reporter semantics.
      */
     public static void debug(String msg, Object... args) {
-        if (LOGGER.isLoggable(Level.FINE)) {
-            if (reporter == null) {
-                LOGGER.log(Level.FINE, format(msg, args), findException(args));
-            } else {
-                reporter.printNotice(GlobalPosition.current(), format(msg, args));
-            }
-        }
+//        if (LOGGER.isLoggable(Level.FINE)) {
+//            if (reporter == null) {
+//                LOGGER.log(Level.FINE, format(msg, args), findException(args));
+//            } else {
+//                reporter.printNotice(GlobalPosition.current(), format(msg, args));
+//            }
+//        }
+        if (reporter != null) reporter.print(Diagnostic.Kind.OTHER, format(msg, args));
     }
 
     /**
@@ -163,15 +168,17 @@ public class LogSupport implements DocErrorReporter {
      * @param msg  The message or message pattern in case of arguments.
      * @param args The message arguments, if any.
      * @see MessageFormat
+     * @deprecated Switch from logger to reporter semantics.
      */
     public static void info(String msg, Object... args) {
-        if (LOGGER.isLoggable(Level.INFO)) {
-            if (reporter == null) {
-                LOGGER.log(Level.INFO, format(msg, args), findException(args));
-            } else {
-                reporter.printNotice(GlobalPosition.current(), format(msg, args));
-            }
-        }
+//        if (LOGGER.isLoggable(Level.INFO)) {
+//            if (reporter == null) {
+//                LOGGER.log(Level.INFO, format(msg, args), findException(args));
+//            } else {
+//                reporter.printNotice(GlobalPosition.current(), format(msg, args));
+//            }
+//        }
+        if (reporter != null) reporter.print(Diagnostic.Kind.NOTE, format(msg, args));
     }
 
     /**
@@ -182,15 +189,17 @@ public class LogSupport implements DocErrorReporter {
      * @param msg  The message or message pattern in case of arguments.
      * @param args The message arguments, if any.
      * @see MessageFormat
+     * @deprecated Switch from logger to reporter semantics.
      */
     public static void warn(String msg, Object... args) {
-        if (LOGGER.isLoggable(Level.WARNING)) {
-            if (reporter == null) {
-                LOGGER.log(Level.WARNING, format(msg, args), findException(args));
-            } else {
-                reporter.printWarning(GlobalPosition.current(), format(msg, args));
-            }
-        }
+//        if (LOGGER.isLoggable(Level.WARNING)) {
+//            if (reporter == null) {
+//                LOGGER.log(Level.WARNING, format(msg, args), findException(args));
+//            } else {
+//                reporter.printWarning(GlobalPosition.current(), format(msg, args));
+//            }
+//        }
+        if (reporter != null) reporter.print(Diagnostic.Kind.WARNING, format(msg, args));
     }
 
     /**
@@ -200,15 +209,17 @@ public class LogSupport implements DocErrorReporter {
      * @param msg  The message or message pattern in case of arguments.
      * @param args The message arguments, if any.
      * @see MessageFormat
+     * @deprecated Switch from logger to reporter semantics.
      */
     public static void error(String msg, Object... args) {
-        if (LOGGER.isLoggable(Level.SEVERE)) {
-            if (reporter == null) {
-                LOGGER.log(Level.SEVERE, format(msg, args), findException(args));
-            } else {
-                reporter.printError(GlobalPosition.current(), format(msg, args));
-            }
-        }
+//        if (LOGGER.isLoggable(Level.SEVERE)) {
+//            if (reporter == null) {
+//                LOGGER.log(Level.SEVERE, format(msg, args), findException(args));
+//            } else {
+//                reporter.printError(GlobalPosition.current(), format(msg, args));
+//            }
+//        }
+        if (reporter != null) reporter.print(Diagnostic.Kind.ERROR, format(msg, args));
     }
 
     /**
@@ -216,8 +227,8 @@ public class LogSupport implements DocErrorReporter {
      *
      * @param msg The message (without parameters).
      * @see #info(String, Object...)
+     * @deprecated Switch from logger to reporter semantics.
      */
-    @Override
     public void printNotice(String msg) {
         info(msg);
     }
@@ -227,8 +238,8 @@ public class LogSupport implements DocErrorReporter {
      *
      * @param msg The message (without parameters).
      * @see #warn(String, Object...)
+     * @deprecated Switch from logger to reporter semantics.
      */
-    @Override
     public void printWarning(String msg) {
         warn(msg);
     }
@@ -238,8 +249,8 @@ public class LogSupport implements DocErrorReporter {
      *
      * @param msg The message (without parameters).
      * @see #error(String, Object...)
+     * @deprecated Switch from logger to reporter semantics.
      */
-    @Override
     public void printError(String msg) {
         error(msg);
     }
@@ -249,8 +260,8 @@ public class LogSupport implements DocErrorReporter {
      *
      * @param msg The message (without parameters).
      * @see #info(String, Object...)
+     * @deprecated Switch from logger to reporter semantics.
      */
-    @Override
     public void printNotice(SourcePosition pos, String msg) {
         try (GlobalPosition gp = new GlobalPosition(pos)) {
             info(msg);
@@ -262,8 +273,8 @@ public class LogSupport implements DocErrorReporter {
      *
      * @param msg The message (without parameters).
      * @see #warn(String, Object...)
+     * @deprecated Switch from logger to reporter semantics.
      */
-    @Override
     public void printWarning(SourcePosition pos, String msg) {
         try (GlobalPosition gp = new GlobalPosition(pos)) {
             warn(msg);
@@ -275,8 +286,8 @@ public class LogSupport implements DocErrorReporter {
      *
      * @param msg The message (without parameters).
      * @see #error(String, Object...)
+     * @deprecated Switch from logger to reporter semantics.
      */
-    @Override
     public void printError(SourcePosition pos, String msg) {
         try (GlobalPosition gp = new GlobalPosition(pos)) {
             error(msg);
