@@ -1,22 +1,17 @@
-#sudo: required
 sudo: false
 dist: trusty
-#group: edge
 jdk: oraclejdk9
 
 language: java
-#jdk:
-#- oraclejdk8
 
 addons:
   apt:
     packages:
-#    - oracle-java9-installer
-    - graphviz
+      - graphviz
 
 cache:
   directories:
-  - $HOME/.m2/repository
+    - $HOME/.m2/repository
 
 before_install:
   # copy maven settings
