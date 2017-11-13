@@ -19,8 +19,11 @@ import jdk.javadoc.doclet.DocletEnvironment;
 import jdk.javadoc.doclet.Reporter;
 import jdk.javadoc.doclet.StandardDoclet;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.model.ClassDiagram;
 
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.TypeElement;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
@@ -82,6 +85,11 @@ public class UMLDoclet extends StandardDoclet {
     }
 
     private boolean generateClassDiagrams(DocletEnvironment docEnv) {
+        docEnv.getIncludedElements().stream()
+                .filter(TypeElement.class::isInstance).map(TypeElement.class::cast)
+                .filter(e -> ElementKind.CLASS.equals(e.getKind()))
+                .map(e -> new ClassDiagram(config, docEnv, e))
+                .forEach(ClassDiagram::render);
         return true;
     }
 

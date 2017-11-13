@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.model;
 
+import jdk.javadoc.doclet.DocletEnvironment;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
@@ -27,13 +28,15 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Sjoerd Talsma
  */
-public class UMLDiagram extends Renderer {
+public abstract class UMLDiagram extends Renderer {
 
     protected final Configuration config;
+    protected final DocletEnvironment env;
 
-    public UMLDiagram(Configuration config) {
+    public UMLDiagram(Configuration config, DocletEnvironment env) {
         super(null);
         this.config = requireNonNull(config, "No UML Doclet configuration provided.");
+        this.env = requireNonNull(env, "Doclet environment is <null>.");
     }
 
     @Override

@@ -41,7 +41,7 @@ public class TestExcludedClassReferences extends Object {
     @Test
     public void testAbsentObjectDeclaration() {
         assertThat("Package diagram", packageDiag, not(containsString("java.lang.Object")));
-        assertThat("Class diagram", classDiag, not(containsString("java.lang.Object")));
+        assertThat("Clazz diagram", classDiag, not(containsString("java.lang.Object")));
     }
 
     @Test
@@ -50,23 +50,23 @@ public class TestExcludedClassReferences extends Object {
         assertThat("Package diagram", packageDiag, not(containsString("equals")));
         assertThat("Package diagram", packageDiag, not(containsString("toString")));
 
-        assertThat("Class diagram", classDiag, not(containsString("hashCode")));
-        assertThat("Class diagram", classDiag, not(containsString("equals")));
-        assertThat("Class diagram", classDiag, not(containsString("toString")));
+        assertThat("Clazz diagram", classDiag, not(containsString("hashCode")));
+        assertThat("Clazz diagram", classDiag, not(containsString("equals")));
+        assertThat("Clazz diagram", classDiag, not(containsString("toString")));
     }
 
     @Test
     public void testAbsentEnumDeclaration() {
         assertThat("Package diagram", packageDiag, not(containsString("java.lang.Enum")));
-        assertThat("Class diagram", classDiag, not(containsString("java.lang.Enum")));
+        assertThat("Clazz diagram", classDiag, not(containsString("java.lang.Enum")));
     }
 
     @Test
     public void testAbsentImplicitStaticEnumMethods() {
         assertThat("Package diagram", packageDiag, not(containsString("values()")));
         assertThat("Package diagram", packageDiag, not(containsString("valueOf(String)")));
-        assertThat("Class diagram", classDiag, not(containsString("values()")));
-        assertThat("Class diagram", classDiag, not(containsString("valueOf(String)")));
+        assertThat("Clazz diagram", classDiag, not(containsString("values()")));
+        assertThat("Clazz diagram", classDiag, not(containsString("valueOf(String)")));
     }
 
 }

@@ -16,13 +16,12 @@
 package nl.talsmasoftware.umldoclet.configuration;
 
 import jdk.javadoc.doclet.Doclet;
+import jdk.javadoc.doclet.DocletEnvironment;
 import jdk.javadoc.doclet.Reporter;
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 
-import java.util.Locale;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
@@ -31,7 +30,9 @@ public class Configuration {
 
     final Doclet doclet;
     private final StandardConfigurationOptions standardConfig;
+    private Locale locale;
     private Reporter reporter = new SysoutReporter();
+    private DocletEnvironment env = null;
 
     public Configuration(UMLDoclet doclet) {
         this.doclet = requireNonNull(doclet, "UML Doclet is <null>.");
@@ -39,8 +40,16 @@ public class Configuration {
     }
 
     public void init(Locale locale, Reporter reporter) {
-        // this.locale = locale; // Wait until we need it.
+        if (locale != null) this.locale = locale;
         if (reporter != null) this.reporter = reporter;
+    }
+
+    public ResourceBundle resources() {
+        try {
+            return ResourceBundle.getBundle(UMLDoclet.class.getName(), locale == null ? Locale.getDefault() : locale);
+        } catch (MissingResourceException mre) {
+            throw new IllegalStateException("Missing resourcebundle for UMLDoclet.", mre);
+        }
     }
 
     /**
@@ -53,7 +62,6 @@ public class Configuration {
     public Set<Doclet.Option> getSupportedOptions() {
         Set<Doclet.Option> supportedOptions = new TreeSet<>(comparing(o -> o.getNames().get(0), String::compareTo));
         supportedOptions.addAll(standardConfig.getSupportedStandardOptions());
-        // TODO add our own custom options.
         return supportedOptions;
     }
 
