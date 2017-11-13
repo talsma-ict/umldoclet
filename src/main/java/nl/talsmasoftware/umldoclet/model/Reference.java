@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.util;
+package nl.talsmasoftware.umldoclet.model;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -23,7 +23,7 @@ import java.util.Set;
 import static java.util.Arrays.asList;
 import static java.util.Collections.*;
 import static java.util.Objects.requireNonNull;
-import static nl.talsmasoftware.umldoclet.util.Concatenation.append;
+import static nl.talsmasoftware.umldoclet.v1.Concatenation.append;
 
 /**
  * Model class for a reference between two types.

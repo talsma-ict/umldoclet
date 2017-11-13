@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.logging;
+package nl.talsmasoftware.umldoclet.v1.logging;
 
 import com.sun.javadoc.DocErrorReporter;
 import com.sun.javadoc.SourcePosition;
@@ -171,10 +171,8 @@ public class LogSupport {
     }
 
     /**
-     * Reporter alias method for {@link #info(String, Object...)} with position info.
-     *
-     * @param msg The message (without parameters).
-     * @see #info(String, Object...)
+     * @param pos The source position
+     * @param msg The message
      * @deprecated Switch from logger to reporter semantics.
      */
     public void printNotice(SourcePosition pos, String msg) {
@@ -184,10 +182,8 @@ public class LogSupport {
     }
 
     /**
-     * Reporter alias method for {@link #warn(String, Object...)} with position info.
-     *
-     * @param msg The message (without parameters).
-     * @see #warn(String, Object...)
+     * @param pos The source position
+     * @param msg The message
      * @deprecated Switch from logger to reporter semantics.
      */
     public void printWarning(SourcePosition pos, String msg) {
@@ -197,10 +193,8 @@ public class LogSupport {
     }
 
     /**
-     * Reporter alias method for {@link #error(String, Object...)} with position info.
-     *
-     * @param msg The message (without parameters).
-     * @see #error(String, Object...)
+     * @param pos The source position
+     * @param msg The message
      * @deprecated Switch from logger to reporter semantics.
      */
     public void printError(SourcePosition pos, String msg) {

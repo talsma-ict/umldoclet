@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.rendering;
+package nl.talsmasoftware.umldoclet.v1.rendering;
 
 import com.sun.javadoc.ClassDoc;
-import nl.talsmasoftware.umldoclet.logging.GlobalPosition;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.v1.logging.GlobalPosition;
 
 /**
  * Specific renderer for annotations.

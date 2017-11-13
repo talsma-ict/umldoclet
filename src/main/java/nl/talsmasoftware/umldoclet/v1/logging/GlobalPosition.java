@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.logging;
+package nl.talsmasoftware.umldoclet.v1.logging;
 
 import com.sun.javadoc.Doc;
 import com.sun.javadoc.SourcePosition;

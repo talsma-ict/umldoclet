@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.config;
+package nl.talsmasoftware.umldoclet.v1.config;
 
-import nl.talsmasoftware.umldoclet.logging.LogSupport;
+import nl.talsmasoftware.umldoclet.v1.logging.LogSupport;
 
 import java.util.Arrays;
 

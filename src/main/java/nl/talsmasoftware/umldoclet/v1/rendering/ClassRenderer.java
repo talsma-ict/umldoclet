@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.rendering;
+package nl.talsmasoftware.umldoclet.v1.rendering;
 
 import com.sun.javadoc.*;
-import nl.talsmasoftware.umldoclet.logging.GlobalPosition;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.v1.logging.GlobalPosition;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,9 +25,9 @@ import java.util.List;
 import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
-import static nl.talsmasoftware.umldoclet.logging.LogSupport.debug;
-import static nl.talsmasoftware.umldoclet.logging.LogSupport.trace;
-import static nl.talsmasoftware.umldoclet.util.Model.isDeprecated;
+import static nl.talsmasoftware.umldoclet.v1.Model.isDeprecated;
+import static nl.talsmasoftware.umldoclet.v1.logging.LogSupport.debug;
+import static nl.talsmasoftware.umldoclet.v1.logging.LogSupport.trace;
 
 /**
  * Renderer to produce PlantUML output for a single class.

@@ -16,8 +16,10 @@
 package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.DocErrorReporter;
-import nl.talsmasoftware.umldoclet.config.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.v1.config.UMLDocletConfig;
+import nl.talsmasoftware.umldoclet.v1.rendering.DiagramRenderer;
+import nl.talsmasoftware.umldoclet.v1.rendering.Renderer;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;

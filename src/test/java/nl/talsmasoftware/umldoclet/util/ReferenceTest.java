@@ -15,10 +15,11 @@
  */
 package nl.talsmasoftware.umldoclet.util;
 
+import nl.talsmasoftware.umldoclet.model.Reference;
 import org.junit.Test;
 
-import static nl.talsmasoftware.umldoclet.util.Reference.Side.from;
-import static nl.talsmasoftware.umldoclet.util.Reference.Side.to;
+import static nl.talsmasoftware.umldoclet.model.Reference.Side.from;
+import static nl.talsmasoftware.umldoclet.model.Reference.Side.to;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 

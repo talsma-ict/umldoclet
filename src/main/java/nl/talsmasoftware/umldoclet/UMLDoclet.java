@@ -19,7 +19,6 @@ import jdk.javadoc.doclet.DocletEnvironment;
 import jdk.javadoc.doclet.Reporter;
 import jdk.javadoc.doclet.StandardDoclet;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.logging.LogSupport;
 
 import javax.lang.model.SourceVersion;
 import java.util.Locale;
@@ -46,7 +45,7 @@ public class UMLDoclet extends StandardDoclet {
 
     @Override
     public void init(Locale locale, Reporter reporter) {
-        LogSupport.setReporter(reporter);
+        nl.talsmasoftware.umldoclet.v1.logging.LogSupport.setReporter(reporter);
         config.init(locale, reporter);
         super.init(locale, reporter);
     }

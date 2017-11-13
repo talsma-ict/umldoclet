@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.util;
+package nl.talsmasoftware.umldoclet.v1;
 
 import com.sun.javadoc.*;
-import nl.talsmasoftware.umldoclet.rendering.Renderer;
+import nl.talsmasoftware.umldoclet.v1.rendering.Renderer;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -25,8 +25,8 @@ import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
-import static nl.talsmasoftware.umldoclet.logging.LogSupport.trace;
-import static nl.talsmasoftware.umldoclet.logging.LogSupport.warn;
+import static nl.talsmasoftware.umldoclet.v1.logging.LogSupport.trace;
+import static nl.talsmasoftware.umldoclet.v1.logging.LogSupport.warn;
 
 /**
  * @author Sjoerd Talsma

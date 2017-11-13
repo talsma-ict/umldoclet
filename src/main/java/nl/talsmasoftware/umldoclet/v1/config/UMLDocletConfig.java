@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.config;
+package nl.talsmasoftware.umldoclet.v1.config;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.DocErrorReporter;
-import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
+import nl.talsmasoftware.umldoclet.v1.logging.LogSupport;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,11 +26,11 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.regex.Matcher;
 
-import static nl.talsmasoftware.umldoclet.config.UMLDocletConfig.Setting.*;
-import static nl.talsmasoftware.umldoclet.logging.LogSupport.*;
 import static nl.talsmasoftware.umldoclet.rendering.indent.Indentation.spaces;
 import static nl.talsmasoftware.umldoclet.rendering.indent.Indentation.tabs;
-import static nl.talsmasoftware.umldoclet.util.Model.isDeprecated;
+import static nl.talsmasoftware.umldoclet.v1.Model.isDeprecated;
+import static nl.talsmasoftware.umldoclet.v1.config.UMLDocletConfig.Setting.*;
+import static nl.talsmasoftware.umldoclet.v1.logging.LogSupport.*;
 
 /**
  * Class containing all possible Doclet options for the UML doclet.

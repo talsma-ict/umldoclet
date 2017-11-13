@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.rendering;
+package nl.talsmasoftware.umldoclet.v1.rendering;
 
 import com.sun.javadoc.*;
-import nl.talsmasoftware.umldoclet.logging.GlobalPosition;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.v1.logging.GlobalPosition;
 
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -27,8 +27,8 @@ import static java.lang.Character.toLowerCase;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.requireNonNull;
-import static nl.talsmasoftware.umldoclet.logging.LogSupport.*;
-import static nl.talsmasoftware.umldoclet.util.Model.isDeprecated;
+import static nl.talsmasoftware.umldoclet.v1.Model.isDeprecated;
+import static nl.talsmasoftware.umldoclet.v1.logging.LogSupport.*;
 
 /**
  * Method renderer.

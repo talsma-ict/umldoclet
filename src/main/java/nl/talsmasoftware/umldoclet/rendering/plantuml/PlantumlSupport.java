@@ -15,8 +15,6 @@
  */
 package nl.talsmasoftware.umldoclet.rendering.plantuml;
 
-import nl.talsmasoftware.umldoclet.logging.LogSupport;
-
 /**
  * Simple class to perform detection of the plantuml library on the classpath.
  * Detection happens without a runtime dependency on plantuml itself, so we can cleanly avoid attempts
@@ -35,31 +33,27 @@ public class PlantumlSupport {
     private static volatile String plantumlVersion = null;
 
     /**
-     * @return <code>true</code> if 'some version of' the <code>plantuml</code> library is detected on the classpath,
-     * otherwise <code>false</code>.
-     */
-    public static boolean isPlantumlDetected() {
-        if (plantumlVersion == null) {
-            plantumlVersion = determinePlantumlVersion();
-        }
-        LogSupport.trace("Detected plantuml version: \"{0}\".", plantumlVersion);
-        return !plantumlVersion.isEmpty();
-    }
-
-    /**
      * Use reflection to determine the plantuml version that is available on the classpath.
      *
-     * @return The plant UML version or the empty String (<code>""</code>) if not found.
+     * @return The detected plant UML version
+     * @throws PlantumlNotDetectedException if no plant UML version was detected on the classpath
      */
-    private static synchronized String determinePlantumlVersion() {
-        try {
-            final String plantumlVersion = Class.forName("net.sourceforge.plantuml.version.Version")
-                    .getMethod("versionString").invoke(null).toString();
-            LogSupport.info("Plantuml library version \"{0}\" was detected on the classpath.", plantumlVersion);
-            return plantumlVersion;
-        } catch (ReflectiveOperationException | LinkageError | RuntimeException notFound) {
-            LogSupport.info("The plantuml library was not detected on the classpath.", notFound);
-            return "";
+    public static synchronized String determinePlantumlVersion() throws PlantumlNotDetectedException {
+        if (plantumlVersion == null) {
+            try {
+                final String plantumlVersion = Class.forName("net.sourceforge.plantuml.version.Version")
+                        .getMethod("versionString").invoke(null).toString();
+                return plantumlVersion;
+            } catch (ReflectiveOperationException | LinkageError | RuntimeException notFound) {
+                throw new PlantumlNotDetectedException(notFound);
+            }
+        }
+        return plantumlVersion;
+    }
+
+    public static final class PlantumlNotDetectedException extends Exception {
+        private PlantumlNotDetectedException(Throwable cause) {
+            super("The plantuml library was not detected on the classpath.", cause);
         }
     }
 

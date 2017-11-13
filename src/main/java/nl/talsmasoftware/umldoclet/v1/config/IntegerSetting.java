@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.config;
+package nl.talsmasoftware.umldoclet.v1.config;
 
-import nl.talsmasoftware.umldoclet.logging.LogSupport;
+import nl.talsmasoftware.umldoclet.v1.logging.LogSupport;
 
 import java.util.Arrays;
 
 /**
  * @author Sjoerd Talsma
  */
-class BooleanSetting extends AbstractSetting<Boolean> {
+class IntegerSetting extends AbstractSetting<Integer> {
 
-    private final boolean defaultValue;
+    private final int defaultValue;
 
-    BooleanSetting(String name, boolean defaultValue) {
+    IntegerSetting(String name, int defaultValue) {
         super(name);
         this.defaultValue = defaultValue;
     }
@@ -36,7 +36,11 @@ class BooleanSetting extends AbstractSetting<Boolean> {
         if (option.length != 2) {
             LogSupport.error("Expected {0} but received {1} values: {2}.", 2, option.length, Arrays.toString(option));
             return false;
-        } else if (!"true".equalsIgnoreCase(option[1]) && !"false".equalsIgnoreCase(option[1])) {
+        }
+        try {
+            LogSupport.trace("Valid integer option \"{0}\": {1}", option[0], Integer.valueOf(option[1]));
+        } catch (NumberFormatException badInteger) {
+            LogSupport.trace("Invalid integer option \"{0}\": {1}", option[0], badInteger);
             LogSupport.error("Expected boolean value, but got \"{0}\" for option \"{1}\".", option[1], option[0]);
             return false;
         }
@@ -44,15 +48,13 @@ class BooleanSetting extends AbstractSetting<Boolean> {
     }
 
     @Override
-    public Boolean parse(String[] option, Object currentValue) {
-        // TODO: Error reporting!
-        return option.length > 1 ? Boolean.valueOf(option[1]) : value(currentValue);
+    public Integer parse(String[] option, Object currentValue) {
+        return option.length > 1 ? Integer.valueOf(option[1]) : value(currentValue);
     }
 
     @Override
-    public Boolean value(Object configured) {
-        return configured instanceof Boolean ? (Boolean) configured
+    public Integer value(Object configured) {
+        return configured instanceof Integer ? (Integer) configured
                 : defaultValue;
     }
-
 }

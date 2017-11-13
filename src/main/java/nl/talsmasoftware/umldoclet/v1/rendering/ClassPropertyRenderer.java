@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.rendering;
+package nl.talsmasoftware.umldoclet.v1.rendering;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.Type;
-import nl.talsmasoftware.umldoclet.logging.LogSupport;
-import nl.talsmasoftware.umldoclet.util.Model;
-import nl.talsmasoftware.umldoclet.util.Reference;
+import nl.talsmasoftware.umldoclet.model.Reference;
+import nl.talsmasoftware.umldoclet.v1.Model;
+import nl.talsmasoftware.umldoclet.v1.logging.LogSupport;
 
 import java.util.Collection;
 
-import static nl.talsmasoftware.umldoclet.util.Model.find;
-import static nl.talsmasoftware.umldoclet.util.Reference.Side.from;
-import static nl.talsmasoftware.umldoclet.util.Reference.Side.to;
+import static nl.talsmasoftware.umldoclet.model.Reference.Side.from;
+import static nl.talsmasoftware.umldoclet.model.Reference.Side.to;
+import static nl.talsmasoftware.umldoclet.v1.Model.find;
 
 /**
  * This class is specifically meant for class dependencies among each-other from object properties..

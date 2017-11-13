@@ -15,8 +15,8 @@
  */
 package nl.talsmasoftware.umldoclet.testing.deprecation;
 
-import nl.talsmasoftware.umldoclet.config.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.testing.Testing;
+import nl.talsmasoftware.umldoclet.v1.config.UMLDocletConfig;
 import org.junit.Ignore;
 import org.junit.Test;
 
