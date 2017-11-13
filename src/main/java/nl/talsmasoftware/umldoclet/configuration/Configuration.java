@@ -19,10 +19,11 @@ import jdk.javadoc.doclet.Doclet;
 import jdk.javadoc.doclet.Reporter;
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 
-import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
+import java.util.TreeSet;
 
+import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 
 public class Configuration {
@@ -49,7 +50,7 @@ public class Configuration {
     }
 
     public Set<Doclet.Option> getSupportedOptions() {
-        Set<Doclet.Option> supportedOptions = new LinkedHashSet<>();
+        Set<Doclet.Option> supportedOptions = new TreeSet<>(comparing(o -> o.getNames().get(0), String::compareTo));
         supportedOptions.addAll(standardConfig.getSupportedStandardOptions());
         // TODO add our own custom options.
         return supportedOptions;
