@@ -26,7 +26,7 @@ import java.util.Objects;
 import static java.util.Objects.requireNonNull;
 import static nl.talsmasoftware.umldoclet.logging.LogSupport.concatLowercaseParts;
 import static nl.talsmasoftware.umldoclet.logging.LogSupport.trace;
-import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
+import static nl.talsmasoftware.umldoclet.util.Model.isDeprecated;
 
 /**
  * Created on 17-02-2016.

@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.model;
+package nl.talsmasoftware.umldoclet.util;
 
 import org.junit.Test;
 
-import static nl.talsmasoftware.umldoclet.model.Reference.Side.from;
-import static nl.talsmasoftware.umldoclet.model.Reference.Side.to;
+import static nl.talsmasoftware.umldoclet.util.Reference.Side.from;
+import static nl.talsmasoftware.umldoclet.util.Reference.Side.to;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 

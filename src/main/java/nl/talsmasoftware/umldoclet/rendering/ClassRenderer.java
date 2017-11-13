@@ -27,7 +27,7 @@ import java.util.Objects;
 import static java.util.Objects.requireNonNull;
 import static nl.talsmasoftware.umldoclet.logging.LogSupport.debug;
 import static nl.talsmasoftware.umldoclet.logging.LogSupport.trace;
-import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
+import static nl.talsmasoftware.umldoclet.util.Model.isDeprecated;
 
 /**
  * Renderer to produce PlantUML output for a single class.

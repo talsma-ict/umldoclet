@@ -28,9 +28,9 @@ import java.util.regex.Matcher;
 
 import static nl.talsmasoftware.umldoclet.config.UMLDocletConfig.Setting.*;
 import static nl.talsmasoftware.umldoclet.logging.LogSupport.*;
-import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
 import static nl.talsmasoftware.umldoclet.rendering.indent.Indentation.spaces;
 import static nl.talsmasoftware.umldoclet.rendering.indent.Indentation.tabs;
+import static nl.talsmasoftware.umldoclet.util.Model.isDeprecated;
 
 /**
  * Class containing all possible Doclet options for the UML doclet.

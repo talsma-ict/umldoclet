@@ -28,7 +28,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.requireNonNull;
 import static nl.talsmasoftware.umldoclet.logging.LogSupport.*;
-import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
+import static nl.talsmasoftware.umldoclet.util.Model.isDeprecated;
 
 /**
  * Method renderer.

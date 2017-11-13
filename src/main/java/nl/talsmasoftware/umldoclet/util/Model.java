@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.model;
+package nl.talsmasoftware.umldoclet.util;
 
 import com.sun.javadoc.*;
 import nl.talsmasoftware.umldoclet.rendering.Renderer;

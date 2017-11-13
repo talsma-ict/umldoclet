@@ -19,15 +19,15 @@ import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.PackageDoc;
 import com.sun.javadoc.Tag;
 import nl.talsmasoftware.umldoclet.config.UMLDocletConfig;
-import nl.talsmasoftware.umldoclet.model.Reference;
+import nl.talsmasoftware.umldoclet.util.Reference;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 
 import static nl.talsmasoftware.umldoclet.logging.LogSupport.*;
-import static nl.talsmasoftware.umldoclet.model.Reference.Side.from;
-import static nl.talsmasoftware.umldoclet.model.Reference.Side.to;
+import static nl.talsmasoftware.umldoclet.util.Reference.Side.from;
+import static nl.talsmasoftware.umldoclet.util.Reference.Side.to;
 
 /**
  * This class is here to support references that were available from JavaDoc tags from the old PlantUML doclet.

@@ -19,14 +19,14 @@ import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.Type;
 import nl.talsmasoftware.umldoclet.logging.LogSupport;
-import nl.talsmasoftware.umldoclet.model.Model;
-import nl.talsmasoftware.umldoclet.model.Reference;
+import nl.talsmasoftware.umldoclet.util.Model;
+import nl.talsmasoftware.umldoclet.util.Reference;
 
 import java.util.Collection;
 
-import static nl.talsmasoftware.umldoclet.model.Model.find;
-import static nl.talsmasoftware.umldoclet.model.Reference.Side.from;
-import static nl.talsmasoftware.umldoclet.model.Reference.Side.to;
+import static nl.talsmasoftware.umldoclet.util.Model.find;
+import static nl.talsmasoftware.umldoclet.util.Reference.Side.from;
+import static nl.talsmasoftware.umldoclet.util.Reference.Side.to;
 
 /**
  * This class is specifically meant for class dependencies among each-other from object properties..
