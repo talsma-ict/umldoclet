@@ -19,6 +19,7 @@ import jdk.javadoc.doclet.DocletEnvironment;
 import jdk.javadoc.doclet.Reporter;
 import jdk.javadoc.doclet.StandardDoclet;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.logging.LogSupport;
 
 import javax.lang.model.SourceVersion;
 import java.util.Locale;
@@ -45,6 +46,7 @@ public class UMLDoclet extends StandardDoclet {
 
     @Override
     public void init(Locale locale, Reporter reporter) {
+        LogSupport.setReporter(reporter);
         config.init(locale, reporter);
         super.init(locale, reporter);
     }
@@ -69,7 +71,19 @@ public class UMLDoclet extends StandardDoclet {
 
     @Override
     public boolean run(DocletEnvironment docEnv) {
-        return super.run(docEnv);
+        boolean result;
+        try {
+            result = generateClassDiagrams(docEnv);
+        } catch (RuntimeException rte) {
+            result = false;
+            System.err.println("Unanticipated error generating UML: " + rte.getMessage());
+            rte.printStackTrace(System.err);
+        }
+        return result && super.run(docEnv);
+    }
+
+    private boolean generateClassDiagrams(DocletEnvironment docEnv) {
+        return true;
     }
 
 }

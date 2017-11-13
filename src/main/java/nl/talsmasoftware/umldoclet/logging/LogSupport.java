@@ -46,98 +46,41 @@ public class LogSupport {
     }
 
     /**
-     * Sets the loglevel for the doclet.
-     * This supports both the 'olg.slf4j' style levels as the 'java.util.logging' style levels and breaks them up into the
-     * following 'java.util.logging' levels:
-     * <ol>
-     * <li><b><code>FINEST</code></b>, <code>ALL</code>, <code>TRACE</code></li>
-     * <li><b><code>FINER</code></b></li>
-     * <li><b><code>FINE</code></b>, <code>DEBUG</code></li>
-     * <li><b><code>CONFIG</code></b></li>
-     * <li><b><code>INFO</code></b></li>
-     * <li><b><code>WARNING</code></b>, <code>WARN</code></li>
-     * <li><b><code>SEVERE</code></b>, <code>ERROR</code>, <code>FATAL</code></li>
-     * <li><b><code>OFF</code></b></li>
-     * </ol>
+     * No longer does anything, please use {@link nl.talsmasoftware.umldoclet.configuration.Configuration#reporter()}
+     * instead.
      *
-     * @param level The level to set the log support to (or <code>null</code> to default back to INFO).
+     * @param level ignored
      * @deprecated switch from logger to reporter semantics.
      */
     public static void setLevel(Object level) {
-//        switch (Objects.toString(level, "INFO").toUpperCase(Locale.ENGLISH).trim()) {
-//            case "ALL":
-//            case "TRACE":
-//            case "FINEST":
-//                LOGGER.setLevel(Level.FINEST);
-//                break;
-//            case "FINER":
-//                LOGGER.setLevel(Level.FINER);
-//                break;
-//            case "DEBUG":
-//            case "FINE":
-//                LOGGER.setLevel(Level.FINE);
-//                break;
-//            case "CONFIG":
-//                LOGGER.setLevel(Level.CONFIG);
-//                break;
-//            case "INFO":
-//                LOGGER.setLevel(Level.INFO);
-//                break;
-//            case "WARN":
-//            case "WARNING":
-//                LOGGER.setLevel(Level.WARNING);
-//                break;
-//            case "ERROR":
-//            case "FATAL":
-//            case "SEVERE":
-//                LOGGER.setLevel(Level.SEVERE);
-//                break;
-//            case "OFF":
-//                LOGGER.setLevel(Level.OFF);
-//                break;
-//            default:
-//                throw new IllegalArgumentException(format("Unsupported log level \"{0}\"!", level));
-//        }
+        // No-op, please switch to Reporter semantics!
     }
 
-    /**
-     * Formats the log message according to the {@link MessageFormat} class, so numbered placeholders are replaced by
-     * paramters like: <code>{0}</code>, <code>{1}</code>, etc.
-     *
-     * @param msg  The message, possibly containing placeholders.
-     * @param args The parameters to replace placeholders, if any.
-     * @return The formatted message.
-     */
     private static String format(String msg, Object... args) {
         return MessageFormat.format(msg, args);
     }
 
     /**
-     * @return Whether trace logging is enabled.
+     * No longer does anything, please use {@link nl.talsmasoftware.umldoclet.configuration.Configuration#reporter()}
+     * instead.
+     *
+     * @return Always {@code false}
      * @deprecated Switch from logger to reporter semantics.
      */
     public static boolean isTraceEnabled() {
-//        return LOGGER.isLoggable(Level.FINEST);
         return false;
     }
 
     /**
-     * Traces the message, arguments will replace message placeholders like <code>"{0}"</code>, <code>"{1}"</code>, etc.
-     * (See {@link MessageFormat} for more details).
+     * No longer does anything, please use {@link nl.talsmasoftware.umldoclet.configuration.Configuration#reporter()}
+     * instead.
      *
-     * @param msg  The message or message pattern in case of arguments.
-     * @param args The message arguments, if any.
-     * @see MessageFormat
+     * @param msg  ignored
+     * @param args ignored
      * @deprecated Switch from logger to reporter semantics.
      */
     public static void trace(String msg, Object... args) {
-//        if (isTraceEnabled()) {
-//            if (reporter == null) {
-//                LOGGER.log(Level.FINEST, format(msg, args), findException(args));
-//            } else {
-//                reporter.printNotice(GlobalPosition.current(), format(msg, args));
-//            }
-//        }
+        // No-op, please switch to Reporter semantics!
     }
 
     /**
@@ -150,13 +93,6 @@ public class LogSupport {
      * @deprecated Switch from logger to reporter semantics.
      */
     public static void debug(String msg, Object... args) {
-//        if (LOGGER.isLoggable(Level.FINE)) {
-//            if (reporter == null) {
-//                LOGGER.log(Level.FINE, format(msg, args), findException(args));
-//            } else {
-//                reporter.printNotice(GlobalPosition.current(), format(msg, args));
-//            }
-//        }
         if (reporter != null) reporter.print(Diagnostic.Kind.OTHER, format(msg, args));
     }
 
@@ -171,13 +107,6 @@ public class LogSupport {
      * @deprecated Switch from logger to reporter semantics.
      */
     public static void info(String msg, Object... args) {
-//        if (LOGGER.isLoggable(Level.INFO)) {
-//            if (reporter == null) {
-//                LOGGER.log(Level.INFO, format(msg, args), findException(args));
-//            } else {
-//                reporter.printNotice(GlobalPosition.current(), format(msg, args));
-//            }
-//        }
         if (reporter != null) reporter.print(Diagnostic.Kind.NOTE, format(msg, args));
     }
 
@@ -192,13 +121,6 @@ public class LogSupport {
      * @deprecated Switch from logger to reporter semantics.
      */
     public static void warn(String msg, Object... args) {
-//        if (LOGGER.isLoggable(Level.WARNING)) {
-//            if (reporter == null) {
-//                LOGGER.log(Level.WARNING, format(msg, args), findException(args));
-//            } else {
-//                reporter.printWarning(GlobalPosition.current(), format(msg, args));
-//            }
-//        }
         if (reporter != null) reporter.print(Diagnostic.Kind.WARNING, format(msg, args));
     }
 
@@ -212,13 +134,6 @@ public class LogSupport {
      * @deprecated Switch from logger to reporter semantics.
      */
     public static void error(String msg, Object... args) {
-//        if (LOGGER.isLoggable(Level.SEVERE)) {
-//            if (reporter == null) {
-//                LOGGER.log(Level.SEVERE, format(msg, args), findException(args));
-//            } else {
-//                reporter.printError(GlobalPosition.current(), format(msg, args));
-//            }
-//        }
         if (reporter != null) reporter.print(Diagnostic.Kind.ERROR, format(msg, args));
     }
 

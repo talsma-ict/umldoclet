@@ -18,6 +18,7 @@ package nl.talsmasoftware.umldoclet.configuration;
 import jdk.javadoc.doclet.Doclet;
 import jdk.javadoc.doclet.Reporter;
 import nl.talsmasoftware.umldoclet.UMLDoclet;
+import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 
 import java.util.Locale;
 import java.util.Set;
@@ -54,5 +55,9 @@ public class Configuration {
         supportedOptions.addAll(standardConfig.getSupportedStandardOptions());
         // TODO add our own custom options.
         return supportedOptions;
+    }
+
+    public Indentation indentation() {
+        return Indentation.DEFAULT; // TODO decide whether we want to make this configurable at all.
     }
 }
