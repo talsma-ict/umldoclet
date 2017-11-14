@@ -23,24 +23,28 @@ import javax.tools.Diagnostic;
 
 public class ClassDiagram extends UMLDiagram {
 
-    private final Type clz;
+    private final Type cls;
 
     public ClassDiagram(Configuration config, DocletEnvironment env, TypeElement classElement) {
         super(config, env);
-        this.clz = new Type(this, classElement);
-        super.children.add(clz);
-    }
-
-    protected String diagramPath() {
-        String packagePath = clz.containingPackage().getQualifiedName().toString().replace('.', '/');
-        return packagePath + "/" + clz.getSimpleName() + ".puml";
+        this.cls = new Type(this, classElement);
+        super.children.add(cls);
     }
 
     public void render() {
-//        env.getJavaFileManager().getLocationForModule()
+        if (!config.quiet) config.reporter().print(Diagnostic.Kind.NOTE, "Generating " + umlPath() + " (todo)...");
+    }
 
-        config.reporter().print(Diagnostic.Kind.OTHER, clz.typeElement, "Diagram path: " + diagramPath());
-        config.reporter().print(Diagnostic.Kind.OTHER, clz.typeElement, this.toString());
+    protected String umlPath() {
+        StringBuilder result = new StringBuilder(config.destDirName);
+        if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');
+        result.append(cls.containingPackage().getQualifiedName().toString().replace('.', '/')).append('/');
+        return result.append(cls.getSimpleName()).append(".puml").toString();
+    }
+
+    protected String imgPath(String type) {
+        // For now in the same location as the UML. TODO: add support for 'imagedir'
+        return umlPath().replaceAll("\\.puml$", "." + type);
     }
 
 }

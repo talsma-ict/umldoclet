@@ -24,11 +24,12 @@ import nl.talsmasoftware.umldoclet.model.ClassDiagram;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.Set;
-import java.util.TreeSet;
-
-import static java.util.Comparator.comparing;
 
 /**
  * UML doclet that generates <a href="http://plantuml.com">PlantUML</a> class diagrams from your java code just as
@@ -40,6 +41,7 @@ import static java.util.Comparator.comparing;
 public class UMLDoclet extends StandardDoclet {
 
     private final Configuration config;
+    private Properties properties;
 
     public UMLDoclet() {
         super();
@@ -48,8 +50,8 @@ public class UMLDoclet extends StandardDoclet {
 
     @Override
     public void init(Locale locale, Reporter reporter) {
-        nl.talsmasoftware.umldoclet.v1.logging.LogSupport.setReporter(reporter);
         config.init(locale, reporter);
+        nl.talsmasoftware.umldoclet.v1.logging.LogSupport.setReporter(config.reporter());
         super.init(locale, reporter);
     }
 
@@ -58,12 +60,25 @@ public class UMLDoclet extends StandardDoclet {
         return "UML";
     }
 
+    private Properties getProperties() {
+        if (properties == null) {
+            properties = new Properties();
+            try (InputStream in = getClass().getResourceAsStream("/META-INF/umldoclet.properties")) {
+                properties.load(in);
+            } catch (IOException | RuntimeException e) {
+                config.reporter().print(Diagnostic.Kind.WARNING, "Unable to load UMLDoclet properties: " + e.getMessage());
+            }
+        }
+        return properties;
+    }
+
+    public String getVersion() {
+        return getProperties().getProperty("version", "unknown");
+    }
+
     @Override
     public Set<Option> getSupportedOptions() {
-        Set<Option> supportedOptions = new TreeSet<>(comparing(o -> o.getNames().get(0), String::compareTo));
-        supportedOptions.addAll(super.getSupportedOptions());
-        supportedOptions.addAll(config.getSupportedOptions());
-        return supportedOptions;
+        return config.mergeOptionsWith(super.getSupportedOptions());
     }
 
     @Override
@@ -73,6 +88,7 @@ public class UMLDoclet extends StandardDoclet {
 
     @Override
     public boolean run(DocletEnvironment docEnv) {
+        config.reporter().print(Diagnostic.Kind.NOTE, getName() + " Doclet version " + getVersion());
         boolean result;
         try {
             result = generateClassDiagrams(docEnv);

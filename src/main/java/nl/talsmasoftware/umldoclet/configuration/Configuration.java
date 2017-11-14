@@ -15,33 +15,47 @@
  */
 package nl.talsmasoftware.umldoclet.configuration;
 
+import com.sun.source.util.DocTreePath;
 import jdk.javadoc.doclet.Doclet;
 import jdk.javadoc.doclet.DocletEnvironment;
 import jdk.javadoc.doclet.Reporter;
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 
-import java.util.*;
+import javax.lang.model.element.Element;
+import javax.tools.Diagnostic;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+import java.util.Set;
 
-import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 
 public class Configuration {
 
     final Doclet doclet;
-    private final StandardConfigurationOptions standardConfig;
+    private final UMLOptions options;
+    private final ReporterImpl reporter;
     private Locale locale;
-    private Reporter reporter = new SysoutReporter();
     private DocletEnvironment env = null;
+
+    /**
+     * Destination directory name, in which doclet will generate the entire
+     * documentation. Default is current directory.
+     */
+    public String destDirName = "";
+
+    public boolean quiet = false;
 
     public Configuration(UMLDoclet doclet) {
         this.doclet = requireNonNull(doclet, "UML Doclet is <null>.");
-        this.standardConfig = new StandardConfigurationOptions(this);
+        this.options = new UMLOptions(this);
+        this.reporter = new ReporterImpl();
     }
 
     public void init(Locale locale, Reporter reporter) {
-        if (locale != null) this.locale = locale;
-        if (reporter != null) this.reporter = reporter;
+        this.locale = locale;
+        this.reporter.delegate = reporter;
     }
 
     public ResourceBundle resources() {
@@ -59,13 +73,45 @@ public class Configuration {
         return reporter;
     }
 
-    public Set<Doclet.Option> getSupportedOptions() {
-        Set<Doclet.Option> supportedOptions = new TreeSet<>(comparing(o -> o.getNames().get(0), String::compareTo));
-        supportedOptions.addAll(standardConfig.getSupportedStandardOptions());
-        return supportedOptions;
+    public Set<Doclet.Option> mergeOptionsWith(Set<Doclet.Option> standardOptions) {
+        return options.mergeWith(standardOptions);
     }
 
     public Indentation indentation() {
         return Indentation.DEFAULT; // TODO decide whether we want to make this configurable at all.
     }
+
+    private class ReporterImpl implements Reporter {
+        private Reporter delegate = null;
+
+        private boolean mustPrint(Diagnostic.Kind kind) {
+            Diagnostic.Kind threshold = quiet ? Diagnostic.Kind.WARNING : Diagnostic.Kind.NOTE;
+            return kind != null && kind.compareTo(threshold) <= 0;
+        }
+
+        @Override
+        public void print(Diagnostic.Kind kind, String msg) {
+            if (mustPrint(kind)) {
+                if (delegate == null) System.out.println(msg);
+                else delegate.print(kind, msg);
+            }
+        }
+
+        @Override
+        public void print(Diagnostic.Kind kind, DocTreePath path, String msg) {
+            if (mustPrint(kind)) {
+                if (delegate == null) System.out.println(msg);
+                else delegate.print(kind, path, msg);
+            }
+        }
+
+        @Override
+        public void print(Diagnostic.Kind kind, Element e, String msg) {
+            if (mustPrint(kind)) {
+                if (delegate == null) System.out.println(msg);
+                else delegate.print(kind, e, msg);
+            }
+        }
+    }
+
 }

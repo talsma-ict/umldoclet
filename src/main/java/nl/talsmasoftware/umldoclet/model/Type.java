@@ -17,9 +17,7 @@ package nl.talsmasoftware.umldoclet.model;
 
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
-import javax.lang.model.element.Element;
-import javax.lang.model.element.PackageElement;
-import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.*;
 
 import static java.util.Objects.requireNonNull;
 
@@ -32,6 +30,10 @@ public class Type extends Renderer {
         this.typeElement = requireNonNull(typeElement, "Type element is <null>.");
     }
 
+    protected PackageElement containingPackage() {
+        return diagram.env.getElementUtils().getPackageOf(typeElement);
+    }
+
     protected String getSimpleName() {
         StringBuilder sb = new StringBuilder(typeElement.getSimpleName());
         for (Element enclosed = typeElement.getEnclosingElement();
@@ -42,13 +44,27 @@ public class Type extends Renderer {
         return sb.toString();
     }
 
-    protected PackageElement containingPackage() {
-        return diagram.env.getElementUtils().getPackageOf(typeElement);
-    }
-
     @Override
     protected IndentingPrintWriter writeTo(IndentingPrintWriter output) {
-        System.out.println("Simulating rendering of: " + typeElement);
-        return output;
+        output.append(umlTypeOf(typeElement)).whitespace();
+        if (!children.isEmpty()) writeChildrenTo(output.append('{').newline()).append('}');
+        return output.newline().newline();
+    }
+
+    /**
+     * Determines the 'UML' type for the class to be rendered.
+     * Currently, this can return one of the following: {@code "enum"}, {@code "interface"}, {@code "abstract class"}
+     * or otherwise {@code "class"}.
+     *
+     * @param typeElement The type element to return the uml type for.
+     * @return The UML type for the class to be rendered.
+     */
+    protected static String umlTypeOf(TypeElement typeElement) {
+        ElementKind kind = requireNonNull(typeElement, "Type element is <null>.").getKind();
+        return ElementKind.ENUM.equals(kind) ? "enum"
+                : ElementKind.INTERFACE.equals(kind) ? "interface"
+                : ElementKind.ANNOTATION_TYPE.equals(kind) ? "annotation"
+                : typeElement.getModifiers().contains(Modifier.ABSTRACT) ? "abstract class"
+                : "class";
     }
 }
