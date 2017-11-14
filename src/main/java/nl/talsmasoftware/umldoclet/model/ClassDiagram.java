@@ -23,11 +23,11 @@ import javax.tools.Diagnostic;
 
 public class ClassDiagram extends UMLDiagram {
 
-    private final Clazz clz;
+    private final Type clz;
 
     public ClassDiagram(Configuration config, DocletEnvironment env, TypeElement classElement) {
         super(config, env);
-        this.clz = new Clazz(this, classElement);
+        this.clz = new Type(this, classElement);
         super.children.add(clz);
     }
 
@@ -39,8 +39,8 @@ public class ClassDiagram extends UMLDiagram {
     public void render() {
 //        env.getJavaFileManager().getLocationForModule()
 
-        config.reporter().print(Diagnostic.Kind.OTHER, clz.classElement, "Diagram path: " + diagramPath());
-        config.reporter().print(Diagnostic.Kind.OTHER, clz.classElement, this.toString());
+        config.reporter().print(Diagnostic.Kind.OTHER, clz.typeElement, "Diagram path: " + diagramPath());
+        config.reporter().print(Diagnostic.Kind.OTHER, clz.typeElement, this.toString());
     }
 
 }

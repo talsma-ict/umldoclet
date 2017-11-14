@@ -33,7 +33,7 @@ import static nl.talsmasoftware.umldoclet.v1.config.UMLDocletConfig.Setting.*;
 import static nl.talsmasoftware.umldoclet.v1.logging.LogSupport.*;
 
 /**
- * Clazz containing all possible Doclet options for the UML doclet.
+ * Type containing all possible Doclet options for the UML doclet.
  * This configuration class is also responsible for providing suitable default values in a central location.
  *
  * @author Sjoerd Talsma

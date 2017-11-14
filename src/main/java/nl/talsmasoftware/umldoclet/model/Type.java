@@ -23,18 +23,18 @@ import javax.lang.model.element.TypeElement;
 
 import static java.util.Objects.requireNonNull;
 
-public class Clazz extends Renderer {
+public class Type extends Renderer {
 
-    protected final TypeElement classElement;
+    protected final TypeElement typeElement;
 
-    protected Clazz(UMLDiagram diagram, TypeElement classElement) {
+    protected Type(UMLDiagram diagram, TypeElement typeElement) {
         super(diagram);
-        this.classElement = requireNonNull(classElement, "Clazz element is <null>.");
+        this.typeElement = requireNonNull(typeElement, "Type element is <null>.");
     }
 
     protected String getSimpleName() {
-        StringBuilder sb = new StringBuilder(classElement.getSimpleName());
-        for (Element enclosed = classElement.getEnclosingElement();
+        StringBuilder sb = new StringBuilder(typeElement.getSimpleName());
+        for (Element enclosed = typeElement.getEnclosingElement();
              enclosed != null && (enclosed.getKind().isClass() || enclosed.getKind().isInterface());
              enclosed = enclosed.getEnclosingElement()) {
             sb.insert(0, enclosed.getSimpleName() + ".");
@@ -43,12 +43,12 @@ public class Clazz extends Renderer {
     }
 
     protected PackageElement containingPackage() {
-        return diagram.env.getElementUtils().getPackageOf(classElement);
+        return diagram.env.getElementUtils().getPackageOf(typeElement);
     }
 
     @Override
     protected IndentingPrintWriter writeTo(IndentingPrintWriter output) {
-        System.out.println("Simulating rendering of: " + classElement);
+        System.out.println("Simulating rendering of: " + typeElement);
         return output;
     }
 }

@@ -24,7 +24,7 @@ import java.util.Objects;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Clazz to capture the indentation as an immutable type containing a pre-filled buffer to quickly be written.
+ * Type to capture the indentation as an immutable type containing a pre-filled buffer to quickly be written.
  *
  * @author Sjoerd Talsma
  */

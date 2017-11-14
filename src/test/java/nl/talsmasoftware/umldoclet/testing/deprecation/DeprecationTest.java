@@ -53,7 +53,7 @@ public class DeprecationTest {
         String classUml = Testing.readFile("testing/deprecation/DeprecatedByAnnotationClass.puml");
         assertThat(classUml, is(not(nullValue())));
 
-        // Clazz should have 'deprecated' stereotype.
+        // Type should have 'deprecated' stereotype.
         assertThat(classUml, containsString("class " + className + " <<deprecated>>"));
         // Field should have strike through font.
         assertThat(classUml, containsString("+ --someField-- : String"));
@@ -67,7 +67,7 @@ public class DeprecationTest {
         String classUml = Testing.readFile("testing/deprecation/DeprecatedByJavadocTagAbstractClass.puml");
         assertThat(classUml, is(not(nullValue())));
 
-        // Clazz should have 'deprecated' stereotype.
+        // Type should have 'deprecated' stereotype.
         assertThat(classUml, containsString("class " + className + " <<deprecated>>"));
         // Field should have strike through font.
         assertThat(classUml, containsString("# --someField-- : String"));
@@ -81,7 +81,7 @@ public class DeprecationTest {
         String classUml = Testing.readFile("testing/deprecation/DeprecatedBySuperclass.puml");
         assertThat(classUml, is(not(nullValue())));
 
-        // Clazz should have 'deprecated' stereotype.
+        // Type should have 'deprecated' stereotype.
         assertThat(classUml, containsString("class " + className + " <<deprecated>>"));
         // Non-deprecated declared field should be deprecated as well due to the superclass.
         assertThat(classUml, containsString("# --someSubclassField-- : String"));

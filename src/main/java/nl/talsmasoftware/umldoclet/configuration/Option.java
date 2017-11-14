@@ -73,26 +73,13 @@ abstract class Option implements Doclet.Option {
     }
 
     @Override
-    public String toString() {
-        return Arrays.toString(names);
-    }
-
-    @Override
     public int getArgumentCount() {
         return argCount;
     }
 
-    public boolean matches(String option) {
-        for (String name : names) {
-            boolean matchCase = name.startsWith("--");
-            if (option.startsWith("--") && option.contains("=")) {
-                return name.equals(option.substring(option.indexOf("=") + 1));
-            } else if (matchCase) {
-                return name.equals(option);
-            }
-            return name.toLowerCase().equals(option.toLowerCase());
-        }
-        return false;
+    @Override
+    public String toString() {
+        return Arrays.toString(names);
     }
 
 }

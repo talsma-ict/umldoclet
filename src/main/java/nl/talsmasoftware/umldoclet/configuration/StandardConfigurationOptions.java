@@ -23,7 +23,7 @@ import java.util.Set;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Clazz that serves as an 'anti-corruption' facade between our Doclet
+ * Type that serves as an 'anti-corruption' facade between our Doclet
  * and the {@code internal} configuration of the StandardDoclet.
  * <p>
  * Although we want to apply the standard configuration options that make
