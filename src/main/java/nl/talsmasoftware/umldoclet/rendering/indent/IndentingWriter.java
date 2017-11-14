@@ -64,7 +64,8 @@ public class IndentingWriter extends Writer {
      * @see Indentation#DEFAULT
      */
     public static IndentingWriter wrap(Writer delegate, Indentation indentation) {
-        return delegate instanceof IndentingWriter ? ((IndentingWriter) delegate).withIndentation(indentation)
+        return delegate instanceof IndentingWriter
+                ? ((IndentingWriter) delegate).withIndentation(indentation)
                 : new IndentingWriter(delegate, indentation);
     }
 

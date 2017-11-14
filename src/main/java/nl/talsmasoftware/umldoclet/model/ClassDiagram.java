@@ -17,9 +17,14 @@ package nl.talsmasoftware.umldoclet.model;
 
 import jdk.javadoc.doclet.DocletEnvironment;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 
 public class ClassDiagram extends UMLDiagram {
 
@@ -32,7 +37,12 @@ public class ClassDiagram extends UMLDiagram {
     }
 
     public void render() {
-        if (!config.quiet) config.reporter().print(Diagnostic.Kind.NOTE, "Generating " + umlPath() + " (todo)...");
+        config.reporter().print(Diagnostic.Kind.NOTE, "Generating " + umlPath() + "...");
+        try (Writer writer = new OutputStreamWriter(new FileOutputStream(umlPath()))) {
+            writeTo(IndentingPrintWriter.wrap(writer, config.indentation));
+        } catch (IOException | RuntimeException e) {
+            config.reporter().print(Diagnostic.Kind.ERROR, cls.typeElement, "Error rendering class diagram: " + e.getMessage());
+        }
     }
 
     protected String umlPath() {

@@ -49,8 +49,9 @@ public class IndentingPrintWriter extends PrintWriter {
      * @see Indentation#DEFAULT
      */
     public static IndentingPrintWriter wrap(Writer delegate, Indentation indentation) {
-        return delegate instanceof IndentingPrintWriter ? (IndentingPrintWriter) delegate
-                : new IndentingPrintWriter(delegate, null);
+        return delegate instanceof IndentingPrintWriter
+                ? ((IndentingPrintWriter) delegate).withIndentation(indentation)
+                : new IndentingPrintWriter(delegate, indentation);
     }
 
     /**

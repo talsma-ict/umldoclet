@@ -17,7 +17,6 @@ package nl.talsmasoftware.umldoclet.configuration;
 
 import com.sun.source.util.DocTreePath;
 import jdk.javadoc.doclet.Doclet;
-import jdk.javadoc.doclet.DocletEnvironment;
 import jdk.javadoc.doclet.Reporter;
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
@@ -33,19 +32,19 @@ import static java.util.Objects.requireNonNull;
 
 public class Configuration {
 
-    final Doclet doclet;
+    private final Doclet doclet;
     private final UMLOptions options;
     private final ReporterImpl reporter;
     private Locale locale;
-    private DocletEnvironment env = null;
 
     /**
-     * Destination directory name, in which doclet will generate the entire
-     * documentation. Default is current directory.
+     * Destination directory where documentation is generated. Default is the current directory.
      */
     public String destDirName = "";
 
     public boolean quiet = false;
+
+    public Indentation indentation = Indentation.DEFAULT;
 
     public Configuration(UMLDoclet doclet) {
         this.doclet = requireNonNull(doclet, "UML Doclet is <null>.");

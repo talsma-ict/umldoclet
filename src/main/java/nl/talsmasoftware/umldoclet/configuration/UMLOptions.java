@@ -50,9 +50,11 @@ final class UMLOptions {
         this.config = requireNonNull(config, "Configuration is <null>.");
         this.standardOptions = standardOptions;
         this.options = new TreeSet<Doclet.Option>(comparing(o -> o.getNames().get(0), String::compareTo)) {{
+
             // Options from Standard doclet that we also support
             add(new Option("-d", 1, null, (args) -> config.destDirName = args.get(0)));
             add(new Option("-quiet", 0, Kind.OTHER, (args) -> config.quiet = true));
+
         }};
     }
 
