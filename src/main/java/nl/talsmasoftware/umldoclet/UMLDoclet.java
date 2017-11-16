@@ -25,8 +25,6 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
@@ -60,20 +58,8 @@ public class UMLDoclet extends StandardDoclet {
         return "UML";
     }
 
-    private Properties getProperties() {
-        if (properties == null) {
-            properties = new Properties();
-            try (InputStream in = getClass().getResourceAsStream("/META-INF/umldoclet.properties")) {
-                properties.load(in);
-            } catch (IOException | RuntimeException e) {
-                config.reporter().print(Diagnostic.Kind.WARNING, "Unable to load UMLDoclet properties: " + e.getMessage());
-            }
-        }
-        return properties;
-    }
-
     public String getVersion() {
-        return getProperties().getProperty("version", "unknown");
+        return config.resources().getString("version");
     }
 
     @Override

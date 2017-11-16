@@ -29,9 +29,11 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.ResourceBundle.getBundle;
 
 public class Configuration {
 
+    public static final String BUNDLE_NAME = UMLDoclet.class.getName();
     private final Doclet doclet;
     private final UMLOptions options;
     private final ReporterImpl reporter;
@@ -59,7 +61,7 @@ public class Configuration {
 
     public ResourceBundle resources() {
         try {
-            return ResourceBundle.getBundle(UMLDoclet.class.getName(), locale == null ? Locale.getDefault() : locale);
+            return locale == null ? getBundle(BUNDLE_NAME) : getBundle(BUNDLE_NAME, locale);
         } catch (MissingResourceException mre) {
             throw new IllegalStateException("Missing resourcebundle for UMLDoclet.", mre);
         }
