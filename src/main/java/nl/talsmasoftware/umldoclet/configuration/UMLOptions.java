@@ -89,11 +89,11 @@ final class UMLOptions {
         }
 
         private String resourceMsg(String key) {
-            try {
-                return config.resources().getString(key); // TODO: Bundle seems to be missing!
-            } catch (RuntimeException ignore) {
+//            try {
+//                return config.resources().getString(key); // TODO: Bundle seems to be missing!
+//            } catch (RuntimeException ignore) {
                 return "";
-            }
+//            }
         }
 
         @Override

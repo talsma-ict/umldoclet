@@ -24,10 +24,12 @@ import nl.talsmasoftware.umldoclet.model.ClassDiagram;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
-import javax.tools.Diagnostic;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
+
+import static nl.talsmasoftware.umldoclet.configuration.Messages.DOCLET_INFO;
+import static nl.talsmasoftware.umldoclet.configuration.Messages.VERSION;
 
 /**
  * UML doclet that generates <a href="http://plantuml.com">PlantUML</a> class diagrams from your java code just as
@@ -49,17 +51,12 @@ public class UMLDoclet extends StandardDoclet {
     @Override
     public void init(Locale locale, Reporter reporter) {
         config.init(locale, reporter);
-        nl.talsmasoftware.umldoclet.v1.logging.LogSupport.setReporter(config.reporter());
         super.init(locale, reporter);
     }
 
     @Override
     public String getName() {
         return "UML";
-    }
-
-    public String getVersion() {
-        return config.resources().getString("version");
     }
 
     @Override
@@ -74,16 +71,18 @@ public class UMLDoclet extends StandardDoclet {
 
     @Override
     public boolean run(DocletEnvironment docEnv) {
-        config.reporter().print(Diagnostic.Kind.NOTE, getName() + " Doclet version " + getVersion());
-        boolean result;
         try {
+            config.info(DOCLET_INFO, VERSION);
+            boolean result;
+
             result = generateClassDiagrams(docEnv);
+
+            return result && super.run(docEnv);
         } catch (RuntimeException rte) {
-            result = false;
             System.err.println("Unanticipated error generating UML: " + rte.getMessage());
             rte.printStackTrace(System.err);
+            return false;
         }
-        return result && super.run(docEnv);
     }
 
     private boolean generateClassDiagrams(DocletEnvironment docEnv) {

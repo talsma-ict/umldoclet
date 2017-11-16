@@ -1,0 +1,74 @@
+package nl.talsmasoftware.umldoclet.configuration;
+
+import com.sun.source.util.DocTreePath;
+import jdk.javadoc.doclet.Reporter;
+
+import javax.lang.model.element.Element;
+import javax.tools.Diagnostic;
+import java.text.MessageFormat;
+import java.util.Locale;
+
+import static java.util.Objects.requireNonNull;
+
+/**
+ * Reporter using a specific {@link Locale} to reporte to a delegate {@link Reporter}.
+ *
+ * @author Sjoerd Talsma
+ */
+final class LocalizedReporter implements Reporter {
+    private final Configuration config;
+    private final Reporter delegate;
+    private final Locale locale;
+
+    LocalizedReporter(Configuration config, Reporter delegate, Locale locale) {
+        this.config = requireNonNull(config, "Configuration is <null>.");
+        this.delegate = delegate;
+        this.locale = locale;
+    }
+
+    void log(Diagnostic.Kind kind, DocTreePath path, Element elem, Messages key, Object... args) {
+        if (mustPrint(kind)) {
+            String message = key.toString(locale);
+            if (args.length > 0) message = MessageFormat.format(message, localize(args));
+            if (path != null) print(kind, path, message);
+            else if (elem != null) print(kind, elem, message);
+            else print(kind, message);
+        }
+    }
+
+    private Object[] localize(Object... args) {
+        for (int i = 0; i < args.length; i++) {
+            if (args[i] instanceof Messages) args[i] = ((Messages) args[i]).toString(locale);
+        }
+        return args;
+    }
+
+    private boolean mustPrint(Diagnostic.Kind kind) {
+        Diagnostic.Kind threshold = config.quiet ? Diagnostic.Kind.WARNING : Diagnostic.Kind.NOTE;
+        return kind != null && kind.compareTo(threshold) <= 0;
+    }
+
+    @Override
+    public void print(Diagnostic.Kind kind, String msg) {
+        if (mustPrint(kind)) {
+            if (delegate == null) System.out.println(msg);
+            else delegate.print(kind, msg);
+        }
+    }
+
+    @Override
+    public void print(Diagnostic.Kind kind, DocTreePath path, String msg) {
+        if (mustPrint(kind)) {
+            if (delegate == null) System.out.println(msg);
+            else delegate.print(kind, path, msg);
+        }
+    }
+
+    @Override
+    public void print(Diagnostic.Kind kind, Element e, String msg) {
+        if (mustPrint(kind)) {
+            if (delegate == null) System.out.println(msg);
+            else delegate.print(kind, e, msg);
+        }
+    }
+}

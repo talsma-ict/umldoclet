@@ -46,8 +46,8 @@ public class LogSupport {
     }
 
     /**
-     * No longer does anything, please use {@link nl.talsmasoftware.umldoclet.configuration.Configuration#reporter()}
-     * instead.
+     * No longer does anything, please use {@link nl.talsmasoftware.umldoclet.configuration.Configuration Configuration}
+     * log methods instead.
      *
      * @param level ignored
      * @deprecated switch from logger to reporter semantics.
@@ -61,8 +61,8 @@ public class LogSupport {
     }
 
     /**
-     * No longer does anything, please use {@link nl.talsmasoftware.umldoclet.configuration.Configuration#reporter()}
-     * instead.
+     * No longer does anything, please use {@link nl.talsmasoftware.umldoclet.configuration.Configuration Configuration}
+     * log methods instead.
      *
      * @return Always {@code false}
      * @deprecated Switch from logger to reporter semantics.
@@ -72,8 +72,8 @@ public class LogSupport {
     }
 
     /**
-     * No longer does anything, please use {@link nl.talsmasoftware.umldoclet.configuration.Configuration#reporter()}
-     * instead.
+     * No longer does anything, please use {@link nl.talsmasoftware.umldoclet.configuration.Configuration Configuration}
+     * log methods instead.
      *
      * @param msg  ignored
      * @param args ignored

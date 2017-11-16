@@ -15,29 +15,23 @@
  */
 package nl.talsmasoftware.umldoclet.configuration;
 
-import com.sun.source.util.DocTreePath;
 import jdk.javadoc.doclet.Doclet;
 import jdk.javadoc.doclet.Reporter;
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 
-import javax.lang.model.element.Element;
 import javax.tools.Diagnostic;
 import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.ResourceBundle.getBundle;
 
 public class Configuration {
 
     public static final String BUNDLE_NAME = UMLDoclet.class.getName();
     private final Doclet doclet;
     private final UMLOptions options;
-    private final ReporterImpl reporter;
-    private Locale locale;
+    private volatile LocalizedReporter reporter;
 
     /**
      * Destination directory where documentation is generated. Default is the current directory.
@@ -51,28 +45,19 @@ public class Configuration {
     public Configuration(UMLDoclet doclet) {
         this.doclet = requireNonNull(doclet, "UML Doclet is <null>.");
         this.options = new UMLOptions(this);
-        this.reporter = new ReporterImpl();
+        this.reporter = new LocalizedReporter(this, null, null);
     }
 
     public void init(Locale locale, Reporter reporter) {
-        this.locale = locale;
-        this.reporter.delegate = reporter;
+        this.reporter = new LocalizedReporter(this, reporter, locale);
     }
 
-    public ResourceBundle resources() {
-        try {
-            return locale == null ? getBundle(BUNDLE_NAME) : getBundle(BUNDLE_NAME, locale);
-        } catch (MissingResourceException mre) {
-            throw new IllegalStateException("Missing resourcebundle for UMLDoclet.", mre);
-        }
-    }
-
-    /**
-     * @return The reporter for the JavaDoc task.
-     */
-    public Reporter reporter() {
-        return reporter;
-    }
+//    /**
+//     * @return The reporter for the JavaDoc task.
+//     */
+//    public Reporter reporter() {
+//        return reporter;
+//    }
 
     public Set<Doclet.Option> mergeOptionsWith(Set<Doclet.Option> standardOptions) {
         return options.mergeWith(standardOptions);
@@ -82,37 +67,16 @@ public class Configuration {
         return Indentation.DEFAULT; // TODO decide whether we want to make this configurable at all.
     }
 
-    private class ReporterImpl implements Reporter {
-        private Reporter delegate = null;
+    public void debug(Messages key, Object... args) {
+        reporter.log(Diagnostic.Kind.OTHER, null, null, key, args);
+    }
 
-        private boolean mustPrint(Diagnostic.Kind kind) {
-            Diagnostic.Kind threshold = quiet ? Diagnostic.Kind.WARNING : Diagnostic.Kind.NOTE;
-            return kind != null && kind.compareTo(threshold) <= 0;
-        }
+    public void info(Messages key, Object... args) {
+        reporter.log(Diagnostic.Kind.NOTE, null, null, key, args);
+    }
 
-        @Override
-        public void print(Diagnostic.Kind kind, String msg) {
-            if (mustPrint(kind)) {
-                if (delegate == null) System.out.println(msg);
-                else delegate.print(kind, msg);
-            }
-        }
-
-        @Override
-        public void print(Diagnostic.Kind kind, DocTreePath path, String msg) {
-            if (mustPrint(kind)) {
-                if (delegate == null) System.out.println(msg);
-                else delegate.print(kind, path, msg);
-            }
-        }
-
-        @Override
-        public void print(Diagnostic.Kind kind, Element e, String msg) {
-            if (mustPrint(kind)) {
-                if (delegate == null) System.out.println(msg);
-                else delegate.print(kind, e, msg);
-            }
-        }
+    public void warn(Messages key, Object... args) {
+        reporter.log(Diagnostic.Kind.WARNING, null, null, key, args);
     }
 
 }
