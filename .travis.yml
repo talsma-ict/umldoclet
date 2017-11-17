@@ -1,9 +1,8 @@
 sudo: false
 dist: trusty
+jdk: oraclejdk8
 
 language: java
-jdk:
-- oraclejdk8
 
 addons:
   apt:
@@ -12,22 +11,25 @@ addons:
 
 cache:
   directories:
-  - $HOME/.m2/repository
+    - $HOME/.m2/repository
 
 before_install:
-  # import the GPG Secret Keys and Ownertrust at the beginning
+  # copy maven settings
+  - cp .travis/mvn-settings.xml $HOME/.m2/settings.xml
+  - cp .travis/mvn-toolchains.xml $HOME/.m2/toolchains.xml
+  # import the GPG secret keys and owner trust
   - if [ ! -z "$GPG_SECRET_KEYS" ]; then echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import; fi
   - if [ ! -z "$GPG_OWNERTRUST" ]; then echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust; fi
-  # allocate commits to CI
+  # allocate commits by travis to the CI user
   - git config user.name "Talsma CI"
   - git config user.email "ci-user@talsma-ict.nl"
-  # setup https authentication credentials, used by ./mvnw release:prepare
+  # setup https authentication credentials for github, used by ./mvnw release:prepare
   - git config credential.helper "store --file=.git/credentials"
   - echo "https://$GH_TOKEN:@github.com" > .git/credentials
 
 install:
-  # Override default travis to use the maven wrapper
-  - ./mvnw -s .mvn/settings.xml install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+  # use the maven wrapper instead of provided maven
+  - ./mvnw install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 
 script:
   - .travis/publish.sh
