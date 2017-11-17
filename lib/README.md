@@ -43,3 +43,30 @@ but sourceforce doesn't seem to like that very much.
 Fortunately, maven still allows us to just add a dependency directly into the project.
 
 This is the reason the `lib` directory was introduced.
+
+## Why a local maven repo?
+
+Can't you just add the jar to `lib` and add it as a `<scope>system</scope>` dependency
+with a `<systemPath>` pointing to it?
+
+>Yes, in fact that's exactly what I tried first.
+>However, the shade plugin (correctly) assumes that a system dependency should
+>be actually available on the system and won't shade it, unless it's obtained
+>from an actual Maven repository.
+
+That's why the `lib` directory has been made into a mini-repository from which
+we 'download' the `plantuml-asl.jar`.  
+This way, the jar can be shaded into the umldoclet.
+
+Installing a freshly downloaded `plantuml-asl.jar` into the local repo can be
+achieved by the following command:
+
+```bash
+mvn install:install-file \
+    -Dfile=plantuml.jar \
+    -DgroupId=net.sourceforge.plantuml \
+    -DartifactId=plantuml-asl \
+    -Dversion=<version> \
+    -Dpackaging=jar \
+    -DlocalRepositoryPath=lib
+```

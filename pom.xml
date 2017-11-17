@@ -81,6 +81,7 @@
 
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
         <maven-failsafe-plugin.version>2.20.1</maven-failsafe-plugin.version>
+        <maven-shade-plugin.version>3.1.0</maven-shade-plugin.version>
         <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
         <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
@@ -200,6 +201,27 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>${maven-shade-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <minimizeJar>true</minimizeJar>
+                            <artifactSet>
+                                <includes>
+                                    <include>*:plantuml-asl</include>
+                                </includes>
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>${maven-source-plugin.version}</version>
                 <executions>
@@ -301,8 +323,6 @@
             <groupId>net.sourceforge.plantuml</groupId>
             <artifactId>plantuml-asl</artifactId>
             <version>${plantuml.version}</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/plantuml-asl-${plantuml.version}.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -361,6 +381,13 @@
             </plugin>
         </plugins>
     </reporting>
+
+    <repositories>
+        <repository>
+            <id>local-lib</id>
+            <url>file://${basedir}/lib</url>
+        </repository>
+    </repositories>
 
     <distributionManagement>
         <snapshotRepository>
