@@ -4,9 +4,9 @@ _TLDR: Due to license incompatibilities we have to bundle an alternative jar._
 
 ## Licensing issues
 
-Since the advanced dependency management was introduced and Maven and its
-central repository helped manage dependencies I haven't had the need to 
-include any binary dependencies into my java projects anymore.  
+Since the advanced dependency management was introduced by Maven and its
+central repository, I haven't had the need to include any binary dependencies
+into my java projects anymore.  
 
 Until today.
 
