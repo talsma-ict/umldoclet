@@ -69,7 +69,7 @@
         <!-- runtime -->
 
         <!-- optional provided -->
-        <plantuml.version>1.2017.16</plantuml.version>
+        <plantuml.version>1.2017.19</plantuml.version>
 
         <!-- test -->
         <junit.version>4.12</junit.version>
@@ -298,10 +298,10 @@
     <dependencies>
         <dependency>
             <groupId>net.sourceforge.plantuml</groupId>
-            <artifactId>plantuml</artifactId>
+            <artifactId>plantuml-asl</artifactId>
             <version>${plantuml.version}</version>
-            <optional>true</optional>
-            <scope>provided</scope>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/plantuml-asl-${plantuml.version}.jar</systemPath>
         </dependency>
 
         <dependency>
