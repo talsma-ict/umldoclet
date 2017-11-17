@@ -18,6 +18,7 @@ package nl.talsmasoftware.umldoclet;
 import jdk.javadoc.doclet.DocletEnvironment;
 import jdk.javadoc.doclet.Reporter;
 import jdk.javadoc.doclet.StandardDoclet;
+import net.sourceforge.plantuml.version.Version;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.model.ClassDiagram;
 
@@ -46,6 +47,9 @@ public class UMLDoclet extends StandardDoclet {
     public UMLDoclet() {
         super();
         this.config = new Configuration(this);
+
+        info("UML Doclet (C) Copyright Talsma ICT, version: {1}.", getClass().getSimpleName(), config.version());
+        info("This software uses PlantUML (C) Copyright Arnaud Roques, version: {0}.", Version.versionString());
     }
 
     @Override
