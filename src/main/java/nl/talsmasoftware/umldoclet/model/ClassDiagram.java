@@ -20,7 +20,10 @@ import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.Messages;
 
 import javax.lang.model.element.TypeElement;
+import javax.tools.DocumentationTool;
+import javax.tools.FileObject;
 import javax.tools.JavaFileManager;
+import java.io.IOException;
 
 public class ClassDiagram extends UMLDiagram {
 
@@ -33,13 +36,22 @@ public class ClassDiagram extends UMLDiagram {
     }
 
     public void render() {
-        config.info(Messages.INFO_GENERATING_FILE, umlPath());
-        JavaFileManager fm = env.getJavaFileManager(); // TODO use this instead of writing to file directly
+        try {
+            config.info(Messages.INFO_GENERATING_FILE, umlPath());
+            JavaFileManager fm = env.getJavaFileManager(); // TODO use this instead of writing to file directly
+            DocumentationTool.Location loc = DocumentationTool.Location.DOCUMENTATION_OUTPUT;
+//            JavaFileObject javaFileForOutput = fm.getJavaFileForOutput(loc, cls.typeElement.getQualifiedName().toString(),
+//                    JavaFileObject.Kind.OTHER, new UmlFileObject());
+            FileObject fileForOutput = fm.getFileForOutput(loc, cls.containingPackage().getQualifiedName().toString(),
+                    cls.getSimpleName() + ".puml", new UmlFileObject());
 //        try (Writer writer = new OutputStreamWriter(new FileOutputStream(umlPath()))) {
 //            writeTo(IndentingPrintWriter.wrap(writer, config.indentation));
 //        } catch (IOException | RuntimeException e) {
 //            config.reporter().print(Diagnostic.Kind.ERROR, cls.typeElement, "Error rendering class diagram: " + e.getMessage());
 //        }
+        } catch (IOException ioe) {
+            throw new IllegalStateException(ioe.getMessage(), ioe);
+        }
     }
 
     protected String umlPath() {
