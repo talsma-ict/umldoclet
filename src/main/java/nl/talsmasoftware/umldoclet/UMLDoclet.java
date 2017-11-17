@@ -17,6 +17,7 @@ package nl.talsmasoftware.umldoclet;
 
 import com.sun.javadoc.*;
 import com.sun.tools.doclets.standard.Standard;
+import net.sourceforge.plantuml.version.Version;
 import nl.talsmasoftware.umldoclet.config.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.logging.GlobalPosition;
 import nl.talsmasoftware.umldoclet.rendering.DiagramRenderer;
@@ -54,8 +55,8 @@ public class UMLDoclet extends Standard {
     public UMLDoclet(RootDoc rootDoc) {
         this.rootDoc = requireNonNull(rootDoc, "No root document received.");
         this.config = new UMLDocletConfig(rootDoc.options(), rootDoc);
-        info("{0} version {1}", getClass().getSimpleName(), config.version());
-        trace("Plantuml {0} detected.", PlantumlSupport.isPlantumlDetected() ? "was" : "was not");
+        info("UML Doclet (C) Copyright Talsma ICT, version: {1}.", getClass().getSimpleName(), config.version());
+        info("This software uses PlantUML (C) Copyright Arnaud Roques, version: {0}.", Version.versionString());
         debug("Initialized {0}...", config);
     }
 
@@ -98,7 +99,7 @@ public class UMLDoclet extends Standard {
 
             return generateIndividualClassDiagrams(rootDoc.classes())
                     && generatePackageDiagrams();
-            
+
         } catch (RuntimeException rte) {
             error(rte.getMessage(), rte);
             return false;
