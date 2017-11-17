@@ -152,6 +152,7 @@
                     </mapping>
                     <excludes>
                         <exclude>.gitignore</exclude>
+                        <exclude>.travis/**</exclude>
                         <exclude>.travis.yml</exclude>
                         <exclude>.mvn/**</exclude>
                         <exclude>mvnw*</exclude>
