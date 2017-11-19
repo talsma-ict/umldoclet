@@ -30,6 +30,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import static nl.talsmasoftware.umldoclet.configuration.Messages.DOCLET_INFO;
+import static nl.talsmasoftware.umldoclet.configuration.Messages.PLANTUML_INFO;
 import static nl.talsmasoftware.umldoclet.configuration.Messages.VERSION;
 
 /**
@@ -47,9 +48,6 @@ public class UMLDoclet extends StandardDoclet {
     public UMLDoclet() {
         super();
         this.config = new Configuration(this);
-
-        info("UML Doclet (C) Copyright Talsma ICT, version: {1}.", getClass().getSimpleName(), config.version());
-        info("This software uses PlantUML (C) Copyright Arnaud Roques, version: {0}.", Version.versionString());
     }
 
     @Override
@@ -77,6 +75,8 @@ public class UMLDoclet extends StandardDoclet {
     public boolean run(DocletEnvironment docEnv) {
         try {
             config.info(DOCLET_INFO, VERSION);
+            config.info(PLANTUML_INFO, Version.versionString());
+
             boolean result;
 
             result = generateClassDiagrams(docEnv);

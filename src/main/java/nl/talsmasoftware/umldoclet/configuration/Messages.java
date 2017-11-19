@@ -17,6 +17,7 @@ import static java.util.ResourceBundle.getBundle;
 public enum Messages {
     VERSION,
     DOCLET_INFO,
+    PLANTUML_INFO,
 
     INFO_GENERATING_FILE,
 
