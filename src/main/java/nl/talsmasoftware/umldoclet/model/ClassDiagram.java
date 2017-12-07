@@ -49,8 +49,8 @@ public class ClassDiagram extends UMLDiagram {
 //        } catch (IOException | RuntimeException e) {
 //            config.reporter().print(Diagnostic.Kind.ERROR, cls.typeElement, "Error rendering class diagram: " + e.getMessage());
 //        }
-        } catch (IOException ioe) {
-            throw new IllegalStateException(ioe.getMessage(), ioe);
+        } catch (IOException | RuntimeException e) {
+//            throw new IllegalStateException(e.getMessage(), e); TODO
         }
     }
 

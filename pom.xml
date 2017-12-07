@@ -116,22 +116,6 @@
         </resources>
         <plugins>
             <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.8</version>
-                <executions>
-                    <execution>
-                        <phase>generate-resources</phase>
-                        <goals><goal>run</goal></goals>
-                        <configuration>
-                            <tasks>
-                                <!--<unzip src="${project.basedir}/lib/net/sourceforge/plantuml/plantuml-asl/${plantuml.version}/plantuml-asl-${plantuml.version}-sources.jar" dest="${project.build.directory}/plantuml-src" />-->
-                                <unzip src="${project.basedir}/lib/net/sourceforge/plantuml/plantuml-asl/${plantuml.version}/plantuml-asl-${plantuml.version}.jar" dest="${project.build.outputDirectory}" />
-                            </tasks>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
                 <version>${buildnumber-maven-plugin.version}</version>
@@ -212,7 +196,6 @@
                             </executions>
                         </plugin>
             -->
-<!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -234,7 +217,6 @@
                     </execution>
                 </executions>
             </plugin>
--->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -360,6 +342,11 @@
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>net.sourceforge.plantuml</groupId>
+            <artifactId>plantuml-asl</artifactId>
+            <version>${plantuml.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>junit</groupId>
@@ -408,6 +395,13 @@
             </plugin>
         </plugins>
     </reporting>
+
+    <repositories>
+        <repository>
+            <id>local-lib</id>
+            <url>file://${basedir}/lib</url>
+        </repository>
+    </repositories>
 
     <distributionManagement>
         <snapshotRepository>
