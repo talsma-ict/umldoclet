@@ -18,16 +18,15 @@ package nl.talsmasoftware.umldoclet.model;
 import jdk.javadoc.doclet.DocletEnvironment;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.Messages;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import javax.lang.model.element.TypeElement;
-import javax.tools.DocumentationTool;
-import javax.tools.FileObject;
-import javax.tools.JavaFileManager;
-import java.io.IOException;
+import java.io.*;
 
 public class ClassDiagram extends UMLDiagram {
 
     private final Type cls;
+    private String umlPath = null;
 
     public ClassDiagram(Configuration config, DocletEnvironment env, TypeElement classElement) {
         super(config, env);
@@ -36,29 +35,28 @@ public class ClassDiagram extends UMLDiagram {
     }
 
     public void render() {
+        config.info(Messages.INFO_GENERATING_FILE, umlPath());
         try {
-            config.info(Messages.INFO_GENERATING_FILE, umlPath());
-            JavaFileManager fm = env.getJavaFileManager(); // TODO use this instead of writing to file directly
-            DocumentationTool.Location loc = DocumentationTool.Location.DOCUMENTATION_OUTPUT;
-//            JavaFileObject javaFileForOutput = fm.getJavaFileForOutput(loc, cls.typeElement.getQualifiedName().toString(),
-//                    JavaFileObject.Kind.OTHER, new UmlFileObject());
-            FileObject fileForOutput = fm.getFileForOutput(loc, cls.containingPackage().getQualifiedName().toString(),
-                    cls.getSimpleName() + ".puml", new UmlFileObject());
-//        try (Writer writer = new OutputStreamWriter(new FileOutputStream(umlPath()))) {
-//            writeTo(IndentingPrintWriter.wrap(writer, config.indentation));
-//        } catch (IOException | RuntimeException e) {
-//            config.reporter().print(Diagnostic.Kind.ERROR, cls.typeElement, "Error rendering class diagram: " + e.getMessage());
-//        }
+            File umlFile = new File(umlPath());
+            if (!umlFile.getParentFile().exists() && !umlFile.getParentFile().mkdirs()) {
+                throw new IllegalStateException("Can't create directory \"" + umlFile.getParent() + "\".");
+            }
+            try (Writer writer = new OutputStreamWriter(new FileOutputStream(umlFile))) {
+                this.writeTo(IndentingPrintWriter.wrap(writer, config.indentation));
+            }
         } catch (IOException | RuntimeException e) {
-//            throw new IllegalStateException(e.getMessage(), e); TODO
+            throw new IllegalStateException("Couldn't render \"" + umlPath() + "\": " + e.getMessage(), e);
         }
     }
 
     protected String umlPath() {
-        StringBuilder result = new StringBuilder(config.destDirName);
-        if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');
-        result.append(cls.containingPackage().getQualifiedName().toString().replace('.', '/')).append('/');
-        return result.append(cls.getSimpleName()).append(".puml").toString();
+        if (umlPath == null) {
+            StringBuilder result = new StringBuilder(config.destDirName);
+            if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');
+            result.append(cls.containingPackage().getQualifiedName().toString().replace('.', '/'));
+            umlPath = result.append('/').append(cls.getSimpleName()).append(".puml").toString();
+        }
+        return umlPath;
     }
 
     protected String imgPath(String type) {
