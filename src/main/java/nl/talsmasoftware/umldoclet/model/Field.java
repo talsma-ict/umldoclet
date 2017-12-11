@@ -2,8 +2,7 @@ package nl.talsmasoftware.umldoclet.model;
 
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
-import javax.lang.model.element.Modifier;
-import javax.lang.model.element.VariableElement;
+import javax.lang.model.element.*;
 import java.util.Objects;
 import java.util.Set;
 
@@ -27,7 +26,9 @@ public class Field extends Renderer {
     @Override
     protected IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         if (modifiers.contains(STATIC)) output.append("{static}").whitespace();
-        return output.append(umlAccessibility(modifiers)).append(fld.getSimpleName()).newline();
+        output.append(umlAccessibility(modifiers)).append(fld.getSimpleName());
+        output.append(":").whitespace().append(umlTypeOf(diagram.env.getTypeUtils().asElement(fld.asType())));
+        return output.newline();
     }
 
     protected static char umlAccessibility(Set<Modifier> modifiers) {
@@ -35,6 +36,20 @@ public class Field extends Renderer {
                 : modifiers.contains(PROTECTED) ? '#'
                 : modifiers.contains(PUBLIC) ? '+'
                 : '~';
+    }
+
+    protected static String umlTypeOf(Element element) {
+        if (element == null) return "null";
+        final StringBuilder result = new StringBuilder();
+        if (element instanceof QualifiedNameable) {
+            result.append(((QualifiedNameable) element).getQualifiedName());
+        } else {
+            result.append(element.getSimpleName());
+        }
+        if (element instanceof Parameterizable) {
+            result.append(Type.umlGenericsOf((Parameterizable) element));
+        }
+        return result.toString();
     }
 
     @Override

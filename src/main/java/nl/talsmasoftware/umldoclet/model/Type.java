@@ -19,22 +19,29 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import javax.lang.model.element.*;
 import java.util.List;
+import java.util.Set;
 
 import static java.lang.Integer.signum;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
+import static javax.lang.model.element.ElementKind.ENUM;
 
 public class Type extends Renderer implements Comparable<Type> {
 
     protected final TypeElement tp;
+    protected final Set<Modifier> modifiers;
 
     protected Type(UMLDiagram diagram, TypeElement typeElement) {
         super(diagram);
         this.tp = requireNonNull(typeElement, "Type element is <null>.");
+        this.modifiers = typeElement.getModifiers();
 
         // Add the various parts of the class UML, order matters here, obviously!
 
-        // addEnumConstants();
+        if (ENUM.equals(tp.getKind())) tp.getEnclosedElements().stream() // Add enum constants
+                .filter(elem -> ElementKind.ENUM_CONSTANT.equals(elem.getKind()))
+                .filter(VariableElement.class::isInstance).map(VariableElement.class::cast)
+                .forEach(elem -> children.add(new Field(this, elem)));
 
         tp.getEnclosedElements().stream() // Add fields
                 .filter(elem -> ElementKind.FIELD.equals(elem.getKind()))
@@ -69,40 +76,44 @@ public class Type extends Renderer implements Comparable<Type> {
 
     @Override
     protected IndentingPrintWriter writeTo(IndentingPrintWriter output) {
-        output.append(umlTypeOf(tp)).whitespace();
-        writeNameTo(output).whitespace();
-        writeTypeParametersTo(output).whitespace();
+        output.append(umlTypeCategoryOf(tp)).whitespace()
+                .append(tp.getQualifiedName()).whitespace()
+                .append(umlGenericsOf(tp)).whitespace();
         if (!children.isEmpty()) writeChildrenTo(output.append('{').newline()).append('}');
         return output.newline().newline();
     }
 
-    protected IndentingPrintWriter writeNameTo(IndentingPrintWriter output) {
-        return output.append(tp.getQualifiedName());
-    }
-
-    protected IndentingPrintWriter writeTypeParametersTo(IndentingPrintWriter output) {
-        List<? extends TypeParameterElement> typeParameters = tp.getTypeParameters();
-        return typeParameters.isEmpty() ? output
-                : output.append('<')
-                .append(typeParameters.stream().map(Element::getSimpleName).collect(joining(", ")))
-                .append('>');
-    }
-
     /**
      * Determines the 'UML' type for the class to be rendered.
-     * Currently, this can return one of the following: {@code "enum"}, {@code "interface"}, {@code "abstract class"}
+     * Currently, this can return one of the following:
+     * {@code "enum"},
+     * {@code "interface"},
+     * {@code "annotation"},
+     * {@code "abstract class"}
      * or otherwise {@code "class"}.
      *
      * @param typeElement The type element to return the uml type for.
      * @return The UML type for the class to be rendered.
      */
-    protected static String umlTypeOf(TypeElement typeElement) {
+    protected static String umlTypeCategoryOf(TypeElement typeElement) {
         ElementKind kind = requireNonNull(typeElement, "Type element is <null>.").getKind();
-        return ElementKind.ENUM.equals(kind) ? "enum"
+        return ENUM.equals(kind) ? "enum"
                 : ElementKind.INTERFACE.equals(kind) ? "interface"
                 : ElementKind.ANNOTATION_TYPE.equals(kind) ? "annotation"
                 : typeElement.getModifiers().contains(Modifier.ABSTRACT) ? "abstract class"
                 : "class";
+    }
+
+    /**
+     * The generics for the given type in UML notation.
+     *
+     * @param parameterizable The type element to return the generics part of.
+     * @return The empty String ({@code ""}) if no generics are applicable or the generic type(s) in brackets.
+     */
+    protected static String umlGenericsOf(Parameterizable parameterizable) {
+        List<? extends TypeParameterElement> typeParameters = parameterizable.getTypeParameters();
+        return typeParameters == null || typeParameters.isEmpty() ? "" : typeParameters.stream()
+                .map(Element::getSimpleName).collect(joining(", ", "<", ">"));
     }
 
     @Override

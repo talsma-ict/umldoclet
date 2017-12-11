@@ -241,7 +241,7 @@
                             <goal>jar</goal>
                         </goals>
                         <configuration>
-                            <!--<javadocVersion>1.9</javadocVersion>-->
+                            <javadocVersion>9</javadocVersion>
                             <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
                             <docletArtifact>
                                 <groupId>${project.groupId}</groupId>
@@ -249,7 +249,7 @@
                                 <version>${project.version}</version>
                             </docletArtifact>
                             <docencoding>UTF-8</docencoding>
-                            <!--<useStandardDocletOptions>true</useStandardDocletOptions>-->
+                            <useStandardDocletOptions>true</useStandardDocletOptions>
 <!--
                             <additionalparam>
                                 -umlLogLevel DEBUG
@@ -258,36 +258,6 @@
 -->
                         </configuration>
                     </execution>
-<!--
-                    <execution>
-                        <id>generate-test-uml</id>
-                        <goals>
-                            <goal>test-javadoc</goal>
-                        </goals>
-                        <phase>compile</phase>
-                        <configuration>
-                            <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
-                            <docletArtifact>
-                                <groupId>${project.groupId}</groupId>
-                                <artifactId>${project.artifactId}</artifactId>
-                                <version>${project.version}</version>
-                            </docletArtifact>
-                            <docencoding>UTF-8</docencoding>
-                            &lt;!&ndash;
-                                <additionalparam>
-                                    -umlLogLevel DEBUG
-                                    -umlImageFormat PNG;SVG
-                                    -umlImageDirectory images
-                                    -umlBasePath "${project.baseUri}target/test-uml"
-                                    -umlSkipStandardDoclet true
-                                    -umlCommand "hide empty members"
-                                    -umlCommand "hide &lt;&lt;Stereotype&gt;&gt; circle"
-                                    -umlIncludeMethodReturntypes true
-                                </additionalparam>
-                            &ndash;&gt;
-                        </configuration>
-                    </execution>
--->
                 </executions>
             </plugin>
             <plugin>

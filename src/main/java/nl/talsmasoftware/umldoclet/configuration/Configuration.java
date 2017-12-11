@@ -28,7 +28,6 @@ import static java.util.Objects.requireNonNull;
 
 public class Configuration {
 
-    public static final String BUNDLE_NAME = UMLDoclet.class.getName();
     private final Doclet doclet;
     private final UMLOptions options;
     private volatile LocalizedReporter reporter;
@@ -51,13 +50,6 @@ public class Configuration {
     public void init(Locale locale, Reporter reporter) {
         this.reporter = new LocalizedReporter(this, reporter, locale);
     }
-
-//    /**
-//     * @return The reporter for the JavaDoc task.
-//     */
-//    public Reporter reporter() {
-//        return reporter;
-//    }
 
     public Set<Doclet.Option> mergeOptionsWith(Set<Doclet.Option> standardOptions) {
         return options.mergeWith(standardOptions);
