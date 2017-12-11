@@ -17,14 +17,19 @@ package nl.talsmasoftware.umldoclet.model;
 
 import jdk.javadoc.doclet.DocletEnvironment;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.configuration.Messages;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+
+import java.io.*;
 
 import static java.util.Objects.requireNonNull;
 
 /**
  * Renders a new UML diagram.
  * <p>
- * Responsible for rendering the <code>{@literal @}startuml</code> and <code>{@literal @}enduml</code> lines.
+ * Responsible for rendering the UML diagram itself:
+ * The <code>{@literal @}startuml</code> and <code>{@literal @}enduml</code> lines with the children within.
+ * Subclasses of {@code UMLDiagram} are responsible for adding appropriate child renderers.
  *
  * @author Sjoerd Talsma
  */
@@ -39,11 +44,43 @@ public abstract class UMLDiagram extends Renderer {
         this.env = requireNonNull(env, "Doclet environment is <null>.");
     }
 
+    /**
+     * This method determines the physical file where the plantuml diagram should be rendered.
+     *
+     * @return The physical file where this plantuml diagram in question should be rendered.
+     */
+    protected abstract File pumlFile();
+
     @Override
     protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         out.append("@startuml").newline().newline();
         writeChildrenTo(out);
         return out.append("@enduml").newline();
+    }
+
+    /**
+     * Renders this diagram to a designated {@link #pumlFile() .puml file}.
+     */
+    public void render() {
+        config.info(Messages.INFO_GENERATING_FILE, pumlFile());
+        try (Writer writer = new OutputStreamWriter(new FileOutputStream(pumlFile()))) {
+            this.writeTo(IndentingPrintWriter.wrap(writer, config.indentation));
+        } catch (IOException | RuntimeException e) {
+            throw new IllegalStateException("Couldn't render \"" + pumlFile() + "\": " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Ensure the parent directory exists by attempting to create it if it doensn't yet exist.
+     *
+     * @param file The file verify directory existence for.
+     * @return The specified file.
+     */
+    protected static File ensureParentDir(File file) {
+        if (file != null && !file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
+            throw new IllegalStateException("Can't create directory \"" + file.getParent() + "\".");
+        }
+        return file;
     }
 
 }

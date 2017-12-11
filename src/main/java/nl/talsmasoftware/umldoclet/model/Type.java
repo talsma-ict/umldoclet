@@ -18,25 +18,48 @@ package nl.talsmasoftware.umldoclet.model;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import javax.lang.model.element.*;
+import java.util.List;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.joining;
 
 public class Type extends Renderer {
 
-    protected final TypeElement typeElement;
+    protected final TypeElement tp;
 
     protected Type(UMLDiagram diagram, TypeElement typeElement) {
         super(diagram);
-        this.typeElement = requireNonNull(typeElement, "Type element is <null>.");
+        this.tp = requireNonNull(typeElement, "Type element is <null>.");
+
+        // Add the various parts of the class UML, order matters here, obviously!
+
+        // addEnumConstants();
+
+        tp.getEnclosedElements().stream() // Add fields
+                .filter(elem -> ElementKind.FIELD.equals(elem.getKind()))
+                .filter(VariableElement.class::isInstance).map(VariableElement.class::cast)
+                .forEach(elem -> children.add(new Variable(this, elem)));
+
+        tp.getEnclosedElements().stream() // Add constructors
+                .filter(elem -> ElementKind.CONSTRUCTOR.equals(elem.getKind()))
+                .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
+                .forEach(elem -> children.add(new Constructor(this, elem)));
+
+        // addMethods();
+        tp.getEnclosedElements().stream() // Add methods
+                .filter(elem -> ElementKind.METHOD.equals(elem.getKind()))
+                .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
+                .forEach(elem -> children.add(new Method(this, elem)));
+
     }
 
     protected PackageElement containingPackage() {
-        return diagram.env.getElementUtils().getPackageOf(typeElement);
+        return diagram.env.getElementUtils().getPackageOf(tp);
     }
 
     protected String getSimpleName() {
-        StringBuilder sb = new StringBuilder(typeElement.getSimpleName());
-        for (Element enclosed = typeElement.getEnclosingElement();
+        StringBuilder sb = new StringBuilder(tp.getSimpleName());
+        for (Element enclosed = tp.getEnclosingElement();
              enclosed != null && (enclosed.getKind().isClass() || enclosed.getKind().isInterface());
              enclosed = enclosed.getEnclosingElement()) {
             sb.insert(0, enclosed.getSimpleName() + ".");
@@ -46,9 +69,23 @@ public class Type extends Renderer {
 
     @Override
     protected IndentingPrintWriter writeTo(IndentingPrintWriter output) {
-        output.append(umlTypeOf(typeElement)).whitespace();
+        output.append(umlTypeOf(tp)).whitespace();
+        writeNameTo(output).whitespace();
+        writeTypeParametersTo(output).whitespace();
         if (!children.isEmpty()) writeChildrenTo(output.append('{').newline()).append('}');
         return output.newline().newline();
+    }
+
+    protected IndentingPrintWriter writeNameTo(IndentingPrintWriter output) {
+        return output.append(tp.getQualifiedName());
+    }
+
+    protected IndentingPrintWriter writeTypeParametersTo(IndentingPrintWriter output) {
+        List<? extends TypeParameterElement> typeParameters = tp.getTypeParameters();
+        return typeParameters.isEmpty() ? output
+                : output.append('<')
+                .append(typeParameters.stream().map(Element::getSimpleName).collect(joining(", ")))
+                .append('>');
     }
 
     /**

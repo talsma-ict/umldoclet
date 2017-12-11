@@ -17,51 +17,31 @@ package nl.talsmasoftware.umldoclet.model;
 
 import jdk.javadoc.doclet.DocletEnvironment;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.configuration.Messages;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import javax.lang.model.element.TypeElement;
-import java.io.*;
+import java.io.File;
 
 public class ClassDiagram extends UMLDiagram {
 
-    private final Type cls;
-    private String umlPath = null;
+    private final Type type;
+    private File pumlFile = null;
 
     public ClassDiagram(Configuration config, DocletEnvironment env, TypeElement classElement) {
         super(config, env);
-        this.cls = new Type(this, classElement);
-        super.children.add(cls);
+        this.type = new Type(this, classElement);
+        super.children.add(type);
     }
 
-    public void render() {
-        config.info(Messages.INFO_GENERATING_FILE, umlPath());
-        try {
-            File umlFile = new File(umlPath());
-            if (!umlFile.getParentFile().exists() && !umlFile.getParentFile().mkdirs()) {
-                throw new IllegalStateException("Can't create directory \"" + umlFile.getParent() + "\".");
-            }
-            try (Writer writer = new OutputStreamWriter(new FileOutputStream(umlFile))) {
-                this.writeTo(IndentingPrintWriter.wrap(writer, config.indentation));
-            }
-        } catch (IOException | RuntimeException e) {
-            throw new IllegalStateException("Couldn't render \"" + umlPath() + "\": " + e.getMessage(), e);
-        }
-    }
-
-    protected String umlPath() {
-        if (umlPath == null) {
+    @Override
+    protected File pumlFile() {
+        if (pumlFile == null) {
             StringBuilder result = new StringBuilder(config.destDirName);
             if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');
-            result.append(cls.containingPackage().getQualifiedName().toString().replace('.', '/'));
-            umlPath = result.append('/').append(cls.getSimpleName()).append(".puml").toString();
+            result.append(type.containingPackage().getQualifiedName().toString().replace('.', '/'));
+            result.append('/').append(type.getSimpleName()).append(".puml");
+            pumlFile = ensureParentDir(new File(result.toString()));
         }
-        return umlPath;
-    }
-
-    protected String imgPath(String type) {
-        // For now in the same location as the UML. TODO: add support for 'imagedir'
-        return umlPath().replaceAll("\\.puml$", "." + type);
+        return pumlFile;
     }
 
 }

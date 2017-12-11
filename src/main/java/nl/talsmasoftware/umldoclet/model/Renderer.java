@@ -20,7 +20,6 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
@@ -85,27 +84,6 @@ public abstract class Renderer {
      */
     public static String quoted(String value) {
         return value == null || value.trim().isEmpty() ? "" : '"' + value.replaceAll("\"", "\\\"") + '"';
-    }
-
-    /**
-     * @return Hashcode implementation based on the children of this renderer.
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(children);
-    }
-
-    /**
-     * Equals implementation based on 'instanceof' test and children equality.
-     *
-     * @param other The object to compare this renderer with.
-     * @return {@code true} if the other object is an instance of this renderers class and its children are equal,{@code false} otherwise.
-     */
-    @Override
-    public boolean equals(Object other) {
-        return this == other || (getClass().isInstance(other)
-                && Objects.equals(children, ((Renderer) other).children)
-        );
     }
 
     /**
