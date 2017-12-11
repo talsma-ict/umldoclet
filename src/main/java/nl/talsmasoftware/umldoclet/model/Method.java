@@ -7,6 +7,7 @@ import javax.lang.model.element.Modifier;
 import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.joining;
 import static nl.talsmasoftware.umldoclet.model.Field.umlAccessibility;
 
 /**
@@ -25,7 +26,11 @@ public class Method extends Renderer {
 
     @Override
     protected IndentingPrintWriter writeTo(IndentingPrintWriter output) {
-        return output.append(umlAccessibility(modifiers)).append(method.getSimpleName()).append("()").newline();
+        output.append(umlAccessibility(modifiers)).append(method.getSimpleName());
+        output.append(method.getParameters().stream()
+                .map(elem -> Field.umlTypeOf(diagram.env.getTypeUtils().asElement(elem.asType())) + " " + elem.getSimpleName())
+                .collect(joining(", ", "(", ")")));
+        return output.newline();
     }
 
 }
