@@ -20,10 +20,11 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import javax.lang.model.element.*;
 import java.util.List;
 
+import static java.lang.Integer.signum;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 
-public class Type extends Renderer {
+public class Type extends Renderer implements Comparable<Type> {
 
     protected final TypeElement tp;
 
@@ -38,14 +39,13 @@ public class Type extends Renderer {
         tp.getEnclosedElements().stream() // Add fields
                 .filter(elem -> ElementKind.FIELD.equals(elem.getKind()))
                 .filter(VariableElement.class::isInstance).map(VariableElement.class::cast)
-                .forEach(elem -> children.add(new Variable(this, elem)));
+                .forEach(elem -> children.add(new Field(this, elem)));
 
         tp.getEnclosedElements().stream() // Add constructors
                 .filter(elem -> ElementKind.CONSTRUCTOR.equals(elem.getKind()))
                 .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
                 .forEach(elem -> children.add(new Constructor(this, elem)));
 
-        // addMethods();
         tp.getEnclosedElements().stream() // Add methods
                 .filter(elem -> ElementKind.METHOD.equals(elem.getKind()))
                 .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
@@ -103,5 +103,22 @@ public class Type extends Renderer {
                 : ElementKind.ANNOTATION_TYPE.equals(kind) ? "annotation"
                 : typeElement.getModifiers().contains(Modifier.ABSTRACT) ? "abstract class"
                 : "class";
+    }
+
+    @Override
+    public int hashCode() {
+        return tp.getQualifiedName().hashCode();
+    }
+
+    public int compareTo(Type other) {
+        final String otherQName = requireNonNull(other, "Cannot compare Type to <null>.").tp.getQualifiedName().toString();
+        final String myQName = tp.getQualifiedName().toString();
+        final int diff = signum(myQName.compareToIgnoreCase(otherQName));
+        return diff == 0 ? signum(myQName.compareTo(otherQName)) : diff;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return this == other || (other instanceof Type && this.compareTo((Type) other) == 0);
     }
 }
