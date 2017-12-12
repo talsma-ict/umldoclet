@@ -18,23 +18,24 @@ package nl.talsmasoftware.umldoclet.model;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import javax.lang.model.element.*;
-import java.util.List;
+import javax.lang.model.type.TypeVisitor;
 import java.util.Set;
 
 import static java.lang.Integer.signum;
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.joining;
 import static javax.lang.model.element.ElementKind.ENUM;
 
 public class Type extends Renderer implements Comparable<Type> {
 
     protected final TypeElement tp;
     protected final Set<Modifier> modifiers;
+    private final TypeVisitor<String, ?> umlTypeName;
 
     protected Type(UMLDiagram diagram, TypeElement typeElement) {
         super(diagram);
         this.tp = requireNonNull(typeElement, "Type element is <null>.");
         this.modifiers = typeElement.getModifiers();
+        this.umlTypeName = new TypeName(true, true);
 
         // Add the various parts of the class UML, order matters here, obviously!
 
@@ -60,6 +61,20 @@ public class Type extends Renderer implements Comparable<Type> {
 
     }
 
+//    protected static String umlTypeOf(Element element) {
+//        if (element == null) return "null";
+//        final StringBuilder result = new StringBuilder();
+//        if (element instanceof QualifiedNameable) {
+//            result.append(((QualifiedNameable) element).getQualifiedName());
+//        } else {
+//            result.append(element.getSimpleName());
+//        }
+//        if (element instanceof Parameterizable) {
+//            result.append(umlGenericsOf((Parameterizable) element));
+//        }
+//        return result.toString();
+//    }
+
     protected PackageElement containingPackage() {
         return diagram.env.getElementUtils().getPackageOf(tp);
     }
@@ -77,8 +92,7 @@ public class Type extends Renderer implements Comparable<Type> {
     @Override
     protected IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         output.append(umlTypeCategoryOf(tp)).whitespace()
-                .append(tp.getQualifiedName()).whitespace()
-                .append(umlGenericsOf(tp)).whitespace();
+                .append(umlTypeName.visit(tp.asType())).whitespace();
         if (!children.isEmpty()) writeChildrenTo(output.append('{').newline()).append('}');
         return output.newline().newline();
     }
@@ -104,17 +118,17 @@ public class Type extends Renderer implements Comparable<Type> {
                 : "class";
     }
 
-    /**
-     * The generics for the given type in UML notation.
-     *
-     * @param parameterizable The type element to return the generics part of.
-     * @return The empty String ({@code ""}) if no generics are applicable or the generic type(s) in brackets.
-     */
-    protected static String umlGenericsOf(Parameterizable parameterizable) {
-        List<? extends TypeParameterElement> typeParameters = parameterizable.getTypeParameters();
-        return typeParameters == null || typeParameters.isEmpty() ? "" : typeParameters.stream()
-                .map(Element::getSimpleName).collect(joining(", ", "<", ">"));
-    }
+//    /**
+//     * The generics for the given type in UML notation.
+//     *
+//     * @param parameterizable The type element to return the generics part of.
+//     * @return The empty String ({@code ""}) if no generics are applicable or the generic type(s) in brackets.
+//     */
+//    protected static String umlGenericsOf(Parameterizable parameterizable) {
+//        List<? extends TypeParameterElement> typeParameters = parameterizable.getTypeParameters();
+//        return typeParameters == null || typeParameters.isEmpty() ? "" : typeParameters.stream()
+//                .map(Type::umlTypeOf).collect(joining(", ", "<", ">"));
+//    }
 
     @Override
     public int hashCode() {
