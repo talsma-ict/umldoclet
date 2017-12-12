@@ -61,20 +61,6 @@ public class Type extends Renderer implements Comparable<Type> {
 
     }
 
-//    protected static String umlTypeOf(Element element) {
-//        if (element == null) return "null";
-//        final StringBuilder result = new StringBuilder();
-//        if (element instanceof QualifiedNameable) {
-//            result.append(((QualifiedNameable) element).getQualifiedName());
-//        } else {
-//            result.append(element.getSimpleName());
-//        }
-//        if (element instanceof Parameterizable) {
-//            result.append(umlGenericsOf((Parameterizable) element));
-//        }
-//        return result.toString();
-//    }
-
     protected PackageElement containingPackage() {
         return diagram.env.getElementUtils().getPackageOf(tp);
     }
@@ -117,18 +103,6 @@ public class Type extends Renderer implements Comparable<Type> {
                 : typeElement.getModifiers().contains(Modifier.ABSTRACT) ? "abstract class"
                 : "class";
     }
-
-//    /**
-//     * The generics for the given type in UML notation.
-//     *
-//     * @param parameterizable The type element to return the generics part of.
-//     * @return The empty String ({@code ""}) if no generics are applicable or the generic type(s) in brackets.
-//     */
-//    protected static String umlGenericsOf(Parameterizable parameterizable) {
-//        List<? extends TypeParameterElement> typeParameters = parameterizable.getTypeParameters();
-//        return typeParameters == null || typeParameters.isEmpty() ? "" : typeParameters.stream()
-//                .map(Type::umlTypeOf).collect(joining(", ", "<", ">"));
-//    }
 
     @Override
     public int hashCode() {

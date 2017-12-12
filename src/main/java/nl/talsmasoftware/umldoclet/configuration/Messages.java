@@ -36,6 +36,7 @@ public enum Messages {
 
     INFO_GENERATING_FILE,
 
+    ERROR_COULDNT_RENDER_UML,
     ERROR_UNANTICIPATED_ERROR_GENERATING_UML;
 
     private static final Map<String, ResourceBundle> BUNDLES = new HashMap<>();

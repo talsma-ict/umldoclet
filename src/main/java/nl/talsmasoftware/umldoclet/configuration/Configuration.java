@@ -71,4 +71,8 @@ public class Configuration {
         reporter.log(Diagnostic.Kind.WARNING, null, null, key, args);
     }
 
+    public void error(Messages key, Object... args) {
+        reporter.log(Diagnostic.Kind.ERROR, null, null, key, args);
+    }
+
 }

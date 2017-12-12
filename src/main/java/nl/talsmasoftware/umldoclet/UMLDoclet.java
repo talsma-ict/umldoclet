@@ -21,17 +21,19 @@ import jdk.javadoc.doclet.StandardDoclet;
 import net.sourceforge.plantuml.version.Version;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.model.ClassDiagram;
+import nl.talsmasoftware.umldoclet.model.PackageDiagram;
+import nl.talsmasoftware.umldoclet.model.UMLDiagram;
 
 import javax.lang.model.SourceVersion;
-import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 
-import static nl.talsmasoftware.umldoclet.configuration.Messages.DOCLET_INFO;
-import static nl.talsmasoftware.umldoclet.configuration.Messages.PLANTUML_INFO;
-import static nl.talsmasoftware.umldoclet.configuration.Messages.VERSION;
+import static nl.talsmasoftware.umldoclet.configuration.Messages.*;
 
 /**
  * UML doclet that generates <a href="http://plantuml.com">PlantUML</a> class diagrams from your java code just as
@@ -77,25 +79,30 @@ public class UMLDoclet extends StandardDoclet {
             config.info(DOCLET_INFO, VERSION);
             config.info(PLANTUML_INFO, Version.versionString());
 
-            boolean result;
+            return generateUMLDiagrams(docEnv) && super.run(docEnv);
 
-            result = generateClassDiagrams(docEnv);
-
-            return result && super.run(docEnv);
         } catch (RuntimeException rte) {
-            System.err.println("Unanticipated error generating UML: " + rte.getMessage());
+            config.error(ERROR_UNANTICIPATED_ERROR_GENERATING_UML, rte);
             rte.printStackTrace(System.err);
             return false;
         }
     }
 
-    private boolean generateClassDiagrams(DocletEnvironment docEnv) {
-        docEnv.getIncludedElements().stream()
-                .filter(TypeElement.class::isInstance).map(TypeElement.class::cast)
-                .filter(e -> ElementKind.CLASS.equals(e.getKind()))
-                .map(e -> new ClassDiagram(config, docEnv, e))
-                .forEach(ClassDiagram::render);
-        return true;
+    private boolean generateUMLDiagrams(DocletEnvironment docEnv) {
+        return docEnv.getIncludedElements().stream()
+                .map(element -> mapToDiagram(docEnv, element))
+                .filter(Objects::nonNull)
+                .map(UMLDiagram::render)
+                .reduce(Boolean.TRUE, (a, b) -> a & b);
+    }
+
+    private UMLDiagram mapToDiagram(DocletEnvironment docEnv, Element element) {
+        if (element instanceof PackageElement) {
+            return new PackageDiagram(config, docEnv, (PackageElement) element);
+        } else if (element instanceof TypeElement && (element.getKind().isClass() || element.getKind().isInterface())) {
+            return new ClassDiagram(config, docEnv, (TypeElement) element);
+        }
+        return null;
     }
 
 }

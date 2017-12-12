@@ -23,6 +23,7 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import java.io.*;
 
 import static java.util.Objects.requireNonNull;
+import static nl.talsmasoftware.umldoclet.configuration.Messages.ERROR_COULDNT_RENDER_UML;
 
 /**
  * Renders a new UML diagram.
@@ -60,13 +61,18 @@ public abstract class UMLDiagram extends Renderer {
 
     /**
      * Renders this diagram to a designated {@link #pumlFile() .puml file}.
+     *
+     * @return Whether the rendering succeeded.
      */
-    public void render() {
-        config.info(Messages.INFO_GENERATING_FILE, pumlFile());
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(pumlFile()))) {
+    public boolean render() {
+        final File pumlFile = pumlFile();
+        try (Writer writer = new OutputStreamWriter(new FileOutputStream(pumlFile))) {
+            config.info(Messages.INFO_GENERATING_FILE, pumlFile);
             this.writeTo(IndentingPrintWriter.wrap(writer, config.indentation));
+            return true;
         } catch (IOException | RuntimeException e) {
-            throw new IllegalStateException("Couldn't render \"" + pumlFile() + "\": " + e.getMessage(), e);
+            config.error(ERROR_COULDNT_RENDER_UML, pumlFile, e);
+            return false;
         }
     }
 
