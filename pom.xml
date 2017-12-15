@@ -163,6 +163,7 @@
                         <exclude>.travis.yml</exclude>
                         <exclude>.mvn/**</exclude>
                         <exclude>mvnw*</exclude>
+                        <exclude>lib/**</exclude>
                         <exclude>**/.idea/**</exclude>
                         <exclude>LICENSE</exclude>
                         <exclude>**/*.md</exclude>
