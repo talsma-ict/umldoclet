@@ -143,6 +143,12 @@
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
                 <version>${license-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals><goal>check</goal></goals>
+                        <phase>compile</phase>
+                    </execution>
+                </executions>
                 <configuration>
                     <header>${project.basedir}/.mvn/license/header.txt</header>
                     <properties>
@@ -157,6 +163,7 @@
                         <exclude>.travis.yml</exclude>
                         <exclude>.mvn/**</exclude>
                         <exclude>mvnw*</exclude>
+                        <exclude>lib/**</exclude>
                         <exclude>**/.idea/**</exclude>
                         <exclude>LICENSE</exclude>
                         <exclude>**/*.md</exclude>
