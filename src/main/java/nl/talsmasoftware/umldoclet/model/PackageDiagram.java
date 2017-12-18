@@ -32,6 +32,7 @@ public class PackageDiagram extends UMLDiagram {
     public PackageDiagram(Configuration config, DocletEnvironment env, PackageElement packageElement) {
         super(config, env);
         this.packageElement = packageElement;
+        this.children.add(new Package(this, packageElement));
     }
 
     @Override

@@ -29,8 +29,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import java.util.Locale;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.Optional;
 import java.util.Set;
 
 import static nl.talsmasoftware.umldoclet.configuration.Messages.*;
@@ -38,14 +37,13 @@ import static nl.talsmasoftware.umldoclet.configuration.Messages.*;
 /**
  * UML doclet that generates <a href="http://plantuml.com">PlantUML</a> class diagrams from your java code just as
  * easily as creating proper JavaDoc comments.<br>
- * It actually extends JavaDoc's {@link StandardDoclet} doclet to generate the 'regular' HTML documentation.
+ * It actually extends JavaDoc's {@link StandardDoclet} doclet to generate the regular HTML documentation.
  *
  * @author Sjoerd Talsma
  */
 public class UMLDoclet extends StandardDoclet {
 
     private final Configuration config;
-    private Properties properties;
 
     public UMLDoclet() {
         super();
@@ -91,18 +89,18 @@ public class UMLDoclet extends StandardDoclet {
     private boolean generateUMLDiagrams(DocletEnvironment docEnv) {
         return docEnv.getIncludedElements().stream()
                 .map(element -> mapToDiagram(docEnv, element))
-                .filter(Objects::nonNull)
+                .filter(Optional::isPresent).map(Optional::get)
                 .map(UMLDiagram::render)
                 .reduce(Boolean.TRUE, (a, b) -> a & b);
     }
 
-    private UMLDiagram mapToDiagram(DocletEnvironment docEnv, Element element) {
+    private Optional<UMLDiagram> mapToDiagram(DocletEnvironment docEnv, Element element) {
         if (element instanceof PackageElement) {
-            return new PackageDiagram(config, docEnv, (PackageElement) element);
+            return Optional.of(new PackageDiagram(config, docEnv, (PackageElement) element));
         } else if (element instanceof TypeElement && (element.getKind().isClass() || element.getKind().isInterface())) {
-            return new ClassDiagram(config, docEnv, (TypeElement) element);
+            return Optional.of(new ClassDiagram(config, docEnv, (TypeElement) element));
         }
-        return null;
+        return Optional.empty();
     }
 
 }
