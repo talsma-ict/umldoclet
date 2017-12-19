@@ -19,11 +19,15 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeVisitor;
+import java.util.Collection;
 import java.util.Set;
 
 import static java.lang.Integer.signum;
+import static java.util.Collections.singleton;
 import static java.util.Objects.requireNonNull;
 import static javax.lang.model.element.ElementKind.ENUM;
+import static nl.talsmasoftware.umldoclet.model.Reference.Side.from;
+import static nl.talsmasoftware.umldoclet.model.Reference.Side.to;
 
 public class Type extends Renderer implements Comparable<Type> {
 
@@ -73,6 +77,15 @@ public class Type extends Renderer implements Comparable<Type> {
             sb.insert(0, enclosed.getSimpleName() + ".");
         }
         return sb.toString();
+    }
+
+    protected String getQualifiedName() {
+        return tp.getQualifiedName().toString();
+    }
+
+    protected Collection<Reference> getReferences() {
+        //        return Collections.emptyList(); // TODO
+        return singleton(new Reference(from(getQualifiedName()), "-->", to(getQualifiedName()), "this"));
     }
 
     @Override

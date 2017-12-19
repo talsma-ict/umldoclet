@@ -19,8 +19,10 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import java.util.Collection;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Sjoerd Talsma
@@ -28,6 +30,7 @@ import static java.util.Objects.requireNonNull;
 public class Package extends Renderer {
 
     protected final PackageElement packageElement;
+    private final Collection<Reference> references;
 
     Package(UMLDiagram diagram, PackageElement packageElement) {
         super(diagram);
@@ -39,12 +42,18 @@ public class Package extends Renderer {
                 .map(type -> new Type(diagram, type))
                 .forEach(children::add);
 
+        this.references = children.stream()
+                .filter(Type.class::isInstance).map(Type.class::cast)
+                .map(Type::getReferences).flatMap(Collection::stream)
+                .collect(toList());
+
     }
 
     @Override
     protected IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         output.append("namespace").whitespace().append(packageElement.getQualifiedName()).whitespace().append("{").newline();
-        writeChildrenTo(output);
+        writeChildrenTo(output).newline();
+        references.stream().map(Object::toString).forEach(ref -> output.indent().append(ref).newline());
         return output.newline().append("}").newline();
     }
 
