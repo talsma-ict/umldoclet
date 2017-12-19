@@ -19,7 +19,6 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeVisitor;
-import java.util.Collection;
 import java.util.Set;
 
 import static java.lang.Integer.signum;
@@ -34,6 +33,7 @@ public class Type extends Renderer implements Comparable<Type> {
     protected final TypeElement tp;
     protected final Set<Modifier> modifiers;
     private final TypeVisitor<String, ?> umlTypeName;
+    protected final Set<Reference> references;
 
     protected Type(UMLDiagram diagram, TypeElement typeElement) {
         super(diagram);
@@ -63,6 +63,8 @@ public class Type extends Renderer implements Comparable<Type> {
                 .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
                 .forEach(elem -> children.add(new Method(this, elem)));
 
+        // TODO Analyse references from this class to other classes.
+        references = singleton(new Reference(from(getQualifiedName()), "-->", to(getQualifiedName()), "this"));
     }
 
     protected PackageElement containingPackage() {
@@ -81,11 +83,6 @@ public class Type extends Renderer implements Comparable<Type> {
 
     protected String getQualifiedName() {
         return tp.getQualifiedName().toString();
-    }
-
-    protected Collection<Reference> getReferences() {
-        //        return Collections.emptyList(); // TODO
-        return singleton(new Reference(from(getQualifiedName()), "-->", to(getQualifiedName()), "this"));
     }
 
     @Override

@@ -22,7 +22,7 @@ import javax.lang.model.element.TypeElement;
 import java.util.Collection;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * @author Sjoerd Talsma
@@ -44,9 +44,8 @@ public class Package extends Renderer {
 
         this.references = children.stream()
                 .filter(Type.class::isInstance).map(Type.class::cast)
-                .map(Type::getReferences).flatMap(Collection::stream)
-                .collect(toList());
-
+                .flatMap(type -> type.references.stream().map(Reference::canonical))
+                .collect(toSet());
     }
 
     @Override
