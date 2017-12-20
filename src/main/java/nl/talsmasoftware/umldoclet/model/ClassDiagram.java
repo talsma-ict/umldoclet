@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.model;
 
 import jdk.javadoc.doclet.DocletEnvironment;
-import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.configuration.DocletConfig;
 
 import javax.lang.model.element.TypeElement;
 import java.io.File;
@@ -29,7 +29,7 @@ public class ClassDiagram extends UMLDiagram {
     private final Type type;
     private File pumlFile = null;
 
-    public ClassDiagram(Configuration config, DocletEnvironment env, TypeElement classElement) {
+    public ClassDiagram(DocletConfig config, DocletEnvironment env, TypeElement classElement) {
         super(config, env);
         this.type = new Type(this, classElement);
         super.children.add(type);
@@ -38,7 +38,7 @@ public class ClassDiagram extends UMLDiagram {
     @Override
     protected File pumlFile() {
         if (pumlFile == null) {
-            StringBuilder result = new StringBuilder(config.destDirName);
+            StringBuilder result = new StringBuilder(config.getDestinationDirectory());
             if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');
             result.append(type.containingPackage().getQualifiedName().toString().replace('.', '/'));
             result.append('/').append(type.getSimpleName()).append(".puml");

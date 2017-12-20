@@ -19,7 +19,7 @@ import jdk.javadoc.doclet.DocletEnvironment;
 import jdk.javadoc.doclet.Reporter;
 import jdk.javadoc.doclet.StandardDoclet;
 import net.sourceforge.plantuml.version.Version;
-import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.configuration.DocletConfig;
 import nl.talsmasoftware.umldoclet.model.ClassDiagram;
 import nl.talsmasoftware.umldoclet.model.PackageDiagram;
 import nl.talsmasoftware.umldoclet.model.UMLDiagram;
@@ -43,11 +43,11 @@ import static nl.talsmasoftware.umldoclet.logging.Message.*;
  */
 public class UMLDoclet extends StandardDoclet {
 
-    private final Configuration config;
+    private final DocletConfig config;
 
     public UMLDoclet() {
         super();
-        this.config = new Configuration(this);
+        this.config = new DocletConfig(this);
     }
 
     @Override

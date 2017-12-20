@@ -15,66 +15,24 @@
  */
 package nl.talsmasoftware.umldoclet.configuration;
 
-import jdk.javadoc.doclet.Doclet;
-import jdk.javadoc.doclet.Reporter;
-import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.logging.Logger;
-import nl.talsmasoftware.umldoclet.logging.Message;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 
-import javax.tools.Diagnostic;
-import java.util.Locale;
-import java.util.Set;
+/**
+ * @author Sjoerd Talsma
+ */
+public interface Configuration {
 
-import static java.util.Objects.requireNonNull;
-
-public class Configuration implements Logger {
-
-    private final Doclet doclet;
-    private final UMLOptions options;
-    private volatile LocalizedReporter reporter;
+    Logger getLogger();
 
     /**
-     * Destination directory where documentation is generated. Default is the current directory.
+     * @return The configured indentation within the generated UML files.
      */
-    public String destDirName = "";
+    Indentation getIndentation();
 
-    public boolean quiet = false;
-
-    public Indentation indentation = Indentation.DEFAULT;
-
-    public Configuration(UMLDoclet doclet) {
-        this.doclet = requireNonNull(doclet, "UML Doclet is <null>.");
-        this.options = new UMLOptions(this);
-        this.reporter = new LocalizedReporter(this, null, null);
-    }
-
-    public void init(Locale locale, Reporter reporter) {
-        this.reporter = new LocalizedReporter(this, reporter, locale);
-    }
-
-    public Set<Doclet.Option> mergeOptionsWith(Set<Doclet.Option> standardOptions) {
-        return options.mergeWith(standardOptions);
-    }
-
-    public Indentation indentation() {
-        return Indentation.DEFAULT; // TODO decide whether we want to make this configurable at all.
-    }
-
-    public void debug(Message key, Object... args) {
-        reporter.log(Diagnostic.Kind.OTHER, null, null, key, args);
-    }
-
-    public void info(Message key, Object... args) {
-        reporter.log(Diagnostic.Kind.NOTE, null, null, key, args);
-    }
-
-    public void warn(Message key, Object... args) {
-        reporter.log(Diagnostic.Kind.WARNING, null, null, key, args);
-    }
-
-    public void error(Message key, Object... args) {
-        reporter.log(Diagnostic.Kind.ERROR, null, null, key, args);
-    }
+    /**
+     * @return The destination directory for the UML diagrams, or the empty string {@code ""} for the current directory.
+     */
+    String getDestinationDirectory();
 
 }

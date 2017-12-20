@@ -18,6 +18,7 @@ package nl.talsmasoftware.umldoclet.v1.logging;
 import com.sun.javadoc.DocErrorReporter;
 import com.sun.javadoc.SourcePosition;
 import jdk.javadoc.doclet.Reporter;
+import nl.talsmasoftware.umldoclet.configuration.DocletConfig;
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.logging.Message;
 
@@ -75,7 +76,7 @@ public class LogSupport {
     }
 
     /**
-     * No longer does anything, please use {@link nl.talsmasoftware.umldoclet.configuration.Configuration Configuration}
+     * No longer does anything, please use {@link DocletConfig Configuration}
      * log methods instead.
      *
      * @param level ignored
@@ -90,7 +91,7 @@ public class LogSupport {
     }
 
     /**
-     * No longer does anything, please use {@link nl.talsmasoftware.umldoclet.configuration.Configuration Configuration}
+     * No longer does anything, please use {@link DocletConfig Configuration}
      * log methods instead.
      *
      * @return Always {@code false}
@@ -101,7 +102,7 @@ public class LogSupport {
     }
 
     /**
-     * No longer does anything, please use {@link nl.talsmasoftware.umldoclet.configuration.Configuration Configuration}
+     * No longer does anything, please use {@link DocletConfig Configuration}
      * log methods instead.
      *
      * @param msg  ignored

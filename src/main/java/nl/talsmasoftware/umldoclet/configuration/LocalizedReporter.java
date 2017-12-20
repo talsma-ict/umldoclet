@@ -32,11 +32,11 @@ import static java.util.Objects.requireNonNull;
  * @author Sjoerd Talsma
  */
 final class LocalizedReporter implements Reporter {
-    private final Configuration config;
+    private final DocletConfig config;
     private final Reporter delegate;
     private final Locale locale;
 
-    LocalizedReporter(Configuration config, Reporter delegate, Locale locale) {
+    LocalizedReporter(DocletConfig config, Reporter delegate, Locale locale) {
         this.config = requireNonNull(config, "Configuration is <null>.");
         this.delegate = delegate;
         this.locale = locale;

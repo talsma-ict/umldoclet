@@ -32,6 +32,10 @@ import static nl.talsmasoftware.umldoclet.logging.Message.ERROR_COULDNT_RENDER_U
  * Responsible for rendering the UML diagram itself:
  * The <code>{@literal @}startuml</code> and <code>{@literal @}enduml</code> lines with the children within.
  * Subclasses of {@code UMLDiagram} are responsible for adding appropriate child renderers.
+ * <p>
+ * The diagram is rendered to a {@code .puml} output file.
+ * Writing happens to the {@link PlantumlImageWriter} which caches the written plantuml file and
+ * will generate one or more corresponding images from the diagram when the writer is closed.
  *
  * @author Sjoerd Talsma
  */
@@ -67,18 +71,13 @@ public abstract class UMLDiagram extends Renderer {
      */
     public boolean render() {
         final File pumlFile = pumlFile();
-        final String baseName = baseName(pumlFile);
-        // TODO Make these configurable:
-        final File imgdir = ensureParentDir(pumlFile).getParentFile();
-        final String[] imgFormats = new String[]{"svg", "png"};
 
-        try (Writer writer = new PlantumlImageWriter(
-                new OutputStreamWriter(new FileOutputStream(pumlFile)), config, imgdir, baseName, imgFormats)) {
-            config.info(Message.INFO_GENERATING_FILE, pumlFile);
-            this.writeTo(IndentingPrintWriter.wrap(writer, config.indentation));
+        try (Writer writer = createPlantumlWriter(pumlFile)) {
+            config.getLogger().info(Message.INFO_GENERATING_FILE, pumlFile);
+            this.writeTo(IndentingPrintWriter.wrap(writer, config.getIndentation()));
             return true;
         } catch (IOException | RuntimeException e) {
-            config.error(ERROR_COULDNT_RENDER_UML, pumlFile, e);
+            config.getLogger().error(ERROR_COULDNT_RENDER_UML, pumlFile, e);
             return false;
         }
     }
@@ -100,6 +99,17 @@ public abstract class UMLDiagram extends Renderer {
         String name = file.getName();
         int lastDot = name.lastIndexOf('.');
         return lastDot > 0 ? name.substring(0, lastDot) : name;
+    }
+
+    private Writer createPlantumlWriter(File pumlFile) throws IOException {
+        // TODO Make these configurable:
+        final File imgdir = ensureParentDir(pumlFile).getParentFile();
+        final String baseName = baseName(pumlFile);
+        final String[] imgFormats = new String[]{"svg", "png"};
+
+        return new PlantumlImageWriter(
+                new OutputStreamWriter(new FileOutputStream(pumlFile)),
+                config.getLogger(), imgdir, baseName, imgFormats);
     }
 
 }

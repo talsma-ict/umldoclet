@@ -38,15 +38,15 @@ import static java.util.Objects.requireNonNull;
  * @author Sjoerd Talsma
  */
 final class UMLOptions {
-    private final Configuration config;
+    private final DocletConfig config;
     private final Set<Doclet.Option> standardOptions;
     private final Set<Doclet.Option> options;
 
-    UMLOptions(Configuration config) {
+    UMLOptions(DocletConfig config) {
         this(config, null);
     }
 
-    private UMLOptions(Configuration config, Set<Doclet.Option> standardOptions) {
+    private UMLOptions(DocletConfig config, Set<Doclet.Option> standardOptions) {
         this.config = requireNonNull(config, "Configuration is <null>.");
         this.standardOptions = standardOptions;
         this.options = new TreeSet<Doclet.Option>(comparing(o -> o.getNames().get(0), String::compareTo)) {{

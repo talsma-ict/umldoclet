@@ -92,7 +92,7 @@ public abstract class Renderer {
      * @return The rendered content of this renderer.
      */
     public String toString() {
-        return writeTo(IndentingPrintWriter.wrap(new StringWriter(), diagram.config.indentation())).toString();
+        return writeTo(IndentingPrintWriter.wrap(new StringWriter(), diagram.config.getIndentation())).toString();
     }
 
 }
