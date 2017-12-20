@@ -2,6 +2,7 @@
 *.class
 target/
 pom.xml.versionsBackup
+dependency-reduced-pom.xml
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
@@ -17,4 +18,3 @@ hs_err_pid*
 # IntelliJ project files
 .idea/
 *.iml
-
