@@ -38,7 +38,7 @@ Or, look at the [the generated plantuml source file](example/rendering-package.p
   
   
 _Thanks for using the doclet, I hope it may be of benefit to your project!_  
-_Also a big thanks go to the developers of the excellent [PlantUML project](http://plantuml.com/)._
+_Also a big thank you goes to the developers of the excellent [PlantUML project](http://plantuml.com/)._
 
   [ci-img]: https://img.shields.io/travis/talsma-ict/umldoclet/master.svg
   [ci]: https://travis-ci.org/talsma-ict/umldoclet
