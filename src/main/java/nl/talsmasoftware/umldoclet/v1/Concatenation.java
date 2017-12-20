@@ -25,6 +25,7 @@ import static java.util.Objects.requireNonNull;
  * Concatenation of one or more iterables.
  *
  * @author Sjoerd Talsma
+ * @deprecated Since Java 8, it's much easier to use stream().flatMap()
  */
 public class Concatenation<T> implements Iterable<T> {
     private final Iterable<T>[] iterables;

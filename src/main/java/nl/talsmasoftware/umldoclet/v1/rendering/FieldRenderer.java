@@ -18,7 +18,6 @@ package nl.talsmasoftware.umldoclet.v1.rendering;
 import com.sun.javadoc.FieldDoc;
 import com.sun.javadoc.ProgramElementDoc;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
-import nl.talsmasoftware.umldoclet.v1.logging.GlobalPosition;
 import nl.talsmasoftware.umldoclet.v1.logging.LogSupport;
 
 import java.util.Objects;
@@ -90,18 +89,16 @@ public class FieldRenderer extends Renderer {
     }
 
     protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
-        try (GlobalPosition gp = new GlobalPosition(fieldDoc)) {
-            if (includeField()) {
-                if (disabled) out.append("' ");
-                writeAccessibility(out, fieldDoc);
-                writeNameTo(out);
-                if (includeFieldType()) {
-                    writeTypeTo(out.append(":").whitespace(), fieldDoc.type());
-                }
-                out.newline();
+        if (includeField()) {
+            if (disabled) out.append("' ");
+            writeAccessibility(out, fieldDoc);
+            writeNameTo(out);
+            if (includeFieldType()) {
+                writeTypeTo(out.append(":").whitespace(), fieldDoc.type());
             }
-            return out;
+            out.newline();
         }
+        return out;
     }
 
     @Override

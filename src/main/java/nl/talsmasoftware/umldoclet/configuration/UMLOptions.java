@@ -55,6 +55,9 @@ final class UMLOptions {
             add(new Option("-d", 1, null, (args) -> config.destDirName = args.get(0)));
             add(new Option("-quiet", 0, Kind.OTHER, (args) -> config.quiet = true));
 
+            // Our own options
+            add(new Option("-verbose", 0, Kind.OTHER, (args) -> config.verbose = true));
+
         }};
     }
 
@@ -89,11 +92,7 @@ final class UMLOptions {
         }
 
         private String resourceMsg(String key) {
-//            try {
-//                return config.resources().getString(key); // TODO: Bundle seems to be missing!
-//            } catch (RuntimeException ignore) {
-                return "";
-//            }
+            return "";
         }
 
         @Override

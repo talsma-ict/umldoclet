@@ -20,7 +20,6 @@ import com.sun.javadoc.MethodDoc;
 import nl.talsmasoftware.umldoclet.model.Reference;
 import nl.talsmasoftware.umldoclet.model.Reference.Side;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
-import nl.talsmasoftware.umldoclet.v1.logging.GlobalPosition;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -96,51 +95,49 @@ public class ClassReferenceRenderer extends ClassRenderer {
      * @return The references.
      */
     static Collection<ClassReferenceRenderer> referencesFor(ClassRenderer parent) {
-        try (GlobalPosition pos = new GlobalPosition(parent.classDoc)) {
-            requireNonNull(parent, "Included class is required in order to find its references.");
-            final String referentName = parent.classDoc.qualifiedName();
-            trace("Adding references for included class {0}...", referentName);
-            final Collection<ClassReferenceRenderer> references = new LinkedHashSet<>();
-            final Collection<String> excludedReferences = parent.diagram.config.excludedReferences();
+        requireNonNull(parent, "Included class is required in order to find its references.");
+        final String referentName = parent.classDoc.qualifiedName();
+        trace("Adding references for included class {0}...", referentName);
+        final Collection<ClassReferenceRenderer> references = new LinkedHashSet<>();
+        final Collection<String> excludedReferences = parent.diagram.config.excludedReferences();
 
-            // Add extended superclass type.
-            ClassDoc superclass = parent.classDoc.superclass();
-            final String superclassName = superclass == null ? null : superclass.qualifiedName();
-            if (superclassName == null) {
-                debug("Encountered <null> as superclass of \"{0}\".", referentName);
-            } else if (excludedReferences.contains(superclassName)) {
-                trace("Excluding superclass \"{0}\" of \"{1}\"...", superclassName, referentName);
-            } else if (references.add(new ClassReferenceRenderer(parent, superclass, "<|--"))) {
-                trace("Added type to superclass \"{0}\" from \"{1}\".", superclassName, referentName);
-            } else {
-                trace("Excluding type to superclass \"{0}\" from \"{1}\"; the type was already generated.",
-                        superclassName, referentName);
-            }
-
-            // Add implemented interface references.
-            for (ClassDoc interfaceDoc : parent.classDoc.interfaces()) {
-                final String interfaceName = interfaceDoc == null ? null : interfaceDoc.qualifiedName();
-                if (interfaceName == null) {
-                    info("Encountered <null> as implemented interface of \"{0}\".", referentName);
-                } else if (excludedReferences.contains(interfaceName)) {
-                    trace("Excluding interface \"{0}\" of \"{1}\"...", interfaceName, referentName);
-                } else if (references.add(new ClassReferenceRenderer(parent, interfaceDoc, "<|.."))) {
-                    trace("Added type to interface \"{0}\" from \"{1}\".", interfaceName, referentName);
-                } else {
-                    debug("Excluding type to interface \"{0}\" from \"{1}\"; the type was already generated.", interfaceName, referentName);
-                }
-            }
-
-            // Add type to containing classes.
-            if (parent.classDoc.containingClass() != null) {
-                references.add(new ClassReferenceRenderer(parent, parent.classDoc.containingClass(), "+--"));
-            }
-
-            // Support for tags defined in legacy doclet.
-            references.addAll(LegacyTag.legacyReferencesFor(parent));
-
-            return references;
+        // Add extended superclass type.
+        ClassDoc superclass = parent.classDoc.superclass();
+        final String superclassName = superclass == null ? null : superclass.qualifiedName();
+        if (superclassName == null) {
+            debug("Encountered <null> as superclass of \"{0}\".", referentName);
+        } else if (excludedReferences.contains(superclassName)) {
+            trace("Excluding superclass \"{0}\" of \"{1}\"...", superclassName, referentName);
+        } else if (references.add(new ClassReferenceRenderer(parent, superclass, "<|--"))) {
+            trace("Added type to superclass \"{0}\" from \"{1}\".", superclassName, referentName);
+        } else {
+            trace("Excluding type to superclass \"{0}\" from \"{1}\"; the type was already generated.",
+                    superclassName, referentName);
         }
+
+        // Add implemented interface references.
+        for (ClassDoc interfaceDoc : parent.classDoc.interfaces()) {
+            final String interfaceName = interfaceDoc == null ? null : interfaceDoc.qualifiedName();
+            if (interfaceName == null) {
+                info("Encountered <null> as implemented interface of \"{0}\".", referentName);
+            } else if (excludedReferences.contains(interfaceName)) {
+                trace("Excluding interface \"{0}\" of \"{1}\"...", interfaceName, referentName);
+            } else if (references.add(new ClassReferenceRenderer(parent, interfaceDoc, "<|.."))) {
+                trace("Added type to interface \"{0}\" from \"{1}\".", interfaceName, referentName);
+            } else {
+                debug("Excluding type to interface \"{0}\" from \"{1}\"; the type was already generated.", interfaceName, referentName);
+            }
+        }
+
+        // Add type to containing classes.
+        if (parent.classDoc.containingClass() != null) {
+            references.add(new ClassReferenceRenderer(parent, parent.classDoc.containingClass(), "+--"));
+        }
+
+        // Support for tags defined in legacy doclet.
+        references.addAll(LegacyTag.legacyReferencesFor(parent));
+
+        return references;
     }
 
     private String guessClassOrInterface() {

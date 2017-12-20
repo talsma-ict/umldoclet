@@ -18,7 +18,6 @@ package nl.talsmasoftware.umldoclet.v1.rendering;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.PackageDoc;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
-import nl.talsmasoftware.umldoclet.v1.logging.GlobalPosition;
 import nl.talsmasoftware.umldoclet.v1.logging.LogSupport;
 
 import java.util.Collection;
@@ -38,47 +37,43 @@ public class PackageRenderer extends Renderer {
 
     protected PackageRenderer(DiagramRenderer diagram, PackageDoc packageDoc) {
         super(diagram);
-        try (GlobalPosition gp = new GlobalPosition(packageDoc)) {
-            this.packageDoc = requireNonNull(packageDoc, "No package documentation provided.");
+        this.packageDoc = requireNonNull(packageDoc, "No package documentation provided.");
 
-            // Phase 1: find all classes in the package.
-            Collection<ClassRenderer> classes = new LinkedHashSet<>();
-            Collection<ClassDoc> encounteredClasses = new LinkedHashSet<>();
-            for (ClassDoc classDoc : packageDoc.allClasses(false)) {
-                if (classDoc == null) {
-                    LogSupport.warn("Encountered <null> class doc in package \"{0}\"!", packageDoc.name());
-                } else if (diagram.config.includeClass(classDoc)) {
-                    if (classes.add(ClassRenderer.create(this, classDoc))) encounteredClasses.add(classDoc);
-                }
+        // Phase 1: find all classes in the package.
+        Collection<ClassRenderer> classes = new LinkedHashSet<>();
+        Collection<ClassDoc> encounteredClasses = new LinkedHashSet<>();
+        for (ClassDoc classDoc : packageDoc.allClasses(false)) {
+            if (classDoc == null) {
+                LogSupport.warn("Encountered <null> class doc in package \"{0}\"!", packageDoc.name());
+            } else if (diagram.config.includeClass(classDoc)) {
+                if (classes.add(ClassRenderer.create(this, classDoc))) encounteredClasses.add(classDoc);
             }
-
-            // Phase 2: find all references within the package and any superclass references etc.
-            Collection<ClassReferenceRenderer> references = new LinkedHashSet<>();
-            for (ClassRenderer child : classes) {
-                for (ClassReferenceRenderer ref : ClassReferenceRenderer.referencesFor(child)) {
-                    if (references.add(ref)) encounteredClasses.add(ref.classDoc);
-                }
-            }
-
-            // Phase 3: add dependencies within this package.
-            if (diagram.config.usePackageDependencies()) for (ClassRenderer child : classes) {
-                addDiagramDependenciesTo(references, child, encounteredClasses);
-            }
-
-            // Finally, compose the diagram in the order we want things rendered.
-            children.addAll(classes);
-            children.addAll(references);
         }
+
+        // Phase 2: find all references within the package and any superclass references etc.
+        Collection<ClassReferenceRenderer> references = new LinkedHashSet<>();
+        for (ClassRenderer child : classes) {
+            for (ClassReferenceRenderer ref : ClassReferenceRenderer.referencesFor(child)) {
+                if (references.add(ref)) encounteredClasses.add(ref.classDoc);
+            }
+        }
+
+        // Phase 3: add dependencies within this package.
+        if (diagram.config.usePackageDependencies()) for (ClassRenderer child : classes) {
+            addDiagramDependenciesTo(references, child, encounteredClasses);
+        }
+
+        // Finally, compose the diagram in the order we want things rendered.
+        children.addAll(classes);
+        children.addAll(references);
     }
 
     protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
-        try (GlobalPosition pos = new GlobalPosition(packageDoc.position())) {
-            out.append("namespace").whitespace()
-                    .append(packageDoc.name()).whitespace()
-                    .append('{').newline().newline();
-            writeChildrenTo(out);
-            return out.append('}').newline().newline();
-        }
+        out.append("namespace").whitespace()
+                .append(packageDoc.name()).whitespace()
+                .append('{').newline().newline();
+        writeChildrenTo(out);
+        return out.append('}').newline().newline();
     }
 
     @Override

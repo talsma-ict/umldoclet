@@ -17,7 +17,6 @@ package nl.talsmasoftware.umldoclet.v1.rendering;
 
 import com.sun.javadoc.*;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
-import nl.talsmasoftware.umldoclet.v1.logging.GlobalPosition;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,17 +41,15 @@ public class ClassRenderer extends ParentAwareRenderer {
 
     protected ClassRenderer(Renderer parent, ClassDoc classDoc) {
         super(parent);
-        try (GlobalPosition gp = new GlobalPosition(classDoc)) {
-            this.classDoc = requireNonNull(classDoc, "No class documentation provided.");
-            this.notes = findLegacyNoteTags();
-            this.classHyperlink = determineClassHyperlink();
+        this.classDoc = requireNonNull(classDoc, "No class documentation provided.");
+        this.notes = findLegacyNoteTags();
+        this.classHyperlink = determineClassHyperlink();
 
-            // Add the various parts of the class UML, order matters here, obviously!
-            addEnumConstants();
-            addFields();
-            addConstructors();
-            addMethods();
-        }
+        // Add the various parts of the class UML, order matters here, obviously!
+        addEnumConstants();
+        addFields();
+        addConstructors();
+        addMethods();
     }
 
     static ClassRenderer create(Renderer parent, ClassDoc classDoc) {
@@ -251,16 +248,14 @@ public class ClassRenderer extends ParentAwareRenderer {
      * @return The writer so more content can easily be written.
      */
     protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
-        try (GlobalPosition gp = new GlobalPosition(classDoc.position())) {
-            writeNameTo(out.append(umlType()).whitespace());
-            writeGenericsTo(out).whitespace();
-            // I don't know how to strikethrough a class name, so add 'deprecated' classifier.
-            if (isDeprecated(classDoc)) out.append("<<deprecated>>").whitespace();
-            if (classHyperlink != null) out.append("[[").append(classHyperlink).append("]]").whitespace();
+        writeNameTo(out.append(umlType()).whitespace());
+        writeGenericsTo(out).whitespace();
+        // I don't know how to strikethrough a class name, so add 'deprecated' classifier.
+        if (isDeprecated(classDoc)) out.append("<<deprecated>>").whitespace();
+        if (classHyperlink != null) out.append("[[").append(classHyperlink).append("]]").whitespace();
 
-            writeChildrenTo(out.append('{').newline()).append('}').newline().newline();
-            return writeNotesTo(out);
-        }
+        writeChildrenTo(out.append('{').newline()).append('}').newline().newline();
+        return writeNotesTo(out);
     }
 
     @Override

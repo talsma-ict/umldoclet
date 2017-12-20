@@ -21,7 +21,6 @@ import net.sourceforge.plantuml.version.Version;
 import nl.talsmasoftware.umldoclet.logging.Message;
 import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlImageWriter;
 import nl.talsmasoftware.umldoclet.v1.config.UMLDocletConfig;
-import nl.talsmasoftware.umldoclet.v1.logging.GlobalPosition;
 import nl.talsmasoftware.umldoclet.v1.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.v1.rendering.DiagramRenderer;
 
@@ -97,11 +96,8 @@ public class OldUmlDoclet extends Standard {
     }
 
     public boolean generateUMLDiagrams() {
-        try (GlobalPosition gp = new GlobalPosition(rootDoc)) {
-
-            return generateIndividualClassDiagrams(rootDoc.classes())
-                    && generatePackageDiagrams();
-
+        try {
+            return generateIndividualClassDiagrams(rootDoc.classes()) && generatePackageDiagrams();
         } catch (RuntimeException rte) {
             error(rte.getMessage(), rte);
             return false;
@@ -112,8 +108,7 @@ public class OldUmlDoclet extends Standard {
         debug("Generating class diagrams for all individual classes...");
         for (ClassDoc classDoc : classDocs) {
             encounteredPackages.add(classDoc.containingPackage());
-            try (GlobalPosition gp = new GlobalPosition(classDoc);
-                 Writer out = createWriterForNewClassFile(classDoc)) {
+            try (Writer out = createWriterForNewClassFile(classDoc)) {
 
                 new DiagramRenderer(config).addClass(classDoc).writeTo(out);
 
@@ -136,8 +131,7 @@ public class OldUmlDoclet extends Standard {
     protected boolean generatePackageDiagrams() {
         debug("Generating package diagrams for all packages...");
         for (PackageDoc packageDoc : encounteredPackages) {
-            try (GlobalPosition gp = new GlobalPosition(packageDoc);
-                 Writer out = createWriterForNewPackageFile(packageDoc)) {
+            try (Writer out = createWriterForNewPackageFile(packageDoc)) {
 
                 new DiagramRenderer(config).addPackage(packageDoc).writeTo(out);
 

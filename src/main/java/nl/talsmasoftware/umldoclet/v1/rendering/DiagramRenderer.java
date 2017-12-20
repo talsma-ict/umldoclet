@@ -19,7 +19,6 @@ import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.PackageDoc;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.v1.config.UMLDocletConfig;
-import nl.talsmasoftware.umldoclet.v1.logging.GlobalPosition;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -43,23 +42,19 @@ public class DiagramRenderer extends Renderer {
     }
 
     public DiagramRenderer addClass(ClassDoc classDoc) {
-        try (GlobalPosition gp = new GlobalPosition(classDoc)) {
-            DiagramRenderer classDiagram = new DiagramRenderer(config);
-            classDiagram.children.addAll(children);
-            classDiagram.children.add(ClassRenderer.create(this, classDoc));
-            addGlobalCommandsTo(classDiagram.children);
-            return classDiagram;
-        }
+        DiagramRenderer classDiagram = new DiagramRenderer(config);
+        classDiagram.children.addAll(children);
+        classDiagram.children.add(ClassRenderer.create(this, classDoc));
+        addGlobalCommandsTo(classDiagram.children);
+        return classDiagram;
     }
 
     public DiagramRenderer addPackage(PackageDoc packageDoc) {
-        try (GlobalPosition gp = new GlobalPosition(packageDoc)) {
-            DiagramRenderer packageDiagram = new DiagramRenderer(config);
-            packageDiagram.children.addAll(children);
-            packageDiagram.children.add(new PackageRenderer(this, packageDoc));
-            addGlobalCommandsTo(packageDiagram.children);
-            return packageDiagram;
-        }
+        DiagramRenderer packageDiagram = new DiagramRenderer(config);
+        packageDiagram.children.addAll(children);
+        packageDiagram.children.add(new PackageRenderer(this, packageDoc));
+        addGlobalCommandsTo(packageDiagram.children);
+        return packageDiagram;
     }
 
     public DiagramRenderer addDependencyDiagram(Object dontKnowYet) {

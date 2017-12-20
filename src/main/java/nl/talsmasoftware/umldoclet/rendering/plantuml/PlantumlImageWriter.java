@@ -27,8 +27,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
-import static nl.talsmasoftware.umldoclet.logging.Message.INFO_GENERATING_FILE;
-import static nl.talsmasoftware.umldoclet.logging.Message.WARNING_UNRECOGNIZED_IMAGE_FORMAT;
+import static nl.talsmasoftware.umldoclet.logging.Message.*;
 
 /**
  * Writer that delegates to a regular writer for the UML itself, but when finished (i.e. when close is called), also
@@ -99,7 +98,7 @@ public class PlantumlImageWriter extends StringBufferingWriter {
             FileFormat fileFormat = fileFormatFromName(fileFormatName);
             if (fileFormat != null) fileFormats.add(fileFormat);
         }
-        // LogSupport.trace("Configured (and recognized) image formats to generate: {0}.", fileFormats);
+        logger.debug(DEBUG_CONFIGURED_IMAGE_FORMATS, fileFormats);
         return fileFormats;
     }
 
@@ -112,8 +111,7 @@ public class PlantumlImageWriter extends StringBufferingWriter {
      */
     private FileFormat fileFormatFromName(String fileFormatName) {
         fileFormatName = requireNonNull(fileFormatName, "Configured image format was <null>!").trim();
-        // In case somebody mistakenly provided file extension instead
-        if (fileFormatName.startsWith(".")) fileFormatName = fileFormatName.substring(1).trim();
+        if (fileFormatName.startsWith(".")) fileFormatName = fileFormatName.substring(1);
         for (FileFormat fileFormat : FileFormat.values()) {
             if (fileFormatName.equalsIgnoreCase(fileFormat.name())) return fileFormat;
         }

@@ -17,6 +17,7 @@ package nl.talsmasoftware.umldoclet.configuration;
 
 import com.sun.source.util.DocTreePath;
 import jdk.javadoc.doclet.Reporter;
+import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.logging.Message;
 
 import javax.lang.model.element.Element;
@@ -31,7 +32,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Sjoerd Talsma
  */
-final class LocalizedReporter implements Reporter {
+final class LocalizedReporter implements Reporter, Logger {
     private final DocletConfig config;
     private final Reporter delegate;
     private final Locale locale;
@@ -42,7 +43,27 @@ final class LocalizedReporter implements Reporter {
         this.locale = locale;
     }
 
-    void log(Diagnostic.Kind kind, DocTreePath path, Element elem, Message key, Object... args) {
+    @Override
+    public void debug(Message key, Object... args) {
+        log(Diagnostic.Kind.OTHER, null, null, key, args);
+    }
+
+    @Override
+    public void info(Message key, Object... args) {
+        log(Diagnostic.Kind.NOTE, null, null, key, args);
+    }
+
+    @Override
+    public void warn(Message key, Object... args) {
+        log(Diagnostic.Kind.WARNING, null, null, key, args);
+    }
+
+    @Override
+    public void error(Message key, Object... args) {
+        log(Diagnostic.Kind.ERROR, null, null, key, args);
+    }
+
+    private void log(Diagnostic.Kind kind, DocTreePath path, Element elem, Message key, Object... args) {
         if (mustPrint(kind)) {
             String message = key.toString(locale);
             if (args.length > 0) message = MessageFormat.format(message, localize(args));
@@ -60,7 +81,9 @@ final class LocalizedReporter implements Reporter {
     }
 
     private boolean mustPrint(Diagnostic.Kind kind) {
-        Diagnostic.Kind threshold = config.quiet ? Diagnostic.Kind.WARNING : Diagnostic.Kind.NOTE;
+        Diagnostic.Kind threshold = config.quiet ? Diagnostic.Kind.WARNING
+                : config.verbose ? Diagnostic.Kind.OTHER
+                : Diagnostic.Kind.NOTE;
         return kind != null && kind.compareTo(threshold) <= 0;
     }
 

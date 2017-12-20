@@ -206,9 +206,7 @@ public class LogSupport {
      * @deprecated Switch from logger to reporter semantics.
      */
     public void printNotice(SourcePosition pos, String msg) {
-        try (GlobalPosition gp = new GlobalPosition(pos)) {
-            info(msg);
-        }
+        info(msg);
     }
 
     /**
@@ -217,9 +215,7 @@ public class LogSupport {
      * @deprecated Switch from logger to reporter semantics.
      */
     public void printWarning(SourcePosition pos, String msg) {
-        try (GlobalPosition gp = new GlobalPosition(pos)) {
-            warn(msg);
-        }
+        warn(msg);
     }
 
     /**
@@ -228,9 +224,7 @@ public class LogSupport {
      * @deprecated Switch from logger to reporter semantics.
      */
     public void printError(SourcePosition pos, String msg) {
-        try (GlobalPosition gp = new GlobalPosition(pos)) {
-            error(msg);
-        }
+        error(msg);
     }
 
     /**

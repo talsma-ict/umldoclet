@@ -17,7 +17,6 @@ package nl.talsmasoftware.umldoclet.v1.rendering;
 
 import com.sun.javadoc.*;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
-import nl.talsmasoftware.umldoclet.v1.logging.GlobalPosition;
 
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -116,22 +115,20 @@ public class MethodRenderer extends Renderer {
     }
 
     protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
-        try (GlobalPosition gp = new GlobalPosition(methodDoc.position())) {
-            if (includeMethod() && !disabled) {
-                // if (disabled) out.append("' ");
-                if (isAbstract()) {
-                    out.append("{abstract}").whitespace();
-                }
-                FieldRenderer.writeAccessibility(out, methodDoc);
-                writeNameTo(out);
-                writeParametersTo(out.append('(')).append(')');
-                if (methodDoc instanceof MethodDoc && diagram.config.includeMethodReturntypes()) {
-                    writeTypeTo(out.append(':').whitespace(), ((MethodDoc) methodDoc).returnType());
-                }
-                return out.newline();
+        if (includeMethod() && !disabled) {
+            // if (disabled) out.append("' ");
+            if (isAbstract()) {
+                out.append("{abstract}").whitespace();
             }
-            return out;
+            FieldRenderer.writeAccessibility(out, methodDoc);
+            writeNameTo(out);
+            writeParametersTo(out.append('(')).append(')');
+            if (methodDoc instanceof MethodDoc && diagram.config.includeMethodReturntypes()) {
+                writeTypeTo(out.append(':').whitespace(), ((MethodDoc) methodDoc).returnType());
+            }
+            return out.newline();
         }
+        return out;
     }
 
     private boolean isConstructor() {

@@ -19,30 +19,39 @@ import jdk.javadoc.doclet.Doclet;
 import jdk.javadoc.doclet.Reporter;
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.logging.Logger;
-import nl.talsmasoftware.umldoclet.logging.Message;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 
-import javax.tools.Diagnostic;
 import java.util.Locale;
 import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 
-public class DocletConfig implements Configuration, Logger {
+public class DocletConfig implements Configuration {
 
     private final Doclet doclet;
     private final UMLOptions options;
     private volatile LocalizedReporter reporter;
 
     /**
-     * Destination directory where documentation is generated. Default is the current directory.
+     * Destination directory where documentation is generated.
+     * <p>
+     * Set by (Standard) doclet option {@code -d}, default is {@code ""} meaning the current directory.
      */
     String destDirName = "";
 
     /**
-     * Whether the doclet should run more quite (errors must still be displayed). Default is {@code false}.
+     * Whether the doclet should run more quite (errors must still be displayed).
+     * <p>
+     * Set by (Standard) doclet option {@code -quiet}, default is {@code false}.
      */
     boolean quiet = false;
+
+    /**
+     * When not quiet, should the doclet be extra verbose?
+     * <p>
+     * Set by (our own) doclet option {@code -verbose}, default is {@code false}.
+     */
+    boolean verbose = false;
 
     // TODO decide whether we want to make this configurable at all.
     private Indentation indentation = Indentation.DEFAULT;
@@ -62,7 +71,7 @@ public class DocletConfig implements Configuration, Logger {
     }
 
     public Logger getLogger() {
-        return this;
+        return reporter;
     }
 
     public Indentation getIndentation() {
@@ -71,22 +80,6 @@ public class DocletConfig implements Configuration, Logger {
 
     public String getDestinationDirectory() {
         return destDirName;
-    }
-
-    public void debug(Message key, Object... args) {
-        reporter.log(Diagnostic.Kind.OTHER, null, null, key, args);
-    }
-
-    public void info(Message key, Object... args) {
-        reporter.log(Diagnostic.Kind.NOTE, null, null, key, args);
-    }
-
-    public void warn(Message key, Object... args) {
-        reporter.log(Diagnostic.Kind.WARNING, null, null, key, args);
-    }
-
-    public void error(Message key, Object... args) {
-        reporter.log(Diagnostic.Kind.ERROR, null, null, key, args);
     }
 
 }

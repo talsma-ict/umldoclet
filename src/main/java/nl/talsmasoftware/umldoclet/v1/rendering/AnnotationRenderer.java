@@ -17,7 +17,6 @@ package nl.talsmasoftware.umldoclet.v1.rendering;
 
 import com.sun.javadoc.ClassDoc;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
-import nl.talsmasoftware.umldoclet.v1.logging.GlobalPosition;
 
 /**
  * Specific renderer for annotations.
@@ -33,9 +32,7 @@ public class AnnotationRenderer extends ClassRenderer {
     @Override
     protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         // As far as I know, annotations don't currently support rendering children yet.
-        try (GlobalPosition gp = new GlobalPosition(classDoc.position())) {
-            return writeNameTo(out.append(umlType()).whitespace()).newline().newline();
-        }
+        return writeNameTo(out.append(umlType()).whitespace()).newline().newline();
     }
 
 }
