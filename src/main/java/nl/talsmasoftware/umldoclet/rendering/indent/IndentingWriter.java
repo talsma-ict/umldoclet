@@ -121,11 +121,12 @@ public class IndentingWriter extends Writer {
 
     @Override
     public void write(char[] cbuf, int off, int len) throws IOException {
-        if (len > off) {
+        if (off < len) {
             char ch = cbuf[off];
             synchronized (lock) {
                 if (addWhitespace.compareAndSet(true, false) && !isWhitespace(lastWritten) && !isWhitespace(ch)) {
                     delegate.write(' ');
+                    lastWritten = ' ';
                 }
                 for (int i = off; i < len; i++) {
                     ch = cbuf[i];
