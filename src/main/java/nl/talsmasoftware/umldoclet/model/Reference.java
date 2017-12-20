@@ -145,7 +145,10 @@ public class Reference {
         }
 
         protected Side(String qualifiedName, String cardinality) {
-            this.qualifiedName = requireNonNull(qualifiedName, "Name of referred object is <null>.").trim();
+            requireNonNull(qualifiedName, "Name of referred object is <null>.");
+            int genericIdx = qualifiedName.indexOf('<');
+            if (genericIdx > 0) qualifiedName = qualifiedName.substring(0, genericIdx);
+            this.qualifiedName = qualifiedName.trim();
             if (this.qualifiedName.isEmpty()) throw new IllegalArgumentException("Name of referred object is empty.");
             this.cardinality = cardinality != null ? cardinality.trim() : "";
         }
