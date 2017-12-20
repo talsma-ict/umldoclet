@@ -18,6 +18,8 @@ package nl.talsmasoftware.umldoclet.v1.logging;
 import com.sun.javadoc.DocErrorReporter;
 import com.sun.javadoc.SourcePosition;
 import jdk.javadoc.doclet.Reporter;
+import nl.talsmasoftware.umldoclet.logging.Logger;
+import nl.talsmasoftware.umldoclet.logging.Message;
 
 import javax.tools.Diagnostic;
 import java.text.MessageFormat;
@@ -40,6 +42,33 @@ public class LogSupport {
 //    private static final Logger LOGGER = Logger.getLogger(LogSupport.class.getName());
 
     private static volatile Reporter reporter;
+
+    // Compatible logger with the registered reporter.
+    public static final Logger LOGGER = new Logger() {
+        private void log(Diagnostic.Kind kind, Message key, Object... args) {
+            if (reporter != null) {
+                String message = key.toString();
+                if (args.length > 0) message = MessageFormat.format(message, args);
+                reporter.print(kind, message);
+            }
+        }
+
+        public void debug(Message key, Object... args) {
+            log(Diagnostic.Kind.OTHER, key, args);
+        }
+
+        public void info(Message key, Object... args) {
+            log(Diagnostic.Kind.NOTE, key, args);
+        }
+
+        public void warn(Message key, Object... args) {
+            log(Diagnostic.Kind.WARNING, key, args);
+        }
+
+        public void error(Message key, Object... args) {
+            log(Diagnostic.Kind.ERROR, key, args);
+        }
+    };
 
     public static void setReporter(Reporter reporter) {
         LogSupport.reporter = reporter;

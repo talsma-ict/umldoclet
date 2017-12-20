@@ -18,10 +18,11 @@ package nl.talsmasoftware.umldoclet.v1;
 import com.sun.javadoc.*;
 import com.sun.tools.doclets.standard.Standard;
 import net.sourceforge.plantuml.version.Version;
-import nl.talsmasoftware.umldoclet.configuration.Message;
+import nl.talsmasoftware.umldoclet.logging.Message;
 import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlImageWriter;
 import nl.talsmasoftware.umldoclet.v1.config.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.v1.logging.GlobalPosition;
+import nl.talsmasoftware.umldoclet.v1.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.v1.rendering.DiagramRenderer;
 
 import java.io.*;
@@ -226,7 +227,7 @@ public class OldUmlDoclet extends Standard {
                     if (!imgDirectory.exists() && !imgDirectory.mkdirs()) {
                         throw new IllegalStateException("Error creating: " + imgDirectory.getPath());
                     }
-                    writer = new PlantumlImageWriter(writer, imgDirectory, imgBaseName, imageFormats);
+                    writer = new PlantumlImageWriter(writer, LogSupport.LOGGER, imgDirectory, imgBaseName, imageFormats);
                 }
                 return writer;
             }

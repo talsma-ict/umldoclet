@@ -18,6 +18,8 @@ package nl.talsmasoftware.umldoclet.configuration;
 import jdk.javadoc.doclet.Doclet;
 import jdk.javadoc.doclet.Reporter;
 import nl.talsmasoftware.umldoclet.UMLDoclet;
+import nl.talsmasoftware.umldoclet.logging.Logger;
+import nl.talsmasoftware.umldoclet.logging.Message;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 
 import javax.tools.Diagnostic;
@@ -26,7 +28,7 @@ import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 
-public class Configuration {
+public class Configuration implements Logger {
 
     private final Doclet doclet;
     private final UMLOptions options;

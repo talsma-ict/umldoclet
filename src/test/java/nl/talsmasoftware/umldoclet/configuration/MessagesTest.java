@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.configuration;
 
+import nl.talsmasoftware.umldoclet.logging.Message;
 import org.junit.Test;
 
 import java.util.Locale;

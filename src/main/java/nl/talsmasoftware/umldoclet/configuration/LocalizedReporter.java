@@ -17,6 +17,7 @@ package nl.talsmasoftware.umldoclet.configuration;
 
 import com.sun.source.util.DocTreePath;
 import jdk.javadoc.doclet.Reporter;
+import nl.talsmasoftware.umldoclet.logging.Message;
 
 import javax.lang.model.element.Element;
 import javax.tools.Diagnostic;

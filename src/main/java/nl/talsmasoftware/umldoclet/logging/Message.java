@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.configuration;
+package nl.talsmasoftware.umldoclet.logging;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 
@@ -35,6 +35,8 @@ public enum Message {
     PLANTUML_COPYRIGHT,
 
     INFO_GENERATING_FILE,
+
+    WARNING_UNRECOGNIZED_IMAGE_FORMAT,
 
     ERROR_COULDNT_RENDER_UML,
     ERROR_UNANTICIPATED_ERROR_GENERATING_UML;

@@ -17,13 +17,14 @@ package nl.talsmasoftware.umldoclet.model;
 
 import jdk.javadoc.doclet.DocletEnvironment;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.configuration.Message;
+import nl.talsmasoftware.umldoclet.logging.Message;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlImageWriter;
 
 import java.io.*;
 
 import static java.util.Objects.requireNonNull;
-import static nl.talsmasoftware.umldoclet.configuration.Message.ERROR_COULDNT_RENDER_UML;
+import static nl.talsmasoftware.umldoclet.logging.Message.ERROR_COULDNT_RENDER_UML;
 
 /**
  * Renders a new UML diagram.
@@ -66,7 +67,13 @@ public abstract class UMLDiagram extends Renderer {
      */
     public boolean render() {
         final File pumlFile = pumlFile();
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(pumlFile))) {
+        final String baseName = baseName(pumlFile);
+        // TODO Make these configurable:
+        final File imgdir = ensureParentDir(pumlFile).getParentFile();
+        final String[] imgFormats = new String[]{"svg", "png"};
+
+        try (Writer writer = new PlantumlImageWriter(
+                new OutputStreamWriter(new FileOutputStream(pumlFile)), config, imgdir, baseName, imgFormats)) {
             config.info(Message.INFO_GENERATING_FILE, pumlFile);
             this.writeTo(IndentingPrintWriter.wrap(writer, config.indentation));
             return true;
@@ -87,6 +94,12 @@ public abstract class UMLDiagram extends Renderer {
             throw new IllegalStateException("Can't create directory \"" + file.getParent() + "\".");
         }
         return file;
+    }
+
+    private static String baseName(File file) {
+        String name = file.getName();
+        int lastDot = name.lastIndexOf('.');
+        return lastDot > 0 ? name.substring(0, lastDot) : name;
     }
 
 }

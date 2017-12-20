@@ -32,7 +32,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 
-import static nl.talsmasoftware.umldoclet.configuration.Message.*;
+import static nl.talsmasoftware.umldoclet.logging.Message.*;
 
 /**
  * UML doclet that generates <a href="http://plantuml.com">PlantUML</a> class diagrams from your java code just as
