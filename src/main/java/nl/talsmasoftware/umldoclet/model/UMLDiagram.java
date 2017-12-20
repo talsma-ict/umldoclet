@@ -39,7 +39,7 @@ import static nl.talsmasoftware.umldoclet.logging.Message.ERROR_COULDNT_RENDER_U
  *
  * @author Sjoerd Talsma
  */
-public abstract class UMLDiagram extends Renderer {
+public abstract class UMLDiagram extends AbstractRenderer {
 
     protected final Configuration config;
     protected final DocletEnvironment env;
@@ -58,7 +58,7 @@ public abstract class UMLDiagram extends Renderer {
     protected abstract File pumlFile();
 
     @Override
-    protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
+    public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         out.append("@startuml").newline().newline();
         writeChildrenTo(out);
         return out.append("@enduml").newline();

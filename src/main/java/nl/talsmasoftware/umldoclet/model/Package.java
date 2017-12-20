@@ -27,7 +27,7 @@ import static java.util.stream.Collectors.toSet;
 /**
  * @author Sjoerd Talsma
  */
-public class Package extends Renderer {
+public class Package extends AbstractRenderer {
 
     protected final PackageElement packageElement;
     private final Collection<Reference> references;
@@ -49,7 +49,7 @@ public class Package extends Renderer {
     }
 
     @Override
-    protected IndentingPrintWriter writeTo(IndentingPrintWriter output) {
+    public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         output.append("namespace").whitespace().append(packageElement.getQualifiedName()).whitespace().append("{").newline();
         writeChildrenTo(output).newline();
         references.stream().map(Object::toString).forEach(ref -> output.indent().append(ref).newline());

@@ -15,7 +15,9 @@
  */
 package nl.talsmasoftware.umldoclet.model;
 
+import nl.talsmasoftware.umldoclet.rendering.Renderer;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingRenderer;
 
 import java.io.StringWriter;
 import java.util.Collection;
@@ -24,31 +26,23 @@ import java.util.LinkedHashSet;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Base implementation for any 'renderer' subclass.
+ * Base implementation for renderers.
  * <p>
  * Renderers are capable of rendering themselves to {@link IndentingPrintWriter} instances and have
  * chaining methods returning these writers for easier appending.
  *
  * @author Sjoerd Talsma
  */
-public abstract class Renderer {
+abstract class AbstractRenderer implements IndentingRenderer {
 
     protected final UMLDiagram diagram;
     protected final Collection<Renderer> children = new LinkedHashSet<>();
 
-    protected Renderer(UMLDiagram diagram) {
+    protected AbstractRenderer(UMLDiagram diagram) {
         this.diagram = requireNonNull( // Only situation where a <null> diagram is accepted: the diagram itself.
                 diagram == null && this instanceof UMLDiagram ? (UMLDiagram) this : diagram,
                 "Diagram renderer is <null>.");
     }
-
-    /**
-     * Renders this object to the given {@code output}.
-     *
-     * @param output The output to render this object to.
-     * @return A reference to the output for method chaining purposes.
-     */
-    protected abstract IndentingPrintWriter writeTo(IndentingPrintWriter output);
 
     /**
      * Helper method to write all children to the specified output.
@@ -63,13 +57,6 @@ public abstract class Renderer {
         final IndentingPrintWriter indented = output.indent();
         children.forEach(child -> child.writeTo(indented));
         return output;
-    }
-
-    protected Renderer lastChild() {
-        // TODO: Check what the impact would be to change children into a List (is that even desirable?).
-        Renderer last = null;
-        for (Renderer child : children) last = child;
-        return last;
     }
 
     /**

@@ -29,7 +29,7 @@ import static javax.lang.model.element.Modifier.*;
 /**
  * @author Sjoerd Talsma
  */
-public class Field extends Renderer {
+public class Field extends AbstractRenderer {
 
     protected final VariableElement fld;
     protected final Set<Modifier> modifiers;
@@ -43,7 +43,7 @@ public class Field extends Renderer {
     }
 
     @Override
-    protected IndentingPrintWriter writeTo(IndentingPrintWriter output) {
+    public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         if (modifiers.contains(STATIC)) output.append("{static}").whitespace();
         output.append(umlAccessibility(modifiers)).append(fld.getSimpleName());
         output.append(":").whitespace().append(typeName.visit(fld.asType()));

@@ -31,7 +31,7 @@ import static nl.talsmasoftware.umldoclet.model.Field.umlAccessibility;
 /**
  * @author Sjoerd Talsma
  */
-public class Method extends Renderer {
+public class Method extends AbstractRenderer {
 
     protected final ExecutableElement method;
     protected final Set<Modifier> modifiers;
@@ -78,7 +78,7 @@ public class Method extends Renderer {
     }
 
     @Override
-    protected IndentingPrintWriter writeTo(IndentingPrintWriter output) {
+    public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         return appendReturnTypeTo(
                 appendParametersTo(
                         appendNameTo(

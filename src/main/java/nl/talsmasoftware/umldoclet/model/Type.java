@@ -28,7 +28,7 @@ import static javax.lang.model.element.ElementKind.ENUM;
 import static nl.talsmasoftware.umldoclet.model.Reference.Side.from;
 import static nl.talsmasoftware.umldoclet.model.Reference.Side.to;
 
-public class Type extends Renderer implements Comparable<Type> {
+public class Type extends AbstractRenderer implements Comparable<Type> {
 
     protected final TypeElement tp;
     protected final Set<Modifier> modifiers;
@@ -90,7 +90,7 @@ public class Type extends Renderer implements Comparable<Type> {
     }
 
     @Override
-    protected IndentingPrintWriter writeTo(IndentingPrintWriter output) {
+    public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         output.append(umlClassificationOf(tp)).whitespace().append(umlTypeName.visit(tp.asType())).whitespace();
         if (!children.isEmpty()) writeChildrenTo(output.append('{').newline()).append('}');
         return output.newline().newline();
