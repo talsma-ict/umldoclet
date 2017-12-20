@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.rendering.plantuml;
 
+import net.sourceforge.plantuml.version.Version;
 import nl.talsmasoftware.umldoclet.logging.LogSupport;
 
 /**
@@ -52,15 +53,7 @@ public class PlantumlSupport {
      * @return The plant UML version or the empty String (<code>""</code>) if not found.
      */
     private static synchronized String determinePlantumlVersion() {
-        try {
-            final String plantumlVersion = Class.forName("net.sourceforge.plantuml.version.Version")
-                    .getMethod("versionString").invoke(null).toString();
-            LogSupport.info("Plantuml library version \"{0}\" was detected on the classpath.", plantumlVersion);
-            return plantumlVersion;
-        } catch (ReflectiveOperationException | LinkageError | RuntimeException notFound) {
-            LogSupport.info("The plantuml library was not detected on the classpath.", notFound);
-            return "";
-        }
+        return Version.versionString();
     }
 
 }
