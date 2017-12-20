@@ -17,13 +17,13 @@ package nl.talsmasoftware.umldoclet.model;
 
 import jdk.javadoc.doclet.DocletEnvironment;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.configuration.Messages;
+import nl.talsmasoftware.umldoclet.configuration.Message;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.io.*;
 
 import static java.util.Objects.requireNonNull;
-import static nl.talsmasoftware.umldoclet.configuration.Messages.ERROR_COULDNT_RENDER_UML;
+import static nl.talsmasoftware.umldoclet.configuration.Message.ERROR_COULDNT_RENDER_UML;
 
 /**
  * Renders a new UML diagram.
@@ -67,7 +67,7 @@ public abstract class UMLDiagram extends Renderer {
     public boolean render() {
         final File pumlFile = pumlFile();
         try (Writer writer = new OutputStreamWriter(new FileOutputStream(pumlFile))) {
-            config.info(Messages.INFO_GENERATING_FILE, pumlFile);
+            config.info(Message.INFO_GENERATING_FILE, pumlFile);
             this.writeTo(IndentingPrintWriter.wrap(writer, config.indentation));
             return true;
         } catch (IOException | RuntimeException e) {

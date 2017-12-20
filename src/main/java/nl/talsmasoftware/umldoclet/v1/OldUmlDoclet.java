@@ -18,7 +18,7 @@ package nl.talsmasoftware.umldoclet.v1;
 import com.sun.javadoc.*;
 import com.sun.tools.doclets.standard.Standard;
 import net.sourceforge.plantuml.version.Version;
-import nl.talsmasoftware.umldoclet.configuration.Messages;
+import nl.talsmasoftware.umldoclet.configuration.Message;
 import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlImageWriter;
 import nl.talsmasoftware.umldoclet.v1.config.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.v1.logging.GlobalPosition;
@@ -56,8 +56,8 @@ public class OldUmlDoclet extends Standard {
     public OldUmlDoclet(RootDoc rootDoc) {
         this.rootDoc = requireNonNull(rootDoc, "No root document received.");
         this.config = new UMLDocletConfig(rootDoc.options(), rootDoc);
-        info(MessageFormat.format(Messages.DOCLET_INFO.toString(), Messages.VERSION));
-        info(MessageFormat.format(Messages.PLANTUML_INFO.toString(), Version.versionString()));
+        info(MessageFormat.format(Message.DOCLET_COPYRIGHT.toString(), Message.DOCLET_VERSION));
+        info(MessageFormat.format(Message.PLANTUML_COPYRIGHT.toString(), Version.versionString()));
         debug("Initialized {0}...", config);
     }
 

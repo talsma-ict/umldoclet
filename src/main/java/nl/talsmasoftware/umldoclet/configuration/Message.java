@@ -17,7 +17,7 @@ package nl.talsmasoftware.umldoclet.configuration;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 
-import java.util.*;
+import java.util.Locale;
 
 import static java.util.ResourceBundle.getBundle;
 
@@ -29,29 +29,24 @@ import static java.util.ResourceBundle.getBundle;
  *
  * @author Sjoerd Talsma
  */
-public enum Messages {
-    VERSION,
-    DOCLET_INFO,
-    PLANTUML_INFO,
+public enum Message {
+    DOCLET_VERSION,
+    DOCLET_COPYRIGHT,
+    PLANTUML_COPYRIGHT,
 
     INFO_GENERATING_FILE,
 
     ERROR_COULDNT_RENDER_UML,
     ERROR_UNANTICIPATED_ERROR_GENERATING_UML;
 
-    private static final Map<String, ResourceBundle> BUNDLES = new HashMap<>();
+    private final String key = name().toLowerCase().replace('_', '.');
 
     public String toString() {
         return toString(null);
     }
 
     public String toString(Locale locale) {
-        String loc = Optional.ofNullable(locale).map(Object::toString).orElse("");
-        ResourceBundle bundle = BUNDLES.get(loc);
-        if (bundle == null) {
-            bundle = loc.isEmpty() ? getBundle(UMLDoclet.class.getName()) : getBundle(UMLDoclet.class.getName(), locale);
-            BUNDLES.put(loc, bundle);
-        }
-        return bundle.getString(name().toLowerCase().replace('_', '.'));
+        final String bundleName = UMLDoclet.class.getName();
+        return locale == null ? getBundle(bundleName).getString(key) : getBundle(bundleName, locale).getString(key);
     }
 }

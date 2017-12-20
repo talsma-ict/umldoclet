@@ -41,7 +41,7 @@ final class LocalizedReporter implements Reporter {
         this.locale = locale;
     }
 
-    void log(Diagnostic.Kind kind, DocTreePath path, Element elem, Messages key, Object... args) {
+    void log(Diagnostic.Kind kind, DocTreePath path, Element elem, Message key, Object... args) {
         if (mustPrint(kind)) {
             String message = key.toString(locale);
             if (args.length > 0) message = MessageFormat.format(message, localize(args));
@@ -53,7 +53,7 @@ final class LocalizedReporter implements Reporter {
 
     private Object[] localize(Object... args) {
         for (int i = 0; i < args.length; i++) {
-            if (args[i] instanceof Messages) args[i] = ((Messages) args[i]).toString(locale);
+            if (args[i] instanceof Message) args[i] = ((Message) args[i]).toString(locale);
         }
         return args;
     }
@@ -80,10 +80,10 @@ final class LocalizedReporter implements Reporter {
     }
 
     @Override
-    public void print(Diagnostic.Kind kind, Element e, String msg) {
+    public void print(Diagnostic.Kind kind, Element elem, String msg) {
         if (mustPrint(kind)) {
             if (delegate == null) System.out.println(msg);
-            else delegate.print(kind, e, msg);
+            else delegate.print(kind, elem, msg);
         }
     }
 }

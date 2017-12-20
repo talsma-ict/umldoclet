@@ -32,7 +32,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 
-import static nl.talsmasoftware.umldoclet.configuration.Messages.*;
+import static nl.talsmasoftware.umldoclet.configuration.Message.*;
 
 /**
  * UML doclet that generates <a href="http://plantuml.com">PlantUML</a> class diagrams from your java code just as
@@ -74,8 +74,8 @@ public class UMLDoclet extends StandardDoclet {
     @Override
     public boolean run(DocletEnvironment docEnv) {
         try {
-            config.info(DOCLET_INFO, VERSION);
-            config.info(PLANTUML_INFO, Version.versionString());
+            config.info(DOCLET_COPYRIGHT, DOCLET_VERSION);
+            config.info(PLANTUML_COPYRIGHT, Version.versionString());
 
             return generateUMLDiagrams(docEnv) && super.run(docEnv);
 

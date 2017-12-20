@@ -59,19 +59,19 @@ public class Configuration {
         return Indentation.DEFAULT; // TODO decide whether we want to make this configurable at all.
     }
 
-    public void debug(Messages key, Object... args) {
+    public void debug(Message key, Object... args) {
         reporter.log(Diagnostic.Kind.OTHER, null, null, key, args);
     }
 
-    public void info(Messages key, Object... args) {
+    public void info(Message key, Object... args) {
         reporter.log(Diagnostic.Kind.NOTE, null, null, key, args);
     }
 
-    public void warn(Messages key, Object... args) {
+    public void warn(Message key, Object... args) {
         reporter.log(Diagnostic.Kind.WARNING, null, null, key, args);
     }
 
-    public void error(Messages key, Object... args) {
+    public void error(Message key, Object... args) {
         reporter.log(Diagnostic.Kind.ERROR, null, null, key, args);
     }
 

@@ -17,16 +17,23 @@ package nl.talsmasoftware.umldoclet.configuration;
 
 import org.junit.Test;
 
+import java.util.Locale;
+
 import static java.util.Arrays.stream;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasToString;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 public class MessagesTest {
+    private static final Locale DUTCH = new Locale("nl", "NL");
 
     @Test
     public void testAllMessageAvailability() {
-        stream(Messages.values()).forEach(key -> assertThat(key, hasToString(notNullValue())));
+        stream(Message.values()).forEach(key -> assertThat(key, hasToString(notNullValue())));
+    }
+
+    @Test
+    public void testAllMessagesInDutch() {
+        stream(Message.values()).forEach(key -> assertThat(key.toString(DUTCH), is(notNullValue())));
     }
 
 }
