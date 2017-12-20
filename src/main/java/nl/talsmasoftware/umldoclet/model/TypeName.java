@@ -63,4 +63,18 @@ final class TypeName extends SimpleTypeVisitor9<String, Void> {
                 .collect(joining(", ", "<", ">"));
     }
 
+    @Override
+    public String visitIntersection(IntersectionType intersectionType, Void parameter) {
+        return intersectionType.getBounds().stream()
+                .map(bound -> visit(bound, parameter))
+                .collect(joining(" & "));
+    }
+
+    @Override
+    public String visitUnion(UnionType unionType, Void parameter) {
+        return unionType.getAlternatives().stream()
+                .map(alternative -> visit(alternative, parameter))
+                .collect(joining(" | "));
+    }
+
 }
