@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.configuration;
+package nl.talsmasoftware.umldoclet.javadoc;
 
 import jdk.javadoc.doclet.Doclet;
 import jdk.javadoc.doclet.Reporter;
 import nl.talsmasoftware.umldoclet.UMLDoclet;
+import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 

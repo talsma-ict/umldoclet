@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.model;
 
 import jdk.javadoc.doclet.DocletEnvironment;
-import nl.talsmasoftware.umldoclet.configuration.DocletConfig;
+import nl.talsmasoftware.umldoclet.configuration.Configuration;
 
 import javax.lang.model.element.TypeElement;
 import java.io.File;
@@ -29,7 +29,7 @@ public class ClassDiagram extends UMLDiagram {
     private final Type type;
     private File pumlFile = null;
 
-    public ClassDiagram(DocletConfig config, DocletEnvironment env, TypeElement classElement) {
+    public ClassDiagram(Configuration config, DocletEnvironment env, TypeElement classElement) {
         super(config, env);
         this.type = new Type(this, classElement);
         super.children.add(type);

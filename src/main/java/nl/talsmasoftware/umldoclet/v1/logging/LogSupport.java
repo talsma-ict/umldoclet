@@ -18,7 +18,6 @@ package nl.talsmasoftware.umldoclet.v1.logging;
 import com.sun.javadoc.DocErrorReporter;
 import com.sun.javadoc.SourcePosition;
 import jdk.javadoc.doclet.Reporter;
-import nl.talsmasoftware.umldoclet.configuration.DocletConfig;
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.logging.Message;
 
@@ -37,16 +36,16 @@ import static java.lang.Character.toLowerCase;
  * during doclet execution but may occur in exceptional situations during startup.
  *
  * @author Sjoerd Talsma
- * @deprecated switch from logger to reporter semantics.
+ * @deprecated Use our own dependency-less Logger abstraction instead.
  */
 public class LogSupport {
-//    private static final Logger LOGGER = Logger.getLogger(LogSupport.class.getName());
 
     private static volatile Reporter reporter;
 
-    // Compatible logger with the registered reporter.
+    // Logger that uses the registered reporter.
     public static final Logger LOGGER = new Logger() {
         private void log(Diagnostic.Kind kind, Message key, Object... args) {
+            final Reporter reporter = LogSupport.reporter;
             if (reporter != null) {
                 String message = key.toString();
                 if (args.length > 0) message = MessageFormat.format(message, args);
@@ -76,8 +75,7 @@ public class LogSupport {
     }
 
     /**
-     * No longer does anything, please use {@link DocletConfig Configuration}
-     * log methods instead.
+     * No longer does anything, please use {@link Logger} log methods instead.
      *
      * @param level ignored
      * @deprecated switch from logger to reporter semantics.
@@ -91,8 +89,7 @@ public class LogSupport {
     }
 
     /**
-     * No longer does anything, please use {@link DocletConfig Configuration}
-     * log methods instead.
+     * No longer does anything, please use {@link Logger} log methods instead.
      *
      * @return Always {@code false}
      * @deprecated Switch from logger to reporter semantics.
@@ -102,8 +99,7 @@ public class LogSupport {
     }
 
     /**
-     * No longer does anything, please use {@link DocletConfig Configuration}
-     * log methods instead.
+     * No longer does anything, please use {@link Logger} log methods instead.
      *
      * @param msg  ignored
      * @param args ignored

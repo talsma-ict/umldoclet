@@ -31,22 +31,26 @@ import static java.util.Objects.requireNonNull;
 public final class Indentation implements CharSequence, Serializable {
 
     // Cache of the first 5 four-spaces indentations.
-    private static final Indentation[] FOUR_SPACES = {new Indentation(4, ' ', 0), new Indentation(4, ' ', 1),
-            new Indentation(4, ' ', 2), new Indentation(4, ' ', 3), new Indentation(4, ' ', 4)};
+    private static final Indentation[] FOUR_SPACES = {
+            new Indentation(4, ' ', 0), new Indentation(4, ' ', 1),
+            new Indentation(4, ' ', 2), new Indentation(4, ' ', 3),
+            new Indentation(4, ' ', 4)};
 
     // Cache of the first 5 tab indentations.
-    private static final Indentation[] TABS = {new Indentation(1, '\t', 0), new Indentation(1, '\t', 1),
-            new Indentation(1, '\t', 2), new Indentation(1, '\t', 3), new Indentation(1, '\t', 4)};
+    private static final Indentation[] TABS = {
+            new Indentation(1, '\t', 0), new Indentation(1, '\t', 1),
+            new Indentation(1, '\t', 2), new Indentation(1, '\t', 3),
+            new Indentation(1, '\t', 4)};
 
     /**
      * The default indentation is four spaces, initially at level 0.
      */
-    public static Indentation DEFAULT = FOUR_SPACES[0];
+    public static final Indentation DEFAULT = FOUR_SPACES[0];
 
     /**
      * A reusable constant for no indentation at all (even after calls to {@link #increase()}.
      */
-    public static Indentation NONE = new Indentation(0, ' ', 0);
+    public static final Indentation NONE = new Indentation(0, ' ', 0);
 
     // All fields of Indentation class are final.
     final int width, level;

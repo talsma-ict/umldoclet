@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.configuration;
+package nl.talsmasoftware.umldoclet.javadoc;
 
 import com.sun.source.util.DocTreePath;
 import jdk.javadoc.doclet.Reporter;
@@ -28,7 +28,7 @@ import java.util.Locale;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Reporter using a specific {@link Locale} to reporte to a delegate {@link Reporter}.
+ * Doclet reporter using a specific {@link Locale} to reporte to a delegate {@link Reporter}.
  *
  * @author Sjoerd Talsma
  */
