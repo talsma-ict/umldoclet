@@ -26,7 +26,13 @@ import static java.util.Objects.requireNonNull;
 import static nl.talsmasoftware.umldoclet.v1.Concatenation.append;
 
 /**
- * Model class for a reference between two types.
+ * Reference between two types.
+ * <p>
+ * The following reference types are currently supported:
+ * <ul>
+ * <li>The 'extends' reference: {@code "--|>"}</li>
+ * <li>The 'implements' reference: {@code "..|>"}</li>
+ * </ul>
  *
  * @author Sjoerd Talsma
  */
@@ -106,8 +112,9 @@ public class Reference {
 
     private String reverseType() {
         char[] chars = type.toCharArray();
-        char swap = chars[0];
-        for (int i = 0, j = chars.length - 1; i < j; swap = chars[i++]) {
+        char swap;
+        for (int i = 0, j = chars.length - 1; i < j; i++) {
+            swap = chars[i];
             chars[i] = reverseChar(chars[j]);
             chars[j--] = reverseChar(swap);
         }

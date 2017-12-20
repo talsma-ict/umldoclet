@@ -19,10 +19,10 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeVisitor;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static java.lang.Integer.signum;
-import static java.util.Collections.singleton;
 import static java.util.Objects.requireNonNull;
 import static javax.lang.model.element.ElementKind.ENUM;
 import static nl.talsmasoftware.umldoclet.model.Reference.Side.from;
@@ -33,7 +33,7 @@ public class Type extends Renderer implements Comparable<Type> {
     protected final TypeElement tp;
     protected final Set<Modifier> modifiers;
     private final TypeVisitor<String, ?> umlTypeName;
-    protected final Set<Reference> references;
+    protected final Set<Reference> references = new LinkedHashSet<>();
 
     protected Type(UMLDiagram diagram, TypeElement typeElement) {
         super(diagram);
@@ -63,8 +63,12 @@ public class Type extends Renderer implements Comparable<Type> {
                 .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
                 .forEach(elem -> children.add(new Method(this, elem)));
 
-        // TODO Analyse references from this class to other classes.
-        references = singleton(new Reference(from(getQualifiedName()), "-->", to(getQualifiedName()), "this"));
+        String typeQName = tp.getQualifiedName().toString();
+        String superclassQName = tp.getSuperclass().accept(umlTypeName, null);
+        references.add(new Reference(from(typeQName), "--|>", to(superclassQName)));
+        tp.getInterfaces().stream().map(itfc -> itfc.accept(umlTypeName, null))
+                .forEach(qName -> references.add(new Reference(from(typeQName), "..|>", to(qName))));
+
     }
 
     protected PackageElement containingPackage() {
@@ -87,14 +91,14 @@ public class Type extends Renderer implements Comparable<Type> {
 
     @Override
     protected IndentingPrintWriter writeTo(IndentingPrintWriter output) {
-        output.append(umlTypeCategoryOf(tp)).whitespace()
-                .append(umlTypeName.visit(tp.asType())).whitespace();
+        output.append(umlClassificationOf(tp)).whitespace().append(umlTypeName.visit(tp.asType())).whitespace();
         if (!children.isEmpty()) writeChildrenTo(output.append('{').newline()).append('}');
         return output.newline().newline();
     }
 
     /**
-     * Determines the 'UML' type for the class to be rendered.
+     * The 'UML' classification of the type.
+     * <p>
      * Currently, this can return one of the following:
      * {@code "enum"},
      * {@code "interface"},
@@ -105,7 +109,7 @@ public class Type extends Renderer implements Comparable<Type> {
      * @param typeElement The type element to return the uml type for.
      * @return The UML type for the class to be rendered.
      */
-    protected static String umlTypeCategoryOf(TypeElement typeElement) {
+    protected static String umlClassificationOf(TypeElement typeElement) {
         ElementKind kind = requireNonNull(typeElement, "Type element is <null>.").getKind();
         return ENUM.equals(kind) ? "enum"
                 : ElementKind.INTERFACE.equals(kind) ? "interface"
