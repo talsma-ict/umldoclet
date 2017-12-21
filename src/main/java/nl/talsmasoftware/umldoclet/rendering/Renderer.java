@@ -15,8 +15,6 @@
  */
 package nl.talsmasoftware.umldoclet.rendering;
 
-import java.io.Writer;
-
 /**
  * Definition of a 'renderer' object that can render itself to a given output.
  *
@@ -27,9 +25,10 @@ public interface Renderer {
     /**
      * Renders this object to the given {@code output}.
      *
+     * @param <A>    The output type (must be appendable).
      * @param output The output to render this object to.
      * @return A reference to the output for method chaining purposes.
      */
-    Writer writeTo(Writer output);
+    <A extends Appendable> A writeTo(A output);
 
 }

@@ -18,7 +18,7 @@ package nl.talsmasoftware.umldoclet.model;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import javax.lang.model.element.*;
-import javax.lang.model.type.TypeVisitor;
+import javax.lang.model.type.TypeKind;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -28,18 +28,18 @@ import static javax.lang.model.element.ElementKind.ENUM;
 import static nl.talsmasoftware.umldoclet.model.Reference.Side.from;
 import static nl.talsmasoftware.umldoclet.model.Reference.Side.to;
 
-public class Type extends AbstractRenderer implements Comparable<Type> {
+public class Type extends UMLRenderer implements Comparable<Type> {
 
     protected final TypeElement tp;
     protected final Set<Modifier> modifiers;
-    private final TypeVisitor<String, ?> umlTypeName;
+    private final TypeName name;
     protected final Set<Reference> references = new LinkedHashSet<>();
 
     protected Type(UMLDiagram diagram, TypeElement typeElement) {
         super(diagram);
         this.tp = requireNonNull(typeElement, "Type element is <null>.");
         this.modifiers = typeElement.getModifiers();
-        this.umlTypeName = new TypeName(true, true);
+        this.name = TypeNameVisitor.INSTANCE.visit(typeElement.asType());
 
         // Add the various parts of the class UML, order matters here, obviously!
 
@@ -56,19 +56,19 @@ public class Type extends AbstractRenderer implements Comparable<Type> {
         tp.getEnclosedElements().stream() // Add constructors
                 .filter(elem -> ElementKind.CONSTRUCTOR.equals(elem.getKind()))
                 .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
-                .forEach(elem -> children.add(new Constructor(this, elem)));
+                .forEach(elem -> children.add(new Method(this, elem)));
 
         tp.getEnclosedElements().stream() // Add methods
                 .filter(elem -> ElementKind.METHOD.equals(elem.getKind()))
                 .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
                 .forEach(elem -> children.add(new Method(this, elem)));
 
-        String typeQName = tp.getQualifiedName().toString();
-        String superclassQName = tp.getSuperclass().accept(umlTypeName, null);
-        references.add(new Reference(from(typeQName), "--|>", to(superclassQName)));
-        tp.getInterfaces().stream().map(itfc -> itfc.accept(umlTypeName, null))
-                .forEach(qName -> references.add(new Reference(from(typeQName), "..|>", to(qName))));
-
+        if (!TypeKind.NONE.equals(tp.getSuperclass().getKind())) {
+            references.add(new Reference(
+                    from(name.qualified), "--|>", to(TypeNameVisitor.INSTANCE.visit(tp.getSuperclass()).qualified)));
+        }
+        tp.getInterfaces().stream().map(TypeNameVisitor.INSTANCE::visit)
+                .forEach(ifName -> references.add(new Reference(from(name.qualified), "..|>", to(ifName.qualified))));
     }
 
     protected PackageElement containingPackage() {
@@ -91,7 +91,8 @@ public class Type extends AbstractRenderer implements Comparable<Type> {
 
     @Override
     public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
-        output.append(umlClassificationOf(tp)).whitespace().append(umlTypeName.visit(tp.asType())).whitespace();
+        output.append(umlClassificationOf(tp)).whitespace();
+        name.writeTo(output).whitespace();
         if (!children.isEmpty()) writeChildrenTo(output.append('{').newline()).append('}');
         return output.newline().newline();
     }

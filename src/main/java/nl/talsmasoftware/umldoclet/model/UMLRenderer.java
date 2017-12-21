@@ -33,12 +33,12 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Sjoerd Talsma
  */
-abstract class AbstractRenderer implements IndentingRenderer {
+abstract class UMLRenderer implements IndentingRenderer {
 
     protected final UMLDiagram diagram;
     protected final Collection<Renderer> children = new LinkedHashSet<>();
 
-    protected AbstractRenderer(UMLDiagram diagram) {
+    UMLRenderer(UMLDiagram diagram) {
         this.diagram = requireNonNull( // Only situation where a <null> diagram is accepted: the diagram itself.
                 diagram == null && this instanceof UMLDiagram ? (UMLDiagram) this : diagram,
                 "Diagram renderer is <null>.");

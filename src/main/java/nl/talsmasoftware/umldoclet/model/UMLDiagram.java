@@ -17,7 +17,6 @@ package nl.talsmasoftware.umldoclet.model;
 
 import jdk.javadoc.doclet.DocletEnvironment;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.logging.Message;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlImageWriter;
 
@@ -25,6 +24,7 @@ import java.io.*;
 
 import static java.util.Objects.requireNonNull;
 import static nl.talsmasoftware.umldoclet.logging.Message.ERROR_COULDNT_RENDER_UML;
+import static nl.talsmasoftware.umldoclet.logging.Message.INFO_GENERATING_FILE;
 
 /**
  * Renders a new UML diagram.
@@ -39,7 +39,7 @@ import static nl.talsmasoftware.umldoclet.logging.Message.ERROR_COULDNT_RENDER_U
  *
  * @author Sjoerd Talsma
  */
-public abstract class UMLDiagram extends AbstractRenderer {
+public abstract class UMLDiagram extends UMLRenderer {
 
     protected final Configuration config;
     protected final DocletEnvironment env;
@@ -73,7 +73,7 @@ public abstract class UMLDiagram extends AbstractRenderer {
         final File pumlFile = pumlFile();
 
         try (Writer writer = createPlantumlWriter(pumlFile)) {
-            config.getLogger().info(Message.INFO_GENERATING_FILE, pumlFile);
+            config.getLogger().info(INFO_GENERATING_FILE, pumlFile);
             this.writeTo(IndentingPrintWriter.wrap(writer, config.getIndentation()));
             return true;
         } catch (IOException | RuntimeException e) {

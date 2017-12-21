@@ -15,9 +15,10 @@
  */
 package nl.talsmasoftware.umldoclet.rendering.indent;
 
+import nl.talsmasoftware.umldoclet.rendering.Renderer;
+
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.Writer;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -25,10 +26,12 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * Type to capture the indentation as an immutable type containing a pre-filled buffer to quickly be written.
+ * <p>
+ * TODO: Add support for comment prefixing (e.g. "// ", "# ", or for UML "' ").
  *
  * @author Sjoerd Talsma
  */
-public final class Indentation implements CharSequence, Serializable {
+public final class Indentation implements CharSequence, Renderer, Serializable {
 
     // Cache of the first 5 four-spaces indentations.
     private static final Indentation[] FOUR_SPACES = {
@@ -119,12 +122,18 @@ public final class Indentation implements CharSequence, Serializable {
      * Please be aware that usually it may prove easier to just create an {@link IndentingWriter} instead which will
      * automatically write the indentation whenever needed (i.e. before the first character on any new line is written).
      *
-     * @param writer The writer to write this indentation to.
-     * @throws IOException if thrown by the writer while writing the indentation.
+     * @param output The output to write this indentation to.
      * @see IndentingWriter
      */
-    /* package */ void writeTo(Writer writer) throws IOException {
-        requireNonNull(writer, "Writer was <null>.").write(buf);
+    @Override
+    public <A extends Appendable> A writeTo(A output) {
+        requireNonNull(output, "Output is <null>.");
+        try {
+            output.append(this, 0, buf.length);
+        } catch (IOException ioe) {
+            throw new IllegalStateException("I/O exception writing indentation: " + ioe.getMessage(), ioe);
+        }
+        return output;
     }
 
     /**
@@ -178,4 +187,5 @@ public final class Indentation implements CharSequence, Serializable {
     public String toString() {
         return String.valueOf(buf);
     }
+
 }

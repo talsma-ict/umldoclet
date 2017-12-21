@@ -27,7 +27,7 @@ import static java.util.stream.Collectors.toSet;
 /**
  * @author Sjoerd Talsma
  */
-public class Package extends AbstractRenderer {
+public class Package extends UMLRenderer {
 
     protected final PackageElement packageElement;
     private final Collection<Reference> references;

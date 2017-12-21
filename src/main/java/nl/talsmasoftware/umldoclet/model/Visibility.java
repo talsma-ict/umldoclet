@@ -15,11 +15,16 @@
  */
 package nl.talsmasoftware.umldoclet.model;
 
+import nl.talsmasoftware.umldoclet.rendering.Renderer;
+
+import java.io.IOException;
+
 /**
+ * The visibility values of members in UML diagrams.
+ *
  * @author Sjoerd Talsma
  */
-public enum Visibility {
-
+public enum Visibility implements Renderer {
     PRIVATE('-'),
     PROTECTED('#'),
     PACKAGE_PRIVATE('~'),
@@ -27,8 +32,20 @@ public enum Visibility {
 
     private final char umlVisibility;
 
-    private Visibility(char umlVisibility) {
+    Visibility(char umlVisibility) {
         this.umlVisibility = umlVisibility;
+    }
+
+    @Override
+    public <A extends Appendable> A writeTo(A output) {
+        try {
+            output.append(umlVisibility);
+        } catch (IOException ioe) {
+            throw new IllegalStateException("I/O error writing visibility "
+                    + name().toLowerCase().replace('_', ' ') + " to the output: "
+                    + ioe.getMessage(), ioe);
+        }
+        return output;
     }
 
 }

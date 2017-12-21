@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet;
 
+import nl.talsmasoftware.umldoclet.model.Field;
 import org.junit.Test;
 
 import java.util.spi.ToolProvider;
@@ -29,7 +30,9 @@ public class UMLDocletTest {
                 "-sourcepath", "src/main/java",
                 "-d", "target/doclet-test",
                 "-doclet", UMLDoclet.class.getName(),
-                UMLDoclet.class.getPackage().getName()
+//                UMLDoclet.class.getPackageName(),
+//                DocletConfig.class.getPackageName(),
+                Field.class.getPackageName()
         );
     }
 

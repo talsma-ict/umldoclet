@@ -15,66 +15,109 @@
  */
 package nl.talsmasoftware.umldoclet.model;
 
-import javax.lang.model.element.Element;
-import javax.lang.model.element.Name;
-import javax.lang.model.element.QualifiedNameable;
-import javax.lang.model.type.*;
-import javax.lang.model.util.SimpleTypeVisitor9;
-import java.util.List;
+import nl.talsmasoftware.umldoclet.rendering.Renderer;
 
-import static java.util.stream.Collectors.joining;
+import java.io.IOException;
+import java.io.Serializable;
+import java.io.StringWriter;
+
+import static java.util.Comparator.comparing;
+import static java.util.Objects.requireNonNull;
 
 /**
- * The UML type name implemented as {@link TypeVisitor}.
+ * Class representing a type name.
+ * <p>
+ * This is less simple than it sounds: A type basically has a 'qualified name' and a 'simple name'
+ * (these may be equal).
+ * <p>
+ * Also, if the type is a generic type, the actual type parameters can be seen as 'part' of the name:
+ * The names of {@code List<String>} and {@code List<Integer>} are different, while in Java the actual
+ * types are equal (due to erasure of the generic type).
  *
  * @author Sjoerd Talsma
  */
-final class TypeName extends SimpleTypeVisitor9<String, Void> {
-    private final boolean qualifiedNames, qualifiedGenerics;
+public class TypeName implements Renderer, Comparable<TypeName>, Serializable {
+    final String simple, qualified;
+    private final TypeName[] generics;
 
-    TypeName(boolean qualifiedNames, boolean qualifiedGenerics) {
-        this.qualifiedNames = qualifiedNames;
-        this.qualifiedGenerics = qualifiedGenerics;
-    }
-
-    private TypeVisitor<String, Void> genericsDelegate() {
-        return qualifiedNames == qualifiedGenerics ? this : new TypeName(qualifiedGenerics, qualifiedGenerics);
-    }
-
-    @Override
-    public String visitPrimitive(PrimitiveType primitiveType, Void parameter) {
-        // "byte", "char", "short", "int", "long", "float", "double", "boolean"
-        return primitiveType.getKind().name().toLowerCase();
+    public TypeName(String simpleName, String qualifiedName, TypeName... generics) {
+        this.simple = simpleName;
+        this.qualified = qualifiedName;
+        this.generics = generics.clone();
     }
 
     @Override
-    public String visitNoType(NoType noType, Void parameter) {
-        return noType.getKind().name().toLowerCase(); // "void", "package", "module", "none"
+    public <A extends Appendable> A writeTo(A output) {
+        return writeTo(output, true, false);
+    }
+
+    protected <A extends Appendable> A writeTo(A output, boolean qualified, Boolean qualifiedGenerics) {
+        try {
+            output.append(qualified ? this.qualified : simple);
+            if (qualifiedGenerics != null) writeGenericsTo(output, qualifiedGenerics);
+            return output;
+        } catch (IOException ioe) {
+            throw new IllegalStateException("I/O error writing type name \"" + qualified + "\" to the output: "
+                    + ioe.getMessage(), ioe);
+        }
+    }
+
+    private <A extends Appendable> A writeGenericsTo(A output, boolean qualified) throws IOException {
+        if (generics.length > 0) {
+            String sep = "<";
+            for (TypeName generic : generics) {
+                generic.writeTo(output.append(sep), qualified, qualified);
+                sep = ", ";
+            }
+            output.append('>');
+        }
+        return output;
     }
 
     @Override
-    public String visitDeclared(DeclaredType declaredType, Void parameter) {
-        Element el = declaredType.asElement();
-        List<? extends TypeMirror> args = declaredType.getTypeArguments();
-        Name name = qualifiedNames && el instanceof QualifiedNameable
-                ? ((QualifiedNameable) el).getQualifiedName() : el.getSimpleName();
-        return args.isEmpty() ? name.toString() : name + args.stream()
-                .map(typeArgument -> genericsDelegate().visit(typeArgument, parameter))
-                .collect(joining(", ", "<", ">"));
+    public int compareTo(TypeName other) {
+        requireNonNull(other, "Cannot compare with type name <null>.");
+        return comparing((TypeName type) -> type.qualified.toLowerCase())
+                .thenComparing(type -> type.qualified)
+                .compare(this, other);
     }
 
     @Override
-    public String visitIntersection(IntersectionType intersectionType, Void parameter) {
-        return intersectionType.getBounds().stream()
-                .map(bound -> visit(bound, parameter))
-                .collect(joining(" & "));
+    public int hashCode() {
+        return qualified.hashCode();
     }
 
     @Override
-    public String visitUnion(UnionType unionType, Void parameter) {
-        return unionType.getAlternatives().stream()
-                .map(alternative -> visit(alternative, parameter))
-                .collect(joining(" | "));
+    public boolean equals(Object other) {
+        return this == other || (other instanceof TypeName && this.compareTo((TypeName) other) == 0);
+    }
+
+    @Override
+    public String toString() {
+        return writeTo(new StringWriter()).toString();
+    }
+
+    public static class Array extends TypeName {
+        private final TypeName delegate;
+
+        private Array(TypeName delegate) {
+            super(delegate.simple, delegate.qualified, delegate.generics);
+            this.delegate = delegate;
+        }
+
+        public static Array of(TypeName delegate) {
+            return new Array(requireNonNull(delegate, "Component type of array is <null>."));
+        }
+
+        protected <A extends Appendable> A writeTo(A output, boolean qualified, Boolean qualifiedGenerics) {
+            try {
+                delegate.writeTo(output, qualified, qualifiedGenerics);
+                output.append("[]");
+            } catch (IOException ioe) {
+                throw new IllegalStateException("I/O error writing arry type \"" + this + "\": " + ioe.getMessage(), ioe);
+            }
+            return output;
+        }
     }
 
 }

@@ -19,55 +19,67 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.TypeVisitor;
 import java.util.Objects;
 import java.util.Set;
 
+import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
-import static javax.lang.model.element.Modifier.*;
 
 /**
  * @author Sjoerd Talsma
  */
-public class Field extends AbstractRenderer {
+public class Field extends UMLRenderer implements Comparable<Field> {
 
-    protected final VariableElement fld;
-    protected final Set<Modifier> modifiers;
-    private final TypeVisitor<String, ?> typeName;
+    private final TypeName enclosingType;
+    private final Visibility visibility;
+    private final boolean isStatic;
+    private final String name;
+    private final TypeName type;
 
     protected Field(Type type, VariableElement variableElement) {
         super(type.diagram);
-        this.fld = requireNonNull(variableElement, "Variable element is <null>.");
-        this.modifiers = fld.getModifiers();
-        this.typeName = new TypeName(true, true);
+        // TODO javadoc aware code.
+        this.enclosingType = TypeNameVisitor.INSTANCE.visit(variableElement.getEnclosingElement().asType());
+        Set<Modifier> modifiers = variableElement.getModifiers();
+        this.visibility = visibilityOf(modifiers);
+        this.isStatic = modifiers.contains(Modifier.STATIC);
+        this.name = variableElement.getSimpleName().toString();
+        this.type = TypeNameVisitor.INSTANCE.visit(variableElement.asType());
+    }
+
+    // TODO javadoc aware code.
+    static Visibility visibilityOf(Set<Modifier> modifiers) {
+        return modifiers.contains(Modifier.PRIVATE) ? Visibility.PRIVATE
+                : modifiers.contains(Modifier.PROTECTED) ? Visibility.PROTECTED
+                : modifiers.contains(Modifier.PUBLIC) ? Visibility.PUBLIC
+                : Visibility.PACKAGE_PRIVATE;
     }
 
     @Override
-    public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
-        if (modifiers.contains(STATIC)) output.append("{static}").whitespace();
-        output.append(umlAccessibility(modifiers)).append(fld.getSimpleName());
-        output.append(":").whitespace().append(typeName.visit(fld.asType()));
-        return output.newline();
+    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+        if (isStatic) output.append("{static}").whitespace();
+        visibility.writeTo(output).append(name);
+        type.writeTo(output.append(":").whitespace()).newline();
+        return output;
     }
 
-    protected static char umlAccessibility(Set<Modifier> modifiers) {
-        return modifiers.contains(PRIVATE) ? '-'
-                : modifiers.contains(PROTECTED) ? '#'
-                : modifiers.contains(PUBLIC) ? '+'
-                : '~';
+    @Override
+    public int compareTo(Field other) {
+        requireNonNull(other, "Cannot compare with field <null>.");
+        return comparing((Field field) -> field.enclosingType)
+                .thenComparing(field -> name.toLowerCase())
+                .thenComparing(field -> name)
+                .compare(this, other);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fld.getEnclosingElement(), fld.getSimpleName());
+        return Objects.hash(enclosingType, name);
     }
 
     @Override
     public boolean equals(Object other) {
-        return this == other || (other instanceof Field
-                && Objects.equals(fld.getSimpleName(), ((Field) other).fld.getSimpleName())
-                && Objects.equals(fld.getEnclosingElement(), ((Field) other).fld.getEnclosingElement())
-        );
+        return this == other || (other instanceof Field && this.compareTo((Field) other) == 0);
     }
 
 }

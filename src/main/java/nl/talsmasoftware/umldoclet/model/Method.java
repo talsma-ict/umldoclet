@@ -19,71 +19,81 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
-import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.TypeVisitor;
-import java.util.Objects;
 import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.joining;
-import static nl.talsmasoftware.umldoclet.model.Field.umlAccessibility;
+import static nl.talsmasoftware.umldoclet.model.Field.visibilityOf;
 
 /**
  * @author Sjoerd Talsma
  */
-public class Method extends AbstractRenderer {
+public class Method extends UMLRenderer {
 
-    protected final ExecutableElement method;
-    protected final Set<Modifier> modifiers;
-    private final TypeVisitor<String, ?> parameterType, returnType;
-    private final boolean showParameterType, showParameterName, parameterTypeBeforeName;
+//    protected final ExecutableElement method;
+//    protected final Set<Modifier> modifiers;
+//    private final TypeVisitor<String, ?> parameterType, returnType;
+//    private final boolean showParameterType, showParameterName, parameterTypeBeforeName;
+
+    private final TypeName enclosingType;
+    private final Visibility visibility;
+    private final boolean isAbstract, isStatic;
+    private final String name;
+    private final TypeName type;
 
     protected Method(Type type, ExecutableElement executableElement) {
         super(type.diagram);
-        this.method = requireNonNull(executableElement, "Method executable element is <null>.");
-        this.modifiers = executableElement.getModifiers();
-        // The following booleans should be obtained from the configuration:
-        this.parameterType = new TypeName(true, true);
-        this.returnType = new TypeName(true, true);
-        this.showParameterType = true;
-        this.showParameterName = true;
-        this.parameterTypeBeforeName = true;
-    }
+//        this.method = requireNonNull(executableElement, "Method executable element is <null>.");
+//        this.modifiers = executableElement.getModifiers();
+//        // The following booleans should be obtained from the configuration:
+//        this.parameterType = new TypeNameVisitor(true, true);
+//        this.returnType = new TypeNameVisitor(true, true);
+//        this.showParameterType = true;
+//        this.showParameterName = true;
+//        this.parameterTypeBeforeName = true;
 
-    protected IndentingPrintWriter appendAccessibilityTo(IndentingPrintWriter output) {
-        return output.append(umlAccessibility(modifiers));
-    }
-
-    protected IndentingPrintWriter appendNameTo(IndentingPrintWriter output) {
-        return output.append(method.getSimpleName());
-    }
-
-    private String parameter(VariableElement parameter) {
-        if (showParameterType && showParameterName) return parameterTypeBeforeName
-                ? parameterType.visit(parameter.asType()) + " " + parameter.getSimpleName()
-                : parameter.getSimpleName() + " " + parameterType.visit(parameter.asType());
-        else if (showParameterType) return parameterType.visit(parameter.asType());
-        else if (showParameterName) return parameter.getSimpleName().toString();
-        return null;
-    }
-
-    protected IndentingPrintWriter appendParametersTo(IndentingPrintWriter output) {
-        return output.append(method.getParameters().stream()
-                .map(this::parameter).filter(Objects::nonNull)
-                .collect(joining(", ", "(", ")")));
-    }
-
-    protected IndentingPrintWriter appendReturnTypeTo(IndentingPrintWriter output) {
-        return output.append(": ").append(returnType.visit(method.getReturnType()));
+        // TODO javadoc aware code.
+        requireNonNull(executableElement, "Executable element is <null>.");
+        this.name = requireNonNull(executableElement.getSimpleName().toString(), "Method name is <null>.");
+        this.enclosingType = requireNonNull(TypeNameVisitor.INSTANCE.visit(executableElement.getEnclosingElement().asType()),
+                () -> "Enclosing type of method " + name + " is <null>.");
+        Set<Modifier> modifiers = executableElement.getModifiers();
+        this.visibility = visibilityOf(modifiers);
+        this.isAbstract = modifiers.contains(Modifier.ABSTRACT);
+        this.isStatic = modifiers.contains(Modifier.STATIC);
+//        this.type = requireNonNull(TypeNameVisitor.INSTANCE.visit(executableElement.getReturnType()),
+//                () -> "Return type is <null> for " + enclosingType.qualified + "." + name + ".");
+        this.type = TypeNameVisitor.INSTANCE.visit(executableElement.getReturnType());
     }
 
     @Override
-    public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
-        return appendReturnTypeTo(
-                appendParametersTo(
-                        appendNameTo(
-                                appendAccessibilityTo(output))))
-                .newline();
+    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+        if (isAbstract) output.append("{abstract}").whitespace();
+        if (isStatic) output.append("{static}").whitespace();
+        visibility.writeTo(output).append(name).append("()"); // TODO render parameters.
+        if (type != null) type.writeTo(output.append(":").whitespace());
+//        type.writeTo(output.append(":").whitespace()).newline();
+        output.newline();
+        return output;
     }
+
+//    private String parameter(VariableElement parameter) {
+//        if (showParameterType && showParameterName) return parameterTypeBeforeName
+//                ? parameterType.visit(parameter.asType()) + " " + parameter.getSimpleName()
+//                : parameter.getSimpleName() + " " + parameterType.visit(parameter.asType());
+//        else if (showParameterType) return parameterType.visit(parameter.asType());
+//        else if (showParameterName) return parameter.getSimpleName().toString();
+//        return null;
+//    }
+
+//    protected IndentingPrintWriter appendParametersTo(IndentingPrintWriter output) {
+//        return output.append(method.getParameters().stream()
+//                .map(this::parameter).filter(Objects::nonNull)
+//                .collect(joining(", ", "(", ")")));
+//    }
+
+//    protected IndentingPrintWriter appendReturnTypeTo(IndentingPrintWriter output) {
+//        return output.append(": ").append(returnType.visit(method.getReturnType()));
+//    }
+
 
 }

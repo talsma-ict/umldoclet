@@ -32,7 +32,7 @@ import static java.util.Objects.requireNonNull;
  */
 public class IndentingPrintWriter extends PrintWriter {
 
-    protected IndentingPrintWriter(Writer writer, Indentation indentation) {
+    protected IndentingPrintWriter(Appendable writer, Indentation indentation) {
         super(IndentingWriter.wrap(writer, indentation));
     }
 
@@ -48,7 +48,7 @@ public class IndentingPrintWriter extends PrintWriter {
      * @return The indenting delegate writer.
      * @see Indentation#DEFAULT
      */
-    public static IndentingPrintWriter wrap(Writer delegate, Indentation indentation) {
+    public static IndentingPrintWriter wrap(Appendable delegate, Indentation indentation) {
         return delegate instanceof IndentingPrintWriter
                 ? ((IndentingPrintWriter) delegate).withIndentation(indentation)
                 : new IndentingPrintWriter(delegate, indentation);
