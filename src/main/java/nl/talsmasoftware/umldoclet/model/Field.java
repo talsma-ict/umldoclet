@@ -17,10 +17,7 @@ package nl.talsmasoftware.umldoclet.model;
 
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
-import javax.lang.model.element.Modifier;
-import javax.lang.model.element.VariableElement;
 import java.util.Objects;
-import java.util.Set;
 
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
@@ -38,27 +35,8 @@ public class Field extends UMLRenderer implements Comparable<Field> {
     private final String name;
     private final TypeName type;
 
-    // TODO move javadoc aware code to javadoc package.
-
-    static Field createField(Type containingType, VariableElement variable) {
-        Set<Modifier> modifiers = requireNonNull(variable, "Variable element is <null>.").getModifiers();
-        return new Field(containingType,
-                visibilityOf(modifiers),
-                modifiers.contains(Modifier.STATIC),
-                variable.getSimpleName().toString(),
-                TypeNameVisitor.INSTANCE.visit(variable.asType())
-        );
-    }
-
-    static Visibility visibilityOf(Set<Modifier> modifiers) {
-        return modifiers.contains(Modifier.PRIVATE) ? Visibility.PRIVATE
-                : modifiers.contains(Modifier.PROTECTED) ? Visibility.PROTECTED
-                : modifiers.contains(Modifier.PUBLIC) ? Visibility.PUBLIC
-                : Visibility.PACKAGE_PRIVATE;
-    }
-
-    protected Field(Type containingType, Visibility visibility, boolean isStatic, String name, TypeName type) {
-        super(requireNonNull(containingType, "Containing type is <null>.").diagram);
+    public Field(Type containingType, Visibility visibility, boolean isStatic, String name, TypeName type) {
+        super(requireNonNull(containingType, "Containing type is <null>.").config);
         this.containingType = containingType;
         this.visibility = requireNonNull(visibility, "Field visibility is <null>.");
         this.isStatic = isStatic;

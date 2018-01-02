@@ -13,28 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.model;
+package nl.talsmasoftware.umldoclet.javadoc;
 
-import jdk.javadoc.doclet.DocletEnvironment;
-import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.model.Type;
+import nl.talsmasoftware.umldoclet.model.UMLDiagram;
 
-import javax.lang.model.element.PackageElement;
+import javax.lang.model.element.TypeElement;
 import java.io.File;
 
 /**
- * TODO move to javadoc package
- *
  * @author Sjoerd Talsma
  */
-public class PackageDiagram extends UMLDiagram {
+public class ClassDiagram extends UMLDiagram {
 
-    protected final Package pkg;
+    private final Type type;
     private File pumlFile = null;
 
-    public PackageDiagram(Configuration config, DocletEnvironment env, PackageElement packageElement) {
-        super(config);
-        this.pkg = Package.createPackage(this, packageElement);
-        this.children.add(this.pkg);
+    public ClassDiagram(UMLFactory factory, TypeElement classElement) {
+        super(factory.config);
+        this.type = factory.createType(classElement);
+        children.add(this.type);
     }
 
     @Override
@@ -42,8 +40,8 @@ public class PackageDiagram extends UMLDiagram {
         if (pumlFile == null) {
             StringBuilder result = new StringBuilder(config.getDestinationDirectory());
             if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');
-            result.append(pkg.name.replace('.', '/'));
-            result.append("/package.puml");
+            result.append(type.containingPackage.name.replace('.', '/'));
+            result.append('/').append(type.name.simple).append(".puml");
             pumlFile = ensureParentDir(new File(result.toString()));
         }
         return pumlFile;

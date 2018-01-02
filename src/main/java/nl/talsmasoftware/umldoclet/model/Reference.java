@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 package nl.talsmasoftware.umldoclet.model;
+
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingRenderer;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -36,7 +39,7 @@ import static nl.talsmasoftware.umldoclet.v1.Concatenation.append;
  *
  * @author Sjoerd Talsma
  */
-public class Reference {
+public class Reference implements IndentingRenderer {
 
     public final Side from, to;
     public final String type;
@@ -123,6 +126,12 @@ public class Reference {
 
     private static char reverseChar(char ch) {
         return ch == '<' ? '>' : ch == '>' ? '<' : ch;
+    }
+
+    @Override
+    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+        output.println(this);
+        return output;
     }
 
     public static final class Side {

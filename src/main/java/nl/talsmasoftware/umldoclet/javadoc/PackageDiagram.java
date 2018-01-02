@@ -13,32 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.model;
+package nl.talsmasoftware.umldoclet.javadoc;
 
-import jdk.javadoc.doclet.DocletEnvironment;
-import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.model.Package;
+import nl.talsmasoftware.umldoclet.model.UMLDiagram;
 
-import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.PackageElement;
 import java.io.File;
 
-import static nl.talsmasoftware.umldoclet.model.Type.createType;
-
 /**
- * TODO move to javadoc package.
+ * TODO move to javadoc package
  *
  * @author Sjoerd Talsma
  */
-public class ClassDiagram extends UMLDiagram {
+public class PackageDiagram extends UMLDiagram {
 
-    private final Type type;
+    protected final Package pkg;
     private File pumlFile = null;
 
-    public ClassDiagram(Configuration config, DocletEnvironment env, TypeElement classElement) {
-        super(config);
-        this.type = createType(
-                new Package(this, env.getElementUtils().getPackageOf(classElement).getQualifiedName().toString()),
-                classElement);
-        children.add(this.type);
+    public PackageDiagram(UMLFactory factory, PackageElement packageElement) {
+        super(factory.config);
+        this.pkg = factory.createPackage(packageElement);
+        this.children.add(this.pkg);
     }
 
     @Override
@@ -46,8 +42,8 @@ public class ClassDiagram extends UMLDiagram {
         if (pumlFile == null) {
             StringBuilder result = new StringBuilder(config.getDestinationDirectory());
             if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');
-            result.append(type.containingPackage.name.replace('.', '/'));
-            result.append('/').append(type.name.simple).append(".puml");
+            result.append(pkg.name.replace('.', '/'));
+            result.append("/package.puml");
             pumlFile = ensureParentDir(new File(result.toString()));
         }
         return pumlFile;

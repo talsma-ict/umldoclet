@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.model;
 
+import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingRenderer;
 
@@ -32,13 +33,20 @@ import static java.util.Objects.requireNonNull;
  */
 abstract class UMLRenderer implements IndentingRenderer {
 
-    protected final UMLDiagram diagram;
+    protected final Configuration config;
+//    protected final UMLDiagram diagram;
 //    protected final Collection<Renderer> children = new LinkedHashSet<>();
 
+    @Deprecated
     UMLRenderer(UMLDiagram diagram) {
-        // Only situation where a <null> diagram is accepted: the diagram itself.
-        this.diagram = diagram == null && this instanceof UMLDiagram ? (UMLDiagram) this : diagram;
-        requireNonNull(this.diagram, "UML diagram is <null>.");
+        this(requireNonNull(diagram, "UML diagram is <null>.").config);
+//        // Only situation where a <null> diagram is accepted: the diagram itself.
+//        this.diagram = diagram == null && this instanceof UMLDiagram ? (UMLDiagram) this : diagram;
+//        requireNonNull(this.diagram, "UML diagram is <null>.");
+    }
+
+    UMLRenderer(Configuration config) {
+        this.config = requireNonNull(config, "Configuration is <null>.");
     }
 
 //    /**
@@ -76,7 +84,7 @@ abstract class UMLRenderer implements IndentingRenderer {
      * @return The rendered content of this renderer.
      */
     public String toString() {
-        return writeTo(IndentingPrintWriter.wrap(new StringWriter(), diagram.config.getIndentation())).toString();
+        return writeTo(IndentingPrintWriter.wrap(new StringWriter(), config.getIndentation())).toString();
     }
 
 }

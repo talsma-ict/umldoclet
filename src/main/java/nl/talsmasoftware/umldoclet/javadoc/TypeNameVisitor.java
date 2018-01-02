@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.model;
+package nl.talsmasoftware.umldoclet.javadoc;
+
+import nl.talsmasoftware.umldoclet.model.TypeName;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.QualifiedNameable;

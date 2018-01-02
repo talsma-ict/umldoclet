@@ -25,7 +25,6 @@ import java.io.*;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static java.util.Objects.requireNonNull;
 import static nl.talsmasoftware.umldoclet.logging.Message.ERROR_COULDNT_RENDER_UML;
 import static nl.talsmasoftware.umldoclet.logging.Message.INFO_GENERATING_FILE;
 
@@ -44,13 +43,12 @@ import static nl.talsmasoftware.umldoclet.logging.Message.INFO_GENERATING_FILE;
  */
 public abstract class UMLDiagram extends UMLRenderer implements IndentingRenderer.WithChildren {
 
-    protected final Configuration config;
+    //    protected final Configuration config;
     //    protected final DocletEnvironment env;
     protected final Set<Renderer> children = new LinkedHashSet<>();
 
     protected UMLDiagram(Configuration config) {
-        super(null);
-        this.config = requireNonNull(config, "No UML Doclet configuration provided.");
+        super(config);
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,10 @@ import jdk.javadoc.doclet.DocletEnvironment;
 import jdk.javadoc.doclet.Reporter;
 import jdk.javadoc.doclet.StandardDoclet;
 import net.sourceforge.plantuml.version.Version;
+import nl.talsmasoftware.umldoclet.javadoc.ClassDiagram;
 import nl.talsmasoftware.umldoclet.javadoc.DocletConfig;
-import nl.talsmasoftware.umldoclet.model.ClassDiagram;
-import nl.talsmasoftware.umldoclet.model.PackageDiagram;
+import nl.talsmasoftware.umldoclet.javadoc.PackageDiagram;
+import nl.talsmasoftware.umldoclet.javadoc.UMLFactory;
 import nl.talsmasoftware.umldoclet.model.UMLDiagram;
 
 import javax.lang.model.SourceVersion;
@@ -87,18 +88,19 @@ public class UMLDoclet extends StandardDoclet {
     }
 
     private boolean generateUMLDiagrams(DocletEnvironment docEnv) {
+        UMLFactory factory = new UMLFactory(config, docEnv);
         return docEnv.getIncludedElements().stream()
-                .map(element -> mapToDiagram(docEnv, element))
+                .map(element -> mapToDiagram(factory, element))
                 .filter(Optional::isPresent).map(Optional::get)
                 .map(UMLDiagram::render)
                 .reduce(Boolean.TRUE, (a, b) -> a & b);
     }
 
-    private Optional<UMLDiagram> mapToDiagram(DocletEnvironment docEnv, Element element) {
+    private Optional<UMLDiagram> mapToDiagram(UMLFactory factory, Element element) {
         if (element instanceof PackageElement) {
-            return Optional.of(new PackageDiagram(config, docEnv, (PackageElement) element));
+            return Optional.of(new PackageDiagram(factory, (PackageElement) element));
         } else if (element instanceof TypeElement && (element.getKind().isClass() || element.getKind().isInterface())) {
-            return Optional.of(new ClassDiagram(config, docEnv, (TypeElement) element));
+            return Optional.of(new ClassDiagram(factory, (TypeElement) element));
         }
         return Optional.empty();
     }
