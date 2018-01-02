@@ -17,8 +17,8 @@ package nl.talsmasoftware.umldoclet.model;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.rendering.Renderer;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingChildRenderer;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingRenderer;
 import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlImageWriter;
 
 import java.io.*;
@@ -41,7 +41,7 @@ import static nl.talsmasoftware.umldoclet.logging.Message.INFO_GENERATING_FILE;
  *
  * @author Sjoerd Talsma
  */
-public abstract class UMLDiagram extends UMLRenderer implements IndentingRenderer.WithChildren {
+public abstract class UMLDiagram extends UMLRenderer implements IndentingChildRenderer {
 
     //    protected final Configuration config;
     //    protected final DocletEnvironment env;

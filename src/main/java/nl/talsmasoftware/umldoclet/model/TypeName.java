@@ -40,6 +40,13 @@ public class TypeName implements Renderer, Comparable<TypeName>, Serializable {
     public final String simple, qualified;
     private final TypeName[] generics;
 
+    public enum Display {
+        NONE,
+        SIMPLE,
+        QUALIFIED,
+        QUALIFIED_GENERICS
+    }
+
     public TypeName(String simpleName, String qualifiedName, TypeName... generics) {
         this.simple = simpleName;
         this.qualified = qualifiedName;
@@ -52,25 +59,42 @@ public class TypeName implements Renderer, Comparable<TypeName>, Serializable {
 
     @Override
     public <A extends Appendable> A writeTo(A output) {
-        return writeTo(output, true, false);
+        return writeTo(output, Display.SIMPLE);
     }
 
-    protected <A extends Appendable> A writeTo(A output, boolean qualified, Boolean qualifiedGenerics) {
-        try {
-            output.append(qualified ? this.qualified : simple);
-            if (qualifiedGenerics != null) writeGenericsTo(output, qualifiedGenerics);
-            return output;
+//    protected <A extends Appendable> A writeTo(A output, boolean qualified, Boolean qualifiedGenerics) {
+//        try {
+//            output.append(qualified ? this.qualified : simple);
+//            if (qualifiedGenerics != null) writeGenericsTo(output, qualifiedGenerics);
+//            return output;
+//        } catch (IOException ioe) {
+//            throw new IllegalStateException("I/O error writing type name \"" + qualified + "\" to the output: "
+//                    + ioe.getMessage(), ioe);
+//        }
+//    }
+
+    protected <A extends Appendable> A writeTo(A output, Display typeConfig) {
+        if (!Display.NONE.equals(typeConfig)) try {
+
+            if (Display.QUALIFIED.equals(typeConfig) || Display.QUALIFIED_GENERICS.equals(typeConfig)) {
+                output.append(this.qualified);
+            } else {
+                output.append(this.simple);
+            }
+            writeGenericsTo(output, Display.QUALIFIED.equals(typeConfig) ? Display.SIMPLE : typeConfig);
+
         } catch (IOException ioe) {
             throw new IllegalStateException("I/O error writing type name \"" + qualified + "\" to the output: "
                     + ioe.getMessage(), ioe);
         }
+        return output;
     }
 
-    private <A extends Appendable> A writeGenericsTo(A output, boolean qualified) throws IOException {
+    private <A extends Appendable> A writeGenericsTo(A output, Display typeConfig) throws IOException {
         if (generics.length > 0) {
             String sep = "<";
             for (TypeName generic : generics) {
-                generic.writeTo(output.append(sep), qualified, qualified);
+                generic.writeTo(output.append(sep), typeConfig);
                 sep = ", ";
             }
             output.append('>');
@@ -113,9 +137,9 @@ public class TypeName implements Renderer, Comparable<TypeName>, Serializable {
             return new Array(requireNonNull(delegate, "Component type of array is <null>."));
         }
 
-        protected <A extends Appendable> A writeTo(A output, boolean qualified, Boolean qualifiedGenerics) {
+        protected <A extends Appendable> A writeTo(A output, Display typeConfig) {
             try {
-                delegate.writeTo(output, qualified, qualifiedGenerics);
+                delegate.writeTo(output, typeConfig);
                 output.append("[]");
             } catch (IOException ioe) {
                 throw new IllegalStateException("I/O error writing array type \"" + qualified + "\": " + ioe.getMessage(), ioe);

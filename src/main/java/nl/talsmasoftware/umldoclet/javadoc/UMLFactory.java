@@ -19,15 +19,19 @@ import jdk.javadoc.doclet.DocletEnvironment;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.model.*;
 import nl.talsmasoftware.umldoclet.rendering.Renderer;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingRenderer;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingChildRenderer;
 
 import javax.lang.model.element.*;
+import javax.lang.model.type.TypeKind;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 import static javax.lang.model.element.ElementKind.ENUM;
+import static nl.talsmasoftware.umldoclet.model.Reference.Side.from;
+import static nl.talsmasoftware.umldoclet.model.Reference.Side.to;
 
 /**
  * @author Sjoerd Talsma
@@ -99,7 +103,7 @@ public class UMLFactory {
         return createType(packageOf(typeElement), typeElement);
     }
 
-    private static boolean addChild(IndentingRenderer.WithChildren parent, Renderer child) {
+    private static boolean addChild(IndentingChildRenderer parent, Renderer child) {
         Collection<Renderer> children = (Collection<Renderer>) parent.getChildren();
         return children.add(child);
     }
@@ -136,33 +140,45 @@ public class UMLFactory {
                 .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
                 .forEach(elem -> addChild(type, createMethod(type, elem)));
 
-//        if (!TypeKind.NONE.equals(typeElement.getSuperclass().getKind())) {
-//            type.references.add(new Reference(
-//                    from(type.name.qualified), "--|>", to(TypeNameVisitor.INSTANCE.visit(typeElement.getSuperclass()).qualified)));
-//        }
-//        typeElement.getInterfaces().stream()
-//                .map(TypeNameVisitor.INSTANCE::visit)
-//                .forEach(ifName -> type.references.add(new Reference(from(type.name.qualified), "..|>", to(ifName.qualified))));
-
         return type;
+    }
+
+    private Collection<Reference> findReferences(TypeElement typeElement, Type type) {
+        Collection<Reference> references = new ArrayList<>();
+
+        // Superclass reference.
+        if (!TypeKind.NONE.equals(typeElement.getSuperclass().getKind())) references.add(new Reference(
+                from(type.name.qualified), "--|>",
+                to(TypeNameVisitor.INSTANCE.visit(typeElement.getSuperclass()).qualified)
+        ));
+
+        // Implemented interfaces.
+        typeElement.getInterfaces().stream()
+                .map(TypeNameVisitor.INSTANCE::visit)
+                .forEach(ifName -> references.add(new Reference(
+                        from(type.name.qualified), "..|>",
+                        to(ifName.qualified))));
+
+        return references;
     }
 
     Namespace createPackage(PackageElement packageElement) {
         Namespace pkg = new Namespace(config, packageElement.getQualifiedName().toString());
 
+        List<Reference> references = new ArrayList<>();
+
         // Add all types contained in this package.
         packageElement.getEnclosedElements().stream()
                 .filter(TypeElement.class::isInstance).map(TypeElement.class::cast)
-                .map(type -> createType(pkg, type))
+                .map(typeElement -> {
+                    Type type = createType(pkg, typeElement);
+                    references.addAll(findReferences(typeElement, type));
+                    return type;
+                })
                 .forEach(type -> addChild(pkg, type));
 
-        // Or find references within the factory.
-        pkg.getChildren().stream()
-                .filter(Type.class::isInstance).map(Type.class::cast)
-                .flatMap(type -> type.getChildren().stream()
-                        .filter(Reference.class::isInstance).map(Reference.class::cast)
-                        .map(Reference::canonical))
-                .forEach(ref -> addChild(pkg, ref));
+        // Add all encountered references.
+        references.forEach(ref -> addChild(pkg, ref.canonical()));
 
         return pkg;
     }

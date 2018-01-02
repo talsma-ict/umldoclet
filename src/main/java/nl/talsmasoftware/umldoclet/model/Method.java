@@ -15,6 +15,8 @@
  */
 package nl.talsmasoftware.umldoclet.model;
 
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+
 /**
  * @author Sjoerd Talsma
  */
@@ -25,4 +27,12 @@ public class Method extends TypeMember {
         super(containingType, visibility, isAbstract, isStatic, name, parameters, returnType);
     }
 
+    @Override
+    protected <IPW extends IndentingPrintWriter> IPW writeTypeTo(IPW output) {
+        TypeName.Display returnTypeCfg = config.getMethodConfig().returnType();
+        if (type != null && !TypeName.Display.NONE.equals(returnTypeCfg)) {
+            type.writeTo(output.append(": "), returnTypeCfg);
+        }
+        return output;
+    }
 }

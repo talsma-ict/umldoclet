@@ -16,8 +16,8 @@
 package nl.talsmasoftware.umldoclet.model;
 
 import nl.talsmasoftware.umldoclet.rendering.Renderer;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingChildRenderer;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingRenderer;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -25,16 +25,16 @@ import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 
-public class Type extends UMLRenderer implements IndentingRenderer.WithChildren, Comparable<Type> {
+public class Type extends UMLRenderer implements IndentingChildRenderer, Comparable<Type> {
 
     public final Namespace containingPackage;
     public final TypeClassification classfication;
     public final TypeName name;
     protected final Set<Renderer> children = new LinkedHashSet<>();
 
-    public Type(Namespace containingPackage, TypeClassification classification, TypeName name) {
-        super(requireNonNull(containingPackage, "Containing package is <null>.").config);
-        this.containingPackage = containingPackage;
+    public Type(Namespace namespace, TypeClassification classification, TypeName name) {
+        super(requireNonNull(namespace, "Containing package is <null>.").config);
+        this.containingPackage = namespace;
         this.classfication = requireNonNull(classification, "Type classification is <null>.");
         this.name = requireNonNull(name, "Type name is <null>.");
     }
@@ -45,11 +45,12 @@ public class Type extends UMLRenderer implements IndentingRenderer.WithChildren,
     }
 
     @Override
-    public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
+    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         classfication.writeTo(output).whitespace();
         name.writeTo(output).whitespace();
         if (!children.isEmpty()) writeChildrenTo(output.append('{').newline()).append('}');
-        return output.newline();
+        output.newline();
+        return output;
     }
 
     @Override
@@ -57,6 +58,7 @@ public class Type extends UMLRenderer implements IndentingRenderer.WithChildren,
         return name.hashCode();
     }
 
+    @Override
     public int compareTo(Type other) {
         return name.compareTo(requireNonNull(other, "Cannot compare Type to <null>.").name);
     }

@@ -48,13 +48,18 @@ public abstract class TypeMember extends UMLRenderer implements Comparable<TypeM
         this.type = type;
     }
 
+    protected <IPW extends IndentingPrintWriter> IPW writeTypeTo(IPW output) {
+        if (type != null) type.writeTo(output.append(": "));
+        return output;
+    }
+
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         if (isAbstract) output.append("{abstract}").whitespace();
         if (isStatic) output.append("{static}").whitespace();
         visibility.writeTo(output).append(name);
         if (parameters != null) parameters.writeTo(output);
-        if (type != null) type.writeTo(output.append(": ").whitespace());
+        writeTypeTo(output);
         output.newline();
         return output;
     }

@@ -13,16 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.model;
+package nl.talsmasoftware.umldoclet.configuration;
+
+import nl.talsmasoftware.umldoclet.model.TypeName;
 
 /**
- * Model object for a Field in an UML class.
+ * The configuration settings that determine how methods must be rendered.
  *
  * @author Sjoerd Talsma
  */
-public class Field extends TypeMember {
-
-    public Field(Type containingType, Visibility visibility, boolean isStatic, String name, TypeName type) {
-        super(containingType, visibility, false, isStatic, name, null, type);
+public interface MethodConfig {
+    enum ParamNames {
+        NONE, BEFORE_TYPE, AFTER_TYPE
     }
+
+    ParamNames paramNames();
+
+    TypeName.Display paramTypes();
+
+    TypeName.Display returnType();
 }

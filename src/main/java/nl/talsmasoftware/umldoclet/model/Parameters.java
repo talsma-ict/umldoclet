@@ -16,6 +16,7 @@
 package nl.talsmasoftware.umldoclet.model;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.configuration.MethodConfig;
 import nl.talsmasoftware.umldoclet.rendering.Renderer;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
@@ -63,8 +64,19 @@ public class Parameters extends UMLRenderer {
         @Override
         public <A extends Appendable> A writeTo(A output) {
             try {
-                output.append(name).append(": ");
-                type.writeTo(output, false, false);
+                String sep = "";
+                MethodConfig methodConfig = config.getMethodConfig();
+                if (name != null && MethodConfig.ParamNames.BEFORE_TYPE.equals(methodConfig.paramNames())) {
+                    output.append(name);
+                    sep = ": ";
+                }
+                if (type != null && !TypeName.Display.NONE.equals(methodConfig.paramTypes())) {
+                    type.writeTo(output.append(sep), methodConfig.paramTypes());
+                    sep = ": ";
+                }
+                if (name != null && MethodConfig.ParamNames.AFTER_TYPE.equals(methodConfig.paramNames())) {
+                    output.append(sep).append(name);
+                }
                 return output;
             } catch (IOException ioe) {
                 throw new IllegalStateException("I/O exeption writing parameter \"" + name + "\": " + ioe.getMessage(), ioe);

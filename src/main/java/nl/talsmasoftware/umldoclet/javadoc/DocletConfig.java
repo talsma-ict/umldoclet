@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@ import jdk.javadoc.doclet.Doclet;
 import jdk.javadoc.doclet.Reporter;
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.configuration.MethodConfig;
 import nl.talsmasoftware.umldoclet.logging.Logger;
+import nl.talsmasoftware.umldoclet.model.TypeName;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 
 import java.util.Locale;
@@ -54,6 +56,8 @@ public class DocletConfig implements Configuration {
      */
     boolean verbose = false;
 
+    MethodCfg methodConfig = new MethodCfg();
+
     // TODO decide whether we want to make this configurable at all.
     private Indentation indentation = Indentation.DEFAULT;
 
@@ -83,4 +87,29 @@ public class DocletConfig implements Configuration {
         return destDirName;
     }
 
+    @Override
+    public MethodConfig getMethodConfig() {
+        return methodConfig;
+    }
+
+    class MethodCfg implements MethodConfig {
+        ParamNames paramNames = ParamNames.BEFORE_TYPE;
+        TypeName.Display paramTypes = TypeName.Display.SIMPLE;
+        TypeName.Display returnType = TypeName.Display.SIMPLE;
+
+        @Override
+        public ParamNames paramNames() {
+            return paramNames;
+        }
+
+        @Override
+        public TypeName.Display paramTypes() {
+            return paramTypes;
+        }
+
+        @Override
+        public TypeName.Display returnType() {
+            return returnType;
+        }
+    }
 }

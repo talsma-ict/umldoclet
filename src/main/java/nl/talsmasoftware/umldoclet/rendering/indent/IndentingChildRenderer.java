@@ -17,32 +17,29 @@ package nl.talsmasoftware.umldoclet.rendering.indent;
 
 import nl.talsmasoftware.umldoclet.rendering.Renderer;
 
+import java.util.Collection;
+
 /**
- * Rendere interface that can make use of an {@link IndentingPrintWriter}
- * by virtue of default wrapping behaviour.
+ * Interface for an IndentingRenderer where children are rendered with increased indentation.
  *
  * @author Sjoerd Talsma
  */
-public interface IndentingRenderer extends Renderer {
+public interface IndentingChildRenderer extends IndentingRenderer {
+    Collection<? extends Renderer> getChildren();
 
     /**
-     * Renders this object to the given indenting {@code output}.
+     * Helper method to write all children to the specified output.
+     * <p>
+     * By default children will be {@link #writeTo(IndentingPrintWriter) written}
+     * with increased indentation for legibility.
      *
      * @param <IPW>  The subclass of indenting print writer being written to.
-     * @param output The output to render this object to.
+     * @param output The output to write the children to.
      * @return A reference to the output for method chaining purposes.
      */
-    <IPW extends IndentingPrintWriter> IPW writeTo(IPW output);
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    default <A extends Appendable> A writeTo(A output) {
-        writeTo(output instanceof IndentingPrintWriter
-                ? (IndentingPrintWriter) output
-                : IndentingPrintWriter.wrap(output, null));
+    default <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
+        final IndentingPrintWriter indented = output.indent();
+        getChildren().forEach(child -> child.writeTo(indented));
         return output;
     }
-
 }
