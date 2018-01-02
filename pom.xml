@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright 2016-2017 Talsma ICT
+    Copyright 2016-2018 Talsma ICT
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -90,7 +90,7 @@
         <maven-failsafe-plugin.version>2.20.1</maven-failsafe-plugin.version>
         <maven-shade-plugin.version>3.1.0</maven-shade-plugin.version>
         <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
-        <maven-javadoc-plugin.version>3.0.0-M1</maven-javadoc-plugin.version>
+        <maven-javadoc-plugin.version>3.0.0</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <maven-scm-plugin.version>1.9.5</maven-scm-plugin.version>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
