@@ -27,12 +27,12 @@ import static java.util.Objects.requireNonNull;
 
 public class Type extends UMLRenderer implements IndentingRenderer.WithChildren, Comparable<Type> {
 
-    public final Package containingPackage;
+    public final Namespace containingPackage;
     public final TypeClassification classfication;
     public final TypeName name;
     protected final Set<Renderer> children = new LinkedHashSet<>();
 
-    public Type(Package containingPackage, TypeClassification classification, TypeName name) {
+    public Type(Namespace containingPackage, TypeClassification classification, TypeName name) {
         super(requireNonNull(containingPackage, "Containing package is <null>.").config);
         this.containingPackage = containingPackage;
         this.classfication = requireNonNull(classification, "Type classification is <null>.");

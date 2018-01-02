@@ -29,12 +29,12 @@ import static java.util.Objects.requireNonNull;
 /**
  * @author Sjoerd Talsma
  */
-public class Package extends UMLRenderer implements IndentingRenderer.WithChildren {
+public class Namespace extends UMLRenderer implements IndentingRenderer.WithChildren {
 
     public final String name;
     private final Set<Renderer> children = new LinkedHashSet<>();
 
-    public Package(Configuration config, String name) {
+    public Namespace(Configuration config, String name) {
         super(config);
         this.name = requireNonNull(name, "Package name is <null>.").trim();
         if (this.name.isEmpty()) throw new IllegalArgumentException("Package name is empty.");

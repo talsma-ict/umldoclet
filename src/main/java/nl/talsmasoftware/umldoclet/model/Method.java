@@ -15,44 +15,14 @@
  */
 package nl.talsmasoftware.umldoclet.model;
 
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
-
-import static java.util.Objects.requireNonNull;
-
 /**
  * @author Sjoerd Talsma
  */
-public class Method extends UMLRenderer {
-
-    private final Type containingType;
-    private final Visibility visibility;
-    private final boolean isAbstract, isStatic;
-    private final String name;
-    private final Parameters parameters;
-    private final TypeName returnType;
+public class Method extends TypeMember {
 
     public Method(Type containingType, Visibility visibility, boolean isAbstract, boolean isStatic,
                   String name, Parameters parameters, TypeName returnType) {
-        super(requireNonNull(containingType, "Containing type is <null>.").config);
-        this.containingType = containingType;
-        this.visibility = requireNonNull(visibility, "Method visibility is <null>.");
-        this.isAbstract = isAbstract;
-        this.isStatic = isStatic;
-        this.name = requireNonNull(name, "Method name is <null>.").trim();
-        if (this.name.isEmpty()) throw new IllegalArgumentException("Method name is empty.");
-        this.parameters = requireNonNull(parameters, "Method parameters are <null>.");
-        this.returnType = returnType;
-    }
-
-    @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-        if (isAbstract) output.append("{abstract}").whitespace();
-        if (isStatic) output.append("{static}").whitespace();
-        visibility.writeTo(output).append(name);
-        parameters.writeTo(output);
-        if (returnType != null) returnType.writeTo(output.append(": ").whitespace());
-        output.newline();
-        return output;
+        super(containingType, visibility, isAbstract, isStatic, name, parameters, returnType);
     }
 
 }

@@ -18,7 +18,6 @@ package nl.talsmasoftware.umldoclet.javadoc;
 import jdk.javadoc.doclet.DocletEnvironment;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.model.*;
-import nl.talsmasoftware.umldoclet.model.Package;
 import nl.talsmasoftware.umldoclet.rendering.Renderer;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingRenderer;
 
@@ -43,8 +42,8 @@ public class UMLFactory {
         this.env = requireNonNull(env, "Doclet environment is <null>.");
     }
 
-    Package packageOf(TypeElement typeElement) {
-        return new Package(config, env.getElementUtils().getPackageOf(typeElement).getQualifiedName().toString());
+    Namespace packageOf(TypeElement typeElement) {
+        return new Namespace(config, env.getElementUtils().getPackageOf(typeElement).getQualifiedName().toString());
     }
 
     Field createField(Type containingType, VariableElement variable) {
@@ -61,6 +60,19 @@ public class UMLFactory {
         Parameters result = new Parameters(config);
         params.forEach(param -> result.add(param.getSimpleName().toString(), TypeNameVisitor.INSTANCE.visit(param.asType())));
         return result;
+    }
+
+    Method createConstructor(Type containingType, ExecutableElement executableElement) {
+        Set<Modifier> modifiers = requireNonNull(executableElement, "Executable element is <null>.").getModifiers();
+        return new Method(
+                containingType,
+                visibilityOf(modifiers),
+                modifiers.contains(Modifier.ABSTRACT),
+                modifiers.contains(Modifier.STATIC),
+                containingType.name.simple,
+                toParameters(executableElement.getParameters()),
+                null
+        );
     }
 
     Method createMethod(Type containingType, ExecutableElement executableElement) {
@@ -92,7 +104,7 @@ public class UMLFactory {
         return children.add(child);
     }
 
-    Type createType(Package containingPackage, TypeElement typeElement) {
+    Type createType(Namespace containingPackage, TypeElement typeElement) {
         ElementKind kind = requireNonNull(typeElement, "Type element is <null>.").getKind();
         Set<Modifier> modifiers = typeElement.getModifiers();
         TypeClassification classification = ENUM.equals(kind) ? TypeClassification.ENUM
@@ -118,7 +130,7 @@ public class UMLFactory {
         typeElement.getEnclosedElements().stream() // Add constructors
                 .filter(elem -> ElementKind.CONSTRUCTOR.equals(elem.getKind()))
                 .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
-                .forEach(elem -> addChild(type, createMethod(type, elem)));
+                .forEach(elem -> addChild(type, createConstructor(type, elem)));
         typeElement.getEnclosedElements().stream() // Add methods
                 .filter(elem -> ElementKind.METHOD.equals(elem.getKind()))
                 .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
@@ -135,8 +147,8 @@ public class UMLFactory {
         return type;
     }
 
-    Package createPackage(PackageElement packageElement) {
-        Package pkg = new Package(config, packageElement.getQualifiedName().toString());
+    Namespace createPackage(PackageElement packageElement) {
+        Namespace pkg = new Namespace(config, packageElement.getQualifiedName().toString());
 
         // Add all types contained in this package.
         packageElement.getEnclosedElements().stream()

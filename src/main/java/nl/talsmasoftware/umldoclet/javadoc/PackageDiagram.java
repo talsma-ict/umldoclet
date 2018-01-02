@@ -15,7 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.javadoc;
 
-import nl.talsmasoftware.umldoclet.model.Package;
+import nl.talsmasoftware.umldoclet.model.Namespace;
 import nl.talsmasoftware.umldoclet.model.UMLDiagram;
 
 import javax.lang.model.element.PackageElement;
@@ -28,7 +28,7 @@ import java.io.File;
  */
 public class PackageDiagram extends UMLDiagram {
 
-    protected final Package pkg;
+    protected final Namespace pkg;
     private File pumlFile = null;
 
     public PackageDiagram(UMLFactory factory, PackageElement packageElement) {
