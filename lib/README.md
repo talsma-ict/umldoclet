@@ -37,8 +37,8 @@ Fortunately for us, the author of plantuml, Arnoud Roques also publishes
 an [apache licensed version](http://plantuml.com/download#asl) of 
 plantuml [here][plantuml-asl-location].
 Just not on maven-central. Therefore the dependency has to be obtained from
-sourceforce, preferably still in cooperation with the rest of the maven build.
-Downloading as part of the build is unfeasible as sourceforce doesn't 
+sourceforge, preferably still in cooperation with the rest of the maven build.
+Downloading as part of the build is unfeasible as sourceforge doesn't 
 seem to like that very much. Fortunately, maven still allows us to just 
 add a dependency directly into the project.
 
@@ -73,4 +73,3 @@ mvn install:install-file \
 
 
   [plantuml-asl-location]: https://sourceforge.net/projects/plantuml/files/
-    
