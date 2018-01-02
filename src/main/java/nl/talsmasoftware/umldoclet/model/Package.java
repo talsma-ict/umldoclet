@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,45 +15,56 @@
  */
 package nl.talsmasoftware.umldoclet.model;
 
+import nl.talsmasoftware.umldoclet.rendering.Renderer;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
-import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toSet;
+import static nl.talsmasoftware.umldoclet.model.Type.createType;
 
 /**
  * @author Sjoerd Talsma
  */
 public class Package extends UMLRenderer {
 
-    protected final PackageElement packageElement;
-    private final Collection<Reference> references;
+    protected final String name;
+    protected final Set<Renderer> children = new LinkedHashSet<>();
+    private final Set<Reference> references = new LinkedHashSet<>();
 
-    Package(UMLDiagram diagram, PackageElement packageElement) {
-        super(diagram);
-        this.packageElement = requireNonNull(packageElement, "Package element is <null>.");
+    static Package createPackage(UMLDiagram diagram, PackageElement packageElement) {
+        Package pkg = new Package(diagram, packageElement.getQualifiedName().toString());
 
         // Add all types contained in this package.
         packageElement.getEnclosedElements().stream()
                 .filter(TypeElement.class::isInstance).map(TypeElement.class::cast)
-                .map(type -> new Type(diagram, type))
-                .forEach(children::add);
+                .map(type -> createType(pkg, type))
+                .forEach(pkg.children::add);
 
-        this.references = children.stream()
+        pkg.children.stream()
                 .filter(Type.class::isInstance).map(Type.class::cast)
                 .flatMap(type -> type.references.stream().map(Reference::canonical))
-                .collect(toSet());
+                .forEach(pkg.references::add);
+
+        return pkg;
+    }
+
+    Package(UMLDiagram diagram, String name) {
+        super(diagram);
+        this.name = requireNonNull(name, "Package name is <null>.").trim();
+        if (this.name.isEmpty()) throw new IllegalArgumentException("Package name is empty.");
     }
 
     @Override
     public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
-        output.append("namespace").whitespace().append(packageElement.getQualifiedName()).whitespace().append("{").newline();
-        writeChildrenTo(output).newline();
-        references.stream().map(Object::toString).forEach(ref -> output.indent().append(ref).newline());
-        return output.newline().append("}").newline();
+        IndentingPrintWriter indented = output.append("namespace").whitespace().append(name).whitespace()
+                .append('{').newline().indent();
+        children.forEach(child -> child.writeTo(indented).newline());
+        references.stream().map(Object::toString).forEach(ref -> indented.append(ref).newline());
+        return indented.newline().unindent().append('}').newline();
     }
 
 }

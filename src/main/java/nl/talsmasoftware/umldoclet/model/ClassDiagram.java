@@ -21,7 +21,11 @@ import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import javax.lang.model.element.TypeElement;
 import java.io.File;
 
+import static nl.talsmasoftware.umldoclet.model.Type.createType;
+
 /**
+ * TODO move to javadoc package.
+ *
  * @author Sjoerd Talsma
  */
 public class ClassDiagram extends UMLDiagram {
@@ -30,9 +34,11 @@ public class ClassDiagram extends UMLDiagram {
     private File pumlFile = null;
 
     public ClassDiagram(Configuration config, DocletEnvironment env, TypeElement classElement) {
-        super(config, env);
-        this.type = new Type(this, classElement);
-        super.children.add(type);
+        super(config);
+        this.type = createType(
+                new Package(this, env.getElementUtils().getPackageOf(classElement).getQualifiedName().toString()),
+                classElement);
+        children.add(this.type);
     }
 
     @Override
@@ -40,7 +46,7 @@ public class ClassDiagram extends UMLDiagram {
         if (pumlFile == null) {
             StringBuilder result = new StringBuilder(config.getDestinationDirectory());
             if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');
-            result.append(type.containingPackage().getQualifiedName().toString().replace('.', '/'));
+            result.append(type.containingPackage.name.replace('.', '/'));
             result.append('/').append(type.name.simple).append(".puml");
             pumlFile = ensureParentDir(new File(result.toString()));
         }

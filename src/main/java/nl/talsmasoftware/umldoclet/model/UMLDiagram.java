@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,15 @@
  */
 package nl.talsmasoftware.umldoclet.model;
 
-import jdk.javadoc.doclet.DocletEnvironment;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.rendering.Renderer;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingRenderer;
 import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlImageWriter;
 
 import java.io.*;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 import static nl.talsmasoftware.umldoclet.logging.Message.ERROR_COULDNT_RENDER_UML;
@@ -39,15 +42,15 @@ import static nl.talsmasoftware.umldoclet.logging.Message.INFO_GENERATING_FILE;
  *
  * @author Sjoerd Talsma
  */
-public abstract class UMLDiagram extends UMLRenderer {
+public abstract class UMLDiagram extends UMLRenderer implements IndentingRenderer.WithChildren {
 
     protected final Configuration config;
-    protected final DocletEnvironment env;
+    //    protected final DocletEnvironment env;
+    protected final Set<Renderer> children = new LinkedHashSet<>();
 
-    public UMLDiagram(Configuration config, DocletEnvironment env) {
+    protected UMLDiagram(Configuration config) {
         super(null);
         this.config = requireNonNull(config, "No UML Doclet configuration provided.");
-        this.env = requireNonNull(env, "Doclet environment is <null>.");
     }
 
     /**
@@ -58,10 +61,16 @@ public abstract class UMLDiagram extends UMLRenderer {
     protected abstract File pumlFile();
 
     @Override
-    public IndentingPrintWriter writeTo(IndentingPrintWriter out) {
-        out.append("@startuml").newline().newline();
-        writeChildrenTo(out);
-        return out.append("@enduml").newline();
+    public Set<Renderer> getChildren() {
+        return children;
+    }
+
+    @Override
+    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+        output.append("@startuml").newline().newline();
+        writeChildrenTo(output);
+        output.newline().append("@enduml").newline();
+        return output;
     }
 
     /**

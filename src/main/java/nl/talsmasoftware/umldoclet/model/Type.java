@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.model;
 
+import nl.talsmasoftware.umldoclet.rendering.Renderer;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import javax.lang.model.element.*;
@@ -31,93 +32,75 @@ import static nl.talsmasoftware.umldoclet.model.Reference.Side.to;
 
 public class Type extends UMLRenderer implements Comparable<Type> {
 
+    public final Package containingPackage;
+    public final TypeClassification classfication;
     public final TypeName name;
-    protected final TypeElement tp;
-    protected final Set<Modifier> modifiers;
+    protected final Set<Renderer> children = new LinkedHashSet<>();
     protected final Set<Reference> references = new LinkedHashSet<>();
 
-    protected Type(UMLDiagram diagram, TypeElement typeElement) {
-        super(diagram);
-        this.tp = requireNonNull(typeElement, "Type element is <null>.");
-        this.modifiers = typeElement.getModifiers();
-        this.name = TypeNameVisitor.INSTANCE.visit(typeElement.asType());
+    static Type createType(Package containingPackage, TypeElement typeElement) {
+        ElementKind kind = requireNonNull(typeElement, "Type element is <null>.").getKind();
+        Set<Modifier> modifiers = typeElement.getModifiers();
+        TypeClassification classification = ENUM.equals(kind) ? TypeClassification.ENUM
+                : ElementKind.INTERFACE.equals(kind) ? TypeClassification.INTERFACE
+                : ElementKind.ANNOTATION_TYPE.equals(kind) ? TypeClassification.ANNOTATION
+                : modifiers.contains(Modifier.ABSTRACT) ? TypeClassification.ABSTRACT_CLASS
+                : TypeClassification.CLASS;
+
+        Type type = new Type(containingPackage,
+                classification,
+                TypeNameVisitor.INSTANCE.visit(typeElement.asType())
+        );
 
         // Add the various parts of the class UML, order matters here, obviously!
-
-        if (ENUM.equals(tp.getKind())) tp.getEnclosedElements().stream() // Add enum constants
+        if (TypeClassification.ENUM.equals(classification)) typeElement.getEnclosedElements().stream() // Enum const
                 .filter(elem -> ElementKind.ENUM_CONSTANT.equals(elem.getKind()))
                 .filter(VariableElement.class::isInstance).map(VariableElement.class::cast)
-                .forEach(elem -> children.add(createField(this, elem)));
-
-        tp.getEnclosedElements().stream() // Add fields
+                .forEach(elem -> type.children.add(createField(type, elem)));
+        typeElement.getEnclosedElements().stream() // Add fields
                 .filter(elem -> ElementKind.FIELD.equals(elem.getKind()))
                 .filter(VariableElement.class::isInstance).map(VariableElement.class::cast)
-                .forEach(elem -> children.add(createField(this, elem)));
-
-        tp.getEnclosedElements().stream() // Add constructors
+                .forEach(elem -> type.children.add(createField(type, elem)));
+        typeElement.getEnclosedElements().stream() // Add constructors
                 .filter(elem -> ElementKind.CONSTRUCTOR.equals(elem.getKind()))
                 .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
-                .forEach(elem -> children.add(createMethod(this, elem)));
-
-        tp.getEnclosedElements().stream() // Add methods
+                .forEach(elem -> type.children.add(createMethod(type, elem)));
+        typeElement.getEnclosedElements().stream() // Add methods
                 .filter(elem -> ElementKind.METHOD.equals(elem.getKind()))
                 .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
-                .forEach(elem -> children.add(createMethod(this, elem)));
-
-        if (!TypeKind.NONE.equals(tp.getSuperclass().getKind())) {
-            references.add(new Reference(
-                    from(name.qualified), "--|>", to(TypeNameVisitor.INSTANCE.visit(tp.getSuperclass()).qualified)));
+                .forEach(elem -> type.children.add(createMethod(type, elem)));
+        if (!TypeKind.NONE.equals(typeElement.getSuperclass().getKind())) {
+            type.references.add(new Reference(
+                    from(type.name.qualified), "--|>", to(TypeNameVisitor.INSTANCE.visit(typeElement.getSuperclass()).qualified)));
         }
-        tp.getInterfaces().stream().map(TypeNameVisitor.INSTANCE::visit)
-                .forEach(ifName -> references.add(new Reference(from(name.qualified), "..|>", to(ifName.qualified))));
+        typeElement.getInterfaces().stream()
+                .map(TypeNameVisitor.INSTANCE::visit)
+                .forEach(ifName -> type.references.add(new Reference(from(type.name.qualified), "..|>", to(ifName.qualified))));
+
+        return type;
     }
 
-    protected PackageElement containingPackage() {
-        return diagram.env.getElementUtils().getPackageOf(tp);
+    protected Type(Package containingPackage, TypeClassification classification, TypeName name) {
+        super(requireNonNull(containingPackage, "Containing package is <null>.").diagram);
+        this.containingPackage = containingPackage;
+        this.classfication = requireNonNull(classification, "Type classification is <null>.");
+        this.name = requireNonNull(name, "Type name is <null>.");
     }
 
-//    protected String getSimpleName() {
-//        StringBuilder sb = new StringBuilder(tp.getSimpleName());
-//        for (Element enclosed = tp.getEnclosingElement();
-//             enclosed != null && (enclosed.getKind().isClass() || enclosed.getKind().isInterface());
-//             enclosed = enclosed.getEnclosingElement()) {
-//            sb.insert(0, enclosed.getSimpleName() + ".");
-//        }
-//        return sb.toString();
-//    }
-
-//    protected String getQualifiedName() {
-//        return tp.getQualifiedName().toString();
+//    protected PackageElement containingPackage() {
+//        return diagram.env.getElementUtils().getPackageOf(tp);
 //    }
 
     @Override
     public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
-        output.append(umlClassificationOf(tp)).whitespace();
+        classfication.writeTo(output).whitespace();
         name.writeTo(output).whitespace();
-        if (!children.isEmpty()) writeChildrenTo(output.append('{').newline()).append('}');
-        return output.newline().newline();
-    }
-
-    /**
-     * The 'UML' classification of the type.
-     * <p>
-     * Currently, this can return one of the following:
-     * {@code "enum"},
-     * {@code "interface"},
-     * {@code "annotation"},
-     * {@code "abstract class"}
-     * or otherwise {@code "class"}.
-     *
-     * @param typeElement The type element to return the uml type for.
-     * @return The UML type for the class to be rendered.
-     */
-    protected static String umlClassificationOf(TypeElement typeElement) {
-        ElementKind kind = requireNonNull(typeElement, "Type element is <null>.").getKind();
-        return ENUM.equals(kind) ? "enum"
-                : ElementKind.INTERFACE.equals(kind) ? "interface"
-                : ElementKind.ANNOTATION_TYPE.equals(kind) ? "annotation"
-                : typeElement.getModifiers().contains(Modifier.ABSTRACT) ? "abstract class"
-                : "class";
+        if (!children.isEmpty()) {
+            IndentingPrintWriter indented = output.append('{').newline().indent();
+            children.forEach(child -> child.writeTo(indented));
+            indented.unindent().append('}');
+        }
+        return output.newline();
     }
 
     @Override

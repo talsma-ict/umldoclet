@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,17 +22,19 @@ import javax.lang.model.element.PackageElement;
 import java.io.File;
 
 /**
+ * TODO move to javadoc package
+ *
  * @author Sjoerd Talsma
  */
 public class PackageDiagram extends UMLDiagram {
 
-    protected final PackageElement packageElement;
+    protected final Package pkg;
     private File pumlFile = null;
 
     public PackageDiagram(Configuration config, DocletEnvironment env, PackageElement packageElement) {
-        super(config, env);
-        this.packageElement = packageElement;
-        this.children.add(new Package(this, packageElement));
+        super(config);
+        this.pkg = Package.createPackage(this, packageElement);
+        this.children.add(this.pkg);
     }
 
     @Override
@@ -40,7 +42,7 @@ public class PackageDiagram extends UMLDiagram {
         if (pumlFile == null) {
             StringBuilder result = new StringBuilder(config.getDestinationDirectory());
             if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');
-            result.append(packageElement.getQualifiedName().toString().replace('.', '/'));
+            result.append(pkg.name.replace('.', '/'));
             result.append("/package.puml");
             pumlFile = ensureParentDir(new File(result.toString()));
         }
