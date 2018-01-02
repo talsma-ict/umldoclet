@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ public class ClassDiagram extends UMLDiagram {
             StringBuilder result = new StringBuilder(config.getDestinationDirectory());
             if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');
             result.append(type.containingPackage().getQualifiedName().toString().replace('.', '/'));
-            result.append('/').append(type.getSimpleName()).append(".puml");
+            result.append('/').append(type.name.simple).append(".puml");
             pumlFile = ensureParentDir(new File(result.toString()));
         }
         return pumlFile;

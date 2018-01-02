@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,40 +29,47 @@ import static nl.talsmasoftware.umldoclet.model.Field.visibilityOf;
  */
 public class Method extends UMLRenderer {
 
-//    protected final ExecutableElement method;
-//    protected final Set<Modifier> modifiers;
-//    private final TypeVisitor<String, ?> parameterType, returnType;
-//    private final boolean showParameterType, showParameterName, parameterTypeBeforeName;
-
-    private final TypeName enclosingType;
+    private final Type containingType;
     private final Visibility visibility;
     private final boolean isAbstract, isStatic;
     private final String name;
-    private final TypeName type;
+    private final TypeName returnType;
 
-    protected Method(Type type, ExecutableElement executableElement) {
-        super(type.diagram);
-//        this.method = requireNonNull(executableElement, "Method executable element is <null>.");
-//        this.modifiers = executableElement.getModifiers();
-//        // The following booleans should be obtained from the configuration:
-//        this.parameterType = new TypeNameVisitor(true, true);
-//        this.returnType = new TypeNameVisitor(true, true);
-//        this.showParameterType = true;
-//        this.showParameterName = true;
-//        this.parameterTypeBeforeName = true;
+    static Method createMethod(Type containingType, ExecutableElement executableElement) {
+        Set<Modifier> modifiers = requireNonNull(executableElement, "Executable element is <null>.").getModifiers();
+        return new Method(
+                containingType,
+                visibilityOf(modifiers),
+                modifiers.contains(Modifier.ABSTRACT),
+                modifiers.contains(Modifier.STATIC),
+                executableElement.getSimpleName().toString(),
+                TypeNameVisitor.INSTANCE.visit(executableElement.asType())
+        );
+    }
 
-        // TODO javadoc aware code.
-        requireNonNull(executableElement, "Executable element is <null>.");
-        this.name = requireNonNull(executableElement.getSimpleName().toString(), "Method name is <null>.");
-        this.enclosingType = requireNonNull(TypeNameVisitor.INSTANCE.visit(executableElement.getEnclosingElement().asType()),
-                () -> "Enclosing type of method " + name + " is <null>.");
-        Set<Modifier> modifiers = executableElement.getModifiers();
-        this.visibility = visibilityOf(modifiers);
-        this.isAbstract = modifiers.contains(Modifier.ABSTRACT);
-        this.isStatic = modifiers.contains(Modifier.STATIC);
-//        this.type = requireNonNull(TypeNameVisitor.INSTANCE.visit(executableElement.getReturnType()),
-//                () -> "Return type is <null> for " + enclosingType.qualified + "." + name + ".");
-        this.type = TypeNameVisitor.INSTANCE.visit(executableElement.getReturnType());
+    protected Method(Type containingType, Visibility visibility, boolean isAbstract, boolean isStatic, String name, TypeName returnType) {
+        super(requireNonNull(containingType, "Containing type is <null>.").diagram);
+        this.containingType = containingType;
+        this.visibility = requireNonNull(visibility, "Method visibility is <null>.");
+        this.isAbstract = isAbstract;
+        this.isStatic = isStatic;
+        this.name = requireNonNull(name, "Method name is <null>.").trim();
+        if (this.name.isEmpty()) throw new IllegalArgumentException("Method name is empty.");
+//        this.returnType = requireNonNull(returnType, "Method return type is <null>.");
+        this.returnType = returnType;
+
+//
+//        // TODO javadoc aware code.
+//        this.name = requireNonNull(executableElement.getSimpleName().toString(), "Method name is <null>.");
+//        this.containingType = requireNonNull(TypeNameVisitor.INSTANCE.visit(executableElement.getEnclosingElement().asType()),
+//                () -> "Enclosing type of method " + name + " is <null>.");
+//        Set<Modifier> modifiers = executableElement.getModifiers();
+//        this.visibility = visibilityOf(modifiers);
+//        this.isAbstract = modifiers.contains(Modifier.ABSTRACT);
+//        this.isStatic = modifiers.contains(Modifier.STATIC);
+////        this.type = requireNonNull(TypeNameVisitor.INSTANCE.visit(executableElement.getReturnType()),
+////                () -> "Return type is <null> for " + containingType.qualified + "." + name + ".");
+//        this.type = TypeNameVisitor.INSTANCE.visit(executableElement.getReturnType());
     }
 
     @Override
@@ -70,8 +77,7 @@ public class Method extends UMLRenderer {
         if (isAbstract) output.append("{abstract}").whitespace();
         if (isStatic) output.append("{static}").whitespace();
         visibility.writeTo(output).append(name).append("()"); // TODO render parameters.
-        if (type != null) type.writeTo(output.append(":").whitespace());
-//        type.writeTo(output.append(":").whitespace()).newline();
+        if (returnType != null) returnType.writeTo(output.append(":").whitespace());
         output.newline();
         return output;
     }

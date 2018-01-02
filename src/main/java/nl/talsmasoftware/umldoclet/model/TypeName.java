@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,13 +37,17 @@ import static java.util.Objects.requireNonNull;
  * @author Sjoerd Talsma
  */
 public class TypeName implements Renderer, Comparable<TypeName>, Serializable {
-    final String simple, qualified;
+    public final String simple, qualified;
     private final TypeName[] generics;
 
     public TypeName(String simpleName, String qualifiedName, TypeName... generics) {
         this.simple = simpleName;
         this.qualified = qualifiedName;
         this.generics = generics.clone();
+    }
+
+    public TypeName[] getGenerics() {
+        return generics.clone();
     }
 
     @Override
@@ -114,7 +118,7 @@ public class TypeName implements Renderer, Comparable<TypeName>, Serializable {
                 delegate.writeTo(output, qualified, qualifiedGenerics);
                 output.append("[]");
             } catch (IOException ioe) {
-                throw new IllegalStateException("I/O error writing arry type \"" + this + "\": " + ioe.getMessage(), ioe);
+                throw new IllegalStateException("I/O error writing array type \"" + qualified + "\": " + ioe.getMessage(), ioe);
             }
             return output;
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,33 +26,45 @@ import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 
 /**
+ * Model object for a Field in an UML class.
+ *
  * @author Sjoerd Talsma
  */
 public class Field extends UMLRenderer implements Comparable<Field> {
 
-    private final TypeName enclosingType;
+    private final Type containingType;
     private final Visibility visibility;
     private final boolean isStatic;
     private final String name;
     private final TypeName type;
 
-    protected Field(Type type, VariableElement variableElement) {
-        super(type.diagram);
-        // TODO javadoc aware code.
-        this.enclosingType = TypeNameVisitor.INSTANCE.visit(variableElement.getEnclosingElement().asType());
-        Set<Modifier> modifiers = variableElement.getModifiers();
-        this.visibility = visibilityOf(modifiers);
-        this.isStatic = modifiers.contains(Modifier.STATIC);
-        this.name = variableElement.getSimpleName().toString();
-        this.type = TypeNameVisitor.INSTANCE.visit(variableElement.asType());
+    // TODO move javadoc aware code to javadoc package.
+
+    static Field createField(Type containingType, VariableElement variable) {
+        Set<Modifier> modifiers = requireNonNull(variable, "Variable element is <null>.").getModifiers();
+        return new Field(containingType,
+                visibilityOf(modifiers),
+                modifiers.contains(Modifier.STATIC),
+                variable.getSimpleName().toString(),
+                TypeNameVisitor.INSTANCE.visit(variable.asType())
+        );
     }
 
-    // TODO javadoc aware code.
     static Visibility visibilityOf(Set<Modifier> modifiers) {
         return modifiers.contains(Modifier.PRIVATE) ? Visibility.PRIVATE
                 : modifiers.contains(Modifier.PROTECTED) ? Visibility.PROTECTED
                 : modifiers.contains(Modifier.PUBLIC) ? Visibility.PUBLIC
                 : Visibility.PACKAGE_PRIVATE;
+    }
+
+    protected Field(Type containingType, Visibility visibility, boolean isStatic, String name, TypeName type) {
+        super(requireNonNull(containingType, "Containing type is <null>.").diagram);
+        this.containingType = containingType;
+        this.visibility = requireNonNull(visibility, "Field visibility is <null>.");
+        this.isStatic = isStatic;
+        this.name = requireNonNull(name, "Field name is <null>.").trim();
+        if (this.name.isEmpty()) throw new IllegalArgumentException("Field name is empty.");
+        this.type = requireNonNull(type, "Field type is <null>.");
     }
 
     @Override
@@ -66,7 +78,7 @@ public class Field extends UMLRenderer implements Comparable<Field> {
     @Override
     public int compareTo(Field other) {
         requireNonNull(other, "Cannot compare with field <null>.");
-        return comparing((Field field) -> field.enclosingType)
+        return comparing((Field field) -> field.containingType)
                 .thenComparing(field -> name.toLowerCase())
                 .thenComparing(field -> name)
                 .compare(this, other);
@@ -74,7 +86,7 @@ public class Field extends UMLRenderer implements Comparable<Field> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(enclosingType, name);
+        return Objects.hash(containingType, name);
     }
 
     @Override

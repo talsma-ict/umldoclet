@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,17 +22,18 @@ import javax.lang.model.type.TypeKind;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static java.lang.Integer.signum;
 import static java.util.Objects.requireNonNull;
 import static javax.lang.model.element.ElementKind.ENUM;
+import static nl.talsmasoftware.umldoclet.model.Field.createField;
+import static nl.talsmasoftware.umldoclet.model.Method.createMethod;
 import static nl.talsmasoftware.umldoclet.model.Reference.Side.from;
 import static nl.talsmasoftware.umldoclet.model.Reference.Side.to;
 
 public class Type extends UMLRenderer implements Comparable<Type> {
 
+    public final TypeName name;
     protected final TypeElement tp;
     protected final Set<Modifier> modifiers;
-    private final TypeName name;
     protected final Set<Reference> references = new LinkedHashSet<>();
 
     protected Type(UMLDiagram diagram, TypeElement typeElement) {
@@ -46,22 +47,22 @@ public class Type extends UMLRenderer implements Comparable<Type> {
         if (ENUM.equals(tp.getKind())) tp.getEnclosedElements().stream() // Add enum constants
                 .filter(elem -> ElementKind.ENUM_CONSTANT.equals(elem.getKind()))
                 .filter(VariableElement.class::isInstance).map(VariableElement.class::cast)
-                .forEach(elem -> children.add(new Field(this, elem)));
+                .forEach(elem -> children.add(createField(this, elem)));
 
         tp.getEnclosedElements().stream() // Add fields
                 .filter(elem -> ElementKind.FIELD.equals(elem.getKind()))
                 .filter(VariableElement.class::isInstance).map(VariableElement.class::cast)
-                .forEach(elem -> children.add(new Field(this, elem)));
+                .forEach(elem -> children.add(createField(this, elem)));
 
         tp.getEnclosedElements().stream() // Add constructors
                 .filter(elem -> ElementKind.CONSTRUCTOR.equals(elem.getKind()))
                 .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
-                .forEach(elem -> children.add(new Method(this, elem)));
+                .forEach(elem -> children.add(createMethod(this, elem)));
 
         tp.getEnclosedElements().stream() // Add methods
                 .filter(elem -> ElementKind.METHOD.equals(elem.getKind()))
                 .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
-                .forEach(elem -> children.add(new Method(this, elem)));
+                .forEach(elem -> children.add(createMethod(this, elem)));
 
         if (!TypeKind.NONE.equals(tp.getSuperclass().getKind())) {
             references.add(new Reference(
@@ -75,19 +76,19 @@ public class Type extends UMLRenderer implements Comparable<Type> {
         return diagram.env.getElementUtils().getPackageOf(tp);
     }
 
-    protected String getSimpleName() {
-        StringBuilder sb = new StringBuilder(tp.getSimpleName());
-        for (Element enclosed = tp.getEnclosingElement();
-             enclosed != null && (enclosed.getKind().isClass() || enclosed.getKind().isInterface());
-             enclosed = enclosed.getEnclosingElement()) {
-            sb.insert(0, enclosed.getSimpleName() + ".");
-        }
-        return sb.toString();
-    }
+//    protected String getSimpleName() {
+//        StringBuilder sb = new StringBuilder(tp.getSimpleName());
+//        for (Element enclosed = tp.getEnclosingElement();
+//             enclosed != null && (enclosed.getKind().isClass() || enclosed.getKind().isInterface());
+//             enclosed = enclosed.getEnclosingElement()) {
+//            sb.insert(0, enclosed.getSimpleName() + ".");
+//        }
+//        return sb.toString();
+//    }
 
-    protected String getQualifiedName() {
-        return tp.getQualifiedName().toString();
-    }
+//    protected String getQualifiedName() {
+//        return tp.getQualifiedName().toString();
+//    }
 
     @Override
     public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
@@ -121,18 +122,16 @@ public class Type extends UMLRenderer implements Comparable<Type> {
 
     @Override
     public int hashCode() {
-        return tp.getQualifiedName().hashCode();
+        return name.hashCode();
     }
 
     public int compareTo(Type other) {
-        final String otherQName = requireNonNull(other, "Cannot compare Type to <null>.").tp.getQualifiedName().toString();
-        final String myQName = tp.getQualifiedName().toString();
-        final int diff = signum(myQName.compareToIgnoreCase(otherQName));
-        return diff == 0 ? signum(myQName.compareTo(otherQName)) : diff;
+        return name.compareTo(requireNonNull(other, "Cannot compare Type to <null>.").name);
     }
 
     @Override
     public boolean equals(Object other) {
         return this == other || (other instanceof Type && this.compareTo((Type) other) == 0);
     }
+
 }
