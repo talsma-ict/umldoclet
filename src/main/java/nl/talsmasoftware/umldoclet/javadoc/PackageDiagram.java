@@ -16,10 +16,14 @@
 package nl.talsmasoftware.umldoclet.javadoc;
 
 import nl.talsmasoftware.umldoclet.model.Namespace;
+import nl.talsmasoftware.umldoclet.model.Reference;
+import nl.talsmasoftware.umldoclet.model.Type;
 import nl.talsmasoftware.umldoclet.model.UMLDiagram;
+import nl.talsmasoftware.umldoclet.rendering.CharSequenceRenderer;
 
 import javax.lang.model.element.PackageElement;
 import java.io.File;
+import java.util.*;
 
 /**
  * TODO move to javadoc package
@@ -28,13 +32,27 @@ import java.io.File;
  */
 public class PackageDiagram extends UMLDiagram {
 
-    protected final Namespace pkg;
+    private final Namespace pkg;
     private File pumlFile = null;
 
     public PackageDiagram(UMLFactory factory, PackageElement packageElement) {
         super(factory.config);
-        this.pkg = factory.createPackage(packageElement);
-        this.children.add(this.pkg);
+        Map<Namespace, Collection<Type>> foreignTypes = new LinkedHashMap<>();
+        List<Reference> references = new ArrayList<>();
+        pkg = factory.createPackage(packageElement, foreignTypes, references);
+//        UMLFactory.addChild(pkg, CharSequenceRenderer.NEWLINE);
+//        references.forEach(ref -> UMLFactory.addChild(pkg, ref));
+        children.add(pkg);
+
+        foreignTypes.forEach((pkg, types) -> {
+            children.add(CharSequenceRenderer.NEWLINE);
+            types.forEach(type -> UMLFactory.addChild(pkg, type));
+            children.add(pkg);
+//            this.children.addAll(types);
+        });
+
+        children.add(CharSequenceRenderer.NEWLINE);
+        references.stream().map(Reference::canonical).forEach(children::add);
     }
 
     @Override

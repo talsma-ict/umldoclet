@@ -24,9 +24,12 @@ import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.model.TypeName;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
 public class DocletConfig implements Configuration {
@@ -57,6 +60,9 @@ public class DocletConfig implements Configuration {
     boolean verbose = false;
 
     MethodCfg methodConfig = new MethodCfg();
+
+    List<String> excludedReferences = new ArrayList<>(asList(
+            "java.lang.Object", "java.lang.Enum", "java.lang.annotation.Annotation"));
 
     // TODO decide whether we want to make this configurable at all.
     private Indentation indentation = Indentation.DEFAULT;
@@ -90,6 +96,11 @@ public class DocletConfig implements Configuration {
     @Override
     public MethodConfig getMethodConfig() {
         return methodConfig;
+    }
+
+    @Override
+    public List<String> getExcludedReferences() {
+        return excludedReferences;
     }
 
     class MethodCfg implements MethodConfig {

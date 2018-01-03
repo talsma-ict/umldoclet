@@ -25,7 +25,7 @@ import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 
-public class Type extends UMLRenderer implements IndentingChildRenderer, Comparable<Type> {
+public class Type extends UMLRenderer implements IndentingChildRenderer, Namespace.NameSpaceAware, Comparable<Type> {
 
     public final Namespace containingPackage;
     public final TypeClassification classfication;
@@ -46,8 +46,13 @@ public class Type extends UMLRenderer implements IndentingChildRenderer, Compara
 
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+        return writeTo(output, null);
+    }
+
+    @Override
+    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output, Namespace namespace) {
         classfication.writeTo(output).whitespace();
-        name.writeTo(output).whitespace();
+        name.writeTo(output, TypeName.Display.QUALIFIED, namespace).whitespace();
         if (!children.isEmpty()) writeChildrenTo(output.append('{').newline()).append('}');
         output.newline();
         return output;

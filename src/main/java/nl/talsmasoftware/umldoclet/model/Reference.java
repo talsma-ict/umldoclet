@@ -18,6 +18,7 @@ package nl.talsmasoftware.umldoclet.model;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingRenderer;
 
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -26,6 +27,7 @@ import java.util.Set;
 import static java.util.Arrays.asList;
 import static java.util.Collections.*;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.joining;
 import static nl.talsmasoftware.umldoclet.v1.Concatenation.append;
 
 /**
@@ -39,7 +41,7 @@ import static nl.talsmasoftware.umldoclet.v1.Concatenation.append;
  *
  * @author Sjoerd Talsma
  */
-public class Reference implements IndentingRenderer {
+public class Reference implements IndentingRenderer, Namespace.NameSpaceAware {
 
     public final Side from, to;
     public final String type;
@@ -92,6 +94,15 @@ public class Reference implements IndentingRenderer {
                 ? inverse() : this;
     }
 
+    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output, Namespace namespace) {
+        output.append(from.toString(namespace)).whitespace()
+                .append(type).whitespace()
+                .append(to.toString(namespace));
+        if (!notes.isEmpty()) output.append(": ").append(notes.stream().collect(joining("\\n")));
+        output.newline();
+        return output;
+    }
+
     @Override
     public int hashCode() {
         final Reference ref = canonical();
@@ -109,8 +120,7 @@ public class Reference implements IndentingRenderer {
 
     @Override
     public String toString() {
-        final String toCardinality = to.cardinality.isEmpty() ? "" : to.cardinality + " ";
-        return from + " " + type + " " + toCardinality + to.qualifiedName;
+        return writeTo(new StringWriter()).toString();
     }
 
     private String reverseType() {
@@ -128,13 +138,8 @@ public class Reference implements IndentingRenderer {
         return ch == '<' ? '>' : ch == '>' ? '<' : ch;
     }
 
-    @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-        output.println(this);
-        return output;
-    }
-
     public static final class Side {
+        private final boolean nameFirst;
         public final String qualifiedName, cardinality;
 
         public static Side from(String fromQualifiedName) {
@@ -142,7 +147,7 @@ public class Reference implements IndentingRenderer {
         }
 
         public static Side from(String fromQualifiedName, String fromCardinality) {
-            return new Side(fromQualifiedName, fromCardinality);
+            return new Side(fromQualifiedName, fromCardinality, true);
         }
 
         public static Side to(String toQualifiedName) {
@@ -150,16 +155,17 @@ public class Reference implements IndentingRenderer {
         }
 
         public static Side to(String toQualifiedName, String toCardinality) {
-            return new Side(toQualifiedName, toCardinality);
+            return new Side(toQualifiedName, toCardinality, false);
         }
 
-        protected Side(String qualifiedName, String cardinality) {
+        protected Side(String qualifiedName, String cardinality, boolean nameFirst) {
             requireNonNull(qualifiedName, "Name of referred object is <null>.");
             int genericIdx = qualifiedName.indexOf('<');
             if (genericIdx > 0) qualifiedName = qualifiedName.substring(0, genericIdx);
             this.qualifiedName = qualifiedName.trim();
             if (this.qualifiedName.isEmpty()) throw new IllegalArgumentException("Name of referred object is empty.");
             this.cardinality = cardinality != null ? cardinality.trim() : "";
+            this.nameFirst = nameFirst;
         }
 
         @Override
@@ -174,9 +180,20 @@ public class Reference implements IndentingRenderer {
                     && this.cardinality.equals(((Side) other).cardinality));
         }
 
+        public String toString(Namespace namespace) {
+            String name = qualifiedName;
+            if (namespace != null && name.startsWith(namespace.name + ".")) {
+                name = name.substring(namespace.name.length() + 1);
+                if (name.indexOf('.') > 0) name = qualifiedName;
+            }
+            return cardinality.isEmpty() ? name
+                    : nameFirst ? name + ' ' + cardinality
+                    : cardinality + ' ' + name;
+        }
+
         @Override
         public String toString() {
-            return cardinality.isEmpty() ? qualifiedName : qualifiedName + ' ' + cardinality;
+            return toString(null);
         }
     }
 

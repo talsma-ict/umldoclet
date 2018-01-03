@@ -71,7 +71,7 @@ public class Parameters extends UMLRenderer {
                     sep = ": ";
                 }
                 if (type != null && !TypeName.Display.NONE.equals(methodConfig.paramTypes())) {
-                    type.writeTo(output.append(sep), methodConfig.paramTypes());
+                    type.writeTo(output.append(sep), methodConfig.paramTypes(), null);
                     sep = ": ";
                 }
                 if (name != null && MethodConfig.ParamNames.AFTER_TYPE.equals(methodConfig.paramNames())) {

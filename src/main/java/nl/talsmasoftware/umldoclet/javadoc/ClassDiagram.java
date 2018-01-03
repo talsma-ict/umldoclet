@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.javadoc;
 
+import nl.talsmasoftware.umldoclet.model.Namespace;
 import nl.talsmasoftware.umldoclet.model.Type;
 import nl.talsmasoftware.umldoclet.model.UMLDiagram;
 
@@ -26,13 +27,16 @@ import java.io.File;
  */
 public class ClassDiagram extends UMLDiagram {
 
+    private final Namespace namespace;
     private final Type type;
     private File pumlFile = null;
 
     public ClassDiagram(UMLFactory factory, TypeElement classElement) {
         super(factory.config);
+        this.namespace = factory.packageOf(classElement);
         this.type = factory.createType(classElement);
-        children.add(this.type);
+        UMLFactory.addChild(namespace, type);
+        children.add(namespace);
     }
 
     @Override
@@ -40,9 +44,13 @@ public class ClassDiagram extends UMLDiagram {
         if (pumlFile == null) {
             StringBuilder result = new StringBuilder(config.getDestinationDirectory());
             if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');
-            result.append(type.containingPackage.name.replace('.', '/'));
-            result.append('/').append(type.name.simple).append(".puml");
-            pumlFile = ensureParentDir(new File(result.toString()));
+            result.append(type.containingPackage.name.replace('.', '/')).append('/');
+            if (type.name.qualified.startsWith(type.containingPackage.name + ".")) {
+                result.append(type.name.qualified.substring(type.containingPackage.name.length() + 1));
+            } else {
+                result.append(type.name.simple);
+            }
+            pumlFile = ensureParentDir(new File(result.append(".puml").toString()));
         }
         return pumlFile;
     }

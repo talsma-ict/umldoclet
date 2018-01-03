@@ -22,8 +22,9 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlImageWriter;
 
 import java.io.*;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import static nl.talsmasoftware.umldoclet.logging.Message.ERROR_COULDNT_RENDER_UML;
 import static nl.talsmasoftware.umldoclet.logging.Message.INFO_GENERATING_FILE;
@@ -45,7 +46,7 @@ public abstract class UMLDiagram extends UMLRenderer implements IndentingChildRe
 
     //    protected final Configuration config;
     //    protected final DocletEnvironment env;
-    protected final Set<Renderer> children = new LinkedHashSet<>();
+    protected final List<Renderer> children = new ArrayList<>();
 
     protected UMLDiagram(Configuration config) {
         super(config);
@@ -59,7 +60,7 @@ public abstract class UMLDiagram extends UMLRenderer implements IndentingChildRe
     protected abstract File pumlFile();
 
     @Override
-    public Set<Renderer> getChildren() {
+    public Collection<Renderer> getChildren() {
         return children;
     }
 

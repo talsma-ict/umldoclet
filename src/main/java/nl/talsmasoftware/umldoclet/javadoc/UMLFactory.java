@@ -23,10 +23,8 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingChildRenderer;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeKind;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static javax.lang.model.element.ElementKind.ENUM;
@@ -103,7 +101,7 @@ public class UMLFactory {
         return createType(packageOf(typeElement), typeElement);
     }
 
-    private static boolean addChild(IndentingChildRenderer parent, Renderer child) {
+    static boolean addChild(IndentingChildRenderer parent, Renderer child) {
         Collection<Renderer> children = (Collection<Renderer>) parent.getChildren();
         return children.add(child);
     }
@@ -143,42 +141,79 @@ public class UMLFactory {
         return type;
     }
 
-    private Collection<Reference> findReferences(TypeElement typeElement, Type type) {
-        Collection<Reference> references = new ArrayList<>();
+    private void addForeignType(Map<Namespace, Collection<Type>> foreignTypes, Element typeElement) {
+        if (foreignTypes != null && typeElement instanceof TypeElement) {
+            Type type = createType((TypeElement) typeElement);
+            foreignTypes.computeIfAbsent(type.containingPackage, (namespace) -> new LinkedHashSet<>()).add(type);
+        }
+    }
+
+    private Collection<Reference> findPackageReferences(
+            Namespace namespace, Map<Namespace, Collection<Type>> foreignTypes, TypeElement typeElement, Type type) {
+        Collection<Reference> references = new LinkedHashSet<>();
 
         // Superclass reference.
-        if (!TypeKind.NONE.equals(typeElement.getSuperclass().getKind())) references.add(new Reference(
-                from(type.name.qualified), "--|>",
-                to(TypeNameVisitor.INSTANCE.visit(typeElement.getSuperclass()).qualified)
-        ));
+        if (!TypeKind.NONE.equals(typeElement.getSuperclass().getKind())) {
+            String superclass = TypeNameVisitor.INSTANCE.visit(typeElement.getSuperclass()).qualified;
+            if (!config.getExcludedReferences().contains(superclass)) {
+                references.add(new Reference(
+                        from(type.name.qualified), "--|>",
+                        to(superclass)
+                ));
+            }
+        }
 
         // Implemented interfaces.
-        typeElement.getInterfaces().stream()
-                .map(TypeNameVisitor.INSTANCE::visit)
-                .forEach(ifName -> references.add(new Reference(
+        typeElement.getInterfaces().forEach(interfaceType -> {
+            TypeName ifName = TypeNameVisitor.INSTANCE.visit(interfaceType);
+            if (!config.getExcludedReferences().contains(ifName.qualified)) {
+                references.add(new Reference(
                         from(type.name.qualified), "..|>",
-                        to(ifName.qualified))));
+                        to(ifName.qualified)));
+                if (!namespace.contains(ifName)) {
+                    addForeignType(foreignTypes, env.getTypeUtils().asElement(interfaceType));
+                }
+            }
+        });
+
+        // Add reference to containing class from innner classes.
+        ElementKind enclosingKind = typeElement.getEnclosingElement().getKind();
+        if (enclosingKind.isClass() || enclosingKind.isInterface()) {
+            references.add(new Reference(
+                    from(TypeNameVisitor.INSTANCE.visit(typeElement.getEnclosingElement().asType()).qualified),
+                    "+--", to(type.name.qualified)));
+        }
 
         return references;
     }
 
-    Namespace createPackage(PackageElement packageElement) {
+    private static Stream<TypeElement> innerTypes(TypeElement type) {
+        return Stream.concat(Stream.of(type), type.getEnclosedElements().stream()
+                .filter(TypeElement.class::isInstance).map(TypeElement.class::cast)
+                .flatMap(UMLFactory::innerTypes));
+    }
+
+    Namespace createPackage(PackageElement packageElement,
+                            Map<Namespace, Collection<Type>> foreignTypes,
+                            List<Reference> references) {
         Namespace pkg = new Namespace(config, packageElement.getQualifiedName().toString());
 
-        List<Reference> references = new ArrayList<>();
+//        List<Reference> references = new ArrayList<>();
+//        Map<Namespace, Collection<Type>> foreignTypes = new LinkedHashMap<>();
 
         // Add all types contained in this package.
         packageElement.getEnclosedElements().stream()
                 .filter(TypeElement.class::isInstance).map(TypeElement.class::cast)
+                .flatMap(UMLFactory::innerTypes)
                 .map(typeElement -> {
                     Type type = createType(pkg, typeElement);
-                    references.addAll(findReferences(typeElement, type));
+                    references.addAll(findPackageReferences(pkg, foreignTypes, typeElement, type));
                     return type;
                 })
                 .forEach(type -> addChild(pkg, type));
 
         // Add all encountered references.
-        references.forEach(ref -> addChild(pkg, ref.canonical()));
+//        references.forEach(ref -> addChild(pkg, ref.canonical()));
 
         return pkg;
     }

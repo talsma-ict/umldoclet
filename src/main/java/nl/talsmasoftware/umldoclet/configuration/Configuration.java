@@ -18,6 +18,8 @@ package nl.talsmasoftware.umldoclet.configuration;
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 
+import java.util.List;
+
 /**
  * @author Sjoerd Talsma
  */
@@ -39,5 +41,7 @@ public interface Configuration {
      * @return The part of the configuration that determines how methods are rendered.
      */
     MethodConfig getMethodConfig();
+
+    List<String> getExcludedReferences();
 
 }

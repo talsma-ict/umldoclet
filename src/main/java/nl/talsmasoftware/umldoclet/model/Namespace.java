@@ -19,6 +19,7 @@ import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.rendering.Renderer;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingChildRenderer;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingRenderer;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -32,6 +33,13 @@ import static java.util.Objects.requireNonNull;
  * @author Sjoerd Talsma
  */
 public class Namespace extends UMLRenderer implements IndentingChildRenderer, Comparable<Namespace> {
+    public interface NameSpaceAware extends IndentingRenderer {
+        default <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+            return writeTo(output, null);
+        }
+
+        <IPW extends IndentingPrintWriter> IPW writeTo(IPW output, Namespace namespace);
+    }
 
     public final String name;
     private final Set<Renderer> children = new LinkedHashSet<>();
@@ -48,10 +56,25 @@ public class Namespace extends UMLRenderer implements IndentingChildRenderer, Co
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-        output.append("namespace").whitespace().append(name);
-        writeChildrenTo(output.whitespace().append('{').newline()).newline().append('}');
+    public <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
+        final IndentingPrintWriter indented = output.indent();
+        getChildren().forEach(child -> {
+            if (child instanceof NameSpaceAware) ((NameSpaceAware) child).writeTo(indented, this);
+            else child.writeTo(indented);
+        });
         return output;
+    }
+
+    @Override
+    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+        output.append("namespace").whitespace().append(name).whitespace().append('{').newline();
+        writeChildrenTo(output);
+        output.append('}').newline();
+        return output;
+    }
+
+    public boolean contains(TypeName typeName) {
+        return typeName != null && typeName.qualified.startsWith(this.name + ".");
     }
 
     @Override
