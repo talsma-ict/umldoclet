@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,19 +21,20 @@ import java.io.Serializable;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Simple renderer for {@link CharSequence} content.
+ * Simple renderer for fixed content of type {@link CharSequence}.
  *
  * @author Sjoerd Talsma
  */
 public final class CharSequenceRenderer implements CharSequence, Renderer, Serializable {
+    public static final Renderer NEWLINE = CharSequenceRenderer.of(System.lineSeparator());
 
     private final CharSequence content;
 
     private CharSequenceRenderer(CharSequence content) {
-        this.content = requireNonNull("Content is <null>.");
+        this.content = requireNonNull(content, "Content is <null>.");
     }
 
-    public CharSequenceRenderer of(CharSequence content) {
+    public static CharSequenceRenderer of(CharSequence content) {
         return new CharSequenceRenderer(content);
     }
 
@@ -56,10 +57,11 @@ public final class CharSequenceRenderer implements CharSequence, Renderer, Seria
     public <A extends Appendable> A writeTo(A output) {
         try {
             output.append(content, 0, content.length());
+            return output;
         } catch (IOException ioe) {
-            throw new IllegalStateException("I/O exception writing character sequence: " + ioe.getMessage(), ioe);
+            throw new IllegalStateException("I/O exception writing character sequence \""
+                    + this + "\": " + ioe.getMessage(), ioe);
         }
-        return output;
     }
 
     @Override
