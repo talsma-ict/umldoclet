@@ -142,7 +142,9 @@
                 <version>${license-maven-plugin.version}</version>
                 <executions>
                     <execution>
-                        <goals><goal>check</goal></goals>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
                         <phase>compile</phase>
                     </execution>
                 </executions>
@@ -257,10 +259,10 @@
                             </docletArtifact>
                             <docencoding>UTF-8</docencoding>
                             <useStandardDocletOptions>true</useStandardDocletOptions>
-                            <additionalparam>
-                                <!-- -verbose-->
-                                <!-- -quiet-->
-                            </additionalparam>
+                            <additionalOptions>
+                                <!--<additionalOption>-verbose</additionalOption>-->
+                                <!--<additionalOption>-quiet</additionalOption>-->
+                            </additionalOptions>
                         </configuration>
                     </execution>
                 </executions>
