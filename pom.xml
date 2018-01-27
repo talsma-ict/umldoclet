@@ -257,10 +257,10 @@
                             </docletArtifact>
                             <docencoding>UTF-8</docencoding>
                             <useStandardDocletOptions>true</useStandardDocletOptions>
-                            <additionalparam>
-                                -umlLogLevel DEBUG
-                                -umlImageFormat SVG
-                            </additionalparam>
+                            <additionalOptions>
+                                <additionalOption>-umlLogLevel DEBUG</additionalOption>
+                                <additionalOption>-umlImageFormat SVG</additionalOption>
+                            </additionalOptions>
                         </configuration>
                     </execution>
                     <execution>
