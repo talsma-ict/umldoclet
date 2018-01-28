@@ -108,7 +108,7 @@ make sure to provide the options `-doclet nl.talsmasoftware.umldoclet.UMLDoclet`
 and `-docletpath {PATH_TO_JAR}`, where _{PATH_TO_JAR}_ is the location of the `umldoclet-x.y.z.jar`.  
 The latest version of the jar file can be found on [maven central][maven].  
   
-For more details on commandline javadoc, please see the [official documentation from Oracle](http://docs.oracle.com/javase/1.5.0/docs/tooldocs/windows/javadoc.html "Oracle documentation").
+For more details on commandline javadoc, please see the [official documentation from Oracle](https://docs.oracle.com/javase/9/javadoc/javadoc.htm).
 
 ### Additional parameters
 
