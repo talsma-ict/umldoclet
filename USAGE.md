@@ -50,7 +50,7 @@ Here `VERSION` should be replaced with the version of the doclet you wish to use
 (please see [maven central][maven] for released versions).  
 There are many ways to tune the detail of the UML diagrams.  
 These can be provided as additional parameters within the `additionalOption` tag,
-(each parameter in its own tag).  
+each parameter in its own tag.  
 The additional parameters for this doclet are described below.
 
 ### Gradle
