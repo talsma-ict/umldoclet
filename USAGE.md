@@ -21,7 +21,7 @@ First tell Maven to generate JavaDoc for your project by declaring the 'maven-ja
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.10.3</version>
+            <version>3.0.0</version>
             <executions>
                 <execution>
                     <id>attach-javadocs</id>
@@ -35,9 +35,9 @@ First tell Maven to generate JavaDoc for your project by declaring the 'maven-ja
                             <artifactId>umldoclet</artifactId>
                             <version>VERSION</version>
                         </docletArtifact>
-                        <additionalparam>
-                            ...
-                        </additionalparam>
+                        <additionalOptions>
+                            <additionalOption>...</additionalOption>
+                        </additionalOptions>
                     </configuration>
                 </execution>
             </executions>
@@ -49,8 +49,8 @@ First tell Maven to generate JavaDoc for your project by declaring the 'maven-ja
 Here `VERSION` should be replaced with the version of the doclet you wish to use
 (please see [maven central][maven] for released versions).  
 There are many ways to tune the detail of the UML diagrams.  
-These can be provided as additional parameters within the `additionalparam` tag,
-(each parameter may be on a new line within the XML).  
+These can be provided as additional parameters within the `additionalOption` tag,
+each parameter in its own tag.  
 The additional parameters for this doclet are described below.
 
 ### Gradle
@@ -108,7 +108,7 @@ make sure to provide the options `-doclet nl.talsmasoftware.umldoclet.UMLDoclet`
 and `-docletpath {PATH_TO_JAR}`, where _{PATH_TO_JAR}_ is the location of the `umldoclet-x.y.z.jar`.  
 The latest version of the jar file can be found on [maven central][maven].  
   
-For more details on commandline javadoc, please see the [official documentation from Oracle](http://docs.oracle.com/javase/1.5.0/docs/tooldocs/windows/javadoc.html "Oracle documentation").
+For more details on commandline javadoc, please see the [official documentation from Oracle](https://docs.oracle.com/javase/9/javadoc/javadoc.htm).
 
 ### Additional parameters
 
