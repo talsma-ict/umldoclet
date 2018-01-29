@@ -32,7 +32,7 @@ public abstract class TypeMember extends UMLRenderer implements Comparable<TypeM
     protected final Type containingType;
     protected final Visibility visibility;
     protected final boolean isAbstract, isStatic;
-    protected final String name;
+    public final String name;
     protected final Parameters parameters;
     protected final TypeName type;
 

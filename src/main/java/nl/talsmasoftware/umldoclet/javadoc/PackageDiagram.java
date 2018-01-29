@@ -40,15 +40,12 @@ public class PackageDiagram extends UMLDiagram {
         Map<Namespace, Collection<Type>> foreignTypes = new LinkedHashMap<>();
         List<Reference> references = new ArrayList<>();
         pkg = factory.createPackage(packageElement, foreignTypes, references);
-//        UMLFactory.addChild(pkg, CharSequenceRenderer.NEWLINE);
-//        references.forEach(ref -> UMLFactory.addChild(pkg, ref));
         children.add(pkg);
 
         foreignTypes.forEach((pkg, types) -> {
             children.add(CharSequenceRenderer.NEWLINE);
             types.forEach(type -> UMLFactory.addChild(pkg, type));
             children.add(pkg);
-//            this.children.addAll(types);
         });
 
         children.add(CharSequenceRenderer.NEWLINE);

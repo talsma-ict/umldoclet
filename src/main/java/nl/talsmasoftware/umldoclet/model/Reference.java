@@ -41,7 +41,7 @@ import static nl.talsmasoftware.umldoclet.v1.Concatenation.append;
  *
  * @author Sjoerd Talsma
  */
-public class Reference implements IndentingRenderer, Namespace.NameSpaceAware {
+public class Reference implements Namespace.NameSpaceAware {
 
     public final Side from, to;
     public final String type;

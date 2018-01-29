@@ -22,7 +22,9 @@ import nl.talsmasoftware.umldoclet.rendering.Renderer;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingChildRenderer;
 
 import javax.lang.model.element.*;
+import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -184,7 +186,80 @@ public class UMLFactory {
                     "+--", to(type.name.qualified)));
         }
 
+        // Add 'uses' references by replacing visible fields
+//        final Set<Visibility> visible = EnumSet.of(Visibility.PACKAGE_PRIVATE, Visibility.PUBLIC);
+        final Set<Visibility> visible = EnumSet.allOf(Visibility.class);
+        typeElement.getEnclosedElements().stream()
+                .filter(member -> ElementKind.FIELD.equals(member.getKind()))
+                .filter(VariableElement.class::isInstance).map(VariableElement.class::cast)
+                .filter(field -> visible.contains(visibilityOf(field.getModifiers())))
+                .forEach(field -> {
+                    String fieldName = field.getSimpleName().toString();
+                    TypeName fieldType = propertyType(field.asType());
+                    if (namespace.contains(fieldType)) {
+                        addReference(references, new Reference(from(type.name.qualified),
+                                "-->", to(fieldType.qualified), fieldName));
+                        type.getChildren().removeIf(child -> child instanceof Field && ((Field) child).name.equals(fieldName));
+                    }
+                });
+        // Add 'uses' reference by replacing visible getters/setters
+        typeElement.getEnclosedElements().stream()
+                .filter(member -> ElementKind.METHOD.equals(member.getKind()))
+                .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
+                .filter(method -> visible.contains(visibilityOf(method.getModifiers())))
+                .forEach(method -> {
+                    String propertyName = propertyName(method);
+                    if (propertyName != null) {
+                        TypeName returnType = propertyType(method.getReturnType());
+                        if (namespace.contains(returnType)) {
+                            addReference(references, new Reference(from(type.name.qualified),
+                                    "-->", to(returnType.qualified), propertyName));
+                            type.getChildren().removeIf(child -> child instanceof Method
+                                    && ((Method) child).name.equals(method.getSimpleName().toString()));
+                        }
+                    }
+                });
+
         return references;
+    }
+
+    private static String propertyName(ExecutableElement method) {
+        String name = method.getSimpleName().toString();
+        int params = method.getParameters().size();
+        if (params == 0 && name.length() > 3 && name.startsWith("get")) {
+            char[] result = name.substring(3).toCharArray();
+            result[0] = Character.toLowerCase(result[0]);
+            return new String(result);
+        } else if (params == 1 && name.length() > 3 && name.startsWith("set")) {
+            char[] result = name.substring(3).toCharArray();
+            result[0] = Character.toLowerCase(result[0]);
+            return new String(result);
+        }
+        // TODO: boolean isProperty() support.
+
+        return null;
+    }
+
+    private static TypeName propertyType(TypeMirror typeMirror) {
+        return iteratedType(typeMirror).orElseGet(() -> TypeNameVisitor.INSTANCE.visit(typeMirror));
+    }
+
+    private static Optional<TypeName> iteratedType(TypeMirror typeMirror) {
+        if (typeMirror instanceof ArrayType) {
+            return Optional.of(TypeNameVisitor.INSTANCE.visit(((ArrayType) typeMirror).getComponentType()));
+        }
+        return Optional.empty();
+    }
+
+    private static void addReference(Collection<Reference> collection, Reference reference) {
+        Reference result = reference;
+        Optional<Reference> found = collection.stream().filter(reference::equals).findFirst();
+        if (found.isPresent()) {
+            result = found.get();
+            collection.remove(result);
+            for (String note : reference.notes) result = result.addNote(note);
+        }
+        collection.add(result);
     }
 
     private static Stream<TypeElement> innerTypes(TypeElement type) {
@@ -198,9 +273,6 @@ public class UMLFactory {
                             List<Reference> references) {
         Namespace pkg = new Namespace(config, packageElement.getQualifiedName().toString());
 
-//        List<Reference> references = new ArrayList<>();
-//        Map<Namespace, Collection<Type>> foreignTypes = new LinkedHashMap<>();
-
         // Add all types contained in this package.
         packageElement.getEnclosedElements().stream()
                 .filter(TypeElement.class::isInstance).map(TypeElement.class::cast)
@@ -211,9 +283,6 @@ public class UMLFactory {
                     return type;
                 })
                 .forEach(type -> addChild(pkg, type));
-
-        // Add all encountered references.
-//        references.forEach(ref -> addChild(pkg, ref.canonical()));
 
         return pkg;
     }
