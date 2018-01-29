@@ -67,7 +67,7 @@
         <build.java.version>1.7</build.java.version>
 
         <!-- included -->
-        <plantuml.version>1.2017.20</plantuml.version>
+        <plantuml.version>1.2018.1</plantuml.version>
 
         <!-- test -->
         <junit.version>4.12</junit.version>
