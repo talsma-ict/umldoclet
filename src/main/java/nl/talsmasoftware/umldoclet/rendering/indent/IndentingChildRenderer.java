@@ -38,8 +38,11 @@ public interface IndentingChildRenderer extends IndentingRenderer {
      * @return A reference to the output for method chaining purposes.
      */
     default <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
-        final IndentingPrintWriter indented = output.indent();
-        getChildren().forEach(child -> child.writeTo(indented));
+        Collection<? extends Renderer> children = getChildren();
+        if (children != null && !children.isEmpty()) {
+            IndentingPrintWriter indented = output.indent();
+            children.forEach(child -> child.writeTo(indented));
+        }
         return output;
     }
 }

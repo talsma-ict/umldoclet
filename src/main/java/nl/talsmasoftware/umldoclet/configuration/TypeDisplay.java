@@ -16,18 +16,11 @@
 package nl.talsmasoftware.umldoclet.configuration;
 
 /**
- * The configuration settings that determine how methods must be rendered.
- *
  * @author Sjoerd Talsma
  */
-public interface MethodConfig {
-    enum ParamNames {
-        NONE, BEFORE_TYPE, AFTER_TYPE
-    }
-
-    ParamNames paramNames();
-
-    TypeDisplay paramTypes();
-
-    TypeDisplay returnType();
+public enum TypeDisplay {
+    NONE,
+    SIMPLE,
+    QUALIFIED,
+    QUALIFIED_GENERICS
 }

@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.model;
+package nl.talsmasoftware.umldoclet.uml;
 
-import nl.talsmasoftware.umldoclet.rendering.Renderer;
+import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
 
 import java.io.IOException;
-import java.io.Serializable;
-import java.io.StringWriter;
 
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
@@ -36,24 +34,9 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Sjoerd Talsma
  */
-public class TypeName implements Renderer, Comparable<TypeName>, Serializable {
+public class TypeName implements Comparable<TypeName> {
     public final String simple, qualified;
     private final TypeName[] generics;
-
-    public enum Display {
-        NONE,
-        SIMPLE,
-        QUALIFIED,
-        QUALIFIED_GENERICS;
-
-        private boolean isQualified() {
-            return name().startsWith("QUALIFIED");
-        }
-
-        private Display forGenerics() {
-            return QUALIFIED_GENERICS.equals(this) ? this : SIMPLE;
-        }
-    }
 
     public TypeName(String simpleName, String qualifiedName, TypeName... generics) {
         this.simple = simpleName;
@@ -65,38 +48,38 @@ public class TypeName implements Renderer, Comparable<TypeName>, Serializable {
         return generics.clone();
     }
 
-    @Override
-    public <A extends Appendable> A writeTo(A output) {
-        return writeTo(output, Display.SIMPLE, null);
+    private static boolean isQualified(TypeDisplay display) {
+        return display != null && display.name().startsWith("QUALIFIED");
     }
 
-    protected <A extends Appendable> A writeTo(A output, Display display, Namespace namespace) {
-        if (display == null) display = Display.SIMPLE;
-        if (!Display.NONE.equals(display)) try {
+    protected String toUml(TypeDisplay display, Namespace namespace) {
+        StringBuilder output = new StringBuilder();
+        if (display == null) display = TypeDisplay.SIMPLE;
+        if (!TypeDisplay.NONE.equals(display)) try {
 
             if (namespace != null && this.qualified.startsWith(namespace.name + ".")) {
                 String name = this.qualified.substring(namespace.name.length() + 1);
                 if (name.indexOf('.') > 0) name = this.qualified;
                 output.append(name);
-            } else if (display.isQualified()) {
+            } else if (isQualified(display)) {
                 output.append(this.qualified);
             } else {
                 output.append(this.simple);
             }
-            writeGenericsTo(output, display.forGenerics());
+            writeGenericsTo(output, TypeDisplay.QUALIFIED_GENERICS.equals(display) ? display : TypeDisplay.SIMPLE);
 
         } catch (IOException ioe) {
             throw new IllegalStateException("I/O error writing type name \"" + qualified + "\" to the output: "
                     + ioe.getMessage(), ioe);
         }
-        return output;
+        return output.toString();
     }
 
-    private <A extends Appendable> A writeGenericsTo(A output, Display typeConfig) throws IOException {
+    private <A extends Appendable> A writeGenericsTo(A output, TypeDisplay genericDisplay) throws IOException {
         if (generics.length > 0) {
             String sep = "<";
             for (TypeName generic : generics) {
-                generic.writeTo(output.append(sep), typeConfig, null);
+                output.append(sep).append(generic.toUml(genericDisplay, null));
                 sep = ", ";
             }
             output.append('>');
@@ -124,7 +107,7 @@ public class TypeName implements Renderer, Comparable<TypeName>, Serializable {
 
     @Override
     public String toString() {
-        return writeTo(new StringWriter()).toString();
+        return toUml(TypeDisplay.SIMPLE, null);
     }
 
     public static class Array extends TypeName {
@@ -139,14 +122,9 @@ public class TypeName implements Renderer, Comparable<TypeName>, Serializable {
             return new Array(requireNonNull(delegate, "Component type of array is <null>."));
         }
 
-        protected <A extends Appendable> A writeTo(A output, Display typeConfig, Namespace namespace) {
-            try {
-                delegate.writeTo(output, typeConfig, namespace);
-                output.append("[]");
-            } catch (IOException ioe) {
-                throw new IllegalStateException("I/O error writing array type \"" + qualified + "\": " + ioe.getMessage(), ioe);
-            }
-            return output;
+        @Override
+        protected String toUml(TypeDisplay display, Namespace namespace) {
+            return delegate.toUml(display, namespace) + "[]";
         }
     }
 

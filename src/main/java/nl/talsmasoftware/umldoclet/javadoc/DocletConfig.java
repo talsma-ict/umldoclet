@@ -20,8 +20,8 @@ import jdk.javadoc.doclet.Reporter;
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.MethodConfig;
+import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
 import nl.talsmasoftware.umldoclet.logging.Logger;
-import nl.talsmasoftware.umldoclet.model.TypeName;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 
 import java.util.ArrayList;
@@ -105,8 +105,8 @@ public class DocletConfig implements Configuration {
 
     class MethodCfg implements MethodConfig {
         ParamNames paramNames = ParamNames.BEFORE_TYPE;
-        TypeName.Display paramTypes = TypeName.Display.SIMPLE;
-        TypeName.Display returnType = TypeName.Display.SIMPLE;
+        TypeDisplay paramTypes = TypeDisplay.SIMPLE;
+        TypeDisplay returnType = TypeDisplay.SIMPLE;
 
         @Override
         public ParamNames paramNames() {
@@ -114,12 +114,12 @@ public class DocletConfig implements Configuration {
         }
 
         @Override
-        public TypeName.Display paramTypes() {
+        public TypeDisplay paramTypes() {
             return paramTypes;
         }
 
         @Override
-        public TypeName.Display returnType() {
+        public TypeDisplay returnType() {
             return returnType;
         }
     }

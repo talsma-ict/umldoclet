@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.model;
+package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.rendering.Renderer;
@@ -32,7 +32,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Sjoerd Talsma
  */
-public class Namespace extends UMLRenderer implements IndentingChildRenderer, Comparable<Namespace> {
+public class Namespace extends UMLRenderer implements Comparable<Namespace> {
     public interface NameSpaceAware extends IndentingRenderer {
         default <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
             return writeTo(output, null);

@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet;
 
 import nl.talsmasoftware.umldoclet.javadoc.DocletConfig;
-import nl.talsmasoftware.umldoclet.model.UMLDiagram;
+import nl.talsmasoftware.umldoclet.uml.UMLDiagram;
 import org.junit.Test;
 
 import java.util.spi.ToolProvider;

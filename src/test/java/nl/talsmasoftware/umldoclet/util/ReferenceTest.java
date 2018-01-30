@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,11 @@
  */
 package nl.talsmasoftware.umldoclet.util;
 
-import nl.talsmasoftware.umldoclet.model.Reference;
+import nl.talsmasoftware.umldoclet.uml.Reference;
 import org.junit.Test;
 
-import static nl.talsmasoftware.umldoclet.model.Reference.Side.from;
-import static nl.talsmasoftware.umldoclet.model.Reference.Side.to;
+import static nl.talsmasoftware.umldoclet.uml.Reference.Side.from;
+import static nl.talsmasoftware.umldoclet.uml.Reference.Side.to;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 

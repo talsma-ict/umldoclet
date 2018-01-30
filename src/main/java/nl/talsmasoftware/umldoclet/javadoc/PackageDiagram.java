@@ -15,10 +15,10 @@
  */
 package nl.talsmasoftware.umldoclet.javadoc;
 
-import nl.talsmasoftware.umldoclet.model.Namespace;
-import nl.talsmasoftware.umldoclet.model.Reference;
-import nl.talsmasoftware.umldoclet.model.Type;
-import nl.talsmasoftware.umldoclet.model.UMLDiagram;
+import nl.talsmasoftware.umldoclet.uml.Namespace;
+import nl.talsmasoftware.umldoclet.uml.Reference;
+import nl.talsmasoftware.umldoclet.uml.Type;
+import nl.talsmasoftware.umldoclet.uml.UMLDiagram;
 import nl.talsmasoftware.umldoclet.rendering.CharSequenceRenderer;
 
 import javax.lang.model.element.PackageElement;

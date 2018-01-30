@@ -13,26 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.model;
-
-import nl.talsmasoftware.umldoclet.rendering.Renderer;
-
-import java.io.IOException;
+package nl.talsmasoftware.umldoclet.uml;
 
 /**
+ * Model object for a Field in an UML class.
+ *
  * @author Sjoerd Talsma
  */
-public enum TypeClassification implements Renderer {
-    ENUM, INTERFACE, ANNOTATION, ABSTRACT_CLASS, CLASS;
+public class Field extends TypeMember {
 
-    @Override
-    public <A extends Appendable> A writeTo(A output) {
-        try {
-            output.append(name().toLowerCase().replace('_', ' '));
-            return output;
-        } catch (IOException ioe) {
-            throw new IllegalStateException("I/O exception rendering " + this + ": " + ioe.getMessage(), ioe);
-        }
+    public Field(Type containingType, Visibility visibility, boolean isStatic, String name, TypeName type) {
+        super(containingType, visibility, false, isStatic, name, null, type);
     }
 
 }

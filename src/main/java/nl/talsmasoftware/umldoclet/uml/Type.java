@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.model;
+package nl.talsmasoftware.umldoclet.uml;
 
+import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
 import nl.talsmasoftware.umldoclet.rendering.Renderer;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingChildRenderer;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Collection;
@@ -25,7 +25,7 @@ import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 
-public class Type extends UMLRenderer implements IndentingChildRenderer, Namespace.NameSpaceAware, Comparable<Type> {
+public class Type extends UMLRenderer implements Namespace.NameSpaceAware, Comparable<Type> {
 
     public final Namespace containingPackage;
     public final TypeClassification classfication;
@@ -45,16 +45,16 @@ public class Type extends UMLRenderer implements IndentingChildRenderer, Namespa
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-        return writeTo(output, null);
+    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output, Namespace namespace) {
+        output.append(classfication.toUml()).whitespace();
+        output.append(name.toUml(TypeDisplay.QUALIFIED, namespace)).whitespace();
+        writeChildrenTo(output).newline();
+        return output;
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output, Namespace namespace) {
-        classfication.writeTo(output).whitespace();
-        name.writeTo(output, TypeName.Display.QUALIFIED, namespace).whitespace();
-        if (!children.isEmpty()) writeChildrenTo(output.append('{').newline()).append('}');
-        output.newline();
+    public <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
+        if (!children.isEmpty()) super.writeChildrenTo(output.append('{').newline()).append('}');
         return output;
     }
 

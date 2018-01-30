@@ -23,7 +23,7 @@ import nl.talsmasoftware.umldoclet.javadoc.ClassDiagram;
 import nl.talsmasoftware.umldoclet.javadoc.DocletConfig;
 import nl.talsmasoftware.umldoclet.javadoc.PackageDiagram;
 import nl.talsmasoftware.umldoclet.javadoc.UMLFactory;
-import nl.talsmasoftware.umldoclet.model.UMLDiagram;
+import nl.talsmasoftware.umldoclet.uml.UMLDiagram;
 
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;

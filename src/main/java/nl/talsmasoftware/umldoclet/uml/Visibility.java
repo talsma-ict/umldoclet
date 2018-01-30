@@ -13,21 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.configuration;
+package nl.talsmasoftware.umldoclet.uml;
 
 /**
- * The configuration settings that determine how methods must be rendered.
+ * The visibility values of members in UML diagrams.
  *
  * @author Sjoerd Talsma
  */
-public interface MethodConfig {
-    enum ParamNames {
-        NONE, BEFORE_TYPE, AFTER_TYPE
+public enum Visibility {
+    PRIVATE("-"),
+    PROTECTED("#"),
+    PACKAGE_PRIVATE("~"),
+    PUBLIC("+");
+
+    private final String umlVisibility;
+
+    Visibility(String umlVisibility) {
+        this.umlVisibility = umlVisibility;
     }
 
-    ParamNames paramNames();
-
-    TypeDisplay paramTypes();
-
-    TypeDisplay returnType();
+    public String toUml() {
+        return umlVisibility;
+    }
 }

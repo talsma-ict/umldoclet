@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,14 +39,14 @@ public class IndentingWriter extends Writer {
     private char lastWritten = '\n';
 
     protected IndentingWriter(Appendable delegate, Indentation indentation) {
-        super(requireNonNull(delegate, "Delegate writer is required."));
-        this.delegate = delegate;
-        this.indentation = indentation != null ? indentation : Indentation.DEFAULT;
+        this(delegate, indentation, '\n', false);
         // maybe attempt to support extraction of 'lastWritten' from some types of writers?
     }
 
     private IndentingWriter(Appendable delegate, Indentation indentation, char lastWritten, boolean addWhitespace) {
-        this(delegate, indentation);
+        super(requireNonNull(delegate, "Delegate writer is required."));
+        this.delegate = delegate;
+        this.indentation = indentation == null ? Indentation.DEFAULT : indentation;
         this.lastWritten = lastWritten;
         this.addWhitespace.set(addWhitespace);
     }

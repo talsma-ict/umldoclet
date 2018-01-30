@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.model;
+package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.MethodConfig;
-import nl.talsmasoftware.umldoclet.rendering.Renderer;
+import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -35,16 +35,26 @@ public class Parameters extends UMLRenderer {
         super(config);
     }
 
+    @Override
+    public Collection<? extends Parameter> getChildren() {
+        return params;
+    }
+
     public Parameters add(String name, TypeName type) {
-        params.add(new Parameter(name, type));
+        params.add(new Parameter(config, name, type));
         return this;
     }
 
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+        return writeChildrenTo(output);
+    }
+
+    @Override
+    public <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
         output.append('(');
         String sep = "";
-        for (Parameter param : params) {
+        for (Parameter param : getChildren()) {
             param.writeTo(output.append(sep));
             sep = ", ";
         }
@@ -52,35 +62,32 @@ public class Parameters extends UMLRenderer {
         return output;
     }
 
-    private class Parameter implements Renderer {
+    private static class Parameter extends UMLRenderer {
         private final String name;
         private final TypeName type;
 
-        private Parameter(String name, TypeName type) {
+        private Parameter(Configuration config, String name, TypeName type) {
+            super(config);
             this.name = name;
             this.type = type;
         }
 
         @Override
-        public <A extends Appendable> A writeTo(A output) {
-            try {
-                String sep = "";
-                MethodConfig methodConfig = config.getMethodConfig();
-                if (name != null && MethodConfig.ParamNames.BEFORE_TYPE.equals(methodConfig.paramNames())) {
-                    output.append(name);
-                    sep = ": ";
-                }
-                if (type != null && !TypeName.Display.NONE.equals(methodConfig.paramTypes())) {
-                    type.writeTo(output.append(sep), methodConfig.paramTypes(), null);
-                    sep = ": ";
-                }
-                if (name != null && MethodConfig.ParamNames.AFTER_TYPE.equals(methodConfig.paramNames())) {
-                    output.append(sep).append(name);
-                }
-                return output;
-            } catch (IOException ioe) {
-                throw new IllegalStateException("I/O exeption writing parameter \"" + name + "\": " + ioe.getMessage(), ioe);
+        public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+            String sep = "";
+            MethodConfig methodConfig = config.getMethodConfig();
+            if (name != null && MethodConfig.ParamNames.BEFORE_TYPE.equals(methodConfig.paramNames())) {
+                output.append(name);
+                sep = ": ";
             }
+            if (type != null && !TypeDisplay.NONE.equals(methodConfig.paramTypes())) {
+                output.append(sep).append(type.toUml(methodConfig.paramTypes(), null));
+                sep = ": ";
+            }
+            if (name != null && MethodConfig.ParamNames.AFTER_TYPE.equals(methodConfig.paramNames())) {
+                output.append(sep).append(name);
+            }
+            return output;
         }
     }
 }

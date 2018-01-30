@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,15 @@ package nl.talsmasoftware.umldoclet.v1.rendering;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.PackageDoc;
 import com.sun.javadoc.Tag;
-import nl.talsmasoftware.umldoclet.model.Reference;
+import nl.talsmasoftware.umldoclet.uml.Reference;
 import nl.talsmasoftware.umldoclet.v1.config.UMLDocletConfig;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 
-import static nl.talsmasoftware.umldoclet.model.Reference.Side.from;
-import static nl.talsmasoftware.umldoclet.model.Reference.Side.to;
+import static nl.talsmasoftware.umldoclet.uml.Reference.Side.from;
+import static nl.talsmasoftware.umldoclet.uml.Reference.Side.to;
 import static nl.talsmasoftware.umldoclet.v1.logging.LogSupport.*;
 
 /**

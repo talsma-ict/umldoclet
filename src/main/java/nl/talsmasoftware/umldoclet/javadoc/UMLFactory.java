@@ -17,7 +17,7 @@ package nl.talsmasoftware.umldoclet.javadoc;
 
 import jdk.javadoc.doclet.DocletEnvironment;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.model.*;
+import nl.talsmasoftware.umldoclet.uml.*;
 import nl.talsmasoftware.umldoclet.rendering.Renderer;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingChildRenderer;
 
@@ -30,8 +30,8 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static javax.lang.model.element.ElementKind.ENUM;
-import static nl.talsmasoftware.umldoclet.model.Reference.Side.from;
-import static nl.talsmasoftware.umldoclet.model.Reference.Side.to;
+import static nl.talsmasoftware.umldoclet.uml.Reference.Side.from;
+import static nl.talsmasoftware.umldoclet.uml.Reference.Side.to;
 
 /**
  * @author Sjoerd Talsma

@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.model;
+package nl.talsmasoftware.umldoclet.uml;
 
 /**
- * Model object for a Field in an UML class.
- *
  * @author Sjoerd Talsma
  */
-public class Field extends TypeMember {
+public enum TypeClassification {
+    ENUM, INTERFACE, ANNOTATION, ABSTRACT_CLASS, CLASS;
 
-    public Field(Type containingType, Visibility visibility, boolean isStatic, String name, TypeName type) {
-        super(containingType, visibility, false, isStatic, name, null, type);
+    public String toUml() {
+        return name().toLowerCase().replace('_', ' ');
     }
+
 }

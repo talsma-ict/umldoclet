@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.model;
+package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
@@ -49,7 +49,7 @@ public abstract class TypeMember extends UMLRenderer implements Comparable<TypeM
     }
 
     protected <IPW extends IndentingPrintWriter> IPW writeTypeTo(IPW output) {
-        if (type != null) type.writeTo(output.append(": "));
+        if (type != null) output.append(": ").append(type.toString());
         return output;
     }
 
@@ -57,7 +57,7 @@ public abstract class TypeMember extends UMLRenderer implements Comparable<TypeM
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         if (isAbstract) output.append("{abstract}").whitespace();
         if (isStatic) output.append("{static}").whitespace();
-        visibility.writeTo(output).append(name);
+        output.append(visibility.toUml()).append(name);
         if (parameters != null) parameters.writeTo(output);
         writeTypeTo(output);
         output.newline();

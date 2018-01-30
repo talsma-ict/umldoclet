@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.model;
+package nl.talsmasoftware.umldoclet.uml;
 
+import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 /**
@@ -29,10 +30,11 @@ public class Method extends TypeMember {
 
     @Override
     protected <IPW extends IndentingPrintWriter> IPW writeTypeTo(IPW output) {
-        TypeName.Display returnTypeDisplay = config.getMethodConfig().returnType();
-        if (type != null && !TypeName.Display.NONE.equals(returnTypeDisplay)) {
-            type.writeTo(output.append(": "), returnTypeDisplay, null);
+        TypeDisplay returnTypeDisplay = config.getMethodConfig().returnType();
+        if (type != null && !TypeDisplay.NONE.equals(returnTypeDisplay)) {
+            output.append(": ").append(type.toUml(returnTypeDisplay, null));
         }
         return output;
     }
+
 }

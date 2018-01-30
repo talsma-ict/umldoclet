@@ -15,9 +15,9 @@
  */
 package nl.talsmasoftware.umldoclet.javadoc;
 
-import nl.talsmasoftware.umldoclet.model.Namespace;
-import nl.talsmasoftware.umldoclet.model.Type;
-import nl.talsmasoftware.umldoclet.model.UMLDiagram;
+import nl.talsmasoftware.umldoclet.uml.Namespace;
+import nl.talsmasoftware.umldoclet.uml.Type;
+import nl.talsmasoftware.umldoclet.uml.UMLDiagram;
 
 import javax.lang.model.element.TypeElement;
 import java.io.File;

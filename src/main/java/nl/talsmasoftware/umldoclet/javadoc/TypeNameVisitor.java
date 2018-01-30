@@ -15,7 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.javadoc;
 
-import nl.talsmasoftware.umldoclet.model.TypeName;
+import nl.talsmasoftware.umldoclet.uml.TypeName;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.QualifiedNameable;
