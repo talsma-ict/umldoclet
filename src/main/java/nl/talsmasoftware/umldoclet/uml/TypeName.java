@@ -124,8 +124,29 @@ public class TypeName implements Comparable<TypeName> {
 
         @Override
         protected String toUml(TypeDisplay display, Namespace namespace) {
-            return delegate.toUml(display, namespace) + "[]";
+            return super.toUml(display, namespace) + "[]";
         }
     }
 
+    public static class Wildcard extends TypeName {
+        private boolean isExtends;
+
+        private Wildcard(TypeName delegate, boolean isExtends) {
+            super(delegate.simple, delegate.qualified, delegate.generics);
+            this.isExtends = isExtends;
+        }
+
+        public static Wildcard extendsBound(TypeName delegate) {
+            return new Wildcard(requireNonNull(delegate, "Extends bound is <null>."), true);
+        }
+
+        public static Wildcard superBound(TypeName delegate) {
+            return new Wildcard(requireNonNull(delegate, "Super bound is <null>."), false);
+        }
+
+        @Override
+        protected String toUml(TypeDisplay display, Namespace namespace) {
+            return String.format("? %s %s", isExtends ? "extends" : "super", super.toUml(display, namespace));
+        }
+    }
 }

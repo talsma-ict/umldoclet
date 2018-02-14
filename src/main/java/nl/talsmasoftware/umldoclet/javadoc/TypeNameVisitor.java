@@ -27,7 +27,6 @@ import javax.lang.model.util.SimpleTypeVisitor9;
  *
  * @author Sjoerd Talsma
  */
-// TODO javadoc aware code.
 final class TypeNameVisitor extends SimpleTypeVisitor9<TypeName, Void> {
 
     static final TypeNameVisitor INSTANCE = new TypeNameVisitor();
@@ -66,11 +65,16 @@ final class TypeNameVisitor extends SimpleTypeVisitor9<TypeName, Void> {
         return TypeName.Array.of(visit(arrayType.getComponentType()));
     }
 
-//    @Override
-//    public TypeName visitTypeVariable(TypeVariable typeVariable, Void parameter) {
-//        // TODO handle type variables better!
-//        return new TypeName(typeVariable.toString(), typeVariable.toString());
-//    }
+    @Override
+    public TypeName visitWildcard(WildcardType wildcardType, Void parameter) {
+        TypeMirror extendsBound = wildcardType.getExtendsBound();
+        if (extendsBound != null) return TypeName.Wildcard.extendsBound(visit(extendsBound));
+        TypeMirror superBound = wildcardType.getSuperBound();
+        if (superBound != null) return TypeName.Wildcard.superBound(visit(superBound));
+
+        return defaultAction(wildcardType, parameter);
+    }
+
 
     @Override
     protected TypeName defaultAction(TypeMirror tp, Void parameter) {
@@ -78,19 +82,28 @@ final class TypeNameVisitor extends SimpleTypeVisitor9<TypeName, Void> {
         return new TypeName(tp.toString(), tp.toString());
     }
 
-    // TODO Figure out how intersections and unions are represented in UML
+    // TODO Figure out how the following should be represented in UML
+
 //    @Override
-//    public String visitIntersection(IntersectionType intersectionType, Void parameter) {
-//        return intersectionType.getBounds().stream()
-//                .map(bound -> visit(bound, parameter))
-//                .collect(joining(" & "));
+//    public TypeName visitTypeVariable(TypeVariable typeVariable, Void parameter) {
+//        // TODO handle type variables better!
+//        return defaultAction(typeVariable, parameter);
 //    }
 
 //    @Override
-//    public String visitUnion(UnionType unionType, Void parameter) {
-//        return unionType.getAlternatives().stream()
-//                .map(alternative -> visit(alternative, parameter))
-//                .collect(joining(" | "));
+//    public TypeName visitIntersection(IntersectionType intersectionType, Void parameter) {
+////        return intersectionType.getBounds().stream()
+////                .map(bound -> visit(bound, parameter))
+////                .collect(joining(" & "));
+//        return defaultAction(intersectionType, parameter);
+//    }
+
+//    @Override
+//    public TypeName visitUnion(UnionType unionType, Void parameter) {
+////        return unionType.getAlternatives().stream()
+////                .map(alternative -> visit(alternative, parameter))
+////                .collect(joining(" | "));
+//        return defaultAction(unionType, parameter);
 //    }
 
 }

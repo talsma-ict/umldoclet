@@ -15,6 +15,8 @@
  */
 package nl.talsmasoftware.umldoclet.configuration;
 
+import nl.talsmasoftware.umldoclet.uml.Visibility;
+
 /**
  * The configuration settings that determine how methods must be rendered.
  *
@@ -30,4 +32,6 @@ public interface MethodConfig {
     TypeDisplay paramTypes();
 
     TypeDisplay returnType();
+
+    boolean include(Visibility methodVisibility);
 }

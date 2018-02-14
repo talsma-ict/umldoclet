@@ -17,9 +17,9 @@ package nl.talsmasoftware.umldoclet.javadoc;
 
 import jdk.javadoc.doclet.DocletEnvironment;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.uml.*;
 import nl.talsmasoftware.umldoclet.rendering.Renderer;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingChildRenderer;
+import nl.talsmasoftware.umldoclet.uml.*;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.ArrayType;
@@ -30,6 +30,7 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static javax.lang.model.element.ElementKind.ENUM;
+import static nl.talsmasoftware.umldoclet.rendering.CharSequenceRenderer.NEWLINE;
 import static nl.talsmasoftware.umldoclet.uml.Reference.Side.from;
 import static nl.talsmasoftware.umldoclet.uml.Reference.Side.to;
 
@@ -44,6 +45,14 @@ public class UMLFactory {
     public UMLFactory(Configuration config, DocletEnvironment env) {
         this.config = requireNonNull(config, "Configuration is <null>.");
         this.env = requireNonNull(env, "Doclet environment is <null>.");
+    }
+
+    public UMLDiagram createClassDiagram(TypeElement classElement) {
+        return new ClassDiagram(this, classElement);
+    }
+
+    public UMLDiagram createPackageDiagram(PackageElement packageElement) {
+        return new PackageDiagram(this, packageElement);
     }
 
     Namespace packageOf(TypeElement typeElement) {
@@ -187,26 +196,26 @@ public class UMLFactory {
         }
 
         // Add 'uses' references by replacing visible fields
-//        final Set<Visibility> visible = EnumSet.of(Visibility.PACKAGE_PRIVATE, Visibility.PUBLIC);
-        final Set<Visibility> visible = EnumSet.allOf(Visibility.class);
         typeElement.getEnclosedElements().stream()
                 .filter(member -> ElementKind.FIELD.equals(member.getKind()))
                 .filter(VariableElement.class::isInstance).map(VariableElement.class::cast)
-                .filter(field -> visible.contains(visibilityOf(field.getModifiers())))
+                .filter(field -> config.getFieldConfig().include(visibilityOf(field.getModifiers())))
                 .forEach(field -> {
                     String fieldName = field.getSimpleName().toString();
                     TypeName fieldType = propertyType(field.asType());
                     if (namespace.contains(fieldType)) {
                         addReference(references, new Reference(from(type.name.qualified),
                                 "-->", to(fieldType.qualified), fieldName));
-                        type.getChildren().removeIf(child -> child instanceof Field && ((Field) child).name.equals(fieldName));
+                        type.getChildren().removeIf(child -> child instanceof Field
+                                && ((Field) child).name.equals(fieldName));
                     }
                 });
+
         // Add 'uses' reference by replacing visible getters/setters
         typeElement.getEnclosedElements().stream()
                 .filter(member -> ElementKind.METHOD.equals(member.getKind()))
                 .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
-                .filter(method -> visible.contains(visibilityOf(method.getModifiers())))
+                .filter(method -> config.getMethodConfig().include(visibilityOf(method.getModifiers())))
                 .forEach(method -> {
                     String propertyName = propertyName(method);
                     if (propertyName != null) {
@@ -282,7 +291,8 @@ public class UMLFactory {
                     references.addAll(findPackageReferences(pkg, foreignTypes, typeElement, type));
                     return type;
                 })
-                .forEach(type -> addChild(pkg, type));
+                .flatMap(type -> Stream.of(NEWLINE, type))
+                .forEach(child -> addChild(pkg, child));
 
         return pkg;
     }

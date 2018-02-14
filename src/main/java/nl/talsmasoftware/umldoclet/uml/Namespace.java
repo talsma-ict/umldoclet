@@ -21,6 +21,7 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingChildRenderer;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingRenderer;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -42,7 +43,7 @@ public class Namespace extends UMLRenderer implements Comparable<Namespace> {
     }
 
     public final String name;
-    private final Set<Renderer> children = new LinkedHashSet<>();
+    private final Collection<Renderer> children = new ArrayList<>();
 
     public Namespace(Configuration config, String name) {
         super(config);

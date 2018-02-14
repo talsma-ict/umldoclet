@@ -29,6 +29,12 @@ public class Method extends TypeMember {
     }
 
     @Override
+    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+        if (config.getMethodConfig().include(visibility)) super.writeTo(output);
+        return output;
+    }
+
+    @Override
     protected <IPW extends IndentingPrintWriter> IPW writeTypeTo(IPW output) {
         TypeDisplay returnTypeDisplay = config.getMethodConfig().returnType();
         if (type != null && !TypeDisplay.NONE.equals(returnTypeDisplay)) {

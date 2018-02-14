@@ -38,6 +38,11 @@ public interface Configuration {
     String getDestinationDirectory();
 
     /**
+     * @return The part of the configuration that determines how fields are rendered.
+     */
+    FieldConfig getFieldConfig();
+
+    /**
      * @return The part of the configuration that determines how methods are rendered.
      */
     MethodConfig getMethodConfig();

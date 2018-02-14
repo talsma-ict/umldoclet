@@ -13,24 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.uml;
+package nl.talsmasoftware.umldoclet.configuration;
 
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.uml.Visibility;
 
 /**
- * Model object for a Field in an UML class.
- *
  * @author Sjoerd Talsma
  */
-public class Field extends TypeMember {
+public interface FieldConfig {
 
-    public Field(Type containingType, Visibility visibility, boolean isStatic, String name, TypeName type) {
-        super(containingType, visibility, false, isStatic, name, null, type);
-    }
+    TypeDisplay typeDisplay();
 
-    @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-        if (config.getFieldConfig().include(visibility)) super.writeTo(output);
-        return output;
-    }
+    boolean include(Visibility fieldVisibility);
+
 }

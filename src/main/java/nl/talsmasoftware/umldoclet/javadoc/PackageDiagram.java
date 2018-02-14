@@ -26,16 +26,14 @@ import java.io.File;
 import java.util.*;
 
 /**
- * TODO move to javadoc package
- *
  * @author Sjoerd Talsma
  */
-public class PackageDiagram extends UMLDiagram {
+class PackageDiagram extends UMLDiagram {
 
     private final Namespace pkg;
     private File pumlFile = null;
 
-    public PackageDiagram(UMLFactory factory, PackageElement packageElement) {
+    PackageDiagram(UMLFactory factory, PackageElement packageElement) {
         super(factory.config);
         Map<Namespace, Collection<Type>> foreignTypes = new LinkedHashMap<>();
         List<Reference> references = new ArrayList<>();

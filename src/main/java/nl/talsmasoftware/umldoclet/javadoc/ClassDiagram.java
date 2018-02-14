@@ -25,13 +25,13 @@ import java.io.File;
 /**
  * @author Sjoerd Talsma
  */
-public class ClassDiagram extends UMLDiagram {
+class ClassDiagram extends UMLDiagram {
 
     private final Namespace namespace;
     private final Type type;
     private File pumlFile = null;
 
-    public ClassDiagram(UMLFactory factory, TypeElement classElement) {
+    ClassDiagram(UMLFactory factory, TypeElement classElement) {
         super(factory.config);
         this.namespace = factory.packageOf(classElement);
         this.type = factory.createType(classElement);

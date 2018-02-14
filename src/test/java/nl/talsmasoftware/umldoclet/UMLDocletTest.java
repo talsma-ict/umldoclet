@@ -27,7 +27,7 @@ public class UMLDocletTest {
 
     @Test
     public void testDoclet() {
-        this.javadoc.run(System.out, System.err,
+        javadoc.run(System.out, System.err,
                 "-sourcepath", "src/main/java",
                 "-d", "target/doclet-test",
                 "-doclet", UMLDoclet.class.getName(),

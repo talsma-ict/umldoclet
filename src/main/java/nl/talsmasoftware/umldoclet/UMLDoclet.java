@@ -19,9 +19,7 @@ import jdk.javadoc.doclet.DocletEnvironment;
 import jdk.javadoc.doclet.Reporter;
 import jdk.javadoc.doclet.StandardDoclet;
 import net.sourceforge.plantuml.version.Version;
-import nl.talsmasoftware.umldoclet.javadoc.ClassDiagram;
 import nl.talsmasoftware.umldoclet.javadoc.DocletConfig;
-import nl.talsmasoftware.umldoclet.javadoc.PackageDiagram;
 import nl.talsmasoftware.umldoclet.javadoc.UMLFactory;
 import nl.talsmasoftware.umldoclet.uml.UMLDiagram;
 
@@ -98,9 +96,9 @@ public class UMLDoclet extends StandardDoclet {
 
     private Optional<UMLDiagram> mapToDiagram(UMLFactory factory, Element element) {
         if (element instanceof PackageElement) {
-            return Optional.of(new PackageDiagram(factory, (PackageElement) element));
+            return Optional.of(factory.createPackageDiagram((PackageElement) element));
         } else if (element instanceof TypeElement && (element.getKind().isClass() || element.getKind().isInterface())) {
-            return Optional.of(new ClassDiagram(factory, (TypeElement) element));
+            return Optional.of(factory.createClassDiagram((TypeElement) element));
         }
         return Optional.empty();
     }

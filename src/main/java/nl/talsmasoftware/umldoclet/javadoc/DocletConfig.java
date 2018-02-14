@@ -19,15 +19,14 @@ import jdk.javadoc.doclet.Doclet;
 import jdk.javadoc.doclet.Reporter;
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.configuration.FieldConfig;
 import nl.talsmasoftware.umldoclet.configuration.MethodConfig;
 import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
+import nl.talsmasoftware.umldoclet.uml.Visibility;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
@@ -59,6 +58,7 @@ public class DocletConfig implements Configuration {
      */
     boolean verbose = false;
 
+    FieldCfg fieldConfig = new FieldCfg();
     MethodCfg methodConfig = new MethodCfg();
 
     List<String> excludedReferences = new ArrayList<>(asList(
@@ -94,6 +94,11 @@ public class DocletConfig implements Configuration {
     }
 
     @Override
+    public FieldConfig getFieldConfig() {
+        return fieldConfig;
+    }
+
+    @Override
     public MethodConfig getMethodConfig() {
         return methodConfig;
     }
@@ -103,10 +108,28 @@ public class DocletConfig implements Configuration {
         return excludedReferences;
     }
 
+    class FieldCfg implements FieldConfig {
+
+        TypeDisplay typeDisplay = TypeDisplay.SIMPLE;
+        Set<Visibility> visibilities = EnumSet.of(Visibility.PROTECTED, Visibility.PUBLIC);
+
+        @Override
+        public TypeDisplay typeDisplay() {
+            return typeDisplay;
+        }
+
+        @Override
+        public boolean include(Visibility visibility) {
+            return visibilities.contains(visibility);
+        }
+    }
+
     class MethodCfg implements MethodConfig {
-        ParamNames paramNames = ParamNames.BEFORE_TYPE;
+        // ParamNames paramNames = ParamNames.BEFORE_TYPE;
+        ParamNames paramNames = ParamNames.NONE;
         TypeDisplay paramTypes = TypeDisplay.SIMPLE;
         TypeDisplay returnType = TypeDisplay.SIMPLE;
+        Set<Visibility> visibilities = EnumSet.of(Visibility.PROTECTED, Visibility.PUBLIC);
 
         @Override
         public ParamNames paramNames() {
@@ -121,6 +144,11 @@ public class DocletConfig implements Configuration {
         @Override
         public TypeDisplay returnType() {
             return returnType;
+        }
+
+        @Override
+        public boolean include(Visibility visibility) {
+            return visibilities.contains(visibility);
         }
     }
 }
