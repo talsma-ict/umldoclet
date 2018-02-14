@@ -3,6 +3,11 @@
 
 # UMLDoclet
 
+## Blockers for 2.0
+
+- Hiding of overridden methods from excluded classes (e.g. toString, hashCode + equals)
+- Reasonable configurability
+
 __Note:__ Version `2.0.0` of this [doclet] is a full rewrite as 
 a [Javadoc 9 doclet][doclet], reusing only the internal rendering of `.puml` files.  
 UMLDoclet v2 requires a JDK 9 compatible version of `javadoc` to run.  

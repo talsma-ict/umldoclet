@@ -22,10 +22,10 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingChildRenderer;
 import nl.talsmasoftware.umldoclet.uml.*;
 
 import javax.lang.model.element.*;
-import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
@@ -41,10 +41,12 @@ public class UMLFactory {
 
     final Configuration config;
     private final DocletEnvironment env;
+    private final Function<TypeMirror, TypeNameWithCardinality> typeNameWithCardinality;
 
     public UMLFactory(Configuration config, DocletEnvironment env) {
         this.config = requireNonNull(config, "Configuration is <null>.");
         this.env = requireNonNull(env, "Doclet environment is <null>.");
+        this.typeNameWithCardinality = TypeNameWithCardinality.function(env.getTypeUtils());
     }
 
     public UMLDiagram createClassDiagram(TypeElement classElement) {
@@ -69,7 +71,7 @@ public class UMLFactory {
         );
     }
 
-    private Parameters toParameters(List<? extends VariableElement> params) {
+    private Parameters createParameters(List<? extends VariableElement> params) {
         Parameters result = new Parameters(config);
         params.forEach(param -> result.add(param.getSimpleName().toString(), TypeNameVisitor.INSTANCE.visit(param.asType())));
         return result;
@@ -83,7 +85,7 @@ public class UMLFactory {
                 modifiers.contains(Modifier.ABSTRACT),
                 modifiers.contains(Modifier.STATIC),
                 containingType.name.simple,
-                toParameters(executableElement.getParameters()),
+                createParameters(executableElement.getParameters()),
                 null
         );
     }
@@ -96,7 +98,7 @@ public class UMLFactory {
                 modifiers.contains(Modifier.ABSTRACT),
                 modifiers.contains(Modifier.STATIC),
                 executableElement.getSimpleName().toString(),
-                toParameters(executableElement.getParameters()),
+                createParameters(executableElement.getParameters()),
                 TypeNameVisitor.INSTANCE.visit(executableElement.getReturnType())
         );
     }
@@ -117,7 +119,7 @@ public class UMLFactory {
         return children.add(child);
     }
 
-    Type createType(Namespace containingPackage, TypeElement typeElement) {
+    private Type createType(Namespace containingPackage, TypeElement typeElement) {
         ElementKind kind = requireNonNull(typeElement, "Type element is <null>.").getKind();
         Set<Modifier> modifiers = typeElement.getModifiers();
         TypeClassification classification = ENUM.equals(kind) ? TypeClassification.ENUM
@@ -202,10 +204,13 @@ public class UMLFactory {
                 .filter(field -> config.getFieldConfig().include(visibilityOf(field.getModifiers())))
                 .forEach(field -> {
                     String fieldName = field.getSimpleName().toString();
-                    TypeName fieldType = propertyType(field.asType());
-                    if (namespace.contains(fieldType)) {
-                        addReference(references, new Reference(from(type.name.qualified),
-                                "-->", to(fieldType.qualified), fieldName));
+                    TypeNameWithCardinality fieldType = typeNameWithCardinality.apply(field.asType());
+                    if (namespace.contains(fieldType.typeName)) {
+                        addReference(references, new Reference(
+                                from(type.name.qualified),
+                                "-->",
+                                to(fieldType.typeName.qualified, fieldType.cardinality),
+                                fieldName));
                         type.getChildren().removeIf(child -> child instanceof Field
                                 && ((Field) child).name.equals(fieldName));
                     }
@@ -219,10 +224,13 @@ public class UMLFactory {
                 .forEach(method -> {
                     String propertyName = propertyName(method);
                     if (propertyName != null) {
-                        TypeName returnType = propertyType(method.getReturnType());
-                        if (namespace.contains(returnType)) {
-                            addReference(references, new Reference(from(type.name.qualified),
-                                    "-->", to(returnType.qualified), propertyName));
+                        TypeNameWithCardinality returnType = typeNameWithCardinality.apply(method.getReturnType());
+                        if (namespace.contains(returnType.typeName)) {
+                            addReference(references, new Reference(
+                                    from(type.name.qualified),
+                                    "-->",
+                                    to(returnType.typeName.qualified, returnType.cardinality),
+                                    propertyName));
                             type.getChildren().removeIf(child -> child instanceof Method
                                     && ((Method) child).name.equals(method.getSimpleName().toString()));
                         }
@@ -247,17 +255,6 @@ public class UMLFactory {
         // TODO: boolean isProperty() support.
 
         return null;
-    }
-
-    private static TypeName propertyType(TypeMirror typeMirror) {
-        return iteratedType(typeMirror).orElseGet(() -> TypeNameVisitor.INSTANCE.visit(typeMirror));
-    }
-
-    private static Optional<TypeName> iteratedType(TypeMirror typeMirror) {
-        if (typeMirror instanceof ArrayType) {
-            return Optional.of(TypeNameVisitor.INSTANCE.visit(((ArrayType) typeMirror).getComponentType()));
-        }
-        return Optional.empty();
     }
 
     private static void addReference(Collection<Reference> collection, Reference reference) {

@@ -62,15 +62,15 @@ final class TypeNameVisitor extends SimpleTypeVisitor9<TypeName, Void> {
 
     @Override
     public TypeName visitArray(ArrayType arrayType, Void parameter) {
-        return TypeName.Array.of(visit(arrayType.getComponentType()));
+        return TypeName.Array.of(visit(arrayType.getComponentType(), parameter));
     }
 
     @Override
     public TypeName visitWildcard(WildcardType wildcardType, Void parameter) {
         TypeMirror extendsBound = wildcardType.getExtendsBound();
-        if (extendsBound != null) return TypeName.Wildcard.extendsBound(visit(extendsBound));
+        if (extendsBound != null) return TypeName.Wildcard.extendsBound(visit(extendsBound, parameter));
         TypeMirror superBound = wildcardType.getSuperBound();
-        if (superBound != null) return TypeName.Wildcard.superBound(visit(superBound));
+        if (superBound != null) return TypeName.Wildcard.superBound(visit(superBound, parameter));
 
         return defaultAction(wildcardType, parameter);
     }

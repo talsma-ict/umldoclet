@@ -163,7 +163,7 @@ public class Reference implements Namespace.NameSpaceAware {
             if (genericIdx > 0) qualifiedName = qualifiedName.substring(0, genericIdx);
             this.qualifiedName = qualifiedName.trim();
             if (this.qualifiedName.isEmpty()) throw new IllegalArgumentException("Name of referred object is empty.");
-            this.cardinality = cardinality != null ? cardinality.trim() : "";
+            this.cardinality = cardinality == null ? "" : cardinality.trim();
             this.nameFirst = nameFirst;
         }
 
@@ -186,8 +186,8 @@ public class Reference implements Namespace.NameSpaceAware {
                 if (name.indexOf('.') > 0) name = qualifiedName;
             }
             return cardinality.isEmpty() ? name
-                    : nameFirst ? name + ' ' + cardinality
-                    : cardinality + ' ' + name;
+                    : nameFirst ? name + " \"" + cardinality + '"'
+                    : '"' + cardinality + "\" " + name;
         }
 
         @Override
