@@ -111,15 +111,12 @@ public class TypeName implements Comparable<TypeName> {
     }
 
     public static class Array extends TypeName {
-        private final TypeName delegate;
-
-        private Array(TypeName delegate) {
-            super(delegate.simple, delegate.qualified, delegate.generics);
-            this.delegate = delegate;
+        private Array(TypeName componentType) {
+            super(componentType.simple, componentType.qualified, componentType.generics);
         }
 
-        public static Array of(TypeName delegate) {
-            return new Array(requireNonNull(delegate, "Component type of array is <null>."));
+        public static Array of(TypeName componentType) {
+            return new Array(requireNonNull(componentType, "Component type of array is <null>."));
         }
 
         @Override
@@ -128,25 +125,27 @@ public class TypeName implements Comparable<TypeName> {
         }
     }
 
-    public static class Wildcard extends TypeName {
-        private boolean isExtends;
+    public static class Variable extends TypeName {
+        private final String variable;
+        private final boolean isExtends;
 
-        private Wildcard(TypeName delegate, boolean isExtends) {
-            super(delegate.simple, delegate.qualified, delegate.generics);
+        private Variable(String variable, TypeName bound, boolean isExtends) {
+            super(bound.simple, bound.qualified, bound.generics);
+            this.variable = variable;
             this.isExtends = isExtends;
         }
 
-        public static Wildcard extendsBound(TypeName delegate) {
-            return new Wildcard(requireNonNull(delegate, "Extends bound is <null>."), true);
+        public static Variable extendsBound(String variable, TypeName bound) {
+            return new Variable(variable, requireNonNull(bound, "Upper bound is <null>."), true);
         }
 
-        public static Wildcard superBound(TypeName delegate) {
-            return new Wildcard(requireNonNull(delegate, "Super bound is <null>."), false);
+        public static Variable superBound(String variable, TypeName bound) {
+            return new Variable(variable, requireNonNull(bound, "Lower bound is <null>."), false);
         }
 
         @Override
         protected String toUml(TypeDisplay display, Namespace namespace) {
-            return String.format("? %s %s", isExtends ? "extends" : "super", super.toUml(display, namespace));
+            return String.format("%s %s %s", variable, isExtends ? "extends" : "super", super.toUml(display, namespace));
         }
     }
 }

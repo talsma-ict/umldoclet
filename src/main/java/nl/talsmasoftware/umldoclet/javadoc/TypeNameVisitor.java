@@ -66,15 +66,24 @@ final class TypeNameVisitor extends SimpleTypeVisitor9<TypeName, Void> {
     }
 
     @Override
+    public TypeName visitTypeVariable(TypeVariable typeVariable, Void parameter) {
+        TypeMirror upperBound = typeVariable.getUpperBound();
+        if (upperBound != null) return TypeName.Variable.extendsBound(typeVariable.toString(), visit(upperBound, parameter));
+        TypeMirror lowerBound = typeVariable.getLowerBound();
+        if (lowerBound != null) return TypeName.Variable.superBound(typeVariable.toString(), visit(lowerBound, parameter));
+
+        return defaultAction(typeVariable, parameter);
+    }
+
+    @Override
     public TypeName visitWildcard(WildcardType wildcardType, Void parameter) {
         TypeMirror extendsBound = wildcardType.getExtendsBound();
-        if (extendsBound != null) return TypeName.Wildcard.extendsBound(visit(extendsBound, parameter));
+        if (extendsBound != null) return TypeName.Variable.extendsBound("?", visit(extendsBound, parameter));
         TypeMirror superBound = wildcardType.getSuperBound();
-        if (superBound != null) return TypeName.Wildcard.superBound(visit(superBound, parameter));
+        if (superBound != null) return TypeName.Variable.superBound("?", visit(superBound, parameter));
 
         return defaultAction(wildcardType, parameter);
     }
-
 
     @Override
     protected TypeName defaultAction(TypeMirror tp, Void parameter) {
@@ -83,12 +92,6 @@ final class TypeNameVisitor extends SimpleTypeVisitor9<TypeName, Void> {
     }
 
     // TODO Figure out how the following should be represented in UML
-
-//    @Override
-//    public TypeName visitTypeVariable(TypeVariable typeVariable, Void parameter) {
-//        // TODO handle type variables better!
-//        return defaultAction(typeVariable, parameter);
-//    }
 
 //    @Override
 //    public TypeName visitIntersection(IntersectionType intersectionType, Void parameter) {
