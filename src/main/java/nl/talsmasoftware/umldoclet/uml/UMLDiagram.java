@@ -15,9 +15,8 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
-import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.rendering.Renderer;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingChildRenderer;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlImageWriter;
 

@@ -13,25 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.configuration;
-
-import nl.talsmasoftware.umldoclet.uml.Visibility;
+package nl.talsmasoftware.umldoclet.uml.configuration;
 
 /**
- * The configuration settings that determine how methods must be rendered.
+ * An abstraction for a configured exclusion from the generated UML diagrams.
+ * <p>
+ * TODO Elaborate on this concept.
  *
  * @author Sjoerd Talsma
  */
-public interface MethodConfig {
-    enum ParamNames {
-        NONE, BEFORE_TYPE, AFTER_TYPE
-    }
+public interface Exclusion {
 
-    ParamNames paramNames();
-
-    TypeDisplay paramTypes();
-
-    TypeDisplay returnType();
-
-    boolean include(Visibility methodVisibility);
 }

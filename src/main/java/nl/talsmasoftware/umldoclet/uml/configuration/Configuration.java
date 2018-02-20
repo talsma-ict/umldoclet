@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.configuration;
+package nl.talsmasoftware.umldoclet.uml.configuration;
 
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
@@ -21,6 +21,8 @@ import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 import java.util.List;
 
 /**
+ * Configuration about <em>how</em> UML should be rendered.
+ *
  * @author Sjoerd Talsma
  */
 public interface Configuration {
@@ -47,6 +49,9 @@ public interface Configuration {
      */
     MethodConfig getMethodConfig();
 
-    List<String> getExcludedReferences();
+    /**
+     * @return The types (classes, interfaces) that are excluded as references.
+     */
+    List<String> getExcludedTypeReferences();
 
 }

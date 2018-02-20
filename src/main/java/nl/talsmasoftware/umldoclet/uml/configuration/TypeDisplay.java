@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.configuration;
-
-import nl.talsmasoftware.umldoclet.uml.Visibility;
+package nl.talsmasoftware.umldoclet.uml.configuration;
 
 /**
+ * The ways in which a type can be rendered in the resulting UML.
+ *
  * @author Sjoerd Talsma
  */
-public interface FieldConfig {
-
-    TypeDisplay typeDisplay();
-
-    boolean include(Visibility fieldVisibility);
-
+public enum TypeDisplay {
+    NONE,
+    SIMPLE,
+    QUALIFIED,
+    QUALIFIED_GENERICS
 }

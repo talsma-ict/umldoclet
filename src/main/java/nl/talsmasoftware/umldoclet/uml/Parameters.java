@@ -15,9 +15,9 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
-import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.configuration.MethodConfig;
-import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
+import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.uml.configuration.MethodConfig;
+import nl.talsmasoftware.umldoclet.uml.configuration.TypeDisplay;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.ArrayList;

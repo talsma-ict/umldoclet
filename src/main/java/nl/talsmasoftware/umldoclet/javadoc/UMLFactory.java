@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.javadoc;
 
 import jdk.javadoc.doclet.DocletEnvironment;
-import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.rendering.Renderer;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingChildRenderer;
 import nl.talsmasoftware.umldoclet.uml.*;
@@ -168,7 +168,7 @@ public class UMLFactory {
         // Superclass reference.
         if (!TypeKind.NONE.equals(typeElement.getSuperclass().getKind())) {
             String superclass = TypeNameVisitor.INSTANCE.visit(typeElement.getSuperclass()).qualified;
-            if (!config.getExcludedReferences().contains(superclass)) {
+            if (!config.getExcludedTypeReferences().contains(superclass)) {
                 references.add(new Reference(
                         from(type.name.qualified), "--|>",
                         to(superclass)
@@ -179,7 +179,7 @@ public class UMLFactory {
         // Implemented interfaces.
         typeElement.getInterfaces().forEach(interfaceType -> {
             TypeName ifName = TypeNameVisitor.INSTANCE.visit(interfaceType);
-            if (!config.getExcludedReferences().contains(ifName.qualified)) {
+            if (!config.getExcludedTypeReferences().contains(ifName.qualified)) {
                 references.add(new Reference(
                         from(type.name.qualified), "..|>",
                         to(ifName.qualified)));

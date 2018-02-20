@@ -18,10 +18,10 @@ package nl.talsmasoftware.umldoclet.javadoc;
 import jdk.javadoc.doclet.Doclet;
 import jdk.javadoc.doclet.Reporter;
 import nl.talsmasoftware.umldoclet.UMLDoclet;
-import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.configuration.FieldConfig;
-import nl.talsmasoftware.umldoclet.configuration.MethodConfig;
-import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
+import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.uml.configuration.FieldConfig;
+import nl.talsmasoftware.umldoclet.uml.configuration.MethodConfig;
+import nl.talsmasoftware.umldoclet.uml.configuration.TypeDisplay;
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 import nl.talsmasoftware.umldoclet.uml.Visibility;
@@ -104,7 +104,7 @@ public class DocletConfig implements Configuration {
     }
 
     @Override
-    public List<String> getExcludedReferences() {
+    public List<String> getExcludedTypeReferences() {
         return excludedReferences;
     }
 
