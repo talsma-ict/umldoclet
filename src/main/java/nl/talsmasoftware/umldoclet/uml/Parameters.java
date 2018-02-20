@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * @author Sjoerd Talsma
  */
-public class Parameters extends UMLRenderer {
+public class Parameters extends UMLPart {
 
     private final List<Parameter> params = new ArrayList<>();
 
@@ -62,7 +62,7 @@ public class Parameters extends UMLRenderer {
         return output;
     }
 
-    private static class Parameter extends UMLRenderer {
+    private static class Parameter extends UMLPart {
         private final String name;
         private final TypeName type;
 

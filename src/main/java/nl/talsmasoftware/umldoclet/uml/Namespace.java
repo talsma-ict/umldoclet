@@ -26,11 +26,13 @@ import java.util.Collection;
 import static java.util.Objects.requireNonNull;
 
 /**
- * UML namespace, corresponds to a 'package' in the Java world.
+ * UML namespace
+ * <p>
+ * This corresponds to a 'package' in the Java world.
  *
  * @author Sjoerd Talsma
  */
-public class Namespace extends UMLRenderer implements Comparable<Namespace> {
+public class Namespace extends UMLPart implements Comparable<Namespace> {
     public interface NameSpaceAware extends IndentingRenderer {
         default <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
             return writeTo(output, null);

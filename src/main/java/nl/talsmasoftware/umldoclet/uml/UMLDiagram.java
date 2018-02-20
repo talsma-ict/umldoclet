@@ -41,7 +41,7 @@ import static nl.talsmasoftware.umldoclet.logging.Message.INFO_GENERATING_FILE;
  *
  * @author Sjoerd Talsma
  */
-public abstract class UMLDiagram extends UMLRenderer {
+public abstract class UMLDiagram extends UMLPart {
 
     //    protected final Configuration config;
     //    protected final DocletEnvironment env;

@@ -27,6 +27,13 @@ import java.util.List;
  */
 public interface Configuration {
 
+    /**
+     * Interface for any object that can have configuration.
+     */
+    interface Configured {
+        Configuration getConfiguration();
+    }
+
     Logger getLogger();
 
     /**

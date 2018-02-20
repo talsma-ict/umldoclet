@@ -15,10 +15,12 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
-import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.rendering.Renderer;
+import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingChildRenderer;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.uml.configuration.Configuration.Configured;
 
 import java.io.StringWriter;
 import java.util.Collection;
@@ -27,23 +29,24 @@ import static java.util.Collections.emptySet;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Base implementation for renderers.
+ * Smallest 'independent' part of an UML diagram that can be rendered,
+ * serves as a reusable base-class for all other UML parts.
  * <p>
- * Renderers are capable of rendering themselves to {@link IndentingPrintWriter} instances and have
+ * UML parts are capable of rendering themselves to {@link IndentingPrintWriter} instances and have
  * chaining methods returning these writers for easier appending.
  *
  * @author Sjoerd Talsma
  */
-abstract class UMLRenderer implements IndentingChildRenderer {
+abstract class UMLPart implements IndentingChildRenderer {
 
     protected final Configuration config;
 
-    UMLRenderer(Configuration config) {
+    UMLPart(Configuration config) {
         this.config = requireNonNull(config, "Configuration is <null>.");
     }
 
     /**
-     * To be overridden by renderers that actually have children.
+     * To be overridden by parts that actually have children.
      *
      * @return The children for this renderer.
      */
@@ -52,13 +55,18 @@ abstract class UMLRenderer implements IndentingChildRenderer {
         return emptySet();
     }
 
+    protected Indentation getIndentation() {
+        if (this instanceof Configured) return ((Configured) this).getConfiguration().getIndentation();
+        return Indentation.DEFAULT;
+    }
+
     /**
      * Renders the entire content of this renderer and returns it as a String value.
      *
      * @return The rendered content of this renderer.
      */
     public String toString() {
-        return writeTo(IndentingPrintWriter.wrap(new StringWriter(), config.getIndentation())).toString();
+        return writeTo(IndentingPrintWriter.wrap(new StringWriter(), getIndentation())).toString();
     }
 
 }

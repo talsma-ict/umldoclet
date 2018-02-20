@@ -25,7 +25,7 @@ import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 
-public class Type extends UMLRenderer implements Namespace.NameSpaceAware, Comparable<Type> {
+public class Type extends UMLPart implements Namespace.NameSpaceAware, Comparable<Type> {
 
     public final Namespace containingPackage;
     public final TypeClassification classfication;
