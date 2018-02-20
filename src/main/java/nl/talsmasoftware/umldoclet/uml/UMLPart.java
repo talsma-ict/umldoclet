@@ -15,7 +15,6 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
-import nl.talsmasoftware.umldoclet.rendering.Renderer;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingChildRenderer;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
@@ -51,7 +50,7 @@ abstract class UMLPart implements IndentingChildRenderer {
      * @return The children for this renderer.
      */
     @Override
-    public Collection<? extends Renderer> getChildren() {
+    public Collection<? extends nl.talsmasoftware.umldoclet.rendering.UMLPart> getChildren() {
         return emptySet();
     }
 

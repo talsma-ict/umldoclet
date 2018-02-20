@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.rendering.indent;
 
-import nl.talsmasoftware.umldoclet.rendering.Renderer;
+import nl.talsmasoftware.umldoclet.rendering.UMLPart;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -31,7 +31,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Sjoerd Talsma
  */
-public final class Indentation implements CharSequence, Renderer, Serializable {
+public final class Indentation implements CharSequence, UMLPart, Serializable {
 
     // Cache of the first 5 four-spaces indentations.
     private static final Indentation[] FOUR_SPACES = {

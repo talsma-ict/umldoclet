@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.uml.configuration.TypeDisplay;
-import nl.talsmasoftware.umldoclet.rendering.Renderer;
+import nl.talsmasoftware.umldoclet.rendering.UMLPart;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Collection;
@@ -25,12 +25,12 @@ import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 
-public class Type extends UMLPart implements Namespace.NameSpaceAware, Comparable<Type> {
+public class Type extends nl.talsmasoftware.umldoclet.uml.UMLPart implements Namespace.NameSpaceAware, Comparable<Type> {
 
     public final Namespace containingPackage;
     public final TypeClassification classfication;
     public final TypeName name;
-    protected final Set<Renderer> children = new LinkedHashSet<>();
+    protected final Set<nl.talsmasoftware.umldoclet.rendering.UMLPart> children = new LinkedHashSet<>();
 
     public Type(Namespace namespace, TypeClassification classification, TypeName name) {
         super(requireNonNull(namespace, "Containing package is <null>.").config);
@@ -40,7 +40,7 @@ public class Type extends UMLPart implements Namespace.NameSpaceAware, Comparabl
     }
 
     @Override
-    public Collection<? extends Renderer> getChildren() {
+    public Collection<? extends UMLPart> getChildren() {
         return children;
     }
 

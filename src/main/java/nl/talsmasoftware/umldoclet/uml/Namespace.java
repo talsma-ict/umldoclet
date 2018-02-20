@@ -15,7 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
-import nl.talsmasoftware.umldoclet.rendering.Renderer;
+import nl.talsmasoftware.umldoclet.rendering.UMLPart;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingRenderer;
 import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
@@ -32,7 +32,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Sjoerd Talsma
  */
-public class Namespace extends UMLPart implements Comparable<Namespace> {
+public class Namespace extends nl.talsmasoftware.umldoclet.uml.UMLPart implements Comparable<Namespace> {
     public interface NameSpaceAware extends IndentingRenderer {
         default <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
             return writeTo(output, null);
@@ -42,7 +42,7 @@ public class Namespace extends UMLPart implements Comparable<Namespace> {
     }
 
     public final String name;
-    private final Collection<Renderer> children = new ArrayList<>();
+    private final Collection<UMLPart> children = new ArrayList<>();
 
     public Namespace(Configuration config, String name) {
         super(config);
@@ -51,7 +51,7 @@ public class Namespace extends UMLPart implements Comparable<Namespace> {
     }
 
     @Override
-    public Collection<? extends Renderer> getChildren() {
+    public Collection<? extends UMLPart> getChildren() {
         return children;
     }
 

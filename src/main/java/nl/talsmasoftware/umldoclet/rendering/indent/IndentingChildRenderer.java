@@ -15,7 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.rendering.indent;
 
-import nl.talsmasoftware.umldoclet.rendering.Renderer;
+import nl.talsmasoftware.umldoclet.rendering.UMLPart;
 
 import java.util.Collection;
 
@@ -25,7 +25,7 @@ import java.util.Collection;
  * @author Sjoerd Talsma
  */
 public interface IndentingChildRenderer extends IndentingRenderer {
-    Collection<? extends Renderer> getChildren();
+    Collection<? extends UMLPart> getChildren();
 
     /**
      * Helper method to write all children to the specified output.
@@ -38,7 +38,7 @@ public interface IndentingChildRenderer extends IndentingRenderer {
      * @return A reference to the output for method chaining purposes.
      */
     default <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
-        Collection<? extends Renderer> children = getChildren();
+        Collection<? extends UMLPart> children = getChildren();
         if (children != null && !children.isEmpty()) {
             IndentingPrintWriter indented = output.indent();
             children.forEach(child -> child.writeTo(indented));

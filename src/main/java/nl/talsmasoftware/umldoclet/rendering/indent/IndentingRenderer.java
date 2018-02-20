@@ -15,7 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.rendering.indent;
 
-import nl.talsmasoftware.umldoclet.rendering.Renderer;
+import nl.talsmasoftware.umldoclet.rendering.UMLPart;
 
 /**
  * Rendere interface that can make use of an {@link IndentingPrintWriter}
@@ -23,7 +23,7 @@ import nl.talsmasoftware.umldoclet.rendering.Renderer;
  *
  * @author Sjoerd Talsma
  */
-public interface IndentingRenderer extends Renderer {
+public interface IndentingRenderer extends UMLPart {
 
     /**
      * Renders this object to the given indenting {@code output}.

@@ -25,8 +25,8 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Sjoerd Talsma
  */
-public final class CharSequenceRenderer implements CharSequence, Renderer, Serializable {
-    public static final Renderer NEWLINE = CharSequenceRenderer.of(System.lineSeparator());
+public final class CharSequenceRenderer implements CharSequence, UMLPart, Serializable {
+    public static final UMLPart NEWLINE = CharSequenceRenderer.of(System.lineSeparator());
 
     private final CharSequence content;
 

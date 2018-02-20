@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.rendering.Renderer;
+import nl.talsmasoftware.umldoclet.rendering.UMLPart;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlImageWriter;
 
@@ -41,11 +41,11 @@ import static nl.talsmasoftware.umldoclet.logging.Message.INFO_GENERATING_FILE;
  *
  * @author Sjoerd Talsma
  */
-public abstract class UMLDiagram extends UMLPart {
+public abstract class UMLDiagram extends nl.talsmasoftware.umldoclet.uml.UMLPart {
 
     //    protected final Configuration config;
     //    protected final DocletEnvironment env;
-    protected final List<Renderer> children = new ArrayList<>();
+    protected final List<nl.talsmasoftware.umldoclet.rendering.UMLPart> children = new ArrayList<>();
 
     protected UMLDiagram(Configuration config) {
         super(config);
@@ -59,7 +59,7 @@ public abstract class UMLDiagram extends UMLPart {
     protected abstract File pumlFile();
 
     @Override
-    public Collection<Renderer> getChildren() {
+    public Collection<UMLPart> getChildren() {
         return children;
     }
 

@@ -17,7 +17,7 @@ package nl.talsmasoftware.umldoclet.javadoc;
 
 import jdk.javadoc.doclet.DocletEnvironment;
 import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.rendering.Renderer;
+import nl.talsmasoftware.umldoclet.rendering.UMLPart;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingChildRenderer;
 import nl.talsmasoftware.umldoclet.uml.*;
 
@@ -114,8 +114,8 @@ public class UMLFactory {
         return createType(packageOf(typeElement), typeElement);
     }
 
-    static boolean addChild(IndentingChildRenderer parent, Renderer child) {
-        Collection<Renderer> children = (Collection<Renderer>) parent.getChildren();
+    static boolean addChild(IndentingChildRenderer parent, UMLPart child) {
+        Collection<UMLPart> children = (Collection<UMLPart>) parent.getChildren();
         return children.add(child);
     }
 

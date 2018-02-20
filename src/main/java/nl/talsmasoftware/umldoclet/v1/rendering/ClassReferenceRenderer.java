@@ -31,7 +31,7 @@ import static nl.talsmasoftware.umldoclet.uml.Reference.Side.to;
 import static nl.talsmasoftware.umldoclet.v1.logging.LogSupport.*;
 
 /**
- * Renderer for class references.
+ * UMLPart for class references.
  *
  * @author Sjoerd Talsma
  */
