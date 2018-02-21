@@ -15,16 +15,21 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
-import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.rendering.UMLPart;
+import nl.talsmasoftware.umldoclet.logging.Logger;
+import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlImageWriter;
+import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static java.util.Objects.requireNonNull;
 import static nl.talsmasoftware.umldoclet.logging.Message.ERROR_COULDNT_RENDER_UML;
 import static nl.talsmasoftware.umldoclet.logging.Message.INFO_GENERATING_FILE;
 
@@ -41,14 +46,19 @@ import static nl.talsmasoftware.umldoclet.logging.Message.INFO_GENERATING_FILE;
  *
  * @author Sjoerd Talsma
  */
-public abstract class UMLDiagram extends nl.talsmasoftware.umldoclet.uml.UMLPart {
+public abstract class UMLDiagram extends UMLPart {
 
-    //    protected final Configuration config;
-    //    protected final DocletEnvironment env;
-    protected final List<nl.talsmasoftware.umldoclet.rendering.UMLPart> children = new ArrayList<>();
+    final Configuration config;
+    protected final List<UMLPart> children = new ArrayList<>();
 
     protected UMLDiagram(Configuration config) {
-        super(config);
+        super(null);
+        this.config = requireNonNull(config, "Configuration is <null>.");
+    }
+
+    @Override
+    protected UMLDiagram getDiagram() {
+        return this;
     }
 
     /**
@@ -59,8 +69,13 @@ public abstract class UMLDiagram extends nl.talsmasoftware.umldoclet.uml.UMLPart
     protected abstract File pumlFile();
 
     @Override
-    public Collection<UMLPart> getChildren() {
+    public Collection<? extends UMLPart> getChildren() {
         return children;
+    }
+
+    @Override
+    public Configuration getConfiguration() {
+        return config;
     }
 
     @Override
@@ -78,13 +93,13 @@ public abstract class UMLDiagram extends nl.talsmasoftware.umldoclet.uml.UMLPart
      */
     public boolean render() {
         final File pumlFile = pumlFile();
-
-        try (Writer writer = createPlantumlWriter(pumlFile)) {
-            config.getLogger().info(INFO_GENERATING_FILE, pumlFile);
-            this.writeTo(IndentingPrintWriter.wrap(writer, config.getIndentation()));
+        final Logger logger = getConfiguration().getLogger();
+        try (IndentingPrintWriter writer = createPlantumlWriter(pumlFile)) {
+            logger.info(INFO_GENERATING_FILE, pumlFile);
+            this.writeTo(IndentingPrintWriter.wrap(writer, getConfiguration().getIndentation()));
             return true;
         } catch (IOException | RuntimeException e) {
-            config.getLogger().error(ERROR_COULDNT_RENDER_UML, pumlFile, e);
+            logger.error(ERROR_COULDNT_RENDER_UML, pumlFile, e);
             return false;
         }
     }
@@ -108,15 +123,20 @@ public abstract class UMLDiagram extends nl.talsmasoftware.umldoclet.uml.UMLPart
         return lastDot > 0 ? name.substring(0, lastDot) : name;
     }
 
-    private Writer createPlantumlWriter(File pumlFile) throws IOException {
+    private IndentingPrintWriter createPlantumlWriter(File pumlFile) throws IOException {
+        Configuration config = getConfiguration();
+        Logger logger = config.getLogger();
         // TODO Make these configurable:
-        final File imgdir = ensureParentDir(pumlFile).getParentFile();
-        final String baseName = baseName(pumlFile);
-        final String[] imgFormats = new String[]{"svg", "png"};
+        File imgdir = ensureParentDir(pumlFile).getParentFile();
+        String baseName = baseName(pumlFile);
+        String[] imgFormats = new String[]{"svg", "png"};
+        Indentation indentation = config.getIndentation();
 
-        return new PlantumlImageWriter(
-                new OutputStreamWriter(new FileOutputStream(pumlFile)),
-                config.getLogger(), imgdir, baseName, imgFormats);
+        return IndentingPrintWriter.wrap(
+                new PlantumlImageWriter(
+                        new OutputStreamWriter(new FileOutputStream(pumlFile)),
+                        logger, imgdir, baseName, imgFormats),
+                indentation);
     }
 
 }

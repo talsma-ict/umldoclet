@@ -16,10 +16,8 @@
 package nl.talsmasoftware.umldoclet.javadoc;
 
 import jdk.javadoc.doclet.DocletEnvironment;
-import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.rendering.UMLPart;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingChildRenderer;
 import nl.talsmasoftware.umldoclet.uml.*;
+import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeKind;
@@ -30,9 +28,9 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static javax.lang.model.element.ElementKind.ENUM;
-import static nl.talsmasoftware.umldoclet.rendering.CharSequenceRenderer.NEWLINE;
 import static nl.talsmasoftware.umldoclet.uml.Reference.Side.from;
 import static nl.talsmasoftware.umldoclet.uml.Reference.Side.to;
+import static nl.talsmasoftware.umldoclet.uml.UMLPart.NEWLINE;
 
 /**
  * @author Sjoerd Talsma
@@ -40,6 +38,7 @@ import static nl.talsmasoftware.umldoclet.uml.Reference.Side.to;
 public class UMLFactory {
 
     final Configuration config;
+    final ThreadLocal<UMLDiagram> diagram = new ThreadLocal<>();
     private final DocletEnvironment env;
     private final Function<TypeMirror, TypeNameWithCardinality> typeNameWithCardinality;
 
@@ -50,15 +49,19 @@ public class UMLFactory {
     }
 
     public UMLDiagram createClassDiagram(TypeElement classElement) {
-        return new ClassDiagram(this, classElement);
+        ClassDiagram classDiagram = new ClassDiagram(this, classElement);
+        this.diagram.remove();
+        return classDiagram;
     }
 
     public UMLDiagram createPackageDiagram(PackageElement packageElement) {
-        return new PackageDiagram(this, packageElement);
+        PackageDiagram packageDiagram = new PackageDiagram(this, packageElement);
+        this.diagram.remove();
+        return packageDiagram;
     }
 
     Namespace packageOf(TypeElement typeElement) {
-        return new Namespace(config, env.getElementUtils().getPackageOf(typeElement).getQualifiedName().toString());
+        return new Namespace(diagram.get(), env.getElementUtils().getPackageOf(typeElement).getQualifiedName().toString());
     }
 
     Field createField(Type containingType, VariableElement variable) {
@@ -72,15 +75,14 @@ public class UMLFactory {
     }
 
     private Parameters createParameters(List<? extends VariableElement> params) {
-        Parameters result = new Parameters(config);
+        Parameters result = new Parameters();
         params.forEach(param -> result.add(param.getSimpleName().toString(), TypeNameVisitor.INSTANCE.visit(param.asType())));
         return result;
     }
 
     Method createConstructor(Type containingType, ExecutableElement executableElement) {
         Set<Modifier> modifiers = requireNonNull(executableElement, "Executable element is <null>.").getModifiers();
-        return new Method(
-                containingType,
+        return new Method(containingType,
                 visibilityOf(modifiers),
                 modifiers.contains(Modifier.ABSTRACT),
                 modifiers.contains(Modifier.STATIC),
@@ -92,8 +94,7 @@ public class UMLFactory {
 
     Method createMethod(Type containingType, ExecutableElement executableElement) {
         Set<Modifier> modifiers = requireNonNull(executableElement, "Executable element is <null>.").getModifiers();
-        return new Method(
-                containingType,
+        return new Method(containingType,
                 visibilityOf(modifiers),
                 modifiers.contains(Modifier.ABSTRACT),
                 modifiers.contains(Modifier.STATIC),
@@ -114,7 +115,7 @@ public class UMLFactory {
         return createType(packageOf(typeElement), typeElement);
     }
 
-    static boolean addChild(IndentingChildRenderer parent, UMLPart child) {
+    static boolean addChild(UMLPart parent, UMLPart child) {
         Collection<UMLPart> children = (Collection<UMLPart>) parent.getChildren();
         return children.add(child);
     }
@@ -157,7 +158,7 @@ public class UMLFactory {
     private void addForeignType(Map<Namespace, Collection<Type>> foreignTypes, Element typeElement) {
         if (foreignTypes != null && typeElement instanceof TypeElement) {
             Type type = createType((TypeElement) typeElement);
-            foreignTypes.computeIfAbsent(type.containingPackage, (namespace) -> new LinkedHashSet<>()).add(type);
+            foreignTypes.computeIfAbsent(type.getNamespace(), (namespace) -> new LinkedHashSet<>()).add(type);
         }
     }
 
@@ -274,10 +275,11 @@ public class UMLFactory {
                 .flatMap(UMLFactory::innerTypes));
     }
 
-    Namespace createPackage(PackageElement packageElement,
+    Namespace createPackage(UMLDiagram diagram,
+                            PackageElement packageElement,
                             Map<Namespace, Collection<Type>> foreignTypes,
                             List<Reference> references) {
-        Namespace pkg = new Namespace(config, packageElement.getQualifiedName().toString());
+        Namespace pkg = new Namespace(diagram, packageElement.getQualifiedName().toString());
 
         // Add all types contained in this package.
         packageElement.getEnclosedElements().stream()

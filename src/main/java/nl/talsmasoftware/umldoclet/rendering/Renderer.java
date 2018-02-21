@@ -13,25 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.uml;
-
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+package nl.talsmasoftware.umldoclet.rendering;
 
 /**
- * Model object for a Field in an UML class.
+ * Definition of a 'renderer' object that can render itself to a given output.
  *
  * @author Sjoerd Talsma
  */
-public class Field extends TypeMember {
+public interface Renderer {
 
-    public Field(Type containingType, Visibility visibility, boolean isStatic, String name, TypeName type) {
-        super(containingType, visibility, false, isStatic, name, type);
-    }
-
-    @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-        if (getConfiguration().getFieldConfig().include(visibility)) super.writeTo(output);
-        return output;
-    }
+    /**
+     * Renders this object to the given {@code output}.
+     *
+     * @param <A>    The output type (must be appendable).
+     * @param output The output to render this object to.
+     * @return A reference to the output for method chaining purposes.
+     */
+    <A extends Appendable> A writeTo(A output);
 
 }

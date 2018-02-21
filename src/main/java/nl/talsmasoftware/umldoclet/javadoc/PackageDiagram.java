@@ -15,47 +15,65 @@
  */
 package nl.talsmasoftware.umldoclet.javadoc;
 
-import nl.talsmasoftware.umldoclet.uml.Namespace;
-import nl.talsmasoftware.umldoclet.uml.Reference;
-import nl.talsmasoftware.umldoclet.uml.Type;
-import nl.talsmasoftware.umldoclet.uml.UMLDiagram;
-import nl.talsmasoftware.umldoclet.rendering.CharSequenceRenderer;
+import nl.talsmasoftware.umldoclet.uml.*;
 
 import javax.lang.model.element.PackageElement;
 import java.io.File;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * @author Sjoerd Talsma
  */
 class PackageDiagram extends UMLDiagram {
 
-    private final Namespace pkg;
+    //    private final Namespace pkg;
+    private final String packageName;
     private File pumlFile = null;
 
     PackageDiagram(UMLFactory factory, PackageElement packageElement) {
         super(factory.config);
+        factory.diagram.set(this);
         Map<Namespace, Collection<Type>> foreignTypes = new LinkedHashMap<>();
         List<Reference> references = new ArrayList<>();
-        pkg = factory.createPackage(packageElement, foreignTypes, references);
-        children.add(pkg);
+        packageName = packageElement.getQualifiedName().toString();
+        children.add(factory.createPackage(this, packageElement, foreignTypes, references));
 
-        foreignTypes.forEach((pkg, types) -> {
-            children.add(CharSequenceRenderer.NEWLINE);
-            types.forEach(type -> UMLFactory.addChild(pkg, type));
-            children.add(pkg);
-        });
+        // TODO: Should we filter "java.lang" or "java.util" references that occur >= 3 times?
+        // Maybe somehow make this configurable as well.
+        foreignTypes.entrySet().stream()
+                .filter(entry -> "java.lang".equals(entry.getKey().name) || "java.util".equals(entry.getKey().name))
+                .map(Map.Entry::getValue)
+                .forEach(types -> {
+                    for (Iterator<Type> it = types.iterator(); it.hasNext(); ) {
+                        Type type = it.next();
+                        if (references.stream().filter(ref -> ref.contains(type.name)).limit(3).count() > 2) {
+                            references.removeIf(ref -> ref.contains(type.name));
+                            it.remove();
+                        }
+                    }
+                });
 
-        children.add(CharSequenceRenderer.NEWLINE);
+        foreignTypes.entrySet().stream()
+                .filter(entry -> !entry.getValue().isEmpty())
+                .map(entry -> {
+                    Namespace foreignPackage = entry.getKey();
+                    entry.getValue().forEach(type -> UMLFactory.addChild(foreignPackage, type));
+                    return foreignPackage;
+                })
+                .flatMap(foreignPackage -> Stream.of(UMLPart.NEWLINE, foreignPackage))
+                .forEach(children::add);
+
+        children.add(UMLPart.NEWLINE);
         references.stream().map(Reference::canonical).forEach(children::add);
     }
 
     @Override
     protected File pumlFile() {
         if (pumlFile == null) {
-            StringBuilder result = new StringBuilder(config.getDestinationDirectory());
+            StringBuilder result = new StringBuilder(getConfiguration().getDestinationDirectory());
             if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');
-            result.append(pkg.name.replace('.', '/'));
+            result.append(packageName.replace('.', '/'));
             result.append("/package.puml");
             pumlFile = ensureParentDir(new File(result.toString()));
         }

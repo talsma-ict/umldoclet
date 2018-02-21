@@ -29,7 +29,7 @@ import static nl.talsmasoftware.umldoclet.v1.logging.LogSupport.debug;
 import static nl.talsmasoftware.umldoclet.v1.logging.LogSupport.trace;
 
 /**
- * UMLPart to produce PlantUML output for a single class.
+ * Renderer to produce PlantUML output for a single class.
  *
  * @author Sjoerd Talsma
  */

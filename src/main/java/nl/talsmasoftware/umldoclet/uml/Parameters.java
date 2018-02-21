@@ -15,10 +15,9 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
-import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.uml.configuration.MethodConfig;
 import nl.talsmasoftware.umldoclet.uml.configuration.TypeDisplay;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,9 +29,19 @@ import java.util.List;
 public class Parameters extends UMLPart {
 
     private final List<Parameter> params = new ArrayList<>();
+    private Method method;
 
-    public Parameters(Configuration config) {
-        super(config);
+    public Parameters() {
+        super(null);
+    }
+
+    void setMethod(Method method) {
+        this.method = method; // TODO: refactor this 'hack' away!
+    }
+
+    @Override
+    protected UMLPart requireParent() {
+        return method == null ? super.requireParent() : method;
     }
 
     @Override
@@ -41,7 +50,7 @@ public class Parameters extends UMLPart {
     }
 
     public Parameters add(String name, TypeName type) {
-        params.add(new Parameter(config, name, type));
+        params.add(new Parameter(name, type));
         return this;
     }
 
@@ -62,12 +71,12 @@ public class Parameters extends UMLPart {
         return output;
     }
 
-    private static class Parameter extends UMLPart {
+    private class Parameter extends UMLPart {
         private final String name;
         private final TypeName type;
 
-        private Parameter(Configuration config, String name, TypeName type) {
-            super(config);
+        private Parameter(String name, TypeName type) {
+            super(Parameters.this);
             this.name = name;
             this.type = type;
         }
@@ -75,7 +84,7 @@ public class Parameters extends UMLPart {
         @Override
         public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
             String sep = "";
-            MethodConfig methodConfig = config.getMethodConfig();
+            MethodConfig methodConfig = getConfiguration().getMethodConfig();
             if (name != null && MethodConfig.ParamNames.BEFORE_TYPE.equals(methodConfig.paramNames())) {
                 output.append(name);
                 sep = ": ";

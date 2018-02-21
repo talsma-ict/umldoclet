@@ -15,14 +15,9 @@
  */
 package nl.talsmasoftware.umldoclet.rendering.indent;
 
-import nl.talsmasoftware.umldoclet.rendering.UMLPart;
-
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * Type to capture the indentation as an immutable type containing a pre-filled buffer to quickly be written.
@@ -31,7 +26,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Sjoerd Talsma
  */
-public final class Indentation implements CharSequence, UMLPart, Serializable {
+public final class Indentation implements CharSequence, Serializable {
 
     // Cache of the first 5 four-spaces indentations.
     private static final Indentation[] FOUR_SPACES = {
@@ -58,14 +53,15 @@ public final class Indentation implements CharSequence, UMLPart, Serializable {
     // All fields of Indentation class are final.
     final int width, level;
     final char ch;
-    final char[] buf;
+    final String value;
 
     private Indentation(final int width, final char ch, final int level) {
         this.width = width > 0 ? width : 0;
         this.level = level > 0 ? level : 0;
         this.ch = ch;
-        this.buf = new char[this.width * this.level];
-        Arrays.fill(this.buf, this.ch);
+        char[] buf = new char[this.width * this.level];
+        Arrays.fill(buf, this.ch);
+        this.value = String.valueOf(buf);
     }
 
     /**
@@ -89,8 +85,7 @@ public final class Indentation implements CharSequence, UMLPart, Serializable {
      * @return The indentation level as <code>level</code> multiples of <code>width</code> spaces.
      */
     public static Indentation spaces(int width, final int level) {
-        final int defaultWidth = DEFAULT.ch == ' ' ? DEFAULT.width : 4;
-        if (width < 0) width = defaultWidth;
+        if (width < 0) width = DEFAULT.ch == ' ' ? DEFAULT.width : 4;
         return width == 0 ? NONE
                 : width == FOUR_SPACES[0].width && level < FOUR_SPACES.length ? FOUR_SPACES[Math.max(0, level)]
                 : new Indentation(width, ' ', level);
@@ -117,24 +112,23 @@ public final class Indentation implements CharSequence, UMLPart, Serializable {
         return resolve(width, ch, level - 1);
     }
 
-    /**
-     * Writes this indentation to the given writer object.<br>
-     * Please be aware that usually it may prove easier to just create an {@link IndentingWriter} instead which will
-     * automatically write the indentation whenever needed (i.e. before the first character on any new line is written).
-     *
-     * @param output The output to write this indentation to.
-     * @see IndentingWriter
-     */
-    @Override
-    public <A extends Appendable> A writeTo(A output) {
-        requireNonNull(output, "Output is <null>.");
-        try {
-            output.append(this, 0, buf.length);
-        } catch (IOException ioe) {
-            throw new IllegalStateException("I/O exception writing indentation: " + ioe.getMessage(), ioe);
-        }
-        return output;
-    }
+//    /**
+//     * Writes this indentation to the given writer object.<br>
+//     * Please be aware that usually it may prove easier to just create an {@link IndentingWriter} instead which will
+//     * automatically write the indentation whenever needed (i.e. before the first character on any new line is written).
+//     *
+//     * @param output The output to write this indentation to.
+//     * @see IndentingWriter
+//     */
+//    @Override
+//    public <A extends Appendable> A writeTo(A output) {
+//        try {
+//            output.append(this);
+//        } catch (IOException ioe) {
+//            throw new IllegalStateException("I/O exception writing indentation: " + ioe.getMessage(), ioe);
+//        }
+//        return output;
+//    }
 
     /**
      * Makes sure that after deserialization, objects from cache are used where possible.
@@ -168,24 +162,24 @@ public final class Indentation implements CharSequence, UMLPart, Serializable {
 
     @Override
     public int length() {
-        return buf.length;
+        return value.length();
     }
 
     @Override
     public char charAt(int index) {
-        return buf[index];
+        return value.charAt(index);
     }
 
     @Override
     public CharSequence subSequence(int start, int end) {
-        return toString().substring(start, end);
+        return value.substring(start, end);
     }
 
     /**
      * @return The indentation as a string.
      */
     public String toString() {
-        return String.valueOf(buf);
+        return value;
     }
 
 }

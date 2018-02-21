@@ -122,16 +122,16 @@ public class IndentingWriter extends Writer {
 
     @Override
     public void write(char[] cbuf, int off, int len) throws IOException {
-        if (off < len) {
+        if (len > 0) {
             char ch = cbuf[off];
             synchronized (lock) {
                 if (addWhitespace.compareAndSet(true, false) && !isWhitespace(lastWritten) && !isWhitespace(ch)) {
                     delegate.append(' ');
                     lastWritten = ' ';
                 }
-                for (int i = off; i < len; i++) {
-                    ch = cbuf[i];
-                    if (isEol(lastWritten) && !isEol(ch)) indentation.writeTo(delegate);
+                for (int i = 0; i < len; i++) {
+                    ch = cbuf[off + i];
+                    if (isEol(lastWritten) && !isEol(ch)) delegate.append(indentation);
                     delegate.append(ch);
                     lastWritten = ch;
                 }

@@ -15,10 +15,8 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
-import nl.talsmasoftware.umldoclet.rendering.UMLPart;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingRenderer;
-import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,7 +30,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Sjoerd Talsma
  */
-public class Namespace extends nl.talsmasoftware.umldoclet.uml.UMLPart implements Comparable<Namespace> {
+public class Namespace extends UMLPart implements Comparable<Namespace> {
     public interface NameSpaceAware extends IndentingRenderer {
         default <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
             return writeTo(output, null);
@@ -44,8 +42,8 @@ public class Namespace extends nl.talsmasoftware.umldoclet.uml.UMLPart implement
     public final String name;
     private final Collection<UMLPart> children = new ArrayList<>();
 
-    public Namespace(Configuration config, String name) {
-        super(config);
+    public Namespace(UMLDiagram diagram, String name) {
+        super(diagram);
         this.name = requireNonNull(name, "Package name is <null>.").trim();
         if (this.name.isEmpty()) throw new IllegalArgumentException("Package name is empty.");
     }
@@ -58,7 +56,7 @@ public class Namespace extends nl.talsmasoftware.umldoclet.uml.UMLPart implement
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
         final IndentingPrintWriter indented = output.indent();
-        getChildren().forEach(child -> {
+        getChildren().forEach(child -> { // TODO: This works only one-level deep, maybe keep the Namespace in a TL var?
             if (child instanceof NameSpaceAware) ((NameSpaceAware) child).writeTo(indented, this);
             else child.writeTo(indented);
         });

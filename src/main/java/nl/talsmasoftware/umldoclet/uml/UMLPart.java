@@ -15,11 +15,9 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
-import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingChildRenderer;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingRenderer;
 import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.uml.configuration.Configuration.Configured;
 
 import java.io.StringWriter;
 import java.util.Collection;
@@ -36,12 +34,32 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Sjoerd Talsma
  */
-abstract class UMLPart implements IndentingChildRenderer {
+public abstract class UMLPart implements IndentingRenderer {
+    public static final UMLPart NEWLINE = new UMLPart(null) {
+        @Override
+        public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+            output.append(this.toString());
+            return output;
+        }
 
-    protected final Configuration config;
+        @Override
+        public String toString() {
+            return System.lineSeparator();
+        }
+    };
 
-    UMLPart(Configuration config) {
-        this.config = requireNonNull(config, "Configuration is <null>.");
+    protected final UMLPart parent;
+
+    protected UMLPart(UMLPart parent) {
+        this.parent = parent;
+    }
+
+    protected UMLPart requireParent() {
+        return requireNonNull(parent, () -> getClass().getSimpleName() + " seems to be an orphan, it has no parent.");
+    }
+
+    protected UMLDiagram getDiagram() {
+        return requireParent().getDiagram();
     }
 
     /**
@@ -49,14 +67,31 @@ abstract class UMLPart implements IndentingChildRenderer {
      *
      * @return The children for this renderer.
      */
-    @Override
-    public Collection<? extends nl.talsmasoftware.umldoclet.rendering.UMLPart> getChildren() {
+    public Collection<? extends UMLPart> getChildren() {
         return emptySet();
     }
 
-    protected Indentation getIndentation() {
-        if (this instanceof Configured) return ((Configured) this).getConfiguration().getIndentation();
-        return Indentation.DEFAULT;
+    protected Configuration getConfiguration() {
+        return getDiagram().config;
+    }
+
+    /**
+     * Helper method to write all children to the specified output.
+     * <p>
+     * By default children will be {@link #writeTo(IndentingPrintWriter) written}
+     * with increased indentation for legibility.
+     *
+     * @param <IPW>  The subclass of indenting print writer being written to.
+     * @param output The output to write the children to.
+     * @return A reference to the output for method chaining purposes.
+     */
+    protected <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
+        Collection<? extends UMLPart> children = getChildren();
+        if (children != null && !children.isEmpty()) {
+            IndentingPrintWriter indented = output.indent();
+            children.forEach(child -> child.writeTo(indented));
+        }
+        return output;
     }
 
     /**
@@ -65,7 +100,7 @@ abstract class UMLPart implements IndentingChildRenderer {
      * @return The rendered content of this renderer.
      */
     public String toString() {
-        return writeTo(IndentingPrintWriter.wrap(new StringWriter(), getIndentation())).toString();
+        return writeTo(IndentingPrintWriter.wrap(new StringWriter(), getConfiguration().getIndentation())).toString();
     }
 
 }

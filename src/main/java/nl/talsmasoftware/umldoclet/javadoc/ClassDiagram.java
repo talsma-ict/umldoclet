@@ -33,6 +33,7 @@ class ClassDiagram extends UMLDiagram {
 
     ClassDiagram(UMLFactory factory, TypeElement classElement) {
         super(factory.config);
+        factory.diagram.set(this);
         this.namespace = factory.packageOf(classElement);
         this.type = factory.createType(classElement);
         UMLFactory.addChild(namespace, type);
@@ -42,11 +43,12 @@ class ClassDiagram extends UMLDiagram {
     @Override
     protected File pumlFile() {
         if (pumlFile == null) {
-            StringBuilder result = new StringBuilder(config.getDestinationDirectory());
+            StringBuilder result = new StringBuilder(getConfiguration().getDestinationDirectory());
             if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');
-            result.append(type.containingPackage.name.replace('.', '/')).append('/');
-            if (type.name.qualified.startsWith(type.containingPackage.name + ".")) {
-                result.append(type.name.qualified.substring(type.containingPackage.name.length() + 1));
+            String containingPackage = type.getNamespace().name;
+            result.append(containingPackage.replace('.', '/')).append('/');
+            if (type.name.qualified.startsWith(containingPackage + ".")) {
+                result.append(type.name.qualified.substring(containingPackage.length() + 1));
             } else {
                 result.append(type.name.simple);
             }

@@ -33,18 +33,18 @@ public abstract class TypeMember extends UMLPart implements Comparable<TypeMembe
     protected final Visibility visibility;
     protected final boolean isAbstract, isStatic;
     public final String name;
-    protected final Parameters parameters;
+//    protected final Parameters parameters;
     protected final TypeName type;
 
-    public TypeMember(Type containingType, Visibility visibility, boolean isAbstract, boolean isStatic, String name, Parameters parameters, TypeName type) {
-        super(requireNonNull(containingType, "Containing type is <null>.").config);
-        this.containingType = containingType;
+    public TypeMember(Type containingType, Visibility visibility, boolean isAbstract, boolean isStatic, String name,
+                      TypeName type) {
+        super(containingType);
+        this.containingType = requireNonNull(containingType, "Containing type is <null>.");
         this.visibility = requireNonNull(visibility, "Member visibility is <null>.");
         this.isAbstract = isAbstract;
         this.isStatic = isStatic;
         this.name = requireNonNull(name, "Member name is <null>.").trim();
         if (this.name.isEmpty()) throw new IllegalArgumentException("Member name is empty.");
-        this.parameters = parameters;
         this.type = type;
     }
 
@@ -53,12 +53,16 @@ public abstract class TypeMember extends UMLPart implements Comparable<TypeMembe
         return output;
     }
 
+    protected <IPW extends IndentingPrintWriter> IPW writeParametersTo(IPW output) {
+        return output;
+    }
+
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         if (isAbstract) output.append("{abstract}").whitespace();
         if (isStatic) output.append("{static}").whitespace();
         output.append(visibility.toUml()).append(name);
-        if (parameters != null) parameters.writeTo(output);
+        writeParametersTo(output);
         writeTypeTo(output);
         output.newline();
         return output;

@@ -16,6 +16,7 @@
 package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.uml.Namespace.NameSpaceAware;
 
 import java.io.StringWriter;
 import java.util.Collection;
@@ -40,7 +41,7 @@ import static nl.talsmasoftware.umldoclet.v1.Concatenation.append;
  *
  * @author Sjoerd Talsma
  */
-public class Reference implements Namespace.NameSpaceAware {
+public class Reference extends UMLPart implements NameSpaceAware {
 
     public final Side from, to;
     public final String type;
@@ -51,6 +52,7 @@ public class Reference implements Namespace.NameSpaceAware {
     }
 
     private Reference(Side from, String type, Side to, Iterable<String> notes) {
+        super(null); // TODO maybe add a parent in the future?
         this.from = requireNonNull(from, "Reference \"from\" side is <null>.");
         this.type = requireNonNull(type, "Reference type is <null>.").trim();
         if (this.type.isEmpty()) throw new IllegalArgumentException("Reference type is empty.");
@@ -100,6 +102,16 @@ public class Reference implements Namespace.NameSpaceAware {
         if (!notes.isEmpty()) output.append(": ").append(notes.stream().collect(joining("\\n")));
         output.newline();
         return output;
+    }
+
+    /**
+     * Returns whether or not this reference contains the requested type.
+     *
+     * @param typeName The name of a type to check.
+     * @return Whether either {@code from} or {@code to} matches {@code typeName}.
+     */
+    public boolean contains(TypeName typeName) {
+        return from.matches(typeName) || to.matches(typeName);
     }
 
     @Override
@@ -165,6 +177,10 @@ public class Reference implements Namespace.NameSpaceAware {
             if (this.qualifiedName.isEmpty()) throw new IllegalArgumentException("Name of referred object is empty.");
             this.cardinality = cardinality == null ? "" : cardinality.trim();
             this.nameFirst = nameFirst;
+        }
+
+        private boolean matches(TypeName typeName) {
+            return typeName != null && this.qualifiedName.equals(typeName.qualified);
         }
 
         @Override

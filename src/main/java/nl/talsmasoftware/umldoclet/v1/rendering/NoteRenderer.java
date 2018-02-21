@@ -20,7 +20,7 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import static java.util.Objects.requireNonNull;
 
 /**
- * UMLPart for UML notes.
+ * Renderer for UML notes.
  *
  * @author Sjoerd Talsma
  */

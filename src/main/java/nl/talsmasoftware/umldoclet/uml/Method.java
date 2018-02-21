@@ -15,28 +15,39 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
-import nl.talsmasoftware.umldoclet.uml.configuration.TypeDisplay;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.uml.configuration.TypeDisplay;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * @author Sjoerd Talsma
  */
 public class Method extends TypeMember {
 
+    private final Parameters parameters;
+
     public Method(Type containingType, Visibility visibility, boolean isAbstract, boolean isStatic,
                   String name, Parameters parameters, TypeName returnType) {
-        super(containingType, visibility, isAbstract, isStatic, name, parameters, returnType);
+        super(containingType, visibility, isAbstract, isStatic, name, returnType);
+        this.parameters = requireNonNull(parameters, () -> "No parameters for method " + containingType.name + "." + name);
+        this.parameters.setMethod(this);
+    }
+
+    @Override
+    protected <IPW extends IndentingPrintWriter> IPW writeParametersTo(IPW output) {
+        return parameters.writeTo(output);
     }
 
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-        if (config.getMethodConfig().include(visibility)) super.writeTo(output);
+        if (getConfiguration().getMethodConfig().include(visibility)) super.writeTo(output);
         return output;
     }
 
     @Override
     protected <IPW extends IndentingPrintWriter> IPW writeTypeTo(IPW output) {
-        TypeDisplay returnTypeDisplay = config.getMethodConfig().returnType();
+        TypeDisplay returnTypeDisplay = getConfiguration().getMethodConfig().returnType();
         if (type != null && !TypeDisplay.NONE.equals(returnTypeDisplay)) {
             output.append(": ").append(type.toUml(returnTypeDisplay, null));
         }

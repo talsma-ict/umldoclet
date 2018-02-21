@@ -13,22 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.rendering;
+package nl.talsmasoftware.umldoclet.rendering.indent;
 
-/**
- * Definition of a 'renderer' object that can render itself to a given output.
- *
- * @author Sjoerd Talsma
- */
-public interface UMLPart {
+import org.junit.Test;
 
-    /**
-     * Renders this object to the given {@code output}.
-     *
-     * @param <A>    The output type (must be appendable).
-     * @param output The output to render this object to.
-     * @return A reference to the output for method chaining purposes.
-     */
-    <A extends Appendable> A writeTo(A output);
+import java.io.IOException;
+import java.io.StringWriter;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasToString;
+
+public class IndentingWriterTest {
+
+    @Test
+    public void testWritingFromNonZeroOffset() throws IOException {
+        StringWriter output = new StringWriter();
+        new IndentingWriter(output, Indentation.DEFAULT).write("1234".toCharArray(), 1, 2);
+        assertThat(output, hasToString("23"));
+    }
 
 }

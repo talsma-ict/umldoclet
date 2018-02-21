@@ -30,7 +30,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasToString;
 
 /**
- * Unit tests for the base UMLPart functionality.
+ * Unit tests for the base Renderer functionality.
  *
  * @author Sjoerd Talsma
  */

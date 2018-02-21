@@ -25,8 +25,8 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Sjoerd Talsma
  */
-public final class CharSequenceRenderer implements CharSequence, UMLPart, Serializable {
-    public static final UMLPart NEWLINE = CharSequenceRenderer.of(System.lineSeparator());
+public final class CharSequenceRenderer implements CharSequence, Renderer, Serializable {
+    public static final Renderer NEWLINE = CharSequenceRenderer.of(System.lineSeparator());
 
     private final CharSequence content;
 
@@ -56,7 +56,7 @@ public final class CharSequenceRenderer implements CharSequence, UMLPart, Serial
     @Override
     public <A extends Appendable> A writeTo(A output) {
         try {
-            output.append(content, 0, content.length());
+            output.append(content);
             return output;
         } catch (IOException ioe) {
             throw new IllegalStateException("I/O exception writing character sequence \""
