@@ -135,19 +135,20 @@ public class UMLFactory {
         );
 
         // Add the various parts of the class UML, order matters here, obviously!
-        if (TypeClassification.ENUM.equals(classification)) typeElement.getEnclosedElements().stream() // Enum const
+        List<? extends Element> enclosedElements = typeElement.getEnclosedElements();
+        if (TypeClassification.ENUM.equals(classification)) enclosedElements.stream() // Enum const
                 .filter(elem -> ElementKind.ENUM_CONSTANT.equals(elem.getKind()))
                 .filter(VariableElement.class::isInstance).map(VariableElement.class::cast)
                 .forEach(elem -> addChild(type, createField(type, elem)));
-        typeElement.getEnclosedElements().stream() // Add fields
+        enclosedElements.stream() // Add fields
                 .filter(elem -> ElementKind.FIELD.equals(elem.getKind()))
                 .filter(VariableElement.class::isInstance).map(VariableElement.class::cast)
                 .forEach(elem -> addChild(type, createField(type, elem)));
-        typeElement.getEnclosedElements().stream() // Add constructors
+        enclosedElements.stream() // Add constructors
                 .filter(elem -> ElementKind.CONSTRUCTOR.equals(elem.getKind()))
                 .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
                 .forEach(elem -> addChild(type, createConstructor(type, elem)));
-        typeElement.getEnclosedElements().stream() // Add methods
+        enclosedElements.stream() // Add methods
                 .filter(elem -> ElementKind.METHOD.equals(elem.getKind()))
                 .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
                 .forEach(elem -> addChild(type, createMethod(type, elem)));

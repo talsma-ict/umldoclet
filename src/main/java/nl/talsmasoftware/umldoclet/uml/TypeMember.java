@@ -33,7 +33,6 @@ public abstract class TypeMember extends UMLPart implements Comparable<TypeMembe
     protected final Visibility visibility;
     protected final boolean isAbstract, isStatic;
     public final String name;
-//    protected final Parameters parameters;
     protected final TypeName type;
 
     public TypeMember(Type containingType, Visibility visibility, boolean isAbstract, boolean isStatic, String name,
@@ -70,8 +69,7 @@ public abstract class TypeMember extends UMLPart implements Comparable<TypeMembe
 
     @Override
     public int compareTo(TypeMember other) {
-        requireNonNull(other, "Cannot compare with field <null>.");
-        return comparing((TypeMember member) -> member.containingType)
+        return comparing((TypeMember member) -> member.getClass().getSimpleName())
                 .thenComparing(member -> member.name.toLowerCase())
                 .thenComparing(member -> member.name)
                 .compare(this, other);

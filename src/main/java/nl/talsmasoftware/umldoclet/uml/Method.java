@@ -18,6 +18,9 @@ package nl.talsmasoftware.umldoclet.uml;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.uml.configuration.TypeDisplay;
 
+import java.util.Objects;
+
+import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -52,6 +55,18 @@ public class Method extends TypeMember {
             output.append(": ").append(type.toUml(returnTypeDisplay, null));
         }
         return output;
+    }
+
+    @Override
+    public int compareTo(TypeMember other) {
+        return comparing(super::compareTo)
+                .thenComparing(method -> ((Method) method).parameters)
+                .compare(this, other);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), parameters);
     }
 
 }

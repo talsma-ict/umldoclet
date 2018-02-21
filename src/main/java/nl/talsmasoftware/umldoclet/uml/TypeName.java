@@ -147,5 +147,13 @@ public class TypeName implements Comparable<TypeName> {
         protected String toUml(TypeDisplay display, Namespace namespace) {
             return String.format("%s %s %s", variable, isExtends ? "extends" : "super", super.toUml(display, namespace));
         }
+
+        @Override
+        public int compareTo(TypeName other) {
+            int delta = other instanceof Variable ? 0 : (isExtends ? 1 : -1);
+            if (delta == 0) delta = super.compareTo(other);
+            if (delta == 0) delta = Boolean.compare(this.isExtends, ((Variable) other).isExtends);
+            return delta;
+        }
     }
 }

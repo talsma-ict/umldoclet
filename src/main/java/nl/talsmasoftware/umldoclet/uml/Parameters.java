@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * @author Sjoerd Talsma
  */
-public class Parameters extends UMLPart {
+public class Parameters extends UMLPart implements Comparable<Parameters> {
 
     private final List<Parameter> params = new ArrayList<>();
     private Method method;
@@ -69,6 +69,15 @@ public class Parameters extends UMLPart {
         }
         output.append(')');
         return output;
+    }
+
+    @Override
+    public int compareTo(Parameters other) {
+        int delta = Integer.compare(this.params.size(), other.params.size());
+        for (int i = 0; delta == 0 && i < this.params.size(); i++) {
+            delta = this.params.get(i).type.compareTo(other.params.get(i).type);
+        }
+        return delta;
     }
 
     private class Parameter extends UMLPart {
