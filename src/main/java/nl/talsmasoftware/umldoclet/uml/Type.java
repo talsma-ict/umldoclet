@@ -27,11 +27,11 @@ import static java.util.Objects.requireNonNull;
 
 public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
 
-    public final TypeClassification classfication;
+    public final Classification classfication;
     public final TypeName name;
     protected final Set<UMLPart> children = new LinkedHashSet<>();
 
-    public Type(Namespace namespace, TypeClassification classification, TypeName name) {
+    public Type(Namespace namespace, Classification classification, TypeName name) {
         super(requireNonNull(namespace, "Containing package is <null>."));
         this.classfication = requireNonNull(classification, "Type classification is <null>.");
         this.name = requireNonNull(name, "Type name is <null>.");
@@ -75,4 +75,17 @@ public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
         return this == other || (other instanceof Type && this.compareTo((Type) other) == 0);
     }
 
+    /**
+     * Classification of a UML Type.
+     *
+     * @author Sjoerd Talsma
+     */
+    public static enum Classification {
+        ENUM, INTERFACE, ANNOTATION, ABSTRACT_CLASS, CLASS;
+
+        public String toUml() {
+            return name().toLowerCase().replace('_', ' ');
+        }
+
+    }
 }

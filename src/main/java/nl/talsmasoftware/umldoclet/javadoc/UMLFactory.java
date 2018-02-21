@@ -123,11 +123,11 @@ public class UMLFactory {
     private Type createType(Namespace containingPackage, TypeElement typeElement) {
         ElementKind kind = requireNonNull(typeElement, "Type element is <null>.").getKind();
         Set<Modifier> modifiers = typeElement.getModifiers();
-        TypeClassification classification = ENUM.equals(kind) ? TypeClassification.ENUM
-                : ElementKind.INTERFACE.equals(kind) ? TypeClassification.INTERFACE
-                : ElementKind.ANNOTATION_TYPE.equals(kind) ? TypeClassification.ANNOTATION
-                : modifiers.contains(Modifier.ABSTRACT) ? TypeClassification.ABSTRACT_CLASS
-                : TypeClassification.CLASS;
+        Type.Classification classification = ENUM.equals(kind) ? Type.Classification.ENUM
+                : ElementKind.INTERFACE.equals(kind) ? Type.Classification.INTERFACE
+                : ElementKind.ANNOTATION_TYPE.equals(kind) ? Type.Classification.ANNOTATION
+                : modifiers.contains(Modifier.ABSTRACT) ? Type.Classification.ABSTRACT_CLASS
+                : Type.Classification.CLASS;
 
         Type type = new Type(containingPackage,
                 classification,
@@ -136,7 +136,7 @@ public class UMLFactory {
 
         // Add the various parts of the class UML, order matters here, obviously!
         List<? extends Element> enclosedElements = typeElement.getEnclosedElements();
-        if (TypeClassification.ENUM.equals(classification)) enclosedElements.stream() // Enum const
+        if (Type.Classification.ENUM.equals(classification)) enclosedElements.stream() // Enum const
                 .filter(elem -> ElementKind.ENUM_CONSTANT.equals(elem.getKind()))
                 .filter(VariableElement.class::isInstance).map(VariableElement.class::cast)
                 .forEach(elem -> addChild(type, createField(type, elem)));
