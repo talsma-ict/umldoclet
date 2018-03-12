@@ -72,7 +72,7 @@
         <maven.test.skip>true</maven.test.skip>
 
         <!-- included -->
-        <plantuml.version>1.2018.1</plantuml.version>
+        <plantuml.version>1.2018.2</plantuml.version>
 
         <!-- test -->
         <junit.version>4.12</junit.version>
