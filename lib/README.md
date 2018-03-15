@@ -17,7 +17,7 @@ the [maven-shade-plugin](https://maven.apache.org/plugins/maven-shade-plugin/).
 Unfortunately for me however, the version of plantuml 
 on [maven central](http://mvnrepository.com/artifact/net.sourceforge.plantuml/plantuml) 
 has a [GPL](http://www.gnu.org/copyleft/gpl.html) license which is a so-called
-_copyleft_ license. This meansit will require the umldoclet 
+_copyleft_ license. This means it will require the umldoclet 
 to become `GPL` licensed as well.
 
 I want the doclet to remain open-source, but I feel the `GPL` to be too
