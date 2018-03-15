@@ -24,7 +24,7 @@ I want the doclet to remain open-source, but I feel the `GPL` to be too
 restrictive: it 'infects' everything that uses it as well.
 That's why the this project is published under the 
 [Apache License, version 2.0](https://www.apache.org/licenses/LICENSE-2.0.html).
-That this license is less restrictive as illustrated by the following quote:
+That this license is less restrictive is illustrated by the following quote:
 
 >Apache 2 software can therefore be included in GPLv3 projects, 
 >because the GPLv3 license accepts our software into GPLv3 works.
