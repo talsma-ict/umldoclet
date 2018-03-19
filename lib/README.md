@@ -10,7 +10,8 @@ into java projects anymore.
 
 Until today.
 
-There are [several reasons](#48) to bundle the plantuml library with the doclet itself.
+There are [good reasons](https://github.com/talsma-ict/umldoclet/issues/48) 
+to bundle the plantuml library with the doclet itself.
 Normally this can easily be accomplished for any dependency with 
 the [maven-shade-plugin](https://maven.apache.org/plugins/maven-shade-plugin/).
 Unfortunately however, the version of plantuml 
