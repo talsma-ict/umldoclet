@@ -136,24 +136,52 @@ public class UMLFactory {
 
         // Add the various parts of the class UML, order matters here, obviously!
         List<? extends Element> enclosedElements = typeElement.getEnclosedElements();
-        if (Type.Classification.ENUM.equals(classification)) enclosedElements.stream() // Enum const
+        if (Type.Classification.ENUM.equals(classification)) enclosedElements.stream()
                 .filter(elem -> ElementKind.ENUM_CONSTANT.equals(elem.getKind()))
                 .filter(VariableElement.class::isInstance).map(VariableElement.class::cast)
-                .forEach(elem -> addChild(type, createField(type, elem)));
-        enclosedElements.stream() // Add fields
+                .forEach(enumConst -> addChild(type, createField(type, enumConst)));
+
+        enclosedElements.stream()
                 .filter(elem -> ElementKind.FIELD.equals(elem.getKind()))
                 .filter(VariableElement.class::isInstance).map(VariableElement.class::cast)
-                .forEach(elem -> addChild(type, createField(type, elem)));
-        enclosedElements.stream() // Add constructors
+                .forEach(field -> addChild(type, createField(type, field)));
+
+        enclosedElements.stream()
                 .filter(elem -> ElementKind.CONSTRUCTOR.equals(elem.getKind()))
                 .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
-                .forEach(elem -> addChild(type, createConstructor(type, elem)));
-        enclosedElements.stream() // Add methods
+                .forEach(constructor -> addChild(type, createConstructor(type, constructor)));
+
+        enclosedElements.stream()
                 .filter(elem -> ElementKind.METHOD.equals(elem.getKind()))
                 .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
-                .forEach(elem -> addChild(type, createMethod(type, elem)));
+                .filter(method -> !isMethodFromExcludedSuperclass(method))
+                .forEach(method -> addChild(type, createMethod(type, method)));
 
         return type;
+    }
+
+    private boolean isMethodFromExcludedSuperclass(ExecutableElement method) {
+        boolean result = false;
+        Element containingClass = method.getEnclosingElement();
+        if (ElementKind.CLASS.equals(containingClass.getKind())) {
+            TypeName typeName = TypeNameVisitor.INSTANCE.visit(containingClass.asType());
+            if (config.getExcludedTypeReferences().contains(typeName.qualified)) result = true;
+            else if (containingClass instanceof TypeElement) {
+                Element superclass = env.getTypeUtils().asElement(((TypeElement) containingClass).getSuperclass());
+                result = superclass.getEnclosedElements().stream()
+                        .filter(elem -> ElementKind.METHOD.equals(elem.getKind()))
+                        .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
+                        .filter(superclassMethod -> equalMethodSignatures(superclassMethod, method))
+                        .findFirst()
+                        .map(this::isMethodFromExcludedSuperclass).orElse(false);
+            }
+        }
+        return result;
+    }
+
+    private static boolean equalMethodSignatures(ExecutableElement method1, ExecutableElement method2) {
+        return method1.getSimpleName().equals(method2.getSimpleName())
+                && method1.getParameters().equals(method2.getParameters());
     }
 
     private void addForeignType(Map<Namespace, Collection<Type>> foreignTypes, Element typeElement) {
