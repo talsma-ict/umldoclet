@@ -5,7 +5,7 @@
 
 ## Blockers for 2.0
 
-- Hiding of overridden methods from excluded classes (e.g. toString, hashCode + equals)
+- Vararg method parameters
 - Reasonable configurability
 
 __Note:__ Version `2.0.0` of this [doclet] is a full rewrite as 
