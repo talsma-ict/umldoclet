@@ -25,7 +25,7 @@
     <!-- Artifact identification -->
     <groupId>nl.talsmasoftware</groupId>
     <artifactId>umldoclet</artifactId>
-    <version>1.0.15-SNAPSHOT</version>
+    <version>1.0.17-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <!-- Project information -->
@@ -83,7 +83,7 @@
         <maven-failsafe-plugin.version>2.20.1</maven-failsafe-plugin.version>
         <maven-shade-plugin.version>3.1.0</maven-shade-plugin.version>
         <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
-        <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
+        <maven-javadoc-plugin.version>3.0.0</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <maven-scm-plugin.version>1.9.5</maven-scm-plugin.version>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
@@ -259,10 +259,10 @@
                             </docletArtifact>
                             <docencoding>UTF-8</docencoding>
                             <useStandardDocletOptions>true</useStandardDocletOptions>
-                            <additionalparam>
-                                -umlLogLevel DEBUG
-                                -umlImageFormat SVG
-                            </additionalparam>
+                            <additionalOptions>
+                                <additionalOption>-umlLogLevel DEBUG</additionalOption>
+                                <additionalOption>-umlImageFormat SVG</additionalOption>
+                            </additionalOptions>
                         </configuration>
                     </execution>
                     <execution>
@@ -279,16 +279,16 @@
                                 <version>${project.version}</version>
                             </docletArtifact>
                             <docencoding>UTF-8</docencoding>
-                            <additionalparam>
-                                -umlLogLevel DEBUG
-                                -umlImageFormat PNG;SVG
-                                -umlImageDirectory images
-                                -umlBasePath "${project.baseUri}target/test-uml"
-                                -umlSkipStandardDoclet true
-                                -umlCommand "hide empty members"
-                                -umlCommand "hide &lt;&lt;Stereotype&gt;&gt; circle"
-                                -umlIncludeMethodReturntypes true
-                            </additionalparam>
+                            <additionalOptions>
+                                <additionalOption>-umlLogLevel DEBUG</additionalOption>
+                                <additionalOption>-umlImageFormat PNG;SVG</additionalOption>
+                                <additionalOption>-umlImageDirectory images</additionalOption>
+                                <additionalOption>-umlBasePath "${project.baseUri}target/test-uml"</additionalOption>
+                                <additionalOption>-umlSkipStandardDoclet true</additionalOption>
+                                <additionalOption>-umlCommand "hide empty members"</additionalOption>
+                                <additionalOption>-umlCommand "hide &lt;&lt;Stereotype&gt;&gt; circle"</additionalOption>
+                                <additionalOption>-umlIncludeMethodReturntypes true</additionalOption>
+                            </additionalOptions>
                         </configuration>
                     </execution>
                 </executions>

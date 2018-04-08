@@ -102,9 +102,8 @@ public class IndentingWriter extends Writer {
      * The whitespace character will also not be written until there are other characters that need to be written.
      *
      * @return Reference to this writer for chaining purposes.
-     * @throws IOException
      */
-    public IndentingWriter whitespace() throws IOException {
+    public IndentingWriter whitespace() {
         addWhitespace.set(true);
         return this;
     }
@@ -121,15 +120,17 @@ public class IndentingWriter extends Writer {
 
     @Override
     public void write(char[] cbuf, int off, int len) throws IOException {
-        if (len > 0) {
+        if (len > off) {
+            char ch = cbuf[off];
             synchronized (lock) {
-                if (addWhitespace.compareAndSet(true, false) && !isWhitespace(lastWritten) && !isWhitespace(cbuf[0])) {
+                if (addWhitespace.compareAndSet(true, false) && !isWhitespace(lastWritten) && !isWhitespace(ch)) {
                     delegate.write(' ');
                 }
                 for (int i = off; i < len; i++) {
-                    if (isEol(lastWritten) && !isEol(cbuf[i])) indentation.writeTo(delegate);
-                    delegate.write(cbuf[i]);
-                    lastWritten = cbuf[i];
+                    ch = cbuf[i];
+                    if (isEol(lastWritten) && !isEol(ch)) indentation.writeTo(delegate);
+                    delegate.write(ch);
+                    lastWritten = ch;
                 }
             }
         }
