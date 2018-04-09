@@ -29,6 +29,10 @@ Please take a look at the rendered .SVG image of this doclet's
 [rendering package](example/rendering-package.svg).  
 Or, look at the [the generated plantuml source file](example/rendering-package.puml).
 
+## License
+
+[Apache 2.0 license](LICENSE)
+
 ## Feedback
 
 - Please search the [open issues](https://github.com/talsma-ict/umldoclet/issues)
