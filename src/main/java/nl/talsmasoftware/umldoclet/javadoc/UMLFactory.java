@@ -76,7 +76,11 @@ public class UMLFactory {
 
     private Parameters createParameters(List<? extends VariableElement> params) {
         Parameters result = new Parameters();
-        params.forEach(param -> result.add(param.getSimpleName().toString(), TypeNameVisitor.INSTANCE.visit(param.asType())));
+        Boolean varargs = null;
+        for (VariableElement param : params) {
+            if (varargs == null) result = result.varargs(varargs = isVarArgsMethod(param.getEnclosingElement()));
+            result = result.add(param.getSimpleName().toString(), TypeNameVisitor.INSTANCE.visit(param.asType()));
+        }
         return result;
     }
 
@@ -285,6 +289,10 @@ public class UMLFactory {
         // TODO: boolean isProperty() support.
 
         return null;
+    }
+
+    private static boolean isVarArgsMethod(Element element) {
+        return element instanceof ExecutableElement && ((ExecutableElement) element).isVarArgs();
     }
 
     private static void addReference(Collection<Reference> collection, Reference reference) {

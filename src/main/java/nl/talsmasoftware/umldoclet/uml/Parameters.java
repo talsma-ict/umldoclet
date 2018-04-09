@@ -29,6 +29,7 @@ import java.util.List;
 public class Parameters extends UMLPart implements Comparable<Parameters> {
 
     private final List<Parameter> params = new ArrayList<>();
+    private boolean varargs = false;
     private Method method;
 
     public Parameters() {
@@ -51,6 +52,11 @@ public class Parameters extends UMLPart implements Comparable<Parameters> {
 
     public Parameters add(String name, TypeName type) {
         params.add(new Parameter(name, type));
+        return this;
+    }
+
+    public Parameters varargs(boolean varargs) {
+        this.varargs = varargs;
         return this;
     }
 
@@ -99,7 +105,9 @@ public class Parameters extends UMLPart implements Comparable<Parameters> {
                 sep = ": ";
             }
             if (type != null && !TypeDisplay.NONE.equals(methodConfig.paramTypes())) {
-                output.append(sep).append(type.toUml(methodConfig.paramTypes(), null));
+                String typeUml = type.toUml(methodConfig.paramTypes(), null);
+                if (varargs && typeUml.endsWith("[]")) typeUml = typeUml.substring(0, typeUml.length() - 2) + "...";
+                output.append(sep).append(typeUml);
                 sep = ": ";
             }
             if (name != null && MethodConfig.ParamNames.AFTER_TYPE.equals(methodConfig.paramNames())) {

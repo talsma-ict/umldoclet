@@ -5,7 +5,8 @@
 
 ## Blockers for 2.0
 
-- Vararg method parameters
+- Boolean isXyz properties
+- Overrides method from excluded class: Look into why toString(), equals(Object) hashCode(int) pop up here and there
 - Reasonable configurability
 
 __Note:__ Version `2.0.0` of this [doclet] is a full rewrite as 
