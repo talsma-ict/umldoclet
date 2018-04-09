@@ -31,6 +31,10 @@ To use the doclet together with the JavaDoc tool, the following is required.
 
 - See [Usage] (__TODO__)
 
+## License
+
+[Apache 2.0 license](LICENSE)
+
 ## Feedback
 
 - Please search the [open issues](https://github.com/talsma-ict/umldoclet/issues)
