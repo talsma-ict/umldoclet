@@ -5,8 +5,10 @@
 
 ## Blockers for 2.0
 
-- Boolean isXyz properties
 - Overrides method from excluded class: Look into why toString(), equals(Object) hashCode(int) pop up here and there
+
+## Nice to haves
+
 - Reasonable configurability
 
 __Note:__ Version `2.0.0` of this [doclet] is a full rewrite as 
@@ -23,6 +25,7 @@ It automatically generates UML diagrams from your code as separate
 [PlantUML format][plantuml].
 
 ## Requirements:
+
 To use the doclet together with the JavaDoc tool, the following is required.
 
 - JDK version 9 or higher (for older Javadoc versions please use [v1.x]).

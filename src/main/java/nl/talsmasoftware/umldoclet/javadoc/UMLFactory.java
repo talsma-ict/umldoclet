@@ -285,14 +285,20 @@ public class UMLFactory {
             char[] result = name.substring(3).toCharArray();
             result[0] = Character.toLowerCase(result[0]);
             return new String(result);
+        } else if (params == 0 && name.length() > 2 && name.startsWith("is") && isBooleanPrimitive(method.getReturnType())) {
+            char[] result = name.substring(2).toCharArray();
+            result[0] = Character.toLowerCase(result[0]);
+            return new String(result);
         }
-        // TODO: boolean isProperty() support.
-
         return null;
     }
 
     private static boolean isVarArgsMethod(Element element) {
         return element instanceof ExecutableElement && ((ExecutableElement) element).isVarArgs();
+    }
+
+    private static boolean isBooleanPrimitive(TypeMirror type) {
+        return "boolean".equals(TypeNameVisitor.INSTANCE.visit(type).qualified);
     }
 
     private static void addReference(Collection<Reference> collection, Reference reference) {
