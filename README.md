@@ -10,6 +10,7 @@
 ## Nice to haves
 
 - Reasonable configurability
+- Java-8 compatible multi-version jar.
 
 __Note:__ Version `2.0.0` of this [doclet] is a full rewrite as 
 a [Javadoc 9 doclet][doclet], reusing only the internal rendering of `.puml` files.  
