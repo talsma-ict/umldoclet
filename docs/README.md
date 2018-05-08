@@ -26,12 +26,12 @@ To use the doclet together with the JavaDoc tool, the following is required.
 ## Example
 
 Please take a look at the rendered .SVG image of this doclet's 
-[rendering package](example/rendering-package.svg).  
-Or, look at the [the generated plantuml source file](example/rendering-package.puml).
+[rendering package](../example/rendering-package.svg).  
+Or, look at the [the generated plantuml source file](../example/rendering-package.puml).
 
 ## License
 
-[Apache 2.0 license](LICENSE)
+[Apache 2.0 license](../LICENSE)
 
 ## Feedback
 
@@ -44,7 +44,7 @@ Or, look at the [the generated plantuml source file](example/rendering-package.p
 _Thanks for using the doclet, I hope it may be of benefit to your project!_  
 _Also a big thank you goes to the developers of the excellent [PlantUML project](http://plantuml.com/)._
 
-  [ci-img]: https://img.shields.io/travis/talsma-ict/umldoclet/master.svg
+  [ci-img]: https://img.shields.io/travis/talsma-ict/umldoclet/develop.svg
   [ci]: https://travis-ci.org/talsma-ict/umldoclet
   [maven-img]: https://img.shields.io/maven-central/v/nl.talsmasoftware/umldoclet.svg
   [maven]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22nl.talsmasoftware%22%20AND%20a%3A%22umldoclet%22
