@@ -69,7 +69,8 @@ mvn install:install-file \
     -DartifactId=plantuml-asl \
     -Dversion=<version> \
     -Dpackaging=jar \
-    -DlocalRepositoryPath=lib
+    -DlocalRepositoryPath=lib \
+    -DcreateChecksum=true
 ```
 
 

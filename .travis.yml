@@ -1,8 +1,9 @@
 sudo: false
 dist: trusty
-jdk: oraclejdk9
 
 language: java
+jdk:
+  - oraclejdk9
 
 addons:
   apt:
@@ -28,12 +29,23 @@ before_install:
   - echo "https://$GH_TOKEN:@github.com" > .git/credentials
 
 install:
-  # use the maven wrapper instead of provided maven
-  - ./mvnw install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+  - ./mvnw --version
 
 script:
-  - .travis/publish.sh
+  - .travis/scripts/build.sh
+  - .travis/scripts/release.sh
 
-branches:
-  except:
-    - /^[0-9]/
+after_success:
+  - if [ -f target/jacoco.exec ]; then ./mvnw jacoco:report coveralls:report; fi
+
+deploy:
+  provider: releases
+  name: Release $TRAVIS_TAG
+  api_key: $GH_TOKEN
+  file_glob: true
+  file:
+    - ./**/target/umldoclet-*.jar
+    - ./**/target/umldoclet-*.jar.asc
+  skip_cleanup: true
+  on:
+    tags: true
