@@ -67,6 +67,6 @@ To use the doclet together with the JavaDoc tool, the following is required.
   [maven]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22nl.talsmasoftware%22%20AND%20a%3A%22umldoclet%22
   [usage]: USAGE.md
   [contributing]: Contributing.md
-  [v1.x]: https://github.com/talsma-ict/umldoclet/tree/master
+  [v1.x]: https://github.com/talsma-ict/umldoclet/tree/develop-v1
   [plantuml]: http://plantuml.com
   [doclet]: https://docs.oracle.com/javase/9/docs/api/jdk/javadoc/doclet/Doclet.html
