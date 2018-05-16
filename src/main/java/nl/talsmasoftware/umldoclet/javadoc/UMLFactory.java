@@ -180,15 +180,12 @@ public class UMLFactory {
     private boolean isMethodFromExcludedSuperclass(ExecutableElement method) {
         boolean result = false;
         Element containingClass = method.getEnclosingElement();
-        if (ElementKind.CLASS.equals(containingClass.getKind())) {
-            TypeName typeName = TypeNameVisitor.INSTANCE.visit(containingClass.asType());
-            result = config.getExcludedTypeReferences().contains(typeName.qualified)
-                    || methodsFromExcludedSuperclasses().stream().anyMatch(
+        if (containingClass.getKind().isClass() || containingClass.getKind().isInterface()) {
+            result = methodsFromExcludedSuperclasses().stream().anyMatch(
                     m -> equalMethodSignatures(m, method)
                             && env.getTypeUtils().isAssignable(containingClass.asType(), m.getEnclosingElement().asType()));
-        } else if (ElementKind.ENUM.equals(containingClass.getKind())) {
-            result = isGenericEnumMethod(method);
         }
+        result = result || isExcludedEnumMethod(method);
         return result;
     }
 
@@ -201,7 +198,6 @@ public class UMLFactory {
                     .map(TypeElement::getEnclosedElements).flatMap(Collection::stream)
                     .filter(elem -> ElementKind.METHOD.equals(elem.getKind()))
                     .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
-                    .filter(method -> !method.getModifiers().contains(Modifier.STATIC))
                     .filter(method -> !method.getModifiers().contains(Modifier.ABSTRACT))
                     .filter(method -> visibilityOf(method.getModifiers()).compareTo(Visibility.PRIVATE) > 0)
                     .collect(toCollection(LinkedHashSet::new));
@@ -209,14 +205,16 @@ public class UMLFactory {
         return _methodsFromExcludedSuperclasses;
     }
 
-    private boolean isGenericEnumMethod(ExecutableElement method) {
-        String name = method.getSimpleName().toString();
-        if ("values".equals(name)) {
-            return method.getParameters().size() == 0 && method.getModifiers().contains(Modifier.STATIC);
-        } else if ("valueOf".equals(name)) {
-            return method.getParameters().size() == 1
-                    && method.getModifiers().contains(Modifier.STATIC)
-                    && "java.lang.String".equals(TypeNameVisitor.INSTANCE.visit(method.getParameters().get(0).asType()).qualified);
+    private boolean isExcludedEnumMethod(ExecutableElement method) {
+        if (config.getExcludedTypeReferences().contains(Enum.class.getName())
+                && ElementKind.ENUM.equals(method.getEnclosingElement().getKind())
+                && method.getModifiers().contains(Modifier.STATIC)) {
+            if ("values".equals(method.getSimpleName().toString()) && method.getParameters().isEmpty()) {
+                return true;
+            } else if ("valueOf".equals(method.getSimpleName().toString()) && method.getParameters().size() == 1) {
+                String paramType = TypeNameVisitor.INSTANCE.visit(method.getParameters().get(0).asType()).qualified;
+                return String.class.getName().equals(paramType);
+            }
         }
         return false;
     }
