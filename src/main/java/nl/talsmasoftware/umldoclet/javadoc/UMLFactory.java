@@ -28,6 +28,7 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Types;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -182,7 +183,7 @@ public class UMLFactory {
         Element containingClass = method.getEnclosingElement();
         if (containingClass.getKind().isClass() || containingClass.getKind().isInterface()) {
             result = methodsFromExcludedSuperclasses().stream().anyMatch(
-                    m -> equalMethodSignatures(m, method)
+                    m -> similarMethodSignatures(m, method)
                             && env.getTypeUtils().isAssignable(containingClass.asType(), m.getEnclosingElement().asType()));
         }
         result = result || isExcludedEnumMethod(method);
@@ -219,13 +220,20 @@ public class UMLFactory {
         return false;
     }
 
-    private static boolean equalMethodSignatures(ExecutableElement method1, ExecutableElement method2) {
-        if (!method1.getSimpleName().equals(method2.getSimpleName())
-                || method1.getParameters().size() != method2.getParameters().size()) {
-            return false;
+    private boolean similarMethodSignatures(ExecutableElement method1, ExecutableElement method2) {
+        if (!method1.getSimpleName().equals(method2.getSimpleName())) return false;
+        int paramCount = method1.getParameters().size();
+        if (paramCount != method2.getParameters().size()) return false;
+
+        Types typeUtils = env.getTypeUtils();
+        boolean assignable1 = true, assignable2 = true;
+        for (int i = 0; i < paramCount && (assignable1 || assignable2); i++) {
+            TypeMirror param1 = method1.getParameters().get(i).asType();
+            TypeMirror param2 = method2.getParameters().get(i).asType();
+            assignable1 = assignable1 && typeUtils.isAssignable(param1, param2);
+            assignable2 = assignable2 && typeUtils.isAssignable(param2, param1);
         }
-        // TODO Check compatible parameter types.
-        return true;
+        return assignable1 || assignable2;
     }
 
     private void addForeignType(Map<Namespace, Collection<Type>> foreignTypes, Element typeElement) {
