@@ -7,12 +7,13 @@ Doclet for the JavaDoc tool that generates UML diagrams from the code.
 
 ## Blockers for 2.0
 
-- Overrides method from excluded class: Look into why toString(), equals(Object) hashCode(int) pop up here and there
+- None discovered, please [file an issue](https://github.com/talsma-ict/umldoclet/issues/new)
+  if you found a serious defect.
 
 ## Nice to haves
 
+- Java-8 compatible multi-version jar (#52)
 - Reasonable configurability
-- Java-8 compatible multi-version jar.
 
 __Note:__ Version `2.0.0` of this [doclet] is a full rewrite as 
 a [Javadoc 9 doclet][doclet], reusing only the internal rendering of `.puml` files.  
