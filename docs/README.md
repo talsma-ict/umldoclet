@@ -3,6 +3,8 @@
 
 # UMLDoclet
 
+Doclet for the JavaDoc tool that generates UML diagrams from the code.  
+
 ## Blockers for 2.0
 
 - Overrides method from excluded class: Look into why toString(), equals(Object) hashCode(int) pop up here and there
@@ -15,9 +17,8 @@
 __Note:__ Version `2.0.0` of this [doclet] is a full rewrite as 
 a [Javadoc 9 doclet][doclet], reusing only the internal rendering of `.puml` files.  
 UMLDoclet v2 requires a JDK 9 compatible version of `javadoc` to run.  
-For earlier versions of javadoc, please use the `1.x` versions of this doclet.
+For earlier versions of javadoc, please use the latest `1.x` version of this doclet.
 
-Doclet for the JavaDoc tool that generates UML diagrams from the code.  
 Released versions can be found in the [maven central repository][maven].  
 
 This doclet uses the analyzed information from the JavaDoc tool.

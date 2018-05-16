@@ -19,14 +19,27 @@ import jdk.javadoc.doclet.DocletEnvironment;
 import nl.talsmasoftware.umldoclet.uml.*;
 import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
 
-import javax.lang.model.element.*;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.element.PackageElement;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toCollection;
 import static javax.lang.model.element.ElementKind.ENUM;
 import static nl.talsmasoftware.umldoclet.uml.Reference.Side.from;
 import static nl.talsmasoftware.umldoclet.uml.Reference.Side.to;
@@ -169,23 +182,52 @@ public class UMLFactory {
         Element containingClass = method.getEnclosingElement();
         if (ElementKind.CLASS.equals(containingClass.getKind())) {
             TypeName typeName = TypeNameVisitor.INSTANCE.visit(containingClass.asType());
-            if (config.getExcludedTypeReferences().contains(typeName.qualified)) result = true;
-            else if (containingClass instanceof TypeElement) {
-                Element superclass = env.getTypeUtils().asElement(((TypeElement) containingClass).getSuperclass());
-                result = superclass.getEnclosedElements().stream()
-                        .filter(elem -> ElementKind.METHOD.equals(elem.getKind()))
-                        .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
-                        .filter(superclassMethod -> equalMethodSignatures(superclassMethod, method))
-                        .findFirst()
-                        .map(this::isMethodFromExcludedSuperclass).orElse(false);
-            }
+            result = config.getExcludedTypeReferences().contains(typeName.qualified)
+                    || methodsFromExcludedSuperclasses().stream().anyMatch(
+                    m -> equalMethodSignatures(m, method)
+                            && env.getTypeUtils().isAssignable(containingClass.asType(), m.getEnclosingElement().asType()));
+        } else if (ElementKind.ENUM.equals(containingClass.getKind())) {
+            result = isGenericEnumMethod(method);
         }
         return result;
     }
 
+    private Collection<ExecutableElement> _methodsFromExcludedSuperclasses = null;
+
+    private Collection<ExecutableElement> methodsFromExcludedSuperclasses() {
+        if (_methodsFromExcludedSuperclasses == null) {
+            _methodsFromExcludedSuperclasses = config.getExcludedTypeReferences().stream()
+                    .map(env.getElementUtils()::getTypeElement).filter(Objects::nonNull)
+                    .map(TypeElement::getEnclosedElements).flatMap(Collection::stream)
+                    .filter(elem -> ElementKind.METHOD.equals(elem.getKind()))
+                    .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
+                    .filter(method -> !method.getModifiers().contains(Modifier.STATIC))
+                    .filter(method -> !method.getModifiers().contains(Modifier.ABSTRACT))
+                    .filter(method -> visibilityOf(method.getModifiers()).compareTo(Visibility.PRIVATE) > 0)
+                    .collect(toCollection(LinkedHashSet::new));
+        }
+        return _methodsFromExcludedSuperclasses;
+    }
+
+    private boolean isGenericEnumMethod(ExecutableElement method) {
+        String name = method.getSimpleName().toString();
+        if ("values".equals(name)) {
+            return method.getParameters().size() == 0 && method.getModifiers().contains(Modifier.STATIC);
+        } else if ("valueOf".equals(name)) {
+            return method.getParameters().size() == 1
+                    && method.getModifiers().contains(Modifier.STATIC)
+                    && "java.lang.String".equals(TypeNameVisitor.INSTANCE.visit(method.getParameters().get(0).asType()).qualified);
+        }
+        return false;
+    }
+
     private static boolean equalMethodSignatures(ExecutableElement method1, ExecutableElement method2) {
-        return method1.getSimpleName().equals(method2.getSimpleName())
-                && method1.getParameters().equals(method2.getParameters());
+        if (!method1.getSimpleName().equals(method2.getSimpleName())
+                || method1.getParameters().size() != method2.getParameters().size()) {
+            return false;
+        }
+        // TODO Check compatible parameter types.
+        return true;
     }
 
     private void addForeignType(Map<Namespace, Collection<Type>> foreignTypes, Element typeElement) {
