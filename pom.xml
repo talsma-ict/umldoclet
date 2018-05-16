@@ -25,7 +25,7 @@
     <!-- Artifact identification -->
     <groupId>nl.talsmasoftware</groupId>
     <artifactId>umldoclet</artifactId>
-    <version>1.0.18-SNAPSHOT</version>
+    <version>2.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <!-- Project information -->
@@ -66,7 +66,10 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <build.java.version>1.7</build.java.version>
+        <maven.compiler.source>9</maven.compiler.source>
+        <maven.compiler.target>9</maven.compiler.target>
+        <maven.compiler.release>9</maven.compiler.release>
+        <maven.test.skip>true</maven.test.skip>
 
         <!-- included -->
         <plantuml.version>1.2018.5</plantuml.version>
@@ -79,6 +82,10 @@
         <logback.version>1.2.3</logback.version>
         <maven-invoker.version>3.0.0</maven-invoker.version>
 
+        <!--
+            This compiler plugin version fails in testComple on jdk >= jdk9-ea167:
+            https://issues.apache.org/jira/browse/MCOMPILER-294
+         -->
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
         <maven-failsafe-plugin.version>2.20.1</maven-failsafe-plugin.version>
         <maven-shade-plugin.version>3.1.0</maven-shade-plugin.version>
@@ -87,6 +94,7 @@
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <maven-scm-plugin.version>1.9.5</maven-scm-plugin.version>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+        <maven-toolchains-plugin.version>1.1</maven-toolchains-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
         <license-maven-plugin.version>3.0</license-maven-plugin.version>
         <buildnumber-maven-plugin.version>1.4</buildnumber-maven-plugin.version>
@@ -98,22 +106,11 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
-                <includes>
-                    <include>**/*.properties</include>
-                </includes>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <excludes>
-                    <exclude>**/*.properties</exclude>
-                </excludes>
             </resource>
             <resource>
                 <directory>${project.basedir}</directory>
                 <includes>
                     <include>LICENSE</include>
-                    <include>README.md</include>
-                    <include>USAGE.md</include>
                 </includes>
             </resource>
         </resources>
@@ -187,25 +184,25 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
-                    <source>${build.java.version}</source>
-                    <target>${build.java.version}</target>
                     <showDeprecation>true</showDeprecation>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>${maven-failsafe-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+            <!--
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-failsafe-plugin</artifactId>
+                            <version>${maven-failsafe-plugin.version}</version>
+                            <executions>
+                                <execution>
+                                    <goals>
+                                        <goal>integration-test</goal>
+                                        <goal>verify</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -251,6 +248,7 @@
                             <goal>jar</goal>
                         </goals>
                         <configuration>
+                            <javadocVersion>9</javadocVersion>
                             <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
                             <docletArtifact>
                                 <groupId>${project.groupId}</groupId>
@@ -260,34 +258,8 @@
                             <docencoding>UTF-8</docencoding>
                             <useStandardDocletOptions>true</useStandardDocletOptions>
                             <additionalOptions>
-                                <additionalOption>-umlLogLevel DEBUG</additionalOption>
-                                <additionalOption>-umlImageFormat SVG</additionalOption>
-                            </additionalOptions>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>generate-test-uml</id>
-                        <goals>
-                            <goal>test-javadoc</goal>
-                        </goals>
-                        <phase>compile</phase>
-                        <configuration>
-                            <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
-                            <docletArtifact>
-                                <groupId>${project.groupId}</groupId>
-                                <artifactId>${project.artifactId}</artifactId>
-                                <version>${project.version}</version>
-                            </docletArtifact>
-                            <docencoding>UTF-8</docencoding>
-                            <additionalOptions>
-                                <additionalOption>-umlLogLevel DEBUG</additionalOption>
-                                <additionalOption>-umlImageFormat PNG;SVG</additionalOption>
-                                <additionalOption>-umlImageDirectory images</additionalOption>
-                                <additionalOption>-umlBasePath "${project.baseUri}target/test-uml"</additionalOption>
-                                <additionalOption>-umlSkipStandardDoclet true</additionalOption>
-                                <additionalOption>-umlCommand "hide empty members"</additionalOption>
-                                <additionalOption>-umlCommand "hide &lt;&lt;Stereotype&gt;&gt; circle"</additionalOption>
-                                <additionalOption>-umlIncludeMethodReturntypes true</additionalOption>
+                                <!--<additionalOption>-verbose</additionalOption>-->
+                                <!--<additionalOption>-quiet</additionalOption>-->
                             </additionalOptions>
                         </configuration>
                     </execution>
@@ -322,6 +294,25 @@
                     <tag>${project.version}</tag>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-toolchains-plugin</artifactId>
+                <version>${maven-toolchains-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>toolchain</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <toolchains>
+                        <jdk>
+                            <version>${maven.compiler.release}</version>
+                        </jdk>
+                    </toolchains>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -330,15 +321,6 @@
             <groupId>net.sourceforge.plantuml</groupId>
             <artifactId>plantuml-asl</artifactId>
             <version>${plantuml.version}</version>
-        </dependency>
-
-        <dependency>
-            <!-- This will probably break after jigsaw becomes mainstream? -->
-            <groupId>com.sun</groupId>
-            <artifactId>tools</artifactId>
-            <version>${build.java.version}</version>
-            <scope>system</scope>
-            <systemPath>${java.home}/../lib/tools.jar</systemPath>
         </dependency>
 
         <dependency>

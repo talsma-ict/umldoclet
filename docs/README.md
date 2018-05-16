@@ -2,32 +2,41 @@
 [![Released Version][maven-img]][maven]
 
 # UMLDoclet
+
 Doclet for the JavaDoc tool that generates UML diagrams from the code.  
+
+## Blockers for 2.0
+
+- None discovered, please [file an issue](https://github.com/talsma-ict/umldoclet/issues/new)
+  if you found a serious defect.
+
+## Nice to haves
+
+- Java-8 compatible multi-version jar (#52)
+- Reasonable configurability
+
+__Note:__ Version `2.0.0` of this [doclet] is a full rewrite as 
+a [Javadoc 9 doclet][doclet], reusing only the internal rendering of `.puml` files.  
+UMLDoclet v2 requires a JDK 9 compatible version of `javadoc` to run.  
+For earlier versions of javadoc, please use the latest `1.x` version of this doclet.
+
 Released versions can be found in the [maven central repository][maven].  
 
 This doclet uses the analyzed information from the JavaDoc tool.
 It automatically generates UML diagrams from your code as separate 
 `.puml` diagrams of your classes and packages in the 
-[PlantUML format](http://plantuml.com/).
+[PlantUML format][plantuml].
 
 ## Requirements:
+
 To use the doclet together with the JavaDoc tool, the following is required.
 
-- JDK version 1.7 or 1.8 (JDK 9 no longer has a `tools.jar` and 
-  will require [version 2.x](https://github.com/talsma-ict/umldoclet/pull/46) 
-  of the UML Doclet).
-- Availability of tools.jar containing the Sun JavaDoc API.
-- The doclet jar or a build system that knows how to get it (see [usage](USAGE.md)).
+- JDK version 9 or higher (for older Javadoc versions please use [v1.x]).
+- This doclet jar.
 
 ## Usage
 
-- Please refer to [the usage page](USAGE.md) on how to use this doclet.
-
-## Example
-
-Please take a look at the rendered .SVG image of this doclet's 
-[rendering package](../example/rendering-package.svg).  
-Or, look at the [the generated plantuml source file](../example/rendering-package.puml).
+- See [Usage] (__TODO__)
 
 ## License
 
@@ -40,11 +49,24 @@ Or, look at the [the generated plantuml source file](../example/rendering-packag
 - If possible, please provide a working example when sending in bugs.
   This will make fixing them that much easier!
   
-  
-_Thanks for using the doclet, I hope it may be of benefit to your project!_  
-_Also a big thank you goes to the developers of the excellent [PlantUML project](http://plantuml.com/)._
+## Contributing
+
+- See [Contributing] (__TODO__)
+
+## Thanks!
+
+- First of all, thank _you_ for using this doclet, I hope it may be of benefit to your project.
+- And of course most importantly a big thanks to the developers of the excellent [PlantUML project][plantuml]
+  withouth whom this doclet wouldn't exist!
+
+
 
   [ci-img]: https://img.shields.io/travis/talsma-ict/umldoclet/develop.svg
   [ci]: https://travis-ci.org/talsma-ict/umldoclet
   [maven-img]: https://img.shields.io/maven-central/v/nl.talsmasoftware/umldoclet.svg
   [maven]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22nl.talsmasoftware%22%20AND%20a%3A%22umldoclet%22
+  [usage]: USAGE.md
+  [contributing]: Contributing.md
+  [v1.x]: https://github.com/talsma-ict/umldoclet/tree/master
+  [plantuml]: http://plantuml.com
+  [doclet]: https://docs.oracle.com/javase/9/docs/api/jdk/javadoc/doclet/Doclet.html

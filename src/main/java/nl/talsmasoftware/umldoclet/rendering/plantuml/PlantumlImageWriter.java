@@ -18,7 +18,7 @@ package nl.talsmasoftware.umldoclet.rendering.plantuml;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
-import nl.talsmasoftware.umldoclet.logging.LogSupport;
+import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.rendering.writers.StringBufferingWriter;
 
 import java.io.*;
@@ -27,6 +27,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
+import static nl.talsmasoftware.umldoclet.logging.Message.*;
 
 /**
  * Writer that delegates to a regular writer for the UML itself, but when finished (i.e. when close is called), also
@@ -36,6 +37,7 @@ import static java.util.Objects.requireNonNull;
  */
 public class PlantumlImageWriter extends StringBufferingWriter {
 
+    private final Logger logger;
     private final File directory;
     private final String baseName;
     private final Collection<FileFormat> imageFormats;
@@ -46,15 +48,17 @@ public class PlantumlImageWriter extends StringBufferingWriter {
      * This buffer is used when the writing is done (i.e., this writer is being closed) to create image files;
      * one for each specified <code>imageFormats</code>.
      * The name of the file(s) to create is based on the specified <code>directory</code>, <code>baseName</code> and
-     * {@link FileFormat#getFileSuffix() default file extension} of the particular {@link FileFormat}.
+     * {@code default file extension} of the particular {@code FileFormat}.
      *
      * @param delegate     The delegate writer to perform the pass-through writing.
+     * @param logger       The logger.
      * @param directory    The directory to create the image file(s) in.
      * @param baseName     The base name of the image file(s) to create, without extension.
      * @param imageFormats The name(s) of the image format(s) to generate.
      */
-    public PlantumlImageWriter(Writer delegate, File directory, String baseName, String... imageFormats) {
+    public PlantumlImageWriter(Writer delegate, Logger logger, File directory, String baseName, String... imageFormats) {
         super(delegate);
+        this.logger = requireNonNull(logger, "Logger is <null>.");
         this.directory = directory;
         this.baseName = baseName;
         this.imageFormats = parseFileFormats(imageFormats);
@@ -71,11 +75,10 @@ public class PlantumlImageWriter extends StringBufferingWriter {
     public void close() throws IOException {
         super.close();
         for (FileFormat imageFormat : imageFormats) {
-            File imageFile = new File(directory, baseName + imageFormat.getFileSuffix());
-            LogSupport.info("Generating {0}...", imageFile);
+            final File imageFile = new File(directory, baseName + imageFormat.getFileSuffix());
+            logger.info(INFO_GENERATING_FILE, imageFile);
             try (OutputStream imageOutput = new BufferedOutputStream(new FileOutputStream(imageFile))) {
-                new SourceStringReader(getBuffer().toString()).generateImage(imageOutput, new FileFormatOption(imageFormat));
-                LogSupport.debug("Finished image {0}.", imageFile);
+                new SourceStringReader(getBuffer().toString()).outputImage(imageOutput, new FileFormatOption(imageFormat));
             }
         }
     }
@@ -89,17 +92,13 @@ public class PlantumlImageWriter extends StringBufferingWriter {
      *                         (e.g. <code>"PNG"</code>, <code>"SVG"</code>, etc).
      * @return The parsed <code>FileFormat</code> instances.
      */
-    private static Set<FileFormat> parseFileFormats(String... imageFormatNames) {
+    private Set<FileFormat> parseFileFormats(String... imageFormatNames) {
         Set<FileFormat> fileFormats = EnumSet.noneOf(FileFormat.class);
-        if (imageFormatNames != null) {
-            for (String fileFormatName : imageFormatNames) {
-                FileFormat fileFormat = fileFormatFromName(fileFormatName);
-                if (fileFormat != null) {
-                    fileFormats.add(fileFormat);
-                }
-            }
+        if (imageFormatNames != null) for (String fileFormatName : imageFormatNames) {
+            FileFormat fileFormat = fileFormatFromName(fileFormatName);
+            if (fileFormat != null) fileFormats.add(fileFormat);
         }
-        LogSupport.trace("Configured (and recognized) image formats to generate: {0}.", fileFormats);
+        logger.debug(DEBUG_CONFIGURED_IMAGE_FORMATS, fileFormats);
         return fileFormats;
     }
 
@@ -110,17 +109,13 @@ public class PlantumlImageWriter extends StringBufferingWriter {
      * @param fileFormatName The name of the fileformat.
      * @return The found <code>FileFormat</code> instance or <code>null</code> if the name was not recognized.
      */
-    private static FileFormat fileFormatFromName(String fileFormatName) {
-        fileFormatName = requireNonNull(fileFormatName, "Configured image format was null!").trim();
-        if (fileFormatName.startsWith(".")) { // In case somebody mistakenly provided file extension instead.
-            fileFormatName = fileFormatName.substring(1).trim();
-        }
+    private FileFormat fileFormatFromName(String fileFormatName) {
+        fileFormatName = requireNonNull(fileFormatName, "Configured image format was <null>!").trim();
+        if (fileFormatName.startsWith(".")) fileFormatName = fileFormatName.substring(1);
         for (FileFormat fileFormat : FileFormat.values()) {
-            if (fileFormatName.equalsIgnoreCase(fileFormat.name())) {
-                return fileFormat;
-            }
+            if (fileFormatName.equalsIgnoreCase(fileFormat.name())) return fileFormat;
         }
-        LogSupport.warn("Unrecognized image format encountered: \"{0}\".", fileFormatName);
+        logger.warn(WARNING_UNRECOGNIZED_IMAGE_FORMAT, fileFormatName);
         return null;
     }
 

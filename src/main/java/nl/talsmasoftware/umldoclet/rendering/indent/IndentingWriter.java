@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.rendering.indent;
 
+import java.io.Flushable;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -31,21 +32,21 @@ import static java.util.Objects.requireNonNull;
  */
 public class IndentingWriter extends Writer {
 
-    private final Writer delegate;
+    private final Appendable delegate;
     private final Indentation indentation;
 
     private final AtomicBoolean addWhitespace = new AtomicBoolean(false);
     private char lastWritten = '\n';
 
-    protected IndentingWriter(Writer delegate, Indentation indentation) {
-        super(requireNonNull(delegate, "Delegate writer is required."));
-        this.delegate = delegate;
-        this.indentation = indentation != null ? indentation : Indentation.DEFAULT;
+    protected IndentingWriter(Appendable delegate, Indentation indentation) {
+        this(delegate, indentation, '\n', false);
         // maybe attempt to support extraction of 'lastWritten' from some types of writers?
     }
 
-    private IndentingWriter(Writer delegate, Indentation indentation, char lastWritten, boolean addWhitespace) {
-        this(delegate, indentation);
+    private IndentingWriter(Appendable delegate, Indentation indentation, char lastWritten, boolean addWhitespace) {
+        super(requireNonNull(delegate, "Delegate writer is required."));
+        this.delegate = delegate;
+        this.indentation = indentation == null ? Indentation.DEFAULT : indentation;
         this.lastWritten = lastWritten;
         this.addWhitespace.set(addWhitespace);
     }
@@ -63,8 +64,9 @@ public class IndentingWriter extends Writer {
      * @return The indenting delegate writer.
      * @see Indentation#DEFAULT
      */
-    public static IndentingWriter wrap(Writer delegate, Indentation indentation) {
-        return delegate instanceof IndentingWriter ? ((IndentingWriter) delegate).withIndentation(indentation)
+    public static IndentingWriter wrap(Appendable delegate, Indentation indentation) {
+        return delegate instanceof IndentingWriter
+                ? ((IndentingWriter) delegate).withIndentation(indentation)
                 : new IndentingWriter(delegate, indentation);
     }
 
@@ -120,16 +122,17 @@ public class IndentingWriter extends Writer {
 
     @Override
     public void write(char[] cbuf, int off, int len) throws IOException {
-        if (len > off) {
+        if (len > 0) {
             char ch = cbuf[off];
             synchronized (lock) {
                 if (addWhitespace.compareAndSet(true, false) && !isWhitespace(lastWritten) && !isWhitespace(ch)) {
-                    delegate.write(' ');
+                    delegate.append(' ');
+                    lastWritten = ' ';
                 }
-                for (int i = off; i < len; i++) {
-                    ch = cbuf[i];
-                    if (isEol(lastWritten) && !isEol(ch)) indentation.writeTo(delegate);
-                    delegate.write(ch);
+                for (int i = 0; i < len; i++) {
+                    ch = cbuf[off + i];
+                    if (isEol(lastWritten) && !isEol(ch)) delegate.append(indentation);
+                    delegate.append(ch);
                     lastWritten = ch;
                 }
             }
@@ -138,12 +141,18 @@ public class IndentingWriter extends Writer {
 
     @Override
     public void flush() throws IOException {
-        delegate.flush();
+        if (delegate instanceof Flushable) ((Flushable) delegate).flush();
     }
 
     @Override
     public void close() throws IOException {
-        delegate.close();
+        if (delegate instanceof AutoCloseable) try {
+            ((AutoCloseable) delegate).close();
+        } catch (IOException | RuntimeException rethrowable) {
+            throw rethrowable;
+        } catch (Exception e) {
+            throw new IllegalStateException("Unexpected exception closing " + this + ": " + e.getMessage(), e);
+        }
     }
 
     @Override

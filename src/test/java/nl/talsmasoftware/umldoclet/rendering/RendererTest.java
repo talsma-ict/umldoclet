@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,10 @@
 package nl.talsmasoftware.umldoclet.rendering;
 
 import com.sun.javadoc.DocErrorReporter;
-import nl.talsmasoftware.umldoclet.config.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.v1.config.UMLDocletConfig;
+import nl.talsmasoftware.umldoclet.v1.rendering.DiagramRenderer;
+import nl.talsmasoftware.umldoclet.v1.rendering.Renderer;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
