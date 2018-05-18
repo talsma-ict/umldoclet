@@ -12,13 +12,13 @@ Doclet for the JavaDoc tool that generates UML diagrams from the code.
 
 ## Nice to haves
 
-- Java-8 compatible multi-version jar (#52)
+- Java-8 compatible multi-version jar ([52](https://github.com/talsma-ict/umldoclet/issues/52))
 - Reasonable configurability
 
 __Note:__ Version `2.0.0` of this [doclet] is a full rewrite as 
 a [Javadoc 9 doclet][doclet], reusing only the internal rendering of `.puml` files.  
 UMLDoclet v2 requires a JDK 9 compatible version of `javadoc` to run.  
-For earlier versions of javadoc, please use the latest `1.x` version of this doclet.
+For earlier versions of javadoc, please use the latest [`1.x`][v1.x] version of this doclet.
 
 Released versions can be found in the [maven central repository][maven].  
 
