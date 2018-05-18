@@ -82,7 +82,10 @@ public class Reference extends UMLPart implements NameSpaceAware {
     }
 
     private Reference inverse() {
-        return new Reference(to, reverseType(), from, this.notes);
+        return new Reference(Side.from(to.qualifiedName, to.cardinality),
+                reverseType(),
+                Side.to(from.qualifiedName, from.cardinality),
+                this.notes);
     }
 
     /**

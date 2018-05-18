@@ -21,6 +21,7 @@ import nl.talsmasoftware.umldoclet.v1.config.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.v1.rendering.DiagramRenderer;
 import nl.talsmasoftware.umldoclet.v1.rendering.Renderer;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -34,6 +35,7 @@ import static org.hamcrest.Matchers.hasToString;
  *
  * @author Sjoerd Talsma
  */
+@Ignore // Tests the old doclet
 public class RendererTest {
 
     DocErrorReporter mockReporter;

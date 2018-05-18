@@ -19,6 +19,7 @@ import com.sun.javadoc.AnnotationDesc;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.DocErrorReporter;
 import com.sun.javadoc.Tag;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.*;
@@ -41,6 +42,7 @@ import static org.mockito.Mockito.when;
  *
  * @author Sjoerd Talsma
  */
+@Ignore // Tests the old doclet
 public class UMLDocletConfigTest {
 
     @Test

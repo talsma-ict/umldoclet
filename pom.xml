@@ -69,7 +69,6 @@
         <maven.compiler.source>9</maven.compiler.source>
         <maven.compiler.target>9</maven.compiler.target>
         <maven.compiler.release>9</maven.compiler.release>
-        <maven.test.skip>true</maven.test.skip>
 
         <!-- included -->
         <plantuml.version>1.2018.5</plantuml.version>

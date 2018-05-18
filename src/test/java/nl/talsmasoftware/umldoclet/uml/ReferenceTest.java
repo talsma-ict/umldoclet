@@ -39,9 +39,9 @@ public class ReferenceTest {
         Reference ref2 = new Reference(from("type2", "*"), "<--", to("type1"));
         assertThat(ref1, is(equalTo(ref2)));
         assertThat(ref2, is(equalTo(ref1)));
-        assertThat(ref1, hasToString("type1 --> * type2"));
-        assertThat(ref2, hasToString("type2 * <-- type1"));
-        assertThat(ref2.canonical(), hasToString("type1 --> * type2"));
+        assertThat(ref1, hasToString(containsString("type1 --> \"*\" type2")));
+        assertThat(ref2, hasToString(containsString("type2 \"*\" <-- type1")));
+        assertThat(ref2.canonical(), hasToString(equalTo(ref1.toString())));
     }
 
 }
