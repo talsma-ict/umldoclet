@@ -21,6 +21,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.QualifiedNameable;
 import javax.lang.model.type.*;
 import javax.lang.model.util.SimpleTypeVisitor9;
+import java.util.EnumSet;
 
 /**
  * The UML type name implemented as {@link TypeVisitor}.
@@ -28,6 +29,8 @@ import javax.lang.model.util.SimpleTypeVisitor9;
  * @author Sjoerd Talsma
  */
 final class TypeNameVisitor extends SimpleTypeVisitor9<TypeName, Void> {
+    private static final EnumSet<TypeKind> NO_KNOWN_TYPES = EnumSet.of(
+            TypeKind.VOID, TypeKind.NONE, TypeKind.NULL, TypeKind.ERROR, TypeKind.OTHER);
 
     static final TypeNameVisitor INSTANCE = new TypeNameVisitor();
 
@@ -68,9 +71,18 @@ final class TypeNameVisitor extends SimpleTypeVisitor9<TypeName, Void> {
     @Override
     public TypeName visitTypeVariable(TypeVariable typeVariable, Void parameter) {
         TypeMirror upperBound = typeVariable.getUpperBound();
-        if (upperBound != null) return TypeName.Variable.extendsBound(typeVariable.toString(), visit(upperBound, parameter));
+        if (upperBound != null && !NO_KNOWN_TYPES.contains(upperBound.getKind())) {
+            // Fix for #64: Avoid redundant <T extends Object> (which is obviously true for all T's)
+            TypeName upperBoundName = visit(upperBound, parameter);
+            if (!Object.class.getName().equals(upperBoundName.qualified)) {
+                return TypeName.Variable.extendsBound(typeVariable.toString(), upperBoundName);
+            }
+        }
         TypeMirror lowerBound = typeVariable.getLowerBound();
-        if (lowerBound != null) return TypeName.Variable.superBound(typeVariable.toString(), visit(lowerBound, parameter));
+        if (lowerBound != null && !NO_KNOWN_TYPES.contains(lowerBound.getKind())) {
+            return TypeName.Variable.superBound(typeVariable.toString(), visit(lowerBound, parameter));
+
+        }
 
         return defaultAction(typeVariable, parameter);
     }
