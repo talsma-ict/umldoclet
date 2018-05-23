@@ -1,0 +1,73 @@
+@startuml
+
+    namespace nl.talsmasoftware.umldoclet.rendering.indent {
+
+        class Indentation {
+            {static} +tabs(int): Indentation
+            {static} +spaces(int, int): Indentation
+            +increase(): Indentation
+            +decrease(): Indentation
+            +length(): int
+            +charAt(int): char
+            +subSequence(int, int): CharSequence
+        }
+
+        class IndentingPrintWriter {
+            #IndentingPrintWriter(Appendable, Indentation)
+            {static} +wrap(Appendable, Indentation): IndentingPrintWriter
+            +indent(): IndentingPrintWriter
+            +unindent(): IndentingPrintWriter
+            +whitespace(): IndentingPrintWriter
+            +newline(): IndentingPrintWriter
+            +append(CharSequence): IndentingPrintWriter
+            +append(CharSequence, int, int): IndentingPrintWriter
+            +append(char): IndentingPrintWriter
+        }
+
+        interface IndentingRenderer {
+            {abstract} +writeTo(IPW extends IndentingPrintWriter): IPW extends IndentingPrintWriter
+            +writeTo(A extends Appendable): A extends Appendable
+        }
+
+        class IndentingWriter {
+            #IndentingWriter(Appendable, Indentation)
+            {static} +wrap(Appendable, Indentation): IndentingWriter
+            +withIndentation(Indentation): IndentingWriter
+            +indent(): IndentingWriter
+            +unindent(): IndentingWriter
+            +whitespace(): IndentingWriter
+            +write(char[], int, int): void
+            +flush(): void
+            +close(): void
+        }
+    }
+
+    namespace java.lang {
+        interface CharSequence {
+            {abstract} +length(): int
+            {abstract} +charAt(int): char
+            {abstract} +subSequence(int, int): CharSequence
+            +chars(): IntStream
+            +codePoints(): IntStream
+        }
+    }
+
+    namespace java.io {
+        interface Serializable
+    }
+
+    namespace nl.talsmasoftware.umldoclet.rendering {
+        interface Renderer {
+            {abstract} +writeTo(A extends Appendable): A extends Appendable
+        }
+    }
+
+    java.lang.CharSequence <|.. nl.talsmasoftware.umldoclet.rendering.indent.Indentation
+    java.io.Serializable <|.. nl.talsmasoftware.umldoclet.rendering.indent.Indentation
+    nl.talsmasoftware.umldoclet.rendering.indent.Indentation --> nl.talsmasoftware.umldoclet.rendering.indent.Indentation: DEFAULT\nNONE
+    java.io.PrintWriter <|-- nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter
+    nl.talsmasoftware.umldoclet.rendering.Renderer <|.. nl.talsmasoftware.umldoclet.rendering.indent.IndentingRenderer
+    java.io.Writer <|-- nl.talsmasoftware.umldoclet.rendering.indent.IndentingWriter
+    nl.talsmasoftware.umldoclet.rendering.indent.IndentingWriter --> nl.talsmasoftware.umldoclet.rendering.indent.Indentation: indentation
+
+@enduml
