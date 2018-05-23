@@ -142,7 +142,9 @@
                 <version>${license-maven-plugin.version}</version>
                 <executions>
                     <execution>
-                        <goals><goal>check</goal></goals>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
                         <phase>compile</phase>
                     </execution>
                 </executions>
@@ -198,9 +200,15 @@
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
+                    </execution>
+                    <execution>
+                        <id>default-report</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
                         <configuration>
                             <excludes>
-                                <exclude>**/v1/**.*</exclude>
+                                <exclude>nl/talsmasoftware/umldoclet/v1/*</exclude>
                             </excludes>
                         </configuration>
                     </execution>
