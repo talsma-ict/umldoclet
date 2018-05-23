@@ -200,15 +200,9 @@
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
-                    </execution>
-                    <execution>
-                        <id>default-report</id>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
                         <configuration>
                             <excludes>
-                                <exclude>nl/talsmasoftware/umldoclet/v1/*</exclude>
+                                <exclude>nl.talsmasoftware.umldoclet.v1.**.*</exclude>
                             </excludes>
                         </configuration>
                     </execution>
