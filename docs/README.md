@@ -1,4 +1,5 @@
 [![Build Status][ci-img]][ci]
+[![Coverage Status][coveralls-img]][coveralls]
 [![Released Version][maven-img]][maven]
 
 # UMLDoclet
@@ -65,6 +66,8 @@ To use the doclet together with the JavaDoc tool, the following is required.
   [ci]: https://travis-ci.org/talsma-ict/umldoclet
   [maven-img]: https://img.shields.io/maven-central/v/nl.talsmasoftware/umldoclet.svg
   [maven]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22nl.talsmasoftware%22%20AND%20a%3A%22umldoclet%22
+  [coveralls-img]: https://coveralls.io/repos/github/talsma-ict/umldoclet/badge.svg
+  [coveralls]: https://coveralls.io/github/talsma-ict/umldoclet
   [usage]: USAGE.md
   [contributing]: Contributing.md
   [v1.x]: https://github.com/talsma-ict/umldoclet/tree/develop-v1
