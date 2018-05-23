@@ -202,7 +202,7 @@
                         </goals>
                         <configuration>
                             <excludes>
-                                <exclude>nl.talsmasoftware.umldoclet.v1.**.*</exclude>
+                                <exclude>nl/talsmasoftware/umldoclet/v1/**</exclude>
                             </excludes>
                         </configuration>
                     </execution>
