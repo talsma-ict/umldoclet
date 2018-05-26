@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package nl.talsmasoftware.umldoclet.logging;
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 import static java.util.ResourceBundle.getBundle;
 
@@ -47,6 +48,7 @@ public enum Message {
 
     public String toString(Locale locale) {
         final String bundleName = UMLDoclet.class.getName();
-        return locale == null ? getBundle(bundleName).getString(key) : getBundle(bundleName, locale).getString(key);
+        final ResourceBundle bundle = getBundle(bundleName, locale == null ? Locale.getDefault() : locale);
+        return bundle.getString(key);
     }
 }

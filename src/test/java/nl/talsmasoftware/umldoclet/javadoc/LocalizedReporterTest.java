@@ -15,29 +15,53 @@
  */
 package nl.talsmasoftware.umldoclet.javadoc;
 
+import com.sun.source.util.DocTreePath;
 import jdk.javadoc.doclet.Reporter;
 import nl.talsmasoftware.umldoclet.UMLDoclet;
+import nl.talsmasoftware.umldoclet.logging.Message;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.mockito.Mockito;
 
+import javax.lang.model.element.Element;
+import javax.tools.Diagnostic;
 import java.util.Locale;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 /**
  * @author Sjoerd Talsma
  */
 public class LocalizedReporterTest {
+    private static final Locale NL = new Locale("nl", "NL");
+    private static Locale defaultLocale;
 
     private DocletConfig config;
     private Reporter mockReporter;
     private LocalizedReporter localizedReporter;
 
+    @BeforeClass
+    public static void presetDefaultLocale() {
+        defaultLocale = Locale.getDefault();
+        Locale.setDefault(Locale.ENGLISH);
+    }
+
+    @AfterClass
+    public static void restoreDefaultLocale() {
+        Locale.setDefault(defaultLocale);
+    }
+
     @Before
     public void setup() {
         config = new DocletConfig(new UMLDoclet());
         mockReporter = mock(Reporter.class);
+        init(null);
     }
 
     private void init(Locale locale) {
@@ -49,5 +73,98 @@ public class LocalizedReporterTest {
         verifyNoMoreInteractions(mockReporter);
     }
 
+    @Test
+    public void testDebug_when_verbose() {
+        config.verbose = true;
+        localizedReporter.debug(Message.DOCLET_COPYRIGHT, "1.2.3");
+
+        verify(mockReporter).print(eq(Diagnostic.Kind.OTHER),
+                eq("UML Doclet (C) Copyright Talsma ICT, version: 1.2.3."));
+    }
+
+    @Test
+    public void testDebug_nl() {
+        init(NL);
+        config.verbose = true;
+        localizedReporter.debug(Message.DOCLET_COPYRIGHT, "1.2.3");
+
+        verify(mockReporter).print(eq(Diagnostic.Kind.OTHER),
+                eq("UML Doclet (C) Copyright Talsma ICT, versie: 1.2.3."));
+    }
+
+    @Test
+    public void testDebug_nonVerbose() {
+        localizedReporter.debug(Message.DOCLET_COPYRIGHT, "1.2.3");
+    }
+
+    @Test
+    public void testInfo() {
+        localizedReporter.info(Message.INFO_GENERATING_FILE, "some file");
+        verify(mockReporter).print(eq(Diagnostic.Kind.NOTE),
+                eq("Generating some file..."));
+    }
+
+    @Test
+    public void testInfo_nl() {
+        init(NL);
+        localizedReporter.info(Message.INFO_GENERATING_FILE, "bestand");
+        verify(mockReporter).print(eq(Diagnostic.Kind.NOTE),
+                eq("Genereren bestand..."));
+    }
+
+    @Test
+    public void testInfo_when_quiet() {
+        config.quiet = true;
+        localizedReporter.info(Message.INFO_GENERATING_FILE, "some file");
+    }
+
+    @Test
+    public void testWarn_when_quiet() {
+        config.quiet = true;
+        localizedReporter.warn(Message.WARNING_UNRECOGNIZED_IMAGE_FORMAT, ".doc");
+
+        verify(mockReporter).print(eq(Diagnostic.Kind.WARNING),
+                eq("Unrecognized image format encountered: \".doc\"."));
+    }
+
+    @Test
+    public void testError_when_quiet() {
+        config.quiet = true;
+        localizedReporter.error(Message.ERROR_COULDNT_RENDER_UML, "uml", "reason");
+
+        verify(mockReporter).print(eq(Diagnostic.Kind.ERROR),
+                eq("Could not render \"uml\": reason"));
+    }
+
+    @Test
+    public void testPrint_nulls() {
+        localizedReporter.print(null, null);
+        localizedReporter.print(null, (DocTreePath) null, null);
+        localizedReporter.print(null, (Element) null, null);
+    }
+
+    @Test
+    public void testPrint_withoutReporter() {
+        localizedReporter = new LocalizedReporter(config, null, null);
+        String msg = getClass().getSimpleName() + ": print message without delegate";
+        localizedReporter.print(Diagnostic.Kind.NOTE, msg);
+        localizedReporter.print(Diagnostic.Kind.NOTE, (DocTreePath) null, msg + " (DocTreePath method variant)");
+        localizedReporter.print(Diagnostic.Kind.NOTE, (Element) null, msg + " (Element method variant)");
+    }
+
+    @Test
+    public void testPrint() {
+        String msg = "Test print message";
+        localizedReporter.print(Diagnostic.Kind.NOTE, msg);
+        localizedReporter.print(Diagnostic.Kind.WARNING, (DocTreePath) null, msg + " + doctree path");
+        localizedReporter.print(Diagnostic.Kind.ERROR, (Element) null, msg + " + element");
+
+        verify(mockReporter).print(eq(Diagnostic.Kind.NOTE),
+                eq("Test print message"));
+        verify(mockReporter).print(eq(Diagnostic.Kind.WARNING), Mockito.<DocTreePath>isNull(),
+                eq("Test print message + doctree path"));
+        verify(mockReporter).print(eq(Diagnostic.Kind.ERROR), Mockito.<Element>isNull(),
+                eq("Test print message + element"));
+    }
 
 }
