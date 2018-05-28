@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,12 @@ import net.sourceforge.plantuml.SourceStringReader;
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.rendering.writers.StringBufferingWriter;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
@@ -110,13 +115,17 @@ public class PlantumlImageWriter extends StringBufferingWriter {
      * @return The found <code>FileFormat</code> instance or <code>null</code> if the name was not recognized.
      */
     private FileFormat fileFormatFromName(String fileFormatName) {
-        fileFormatName = requireNonNull(fileFormatName, "Configured image format was <null>!").trim();
+        fileFormatName = trimToEmpty(fileFormatName);
         if (fileFormatName.startsWith(".")) fileFormatName = fileFormatName.substring(1);
         for (FileFormat fileFormat : FileFormat.values()) {
             if (fileFormatName.equalsIgnoreCase(fileFormat.name())) return fileFormat;
         }
         logger.warn(WARNING_UNRECOGNIZED_IMAGE_FORMAT, fileFormatName);
         return null;
+    }
+
+    private static String trimToEmpty(String value) {
+        return value == null ? "" : value.trim();
     }
 
     /**
