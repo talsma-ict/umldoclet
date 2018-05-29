@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.rendering.indent;
 
+import nl.talsmasoftware.umldoclet.rendering.writers.ThrowingWriter;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -94,6 +95,34 @@ public class IndentingPrintWriterTest {
         writer.append('\r').whitespace().append('-').flush();
         assertThat(output, hasToString(equalTo("\r-")));
         clear(output);
+    }
+
+    @Test
+    public void testWhitespace_modifiedUnderlyingWriter() {
+        final StringWriter output = new StringWriter();
+        IndentingPrintWriter writer = new IndentingPrintWriter(output, Indentation.DEFAULT) {{
+            out = output;
+        }};
+        writer.append('\n').whitespace().append('-').flush();
+        assertThat(output, hasToString(equalTo("\n -")));
+        clear(output);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testWhitespace_ioeByUnderlyingWriter() {
+        new IndentingPrintWriter(new StringWriter(), Indentation.DEFAULT) {{
+            out = ThrowingWriter.throwing(new IOException("Buffer is full!"));
+        }}.whitespace();
+        fail("Exception expected.");
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testIndent_modifiedUnderlyingWriter() {
+        final StringWriter output = new StringWriter();
+        new IndentingPrintWriter(output, Indentation.DEFAULT) {{
+            out = output;
+        }}.indent();
+        fail("Exception expected");
     }
 
     static void clear(StringWriter target) {

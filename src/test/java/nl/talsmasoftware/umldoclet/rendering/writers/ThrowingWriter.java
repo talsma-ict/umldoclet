@@ -31,7 +31,7 @@ public class ThrowingWriter extends Writer {
         this.exception = exception;
     }
 
-    static ThrowingWriter throwing(Exception exception) {
+    public static ThrowingWriter throwing(Exception exception) {
         return new ThrowingWriter(exception);
     }
 

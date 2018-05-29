@@ -21,24 +21,21 @@ import java.util.Objects;
 
 /**
  * Type to capture the indentation as an immutable type containing a pre-filled buffer to quickly be written.
- * <p>
- * TODO: Add support for comment prefixing (e.g. "// ", "# ", or for UML "' ").
  *
  * @author Sjoerd Talsma
  */
 public final class Indentation implements CharSequence, Serializable {
 
-    // Cache of the first 5 four-spaces indentations.
-    private static final Indentation[] FOUR_SPACES = {
-            new Indentation(4, ' ', 0), new Indentation(4, ' ', 1),
-            new Indentation(4, ' ', 2), new Indentation(4, ' ', 3),
-            new Indentation(4, ' ', 4)};
+    // Cache of the first 5 instances of: 2, 4 spaces + tabs indentations.
+    private static final Indentation[] TWO_SPACES = new Indentation[5];
+    private static final Indentation[] FOUR_SPACES = new Indentation[5];
+    private static final Indentation[] TABS = new Indentation[5];
 
-    // Cache of the first 5 tab indentations.
-    private static final Indentation[] TABS = {
-            new Indentation(1, '\t', 0), new Indentation(1, '\t', 1),
-            new Indentation(1, '\t', 2), new Indentation(1, '\t', 3),
-            new Indentation(1, '\t', 4)};
+    static {
+        for (int lvl = 0; lvl < TWO_SPACES.length; lvl++) TWO_SPACES[lvl] = new Indentation(2, ' ', lvl);
+        for (int lvl = 0; lvl < FOUR_SPACES.length; lvl++) FOUR_SPACES[lvl] = new Indentation(4, ' ', lvl);
+        for (int lvl = 0; lvl < TABS.length; lvl++) TABS[lvl] = new Indentation(1, '\t', lvl);
+    }
 
     /**
      * The default indentation is four spaces, initially at level 0.
@@ -72,7 +69,7 @@ public final class Indentation implements CharSequence, Serializable {
      * @return The indentation of <code>level</code> tabs.
      */
     public static Indentation tabs(final int level) {
-        return level < TABS.length ? TABS[Math.max(0, level)] : new Indentation(1, '\t', level);
+        return level < TABS.length ? TABS[level > 0 ? level : 0] : new Indentation(1, '\t', level);
     }
 
     /**
@@ -84,10 +81,11 @@ public final class Indentation implements CharSequence, Serializable {
      * @param level The current indentation level (multiply this with the width for the initial number of spaces).
      * @return The indentation level as <code>level</code> multiples of <code>width</code> spaces.
      */
-    public static Indentation spaces(int width, final int level) {
+    public static Indentation spaces(int width, int level) {
         if (width < 0) width = DEFAULT.ch == ' ' ? DEFAULT.width : 4;
         return width == 0 ? NONE
-                : width == FOUR_SPACES[0].width && level < FOUR_SPACES.length ? FOUR_SPACES[Math.max(0, level)]
+                : width == 2 && level < TWO_SPACES.length ? TWO_SPACES[level > 0 ? level : 0]
+                : width == 4 && level < FOUR_SPACES.length ? FOUR_SPACES[level > 0 ? level : 0]
                 : new Indentation(width, ' ', level);
     }
 
@@ -109,26 +107,8 @@ public final class Indentation implements CharSequence, Serializable {
      * @return This indentation with the level decreased by one (if there was indentation left to decrease).
      */
     public Indentation decrease() {
-        return resolve(width, ch, level - 1);
+        return level == 0 ? this : resolve(width, ch, level - 1);
     }
-
-//    /**
-//     * Writes this indentation to the given writer object.<br>
-//     * Please be aware that usually it may prove easier to just create an {@link IndentingWriter} instead which will
-//     * automatically write the indentation whenever needed (i.e. before the first character on any new line is written).
-//     *
-//     * @param output The output to write this indentation to.
-//     * @see IndentingWriter
-//     */
-//    @Override
-//    public <A extends Appendable> A writeTo(A output) {
-//        try {
-//            output.append(this);
-//        } catch (IOException ioe) {
-//            throw new IllegalStateException("I/O exception writing indentation: " + ioe.getMessage(), ioe);
-//        }
-//        return output;
-//    }
 
     /**
      * Makes sure that after deserialization, objects from cache are used where possible.

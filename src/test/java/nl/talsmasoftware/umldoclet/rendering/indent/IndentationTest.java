@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,13 @@ package nl.talsmasoftware.umldoclet.rendering.indent;
 
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -27,17 +34,27 @@ public class IndentationTest {
 
     @Test
     public void testDefault() {
+        // 4 spaces, initially at level 0:
         assertThat(Indentation.DEFAULT, hasToString(equalTo("")));
         assertThat(Indentation.DEFAULT.increase(), hasToString(equalTo("    ")));
         assertThat(Indentation.DEFAULT.increase().decrease(), is(sameInstance(Indentation.DEFAULT)));
+        assertThat(Indentation.DEFAULT.decrease(), is(sameInstance(Indentation.DEFAULT)));
+    }
+
+    @Test
+    public void testNone() {
+        assertThat(Indentation.NONE, hasToString(equalTo("")));
+        assertThat(Indentation.NONE.increase(), is(sameInstance(Indentation.NONE)));
+        assertThat(Indentation.NONE.decrease(), is(sameInstance(Indentation.NONE)));
     }
 
     @Test
     public void testTabs() {
-        assertThat(Indentation.tabs(-1), hasToString(""));
+        assertThat(Indentation.tabs(-1), is(sameInstance(Indentation.tabs(0))));
         assertThat(Indentation.tabs(0), hasToString(""));
         assertThat(Indentation.tabs(1), hasToString("\t"));
         assertThat(Indentation.tabs(2), hasToString("\t\t"));
+        assertThat(Indentation.tabs(6), hasToString("\t\t\t\t\t\t"));
     }
 
     @Test
@@ -46,47 +63,112 @@ public class IndentationTest {
         assertThat(defaultSpaces, hasToString(""));
         assertThat(defaultSpaces.increase(), hasToString("    ")); // four spaces by default.
         assertThat(defaultSpaces.increase().decrease(), is(sameInstance(defaultSpaces)));
-        assertThat(defaultSpaces, is(sameInstance(Indentation.spaces(-1, -1)))); // negative level becomes 0
+        assertThat(Indentation.spaces(-1, -1), is(sameInstance(defaultSpaces))); // negative level becomes 0
+    }
+
+    @Test
+    public void testSpaces_width0() {
+        final int width = 0;
+        assertThat(Indentation.spaces(width, -1), is(sameInstance(Indentation.spaces(width, 0))));
+        assertThat(Indentation.spaces(width, 0), is(sameInstance(Indentation.NONE)));
+        assertThat(Indentation.spaces(width, 1), is(sameInstance(Indentation.NONE)));
+        assertThat(Indentation.spaces(width, 2), is(sameInstance(Indentation.NONE)));
+        assertThat(Indentation.spaces(width, 6), is(sameInstance(Indentation.NONE)));
     }
 
     @Test
     public void testSpaces_width1() {
         final int width = 1;
-        assertThat(Indentation.spaces(width, -1), hasToString(""));
+        assertThat(Indentation.spaces(width, -1), is(equalTo(Indentation.spaces(width, 0))));
         assertThat(Indentation.spaces(width, 0), hasToString(""));
         assertThat(Indentation.spaces(width, 1), hasToString(" "));
-        assertThat(Indentation.spaces(width, -1).increase(), hasToString(" "));
         assertThat(Indentation.spaces(width, 2), hasToString("  "));
+        assertThat(Indentation.spaces(width, 6), hasToString("      "));
     }
 
     @Test
     public void testSpaces_width2() {
         final int width = 2;
-        assertThat(Indentation.spaces(width, -1), hasToString(""));
+        assertThat(Indentation.spaces(width, -1), is(sameInstance(Indentation.spaces(width, 0))));
         assertThat(Indentation.spaces(width, 0), hasToString(""));
         assertThat(Indentation.spaces(width, 1), hasToString("  "));
-        assertThat(Indentation.spaces(width, -1).increase(), hasToString("  "));
         assertThat(Indentation.spaces(width, 2), hasToString("    "));
+        assertThat(Indentation.spaces(width, 6), hasToString("            "));
     }
 
     @Test
     public void testSpaces_width3() {
         final int width = 3;
-        assertThat(Indentation.spaces(width, -1), hasToString(""));
+        assertThat(Indentation.spaces(width, -1), is(equalTo(Indentation.spaces(width, 0))));
         assertThat(Indentation.spaces(width, 0), hasToString(""));
         assertThat(Indentation.spaces(width, 1), hasToString("   "));
-        assertThat(Indentation.spaces(width, -1).increase(), hasToString("   "));
         assertThat(Indentation.spaces(width, 2), hasToString("      "));
+        assertThat(Indentation.spaces(width, 6), hasToString("                  "));
     }
 
     @Test
     public void testSpaces_width4() {
         final int width = 4;
-        assertThat(Indentation.spaces(width, -1), hasToString(""));
+        assertThat(Indentation.spaces(width, -1), is(sameInstance(Indentation.spaces(width, 0))));
         assertThat(Indentation.spaces(width, 0), hasToString(""));
         assertThat(Indentation.spaces(width, 1), hasToString("    "));
-        assertThat(Indentation.spaces(width, -1).increase(), hasToString("    "));
         assertThat(Indentation.spaces(width, 2), hasToString("        "));
+        assertThat(Indentation.spaces(width, 6), hasToString("                        "));
     }
 
+    @Test
+    public void testDeserialization() {
+        Indentation deserialized = deserialize(serialize(Indentation.DEFAULT));
+        assertThat(deserialized, is(sameInstance(Indentation.DEFAULT)));
+
+        deserialized = deserialize(serialize(Indentation.spaces(4, 3)));
+        assertThat(deserialized, is(sameInstance(Indentation.spaces(4, 3))));
+
+        deserialized = deserialize(serialize(Indentation.tabs(4)));
+        assertThat(deserialized, is(sameInstance(Indentation.tabs(4))));
+
+        deserialized = deserialize(serialize(Indentation.spaces(1, 0)));
+        assertThat(deserialized, is(equalTo(Indentation.spaces(1, 0)))); // Not a constant; other instance
+    }
+
+    @Test
+    public void testHashcode() {
+        assertThat(Indentation.DEFAULT.hashCode(), is(Indentation.DEFAULT.hashCode()));
+        assertThat(Indentation.spaces(1, 15).hashCode(), is(Indentation.spaces(1, 15).hashCode()));
+        assertThat(Indentation.tabs(28).hashCode(), is(Indentation.tabs(28).hashCode()));
+    }
+
+    @Test
+    public void testLenght() {
+        assertThat(Indentation.DEFAULT.length(), is(0));
+        assertThat(Indentation.DEFAULT.increase().length(), is(4));
+        assertThat(Indentation.DEFAULT.increase().increase().length(), is(8));
+        assertThat(Indentation.tabs(5).length(), is(5));
+    }
+
+    @Test
+    public void testSubsequence() {
+        assertThat(Indentation.DEFAULT.increase().increase().subSequence(3, 6), hasToString("   "));
+    }
+
+    private static byte[] serialize(Serializable object) {
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            try (ObjectOutputStream oos = new ObjectOutputStream(bos)) {
+                oos.writeObject(object);
+            }
+            return bos.toByteArray();
+        } catch (IOException ioe) {
+            throw new IllegalStateException("Couldn't serialize object: " + ioe.getMessage(), ioe);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <S extends Serializable> S deserialize(byte[] bytes) {
+        try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
+            return (S) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new IllegalStateException("Couldn't deserialize object: " + e.getMessage(), e);
+        }
+    }
 }
