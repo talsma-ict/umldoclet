@@ -25,31 +25,36 @@ import java.io.Writer;
  */
 public class ThrowingWriter extends Writer {
 
-    private Exception exception;
+    private final Throwable throwable;
 
-    private ThrowingWriter(Exception exception) {
-        this.exception = exception;
+    private ThrowingWriter(Throwable throwable) {
+        this.throwable = throwable;
     }
 
-    public static ThrowingWriter throwing(Exception exception) {
-        return new ThrowingWriter(exception);
+    public static ThrowingWriter throwing(Throwable throwable) {
+        return new ThrowingWriter(throwable);
     }
 
     @Override
     public void write(char[] cbuf, int off, int len) throws IOException {
-        if (exception instanceof IOException) throw (IOException) exception;
-        throw (RuntimeException) exception;
+        sneakyThrow(throwable);
+        throw (IOException) throwable;
     }
 
     @Override
     public void flush() throws IOException {
-        if (exception instanceof IOException) throw (IOException) exception;
-        throw (RuntimeException) exception;
+        sneakyThrow(throwable);
+        throw (IOException) throwable;
     }
 
     @Override
     public void close() throws IOException {
-        if (exception instanceof IOException) throw (IOException) exception;
-        throw (RuntimeException) exception;
+        sneakyThrow(throwable);
+        throw (IOException) throwable;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T extends Throwable> void sneakyThrow(Throwable t) throws T {
+        throw (T) t;
     }
 }
