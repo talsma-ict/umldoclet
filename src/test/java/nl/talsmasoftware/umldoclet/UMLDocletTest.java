@@ -36,6 +36,7 @@ public class UMLDocletTest {
                 DocletConfig.class.getPackageName(),
                 UMLDiagram.class.getPackageName()
         );
+        // TODO Actually test things!
     }
 
 }
