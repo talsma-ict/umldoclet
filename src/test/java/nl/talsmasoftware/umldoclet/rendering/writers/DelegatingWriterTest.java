@@ -19,6 +19,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.Writer;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasToString;
@@ -26,6 +27,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * @author Sjoerd Talsma
@@ -105,5 +108,117 @@ public class DelegatingWriterTest {
             assertThat(expected.getMessage(), is("Illegal state!"));
         }
         assertThat(stringWriter, hasToString("The quick brown fox jumps over the lazy dog"));
+    }
+
+    @Test
+    public void testFlush_singleIOException() throws IOException {
+        IOException ioException = new IOException("IO error!");
+        DelegatingWriter delegatingWriter = new DelegatingWriter(ThrowingWriter.throwing(ioException));
+        try {
+            delegatingWriter.flush();
+            fail("IO exception expected");
+        } catch (IOException ioe) {
+            assertThat(ioe, is(sameInstance(ioException)));
+        }
+    }
+
+    @Test
+    public void testFlush_singleRuntimeException() throws IOException {
+        RuntimeException runtimeException = new IllegalStateException("Illegal state!");
+        DelegatingWriter delegatingWriter = new DelegatingWriter(ThrowingWriter.throwing(runtimeException));
+        try {
+            delegatingWriter.flush();
+            fail("Runtime exception expected");
+        } catch (RuntimeException rte) {
+            assertThat(rte, is(sameInstance(runtimeException)));
+        }
+    }
+
+    @Test
+    public void testFlush_multipleExceptions() throws IOException {
+        IOException expectedException1 = new IOException("IO error!");
+        RuntimeException expectedException2 = new IllegalStateException("Illegal state!");
+        DelegatingWriter delegatingWriter = new DelegatingWriter(
+                ThrowingWriter.throwing(expectedException1), ThrowingWriter.throwing(expectedException2));
+        try {
+            delegatingWriter.flush();
+            fail("IO exception expected");
+        } catch (IOException ioe) {
+            Throwable[] suppressed = ioe.getSuppressed();
+            assertThat(suppressed, is(notNullValue()));
+            assertThat(suppressed.length, is(2));
+            assertThat(suppressed[0], is(sameInstance(expectedException1)));
+            assertThat(suppressed[1], is(sameInstance(expectedException2)));
+        }
+    }
+
+    @Test
+    public void testFlush_combinedSuccessAndException() throws IOException {
+        ThrowingWriter throwingWriter = ThrowingWriter.throwing(new IllegalStateException("Illegal state!"));
+        Writer mockWriter = mock(Writer.class);
+        DelegatingWriter delegatingWriter = new DelegatingWriter(throwingWriter, mockWriter);
+        try {
+            delegatingWriter.flush();
+            fail("Exception expected");
+        } catch (RuntimeException expected) {
+            assertThat(expected.getMessage(), is("Illegal state!"));
+        }
+        verify(mockWriter).flush();
+    }
+
+    @Test
+    public void testClose_singleIOException() throws IOException {
+        IOException ioException = new IOException("IO error!");
+        DelegatingWriter delegatingWriter = new DelegatingWriter(ThrowingWriter.throwing(ioException));
+        try {
+            delegatingWriter.close();
+            fail("IO exception expected");
+        } catch (IOException ioe) {
+            assertThat(ioe, is(sameInstance(ioException)));
+        }
+    }
+
+    @Test
+    public void testClose_singleRuntimeException() throws IOException {
+        RuntimeException runtimeException = new IllegalStateException("Illegal state!");
+        DelegatingWriter delegatingWriter = new DelegatingWriter(ThrowingWriter.throwing(runtimeException));
+        try {
+            delegatingWriter.close();
+            fail("Runtime exception expected");
+        } catch (RuntimeException rte) {
+            assertThat(rte, is(sameInstance(runtimeException)));
+        }
+    }
+
+    @Test
+    public void testClose_multipleExceptions() throws IOException {
+        IOException expectedException1 = new IOException("IO error!");
+        RuntimeException expectedException2 = new IllegalStateException("Illegal state!");
+        DelegatingWriter delegatingWriter = new DelegatingWriter(
+                ThrowingWriter.throwing(expectedException1), ThrowingWriter.throwing(expectedException2));
+        try {
+            delegatingWriter.close();
+            fail("IO exception expected");
+        } catch (IOException ioe) {
+            Throwable[] suppressed = ioe.getSuppressed();
+            assertThat(suppressed, is(notNullValue()));
+            assertThat(suppressed.length, is(2));
+            assertThat(suppressed[0], is(sameInstance(expectedException1)));
+            assertThat(suppressed[1], is(sameInstance(expectedException2)));
+        }
+    }
+
+    @Test
+    public void testClose_combinedSuccessAndException() throws IOException {
+        ThrowingWriter throwingWriter = ThrowingWriter.throwing(new IllegalStateException("Illegal state!"));
+        Writer mockWriter = mock(Writer.class);
+        DelegatingWriter delegatingWriter = new DelegatingWriter(throwingWriter, mockWriter);
+        try {
+            delegatingWriter.close();
+            fail("Exception expected");
+        } catch (RuntimeException expected) {
+            assertThat(expected.getMessage(), is("Illegal state!"));
+        }
+        verify(mockWriter).close();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -131,9 +131,9 @@ public class DelegatingWriter extends Writer {
             Exception singleException = exceptions.iterator().next();
             if (singleException instanceof RuntimeException) {
                 throw (RuntimeException) singleException;
+            } else if (singleException instanceof IOException) {
+                return (IOException) singleException;
             }
-            return singleException instanceof IOException ? (IOException) singleException
-                    : new IOException("Error " + actionVerb + " delegate writer!", singleException);
         }
         IOException ioe = new IOException("Error " + actionVerb + " " + exceptions.size() + " delegate writers!");
         for (Exception suppressed : exceptions) {
