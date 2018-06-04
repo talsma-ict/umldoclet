@@ -39,6 +39,7 @@ public class Issue64Test {
 
     public static class EmptySet<T> extends AbstractSet<T> {
         @Override
+        @SuppressWarnings("unchecked")
         public Iterator<T> iterator() {
             return (Iterator<T>) emptySet().iterator();
         }
