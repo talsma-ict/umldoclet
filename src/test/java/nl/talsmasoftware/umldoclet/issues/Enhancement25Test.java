@@ -17,7 +17,6 @@ package nl.talsmasoftware.umldoclet.issues;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -49,7 +48,6 @@ public class Enhancement25Test {
     }
 
     @Test
-//    @Ignore // Enable after re-implementing umlImageDirectory
     public void testImagesDirectoryPresence() {
         File imagesDir = new File("target/test-25/images");
         assertThat("images dir exists", imagesDir.exists(), is(true));
@@ -57,7 +55,6 @@ public class Enhancement25Test {
     }
 
     @Test
-    @Ignore // Enable after re-implementing umlImageDirectory
     public void testEnhancement25ImagePresence() {
         File imageFile = new File("target/test-25/images/" + getClass().getName() + ".png");
         assertThat("image exists", imageFile.exists(), is(true));

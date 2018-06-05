@@ -21,9 +21,7 @@ import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlImageWriter;
 import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -140,7 +138,12 @@ public abstract class UMLDiagram extends UMLPart {
         Configuration config = getConfiguration();
         String[] imgFormats = new String[]{"svg", "png"};
         File imageDir = configuredImageDirectory().orElseGet(pumlFile::getParentFile);
-        final String baseName = baseName(pumlFile);
+        String baseName = baseName(pumlFile);
+        if (configuredImageDirectory().isPresent()) {
+            String relative = relativePath(new File(config.getDestinationDirectory()), pumlFile.getParentFile());
+            if (!relative.isEmpty()) baseName = relative.replace('/', '.') + '.' + baseName;
+        }
+
         ensureParentDir(pumlFile);
         ensureParentDir(new File(imageDir, baseName));
 
