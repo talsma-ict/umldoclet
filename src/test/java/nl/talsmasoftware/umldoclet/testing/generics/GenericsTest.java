@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,14 @@
 package nl.talsmasoftware.umldoclet.testing.generics;
 
 import nl.talsmasoftware.umldoclet.testing.Testing;
-import nl.talsmasoftware.umldoclet.v1.config.UMLDocletConfig;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
 /**
  * Unit test for generated generics information in the UML diagrams.
@@ -29,7 +31,8 @@ import static org.hamcrest.Matchers.*;
 @Ignore // Cannot create uml javadoc yet..
 public class GenericsTest {
 
-    private static final boolean QUALIFIED = new UMLDocletConfig(new String[0][], null).alwaysUseQualifiedClassnames();
+    //    private static final boolean QUALIFIED = new UMLDocletConfig(new String[0][], null).alwaysUseQualifiedClassnames();
+    private static final boolean QUALIFIED = false;
 
     @Test
     public void testGeneratedGenerics() {

@@ -56,7 +56,7 @@ final class UMLOptions {
     private UMLOptions(DocletConfig config, Set<Doclet.Option> standardOptions) {
         this.config = requireNonNull(config, "Configuration is <null>.");
         this.standardOptions = standardOptions;
-        this.options = new TreeSet<>(comparing(o -> o.getNames().get(0), String::compareTo)) {{
+        this.options = new TreeSet<Doclet.Option>(comparing(o -> o.getNames().get(0), String::compareTo)) {{
             // Options from Standard doclet that we also support
             add(new Option("-quiet", 0, Kind.OTHER, (args) -> config.quiet = true));
             add(new Option("-verbose", 0, Kind.OTHER, (args) -> config.verbose = true));

@@ -19,16 +19,18 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.uml.Namespace.NameSpaceAware;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.*;
+import static java.util.Collections.emptySet;
+import static java.util.Collections.singleton;
+import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
-import static nl.talsmasoftware.umldoclet.v1.Concatenation.append;
 
 /**
  * Reference between two types.
@@ -77,8 +79,11 @@ public class Reference extends UMLPart implements NameSpaceAware {
 
     public Reference addNote(final String note) {
         final String trimmed = note != null ? note.trim() : "";
-        return trimmed.isEmpty() || notes.contains(trimmed) ? this
-                : new Reference(from, type, to, append(notes, trimmed));
+        if (trimmed.isEmpty() || notes.contains(trimmed)) return this;
+        final Collection<String> newNotes = new ArrayList<>(notes.size() + 1);
+        newNotes.addAll(notes);
+        newNotes.add(trimmed);
+        return new Reference(from, type, to, newNotes);
     }
 
     private Reference inverse() {
