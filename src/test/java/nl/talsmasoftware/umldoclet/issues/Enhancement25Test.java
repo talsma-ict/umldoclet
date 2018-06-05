@@ -49,7 +49,7 @@ public class Enhancement25Test {
     }
 
     @Test
-    @Ignore // Enable after re-implementing umlImageDirectory
+//    @Ignore // Enable after re-implementing umlImageDirectory
     public void testImagesDirectoryPresence() {
         File imagesDir = new File("target/test-25/images");
         assertThat("images dir exists", imagesDir.exists(), is(true));
