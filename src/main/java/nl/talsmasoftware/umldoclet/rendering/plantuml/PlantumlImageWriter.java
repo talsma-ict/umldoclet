@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.joining;
 import static nl.talsmasoftware.umldoclet.logging.Message.INFO_GENERATING_FILE;
 import static nl.talsmasoftware.umldoclet.logging.Message.WARNING_UNRECOGNIZED_IMAGE_FORMAT;
 
@@ -48,14 +49,14 @@ public class PlantumlImageWriter extends StringBufferingWriter {
     private final EnumMap<FileFormat, File> images = new EnumMap<>(FileFormat.class);
 
     public PlantumlImageWriter(Logger logger, File plantumlFile, File... imageFiles) {
-        super(plantumlWriterTo(plantumlFile));
+        super(plantumlWriter(plantumlFile));
         this.logger = requireNonNull(logger, "Logger is <null>.");
         for (File imageFile : requireNonNull(imageFiles, "Image files are <null>.")) {
-            fileFormatOf(logger, imageFile).ifPresent(format -> images.put(format, imageFile));
+            fileFormatOf(imageFile).ifPresent(format -> images.put(format, imageFile));
         }
     }
 
-    private static Writer plantumlWriterTo(File plantumlFile) {
+    private static Writer plantumlWriter(File plantumlFile) {
         try {
             return new FileWriter(requireNonNull(plantumlFile, "PlantUML file is <null>."));
         } catch (IOException ioe) {
@@ -81,7 +82,7 @@ public class PlantumlImageWriter extends StringBufferingWriter {
         }
     }
 
-    private static Optional<FileFormat> fileFormatOf(Logger logger, File file) {
+    private Optional<FileFormat> fileFormatOf(File file) {
         if (file == null) return Optional.empty();
         FileFormat result = null;
         final String name = file.getName().toLowerCase();
@@ -97,7 +98,8 @@ public class PlantumlImageWriter extends StringBufferingWriter {
      */
     @Override
     public String toString() {
-        return getClass().getSimpleName() + images.values();
+        return getClass().getSimpleName()
+                + images.values().stream().map(File::getName).collect(joining(", ", "[", "]"));
     }
 
 }

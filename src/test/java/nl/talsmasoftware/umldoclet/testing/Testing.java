@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,15 @@
  */
 package nl.talsmasoftware.umldoclet.testing;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
 
 /**
  * Created by sjoerd on 02-03-16.
@@ -39,12 +47,17 @@ public class Testing {
      *
      * @param name the relative path to the file from the "umldoclet" directory.
      * @return The content of the file (using UTF-8 encoding).
+     * @deprecated Test different directories too
      */
     public static String readFile(String name) {
-        try (InputStream in = new FileInputStream("target/test-uml/nl/talsmasoftware/umldoclet/" + name)) {
+        return read(new File("target/test-uml/nl/talsmasoftware/umldoclet", name));
+    }
+
+    public static String read(File file) {
+        try (InputStream in = new FileInputStream(file)) {
             return readUml(in);
         } catch (Exception e) {
-            throw new IllegalStateException(String.format("Cannot read from \"%s\": %s.", name, e.getMessage()), e);
+            throw new IllegalStateException(String.format("Cannot read from \"%s\": %s.", file, e.getMessage()), e);
         }
     }
 
