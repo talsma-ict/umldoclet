@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,13 @@
  */
 package nl.talsmasoftware.umldoclet.issues;
 
+import nl.talsmasoftware.umldoclet.UMLDoclet;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.spi.ToolProvider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -32,19 +35,31 @@ import static org.hamcrest.Matchers.is;
  *
  * @author Sjoerd Talsma
  */
-@Ignore // Cannot create uml javadoc yet..
 public class Enhancement25Test {
 
+    @BeforeClass
+    public static void createJavadoc() {
+        ToolProvider.findFirst("javadoc").get().run(
+                System.out, System.err,
+                "-d", "target/test-25",
+                "-doclet", UMLDoclet.class.getName(),
+                "-umlImageDirectory", "images",
+                "src/test/java/" + Enhancement25Test.class.getName().replace('.', '/') + ".java"
+        );
+    }
+
     @Test
+    @Ignore // Enable after re-implementing umlImageDirectory
     public void testImagesDirectoryPresence() {
-        File imagesDir = new File("target/test-uml/images");
+        File imagesDir = new File("target/test-25/images");
         assertThat("images dir exists", imagesDir.exists(), is(true));
         assertThat("images dir is directory", imagesDir.isDirectory(), is(true));
     }
 
     @Test
+    @Ignore // Enable after re-implementing umlImageDirectory
     public void testEnhancement25ImagePresence() {
-        File imageFile = new File("target/test-uml/images/" + getClass().getName() + ".png");
+        File imageFile = new File("target/test-25/images/" + getClass().getName() + ".png");
         assertThat("image exists", imageFile.exists(), is(true));
         assertThat("image is directory", imageFile.isDirectory(), is(false));
         assertThat("image is file", imageFile.isFile(), is(true));

@@ -19,6 +19,7 @@ import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Configuration about <em>how</em> UML should be rendered.
@@ -38,6 +39,11 @@ public interface Configuration {
      * @return The destination directory for the UML diagrams, or the empty string {@code ""} for the current directory.
      */
     String getDestinationDirectory();
+
+    /**
+     * @return The image directory for the UML diagrams, if explicitly specified.
+     */
+    Optional<String> getImageDirectory();
 
     /**
      * @return The part of the configuration that determines how fields are rendered.

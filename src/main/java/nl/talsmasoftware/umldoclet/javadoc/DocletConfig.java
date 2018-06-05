@@ -26,7 +26,12 @@ import nl.talsmasoftware.umldoclet.uml.configuration.FieldConfig;
 import nl.talsmasoftware.umldoclet.uml.configuration.MethodConfig;
 import nl.talsmasoftware.umldoclet.uml.configuration.TypeDisplay;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
@@ -43,6 +48,14 @@ public class DocletConfig implements Configuration {
      * Set by (Standard) doclet option {@code -d}, default is {@code ""} meaning the current directory.
      */
     String destDirName = "";
+
+    /**
+     * Directory where UML images are generated.
+     * <p>
+     * Set by doclet option {@code -umlImageDirectory}, default is {@code null} meaning relative to the generated
+     * documentation itself.
+     */
+    String imageDirectory;
 
     /**
      * Whether the doclet should run more quite (errors must still be displayed).
@@ -81,16 +94,24 @@ public class DocletConfig implements Configuration {
         return options.mergeWith(standardOptions);
     }
 
+    @Override
     public Logger getLogger() {
         return reporter;
     }
 
+    @Override
     public Indentation getIndentation() {
         return indentation;
     }
 
+    @Override
     public String getDestinationDirectory() {
         return destDirName;
+    }
+
+    @Override
+    public Optional<String> getImageDirectory() {
+        return Optional.ofNullable(imageDirectory);
     }
 
     @Override

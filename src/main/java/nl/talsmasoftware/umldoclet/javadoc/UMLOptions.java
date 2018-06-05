@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,15 @@ package nl.talsmasoftware.umldoclet.javadoc;
 
 import jdk.javadoc.doclet.Doclet;
 import jdk.javadoc.doclet.Doclet.Option.Kind;
+import nl.talsmasoftware.umldoclet.UMLDoclet;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.MissingResourceException;
+import java.util.Optional;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Consumer;
 
 import static java.util.Collections.emptyList;
@@ -49,15 +56,14 @@ final class UMLOptions {
     private UMLOptions(DocletConfig config, Set<Doclet.Option> standardOptions) {
         this.config = requireNonNull(config, "Configuration is <null>.");
         this.standardOptions = standardOptions;
-        this.options = new TreeSet<Doclet.Option>(comparing(o -> o.getNames().get(0), String::compareTo)) {{
-
+        this.options = new TreeSet<>(comparing(o -> o.getNames().get(0), String::compareTo)) {{
             // Options from Standard doclet that we also support
-            add(new Option("-d", 1, null, (args) -> config.destDirName = args.get(0)));
             add(new Option("-quiet", 0, Kind.OTHER, (args) -> config.quiet = true));
-
-            // Our own options
             add(new Option("-verbose", 0, Kind.OTHER, (args) -> config.verbose = true));
 
+            // Our own options
+            add(new Option("-d", 1, Kind.STANDARD, (args) -> config.destDirName = args.get(0)));
+            add(new Option("-umlImageDirectory", 1, Kind.STANDARD, (args) -> config.imageDirectory = args.get(0)));
         }};
     }
 
@@ -79,25 +85,26 @@ final class UMLOptions {
         protected Option(String name, int argCount, Kind kind, Consumer<List<String>> processor) {
             this.processor = processor;
             this.names = name.trim().split("\\s+");
-            String desc = resourceMsg(names[0] + ".description");
-            if (desc.isEmpty()) {
-                this.description = "<MISSING KEY>";
-                this.parameters = "<MISSING KEY>";
-            } else {
-                this.description = desc;
-                this.parameters = resourceMsg(names[0] + ".parameters");
-            }
+            this.description = resourceMsg(names[0] + ".description");
+            this.parameters = resourceMsg(names[0] + ".parameters");
             this.argCount = argCount;
-            this.kind = Optional.ofNullable(kind).orElse(Kind.STANDARD);
+            this.kind = kind;
         }
 
         private String resourceMsg(String key) {
-            return "";
+            try {
+                String resourceKey = "doclet.usage." + key.toLowerCase().replaceFirst("^-+", "");
+                return ResourceBundle.getBundle(UMLDoclet.class.getName()).getString(resourceKey);
+            } catch (MissingResourceException mre) {
+                return "";
+            }
         }
 
         @Override
         public String getDescription() {
-            return findDelegate().map(Doclet.Option::getDescription).orElse(description);
+            return findDelegate().map(Doclet.Option::getDescription)
+                    .filter(s -> !s.isEmpty() && !"<MISSING KEY>".equals(s))
+                    .orElse(description);
         }
 
         @Override
