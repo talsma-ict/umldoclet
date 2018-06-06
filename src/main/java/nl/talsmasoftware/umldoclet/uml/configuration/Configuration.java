@@ -19,7 +19,6 @@ import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Configuration about <em>how</em> UML should be rendered.
@@ -28,36 +27,36 @@ import java.util.Optional;
  */
 public interface Configuration {
 
-    Logger getLogger();
+    Logger logger();
 
     /**
      * @return The configured indentation within the generated UML files.
      */
-    Indentation getIndentation();
+    Indentation indentation();
 
     /**
      * @return The destination directory for the UML diagrams, or the empty string {@code ""} for the current directory.
      */
-    String getDestinationDirectory();
+    String destinationDirectory();
 
     /**
-     * @return The image directory for the UML diagrams, if explicitly specified.
+     * @return The configuration for the images that are generated.
      */
-    Optional<String> getImageDirectory();
+    ImageConfig images();
 
     /**
      * @return The part of the configuration that determines how fields are rendered.
      */
-    FieldConfig getFieldConfig();
+    FieldConfig fields();
 
     /**
      * @return The part of the configuration that determines how methods are rendered.
      */
-    MethodConfig getMethodConfig();
+    MethodConfig methods();
 
     /**
      * @return The types (classes, interfaces) that are excluded as references.
      */
-    List<String> getExcludedTypeReferences();
+    List<String> excludedTypeReferences();
 
 }

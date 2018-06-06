@@ -71,7 +71,7 @@ class PackageDiagram extends UMLDiagram {
     @Override
     protected File pumlFile() {
         if (pumlFile == null) {
-            StringBuilder result = new StringBuilder(getConfiguration().getDestinationDirectory());
+            StringBuilder result = new StringBuilder(getConfiguration().destinationDirectory());
             if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');
             result.append(packageName.replace('.', '/'));
             result.append("/package.puml");

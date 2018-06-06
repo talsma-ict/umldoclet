@@ -194,7 +194,7 @@ public class UMLFactory {
 
     private Collection<ExecutableElement> methodsFromExcludedSuperclasses() {
         if (_methodsFromExcludedSuperclasses == null) {
-            _methodsFromExcludedSuperclasses = config.getExcludedTypeReferences().stream()
+            _methodsFromExcludedSuperclasses = config.excludedTypeReferences().stream()
                     .map(env.getElementUtils()::getTypeElement).filter(Objects::nonNull)
                     .map(TypeElement::getEnclosedElements).flatMap(Collection::stream)
                     .filter(elem -> ElementKind.METHOD.equals(elem.getKind()))
@@ -207,7 +207,7 @@ public class UMLFactory {
     }
 
     private boolean isExcludedEnumMethod(ExecutableElement method) {
-        if (config.getExcludedTypeReferences().contains(Enum.class.getName())
+        if (config.excludedTypeReferences().contains(Enum.class.getName())
                 && ElementKind.ENUM.equals(method.getEnclosingElement().getKind())
                 && method.getModifiers().contains(Modifier.STATIC)) {
             if ("values".equals(method.getSimpleName().toString()) && method.getParameters().isEmpty()) {
@@ -250,7 +250,7 @@ public class UMLFactory {
         // Superclass reference.
         if (!TypeKind.NONE.equals(typeElement.getSuperclass().getKind())) {
             String superclass = TypeNameVisitor.INSTANCE.visit(typeElement.getSuperclass()).qualified;
-            if (!config.getExcludedTypeReferences().contains(superclass)) {
+            if (!config.excludedTypeReferences().contains(superclass)) {
                 references.add(new Reference(
                         from(type.name.qualified), "--|>",
                         to(superclass)
@@ -261,7 +261,7 @@ public class UMLFactory {
         // Implemented interfaces.
         typeElement.getInterfaces().forEach(interfaceType -> {
             TypeName ifName = TypeNameVisitor.INSTANCE.visit(interfaceType);
-            if (!config.getExcludedTypeReferences().contains(ifName.qualified)) {
+            if (!config.excludedTypeReferences().contains(ifName.qualified)) {
                 references.add(new Reference(
                         from(type.name.qualified), "..|>",
                         to(ifName.qualified)));
@@ -283,7 +283,7 @@ public class UMLFactory {
         typeElement.getEnclosedElements().stream()
                 .filter(member -> ElementKind.FIELD.equals(member.getKind()))
                 .filter(VariableElement.class::isInstance).map(VariableElement.class::cast)
-                .filter(field -> config.getFieldConfig().include(visibilityOf(field.getModifiers())))
+                .filter(field -> config.fields().include(visibilityOf(field.getModifiers())))
                 .forEach(field -> {
                     String fieldName = field.getSimpleName().toString();
                     TypeNameWithCardinality fieldType = typeNameWithCardinality.apply(field.asType());
@@ -302,7 +302,7 @@ public class UMLFactory {
         typeElement.getEnclosedElements().stream()
                 .filter(member -> ElementKind.METHOD.equals(member.getKind()))
                 .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
-                .filter(method -> config.getMethodConfig().include(visibilityOf(method.getModifiers())))
+                .filter(method -> config.methods().include(visibilityOf(method.getModifiers())))
                 .forEach(method -> {
                     String propertyName = propertyName(method);
                     if (propertyName != null) {

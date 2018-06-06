@@ -56,7 +56,7 @@ public class Enhancement25Test {
 
     @Test
     public void testEnhancement25ImagePresence() {
-        File imageFile = new File("target/test-25/images/" + getClass().getName() + ".png");
+        File imageFile = new File("target/test-25/images/" + getClass().getName() + ".svg");
         assertThat("image exists", imageFile.exists(), is(true));
         assertThat("image is directory", imageFile.isDirectory(), is(false));
         assertThat("image is file", imageFile.isFile(), is(true));

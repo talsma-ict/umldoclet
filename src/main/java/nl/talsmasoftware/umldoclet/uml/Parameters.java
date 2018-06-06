@@ -99,7 +99,7 @@ public class Parameters extends UMLPart implements Comparable<Parameters> {
         @Override
         public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
             String sep = "";
-            MethodConfig methodConfig = getConfiguration().getMethodConfig();
+            MethodConfig methodConfig = getConfiguration().methods();
             if (name != null && MethodConfig.ParamNames.BEFORE_TYPE.equals(methodConfig.paramNames())) {
                 output.append(name);
                 sep = ": ";

@@ -100,7 +100,7 @@ public abstract class UMLPart implements IndentingRenderer {
      * @return The rendered content of this renderer.
      */
     public String toString() {
-        return writeTo(IndentingPrintWriter.wrap(new StringWriter(), getConfiguration().getIndentation())).toString();
+        return writeTo(IndentingPrintWriter.wrap(new StringWriter(), getConfiguration().indentation())).toString();
     }
 
 }

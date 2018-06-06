@@ -23,15 +23,20 @@ import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 import nl.talsmasoftware.umldoclet.uml.Visibility;
 import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.uml.configuration.FieldConfig;
+import nl.talsmasoftware.umldoclet.uml.configuration.ImageConfig;
 import nl.talsmasoftware.umldoclet.uml.configuration.MethodConfig;
 import nl.talsmasoftware.umldoclet.uml.configuration.TypeDisplay;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
@@ -50,14 +55,6 @@ public class DocletConfig implements Configuration {
     String destDirName = "";
 
     /**
-     * Directory where UML images are generated.
-     * <p>
-     * Set by doclet option {@code -umlImageDirectory}, default is {@code null} meaning relative to the generated
-     * documentation itself.
-     */
-    String imageDirectory;
-
-    /**
      * Whether the doclet should run more quite (errors must still be displayed).
      * <p>
      * Set by (Standard) doclet option {@code -quiet}, default is {@code false}.
@@ -71,8 +68,9 @@ public class DocletConfig implements Configuration {
      */
     boolean verbose = false;
 
-    FieldCfg fieldConfig = new FieldCfg();
-    MethodCfg methodConfig = new MethodCfg();
+    final ImageCfg images = new ImageCfg();
+    final FieldCfg fieldConfig = new FieldCfg();
+    final MethodCfg methodConfig = new MethodCfg();
 
     List<String> excludedReferences = new ArrayList<>(asList(
             "java.lang.Object", "java.lang.Enum", "java.lang.annotation.Annotation"));
@@ -95,41 +93,74 @@ public class DocletConfig implements Configuration {
     }
 
     @Override
-    public Logger getLogger() {
+    public Logger logger() {
         return reporter;
     }
 
     @Override
-    public Indentation getIndentation() {
+    public Indentation indentation() {
         return indentation;
     }
 
     @Override
-    public String getDestinationDirectory() {
+    public String destinationDirectory() {
         return destDirName;
     }
 
     @Override
-    public Optional<String> getImageDirectory() {
-        return Optional.ofNullable(imageDirectory);
+    public ImageConfig images() {
+        return images;
     }
 
     @Override
-    public FieldConfig getFieldConfig() {
+    public FieldConfig fields() {
         return fieldConfig;
     }
 
     @Override
-    public MethodConfig getMethodConfig() {
+    public MethodConfig methods() {
         return methodConfig;
     }
 
     @Override
-    public List<String> getExcludedTypeReferences() {
+    public List<String> excludedTypeReferences() {
         return excludedReferences;
     }
 
-    class FieldCfg implements FieldConfig {
+    static final class ImageCfg implements ImageConfig {
+        String directory = null;
+        Collection<String> imageFormats = null;
+
+        /**
+         * Directory where UML images are generated.
+         * <p>
+         * Set by doclet option {@code -umlImageDirectory}, default is {@code empty} meaning relative to the generated
+         * documentation itself.
+         */
+        @Override
+        public Optional<String> directory() {
+            return Optional.ofNullable(directory);
+        }
+
+        void addImageFormat(String imageFormat) {
+            if (imageFormat != null) {
+                if (imageFormats == null) imageFormats = new LinkedHashSet<>();
+                Stream.of(imageFormat.split(",;"))
+                        .map(String::trim)
+                        .map(s -> s.replaceFirst("^\\.", ""))
+                        .map(String::toUpperCase)
+                        .filter(s -> !s.isEmpty())
+                        .forEach(imageFormats::add);
+            }
+        }
+
+        @Override
+        public Collection<String> formats() {
+            return Optional.ofNullable(imageFormats).orElseGet(() -> Collections.singleton("SVG"));
+        }
+    }
+
+    static final class FieldCfg implements FieldConfig {
 
         TypeDisplay typeDisplay = TypeDisplay.SIMPLE;
         Set<Visibility> visibilities = EnumSet.of(Visibility.PROTECTED, Visibility.PUBLIC);
@@ -145,7 +176,7 @@ public class DocletConfig implements Configuration {
         }
     }
 
-    class MethodCfg implements MethodConfig {
+    static final class MethodCfg implements MethodConfig {
         // ParamNames paramNames = ParamNames.BEFORE_TYPE;
         ParamNames paramNames = ParamNames.NONE;
         TypeDisplay paramTypes = TypeDisplay.SIMPLE;

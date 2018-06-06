@@ -44,13 +44,13 @@ public class Method extends TypeMember {
 
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-        if (getConfiguration().getMethodConfig().include(visibility)) super.writeTo(output);
+        if (getConfiguration().methods().include(visibility)) super.writeTo(output);
         return output;
     }
 
     @Override
     protected <IPW extends IndentingPrintWriter> IPW writeTypeTo(IPW output) {
-        TypeDisplay returnTypeDisplay = getConfiguration().getMethodConfig().returnType();
+        TypeDisplay returnTypeDisplay = getConfiguration().methods().returnType();
         if (type != null && !TypeDisplay.NONE.equals(returnTypeDisplay)) {
             output.append(": ").append(type.toUml(returnTypeDisplay, null));
         }

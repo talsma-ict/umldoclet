@@ -94,10 +94,10 @@ public abstract class UMLDiagram extends UMLPart {
      */
     public boolean render() {
         final File pumlFile = pumlFile();
-        final Logger logger = getConfiguration().getLogger();
+        final Logger logger = getConfiguration().logger();
         try (IndentingPrintWriter writer = createPlantumlWriter(pumlFile)) {
             logger.info(INFO_GENERATING_FILE, pumlFile);
-            this.writeTo(IndentingPrintWriter.wrap(writer, getConfiguration().getIndentation()));
+            this.writeTo(IndentingPrintWriter.wrap(writer, getConfiguration().indentation()));
             return true;
         } catch (RuntimeException e) {
             logger.error(ERROR_COULDNT_RENDER_UML, pumlFile, e);
@@ -120,39 +120,46 @@ public abstract class UMLDiagram extends UMLPart {
         return file;
     }
 
-    private static String baseName(File file) {
-        String name = file.getName();
-        int lastDot = name.lastIndexOf('.');
-        return lastDot > 0 ? name.substring(0, lastDot) : name;
-    }
-
     private Optional<File> configuredImageDirectory() {
-        return config.getImageDirectory().map(imageDir -> {
-            final String baseDir = config.getDestinationDirectory();
+        return config.images().directory().map(imageDir -> {
+            final String baseDir = config.destinationDirectory();
             final File imgDir = new File(imageDir);
             return baseDir.isEmpty() || imgDir.isAbsolute() ? imgDir : new File(baseDir, imageDir);
         });
     }
 
-    private IndentingPrintWriter createPlantumlWriter(File pumlFile) {
-        Configuration config = getConfiguration();
-        String[] imgFormats = new String[]{"svg", "png"};
-        File imageDir = configuredImageDirectory().orElseGet(pumlFile::getParentFile);
-        String baseName = baseName(pumlFile);
+    /**
+     * Returns the name for the image, without the file extension.
+     * <p>
+     * This method also takes the {@link #configuredImageDirectory()} into consideration.
+     *
+     * @param file The file to return the base filename for.
+     * @return The filename to use for images, without the file extension.
+     */
+    private String imageBasename(File file) {
+        String baseName = file.getName();
+        int dotIdx = baseName.indexOf('.');
+        if (dotIdx > 0) baseName = baseName.substring(0, dotIdx);
         if (configuredImageDirectory().isPresent()) {
-            String relative = relativePath(new File(config.getDestinationDirectory()), pumlFile.getParentFile());
-            if (!relative.isEmpty()) baseName = relative.replace('/', '.') + '.' + baseName;
+            String relativeDir = relativePath(new File(config.destinationDirectory()), file.getParentFile());
+            if (!relativeDir.isEmpty()) baseName = relativeDir.replace('/', '.') + '.' + baseName;
         }
+        return baseName;
+    }
+
+    private IndentingPrintWriter createPlantumlWriter(File pumlFile) {
+        final File imageDir = configuredImageDirectory().orElseGet(pumlFile::getParentFile);
+        final String baseName = imageBasename(pumlFile);
 
         ensureParentDir(pumlFile);
         ensureParentDir(new File(imageDir, baseName));
 
-        File[] imageFiles = new File[imgFormats.length];
-        for (int i = 0; i < imgFormats.length; i++) {
-            imageFiles[i] = new File(imageDir, baseName + "." + imgFormats[i]);
-        }
+        File[] imageFiles = config.images().formats().stream()
+                .map(String::toLowerCase)
+                .map(format -> new File(imageDir, baseName + "." + format))
+                .toArray(File[]::new);
 
-        return IndentingPrintWriter.wrap(PlantumlImageWriter.create(config.getLogger(), pumlFile, imageFiles), config.getIndentation());
+        return IndentingPrintWriter.wrap(PlantumlImageWriter.create(config.logger(), pumlFile, imageFiles), config.indentation());
     }
 
     static String relativePath(File from, File to) {

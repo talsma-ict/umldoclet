@@ -15,13 +15,24 @@
  */
 package nl.talsmasoftware.umldoclet.uml.configuration;
 
+import java.util.Collection;
+import java.util.Optional;
+
 /**
- * An abstraction for a configured exclusion from the generated UML diagrams.
- * <p>
- * TODO Elaborate on this concept.
+ * Configuration relating to the images that are generated.
  *
  * @author Sjoerd Talsma
  */
-public interface Exclusion {
+public interface ImageConfig {
+
+    /**
+     * @return The image directory for the UML diagrams, if explicitly specified.
+     */
+    Optional<String> directory();
+
+    /**
+     * @return The image formats that are generated.
+     */
+    Collection<String> formats();
 
 }

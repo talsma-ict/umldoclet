@@ -43,7 +43,7 @@ class ClassDiagram extends UMLDiagram {
     @Override
     protected File pumlFile() {
         if (pumlFile == null) {
-            StringBuilder result = new StringBuilder(getConfiguration().getDestinationDirectory());
+            StringBuilder result = new StringBuilder(getConfiguration().destinationDirectory());
             if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');
             String containingPackage = type.getNamespace().name;
             result.append(containingPackage.replace('.', '/')).append('/');

@@ -73,13 +73,13 @@ public class UMLDoclet extends StandardDoclet {
     @Override
     public boolean run(DocletEnvironment docEnv) {
         try {
-            config.getLogger().info(DOCLET_COPYRIGHT, DOCLET_VERSION);
-            config.getLogger().info(PLANTUML_COPYRIGHT, Version.versionString());
+            config.logger().info(DOCLET_COPYRIGHT, DOCLET_VERSION);
+            config.logger().info(PLANTUML_COPYRIGHT, Version.versionString());
 
             return generateUMLDiagrams(docEnv) && super.run(docEnv);
 
         } catch (RuntimeException rte) {
-            config.getLogger().error(ERROR_UNANTICIPATED_ERROR_GENERATING_UML, rte);
+            config.logger().error(ERROR_UNANTICIPATED_ERROR_GENERATING_UML, rte);
             rte.printStackTrace(System.err);
             return false;
         }
