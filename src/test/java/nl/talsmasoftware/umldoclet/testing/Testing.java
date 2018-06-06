@@ -49,6 +49,7 @@ public class Testing {
      * @return The content of the file (using UTF-8 encoding).
      * @deprecated Test different directories too
      */
+    @Deprecated
     public static String readFile(String name) {
         return read(new File("target/test-uml/nl/talsmasoftware/umldoclet", name));
     }

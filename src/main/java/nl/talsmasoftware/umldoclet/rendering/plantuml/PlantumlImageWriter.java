@@ -48,17 +48,18 @@ public class PlantumlImageWriter extends StringBufferingWriter {
     private final Logger logger;
     private final EnumMap<FileFormat, File> images = new EnumMap<>(FileFormat.class);
 
-    public PlantumlImageWriter(Logger logger, File plantumlFile, File... imageFiles) {
-        super(plantumlWriter(plantumlFile));
+    private PlantumlImageWriter(Logger logger, Writer plantumlWriter, File... imageFiles) {
+        super(plantumlWriter);
         this.logger = requireNonNull(logger, "Logger is <null>.");
         for (File imageFile : requireNonNull(imageFiles, "Image files are <null>.")) {
             fileFormatOf(imageFile).ifPresent(format -> images.put(format, imageFile));
         }
     }
 
-    private static Writer plantumlWriter(File plantumlFile) {
+    public static PlantumlImageWriter create(Logger logger, File plantumlFile, File... imageFiles) {
+        requireNonNull(plantumlFile, "PlantUML file is <null>.");
         try {
-            return new FileWriter(requireNonNull(plantumlFile, "PlantUML file is <null>."));
+            return new PlantumlImageWriter(logger, new FileWriter(plantumlFile), imageFiles);
         } catch (IOException ioe) {
             throw new IllegalStateException("Could not create writer to PlantUML file: " + plantumlFile, ioe);
         }

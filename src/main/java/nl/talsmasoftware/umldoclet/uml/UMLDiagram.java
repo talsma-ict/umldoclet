@@ -99,7 +99,7 @@ public abstract class UMLDiagram extends UMLPart {
             logger.info(INFO_GENERATING_FILE, pumlFile);
             this.writeTo(IndentingPrintWriter.wrap(writer, getConfiguration().getIndentation()));
             return true;
-        } catch (IOException | RuntimeException e) {
+        } catch (RuntimeException e) {
             logger.error(ERROR_COULDNT_RENDER_UML, pumlFile, e);
             return false;
         }
@@ -134,7 +134,7 @@ public abstract class UMLDiagram extends UMLPart {
         });
     }
 
-    private IndentingPrintWriter createPlantumlWriter(File pumlFile) throws IOException {
+    private IndentingPrintWriter createPlantumlWriter(File pumlFile) {
         Configuration config = getConfiguration();
         String[] imgFormats = new String[]{"svg", "png"};
         File imageDir = configuredImageDirectory().orElseGet(pumlFile::getParentFile);
@@ -152,13 +152,7 @@ public abstract class UMLDiagram extends UMLPart {
             imageFiles[i] = new File(imageDir, baseName + "." + imgFormats[i]);
         }
 
-        return IndentingPrintWriter.wrap(new PlantumlImageWriter(config.getLogger(), pumlFile, imageFiles), config.getIndentation());
-
-//        return IndentingPrintWriter.wrap(
-//                new PlantumlImageWriter(
-//                        new OutputStreamWriter(new FileOutputStream(pumlFile)),
-//                        config.getLogger(), imageDir, baseName, imgFormats),
-//                config.getIndentation());
+        return IndentingPrintWriter.wrap(PlantumlImageWriter.create(config.getLogger(), pumlFile, imageFiles), config.getIndentation());
     }
 
     static String relativePath(File from, File to) {
