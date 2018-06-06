@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.rendering.planuml;
+package nl.talsmasoftware.umldoclet.rendering.plantuml;
 
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.logging.Message;
-import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlImageWriter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

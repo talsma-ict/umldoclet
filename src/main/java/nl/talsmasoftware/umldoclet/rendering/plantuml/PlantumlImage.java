@@ -48,19 +48,13 @@ public class PlantumlImage {
         return fileFormatOf(file).map(format -> new PlantumlImage(file.getPath(), format, () -> createFileOutputStream(file)));
     }
 
-    private BufferedOutputStream getBufferedOutputStream() {
-        final OutputStream outputStream = outputStreamSupplier.get();
-        return outputStream instanceof BufferedOutputStream
-                ? (BufferedOutputStream) outputStream
-                : new BufferedOutputStream(outputStream);
-    }
-
     public String getName() {
         return name;
     }
 
     final void renderPlantuml(SourceStringReader plantumlSource) throws IOException {
-        try (OutputStream imageOutput = getBufferedOutputStream()) {
+        requireNonNull(plantumlSource, "PlantUML source is <null>.");
+        try (OutputStream imageOutput = new BufferedOutputStream(outputStreamSupplier.get())) {
             plantumlSource.outputImage(imageOutput, new FileFormatOption(fileFormat));
         }
     }
