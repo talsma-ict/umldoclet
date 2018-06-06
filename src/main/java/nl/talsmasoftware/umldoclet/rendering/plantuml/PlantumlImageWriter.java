@@ -15,25 +15,24 @@
  */
 package nl.talsmasoftware.umldoclet.rendering.plantuml;
 
-import net.sourceforge.plantuml.FileFormat;
-import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.rendering.writers.StringBufferingWriter;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.Writer;
-import java.util.EnumMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.joining;
 import static nl.talsmasoftware.umldoclet.logging.Message.INFO_GENERATING_FILE;
 import static nl.talsmasoftware.umldoclet.logging.Message.WARNING_UNRECOGNIZED_IMAGE_FORMAT;
 
@@ -46,20 +45,22 @@ import static nl.talsmasoftware.umldoclet.logging.Message.WARNING_UNRECOGNIZED_I
 public class PlantumlImageWriter extends StringBufferingWriter {
 
     private final Logger logger;
-    private final EnumMap<FileFormat, File> images = new EnumMap<>(FileFormat.class);
+    private final Collection<PlantumlImage> images;
 
-    private PlantumlImageWriter(Logger logger, Writer plantumlWriter, File... imageFiles) {
+    private PlantumlImageWriter(Logger logger, Writer plantumlWriter, Iterable<PlantumlImage> images) {
         super(plantumlWriter);
-        this.logger = requireNonNull(logger, "Logger is <null>.");
-        for (File imageFile : requireNonNull(imageFiles, "Image files are <null>.")) {
-            fileFormatOf(imageFile).ifPresent(format -> images.put(format, imageFile));
-        }
+        this.logger = logger;
+        this.images = unmodifiableCopyOf(images);
     }
 
     public static PlantumlImageWriter create(Logger logger, File plantumlFile, File... imageFiles) {
+        requireNonNull(logger, "Logger is <null>.");
         requireNonNull(plantumlFile, "PlantUML file is <null>.");
         try {
-            return new PlantumlImageWriter(logger, new FileWriter(plantumlFile), imageFiles);
+            return new PlantumlImageWriter(logger, new FileWriter(plantumlFile), Stream.of(imageFiles)
+                    .map(file -> fileToImage(logger, file))
+                    .filter(Optional::isPresent).map(Optional::get)
+                    .collect(Collectors.toList()));
         } catch (IOException ioe) {
             throw new IllegalStateException("Could not create writer to PlantUML file: " + plantumlFile, ioe);
         }
@@ -75,23 +76,13 @@ public class PlantumlImageWriter extends StringBufferingWriter {
     @Override
     public void close() throws IOException {
         super.close();
-        for (Map.Entry<FileFormat, File> image : images.entrySet()) {
-            logger.info(INFO_GENERATING_FILE, image.getValue());
-            try (OutputStream imageOutput = new BufferedOutputStream(new FileOutputStream(image.getValue()))) {
-                new SourceStringReader(getBuffer().toString()).outputImage(imageOutput, new FileFormatOption(image.getKey()));
+        if (!images.isEmpty()) {
+            SourceStringReader sourceStringReader = new SourceStringReader(getBuffer().toString());
+            for (PlantumlImage image : images) {
+                logger.info(INFO_GENERATING_FILE, image.getName());
+                image.renderPlantuml(sourceStringReader);
             }
         }
-    }
-
-    private Optional<FileFormat> fileFormatOf(File file) {
-        if (file == null) return Optional.empty();
-        FileFormat result = null;
-        final String name = file.getName().toLowerCase();
-        for (FileFormat format : FileFormat.values()) {
-            if (name.endsWith(format.getFileSuffix())) result = format;
-        }
-        if (result == null) logger.warn(WARNING_UNRECOGNIZED_IMAGE_FORMAT, name);
-        return Optional.ofNullable(result);
     }
 
     /**
@@ -99,8 +90,28 @@ public class PlantumlImageWriter extends StringBufferingWriter {
      */
     @Override
     public String toString() {
-        return getClass().getSimpleName()
-                + images.values().stream().map(File::getName).collect(joining(", ", "[", "]"));
+        return getClass().getSimpleName() + images;
     }
 
+    private static Optional<PlantumlImage> fileToImage(Logger logger, File file) {
+        Optional<PlantumlImage> plantumlImage = PlantumlImage.fromFile(file);
+        if (!plantumlImage.isPresent()) logger.warn(WARNING_UNRECOGNIZED_IMAGE_FORMAT, file.getName());
+        return plantumlImage;
+    }
+
+    private static <T> Collection<T> unmodifiableCopyOf(Iterable<? extends T> iterable) {
+        final ArrayList<T> copy = new ArrayList<>();
+        if (iterable != null) iterable.forEach(item -> {
+            if (item != null) copy.add(item);
+        });
+        switch (copy.size()) {
+            case 0:
+                return emptyList();
+            case 1:
+                return singletonList(copy.get(0));
+            default:
+                copy.trimToSize();
+                return unmodifiableList(copy);
+        }
+    }
 }

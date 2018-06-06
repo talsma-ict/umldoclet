@@ -81,7 +81,7 @@ public class PlantumlImageWriterTest {
         }
         assertThat(read(puml), is(exampleUml));
 
-        verify(mockLogger).info(eq(INFO_GENERATING_FILE), eq(svg));
+        verify(mockLogger).info(eq(INFO_GENERATING_FILE), eq(svg.getPath()));
         assertThat(svg + " exists?", svg.isFile(), is(true));
     }
 
@@ -98,7 +98,7 @@ public class PlantumlImageWriterTest {
 
         for (String extension : new String[]{".svg", ".png"}) {
             File file = new File(tempdir, "version" + extension);
-            verify(mockLogger).info(eq(INFO_GENERATING_FILE), eq(file));
+            verify(mockLogger).info(eq(INFO_GENERATING_FILE), eq(file.getPath()));
             assertThat(file + " exists?", file.exists(), is(true));
             assertThat(file + " is file?", file.isFile(), is(true));
             assertThat(file + " is readable?", file.canRead(), is(true));
@@ -140,7 +140,7 @@ public class PlantumlImageWriterTest {
         File puml = new File(tempdir, "diagram.puml");
         try (PlantumlImageWriter writer = PlantumlImageWriter.create(mockLogger, puml, new File(tempdir, "diagram.unrecognized"))) {
             assertThat(writer, hasToString("PlantumlImageWriter[]"));
-            verify(mockLogger).warn(WARNING_UNRECOGNIZED_IMAGE_FORMAT, "diagram.unrecognized");
+            verify(mockLogger).warn(eq(WARNING_UNRECOGNIZED_IMAGE_FORMAT), eq("diagram.unrecognized"));
         }
     }
 
@@ -152,7 +152,7 @@ public class PlantumlImageWriterTest {
         try (PlantumlImageWriter writer = PlantumlImageWriter.create(mockLogger, puml, svg)) {
             assertThat(writer, hasToString("PlantumlImageWriter[diagram.svg]"));
         }
-        verify(mockLogger).info(INFO_GENERATING_FILE, svg);
+        verify(mockLogger).info(eq(INFO_GENERATING_FILE), eq(svg.getPath()));
     }
 
     @Test
@@ -164,8 +164,8 @@ public class PlantumlImageWriterTest {
         try (PlantumlImageWriter writer = PlantumlImageWriter.create(mockLogger, puml, png, svg)) {
             assertThat(writer, hasToString("PlantumlImageWriter[diagram.png, diagram.svg]"));
         }
-        verify(mockLogger).info(INFO_GENERATING_FILE, png);
-        verify(mockLogger).info(INFO_GENERATING_FILE, svg);
+        verify(mockLogger).info(eq(INFO_GENERATING_FILE), eq(png.getPath()));
+        verify(mockLogger).info(eq(INFO_GENERATING_FILE), eq(svg.getPath()));
     }
 
 }
