@@ -95,7 +95,9 @@ public class PlantumlImageWriter extends StringBufferingWriter {
 
     private static Optional<PlantumlImage> fileToImage(Logger logger, File file) {
         Optional<PlantumlImage> plantumlImage = PlantumlImage.fromFile(file);
-        if (!plantumlImage.isPresent()) logger.warn(WARNING_UNRECOGNIZED_IMAGE_FORMAT, file.getName());
+        if (!plantumlImage.isPresent() && !file.getName().endsWith(".none")) {
+            logger.warn(WARNING_UNRECOGNIZED_IMAGE_FORMAT, file.getName());
+        }
         return plantumlImage;
     }
 

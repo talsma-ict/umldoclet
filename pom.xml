@@ -260,15 +260,12 @@
                             <goal>jar</goal>
                         </goals>
                         <configuration>
-                            <javadocVersion>9</javadocVersion>
                             <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
                             <docletArtifact>
-                                <groupId>${project.groupId}</groupId>
-                                <artifactId>${project.artifactId}</artifactId>
+                                <groupId>nl.talsmasoftware</groupId>
+                                <artifactId>umldoclet</artifactId>
                                 <version>${project.version}</version>
                             </docletArtifact>
-                            <docencoding>UTF-8</docencoding>
-                            <useStandardDocletOptions>true</useStandardDocletOptions>
                             <additionalOptions>
                                 <!--<additionalOption>-verbose</additionalOption>-->
                                 <!--<additionalOption>-quiet</additionalOption>-->
