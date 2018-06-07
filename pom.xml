@@ -25,7 +25,7 @@
     <!-- Artifact identification -->
     <groupId>nl.talsmasoftware</groupId>
     <artifactId>umldoclet</artifactId>
-    <version>2.0.0-alpha.2-SNAPSHOT</version>
+    <version>2.0.0-alpha.2</version>
     <packaging>jar</packaging>
 
     <!-- Project information -->
