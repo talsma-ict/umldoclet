@@ -40,10 +40,6 @@ To use the doclet together with the JavaDoc tool, the following is required.
 - Please see the separate [the Usage page][Usage]
   on how to use the UML doclet in your own Java projects.
 
-## License
-
-[Apache 2.0 license](../LICENSE)
-
 ## Feedback
 
 - Please search the [open issues](https://github.com/talsma-ict/umldoclet/issues)
@@ -61,6 +57,9 @@ To use the doclet together with the JavaDoc tool, the following is required.
 - And of course most importantly a big thanks to the developers of the excellent [PlantUML project][plantuml]
   withouth whom this doclet wouldn't exist!
 
+## License
+
+- [Apache 2.0 license](../LICENSE)
 
 
   [ci-img]: https://img.shields.io/travis/talsma-ict/umldoclet/develop.svg
