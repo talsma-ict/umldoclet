@@ -55,7 +55,7 @@ generated images in this single directory, making linking to them easier
 in some cases.  
 _This was requested in issue [Send images to a single directory](#25)_
 
-#### -umlImageFormat (svg|png|none)
+#### -umlImageFormat (svg|png|eps|none)
 
 By default `.svg` images are generated as they will be significantly smaller
 in size than equivalent `.png` images and scale better.
