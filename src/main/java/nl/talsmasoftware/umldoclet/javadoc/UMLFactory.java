@@ -306,7 +306,7 @@ public class UMLFactory {
                 .forEach(method -> {
                     String propertyName = propertyName(method);
                     if (propertyName != null) {
-                        TypeNameWithCardinality returnType = typeNameWithCardinality.apply(method.getReturnType());
+                        TypeNameWithCardinality returnType = typeNameWithCardinality.apply(propertyType(method));
                         if (namespace.contains(returnType.typeName)) {
                             addReference(references, new Reference(
                                     from(type.name.qualified),
@@ -339,6 +339,13 @@ public class UMLFactory {
             return new String(result);
         }
         return null;
+    }
+
+    private static TypeMirror propertyType(ExecutableElement method) {
+        if (method.getSimpleName().toString().startsWith("set") && !method.getParameters().isEmpty()) {
+            return method.getParameters().get(0).asType();
+        }
+        return method.getReturnType();
     }
 
     private static boolean isVarArgsMethod(Element element) {

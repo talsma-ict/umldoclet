@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,21 +15,24 @@
  */
 package nl.talsmasoftware.umldoclet.issues;
 
+import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.testing.Testing;
-import org.junit.Ignore;
 import org.junit.Test;
+
+import java.io.File;
+import java.util.spi.ToolProvider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.either;
 import static org.hamcrest.Matchers.not;
 
 /**
+ * Test correct substitution of JavaBean properties by UML references.
+ *
  * @author Sjoerd Talsma
  */
-@Ignore // Cannot create uml javadoc yet..
 public class Issue30Test {
-
-    final static String packageDiag = Testing.readFile("issues/package.puml");
 
     // Method that should not be seen as a bean property.
     public Issue30Test getSomeValue(Boolean withArgument) {
@@ -41,12 +44,34 @@ public class Issue30Test {
         return this;
     }
 
+    public void setSomeProperty(Issue30Test someProperty) {
+    }
+
     @Test
     public void testIssue30() {
-        assertThat(packageDiag, containsString("+getSomeValue(Boolean): Issue30Test"));
-        assertThat(packageDiag, not(containsString("+getSomeProperty(): Issue30Test")));
-        assertThat(packageDiag, containsString("Issue30Test --> Issue30Test: someProperty"));
-        assertThat(packageDiag, not(containsString("Issue30Test --> Issue30Test: someValue")));
+        String packageAsPath = getClass().getPackage().getName().replace('.', '/');
+        String classAsPath = packageAsPath + "/" + getClass().getSimpleName();
+        ToolProvider.findFirst("javadoc").get().run(
+                System.out, System.err,
+                "-d", "target/test-30",
+                "-doclet", UMLDoclet.class.getName(),
+                "src/test/java/" + classAsPath + ".java"
+        );
+        String uml = Testing.read(new File("target/test-30/" + packageAsPath + "/package.puml"));
+
+        String name = getClass().getName();
+        String simpleName = getClass().getSimpleName();
+
+        // someProperty should have been replaced by referene:
+        assertThat(uml, not(containsString("+getSomeProperty()")));
+        assertThat(uml, not(containsString("+setSomeProperty")));
+        assertThat(uml, either(containsString(simpleName + " --> " + simpleName + ": someProperty"))
+                .or(containsString(name + " --> " + name + ": someProperty")));
+
+        // someValue must not be replaced by reference:
+        assertThat(uml, containsString("+getSomeValue(Boolean): " + simpleName));
+        assertThat(uml, not(either(containsString(simpleName + " --> " + simpleName + ": someValue"))
+                .or(containsString(name + " --> " + name + ": someValue"))));
     }
 
 }
