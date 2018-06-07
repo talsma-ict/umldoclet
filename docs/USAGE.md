@@ -4,20 +4,19 @@
 
 ## Usage
 
-Using any doclet requires the [Javadoc][javadoc-wiki] commandline tool.  
-Javadoc generation can be integrated into many build systems such 
-as _maven_, _gradle_ or even _ant_.
-
-A [Doclet][doclet-api] is a sort of _plugin_ to the javadoc tool to
-modify the standard behaviour of generating documentation.
+A [Doclet][doclet-api] is a sort of _plugin_ to the [javadoc][javadoc-wiki] 
+tool to modify the standard behaviour of generating documentation.
 The `UMLDoclet` delegates to the 'Standard' doclet to generate
 all the 'normal' output you are used to. Furthermore, it analyzes the
 parsed code to produce `UML` diagrams of your _classes_ and _packages_.
 These UML diagrams can be produced both in a [text-based][plantuml] 
 and image format (e.g. `svg` or `png`).
+Javadoc generation can be integrated into many build systems such 
+as _[maven](#configuring-your-maven-build)_, 
+_[gradle](#using-gradle)_ or even _[ant](#using-ant)_.
 
-Running javadoc is [explained here by Oracle][javadoc-command] but 
-the main syntax is as follows:
+The commandline javadoc command is [explained here by Oracle][javadoc-command]
+but the main syntax is as follows:
 ```bash
 javadoc [packages|source-files] [options][@files]
 ```
@@ -40,13 +39,15 @@ therefore please consider using one of the following build systems:_
 
 ## Additional options
 
-The UML doclet supports _all_ options of the `Standard` doclet and adds some of its own.
-To display all available options, run:
+The UML doclet supports all options of the `Standard` doclet and adds some of its own.
+To display all options, please run:
 ```bash
 javadoc --help -docletpath umldoclet-2.x.jar -doclet nl.talsmasoftware.umldoclet.UMLDoclet
 ```
 
-#### -umlImageDirectory <image-dir>
+The rest of this section lists various options that are specific to the UML doclet.
+
+#### -umlImageDirectory &lt;image-dir&gt;
 
 By default, the UML images are generated relative to the HTML pages 
 for the class or package. Specifying an _image directory_ will place all 
