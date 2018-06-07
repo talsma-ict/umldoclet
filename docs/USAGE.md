@@ -33,7 +33,7 @@ javadoc -sourcepath src -classpath lib -d apidocs \
 
 :information_source: **Tip:**
 _The [javadoc][javadoc-command] commandline becomes verbose rather quickly,
-therefore please consider using one of the following build systems:_
+therefore please consider using one of the following build systems for your projects:_
 - [Maven](#configuring-your-maven-build) 
 - [Gradle](#using-gradle)
 
