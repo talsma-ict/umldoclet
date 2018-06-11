@@ -41,6 +41,7 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toList;
 import static javax.lang.model.element.ElementKind.ENUM;
 import static nl.talsmasoftware.umldoclet.uml.Reference.Side.from;
 import static nl.talsmasoftware.umldoclet.uml.Reference.Side.to;
@@ -98,6 +99,10 @@ public class UMLFactory {
             result = result.add(param.getSimpleName().toString(), TypeNameVisitor.INSTANCE.visit(param.asType()));
         }
         return result;
+    }
+
+    private boolean isOnlyDefaultConstructor(Collection<ExecutableElement> constructors) {
+        return constructors.size() == 1 && constructors.iterator().next().getParameters().isEmpty();
     }
 
     Method createConstructor(Type containingType, ExecutableElement executableElement) {
@@ -170,10 +175,13 @@ public class UMLFactory {
                 .filter(VariableElement.class::isInstance).map(VariableElement.class::cast)
                 .forEach(field -> addChild(type, createField(type, field)));
 
-        enclosedElements.stream()
+        List<ExecutableElement> constructors = enclosedElements.stream()
                 .filter(elem -> ElementKind.CONSTRUCTOR.equals(elem.getKind()))
                 .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
-                .forEach(constructor -> addChild(type, createConstructor(type, constructor)));
+                .collect(toList());
+        if (!isOnlyDefaultConstructor(constructors)) {
+            constructors.forEach(constructor -> addChild(type, createConstructor(type, constructor)));
+        }
 
         enclosedElements.stream()
                 .filter(elem -> ElementKind.METHOD.equals(elem.getKind()))
