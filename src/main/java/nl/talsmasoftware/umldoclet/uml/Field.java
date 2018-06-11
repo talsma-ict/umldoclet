@@ -24,8 +24,17 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
  */
 public class Field extends TypeMember {
 
+    private Field(Type containingType, Visibility visibility, boolean isStatic, boolean isDeprecated, String name,
+                  TypeName type) {
+        super(containingType, visibility, false, isStatic, isDeprecated, name, type);
+    }
+
     public Field(Type containingType, Visibility visibility, boolean isStatic, String name, TypeName type) {
-        super(containingType, visibility, false, isStatic, name, type);
+        this(containingType, visibility, isStatic, false, name, type);
+    }
+
+    public Field deprecated() {
+        return new Field(containingType, visibility, isStatic, true, name, type);
     }
 
     @Override

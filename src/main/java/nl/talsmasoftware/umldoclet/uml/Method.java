@@ -32,9 +32,18 @@ public class Method extends TypeMember {
 
     public Method(Type containingType, Visibility visibility, boolean isAbstract, boolean isStatic,
                   String name, Parameters parameters, TypeName returnType) {
-        super(containingType, visibility, isAbstract, isStatic, name, returnType);
+        this(containingType, visibility, isAbstract, isStatic, false, name, parameters, returnType);
+    }
+
+    private Method(Type containingType, Visibility visibility, boolean isAbstract, boolean isStatic, boolean isDeprecated,
+                   String name, Parameters parameters, TypeName returnType) {
+        super(containingType, visibility, isAbstract, isStatic, isDeprecated, name, returnType);
         this.parameters = requireNonNull(parameters, () -> "No parameters for method " + containingType.name + "." + name);
         this.parameters.setMethod(this);
+    }
+
+    public Method deprecated() {
+        return new Method(containingType, visibility, isAbstract, isStatic, true, name, parameters, type);
     }
 
     @Override

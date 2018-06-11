@@ -80,12 +80,14 @@ public class UMLFactory {
 
     Field createField(Type containingType, VariableElement variable) {
         Set<Modifier> modifiers = requireNonNull(variable, "Variable element is <null>.").getModifiers();
-        return new Field(containingType,
+        Field field = new Field(containingType,
                 visibilityOf(modifiers),
                 modifiers.contains(Modifier.STATIC),
                 variable.getSimpleName().toString(),
                 TypeNameVisitor.INSTANCE.visit(variable.asType())
         );
+        if (env.getElementUtils().isDeprecated(variable)) field = field.deprecated();
+        return field;
     }
 
     private Parameters createParameters(List<? extends VariableElement> params) {
@@ -100,7 +102,7 @@ public class UMLFactory {
 
     Method createConstructor(Type containingType, ExecutableElement executableElement) {
         Set<Modifier> modifiers = requireNonNull(executableElement, "Executable element is <null>.").getModifiers();
-        return new Method(containingType,
+        Method constructor = new Method(containingType,
                 visibilityOf(modifiers),
                 modifiers.contains(Modifier.ABSTRACT),
                 modifiers.contains(Modifier.STATIC),
@@ -108,11 +110,13 @@ public class UMLFactory {
                 createParameters(executableElement.getParameters()),
                 null
         );
+        if (env.getElementUtils().isDeprecated(executableElement)) constructor = constructor.deprecated();
+        return constructor;
     }
 
     Method createMethod(Type containingType, ExecutableElement executableElement) {
         Set<Modifier> modifiers = requireNonNull(executableElement, "Executable element is <null>.").getModifiers();
-        return new Method(containingType,
+        Method method = new Method(containingType,
                 visibilityOf(modifiers),
                 modifiers.contains(Modifier.ABSTRACT),
                 modifiers.contains(Modifier.STATIC),
@@ -120,6 +124,8 @@ public class UMLFactory {
                 createParameters(executableElement.getParameters()),
                 TypeNameVisitor.INSTANCE.visit(executableElement.getReturnType())
         );
+        if (env.getElementUtils().isDeprecated(executableElement)) method = method.deprecated();
+        return method;
     }
 
     static Visibility visibilityOf(Set<Modifier> modifiers) {
@@ -175,7 +181,7 @@ public class UMLFactory {
                 .filter(method -> !isMethodFromExcludedSuperclass(method))
                 .forEach(method -> addChild(type, createMethod(type, method)));
 
-        return type;
+        return env.getElementUtils().isDeprecated(typeElement) ? type.deprecated() : type;
     }
 
     private boolean isMethodFromExcludedSuperclass(ExecutableElement method) {
@@ -394,4 +400,14 @@ public class UMLFactory {
         return pkg;
     }
 
+//    private boolean isDeprecated(Element element) {
+//        if (env.getElementUtils().getAllAnnotationMirrors(element).stream()
+//                .map(AnnotationMirror::getAnnotationType)
+//                .map(TypeNameVisitor.INSTANCE::visit)
+//                .anyMatch(name -> "java.lang.Deprecated".equals(name.qualified))) {
+//            return true;
+//        }
+//        env.getElementUtils().getDocComment()
+//        return false;
+//    }
 }

@@ -29,12 +29,24 @@ public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
 
     public final Classification classfication;
     public final TypeName name;
+    protected final boolean isDeprecated;
     protected final Set<UMLPart> children = new LinkedHashSet<>();
 
     public Type(Namespace namespace, Classification classification, TypeName name) {
+        this(namespace, classification, name, false, null);
+    }
+
+    private Type(Namespace namespace, Classification classification, TypeName name, boolean isDeprecated,
+                 Collection<? extends UMLPart> children) {
         super(requireNonNull(namespace, "Containing package is <null>."));
         this.classfication = requireNonNull(classification, "Type classification is <null>.");
         this.name = requireNonNull(name, "Type name is <null>.");
+        this.isDeprecated = isDeprecated;
+        if (children != null) this.children.addAll(children);
+    }
+
+    public Type deprecated() {
+        return new Type(getNamespace(), classfication, name, true, children);
     }
 
     public Namespace getNamespace() {
@@ -50,6 +62,7 @@ public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output, Namespace namespace) {
         output.append(classfication.toUml()).whitespace();
         output.append(name.toUml(TypeDisplay.QUALIFIED, namespace)).whitespace();
+        if (isDeprecated) output.append("<<deprecated>>").whitespace();
         writeChildrenTo(output).newline();
         return output;
     }
