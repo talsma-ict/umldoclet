@@ -400,14 +400,4 @@ public class UMLFactory {
         return pkg;
     }
 
-//    private boolean isDeprecated(Element element) {
-//        if (env.getElementUtils().getAllAnnotationMirrors(element).stream()
-//                .map(AnnotationMirror::getAnnotationType)
-//                .map(TypeNameVisitor.INSTANCE::visit)
-//                .anyMatch(name -> "java.lang.Deprecated".equals(name.qualified))) {
-//            return true;
-//        }
-//        env.getElementUtils().getDocComment()
-//        return false;
-//    }
 }
