@@ -93,7 +93,7 @@ public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
      *
      * @author Sjoerd Talsma
      */
-    public static enum Classification {
+    public enum Classification {
         ENUM, INTERFACE, ANNOTATION, ABSTRACT_CLASS, CLASS;
 
         public String toUml() {
