@@ -15,11 +15,20 @@
  */
 package nl.talsmasoftware.umldoclet.javadoc;
 
-import nl.talsmasoftware.umldoclet.uml.*;
+import nl.talsmasoftware.umldoclet.uml.Namespace;
+import nl.talsmasoftware.umldoclet.uml.Reference;
+import nl.talsmasoftware.umldoclet.uml.Type;
+import nl.talsmasoftware.umldoclet.uml.UMLDiagram;
+import nl.talsmasoftware.umldoclet.uml.UMLPart;
 
 import javax.lang.model.element.PackageElement;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 /**
@@ -27,7 +36,6 @@ import java.util.stream.Stream;
  */
 class PackageDiagram extends UMLDiagram {
 
-    //    private final Namespace pkg;
     private final String packageName;
     private File pumlFile = null;
 
@@ -39,7 +47,7 @@ class PackageDiagram extends UMLDiagram {
         packageName = packageElement.getQualifiedName().toString();
         children.add(factory.createPackage(this, packageElement, foreignTypes, references));
 
-        // TODO: Should we filter "java.lang" or "java.util" references that occur >= 3 times?
+        // Filter "java.lang" or "java.util" references that occur >= 3 times?
         // Maybe somehow make this configurable as well.
         foreignTypes.entrySet().stream()
                 .filter(entry -> "java.lang".equals(entry.getKey().name) || "java.util".equals(entry.getKey().name))

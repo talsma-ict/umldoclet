@@ -68,7 +68,7 @@ public class Issue71DeprecationTest {
 
     @Test
     public void testClassDeprecatedByAnnotation() {
-        assertThat(classUml, containsString("class Issue71DeprecationTest <<deprecated>>"));
+        assertThat(classUml, containsString("class " + getClass().getName() + " <<deprecated>>"));
     }
 
     @Test

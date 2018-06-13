@@ -15,7 +15,6 @@
  */
 package nl.talsmasoftware.umldoclet.javadoc;
 
-import nl.talsmasoftware.umldoclet.uml.Namespace;
 import nl.talsmasoftware.umldoclet.uml.Type;
 import nl.talsmasoftware.umldoclet.uml.UMLDiagram;
 
@@ -27,17 +26,14 @@ import java.io.File;
  */
 class ClassDiagram extends UMLDiagram {
 
-    private final Namespace namespace;
     private final Type type;
     private File pumlFile = null;
 
     ClassDiagram(UMLFactory factory, TypeElement classElement) {
         super(factory.config);
         factory.diagram.set(this);
-        this.namespace = factory.packageOf(classElement);
         this.type = factory.createType(classElement);
-        UMLFactory.addChild(namespace, type);
-        children.add(namespace);
+        children.add(type);
     }
 
     @Override
