@@ -54,7 +54,7 @@ public abstract class UMLPart implements IndentingRenderer {
         this.parent = parent;
     }
 
-    protected UMLPart getParent() {
+    public UMLPart getParent() {
         return parent;
     }
 
@@ -77,6 +77,12 @@ public abstract class UMLPart implements IndentingRenderer {
      */
     public Collection<? extends UMLPart> getChildren() {
         return emptySet();
+    }
+
+    public void addChild(UMLPart child) {
+        Collection<UMLPart> children = (Collection<UMLPart>) getChildren();
+        children.add(child);
+        child.setParent(this);
     }
 
     protected Configuration getConfiguration() {

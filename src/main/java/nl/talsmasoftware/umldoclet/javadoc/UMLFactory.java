@@ -29,13 +29,7 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -71,8 +65,78 @@ public class UMLFactory {
     }
 
     public UMLDiagram createPackageDiagram(PackageElement packageElement) {
-        PackageDiagram packageDiagram = new PackageDiagram(this, packageElement);
-        this.diagram.remove();
+        PackageDiagram packageDiagram = new PackageDiagram(config, packageElement.getQualifiedName().toString());
+        Map<Namespace, Collection<Type>> foreignTypes = new LinkedHashMap<>();
+        List<Reference> references = new ArrayList<>();
+        packageDiagram.addChild(createPackage(packageDiagram, packageElement, foreignTypes, references));
+
+        // Filter "java.lang" or "java.util" references that occur >= 3 times?
+        // Maybe somehow make this configurable as well.
+        foreignTypes.entrySet().stream()
+                .filter(entry -> "java.lang".equals(entry.getKey().name) || "java.util".equals(entry.getKey().name))
+                .map(Map.Entry::getValue)
+                .forEach(types -> {
+                    for (Iterator<Type> it = types.iterator(); it.hasNext(); ) {
+                        Type type = it.next();
+                        if (references.stream().filter(ref -> ref.contains(type.name)).limit(3).count() > 2) {
+                            references.removeIf(ref -> ref.contains(type.name));
+                            it.remove();
+                        }
+                    }
+                });
+
+        // Add all remaining foreign types to the diagram.
+        foreignTypes.entrySet().stream()
+                .filter(entry -> !entry.getValue().isEmpty())
+                .map(entry -> {
+                    Namespace foreignPackage = entry.getKey();
+                    entry.getValue().forEach(foreignPackage::addChild);
+                    return foreignPackage;
+                })
+                .flatMap(foreignPackage -> Stream.of(UMLPart.NEWLINE, foreignPackage))
+                .forEach(packageDiagram::addChild);
+
+        packageDiagram.addChild(UMLPart.NEWLINE);
+        references.stream().map(Reference::canonical).forEach(packageDiagram::addChild);
+
+//            factory.diagram.set(this);
+//            Map<Namespace, Collection<Type>> foreignTypes = new LinkedHashMap<>();
+//            List<Reference> references = new ArrayList<>();
+//            packageName = packageElement.getQualifiedName().toString();
+//            children.add(factory.createPackage(this, packageElement, foreignTypes, references));
+//
+//            // Filter "java.lang" or "java.util" references that occur >= 3 times?
+//            // Maybe somehow make this configurable as well.
+//            foreignTypes.entrySet().stream()
+//                    .filter(entry -> "java.lang".equals(entry.getKey().name) || "java.util".equals(entry.getKey().name))
+//                    .map(Map.Entry::getValue)
+//                    .forEach(types -> {
+//                        for (Iterator<Type> it = types.iterator(); it.hasNext(); ) {
+//                            Type type = it.next();
+//                            if (references.stream().filter(ref -> ref.contains(type.name)).limit(3).count() > 2) {
+//                                references.removeIf(ref -> ref.contains(type.name));
+//                                it.remove();
+//                            }
+//                        }
+//                    });
+//
+//            foreignTypes.entrySet().stream()
+//                    .filter(entry -> !entry.getValue().isEmpty())
+//                    .map(entry -> {
+//                        Namespace foreignPackage = entry.getKey();
+//                        entry.getValue().forEach(type -> UMLFactory.addChild(foreignPackage, type));
+//                        return foreignPackage;
+//                    })
+//                    .flatMap(foreignPackage -> Stream.of(UMLPart.NEWLINE, foreignPackage))
+//                    .forEach(children::add);
+//
+//            children.add(UMLPart.NEWLINE);
+//            references.stream().map(Reference::canonical).forEach(children::add);
+//        }
+
+
+//        PackageDiagram packageDiagram = new PackageDiagram(this, packageElement);
+//        this.diagram.remove();
         return packageDiagram;
     }
 
@@ -145,10 +209,16 @@ public class UMLFactory {
         return createType(packageOf(typeElement), typeElement);
     }
 
-    static boolean addChild(UMLPart parent, UMLPart child) {
-        Collection<UMLPart> children = (Collection<UMLPart>) parent.getChildren();
-        return children.add(child);
-    }
+//    static boolean addChild(UMLPart parent, UMLPart child) {
+////        if (child.getParent() == null) child.setParent(parent);
+////        else if (parent instanceof UMLDiagram) {
+//        UMLPart root = child;
+//        while (root.getParent() != null && !(root.getParent() instanceof UMLDiagram)) root = root.getParent();
+//        if (root.getParent() == null) root.setParent(parent);
+////        }
+//        Collection<UMLPart> children = (Collection<UMLPart>) parent.getChildren();
+//        return children.add(child);
+//    }
 
     private Type createType(Namespace containingPackage, TypeElement typeElement) {
         ElementKind kind = requireNonNull(typeElement, "Type element is <null>.").getKind();
@@ -169,26 +239,31 @@ public class UMLFactory {
         if (Type.Classification.ENUM.equals(classification)) enclosedElements.stream()
                 .filter(elem -> ElementKind.ENUM_CONSTANT.equals(elem.getKind()))
                 .filter(VariableElement.class::isInstance).map(VariableElement.class::cast)
-                .forEach(enumConst -> addChild(type, createField(type, enumConst)));
+                .map(enumConst -> createField(type, enumConst))
+                .forEach(type::addChild);
 
         enclosedElements.stream()
                 .filter(elem -> ElementKind.FIELD.equals(elem.getKind()))
                 .filter(VariableElement.class::isInstance).map(VariableElement.class::cast)
-                .forEach(field -> addChild(type, createField(type, field)));
+                .map(field -> createField(type, field))
+                .forEach(type::addChild);
 
         List<ExecutableElement> constructors = enclosedElements.stream()
                 .filter(elem -> ElementKind.CONSTRUCTOR.equals(elem.getKind()))
                 .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
                 .collect(toList());
         if (!isOnlyDefaultConstructor(constructors)) {
-            constructors.forEach(constructor -> addChild(type, createConstructor(type, constructor)));
+            constructors.stream()
+                    .map(constructor -> createConstructor(type, constructor))
+                    .forEach(type::addChild);
         }
 
         enclosedElements.stream()
                 .filter(elem -> ElementKind.METHOD.equals(elem.getKind()))
                 .filter(ExecutableElement.class::isInstance).map(ExecutableElement.class::cast)
                 .filter(method -> !isMethodFromExcludedSuperclass(method))
-                .forEach(method -> addChild(type, createMethod(type, method)));
+                .map(method -> createMethod(type, method))
+                .forEach(type::addChild);
 
         return env.getElementUtils().isDeprecated(typeElement) ? type.deprecated() : type;
     }
@@ -404,7 +479,7 @@ public class UMLFactory {
                     return type;
                 })
                 .flatMap(type -> Stream.of(NEWLINE, type))
-                .forEach(child -> addChild(pkg, child));
+                .forEach(pkg::addChild);
 
         return pkg;
     }
