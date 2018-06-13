@@ -50,7 +50,7 @@ public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
     }
 
     public Namespace getNamespace() {
-        return (Namespace) parent;
+        return (Namespace) getParent();
     }
 
     @Override

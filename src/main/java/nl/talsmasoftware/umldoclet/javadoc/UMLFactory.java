@@ -64,8 +64,9 @@ public class UMLFactory {
     }
 
     public UMLDiagram createClassDiagram(TypeElement classElement) {
-        ClassDiagram classDiagram = new ClassDiagram(this, classElement);
-        this.diagram.remove();
+        Type type = createType(classElement);
+        ClassDiagram classDiagram = new ClassDiagram(config, type);
+        type.getNamespace().setParent(classDiagram);
         return classDiagram;
     }
 

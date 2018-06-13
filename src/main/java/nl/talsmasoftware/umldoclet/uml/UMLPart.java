@@ -48,9 +48,17 @@ public abstract class UMLPart implements IndentingRenderer {
         }
     };
 
-    protected final UMLPart parent;
+    private UMLPart parent;
 
     protected UMLPart(UMLPart parent) {
+        this.parent = parent;
+    }
+
+    protected UMLPart getParent() {
+        return parent;
+    }
+
+    public void setParent(UMLPart parent) {
         this.parent = parent;
     }
 
