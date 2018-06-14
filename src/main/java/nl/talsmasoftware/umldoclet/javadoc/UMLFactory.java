@@ -58,8 +58,43 @@ public class UMLFactory {
     }
 
     public UMLDiagram createClassDiagram(TypeElement classElement) {
-        Type type = createType(classElement);
+        Type type = createAndPopulateType(null, classElement);
         ClassDiagram classDiagram = new ClassDiagram(config, type);
+
+        List<Reference> references = new ArrayList<>();
+
+        // TODO see if we can refactor some duplicate logic from package- and class diagrams into separate methods
+        // Add superclass
+        if (!TypeKind.NONE.equals(classElement.getSuperclass().getKind())) {
+            String superclassName = TypeNameVisitor.INSTANCE.visit(classElement.getSuperclass()).qualified;
+            if (!config.excludedTypeReferences().contains(superclassName)) {
+                Element superclass = env.getTypeUtils().asElement(classElement.getSuperclass());
+                if (superclass instanceof TypeElement) {
+                    classDiagram.addChild(UMLPart.NEWLINE);
+                    classDiagram.addChild(createType(null, (TypeElement) superclass));
+                }
+                references.add(new Reference(from(type.name.qualified), "--|>", to(superclassName)).canonical());
+            }
+        }
+
+        // Add interfaces
+        classElement.getInterfaces().forEach(interfaceType -> {
+            TypeName ifName = TypeNameVisitor.INSTANCE.visit(interfaceType);
+            if (!config.excludedTypeReferences().contains(ifName.qualified)) {
+                Element implementedInterface = env.getTypeUtils().asElement(interfaceType);
+                if (implementedInterface instanceof TypeElement) {
+                    classDiagram.addChild(UMLPart.NEWLINE);
+                    classDiagram.addChild(createType(null, (TypeElement) implementedInterface));
+                }
+                references.add(new Reference(from(type.name.qualified), "..|>", to(ifName.qualified)).canonical());
+            }
+        });
+
+        if (!references.isEmpty()) {
+            classDiagram.addChild(UMLPart.NEWLINE);
+            references.forEach(classDiagram::addChild);
+        }
+
         return classDiagram;
     }
 
@@ -69,8 +104,8 @@ public class UMLFactory {
         List<Reference> references = new ArrayList<>();
         packageDiagram.addChild(createPackage(packageDiagram, packageElement, foreignTypes, references));
 
-        // Filter "java.lang" or "java.util" references that occur >= 3 times?
-        // Maybe somehow make this configurable as well.
+        // Filter "java.lang" or "java.util" references that occur >= 3 times
+        // Maybe somehow make this configurable as well?
         foreignTypes.entrySet().stream()
                 .filter(entry -> "java.lang".equals(entry.getKey().name) || "java.util".equals(entry.getKey().name))
                 .map(Map.Entry::getValue)
@@ -166,27 +201,37 @@ public class UMLFactory {
                 : Visibility.PACKAGE_PRIVATE;
     }
 
-    Type createType(TypeElement typeElement) {
-        return createType(packageOf(typeElement), typeElement);
+    /**
+     * Creates an 'empty' type (i.e. without any fields, constructors or methods)
+     *
+     * @param containingPackage The containing package of the type (optional, will be obtained from typeElement if null).
+     * @param type              The type element to create a Type object for.
+     * @return The empty Type object.
+     */
+    private Type createType(Namespace containingPackage, TypeElement type) {
+        requireNonNull(type, "Type element is <null>.");
+        if (containingPackage == null) containingPackage = packageOf(type);
+        return new Type(containingPackage, typeClassificationOf(type), TypeNameVisitor.INSTANCE.visit(type.asType()));
     }
 
-    private Type createType(Namespace containingPackage, TypeElement typeElement) {
-        ElementKind kind = requireNonNull(typeElement, "Type element is <null>.").getKind();
-        Set<Modifier> modifiers = typeElement.getModifiers();
-        Type.Classification classification = ENUM.equals(kind) ? Type.Classification.ENUM
+    private Type createAndPopulateType(Namespace containingPackage, TypeElement type) {
+        return populateType(createType(containingPackage, type), type);
+    }
+
+    private static Type.Classification typeClassificationOf(TypeElement type) {
+        ElementKind kind = type.getKind();
+        Set<Modifier> modifiers = type.getModifiers();
+        return ENUM.equals(kind) ? Type.Classification.ENUM
                 : ElementKind.INTERFACE.equals(kind) ? Type.Classification.INTERFACE
                 : ElementKind.ANNOTATION_TYPE.equals(kind) ? Type.Classification.ANNOTATION
                 : modifiers.contains(Modifier.ABSTRACT) ? Type.Classification.ABSTRACT_CLASS
                 : Type.Classification.CLASS;
+    }
 
-        Type type = new Type(containingPackage,
-                classification,
-                TypeNameVisitor.INSTANCE.visit(typeElement.asType())
-        );
-
+    private Type populateType(Type type, TypeElement typeElement) {
         // Add the various parts of the class UML, order matters here, obviously!
         List<? extends Element> enclosedElements = typeElement.getEnclosedElements();
-        if (Type.Classification.ENUM.equals(classification)) enclosedElements.stream()
+        if (Type.Classification.ENUM.equals(type.getClassfication())) enclosedElements.stream()
                 .filter(elem -> ElementKind.ENUM_CONSTANT.equals(elem.getKind()))
                 .filter(VariableElement.class::isInstance).map(VariableElement.class::cast)
                 .map(enumConst -> createField(type, enumConst))
@@ -278,7 +323,7 @@ public class UMLFactory {
 
     private void addForeignType(Map<Namespace, Collection<Type>> foreignTypes, Element typeElement) {
         if (foreignTypes != null && typeElement instanceof TypeElement) {
-            Type type = createType((TypeElement) typeElement);
+            Type type = createAndPopulateType(null, (TypeElement) typeElement);
             foreignTypes.computeIfAbsent(type.getNamespace(), (namespace) -> new LinkedHashSet<>()).add(type);
         }
     }
@@ -424,7 +469,7 @@ public class UMLFactory {
                 .filter(TypeElement.class::isInstance).map(TypeElement.class::cast)
                 .flatMap(UMLFactory::innerTypes)
                 .map(typeElement -> {
-                    Type type = createType(pkg, typeElement);
+                    Type type = createAndPopulateType(pkg, typeElement);
                     references.addAll(findPackageReferences(pkg, foreignTypes, typeElement, type));
                     return type;
                 })

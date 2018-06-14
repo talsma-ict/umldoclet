@@ -43,6 +43,16 @@ public abstract class UMLPart implements IndentingRenderer {
         }
 
         @Override
+        void setParent(UMLPart parent) {
+            // noop
+        }
+
+        @Override
+        public void addChild(UMLPart child) {
+            throw new UnsupportedOperationException("Cannot add child to leaf node.");
+        }
+
+        @Override
         public String toString() {
             return System.lineSeparator();
         }

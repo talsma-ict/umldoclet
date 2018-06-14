@@ -61,6 +61,10 @@ public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
         return namespace;
     }
 
+    public Classification getClassfication() {
+        return classfication;
+    }
+
     @Override
     public Collection<? extends UMLPart> getChildren() {
         return children;
