@@ -27,10 +27,11 @@ import static java.util.Objects.requireNonNull;
 
 public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
 
-    public final Classification classfication;
+    private final Namespace namespace;
+    private final Classification classfication;
     public final TypeName name;
-    protected final boolean isDeprecated;
-    protected final Set<UMLPart> children = new LinkedHashSet<>();
+    private final boolean isDeprecated;
+    private final Set<UMLPart> children = new LinkedHashSet<>();
 
     public Type(Namespace namespace, Classification classification, TypeName name) {
         this(namespace, classification, name, false, null);
@@ -38,11 +39,18 @@ public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
 
     private Type(Namespace namespace, Classification classification, TypeName name, boolean isDeprecated,
                  Collection<? extends UMLPart> children) {
-        super(requireNonNull(namespace, "Containing package is <null>."));
+        super(namespace);
+        this.namespace = requireNonNull(namespace, "Containing package is <null>.");
         this.classfication = requireNonNull(classification, "Type classification is <null>.");
         this.name = requireNonNull(name, "Type name is <null>.");
         this.isDeprecated = isDeprecated;
         if (children != null) this.children.addAll(children);
+    }
+
+    @Override
+    void setParent(UMLPart parent) {
+        super.setParent(parent);
+        if (namespace.getParent() == null) namespace.setParent(parent);
     }
 
     public Type deprecated() {
@@ -50,7 +58,7 @@ public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
     }
 
     public Namespace getNamespace() {
-        return (Namespace) getParent();
+        return namespace;
     }
 
     @Override

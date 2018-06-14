@@ -15,7 +15,6 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
-import nl.talsmasoftware.umldoclet.uml.UMLDiagram;
 import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
 
 import java.io.File;

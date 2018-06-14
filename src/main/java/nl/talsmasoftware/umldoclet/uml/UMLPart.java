@@ -58,7 +58,7 @@ public abstract class UMLPart implements IndentingRenderer {
         return parent;
     }
 
-    public void setParent(UMLPart parent) {
+    void setParent(UMLPart parent) {
         this.parent = parent;
     }
 

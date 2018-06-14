@@ -60,7 +60,7 @@ public class UMLFactory {
     public UMLDiagram createClassDiagram(TypeElement classElement) {
         Type type = createType(classElement);
         ClassDiagram classDiagram = new ClassDiagram(config, type);
-        type.getNamespace().setParent(classDiagram);
+//        type.getNamespace().setParent(classDiagram);
         return classDiagram;
     }
 

@@ -15,11 +15,8 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
-import nl.talsmasoftware.umldoclet.uml.Type;
-import nl.talsmasoftware.umldoclet.uml.UMLDiagram;
 import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
 
-import javax.lang.model.element.TypeElement;
 import java.io.File;
 
 import static java.util.Objects.requireNonNull;
@@ -35,7 +32,7 @@ public class ClassDiagram extends UMLDiagram {
     public ClassDiagram(Configuration config, Type type) {
         super(config);
         this.type = requireNonNull(type, "Type in classdiagram is <null>.");
-        children.add(type);
+        addChild(type);
     }
 
     @Override
