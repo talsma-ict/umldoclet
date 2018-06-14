@@ -13,28 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.uml.configuration;
+package nl.talsmasoftware.umldoclet.logging;
 
-import nl.talsmasoftware.umldoclet.logging.Message;
 import org.junit.Test;
 
 import java.util.Locale;
 
 import static java.util.Arrays.stream;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasToString;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
-public class MessagesTest {
+public class MessageTest {
     private static final Locale DUTCH = new Locale("nl", "NL");
 
     @Test
     public void testAllMessageAvailability() {
-        stream(Message.values()).forEach(key -> assertThat(key, hasToString(notNullValue())));
+        stream(Message.values()).forEach(key -> assertThat(key.name(), key, hasToString(notNullValue())));
     }
 
     @Test
     public void testAllMessagesInDutch() {
-        stream(Message.values()).forEach(key -> assertThat(key.toString(DUTCH), is(notNullValue())));
+        stream(Message.values()).forEach(key -> assertThat("Dutch " + key.name(), key.toString(DUTCH), is(notNullValue())));
     }
 
 }
