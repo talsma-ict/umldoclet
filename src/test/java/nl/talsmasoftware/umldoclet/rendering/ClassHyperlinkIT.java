@@ -32,12 +32,12 @@ import static org.hamcrest.Matchers.stringContainsInOrder;
  *
  * @author Sjoerd Talsma
  */
-@Ignore // Cannot create uml javadoc yet..
+@Ignore // Cannot create content javadoc yet..
 public class ClassHyperlinkIT {
 
     @Test
     public void testClassRendererHyperlink() throws IOException {
-//        String uml = Testing.readClassUml(ClassRenderer.class);
+//        String content = Testing.readClassUml(ClassRenderer.class);
         String uml = "";
         assertThat(uml, stringContainsInOrder(asList(
                 "class ClassRenderer [[ClassRenderer.html]] {",

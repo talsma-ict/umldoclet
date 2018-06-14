@@ -32,7 +32,17 @@ public class ClassDiagram extends UMLDiagram {
     public ClassDiagram(Configuration config, Type type) {
         super(config);
         this.type = requireNonNull(type, "Type in classdiagram is <null>.");
+        addChild(Literal.line("set namespaceSeparator none"));
+        addChild(Literal.line("hide empty fields"));
+        addChild(Literal.line("hide empty methods"));
+        addChild(Literal.NEWLINE);
         addChild(type);
+    }
+
+    @Override
+    public void addChild(UMLPart child) {
+        if (child instanceof Type) child = ((Type) child).addPackageToName();
+        super.addChild(child);
     }
 
     @Override

@@ -28,7 +28,7 @@ import static org.hamcrest.Matchers.nullValue;
 /**
  * Unit test for generated generics information in the UML diagrams.
  */
-@Ignore // Cannot create uml javadoc yet..
+@Ignore // Cannot create content javadoc yet..
 public class GenericsTest {
 
     //    private static final boolean QUALIFIED = new UMLDocletConfig(new String[0][], null).alwaysUseQualifiedClassnames();

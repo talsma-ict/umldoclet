@@ -43,7 +43,7 @@ public class Testing {
 
 
     /**
-     * Reads a file with a relative path from the test-uml "umldoclet" path.
+     * Reads a file with a relative path from the test-content "umldoclet" path.
      *
      * @param name the relative path to the file from the "umldoclet" directory.
      * @return The content of the file (using UTF-8 encoding).
@@ -51,7 +51,7 @@ public class Testing {
      */
     @Deprecated
     public static String readFile(String name) {
-        return read(new File("target/test-uml/nl/talsmasoftware/umldoclet", name));
+        return read(new File("target/test-content/nl/talsmasoftware/umldoclet", name));
     }
 
     public static String read(File file) {

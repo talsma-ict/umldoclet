@@ -30,31 +30,30 @@ public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
     private final Namespace namespace;
     private final Classification classfication;
     public final TypeName name;
-    private final boolean isDeprecated;
+    private final boolean isDeprecated, addPackageToName;
     private final Set<UMLPart> children = new LinkedHashSet<>();
 
     public Type(Namespace namespace, Classification classification, TypeName name) {
-        this(namespace, classification, name, false, null);
+        this(namespace, classification, name, false, false, null);
     }
 
     private Type(Namespace namespace, Classification classification, TypeName name, boolean isDeprecated,
-                 Collection<? extends UMLPart> children) {
+                 boolean addPackageToName, Collection<? extends UMLPart> children) {
         super(namespace);
         this.namespace = requireNonNull(namespace, "Containing package is <null>.");
         this.classfication = requireNonNull(classification, "Type classification is <null>.");
         this.name = requireNonNull(name, "Type name is <null>.");
         this.isDeprecated = isDeprecated;
+        this.addPackageToName = addPackageToName;
         if (children != null) this.children.addAll(children);
     }
 
-    @Override
-    void setParent(UMLPart parent) {
-        super.setParent(parent);
-        if (namespace.getParent() == null) namespace.setParent(parent);
+    public Type deprecated() {
+        return new Type(getNamespace(), classfication, name, true, addPackageToName, children);
     }
 
-    public Type deprecated() {
-        return new Type(getNamespace(), classfication, name, true, children);
+    public Type addPackageToName() {
+        return new Type(getNamespace(), classfication, name, isDeprecated, true, children);
     }
 
     public Namespace getNamespace() {
@@ -71,9 +70,25 @@ public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
     }
 
     @Override
+    void setParent(UMLPart parent) {
+        super.setParent(parent);
+        if (namespace.getParent() == null) namespace.setParent(parent);
+    }
+
+    private <IPW extends IndentingPrintWriter> IPW writeNameTo(IPW output, Namespace namespace) {
+        if (addPackageToName) {
+            output.append("\"<size:14>").append(name.toUml(TypeDisplay.SIMPLE, namespace))
+                    .append("\\n<size:10>").append(getNamespace().name)
+                    .append("\" as ");
+        }
+        output.append(name.toUml(TypeDisplay.QUALIFIED, namespace));
+        return output;
+    }
+
+    @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output, Namespace namespace) {
         output.append(classfication.toUml()).whitespace();
-        output.append(name.toUml(TypeDisplay.QUALIFIED, namespace)).whitespace();
+        writeNameTo(output, namespace).whitespace();
         if (isDeprecated) output.append("<<deprecated>>").whitespace();
         writeChildrenTo(output).newline();
         return output;

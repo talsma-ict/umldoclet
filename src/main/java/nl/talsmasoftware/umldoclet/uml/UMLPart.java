@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
+import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingRenderer;
 import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
@@ -35,29 +36,6 @@ import static java.util.Objects.requireNonNull;
  * @author Sjoerd Talsma
  */
 public abstract class UMLPart implements IndentingRenderer {
-    public static final UMLPart NEWLINE = new UMLPart(null) {
-        @Override
-        public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-            output.append(this.toString());
-            return output;
-        }
-
-        @Override
-        void setParent(UMLPart parent) {
-            // noop
-        }
-
-        @Override
-        public void addChild(UMLPart child) {
-            throw new UnsupportedOperationException("Cannot add child to leaf node.");
-        }
-
-        @Override
-        public String toString() {
-            return System.lineSeparator();
-        }
-    };
-
     private UMLPart parent;
 
     protected UMLPart(UMLPart parent) {
@@ -99,6 +77,10 @@ public abstract class UMLPart implements IndentingRenderer {
         return getDiagram().config;
     }
 
+    protected Indentation getIndentation() {
+        return parent == null ? Indentation.DEFAULT : parent.getIndentation();
+    }
+
     /**
      * Helper method to write all children to the specified output.
      * <p>
@@ -124,7 +106,7 @@ public abstract class UMLPart implements IndentingRenderer {
      * @return The rendered content of this renderer.
      */
     public String toString() {
-        return writeTo(IndentingPrintWriter.wrap(new StringWriter(), getConfiguration().indentation())).toString();
+        return writeTo(IndentingPrintWriter.wrap(new StringWriter(), getIndentation())).toString();
     }
 
 }

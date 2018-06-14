@@ -39,7 +39,6 @@ import static java.util.stream.Collectors.toList;
 import static javax.lang.model.element.ElementKind.ENUM;
 import static nl.talsmasoftware.umldoclet.uml.Reference.Side.from;
 import static nl.talsmasoftware.umldoclet.uml.Reference.Side.to;
-import static nl.talsmasoftware.umldoclet.uml.UMLPart.NEWLINE;
 
 /**
  * @author Sjoerd Talsma
@@ -62,6 +61,7 @@ public class UMLFactory {
         ClassDiagram classDiagram = new ClassDiagram(config, type);
 
         List<Reference> references = new ArrayList<>();
+        Literal sep = Literal.NEWLINE;
 
         // TODO see if we can refactor some duplicate logic from package- and class diagrams into separate methods
         // Add superclass
@@ -70,28 +70,31 @@ public class UMLFactory {
             if (!config.excludedTypeReferences().contains(superclassName)) {
                 Element superclass = env.getTypeUtils().asElement(classElement.getSuperclass());
                 if (superclass instanceof TypeElement) {
-                    classDiagram.addChild(UMLPart.NEWLINE);
+                    classDiagram.addChild(sep);
                     classDiagram.addChild(createType(null, (TypeElement) superclass));
+                    sep = Literal.EMPTY;
                 }
                 references.add(new Reference(from(type.name.qualified), "--|>", to(superclassName)).canonical());
             }
         }
 
         // Add interfaces
-        classElement.getInterfaces().forEach(interfaceType -> {
+
+        for (TypeMirror interfaceType : classElement.getInterfaces()) {
             TypeName ifName = TypeNameVisitor.INSTANCE.visit(interfaceType);
             if (!config.excludedTypeReferences().contains(ifName.qualified)) {
                 Element implementedInterface = env.getTypeUtils().asElement(interfaceType);
                 if (implementedInterface instanceof TypeElement) {
-                    classDiagram.addChild(UMLPart.NEWLINE);
+                    classDiagram.addChild(sep);
                     classDiagram.addChild(createType(null, (TypeElement) implementedInterface));
+                    sep = Literal.EMPTY;
                 }
                 references.add(new Reference(from(type.name.qualified), "..|>", to(ifName.qualified)).canonical());
             }
-        });
+        }
 
         if (!references.isEmpty()) {
-            classDiagram.addChild(UMLPart.NEWLINE);
+            classDiagram.addChild(Literal.NEWLINE);
             references.forEach(classDiagram::addChild);
         }
 
@@ -127,10 +130,10 @@ public class UMLFactory {
                     entry.getValue().forEach(foreignPackage::addChild);
                     return foreignPackage;
                 })
-                .flatMap(foreignPackage -> Stream.of(UMLPart.NEWLINE, foreignPackage))
+                .flatMap(foreignPackage -> Stream.of(Literal.NEWLINE, foreignPackage))
                 .forEach(packageDiagram::addChild);
 
-        packageDiagram.addChild(UMLPart.NEWLINE);
+        packageDiagram.addChild(Literal.NEWLINE);
         references.stream().map(Reference::canonical).forEach(packageDiagram::addChild);
 
         return packageDiagram;
@@ -473,7 +476,7 @@ public class UMLFactory {
                     references.addAll(findPackageReferences(pkg, foreignTypes, typeElement, type));
                     return type;
                 })
-                .flatMap(type -> Stream.of(NEWLINE, type))
+                .flatMap(type -> Stream.of(Literal.NEWLINE, type))
                 .forEach(pkg::addChild);
 
         return pkg;

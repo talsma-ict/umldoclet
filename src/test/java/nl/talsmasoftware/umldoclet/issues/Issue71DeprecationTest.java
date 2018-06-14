@@ -16,6 +16,7 @@
 package nl.talsmasoftware.umldoclet.issues;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
+import nl.talsmasoftware.umldoclet.testing.PatternMatcher;
 import nl.talsmasoftware.umldoclet.testing.Testing;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -23,6 +24,7 @@ import org.junit.Test;
 import java.io.File;
 import java.util.spi.ToolProvider;
 
+import static nl.talsmasoftware.umldoclet.testing.PatternMatcher.containsPattern;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 
@@ -68,7 +70,7 @@ public class Issue71DeprecationTest {
 
     @Test
     public void testClassDeprecatedByAnnotation() {
-        assertThat(classUml, containsString("class " + getClass().getName() + " <<deprecated>>"));
+        assertThat(classUml, containsPattern("class (\".*\" as )?" + getClass().getName() + " <<deprecated>>"));
     }
 
     @Test

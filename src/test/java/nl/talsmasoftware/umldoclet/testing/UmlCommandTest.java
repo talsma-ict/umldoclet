@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import static org.hamcrest.Matchers.containsString;
  *
  * @author Sjoerd Talsma
  */
-@Ignore // Cannot create uml javadoc yet..
+@Ignore // Cannot create content javadoc yet..
 public class UmlCommandTest {
 
     @Test
