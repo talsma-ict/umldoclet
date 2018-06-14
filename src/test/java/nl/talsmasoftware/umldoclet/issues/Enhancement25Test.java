@@ -43,6 +43,7 @@ public class Enhancement25Test {
                 "-d", "target/test-25",
                 "-doclet", UMLDoclet.class.getName(),
                 "-umlImageDirectory", "images",
+//                "-verbose",
                 "src/test/java/" + Enhancement25Test.class.getName().replace('.', '/') + ".java"
         );
     }

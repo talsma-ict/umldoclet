@@ -29,7 +29,6 @@ import nl.talsmasoftware.umldoclet.uml.configuration.TypeDisplay;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -39,6 +38,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singleton;
 import static java.util.Objects.requireNonNull;
 
 public class DocletConfig implements Configuration {
@@ -156,7 +156,7 @@ public class DocletConfig implements Configuration {
 
         @Override
         public Collection<String> formats() {
-            return Optional.ofNullable(imageFormats).orElseGet(() -> Collections.singleton("SVG"));
+            return Optional.ofNullable(imageFormats).orElseGet(() -> singleton("SVG"));
         }
     }
 

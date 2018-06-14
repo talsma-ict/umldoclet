@@ -19,11 +19,9 @@ import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Collection;
 
 import static java.util.Objects.requireNonNull;
 
@@ -41,20 +39,12 @@ public class HtmlPostProcessor {
 
     public boolean postProcessHtml() throws IOException {
         final Path dir = getDestinationPath();
-
-        GeneratedDiagram.Visitor diagrams = new GeneratedDiagram.Visitor(config);
-        Files.walkFileTree(dir, diagrams);
-
-//        Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
-//            @Override
-//            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-//                if (attrs.isRegularFile() && file.endsWith("."))
-//                return super.visitFile(file, attrs);
-//            }
-//        });
+        final Collection<Diagram> diagrams = new DiagramCollector(config).collect(dir);
 
         return Files.walk(dir)
-                .filter(HtmlFile::matches).map(HtmlFile::new).map(htmlFile -> htmlFile.process(diagrams.collected))
+                .filter(HtmlFile::matches)
+                .map(path -> new HtmlFile(config.logger(), path))
+                .map(htmlFile -> htmlFile.process(diagrams))
                 .reduce((a, b) -> a & b).orElse(true);
     }
 
