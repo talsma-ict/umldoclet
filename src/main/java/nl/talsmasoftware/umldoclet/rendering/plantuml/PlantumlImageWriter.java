@@ -18,6 +18,7 @@ package nl.talsmasoftware.umldoclet.rendering.plantuml;
 import net.sourceforge.plantuml.SourceStringReader;
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.rendering.writers.StringBufferingWriter;
+import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -44,22 +45,22 @@ import static nl.talsmasoftware.umldoclet.logging.Message.WARNING_UNRECOGNIZED_I
  */
 public class PlantumlImageWriter extends StringBufferingWriter {
 
-    private final Logger logger;
+    private final Configuration config;
     private final Collection<PlantumlImage> images;
 
-    private PlantumlImageWriter(Logger logger, Writer plantumlWriter, Iterable<PlantumlImage> images) {
+    private PlantumlImageWriter(Configuration config, Writer plantumlWriter, Iterable<PlantumlImage> images) {
         super(plantumlWriter);
-        this.logger = logger;
+        this.config = requireNonNull(config, "Configuration is <null>.");
         this.images = unmodifiableCopyOf(images);
     }
 
-    public static PlantumlImageWriter create(Logger logger, File plantumlFile, File... imageFiles) {
-        requireNonNull(logger, "Logger is <null>.");
+    public static PlantumlImageWriter create(Configuration config, File plantumlFile, File... imageFiles) {
+        requireNonNull(config, "Configuration is <null>.");
         requireNonNull(plantumlFile, "PlantUML file is <null>.");
         try {
             // TODO Use umlEncoding
-            return new PlantumlImageWriter(logger, new FileWriter(plantumlFile), Stream.of(imageFiles)
-                    .map(file -> fileToImage(logger, file))
+            return new PlantumlImageWriter(config, new FileWriter(plantumlFile), Stream.of(imageFiles)
+                    .map(file -> fileToImage(config.logger(), file))
                     .filter(Optional::isPresent).map(Optional::get)
                     .collect(Collectors.toList()));
         } catch (IOException ioe) {
@@ -80,7 +81,7 @@ public class PlantumlImageWriter extends StringBufferingWriter {
         if (!images.isEmpty()) {
             SourceStringReader sourceStringReader = new SourceStringReader(getBuffer().toString());
             for (PlantumlImage image : images) {
-                logger.info(INFO_GENERATING_FILE, image.getName());
+                config.logger().info(INFO_GENERATING_FILE, image.getName());
                 image.renderPlantuml(sourceStringReader);
             }
         }

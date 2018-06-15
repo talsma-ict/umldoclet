@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.joining;
 import static nl.talsmasoftware.umldoclet.logging.Message.ERROR_COULDNT_RENDER_UML;
 import static nl.talsmasoftware.umldoclet.logging.Message.INFO_GENERATING_FILE;
 
@@ -148,7 +147,7 @@ public abstract class UMLDiagram extends UMLPart {
                 .map(format -> new File(imageDir, baseName + "." + format))
                 .toArray(File[]::new);
 
-        return IndentingPrintWriter.wrap(PlantumlImageWriter.create(config.logger(), pumlFile, imageFiles), config.indentation());
+        return IndentingPrintWriter.wrap(PlantumlImageWriter.create(config, pumlFile, imageFiles), config.indentation());
     }
 
 }

@@ -17,6 +17,7 @@ package nl.talsmasoftware.umldoclet.rendering.plantuml;
 
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.logging.Message;
+import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,18 +39,22 @@ import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Sjoerd Talsma
  */
 public class PlantumlImageWriterTest {
     private static String exampleUml = "@startuml\nversion\n@enduml";
+    private Configuration mockConfig;
     private Logger mockLogger;
     private File tempdir;
 
     @Before
     public void setUp() {
+        mockConfig = mock(Configuration.class);
         mockLogger = mock(Logger.class);
+        when(mockConfig.logger()).thenReturn(mockLogger);
     }
 
     @Before
@@ -66,8 +71,9 @@ public class PlantumlImageWriterTest {
 
     @After
     public void verifyMocks() {
+        verify(mockConfig, atLeast(0)).logger();
         verify(mockLogger, atLeast(0)).debug(any(Message.class), any());
-        verifyNoMoreInteractions(mockLogger);
+        verifyNoMoreInteractions(mockConfig, mockLogger);
     }
 
 
@@ -75,7 +81,7 @@ public class PlantumlImageWriterTest {
     public void testSimpleDiagram() throws IOException {
         File puml = new File(tempdir, "version.puml");
         File svg = new File(tempdir, "version.svg");
-        try (PlantumlImageWriter writer = PlantumlImageWriter.create(mockLogger, puml, svg)) {
+        try (PlantumlImageWriter writer = PlantumlImageWriter.create(mockConfig, puml, svg)) {
             writer.write(exampleUml);
         }
         assertThat(read(puml), is(exampleUml));
@@ -90,7 +96,7 @@ public class PlantumlImageWriterTest {
         File svg = new File(tempdir, "version.svg");
         File png = new File(tempdir, "version.png");
 
-        try (PlantumlImageWriter writer = PlantumlImageWriter.create(mockLogger, puml, svg, png)) {
+        try (PlantumlImageWriter writer = PlantumlImageWriter.create(mockConfig, puml, svg, png)) {
             writer.write(exampleUml);
         }
         assertThat(read(puml), is(exampleUml));
@@ -110,7 +116,7 @@ public class PlantumlImageWriterTest {
         File puml = new File(tempdir, "version.puml");
         File unknown = new File(tempdir, "diagram.doc");
 
-        try (PlantumlImageWriter writer = PlantumlImageWriter.create(mockLogger, puml, unknown)) {
+        try (PlantumlImageWriter writer = PlantumlImageWriter.create(mockConfig, puml, unknown)) {
             writer.write(exampleUml);
             assertThat(writer, hasToString("PlantumlImageWriter[]"));
         }
@@ -122,7 +128,7 @@ public class PlantumlImageWriterTest {
     @Test
     public void testNoImages() throws IOException {
         File puml = new File(tempdir, "version.puml");
-        try (PlantumlImageWriter writer = PlantumlImageWriter.create(mockLogger, puml)) {
+        try (PlantumlImageWriter writer = PlantumlImageWriter.create(mockConfig, puml)) {
             writer.write(exampleUml);
             assertThat(writer, hasToString("PlantumlImageWriter[]"));
         }
@@ -131,13 +137,13 @@ public class PlantumlImageWriterTest {
 
     @Test(expected = IllegalStateException.class)
     public void testNoWriteablePlantumlFile() {
-        PlantumlImageWriter.create(mockLogger, tempdir);
+        PlantumlImageWriter.create(mockConfig, tempdir);
     }
 
     @Test
     public void testToString_unrecognizedFormat() throws IOException {
         File puml = new File(tempdir, "diagram.puml");
-        try (PlantumlImageWriter writer = PlantumlImageWriter.create(mockLogger, puml, new File(tempdir, "diagram.unrecognized"))) {
+        try (PlantumlImageWriter writer = PlantumlImageWriter.create(mockConfig, puml, new File(tempdir, "diagram.unrecognized"))) {
             assertThat(writer, hasToString("PlantumlImageWriter[]"));
             verify(mockLogger).warn(eq(WARNING_UNRECOGNIZED_IMAGE_FORMAT), eq("diagram.unrecognized"));
         }
@@ -148,7 +154,7 @@ public class PlantumlImageWriterTest {
         File puml = new File(tempdir, "diagram.puml");
         File svg = new File(tempdir, "diagram.svg");
 
-        try (PlantumlImageWriter writer = PlantumlImageWriter.create(mockLogger, puml, svg)) {
+        try (PlantumlImageWriter writer = PlantumlImageWriter.create(mockConfig, puml, svg)) {
             assertThat(writer, hasToString("PlantumlImageWriter[diagram.svg]"));
         }
         verify(mockLogger).info(eq(INFO_GENERATING_FILE), eq(svg.getPath()));
@@ -160,7 +166,7 @@ public class PlantumlImageWriterTest {
         File svg = new File(tempdir, "diagram.svg");
         File png = new File(tempdir, "diagram.png");
 
-        try (PlantumlImageWriter writer = PlantumlImageWriter.create(mockLogger, puml, png, svg)) {
+        try (PlantumlImageWriter writer = PlantumlImageWriter.create(mockConfig, puml, png, svg)) {
             assertThat(writer, hasToString("PlantumlImageWriter[diagram.png, diagram.svg]"));
         }
         verify(mockLogger).info(eq(INFO_GENERATING_FILE), eq(png.getPath()));
