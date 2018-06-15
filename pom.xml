@@ -269,6 +269,7 @@
                             <additionalOptions>
                                 <!--<additionalOption>-verbose</additionalOption>-->
                                 <!--<additionalOption>-quiet</additionalOption>-->
+                                <!--<aditionalOption>-umlImageDirectory images</aditionalOption>-->
                             </additionalOptions>
                         </configuration>
                     </execution>

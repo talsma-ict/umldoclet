@@ -21,6 +21,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static nl.talsmasoftware.umldoclet.logging.Message.DEBUG_POSTPROCESSING_FILE;
@@ -50,7 +51,8 @@ final class HtmlFile {
 
     boolean process(Collection<Diagram> diagrams) {
         return diagrams.stream()
-                .filter(diagram -> diagram.correspondsWith(path))
+                .map(diagram -> diagram.relativePathFrom(path))
+                .filter(Optional::isPresent).map(Optional::get)
                 .findFirst()
                 .map(this::process)
                 .orElseGet(this::skip);
@@ -61,10 +63,16 @@ final class HtmlFile {
         return true;
     }
 
-    private boolean process(Diagram diagram) {
-        logger.debug(DEBUG_POSTPROCESSING_FILE, path);
+    private boolean process(String relativeDiagramPath) {
+//        System.out.println("  Relative diagram path: " + relativeDiagramPath);
         // TODO actually postprocess the HTML
         return true;
+    }
+
+    private Stream<String> readHtml() {
+        logger.debug(DEBUG_POSTPROCESSING_FILE, path);
+        // TODO Get html encoding from config
+        return null;
     }
 
 }

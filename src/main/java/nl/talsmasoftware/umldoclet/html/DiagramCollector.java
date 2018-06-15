@@ -33,7 +33,7 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toList;
 
 /**
- * A {@code FileVisitor} that collects all generated diagram files.
+ * Collects all generated diagram files from the output directory.
  *
  * @author Sjoerd Talsma
  */

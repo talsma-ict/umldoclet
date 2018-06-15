@@ -57,6 +57,7 @@ public class PlantumlImageWriter extends StringBufferingWriter {
         requireNonNull(logger, "Logger is <null>.");
         requireNonNull(plantumlFile, "PlantUML file is <null>.");
         try {
+            // TODO Use umlEncoding
             return new PlantumlImageWriter(logger, new FileWriter(plantumlFile), Stream.of(imageFiles)
                     .map(file -> fileToImage(logger, file))
                     .filter(Optional::isPresent).map(Optional::get)

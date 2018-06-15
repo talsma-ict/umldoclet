@@ -168,7 +168,7 @@ public abstract class UMLDiagram extends UMLPart {
         return IndentingPrintWriter.wrap(PlantumlImageWriter.create(config.logger(), pumlFile, imageFiles), config.indentation());
     }
 
-    static String relativePath(File from, File to) {
+    public static String relativePath(File from, File to) {
         if (from == null || to == null) return null;
         try {
             if (from.isFile()) from = from.getParentFile();

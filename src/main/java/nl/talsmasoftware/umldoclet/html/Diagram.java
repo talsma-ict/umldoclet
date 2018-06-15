@@ -15,38 +15,51 @@
  */
 package nl.talsmasoftware.umldoclet.html;
 
+import nl.talsmasoftware.umldoclet.uml.UMLDiagram;
+
 import java.io.File;
 import java.nio.file.Path;
-
-import static java.util.Objects.requireNonNull;
+import java.util.Optional;
 
 /**
+ * Abstraction for a generated diagram file.
+ * <p>
+ * This class determines the relative path to the diagram from a corresponding HTML file.
+ *
  * @author Sjoerd Talsma
  */
 final class Diagram {
 
-    private final Path basedir, path;
+    private final File basedir, diagramFile;
     private final String extension, pathString, fileAsPathString;
 
     Diagram(Path basedir, Path path) {
-        this.basedir = requireNonNull(basedir, "Base directory is <null>.");
-        requireNonNull(path, "Diagram file is <null>.");
-        this.path = this.basedir.relativize(path);
-        String filename = this.path.getFileName().toString();
-        int dotIdx = filename.lastIndexOf('.');
-        this.extension = filename.substring(dotIdx);
-        this.pathString = path.toString();
-        this.fileAsPathString = filename.substring(0, dotIdx)
-                .replace('.', File.separatorChar) + extension;
+        basedir = basedir.normalize();
+        path = path.normalize();
+        this.basedir = basedir.toFile();
+        this.diagramFile = path.toFile();
+        String fileName = diagramFile.getName();
+        int dotIdx = fileName.lastIndexOf('.');
+        this.extension = fileName.substring(dotIdx);
+        this.pathString = UMLDiagram.relativePath(this.basedir, diagramFile);
+        if (fileName.indexOf('.') < dotIdx) {
+            this.fileAsPathString = fileName.substring(0, dotIdx).replace('.', File.separatorChar) + extension;
+        } else {
+            this.fileAsPathString = "";
+        }
     }
 
     private String html2extension(Object htmlFileName) {
         return htmlFileName.toString().replaceFirst("\\.html$", extension);
     }
 
-    boolean correspondsWith(Path htmlPath) {
-        htmlPath = basedir.relativize(htmlPath);
-        String html2extension = html2extension(htmlPath);
-        return pathString.equals(html2extension) || fileAsPathString.equals(html2extension);
+    Optional<String> relativePathFrom(Path htmlPath) {
+        File htmlFile = htmlPath.normalize().toFile();
+        String html2extension = html2extension(UMLDiagram.relativePath(basedir, htmlFile));
+        if (pathString.equals(html2extension) || fileAsPathString.equals(html2extension)) {
+            return Optional.of(UMLDiagram.relativePath(htmlFile, diagramFile));
+        }
+        return Optional.empty();
     }
+
 }
