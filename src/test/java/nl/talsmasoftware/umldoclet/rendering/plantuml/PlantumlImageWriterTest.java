@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 
 import static nl.talsmasoftware.umldoclet.logging.Message.INFO_GENERATING_FILE;
 import static nl.talsmasoftware.umldoclet.logging.Message.WARNING_UNRECOGNIZED_IMAGE_FORMAT;
-import static nl.talsmasoftware.umldoclet.testing.Testing.read;
+import static nl.talsmasoftware.umldoclet.util.Testing.read;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasToString;

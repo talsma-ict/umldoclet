@@ -16,8 +16,7 @@
 package nl.talsmasoftware.umldoclet.issues;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
-import nl.talsmasoftware.umldoclet.testing.PatternMatcher;
-import nl.talsmasoftware.umldoclet.testing.Testing;
+import nl.talsmasoftware.umldoclet.util.Testing;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

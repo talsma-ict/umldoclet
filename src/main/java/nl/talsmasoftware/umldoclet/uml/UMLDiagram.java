@@ -20,16 +20,14 @@ import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlImageWriter;
 import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.util.Files;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
-import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 import static nl.talsmasoftware.umldoclet.logging.Message.ERROR_COULDNT_RENDER_UML;
@@ -111,21 +109,6 @@ public abstract class UMLDiagram extends UMLPart {
         }
     }
 
-    /**
-     * Ensure that the parent directory exists for the specified file.
-     * <p>
-     * This will attempt to create the parent directory if it doensn't yet exist.
-     *
-     * @param file The file verify directory existence for.
-     * @return The specified file.
-     */
-    protected static File ensureParentDir(File file) {
-        if (file != null && !file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
-            throw new IllegalStateException("Can't create directory \"" + file.getParent() + "\".");
-        }
-        return file;
-    }
-
     private Optional<File> configuredImageDirectory() {
         return config.images().directory().map(imageDir -> {
             final String baseDir = config.destinationDirectory();
@@ -147,7 +130,7 @@ public abstract class UMLDiagram extends UMLPart {
         int dotIdx = baseName.indexOf('.');
         if (dotIdx > 0) baseName = baseName.substring(0, dotIdx);
         if (configuredImageDirectory().isPresent()) {
-            String relativeDir = relativePath(new File(config.destinationDirectory()), file.getParentFile());
+            String relativeDir = Files.relativePath(new File(config.destinationDirectory()), file.getParentFile());
             if (!relativeDir.isEmpty()) baseName = relativeDir.replace('/', '.') + '.' + baseName;
         }
         return baseName;
@@ -157,8 +140,8 @@ public abstract class UMLDiagram extends UMLPart {
         final File imageDir = configuredImageDirectory().orElseGet(pumlFile::getParentFile);
         final String baseName = imageBasename(pumlFile);
 
-        ensureParentDir(pumlFile);
-        ensureParentDir(new File(imageDir, baseName));
+        Files.ensureParentDir(pumlFile);
+        Files.ensureParentDir(new File(imageDir, baseName));
 
         File[] imageFiles = config.images().formats().stream()
                 .map(String::toLowerCase)
@@ -166,32 +149,6 @@ public abstract class UMLDiagram extends UMLPart {
                 .toArray(File[]::new);
 
         return IndentingPrintWriter.wrap(PlantumlImageWriter.create(config.logger(), pumlFile, imageFiles), config.indentation());
-    }
-
-    public static String relativePath(File from, File to) {
-        if (from == null || to == null) return null;
-        try {
-            if (from.isFile()) from = from.getParentFile();
-            if (!from.isDirectory()) throw new IllegalArgumentException("Not a directory: " + from);
-
-            final String[] fromParts = from.getCanonicalPath().split(Pattern.quote(File.separator));
-            List<String> toParts = new ArrayList<>(asList(to.getCanonicalPath().split(Pattern.quote(File.separator))));
-
-            int skip = 0; // Skip the common base path
-            while (skip < fromParts.length && skip < toParts.size() && fromParts[skip].equals(toParts.get(skip))) {
-                skip++;
-            }
-            if (skip > 0) toParts = toParts.subList(skip, toParts.size());
-
-            // Replace each remaining directory in 'from' by a preceding "../"
-            for (int i = fromParts.length; i > skip; i--) toParts.add(0, "..");
-
-            // Return the resulting path, joined by seprators.
-            return toParts.stream().collect(joining("/"));
-        } catch (IOException ioe) {
-            throw new IllegalStateException("I/O exception calculating relative path from \""
-                    + from + "\" to \"" + to + "\": " + ioe.getMessage(), ioe);
-        }
     }
 
 }

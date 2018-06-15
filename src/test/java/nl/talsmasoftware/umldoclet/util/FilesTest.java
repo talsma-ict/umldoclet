@@ -13,19 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.uml;
+package nl.talsmasoftware.umldoclet.util;
 
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 
-import static nl.talsmasoftware.umldoclet.uml.UMLDiagram.relativePath;
+import static nl.talsmasoftware.umldoclet.util.Files.relativePath;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
-public class UMLDiagramTest {
+public class FilesTest {
+
+    @Test
+    public void testUnsupportedConstructor() {
+        Testing.assertUnsupportedConstructor(Files.class);
+    }
 
     @Test
     public void testRelativePath() throws IOException {

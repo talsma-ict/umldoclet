@@ -15,7 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.testing.annotations;
 
-import nl.talsmasoftware.umldoclet.testing.Testing;
+import nl.talsmasoftware.umldoclet.util.Testing;
 import org.junit.Ignore;
 import org.junit.Test;
 

@@ -21,7 +21,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import static nl.talsmasoftware.umldoclet.testing.Testing.NEWLINE;
+import static nl.talsmasoftware.umldoclet.util.Testing.NEWLINE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;

@@ -16,6 +16,7 @@
 package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.util.Files;
 
 import java.io.File;
 
@@ -41,7 +42,7 @@ public class PackageDiagram extends UMLDiagram {
             if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');
             result.append(packageName.replace('.', '/'));
             result.append("/package.puml");
-            pumlFile = ensureParentDir(new File(result.toString()));
+            pumlFile = Files.ensureParentDir(new File(result.toString()));
         }
         return pumlFile;
     }

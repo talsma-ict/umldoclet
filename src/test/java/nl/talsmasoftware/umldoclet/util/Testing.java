@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.testing;
+package nl.talsmasoftware.umldoclet.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,11 +24,23 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
+import static java.lang.reflect.Modifier.FINAL;
+import static java.lang.reflect.Modifier.PRIVATE;
+import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.fail;
 
 /**
- * Created by sjoerd on 02-03-16.
+ * @author Sjoerd Talsma
  */
-public class Testing {
+public final class Testing {
 
     /**
      * Determine the newline for this OS.
@@ -41,6 +53,22 @@ public class Testing {
         NEWLINE = writer.toString();
     }
 
+    public static void assertUnsupportedConstructor(Class<?> utilityClass) {
+        assertThat("Class is final", utilityClass.getModifiers() & FINAL, is(FINAL));
+        assertThat("Constructors", asList(utilityClass.getDeclaredConstructors()), hasSize(1));
+        Constructor<?> constructor = utilityClass.getDeclaredConstructors()[0];
+        assertThat("Constructor parameters", asList(constructor.getParameterTypes()), is(empty()));
+        assertThat("Constructor is private", constructor.getModifiers() & PRIVATE, is(PRIVATE));
+        constructor.setAccessible(true);
+        try {
+            constructor.newInstance();
+            fail("Exception expected");
+        } catch (InvocationTargetException expected) {
+            assertThat("Expected cause", expected.getCause(), is(instanceOf(UnsupportedOperationException.class)));
+        } catch (ReflectiveOperationException roe) {
+            throw new AssertionError(roe.getMessage(), roe);
+        }
+    }
 
     /**
      * Reads a file with a relative path from the test-content "umldoclet" path.
