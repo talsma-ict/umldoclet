@@ -15,15 +15,16 @@
  */
 package nl.talsmasoftware.umldoclet.rendering.plantuml;
 
+import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.logging.Message;
-import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.stream.Stream;
 
 import static nl.talsmasoftware.umldoclet.logging.Message.INFO_GENERATING_FILE;
@@ -55,6 +56,7 @@ public class PlantumlImageWriterTest {
         mockConfig = mock(Configuration.class);
         mockLogger = mock(Logger.class);
         when(mockConfig.logger()).thenReturn(mockLogger);
+        when(mockConfig.umlCharset()).thenReturn(Charset.forName("UTF-8"));
     }
 
     @Before
@@ -72,6 +74,7 @@ public class PlantumlImageWriterTest {
     @After
     public void verifyMocks() {
         verify(mockConfig, atLeast(0)).logger();
+        verify(mockConfig, atLeast(0)).umlCharset();
         verify(mockLogger, atLeast(0)).debug(any(Message.class), any());
         verifyNoMoreInteractions(mockConfig, mockLogger);
     }

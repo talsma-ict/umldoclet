@@ -16,14 +16,16 @@
 package nl.talsmasoftware.umldoclet.rendering.plantuml;
 
 import net.sourceforge.plantuml.SourceStringReader;
+import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.rendering.writers.StringBufferingWriter;
-import nl.talsmasoftware.umldoclet.configuration.Configuration;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -58,8 +60,9 @@ public class PlantumlImageWriter extends StringBufferingWriter {
         requireNonNull(config, "Configuration is <null>.");
         requireNonNull(plantumlFile, "PlantUML file is <null>.");
         try {
-            // TODO Use umlEncoding
-            return new PlantumlImageWriter(config, new FileWriter(plantumlFile), Stream.of(imageFiles)
+            Charset umlCharset = config.umlCharset();
+            OutputStreamWriter plantumlWriter = new OutputStreamWriter(new FileOutputStream(plantumlFile), umlCharset);
+            return new PlantumlImageWriter(config, plantumlWriter, Stream.of(imageFiles)
                     .map(file -> fileToImage(config.logger(), file))
                     .filter(Optional::isPresent).map(Optional::get)
                     .collect(Collectors.toList()));
