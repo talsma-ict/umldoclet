@@ -17,7 +17,7 @@ package nl.talsmasoftware.umldoclet.javadoc;
 
 import jdk.javadoc.doclet.DocletEnvironment;
 import nl.talsmasoftware.umldoclet.uml.*;
-import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.configuration.Configuration;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;

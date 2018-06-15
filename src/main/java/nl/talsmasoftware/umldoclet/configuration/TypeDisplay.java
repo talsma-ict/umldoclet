@@ -13,25 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.uml.configuration;
-
-import nl.talsmasoftware.umldoclet.uml.Visibility;
+package nl.talsmasoftware.umldoclet.configuration;
 
 /**
- * The configuration settings that determine how methods must be rendered.
+ * The ways in which a type can be rendered in the resulting UML.
  *
  * @author Sjoerd Talsma
  */
-public interface MethodConfig {
-    enum ParamNames {
-        NONE, BEFORE_TYPE, AFTER_TYPE
-    }
-
-    ParamNames paramNames();
-
-    TypeDisplay paramTypes();
-
-    TypeDisplay returnType();
-
-    boolean include(Visibility methodVisibility);
+public enum TypeDisplay {
+    NONE,
+    SIMPLE,
+    QUALIFIED,
+    QUALIFIED_GENERICS
 }

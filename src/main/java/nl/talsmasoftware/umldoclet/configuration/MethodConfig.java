@@ -13,26 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.uml.configuration;
+package nl.talsmasoftware.umldoclet.configuration;
 
-import java.util.Collection;
-import java.util.Optional;
+import nl.talsmasoftware.umldoclet.uml.Visibility;
 
 /**
- * Configuration relating to the images that are generated.
+ * The configuration settings that determine how methods must be rendered.
  *
  * @author Sjoerd Talsma
  */
-public interface ImageConfig {
+public interface MethodConfig {
+    enum ParamNames {
+        NONE, BEFORE_TYPE, AFTER_TYPE
+    }
 
-    /**
-     * @return The image directory for the UML diagrams, if explicitly specified.
-     */
-    Optional<String> directory();
+    ParamNames paramNames();
 
-    /**
-     * @return The image formats that are generated.
-     */
-    Collection<String> formats();
+    TypeDisplay paramTypes();
 
+    TypeDisplay returnType();
+
+    boolean include(Visibility methodVisibility);
 }

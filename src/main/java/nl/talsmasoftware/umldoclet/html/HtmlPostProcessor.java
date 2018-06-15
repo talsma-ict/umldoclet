@@ -15,7 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.html;
 
-import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.configuration.Configuration;
 
 import java.io.File;
 import java.io.IOException;

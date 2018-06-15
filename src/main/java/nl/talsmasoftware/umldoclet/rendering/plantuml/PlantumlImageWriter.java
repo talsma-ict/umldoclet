@@ -18,7 +18,7 @@ package nl.talsmasoftware.umldoclet.rendering.plantuml;
 import net.sourceforge.plantuml.SourceStringReader;
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.rendering.writers.StringBufferingWriter;
-import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.configuration.Configuration;
 
 import java.io.File;
 import java.io.FileWriter;

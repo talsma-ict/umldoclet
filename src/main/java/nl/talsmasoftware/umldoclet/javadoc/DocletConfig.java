@@ -21,11 +21,11 @@ import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 import nl.talsmasoftware.umldoclet.uml.Visibility;
-import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.uml.configuration.FieldConfig;
-import nl.talsmasoftware.umldoclet.uml.configuration.ImageConfig;
-import nl.talsmasoftware.umldoclet.uml.configuration.MethodConfig;
-import nl.talsmasoftware.umldoclet.uml.configuration.TypeDisplay;
+import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.configuration.FieldConfig;
+import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
+import nl.talsmasoftware.umldoclet.configuration.MethodConfig;
+import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;

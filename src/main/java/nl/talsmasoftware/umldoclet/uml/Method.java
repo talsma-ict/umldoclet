@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
-import nl.talsmasoftware.umldoclet.uml.configuration.TypeDisplay;
+import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
 
 import java.util.Objects;
 

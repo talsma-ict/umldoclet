@@ -17,7 +17,7 @@ package nl.talsmasoftware.umldoclet.rendering.plantuml;
 
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.logging.Message;
-import nl.talsmasoftware.umldoclet.uml.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

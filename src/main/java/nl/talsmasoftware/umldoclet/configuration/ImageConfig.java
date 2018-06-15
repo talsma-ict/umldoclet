@@ -13,16 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.uml.configuration;
+package nl.talsmasoftware.umldoclet.configuration;
+
+import java.util.Collection;
+import java.util.Optional;
 
 /**
- * The ways in which a type can be rendered in the resulting UML.
+ * Configuration relating to the images that are generated.
  *
  * @author Sjoerd Talsma
  */
-public enum TypeDisplay {
-    NONE,
-    SIMPLE,
-    QUALIFIED,
-    QUALIFIED_GENERICS
+public interface ImageConfig {
+
+    /**
+     * @return The image directory for the UML diagrams, if explicitly specified.
+     */
+    Optional<String> directory();
+
+    /**
+     * @return The image formats that are generated.
+     */
+    Collection<String> formats();
+
 }
