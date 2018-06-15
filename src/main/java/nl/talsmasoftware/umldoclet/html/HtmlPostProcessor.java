@@ -43,7 +43,7 @@ public class HtmlPostProcessor {
 
         return Files.walk(dir)
                 .filter(HtmlFile::matches)
-                .map(path -> new HtmlFile(config.logger(), path))
+                .map(path -> new HtmlFile(config, path))
                 .map(htmlFile -> htmlFile.process(diagrams))
                 .reduce((a, b) -> a & b).orElse(true);
     }

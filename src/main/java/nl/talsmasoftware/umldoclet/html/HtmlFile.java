@@ -15,9 +15,11 @@
  */
 package nl.talsmasoftware.umldoclet.html;
 
-import nl.talsmasoftware.umldoclet.logging.Logger;
+import nl.talsmasoftware.umldoclet.configuration.Configuration;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Optional;
@@ -34,11 +36,11 @@ import static nl.talsmasoftware.umldoclet.logging.Message.DEBUG_SKIPPING_FILE;
  */
 final class HtmlFile {
 
-    private final Logger logger;
+    private final Configuration config;
     private final Path path;
 
-    HtmlFile(Logger logger, Path path) {
-        this.logger = requireNonNull(logger, "Logger is <null>.");
+    HtmlFile(Configuration config, Path path) {
+        this.config = requireNonNull(config, "Configuration is <null>.");
         this.path = requireNonNull(path, "HTML file is <null>.");
     }
 
@@ -59,20 +61,23 @@ final class HtmlFile {
     }
 
     private boolean skip() {
-        logger.debug(DEBUG_SKIPPING_FILE, path);
+        config.logger().debug(DEBUG_SKIPPING_FILE, path);
         return true;
     }
 
     private boolean process(String relativeDiagramPath) {
-//        System.out.println("  Relative diagram path: " + relativeDiagramPath);
-        // TODO actually postprocess the HTML
-        return true;
+        try {
+            // TODO actually postprocess the HTML
+            Stream<String> lines = readHtml();
+            return true;
+        } catch (IOException ioe) {
+            throw new IllegalStateException("I/O error processing " + path + ": " + ioe.getMessage(), ioe);
+        }
     }
 
-    private Stream<String> readHtml() {
-        logger.debug(DEBUG_POSTPROCESSING_FILE, path);
-        // TODO Get html encoding from config
-        return null;
+    private Stream<String> readHtml() throws IOException {
+        config.logger().debug(DEBUG_POSTPROCESSING_FILE, path);
+        return Files.lines(path, config.htmlCharset());
     }
 
 }
