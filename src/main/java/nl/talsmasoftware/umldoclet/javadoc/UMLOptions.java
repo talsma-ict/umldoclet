@@ -60,11 +60,14 @@ final class UMLOptions {
             // Options from Standard doclet that we also support
             add(new Option("-quiet", 0, Kind.OTHER, (args) -> config.quiet = true));
             add(new Option("-verbose", 0, Kind.OTHER, (args) -> config.verbose = true));
+            add(new Option("-docencoding", 1, Kind.OTHER, (args) -> config.docencoding = args.get(0)));
+            add(new Option("-encoding", 1, Kind.OTHER, (args) -> config.encoding = args.get(0)));
 
             // Our own options
             add(new Option("-d", 1, Kind.STANDARD, (args) -> config.destDirName = args.get(0)));
             add(new Option("-umlImageDirectory", 1, Kind.STANDARD, (args) -> config.images.directory = args.get(0)));
             add(new Option("-umlImageFormat", 1, Kind.STANDARD, (args) -> config.images.addImageFormat(args.get(0))));
+            add(new Option("-umlEncoding", 1, Kind.STANDARD, (args) -> config.umlencoding = args.get(0)));
         }};
     }
 
@@ -76,6 +79,7 @@ final class UMLOptions {
     }
 
     private class Option implements Doclet.Option {
+        private static final String MISSING_KEY = "<MISSING KEY>";
         private final Consumer<List<String>> processor;
         private final String[] names;
         private final String parameters;
@@ -97,14 +101,14 @@ final class UMLOptions {
                 String resourceKey = "doclet.usage." + key.toLowerCase().replaceFirst("^-+", "");
                 return ResourceBundle.getBundle(UMLDoclet.class.getName()).getString(resourceKey);
             } catch (MissingResourceException mre) {
-                return "";
+                return MISSING_KEY;
             }
         }
 
         @Override
         public String getDescription() {
             return findDelegate().map(Doclet.Option::getDescription)
-                    .filter(s -> !s.isEmpty() && !"<MISSING KEY>".equals(s))
+                    .filter(s -> !s.isEmpty() && !MISSING_KEY.equals(s))
                     .orElse(description);
         }
 

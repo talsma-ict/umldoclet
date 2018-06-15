@@ -18,6 +18,7 @@ package nl.talsmasoftware.umldoclet.uml.configuration;
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 
+import java.nio.charset.Charset;
 import java.util.List;
 
 /**
@@ -58,5 +59,15 @@ public interface Configuration {
      * @return The types (classes, interfaces) that are excluded as references.
      */
     List<String> excludedTypeReferences();
+
+    /**
+     * @return The charset to use for PlantUML files
+     */
+    Charset umlCharset();
+
+    /**
+     * @return The charset used for Javadoc HTML files
+     */
+    Charset htmlCharset();
 
 }

@@ -27,6 +27,7 @@ import nl.talsmasoftware.umldoclet.uml.configuration.ImageConfig;
 import nl.talsmasoftware.umldoclet.uml.configuration.MethodConfig;
 import nl.talsmasoftware.umldoclet.uml.configuration.TypeDisplay;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -67,6 +68,27 @@ public class DocletConfig implements Configuration {
      * Set by (our own) doclet option {@code -verbose}, default is {@code false}.
      */
     boolean verbose = false;
+
+    /**
+     * Option to provide explicit encoding for the written PlantUML files.
+     * <p>
+     * Otherwise, the {@link #htmlCharset()} is used.
+     */
+    String umlencoding;
+
+    /**
+     * Option for Standard doclet's HTML encoding.
+     * <p>
+     * This takes precedence over the {@code -encoding} setting which is about the source files.
+     */
+    String docencoding;
+
+    /**
+     * Option for Standard doclet's source encoding.
+     * <p>
+     * This is here because the Standard doclet uses this for HTML output if no {@code -docencoding} is specified.
+     */
+    String encoding;
 
     final ImageCfg images = new ImageCfg();
     final FieldCfg fieldConfig = new FieldCfg();
@@ -125,6 +147,19 @@ public class DocletConfig implements Configuration {
     @Override
     public List<String> excludedTypeReferences() {
         return excludedReferences;
+    }
+
+    @Override
+    public Charset umlCharset() {
+        return umlencoding != null ? Charset.forName(umlencoding)
+                : htmlCharset();
+    }
+
+    @Override
+    public Charset htmlCharset() {
+        return docencoding != null ? Charset.forName(docencoding)
+                : encoding != null ? Charset.forName(encoding)
+                : Charset.defaultCharset();
     }
 
     static final class ImageCfg implements ImageConfig {
