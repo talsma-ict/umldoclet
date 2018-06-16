@@ -67,8 +67,8 @@ final class HtmlFile {
 
     private boolean process(String relativeDiagramPath) {
         try {
-            // TODO actually postprocess the HTML
             Stream<String> lines = readHtml();
+            // TODO Stream to a new file and change <hr> to <hr>\n<img...>
             return true;
         } catch (IOException ioe) {
             throw new IllegalStateException("I/O error processing " + path + ": " + ioe.getMessage(), ioe);
