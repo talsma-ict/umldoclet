@@ -20,7 +20,7 @@ import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlImageWriter;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.util.Files;
+import nl.talsmasoftware.umldoclet.util.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -129,7 +129,7 @@ public abstract class UMLDiagram extends UMLPart {
         int dotIdx = baseName.indexOf('.');
         if (dotIdx > 0) baseName = baseName.substring(0, dotIdx);
         if (configuredImageDirectory().isPresent()) {
-            String relativeDir = Files.relativePath(new File(config.destinationDirectory()), file.getParentFile());
+            String relativeDir = FileUtils.relativePath(new File(config.destinationDirectory()), file.getParentFile());
             if (!relativeDir.isEmpty()) baseName = relativeDir.replace('/', '.') + '.' + baseName;
         }
         return baseName;
@@ -139,8 +139,8 @@ public abstract class UMLDiagram extends UMLPart {
         final File imageDir = configuredImageDirectory().orElseGet(pumlFile::getParentFile);
         final String baseName = imageBasename(pumlFile);
 
-        Files.ensureParentDir(pumlFile);
-        Files.ensureParentDir(new File(imageDir, baseName));
+        FileUtils.ensureParentDir(pumlFile);
+        FileUtils.ensureParentDir(new File(imageDir, baseName));
 
         File[] imageFiles = config.images().formats().stream()
                 .map(String::toLowerCase)

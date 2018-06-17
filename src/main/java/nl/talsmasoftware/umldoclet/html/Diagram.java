@@ -15,7 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.html;
 
-import nl.talsmasoftware.umldoclet.util.Files;
+import nl.talsmasoftware.umldoclet.util.FileUtils;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -41,7 +41,7 @@ final class Diagram {
         String fileName = diagramFile.getName();
         int dotIdx = fileName.lastIndexOf('.');
         this.extension = fileName.substring(dotIdx);
-        this.pathString = Files.relativePath(this.basedir, diagramFile);
+        this.pathString = FileUtils.relativePath(this.basedir, diagramFile);
         if (fileName.indexOf('.') < dotIdx) {
             this.fileAsPathString = fileName.substring(0, dotIdx).replace('.', File.separatorChar) + extension;
         } else {
@@ -55,9 +55,9 @@ final class Diagram {
 
     Optional<String> relativePathFrom(Path htmlPath) {
         File htmlFile = htmlPath.normalize().toFile();
-        String html2extension = html2extension(Files.relativePath(basedir, htmlFile));
+        String html2extension = html2extension(FileUtils.relativePath(basedir, htmlFile));
         if (pathString.equals(html2extension) || fileAsPathString.equals(html2extension)) {
-            return Optional.of(Files.relativePath(htmlFile, diagramFile));
+            return Optional.of(FileUtils.relativePath(htmlFile, diagramFile));
         }
         return Optional.empty();
     }

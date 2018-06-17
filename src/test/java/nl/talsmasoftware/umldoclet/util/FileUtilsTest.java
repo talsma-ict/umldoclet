@@ -20,16 +20,16 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 
-import static nl.talsmasoftware.umldoclet.util.Files.relativePath;
+import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
-public class FilesTest {
+public class FileUtilsTest {
 
     @Test
     public void testUnsupportedConstructor() {
-        Testing.assertUnsupportedConstructor(Files.class);
+        Testing.assertUnsupportedConstructor(FileUtils.class);
     }
 
     @Test

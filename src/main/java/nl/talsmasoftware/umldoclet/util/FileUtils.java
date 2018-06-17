@@ -29,9 +29,9 @@ import static java.util.stream.Collectors.joining;
  *
  * @author Sjoerd Talsma
  */
-public final class Files {
+public final class FileUtils {
 
-    private Files() {
+    private FileUtils() {
         throw new UnsupportedOperationException();
     }
 
@@ -83,4 +83,16 @@ public final class Files {
         }
         return file;
     }
+
+    /**
+     * Shortcut implementation that determines the substring after the last Windows or *nix
+     * path separator.
+     *
+     * @param path The path to return filename of.
+     * @return The part of the specified part after the last slash or backslash.
+     */
+    public static String fileNameOf(String path) {
+        return path.substring(Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\')) + 1);
+    }
+
 }
