@@ -16,6 +16,7 @@
 package nl.talsmasoftware.umldoclet.html;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,12 +27,13 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Collections.unmodifiableCollection;
 import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toList;
-import static nl.talsmasoftware.umldoclet.util.FileUtils.hasExtension;
 
 /**
  * Collects all generated diagram files from the output directory.
@@ -41,8 +43,7 @@ import static nl.talsmasoftware.umldoclet.util.FileUtils.hasExtension;
 final class DiagramCollector extends SimpleFileVisitor<Path> {
     private final Path basedir;
     private final Optional<Path> imagesDirectory;
-    private final Collection<String> diagramExtensions;
-    // TODO: Make collection ordered by diagram type corresponding to order in 'diagramExtensions'
+    private final List<String> diagramExtensions;
     private final ThreadLocal<Collection<UmlDiagram>> collected = ThreadLocal.withInitial(ArrayList::new);
 
     DiagramCollector(Configuration config) {
@@ -63,6 +64,7 @@ final class DiagramCollector extends SimpleFileVisitor<Path> {
      * @throws IOException In case there were I/O errors walking the path
      */
     Collection<UmlDiagram> collectDiagrams() throws IOException {
+        if (diagramExtensions.isEmpty()) return Collections.emptySet();
         try {
             Files.walkFileTree(imagesDirectory.orElse(basedir), this);
             return unmodifiableCollection(collected.get());
@@ -73,22 +75,17 @@ final class DiagramCollector extends SimpleFileVisitor<Path> {
 
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-        if (attrs.isRegularFile() && matchesDiagramExtension(file)) {
+        if (attrs.isRegularFile() && FileUtils.hasExtension(file, diagramExtensions.get(0))) {
             createDiagramInstance(file).ifPresent(collected.get()::add);
         }
         return super.visitFile(file, attrs);
     }
 
-    private boolean matchesDiagramExtension(Path path) {
-        return diagramExtensions.stream().anyMatch(extension -> hasExtension(path, extension));
-    }
-
     private Optional<UmlDiagram> createDiagramInstance(Path diagramFile) {
-        // TODO distinguish between Class and Package Diagrams, either with image directory or without.
         if (diagramFile.getFileName().toString().startsWith("package.")) {
             return Optional.empty(); // TODO implement package diagram HTML inclusion
         }
-        return Optional.of(new UmlClassDiagram(basedir, diagramFile));
+        return Optional.of(new UmlClassDiagram(basedir, imagesDirectory, diagramFile));
     }
 
 }

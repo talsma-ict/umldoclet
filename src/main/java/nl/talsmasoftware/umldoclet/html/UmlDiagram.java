@@ -15,7 +15,6 @@
  */
 package nl.talsmasoftware.umldoclet.html;
 
-import java.nio.file.Path;
 import java.util.Optional;
 
 /**
@@ -23,7 +22,13 @@ import java.util.Optional;
  */
 abstract class UmlDiagram {
 
-    Optional<String> matchRelativePathFromHtmlFile(Path htmlPath) {
+    /**
+     * Creates a postprocessor <strong>if</strong> this diagram corresponds to the HTML file.
+     *
+     * @param htmlFile
+     * @return
+     */
+    Optional<Postprocessor> createPostprocessor(HtmlFile htmlFile) {
         return Optional.empty();
     }
 

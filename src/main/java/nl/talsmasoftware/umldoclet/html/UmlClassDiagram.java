@@ -30,13 +30,14 @@ import java.util.Optional;
  */
 final class UmlClassDiagram extends UmlDiagram {
 
-    private final File basedir, diagramFile;
+    private final File basedir, imagesDirectory, diagramFile;
     private final String extension, pathString, fileAsPathString;
 
-    UmlClassDiagram(Path basedir, Path path) {
+    UmlClassDiagram(Path basedir, Optional<Path> imagesDirectory, Path path) {
         basedir = basedir.normalize();
         path = path.normalize();
         this.basedir = basedir.toFile();
+        this.imagesDirectory = imagesDirectory.map(Path::toFile).orElse(null);
         this.diagramFile = path.toFile();
         String fileName = diagramFile.getName();
         int dotIdx = fileName.lastIndexOf('.');
@@ -49,7 +50,7 @@ final class UmlClassDiagram extends UmlDiagram {
         }
     }
 
-    private String html2extension(Object htmlFileName) {
+    private String changeHtmlFileNameExtension(Object htmlFileName) {
         return htmlFileName.toString().replaceFirst("\\.html$", extension);
     }
 
@@ -60,8 +61,8 @@ final class UmlClassDiagram extends UmlDiagram {
      */
     Optional<String> matchRelativePathFromHtmlFile(Path htmlPath) {
         File htmlFile = htmlPath.normalize().toFile();
-        String html2extension = html2extension(FileUtils.relativePath(basedir, htmlFile));
-        if (pathString.equals(html2extension) || fileAsPathString.equals(html2extension)) {
+        String relativeDiagramPath = changeHtmlFileNameExtension(FileUtils.relativePath(basedir, htmlFile));
+        if (pathString.equals(relativeDiagramPath) || fileAsPathString.equals(relativeDiagramPath)) {
             return Optional.of(FileUtils.relativePath(htmlFile, diagramFile));
         }
         return Optional.empty();

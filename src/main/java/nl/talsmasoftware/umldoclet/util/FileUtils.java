@@ -96,7 +96,8 @@ public final class FileUtils {
     }
 
     public static boolean hasExtension(Object file, String extension) {
+        if (file == null || extension == null) return false;
         if (!extension.startsWith(".")) extension = '.' + extension;
-        return file != null && file.toString().toLowerCase().endsWith(extension.toLowerCase());
+        return file.toString().toLowerCase().endsWith(extension.toLowerCase());
     }
 }
