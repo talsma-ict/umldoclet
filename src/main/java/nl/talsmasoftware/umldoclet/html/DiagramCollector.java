@@ -26,21 +26,24 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.function.Predicate;
+import java.util.Optional;
 
 import static java.util.Collections.unmodifiableCollection;
 import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toList;
+import static nl.talsmasoftware.umldoclet.util.FileUtils.hasExtension;
 
 /**
  * Collects all generated diagram files from the output directory.
  *
  * @author Sjoerd Talsma
  */
-final class DiagramCollector implements Predicate<Path> {
+final class DiagramCollector extends SimpleFileVisitor<Path> {
     private final Path basedir;
+    private final Optional<Path> imagesDirectory;
     private final Collection<String> diagramExtensions;
-    private final Collection<Diagram> collected = new ArrayList<>();
+    // TODO: Make collection ordered by diagram type corresponding to order in 'diagramExtensions'
+    private final ThreadLocal<Collection<UmlDiagram>> collected = ThreadLocal.withInitial(ArrayList::new);
 
     DiagramCollector(Configuration config) {
         this.basedir = new File(config.destinationDirectory()).toPath();
@@ -48,28 +51,44 @@ final class DiagramCollector implements Predicate<Path> {
                 .map(String::toLowerCase)
                 .map(format -> format.startsWith(".") ? format : "." + format)
                 .collect(toList()));
+        this.imagesDirectory = config.images().directory()
+                .map(imagesDir -> new File(config.destinationDirectory(), imagesDir))
+                .map(File::toPath);
     }
 
     /**
      * Collects all generated diagram files by walking the specified path.
      *
-     * @param path The path to collect generated diagrams from
      * @return The collected diagrams
      * @throws IOException In case there were I/O errors walking the path
      */
-    Collection<Diagram> collect(Path path) throws IOException {
-        Files.walkFileTree(path, new SimpleFileVisitor<>() {
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                if (attrs.isRegularFile() && test(file)) collected.add(new Diagram(basedir, file));
-                return super.visitFile(file, attrs);
-            }
-        });
-        return unmodifiableCollection(collected);
+    Collection<UmlDiagram> collectDiagrams() throws IOException {
+        try {
+            Files.walkFileTree(imagesDirectory.orElse(basedir), this);
+            return unmodifiableCollection(collected.get());
+        } finally {
+            collected.remove();
+        }
     }
 
     @Override
-    public boolean test(Path path) {
-        return diagramExtensions.stream().anyMatch(extension -> path.toString().toLowerCase().endsWith(extension));
+    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+        if (attrs.isRegularFile() && matchesDiagramExtension(file)) {
+            createDiagramInstance(file).ifPresent(collected.get()::add);
+        }
+        return super.visitFile(file, attrs);
     }
+
+    private boolean matchesDiagramExtension(Path path) {
+        return diagramExtensions.stream().anyMatch(extension -> hasExtension(path, extension));
+    }
+
+    private Optional<UmlDiagram> createDiagramInstance(Path diagramFile) {
+        // TODO distinguish between Class and Package Diagrams, either with image directory or without.
+        if (diagramFile.getFileName().toString().startsWith("package.")) {
+            return Optional.empty(); // TODO implement package diagram HTML inclusion
+        }
+        return Optional.of(new UmlClassDiagram(basedir, diagramFile));
+    }
+
 }

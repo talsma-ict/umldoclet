@@ -95,4 +95,8 @@ public final class FileUtils {
         return path.substring(Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\')) + 1);
     }
 
+    public static boolean hasExtension(Object file, String extension) {
+        if (!extension.startsWith(".")) extension = '.' + extension;
+        return file != null && file.toString().toLowerCase().endsWith(extension.toLowerCase());
+    }
 }

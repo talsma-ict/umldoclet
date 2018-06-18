@@ -28,12 +28,12 @@ import java.util.Optional;
  *
  * @author Sjoerd Talsma
  */
-final class Diagram {
+final class UmlClassDiagram extends UmlDiagram {
 
     private final File basedir, diagramFile;
     private final String extension, pathString, fileAsPathString;
 
-    Diagram(Path basedir, Path path) {
+    UmlClassDiagram(Path basedir, Path path) {
         basedir = basedir.normalize();
         path = path.normalize();
         this.basedir = basedir.toFile();
@@ -53,7 +53,12 @@ final class Diagram {
         return htmlFileName.toString().replaceFirst("\\.html$", extension);
     }
 
-    Optional<String> relativePathFrom(Path htmlPath) {
+    /**
+     * UML class diagrams are either named identical to the HTML documentation page for the class,
+     * or they are placed inside a specific UML images directory and the file name contains the package and
+     * class name. For easy comparison this is
+     */
+    Optional<String> matchRelativePathFromHtmlFile(Path htmlPath) {
         File htmlFile = htmlPath.normalize().toFile();
         String html2extension = html2extension(FileUtils.relativePath(basedir, htmlFile));
         if (pathString.equals(html2extension) || fileAsPathString.equals(html2extension)) {

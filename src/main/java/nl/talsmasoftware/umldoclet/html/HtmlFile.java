@@ -49,16 +49,16 @@ final class HtmlFile {
         this.path = requireNonNull(path, "HTML file is <null>.");
     }
 
-    static boolean matches(Path path) {
+    static boolean isHtmlFile(Path path) {
         return Optional.ofNullable(path).map(Path::toFile)
                 .filter(File::isFile).filter(File::canRead)
                 .map(File::getName).filter(name -> name.endsWith(".html"))
                 .isPresent();
     }
 
-    boolean process(Collection<Diagram> diagrams) {
+    boolean process(Collection<UmlDiagram> diagrams) {
         return diagrams.stream()
-                .map(diagram -> diagram.relativePathFrom(path))
+                .map(diagram -> diagram.matchRelativePathFromHtmlFile(path))
                 .filter(Optional::isPresent).map(Optional::get)
                 .findFirst()
                 .map(this::process)
@@ -67,51 +67,62 @@ final class HtmlFile {
 
     private boolean skip() {
         config.logger().debug(DEBUG_SKIPPING_FILE, path);
-        return true;
+        return false;
     }
 
     private boolean process(String relativeDiagramPath) {
+        // TODO: Delegate to UmlDiagram and move implementation into separate class
+//        try {
+//            String diagramName = fileNameOf(relativeDiagramPath);
+//            AtomicBoolean containsDiagram = new AtomicBoolean(false);
+//            AtomicBoolean diagramInserted = new AtomicBoolean(false);
+//            Stream<String> lines = readHtml().peek(line -> {
+//                if (line.contains(diagramName)) containsDiagram.set(true);
+//            }).map(line -> {
+//                if (line.contains("<hr>") && diagramInserted.compareAndSet(false, true)) {
+//                    return line.replaceFirst("<hr>", "<hr>" + System.lineSeparator()
+//                            + "<img src=\"" + relativeDiagramPath + "\" alt=\"UML diagram\" style=\"float: right;\">");
+//                }
+//                return line;
+//            });
+//            Path newCopy = determineTemporaryOutputFile();
+//            try (BufferedWriter writer = newBufferedWriter(newCopy, config.htmlCharset())) {
+//                writer.write(lines.collect(joining(System.lineSeparator())));
+//            }
+//            if (!containsDiagram.get() && diagramInserted.get()) {
+//                File pathFile = path.toFile();
+//                File newCopyFile = newCopy.toFile();
+//                if (!pathFile.delete() || !newCopyFile.renameTo(pathFile)) {
+//                    throw new IllegalStateException("Could not replace original " + path + " by postprocessed " + newCopy.getFileName());
+//                }
+//                System.out.println("UmlClassDiagram " + relativeDiagramPath + " inserted into " + path);
+//            } else {
+//                if (!newCopy.toFile().delete()) {
+//                    throw new IllegalStateException("Could not delete unnecessary copy " + newCopy + ".");
+//                }
+//                System.out.println("UmlClassDiagram " + relativeDiagramPath + " wasn't inserted into " + path);
+//            }
+//
+//            return true;
+//        } catch (IOException ioe) {
+//            throw new IllegalStateException("I/O error processing " + path + ": " + ioe.getMessage(), ioe);
+//        }
 
-        try { // TODO Clean up this code!
-            String diagramName = fileNameOf(relativeDiagramPath);
-            AtomicBoolean containsDiagram = new AtomicBoolean(false);
-            AtomicBoolean diagramInserted = new AtomicBoolean(false);
-            Stream<String> lines = readHtml().peek(line -> {
-                if (line.contains(diagramName)) containsDiagram.set(true);
-            }).map(line -> {
-                if (line.contains("<hr>") && diagramInserted.compareAndSet(false, true)) {
-                    return line.replaceFirst("<hr>", "<hr>" + System.lineSeparator()
-                            + "<img src=\"" + relativeDiagramPath + "\" alt=\"UML diagram\" style=\"float: right;\">");
-                }
-                return line;
-            });
-            Path newCopy = determineTemporaryOutputFile();
-            try (BufferedWriter writer = newBufferedWriter(newCopy, config.htmlCharset())) {
-                writer.write(lines.collect(joining(System.lineSeparator())));
-            }
-            if (!containsDiagram.get() && diagramInserted.get()) {
-                Files.delete(path);
-                Files.move(newCopy, path);
-                System.out.println("Diagram " + relativeDiagramPath + " inserted into " + path);
-            } else {
-                Files.delete(newCopy);
-                System.out.println("Diagram " + relativeDiagramPath + " wasn't inserted into " + path);
-            }
+        return false;
 
-            return true;
-        } catch (IOException ioe) {
-            throw new IllegalStateException("I/O error processing " + path + ": " + ioe.getMessage(), ioe);
-        }
     }
 
     private Path determineTemporaryOutputFile() {
         File htmlFile = path.toFile();
-        return new File(htmlFile.getParent(), htmlFile.getName() + '_').toPath();
+        String newName = path.getFileName().toString();
+        int afterDot = newName.lastIndexOf('.') + 1;
+        newName = newName.substring(0, afterDot) + '_' + newName.substring(afterDot);
+        return new File(htmlFile.getParent(), newName).toPath();
     }
 
-    private Stream<String> readHtml() throws IOException {
-        config.logger().debug(DEBUG_POSTPROCESSING_FILE, path);
-        return Files.lines(path, config.htmlCharset());
-    }
+//    private Stream<String> readHtml() throws IOException {
+//        config.logger().debug(DEBUG_POSTPROCESSING_FILE, path);
+//        return Files.lines(path, config.htmlCharset());
+//    }
 
 }

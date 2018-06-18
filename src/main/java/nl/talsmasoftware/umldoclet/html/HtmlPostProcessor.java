@@ -38,25 +38,18 @@ public class HtmlPostProcessor {
     }
 
     public boolean postProcessHtml() throws IOException {
-        final Path dir = getDestinationPath();
-        final Collection<Diagram> diagrams = new DiagramCollector(config).collect(dir);
-
-        return Files.walk(dir)
-                .filter(HtmlFile::matches)
-                .map(path -> new HtmlFile(config, path))
-                .map(htmlFile -> htmlFile.process(diagrams))
-                .reduce((a, b) -> a & b).orElse(true);
-    }
-
-    /**
-     * @return The configured destination path.
-     */
-    private Path getDestinationPath() {
         final File destinationDir = new File(config.destinationDirectory());
         if (!destinationDir.isDirectory() || !destinationDir.canRead()) {
             throw new IllegalStateException("Cannot read from configured destination directory \"" + destinationDir + "\"!");
         }
-        return destinationDir.toPath();
+        final Collection<UmlDiagram> diagrams = new DiagramCollector(config).collectDiagrams();
+
+        long count = Files.walk(destinationDir.toPath())
+                .filter(HtmlFile::isHtmlFile)
+                .map(path -> new HtmlFile(config, path))
+                .map(htmlFile -> htmlFile.process(diagrams))
+                .filter(Boolean::booleanValue).count();
+        return true;
     }
 
 }
