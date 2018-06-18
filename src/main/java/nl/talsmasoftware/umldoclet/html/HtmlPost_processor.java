@@ -30,10 +30,10 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Sjoerd Talsma
  */
-public class HtmlPostProcessor {
+public class HtmlPost_processor {
     private final Configuration config;
 
-    public HtmlPostProcessor(Configuration config) {
+    public HtmlPost_processor(Configuration config) {
         this.config = requireNonNull(config, "Configuration is <null>.");
     }
 

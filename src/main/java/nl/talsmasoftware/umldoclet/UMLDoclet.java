@@ -19,7 +19,7 @@ import jdk.javadoc.doclet.DocletEnvironment;
 import jdk.javadoc.doclet.Reporter;
 import jdk.javadoc.doclet.StandardDoclet;
 import net.sourceforge.plantuml.version.Version;
-import nl.talsmasoftware.umldoclet.html.HtmlPostProcessor;
+import nl.talsmasoftware.umldoclet.html.HtmlPost_processor;
 import nl.talsmasoftware.umldoclet.javadoc.DocletConfig;
 import nl.talsmasoftware.umldoclet.javadoc.UMLFactory;
 import nl.talsmasoftware.umldoclet.uml.UMLDiagram;
@@ -105,7 +105,7 @@ public class UMLDoclet extends StandardDoclet {
     private boolean postProcessHtml() {
         try {
 
-            return new HtmlPostProcessor(config).postProcessHtml();
+            return new HtmlPost_processor(config).postProcessHtml();
 
         } catch (IOException | RuntimeException ex) {
             config.logger().error(ERROR_UNANTICIPATED_ERROR_POSTPROCESSING_HTML, ex);
