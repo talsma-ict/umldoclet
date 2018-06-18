@@ -15,11 +15,15 @@
  */
 package nl.talsmasoftware.umldoclet.html;
 
+import net.sourceforge.plantuml.FileUtils;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
@@ -33,7 +37,7 @@ import static nl.talsmasoftware.umldoclet.logging.Message.DEBUG_SKIPPING_FILE;
  */
 final class HtmlFile {
 
-    private final Configuration config;
+    final Configuration config;
     final Path path;
 
     HtmlFile(Configuration config, Path path) {
@@ -62,8 +66,30 @@ final class HtmlFile {
     }
 
     private boolean process(Postprocessor postprocessor) {
-        config.logger().debug(DEBUG_POSTPROCESSING_FILE, path);
-        return postprocessor.call();
+        try {
+            config.logger().debug(DEBUG_POSTPROCESSING_FILE, path);
+            return postprocessor.call();
+        } catch (IOException ioe) {
+            throw new IllegalStateException("I/O exception postprocessing " + path, ioe);
+        }
     }
 
+    public List<String> readLines() throws IOException {
+        return Files.readAllLines(path, config.htmlCharset());
+    }
+
+    public void replaceBy(File tempFile) throws IOException {
+        File original = path.toFile();
+        if (!original.delete()) throw new IllegalStateException("Cannot delete " + original);
+        if (tempFile.renameTo(original)) {
+            // TODO actually debug
+            System.out.println("Debug: " + original + " renamed from " + tempFile);
+        } else {
+            FileUtils.copyToFile(tempFile, original);
+            if (!tempFile.delete()) {
+                throw new IllegalStateException("Cannot delete " + tempFile + " after postprocessing!");
+            }
+            System.out.println("Debug: " + original + " copied from " + tempFile);
+        }
+    }
 }

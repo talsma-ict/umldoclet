@@ -25,6 +25,8 @@ import java.util.Optional;
  * Abstraction for a generated diagram file.
  * <p>
  * This class determines the relative path to the diagram from a corresponding HTML file.
+ * <p>
+ * TODO: Does not yet work correctly with inner classes!
  *
  * @author Sjoerd Talsma
  */
@@ -54,16 +56,13 @@ final class UmlClassDiagram extends UmlDiagram {
         return htmlFileName.toString().replaceFirst("\\.html$", extension);
     }
 
-    /**
-     * UML class diagrams are either named identical to the HTML documentation page for the class,
-     * or they are placed inside a specific UML images directory and the file name contains the package and
-     * class name. For easy comparison this is
-     */
-    Optional<String> matchRelativePathFromHtmlFile(Path htmlPath) {
-        File htmlFile = htmlPath.normalize().toFile();
+    @Override
+    Optional<Postprocessor> createPostprocessor(HtmlFile html) {
+        File htmlFile = html.path.toFile();
         String relativeDiagramPath = changeHtmlFileNameExtension(FileUtils.relativePath(basedir, htmlFile));
         if (pathString.equals(relativeDiagramPath) || fileAsPathString.equals(relativeDiagramPath)) {
-            return Optional.of(FileUtils.relativePath(htmlFile, diagramFile));
+            String relativePath = FileUtils.relativePath(htmlFile, diagramFile);
+            return Optional.of(new Postprocessor(html, this, relativePath));
         }
         return Optional.empty();
     }

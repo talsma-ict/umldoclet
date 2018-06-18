@@ -15,67 +15,84 @@
  */
 package nl.talsmasoftware.umldoclet.html;
 
+import nl.talsmasoftware.umldoclet.util.FileUtils;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 final class Postprocessor implements Callable<Boolean> {
 
     private final HtmlFile htmlFile;
     private final UmlDiagram umlDiagram;
-    private final String relativePath;
+    private final String relativePath, diagramFileName, diagramExtension;
 
     Postprocessor(HtmlFile htmlFile, UmlDiagram umlDiagram, String relativePath) {
         this.htmlFile = htmlFile;
         this.umlDiagram = umlDiagram;
         this.relativePath = relativePath;
+        this.diagramFileName = FileUtils.fileNameOf(relativePath);
+        int lastDot = diagramFileName.lastIndexOf('.');
+        this.diagramExtension = lastDot > 0 ? diagramFileName.substring(lastDot) : "";
     }
 
-//    private Path determineTemporaryOutputFile() {
-//        File htmlFile = path.toFile();
-//        String newName = path.getFileName().toString();
-//        int afterDot = newName.lastIndexOf('.') + 1;
-//        newName = newName.substring(0, afterDot) + '_' + newName.substring(afterDot);
-//        return new File(htmlFile.getParent(), newName).toPath();
-//    }
-
     @Override
-    public Boolean call() {
-        // TODO: Delegate to UmlDiagram and move implementation into separate class
-//        try {
-//            String diagramName = fileNameOf(relativeDiagramPath);
-//            AtomicBoolean containsDiagram = new AtomicBoolean(false);
-//            AtomicBoolean diagramInserted = new AtomicBoolean(false);
-//            Stream<String> lines = readHtml().peek(line -> {
-//                if (line.contains(diagramName)) containsDiagram.set(true);
-//            }).map(line -> {
-//                if (line.contains("<hr>") && diagramInserted.compareAndSet(false, true)) {
-//                    return line.replaceFirst("<hr>", "<hr>" + System.lineSeparator()
-//                            + "<img src=\"" + relativeDiagramPath + "\" alt=\"UML diagram\" style=\"float: right;\">");
-//                }
-//                return line;
-//            });
-//            Path newCopy = determineTemporaryOutputFile();
-//            try (BufferedWriter writer = newBufferedWriter(newCopy, config.htmlCharset())) {
-//                writer.write(lines.collect(joining(System.lineSeparator())));
-//            }
-//            if (!containsDiagram.get() && diagramInserted.get()) {
-//                File pathFile = path.toFile();
-//                File newCopyFile = newCopy.toFile();
-//                if (!pathFile.delete() || !newCopyFile.renameTo(pathFile)) {
-//                    throw new IllegalStateException("Could not replace original " + path + " by postprocessed " + newCopy.getFileName());
-//                }
-//                System.out.println("UmlClassDiagram " + relativeDiagramPath + " inserted into " + path);
-//            } else {
-//                if (!newCopy.toFile().delete()) {
-//                    throw new IllegalStateException("Could not delete unnecessary copy " + newCopy + ".");
-//                }
-//                System.out.println("UmlClassDiagram " + relativeDiagramPath + " wasn't inserted into " + path);
-//            }
-//
-//            return true;
-//        } catch (IOException ioe) {
-//            throw new IllegalStateException("I/O error processing " + path + ": " + ioe.getMessage(), ioe);
-//        }
-        return false;
+    public Boolean call() throws IOException {
+        synchronized (htmlFile) {
+            File tempFile = File.createTempFile(diagramFileName, ".tmp");
+            List<String> html = htmlFile.readLines();
+            boolean alreadyContainsDiagram = false, diagramInserted = false;
+            try (Writer writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(tempFile)), htmlFile.config.htmlCharset())) {
+                boolean written = false, summaryDivCleared = false;
+                for (String line : html) {
+                    if (line.contains(diagramFileName)) {
+                        alreadyContainsDiagram = true;
+                        break;
+                    } else if (!diagramInserted && line.contains("<hr>")) {
+                        line = line.replaceFirst("(\\s*)<hr>", "$1<hr>" + System.lineSeparator() + "$1" + getImageTag());
+                        diagramInserted = true;
+                    } else if (diagramInserted && !summaryDivCleared) {
+                        String cleared = clearSummaryDiv(line);
+                        if (cleared != null) {
+                            line = cleared;
+                            summaryDivCleared = true;
+                        }
+                    }
+
+                    if (written) writer.write(System.lineSeparator());
+                    writer.write(line);
+                    written = true;
+                }
+            }
+
+            boolean result = false;
+            if (!alreadyContainsDiagram && diagramInserted) {
+                htmlFile.replaceBy(tempFile);
+                result = true;
+            } else if (!tempFile.delete()) {
+                throw new IllegalStateException("Couldn't delete " + tempFile + " after postprocessing!");
+            }
+            return result;
+        }
+    }
+
+    private String getImageTag() {
+        final String name = diagramFileName.substring(0, diagramFileName.length() - diagramExtension.length());
+        return "<img src=\"" + relativePath + "\" alt=\"" + name + " UML Diagram\" style=\"float: right;\">";
+    }
+
+    private String clearSummaryDiv(String line) {
+        final String summaryDiv = "<div class=\"summary\"";
+        int idx = line.indexOf(summaryDiv);
+        if (idx < 0) return null;
+        int ins = idx + summaryDiv.length();
+        line = line.substring(0, ins) + " style=\"clear: right;\"" + line.substring(ins);
+        return line;
     }
 
 }
