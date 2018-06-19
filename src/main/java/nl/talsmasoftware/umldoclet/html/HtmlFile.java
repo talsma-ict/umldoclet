@@ -74,12 +74,6 @@ final class HtmlFile {
         }
     }
 
-    public String filenameWithoutExtension() {
-        String name = path.getFileName().toString();
-        int lastDot = name.lastIndexOf('.');
-        return lastDot > 0 ? name.substring(0, lastDot) : name;
-    }
-
     public List<String> readLines() throws IOException {
         return Files.readAllLines(path, config.htmlCharset());
     }
@@ -88,14 +82,13 @@ final class HtmlFile {
         File original = path.toFile();
         if (!original.delete()) throw new IllegalStateException("Cannot delete " + original);
         if (tempFile.renameTo(original)) {
-            // TODO Change to actual debug
-            System.out.println("Debug: " + original + " renamed from " + tempFile);
+            // TODO debug: System.out.println("Debug: " + original + " renamed from " + tempFile);
         } else {
             FileUtils.copyToFile(tempFile, original);
             if (!tempFile.delete()) {
                 throw new IllegalStateException("Cannot delete " + tempFile + " after postprocessing!");
             }
-            System.out.println("Debug: " + original + " copied from " + tempFile);
+            // TODO: debug: System.out.println("Debug: " + original + " copied from " + tempFile);
         }
     }
 }

@@ -32,4 +32,6 @@ abstract class UmlDiagram {
         return Optional.empty();
     }
 
+    public abstract Postprocessor.Inserter newInserter(String relativePathToDiagram);
+
 }

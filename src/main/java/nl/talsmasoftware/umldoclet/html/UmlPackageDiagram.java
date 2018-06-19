@@ -21,20 +21,14 @@ import java.io.File;
 import java.util.Optional;
 
 /**
- * Abstraction for a generated diagram file.
- * <p>
- * This class determines the relative path to the diagram from a corresponding HTML file.
- * <p>
- * TODO: Does not yet work correctly with inner classes!
- *
  * @author Sjoerd Talsma
  */
-final class UmlClassDiagram extends UmlDiagram {
+final class UmlPackageDiagram extends UmlDiagram {
 
     private final File basedir, diagramFile;
     private final String extension, pathToCompare;
 
-    UmlClassDiagram(File basedir, File diagramFile, boolean hasImagesDirectory) {
+    UmlPackageDiagram(File basedir, File diagramFile, boolean hasImagesDirectory) {
         this.basedir = basedir;
         this.diagramFile = diagramFile;
         final String fileName = diagramFile.getName();
@@ -47,14 +41,14 @@ final class UmlClassDiagram extends UmlDiagram {
         }
     }
 
-    private String changeHtmlFileNameExtension(Object htmlFileName) {
-        return htmlFileName.toString().replaceFirst("\\.html$", extension);
+    private String changeHtmlFileNameToDiagram(String htmlFileName) {
+        return htmlFileName.replaceFirst("package-summary.html$", "package" + extension);
     }
 
     @Override
     Optional<Postprocessor> createPostprocessor(HtmlFile html) {
         File htmlFile = html.path.toFile();
-        if (pathToCompare.equals(changeHtmlFileNameExtension(FileUtils.relativePath(basedir, htmlFile)))) {
+        if (pathToCompare.equals(changeHtmlFileNameToDiagram(FileUtils.relativePath(basedir, htmlFile)))) {
             return Optional.of(new Postprocessor(html, this, FileUtils.relativePath(htmlFile, diagramFile)));
         }
         return Optional.empty();
@@ -65,8 +59,8 @@ final class UmlClassDiagram extends UmlDiagram {
         return new Inserter(relativePathToDiagram);
     }
 
-    private final class Inserter extends Postprocessor.Inserter {
-        private boolean summaryDivCleared = false;
+    private static final class Inserter extends Postprocessor.Inserter {
+        boolean tableClosed = false;
 
         private Inserter(String relativePath) {
             super(relativePath);
@@ -74,33 +68,17 @@ final class UmlClassDiagram extends UmlDiagram {
 
         @Override
         String process(String line) {
-            if (!inserted && line.contains("<hr>")) {
+            if (!inserted && line.contains("<table")) {
                 inserted = true;
-                return line.replaceFirst("(\\s*)<hr>", "$1<hr>" + System.lineSeparator() + "$1" + getImageTag());
-            } else if (inserted && !summaryDivCleared) {
-                String cleared = clearSummaryDiv(line);
-                if (cleared != null) {
-                    summaryDivCleared = true;
-                    return cleared;
-                }
+                return line.replaceFirst("<table", getImageTag() + System.lineSeparator() + "<table");
             }
             return line;
         }
 
         private String getImageTag() {
-            String name = relativePath.substring(relativePath.lastIndexOf('/') + 1);
-            int dotIdx = name.lastIndexOf('.');
-            if (dotIdx > 0) name = name.substring(0, dotIdx);
-            return "<img src=\"" + relativePath + "\" alt=\"" + name + " UML Diagram\" style=\"max-width:60%;float:right;\"/>";
-        }
-
-        private String clearSummaryDiv(String line) {
-            final String summaryDiv = "<div class=\"summary\"";
-            int idx = line.indexOf(summaryDiv);
-            if (idx < 0) return null;
-            int ins = idx + summaryDiv.length();
-            line = line.substring(0, ins) + " style=\"clear: right;\"" + line.substring(ins);
-            return line;
+            String center = " style=\"display:block;margin-left:auto;margin-right:auto;max-width:100%;\"";
+            return "<img src=\"" + relativePath + "\" alt=\"Package summary UML Diagram\"" + center + "/>";
         }
     }
+
 }

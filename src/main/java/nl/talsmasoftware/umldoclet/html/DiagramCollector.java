@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import static java.util.Collections.unmodifiableCollection;
 import static java.util.Collections.unmodifiableList;
@@ -41,20 +42,21 @@ import static java.util.stream.Collectors.toList;
  * @author Sjoerd Talsma
  */
 final class DiagramCollector extends SimpleFileVisitor<Path> {
-    private final Path basedir;
-    private final Optional<Path> imagesDirectory;
+    private static final Pattern PACKAGE_DIAGRAM_PATTERN = Pattern.compile("package.[a-z]+$");
+
+    private final File basedir;
+    private final Optional<File> imagesDirectory;
     private final List<String> diagramExtensions;
     private final ThreadLocal<Collection<UmlDiagram>> collected = ThreadLocal.withInitial(ArrayList::new);
 
     DiagramCollector(Configuration config) {
-        this.basedir = new File(config.destinationDirectory()).toPath();
+        this.basedir = new File(config.destinationDirectory());
         this.diagramExtensions = unmodifiableList(config.images().formats().stream()
                 .map(String::toLowerCase)
                 .map(format -> format.startsWith(".") ? format : "." + format)
                 .collect(toList()));
         this.imagesDirectory = config.images().directory()
-                .map(imagesDir -> new File(config.destinationDirectory(), imagesDir))
-                .map(File::toPath);
+                .map(imagesDir -> new File(config.destinationDirectory(), imagesDir));
     }
 
     /**
@@ -66,7 +68,7 @@ final class DiagramCollector extends SimpleFileVisitor<Path> {
     Collection<UmlDiagram> collectDiagrams() throws IOException {
         if (diagramExtensions.isEmpty()) return Collections.emptySet();
         try {
-            Files.walkFileTree(imagesDirectory.orElse(basedir), this);
+            Files.walkFileTree(imagesDirectory.orElse(basedir).toPath(), this);
             return unmodifiableCollection(collected.get());
         } finally {
             collected.remove();
@@ -74,18 +76,23 @@ final class DiagramCollector extends SimpleFileVisitor<Path> {
     }
 
     @Override
-    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-        if (attrs.isRegularFile() && FileUtils.hasExtension(file, diagramExtensions.get(0))) {
-            createDiagramInstance(file).ifPresent(collected.get()::add);
+    public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
+        if (attrs.isRegularFile() && FileUtils.hasExtension(path, diagramExtensions.get(0))) {
+            createDiagramInstance(path).ifPresent(collected.get()::add);
         }
-        return super.visitFile(file, attrs);
+        return super.visitFile(path, attrs);
     }
 
-    private Optional<UmlDiagram> createDiagramInstance(Path diagramFile) {
-        if (diagramFile.getFileName().toString().startsWith("package.")) {
-            return Optional.empty(); // TODO implement package diagram HTML inclusion
+    private boolean isPackageDiagram(File diagramFile) {
+        return PACKAGE_DIAGRAM_PATTERN.matcher(diagramFile.getName()).find();
+    }
+
+    private Optional<UmlDiagram> createDiagramInstance(Path diagramPath) {
+        File diagramFile = diagramPath.normalize().toFile();
+        if (isPackageDiagram(diagramFile)) {
+            return Optional.of(new UmlPackageDiagram(basedir, diagramFile, imagesDirectory.isPresent()));
         }
-        return Optional.of(new UmlClassDiagram(basedir, imagesDirectory, diagramFile));
+        return Optional.of(new UmlClassDiagram(basedir, diagramFile, imagesDirectory.isPresent()));
     }
 
 }

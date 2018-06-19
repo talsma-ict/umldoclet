@@ -44,34 +44,25 @@ final class Postprocessor implements Callable<Boolean> {
     @Override
     public Boolean call() throws IOException {
         synchronized (htmlFile) {
-            File tempFile = File.createTempFile(diagramFileName, ".tmp");
+            File tempFile = File.createTempFile(htmlFile.path.getFileName().toString(), ".tmp");
             List<String> html = htmlFile.readLines();
-            boolean alreadyContainsDiagram = false, diagramInserted = false;
+            boolean alreadyContainsDiagram = false;
+            final Inserter inserter = umlDiagram.newInserter(relativePath);
             try (Writer writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(tempFile)), htmlFile.config.htmlCharset())) {
-                boolean written = false, summaryDivCleared = false;
+                boolean written = false;
                 for (String line : html) {
                     if (line.contains(diagramFileName)) {
                         alreadyContainsDiagram = true;
                         break;
-                    } else if (!diagramInserted && line.contains("<hr>")) {
-                        line = line.replaceFirst("(\\s*)<hr>", "$1<hr>" + System.lineSeparator() + "$1" + getImageTag());
-                        diagramInserted = true;
-                    } else if (diagramInserted && !summaryDivCleared) {
-                        String cleared = clearSummaryDiv(line);
-                        if (cleared != null) {
-                            line = cleared;
-                            summaryDivCleared = true;
-                        }
                     }
-
                     if (written) writer.write(System.lineSeparator());
-                    writer.write(line);
+                    writer.write(inserter.process(line));
                     written = true;
                 }
             }
 
             boolean result = false;
-            if (!alreadyContainsDiagram && diagramInserted) {
+            if (!alreadyContainsDiagram && inserter.inserted) {
                 htmlFile.replaceBy(tempFile);
                 result = true;
             } else if (!tempFile.delete()) {
@@ -81,18 +72,15 @@ final class Postprocessor implements Callable<Boolean> {
         }
     }
 
-    private String getImageTag() {
-        final String name = htmlFile.filenameWithoutExtension();
-        return "<img src=\"" + relativePath + "\" alt=\"" + name + " UML Diagram\" style=\"float: right;\">";
-    }
+    static abstract class Inserter {
+        protected boolean inserted = false;
+        protected String relativePath;
 
-    private String clearSummaryDiv(String line) {
-        final String summaryDiv = "<div class=\"summary\"";
-        int idx = line.indexOf(summaryDiv);
-        if (idx < 0) return null;
-        int ins = idx + summaryDiv.length();
-        line = line.substring(0, ins) + " style=\"clear: right;\"" + line.substring(ins);
-        return line;
+        protected Inserter(String relativePath) {
+            this.relativePath = relativePath;
+        }
+
+        abstract String process(String line);
     }
 
 }
