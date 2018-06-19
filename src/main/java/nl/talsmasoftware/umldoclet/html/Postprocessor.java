@@ -82,7 +82,7 @@ final class Postprocessor implements Callable<Boolean> {
     }
 
     private String getImageTag() {
-        final String name = diagramFileName.substring(0, diagramFileName.length() - diagramExtension.length());
+        final String name = htmlFile.filenameWithoutExtension();
         return "<img src=\"" + relativePath + "\" alt=\"" + name + " UML Diagram\" style=\"float: right;\">";
     }
 

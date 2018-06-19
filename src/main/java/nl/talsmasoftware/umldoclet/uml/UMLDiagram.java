@@ -126,7 +126,7 @@ public abstract class UMLDiagram extends UMLPart {
      */
     private String imageBasename(File file) {
         String baseName = file.getName();
-        int dotIdx = baseName.indexOf('.');
+        int dotIdx = baseName.lastIndexOf('.');
         if (dotIdx > 0) baseName = baseName.substring(0, dotIdx);
         if (configuredImageDirectory().isPresent()) {
             String relativeDir = FileUtils.relativePath(new File(config.destinationDirectory()), file.getParentFile());

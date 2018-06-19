@@ -33,7 +33,7 @@ import java.util.Optional;
 final class UmlClassDiagram extends UmlDiagram {
 
     private final File basedir, imagesDirectory, diagramFile;
-    private final String extension, pathString, fileAsPathString;
+    private final String extension, pathToCompare;
 
     UmlClassDiagram(Path basedir, Optional<Path> imagesDirectory, Path path) {
         basedir = basedir.normalize();
@@ -44,11 +44,10 @@ final class UmlClassDiagram extends UmlDiagram {
         String fileName = diagramFile.getName();
         int dotIdx = fileName.lastIndexOf('.');
         this.extension = fileName.substring(dotIdx);
-        this.pathString = FileUtils.relativePath(this.basedir, diagramFile);
-        if (fileName.indexOf('.') < dotIdx) {
-            this.fileAsPathString = fileName.substring(0, dotIdx).replace('.', File.separatorChar) + extension;
+        if (imagesDirectory.isPresent()) {
+            this.pathToCompare = fileName.substring(0, dotIdx).replace('.', '/') + extension;
         } else {
-            this.fileAsPathString = "";
+            this.pathToCompare = FileUtils.relativePath(this.basedir, diagramFile);
         }
     }
 
@@ -59,10 +58,8 @@ final class UmlClassDiagram extends UmlDiagram {
     @Override
     Optional<Postprocessor> createPostprocessor(HtmlFile html) {
         File htmlFile = html.path.toFile();
-        String relativeDiagramPath = changeHtmlFileNameExtension(FileUtils.relativePath(basedir, htmlFile));
-        if (pathString.equals(relativeDiagramPath) || fileAsPathString.equals(relativeDiagramPath)) {
-            String relativePath = FileUtils.relativePath(htmlFile, diagramFile);
-            return Optional.of(new Postprocessor(html, this, relativePath));
+        if (pathToCompare.equals(changeHtmlFileNameExtension(FileUtils.relativePath(basedir, htmlFile)))) {
+            return Optional.of(new Postprocessor(html, this, FileUtils.relativePath(htmlFile, diagramFile)));
         }
         return Optional.empty();
     }

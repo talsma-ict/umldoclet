@@ -26,6 +26,7 @@ import java.util.spi.ToolProvider;
 import static nl.talsmasoftware.umldoclet.testing.PatternMatcher.containsPattern;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
 
 /**
  * @author Sjoerd Talsma
@@ -105,6 +106,12 @@ public class Issue71DeprecationTest {
     @Test
     public void testMethodDeprecatedByJavadoc() {
         assertThat(classUml, containsString("+--getDeprecatedByJavadocTag--(): void"));
+    }
+
+    @Test
+    public void testIssue73_innerClassImageName() {
+        File innerClassFile = new File(outputdir, "nl/talsmasoftware/umldoclet/issues/Issue71DeprecationTest.MoreDeprecation.svg");
+        assertThat(innerClassFile + " exists?", innerClassFile.exists(), is(true));
     }
 
     /**
