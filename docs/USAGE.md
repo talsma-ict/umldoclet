@@ -37,31 +37,6 @@ therefore please consider using one of the following build systems for your proj
 - [Maven](#configuring-your-maven-build) 
 - [Gradle](#using-gradle)
 
-## Additional options
-
-The UML doclet supports all options of the `Standard` doclet and adds some of its own.
-To display all options, please run:
-```bash
-javadoc --help -docletpath umldoclet-2.x.jar -doclet nl.talsmasoftware.umldoclet.UMLDoclet
-```
-
-The rest of this section lists various options that are specific to the UML doclet.
-
-#### -umlImageDirectory &lt;image-dir&gt;
-
-By default, the UML images are generated relative to the HTML pages 
-for the class or package. Specifying an _image directory_ will place all 
-generated images in this single directory, making linking to them easier
-in some cases.  
-_This was requested in issue [Send images to a single directory](#25)_
-
-#### -umlImageFormat (svg|png|eps|none)
-
-By default `.svg` images are generated as they will be significantly smaller
-in size than equivalent `.png` images and scale better.
-This option allows this default to be overridden. You can even generate _multiple_ 
-images for each diagram, by providing this option more than once.
-
 ## Configuring your maven build
 
 Maven builds have the advantage of dependency management to fetch the UML doclet
@@ -149,6 +124,31 @@ Make sure a path reference is defined for `umlDoclet.classpath` pointing to the
 `umldoclet-2.x.jar`. It may be a good idea to use [Ivy] in this case.  
 Replace `additionalParamName` and `additionalParamValue` with the name and value 
 of each [additional parameter](#additional-options) you need.
+
+## Additional options
+
+The UML doclet supports all options of the `Standard` doclet and adds some of its own.
+To display all options, please run:
+```bash
+javadoc --help -docletpath umldoclet-2.x.jar -doclet nl.talsmasoftware.umldoclet.UMLDoclet
+```
+
+The rest of this section lists various options that are specific to the UML doclet.
+
+#### -umlImageDirectory &lt;image-dir&gt;
+
+By default, the UML images are generated relative to the HTML pages 
+for the class or package. Specifying an _image directory_ will place all 
+generated images in this single directory, making linking to them easier
+in some cases.  
+_This was requested in issue [Send images to a single directory](#25)_
+
+#### -umlImageFormat (svg|png|eps|none)
+
+By default `.svg` images are generated as they will be significantly smaller
+in size than equivalent `.png` images and scale better.
+This option allows this default to be overridden. You can even generate _multiple_ 
+images for each diagram, by providing this option more than once.
 
 
   [maven-img]: https://img.shields.io/maven-central/v/nl.talsmasoftware/umldoclet.svg
