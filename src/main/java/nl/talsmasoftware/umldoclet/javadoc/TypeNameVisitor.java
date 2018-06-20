@@ -71,20 +71,17 @@ final class TypeNameVisitor extends SimpleTypeVisitor9<TypeName, Void> {
     @Override
     public TypeName visitTypeVariable(TypeVariable typeVariable, Void parameter) {
         TypeMirror upperBound = typeVariable.getUpperBound();
-        if (upperBound != null && !NO_KNOWN_TYPES.contains(upperBound.getKind())) try {
+        if (upperBound != null && !NO_KNOWN_TYPES.contains(upperBound.getKind())) {
             // Fix for #64: Avoid redundant <T extends Object> (which is obviously true for all T's)
             TypeName upperBoundName = visit(upperBound, parameter);
             if (!Object.class.getName().equals(upperBoundName.qualified)) {
                 return TypeName.Variable.extendsBound(typeVariable.toString(), upperBoundName);
             }
-        } catch (StackOverflowError soe) {
-            System.out.println("WARNING: Caught stack overflow error for type " + typeVariable + " with upper bound " + upperBound + "!");
         }
         TypeMirror lowerBound = typeVariable.getLowerBound();
-        if (lowerBound != null && !NO_KNOWN_TYPES.contains(lowerBound.getKind())) try {
+        if (lowerBound != null && !NO_KNOWN_TYPES.contains(lowerBound.getKind())) {
             return TypeName.Variable.superBound(typeVariable.toString(), visit(lowerBound, parameter));
-        } catch (StackOverflowError soe) {
-            System.out.println("WARNING: Caught stack overflow error for type " + typeVariable + " with lower bound " + lowerBound + "!");
+
         }
 
         return defaultAction(typeVariable, parameter);
@@ -103,8 +100,7 @@ final class TypeNameVisitor extends SimpleTypeVisitor9<TypeName, Void> {
     @Override
     protected TypeName defaultAction(TypeMirror tp, Void parameter) {
         // TODO handle unknown type variables better!
-        String stringValue = tp.toString();
-        return new TypeName(stringValue, stringValue);
+        return new TypeName(tp.toString(), tp.toString());
     }
 
     // TODO Figure out how the following should be represented in UML
