@@ -60,7 +60,7 @@ final class UmlPackageDiagram extends UmlDiagram {
     }
 
     private static final class Inserter extends Postprocessor.Inserter {
-        boolean tableClosed = false;
+        private static final String CENTER_STYLE = " style=\"display:block;margin-left:auto;margin-right:auto;max-width:100%;\"";
 
         private Inserter(String relativePath) {
             super(relativePath);
@@ -68,16 +68,18 @@ final class UmlPackageDiagram extends UmlDiagram {
 
         @Override
         String process(String line) {
-            if (!inserted && line.contains("<table")) {
-                inserted = true;
-                return line.replaceFirst("<table", getImageTag() + System.lineSeparator() + "<table");
+            if (!inserted) {
+                int idx = line.indexOf("<table");
+                if (idx >= 0) {
+                    inserted = true;
+                    return line.substring(0, idx) + getImageTag() + System.lineSeparator() + line.substring(idx);
+                }
             }
             return line;
         }
 
         private String getImageTag() {
-            String center = " style=\"display:block;margin-left:auto;margin-right:auto;max-width:100%;\"";
-            return "<img src=\"" + relativePath + "\" alt=\"Package summary UML Diagram\"" + center + "/>";
+            return "<img src=\"" + relativePath + "\" alt=\"Package summary UML Diagram\"" + CENTER_STYLE + "/>";
         }
     }
 

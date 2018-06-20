@@ -74,10 +74,14 @@ final class UmlClassDiagram extends UmlDiagram {
 
         @Override
         String process(String line) {
-            if (!inserted && line.contains("<hr>")) {
-                inserted = true;
-                return line.replaceFirst("(\\s*)<hr>", "$1<hr>" + System.lineSeparator() + "$1" + getImageTag());
-            } else if (inserted && !summaryDivCleared) {
+            if (!inserted) {
+                int idx = line.indexOf("<hr>");
+                if (idx >= 0) {
+                    idx += 4;
+                    inserted = true;
+                    return line.substring(0, idx) + System.lineSeparator() + getImageTag() + line.substring(idx);
+                }
+            } else if (!summaryDivCleared) {
                 String cleared = clearSummaryDiv(line);
                 if (cleared != null) {
                     summaryDivCleared = true;

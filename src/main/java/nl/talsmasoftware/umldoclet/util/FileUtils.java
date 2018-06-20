@@ -25,7 +25,7 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 
 /**
- * Utility class for file utility methods.
+ * Contains static utility methods for files.
  *
  * @author Sjoerd Talsma
  */
