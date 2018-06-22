@@ -15,7 +15,6 @@
  */
 package nl.talsmasoftware.umldoclet.rendering.plantuml;
 
-import net.sourceforge.plantuml.SourceStringReader;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.rendering.writers.StringBufferingWriter;
@@ -82,10 +81,10 @@ public class PlantumlImageWriter extends StringBufferingWriter {
     public void close() throws IOException {
         super.close();
         if (!images.isEmpty()) {
-            SourceStringReader sourceStringReader = new SourceStringReader(getBuffer().toString());
+            final String uml = getBuffer().toString();
             for (PlantumlImage image : images) {
                 config.logger().info(INFO_GENERATING_FILE, image.getName());
-                image.renderPlantuml(sourceStringReader);
+                image.renderPlantuml(uml);
             }
         }
     }

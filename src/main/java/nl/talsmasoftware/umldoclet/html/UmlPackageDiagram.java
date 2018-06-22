@@ -79,6 +79,10 @@ final class UmlPackageDiagram extends UmlDiagram {
         }
 
         private String getImageTag() {
+            if (relativePath.endsWith(".svg")) {
+                // Render SVG images as objects to make their links work
+                return "<object type=\"image/svg+xml\" data=\"" + relativePath + "\" " + CENTER_STYLE + "></object>";
+            }
             return "<img src=\"" + relativePath + "\" alt=\"Package summary UML Diagram\"" + CENTER_STYLE + "/>";
         }
     }

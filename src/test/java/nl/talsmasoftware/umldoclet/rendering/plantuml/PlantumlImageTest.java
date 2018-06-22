@@ -16,7 +16,6 @@
 package nl.talsmasoftware.umldoclet.rendering.plantuml;
 
 import net.sourceforge.plantuml.FileFormat;
-import net.sourceforge.plantuml.SourceStringReader;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +40,7 @@ import static org.junit.Assert.fail;
  * @author Sjoerd Talsma
  */
 public class PlantumlImageTest {
-    private static SourceStringReader plantumlSource = new SourceStringReader("@startuml\nversion\n@enduml");
+    private static String uml = "@startuml\nversion\n@enduml";
 
     private File tempdir;
 
@@ -65,13 +64,13 @@ public class PlantumlImageTest {
 
     @Test(expected = NullPointerException.class)
     public void testConstructor_fileFormatNull() {
-        new PlantumlImage("diagram.png", null, ByteArrayOutputStream::new) {
+        new PlantumlImage(new File("diagram.png"), null, ByteArrayOutputStream::new) {
         };
     }
 
     @Test(expected = NullPointerException.class)
     public void testConstructor_outputStreamSupplierNull() {
-        new PlantumlImage("diagram.png", FileFormat.PNG, null) {
+        new PlantumlImage(new File("diagram.png"), FileFormat.PNG, null) {
         };
     }
 
@@ -111,7 +110,7 @@ public class PlantumlImageTest {
         File pngDir = new File(tempdir, "directory.png");
         assertThat(pngDir.mkdir(), is(true));
         try {
-            PlantumlImage.fromFile(pngDir).get().renderPlantuml(plantumlSource);
+            PlantumlImage.fromFile(pngDir).get().renderPlantuml(uml);
             fail("Runtime exception expected");
         } catch (RuntimeException expected) {
             assertThat(expected, hasToString(stringContainsInOrder(asList("Could not create writer", "directory.png"))));
@@ -123,7 +122,7 @@ public class PlantumlImageTest {
     @Test
     public void testRenderImage() throws IOException {
         File png = new File(tempdir, "diagram.png");
-        PlantumlImage.fromFile(png).get().renderPlantuml(plantumlSource);
+        PlantumlImage.fromFile(png).get().renderPlantuml(uml);
         assertThat(png.isFile(), is(true));
         assertThat(png.length(), is(greaterThan(0L)));
     }

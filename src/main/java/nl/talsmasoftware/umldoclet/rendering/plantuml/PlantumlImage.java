@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 import static java.util.Objects.requireNonNull;
 
@@ -33,36 +34,54 @@ import static java.util.Objects.requireNonNull;
  * @author Sjoerd Talsma
  */
 public class PlantumlImage {
+    private static final Pattern LINK_PATTERN = Pattern.compile("\\[\\[\\S+]]");
 
-    private final String name;
+    private final File file;
     private final FileFormat fileFormat;
     private final Supplier<OutputStream> outputStreamSupplier;
 
-    protected PlantumlImage(String name, FileFormat fileFormat, Supplier<OutputStream> outputStreamSupplier) {
-        this.name = requireNonNull(name, "Image name is <null>.");
+    protected PlantumlImage(File file, FileFormat fileFormat, Supplier<OutputStream> outputStreamSupplier) {
+        this.file = requireNonNull(file, "Image file is <null>.");
         this.fileFormat = requireNonNull(fileFormat, "File format is <null>.");
         this.outputStreamSupplier = requireNonNull(outputStreamSupplier, "Output stream supplier is <null>.");
     }
 
     public static Optional<PlantumlImage> fromFile(File file) {
-        return fileFormatOf(file).map(format -> new PlantumlImage(file.getPath(), format, () -> createFileOutputStream(file)));
+        return fileFormatOf(file).map(format -> new PlantumlImage(file, format, () -> createFileOutputStream(file)));
     }
 
     public String getName() {
-        return name;
+        return file.getPath();
     }
 
-    final void renderPlantuml(SourceStringReader plantumlSource) throws IOException {
-        requireNonNull(plantumlSource, "PlantUML source is <null>.");
+    final void renderPlantuml(String uml) throws IOException {
+        requireNonNull(uml, "PlantUML diagram is <null>.");
         try (OutputStream imageOutput = new BufferedOutputStream(outputStreamSupplier.get())) {
-            plantumlSource.outputImage(imageOutput, new FileFormatOption(fileFormat));
+            new SourceStringReader(filterBrokenLinks(uml)).outputImage(imageOutput, new FileFormatOption(fileFormat));
         }
+    }
+
+    private String filterBrokenLinks(String uml) {
+        return LINK_PATTERN.matcher(uml).replaceAll(result -> {
+            String link = uml.substring(result.start() + 2, result.end() - 2);
+            return fixLink(link).map(lnk -> "[[" + lnk + "]]").orElse("");
+        });
+    }
+
+    private Optional<String> fixLink(String link) {
+        // For now only keep links that work relative from where the diagram ends up
+        File f = new File(file.getParent(), link);
+        if (f.exists()) {
+            return Optional.of(link);
+        }
+        // TODO: Fix images relative to possible umlImagedir
+        // TODO: Fix possible JDK documentation links?
+        return Optional.empty();
     }
 
     @Override
     public String toString() {
-        final int sep = name.lastIndexOf(File.separatorChar);
-        return sep >= 0 ? name.substring(sep + 1) : name;
+        return file.getName();
     }
 
     private static Optional<FileFormat> fileFormatOf(File file) {
