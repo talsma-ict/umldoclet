@@ -21,14 +21,12 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.QualifiedNameable;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.IntersectionType;
 import javax.lang.model.type.NoType;
 import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
 import javax.lang.model.type.TypeVisitor;
-import javax.lang.model.type.UnionType;
 import javax.lang.model.type.WildcardType;
 import javax.lang.model.util.SimpleTypeVisitor9;
 import java.util.Collections;
@@ -139,22 +137,6 @@ final class TypeNameVisitor extends SimpleTypeVisitor9<TypeName, Void> {
         int lt = qualified.lastIndexOf('<');
         int dot = (lt < 0 ? qualified : qualified.substring(0, lt)).lastIndexOf('.');
         return new TypeName(qualified.substring(dot + 1), qualified);
-    }
-
-    @Override
-    public TypeName visitIntersection(IntersectionType intersectionType, Void parameter) {
-//        return intersectionType.getBounds().stream()
-//                .map(bound -> _visit(bound, parameter))
-//                .collect(joining(" & "));
-        return defaultAction(intersectionType, parameter);
-    }
-
-    @Override
-    public TypeName visitUnion(UnionType unionType, Void parameter) {
-//        return unionType.getAlternatives().stream()
-//                .map(alternative -> _visit(alternative, parameter))
-//                .collect(joining(" | "));
-        return defaultAction(unionType, parameter);
     }
 
 }
