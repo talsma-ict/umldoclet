@@ -15,9 +15,9 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
+import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.uml.Namespace.NameSpaceAware;
-import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -26,6 +26,18 @@ import java.util.Set;
 import static java.util.Objects.requireNonNull;
 
 public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
+    /**
+     * Classification of a UML Type.
+     *
+     * @author Sjoerd Talsma
+     */
+    public enum Classification {
+        ENUM, INTERFACE, ANNOTATION, ABSTRACT_CLASS, CLASS;
+
+        public String toUml() {
+            return name().toLowerCase().replace('_', ' ');
+        }
+    }
 
     private final Namespace namespace;
     private final Classification classfication;
@@ -77,7 +89,7 @@ public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
 
     private <IPW extends IndentingPrintWriter> IPW writeNameTo(IPW output, Namespace namespace) {
         if (addPackageToName) {
-            output.append("\"<size:14>").append(name.toUml(TypeDisplay.SIMPLE, namespace))
+            output.append("\"<size:14>").append(stripGenerics(name.toUml(TypeDisplay.SIMPLE, namespace)))
                     .append("\\n<size:10>").append(getNamespace().name)
                     .append("\" as ");
         }
@@ -116,16 +128,16 @@ public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
     }
 
     /**
-     * Classification of a UML Type.
+     * This static utility method returns a substring if the name contains generics.
+     * <p>
+     * This was added as a fix for <a href="https://github.com/talsma-ict/umldoclet/issues/74">bug 74</a>.
      *
-     * @author Sjoerd Talsma
+     * @param name The name (possibly with generics)
+     * @return The name without generics
      */
-    public enum Classification {
-        ENUM, INTERFACE, ANNOTATION, ABSTRACT_CLASS, CLASS;
-
-        public String toUml() {
-            return name().toLowerCase().replace('_', ' ');
-        }
-
+    private static String stripGenerics(String name) {
+        int lt = name.indexOf('<');
+        return lt > 0 ? name.substring(0, lt) : name;
     }
+
 }
