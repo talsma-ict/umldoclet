@@ -38,9 +38,9 @@ public class Bug75StackOverflowTest {
     private static final File outputdir = new File("target/test-75");
     private static String classUml, packageUml;
 
-//    public interface Comparable<T> {
-//        <U extends Comparable<? super U>> Comparator<T> thenComparing(Function<? super T, ? extends U> keyExtractor);
-//    }
+    public interface Comparable<T> {
+        <U extends Comparable<? super U>> Comparator<T> thenComparing(Function<? super T, ? extends U> keyExtractor);
+    }
 
     @BeforeClass
     public static void createJavadoc() {
