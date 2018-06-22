@@ -19,9 +19,20 @@ import nl.talsmasoftware.umldoclet.uml.TypeName;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.QualifiedNameable;
-import javax.lang.model.type.*;
+import javax.lang.model.type.ArrayType;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.NoType;
+import javax.lang.model.type.PrimitiveType;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
+import javax.lang.model.type.TypeVariable;
+import javax.lang.model.type.TypeVisitor;
+import javax.lang.model.type.WildcardType;
 import javax.lang.model.util.SimpleTypeVisitor9;
+import java.util.Collections;
 import java.util.EnumSet;
+import java.util.IdentityHashMap;
+import java.util.Set;
 
 /**
  * The UML type name implemented as {@link TypeVisitor}.
@@ -35,6 +46,29 @@ final class TypeNameVisitor extends SimpleTypeVisitor9<TypeName, Void> {
     static final TypeNameVisitor INSTANCE = new TypeNameVisitor();
 
     private TypeNameVisitor() {
+    }
+
+    private static ThreadLocal<Set<TypeMirror>> VISITED = ThreadLocal.withInitial(
+            () -> Collections.newSetFromMap(new IdentityHashMap<>()));
+
+    /**
+     * Internal variant of {@link #visit(TypeMirror, Object)} for calls from inside this visitor itself.
+     * <p>
+     * Main purpose of this method is to limit the endless recursion that would result for types such as
+     * {@code <T extends Comparable<T>>}
+     *
+     * @param type      The type to visit.
+     * @param parameter The parameter (ignored by our visitor).
+     * @return The type name
+     */
+    private TypeName _visit(TypeMirror type, Void parameter) {
+        if (VISITED.get().add(type)) try {
+            return super.visit(type, parameter);
+        } finally {
+            VISITED.get().remove(type);
+            if (VISITED.get().isEmpty()) VISITED.remove();
+        }
+        return defaultAction(type, parameter);
     }
 
     @Override
@@ -58,14 +92,14 @@ final class TypeNameVisitor extends SimpleTypeVisitor9<TypeName, Void> {
         final String qualifiedName = el instanceof QualifiedNameable
                 ? ((QualifiedNameable) el).getQualifiedName().toString() : simpleName;
         final TypeName[] generics = declaredType.getTypeArguments().stream()
-                .map(generic -> visit(generic, parameter))
+                .map(generic -> _visit(generic, parameter))
                 .toArray(TypeName[]::new);
         return new TypeName(simpleName, qualifiedName, generics);
     }
 
     @Override
     public TypeName visitArray(ArrayType arrayType, Void parameter) {
-        return TypeName.Array.of(visit(arrayType.getComponentType(), parameter));
+        return TypeName.Array.of(_visit(arrayType.getComponentType(), parameter));
     }
 
     @Override
@@ -73,14 +107,14 @@ final class TypeNameVisitor extends SimpleTypeVisitor9<TypeName, Void> {
         TypeMirror upperBound = typeVariable.getUpperBound();
         if (upperBound != null && !NO_KNOWN_TYPES.contains(upperBound.getKind())) {
             // Fix for #64: Avoid redundant <T extends Object> (which is obviously true for all T's)
-            TypeName upperBoundName = visit(upperBound, parameter);
+            TypeName upperBoundName = _visit(upperBound, parameter);
             if (!Object.class.getName().equals(upperBoundName.qualified)) {
                 return TypeName.Variable.extendsBound(typeVariable.toString(), upperBoundName);
             }
         }
         TypeMirror lowerBound = typeVariable.getLowerBound();
         if (lowerBound != null && !NO_KNOWN_TYPES.contains(lowerBound.getKind())) {
-            return TypeName.Variable.superBound(typeVariable.toString(), visit(lowerBound, parameter));
+            return TypeName.Variable.superBound(typeVariable.toString(), _visit(lowerBound, parameter));
 
         }
 
@@ -90,35 +124,19 @@ final class TypeNameVisitor extends SimpleTypeVisitor9<TypeName, Void> {
     @Override
     public TypeName visitWildcard(WildcardType wildcardType, Void parameter) {
         TypeMirror extendsBound = wildcardType.getExtendsBound();
-        if (extendsBound != null) return TypeName.Variable.extendsBound("?", visit(extendsBound, parameter));
+        if (extendsBound != null) return TypeName.Variable.extendsBound("?", _visit(extendsBound, parameter));
         TypeMirror superBound = wildcardType.getSuperBound();
-        if (superBound != null) return TypeName.Variable.superBound("?", visit(superBound, parameter));
+        if (superBound != null) return TypeName.Variable.superBound("?", _visit(superBound, parameter));
 
         return defaultAction(wildcardType, parameter);
     }
 
     @Override
     protected TypeName defaultAction(TypeMirror tp, Void parameter) {
-        // TODO handle unknown type variables better!
-        return new TypeName(tp.toString(), tp.toString());
+        String qualified = tp.toString();
+        int lt = qualified.lastIndexOf('<');
+        int dot = (lt < 0 ? qualified : qualified.substring(0, lt)).lastIndexOf('.');
+        return new TypeName(qualified.substring(dot + 1), qualified);
     }
-
-    // TODO Figure out how the following should be represented in UML
-
-//    @Override
-//    public TypeName visitIntersection(IntersectionType intersectionType, Void parameter) {
-////        return intersectionType.getBounds().stream()
-////                .map(bound -> visit(bound, parameter))
-////                .collect(joining(" & "));
-//        return defaultAction(intersectionType, parameter);
-//    }
-
-//    @Override
-//    public TypeName visitUnion(UnionType unionType, Void parameter) {
-////        return unionType.getAlternatives().stream()
-////                .map(alternative -> visit(alternative, parameter))
-////                .collect(joining(" | "));
-//        return defaultAction(unionType, parameter);
-//    }
 
 }
