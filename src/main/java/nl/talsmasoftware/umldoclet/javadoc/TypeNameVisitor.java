@@ -64,18 +64,13 @@ final class TypeNameVisitor extends SimpleTypeVisitor9<TypeName, Void> {
      * @return The type name
      */
     private TypeName _visit(TypeMirror type, Void parameter) {
-        try {
-            if (VISITED.get().add(type)) {
-                return super.visit(type, parameter);
-            } else {
-                return defaultAction(type, parameter);
-            }
+        if (VISITED.get().add(type)) try {
+            return super.visit(type, parameter);
         } finally {
             VISITED.get().remove(type);
-            if (VISITED.get().isEmpty()) {
-                VISITED.remove();
-            }
+            if (VISITED.get().isEmpty()) VISITED.remove();
         }
+        return defaultAction(type, parameter);
     }
 
     @Override
