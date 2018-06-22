@@ -51,13 +51,13 @@ public class Bug75StackOverflowTest {
                 "-doclet", UMLDoclet.class.getName(),
                 "-umlImageDirectory", "images",
                 "src/test/java/" + Bug75StackOverflowTest.class.getName().replace('.', '/') + ".java"
-        ) ,is(0));
+        ), is(0));
         classUml = Testing.read(new File(outputdir, classAsPath + ".puml"));
         packageUml = Testing.read(new File(outputdir, packageAsPath + "/package.puml"));
     }
 
     @Test
-    public void testDefaultConstructorShouldBeHidden() {
+    public void testInifiniteRecursionIsBounded() {
         assertThat(packageUml, not(containsString("? extends Comparable<? super Comparable<? super Comparable")));
     }
 
