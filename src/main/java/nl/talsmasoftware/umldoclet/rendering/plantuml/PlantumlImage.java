@@ -18,6 +18,7 @@ package nl.talsmasoftware.umldoclet.rendering.plantuml;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
+import nl.talsmasoftware.umldoclet.configuration.Configuration;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -36,18 +37,20 @@ import static java.util.Objects.requireNonNull;
 public class PlantumlImage {
     private static final Pattern LINK_PATTERN = Pattern.compile("\\[\\[\\S+]]");
 
+    private final Configuration config;
     private final File file;
     private final FileFormat fileFormat;
     private final Supplier<OutputStream> outputStreamSupplier;
 
-    protected PlantumlImage(File file, FileFormat fileFormat, Supplier<OutputStream> outputStreamSupplier) {
+    protected PlantumlImage(Configuration config, File file, FileFormat fileFormat, Supplier<OutputStream> outputStreamSupplier) {
+        this.config = requireNonNull(config, "Configuration is <null>.");
         this.file = requireNonNull(file, "Image file is <null>.");
         this.fileFormat = requireNonNull(fileFormat, "File format is <null>.");
         this.outputStreamSupplier = requireNonNull(outputStreamSupplier, "Output stream supplier is <null>.");
     }
 
-    public static Optional<PlantumlImage> fromFile(File file) {
-        return fileFormatOf(file).map(format -> new PlantumlImage(file, format, () -> createFileOutputStream(file)));
+    public static Optional<PlantumlImage> fromFile(Configuration config, File file) {
+        return fileFormatOf(file).map(format -> new PlantumlImage(config, file, format, () -> createFileOutputStream(file)));
     }
 
     public String getName() {

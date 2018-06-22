@@ -34,7 +34,7 @@ import static org.hamcrest.Matchers.is;
  *
  * @author Sjoerd Talsma
  */
-public class Enhancement25Test {
+public class Issue25ImagedirTest {
 
     @BeforeClass
     public static void createJavadoc() {
@@ -43,7 +43,7 @@ public class Enhancement25Test {
                 "-d", "target/test-25",
                 "-doclet", UMLDoclet.class.getName(),
                 "-umlImageDirectory", "images",
-                "src/test/java/" + Enhancement25Test.class.getName().replace('.', '/') + ".java"
+                "src/test/java/" + Issue25ImagedirTest.class.getName().replace('.', '/') + ".java"
         );
     }
 

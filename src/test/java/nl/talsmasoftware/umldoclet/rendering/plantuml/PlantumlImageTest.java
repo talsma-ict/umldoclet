@@ -16,6 +16,7 @@
 package nl.talsmasoftware.umldoclet.rendering.plantuml;
 
 import net.sourceforge.plantuml.FileFormat;
+import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,6 +36,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.stringContainsInOrder;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 /**
  * @author Sjoerd Talsma
@@ -42,10 +45,12 @@ import static org.junit.Assert.fail;
 public class PlantumlImageTest {
     private static String uml = "@startuml\nversion\n@enduml";
 
+    private Configuration config;
     private File tempdir;
 
     @Before
     public void createTempdir() throws IOException {
+        config = mock(Configuration.class);
         tempdir = File.createTempFile("plantuml-image-", ".tmp");
         assertThat("Created temporary directory", tempdir.delete() && tempdir.mkdirs(), is(true));
     }
@@ -54,55 +59,56 @@ public class PlantumlImageTest {
     public void cleanupTempdir() {
         Stream.of(tempdir.listFiles()).forEach(f -> assertThat("Delete " + f, f.delete(), is(true)));
         assertThat("Delete " + tempdir, tempdir.delete(), is(true));
+        verifyNoMoreInteractions(config);
     }
 
     @Test(expected = NullPointerException.class)
     public void testConstructor_nameNull() {
-        new PlantumlImage(null, FileFormat.PNG, ByteArrayOutputStream::new) {
+        new PlantumlImage(config, null, FileFormat.PNG, ByteArrayOutputStream::new) {
         };
     }
 
     @Test(expected = NullPointerException.class)
     public void testConstructor_fileFormatNull() {
-        new PlantumlImage(new File("diagram.png"), null, ByteArrayOutputStream::new) {
+        new PlantumlImage(config, new File("diagram.png"), null, ByteArrayOutputStream::new) {
         };
     }
 
     @Test(expected = NullPointerException.class)
     public void testConstructor_outputStreamSupplierNull() {
-        new PlantumlImage(new File("diagram.png"), FileFormat.PNG, null) {
+        new PlantumlImage(config, new File("diagram.png"), FileFormat.PNG, null) {
         };
     }
 
     @Test
     public void testFromFile_null() {
-        assertThat(PlantumlImage.fromFile(null), is(Optional.empty()));
+        assertThat(PlantumlImage.fromFile(config, null), is(Optional.empty()));
     }
 
     @Test
     public void testFromFile_unrecognizedFileFormat() {
-        assertThat(PlantumlImage.fromFile(new File("diagram.doc")), is(Optional.empty()));
+        assertThat(PlantumlImage.fromFile(config, new File("diagram.doc")), is(Optional.empty()));
     }
 
     @Test
     public void testFromFile_PngFormat() {
         File png = new File("diagram.png");
-        assertThat(PlantumlImage.fromFile(png), not(Optional.empty()));
-        assertThat(PlantumlImage.fromFile(png), hasToString("Optional[diagram.png]"));
+        assertThat(PlantumlImage.fromFile(config, png), not(Optional.empty()));
+        assertThat(PlantumlImage.fromFile(config, png), hasToString("Optional[diagram.png]"));
         assertThat(png.exists(), is(false));
     }
 
     @Test
     public void testName() {
-        assertThat(PlantumlImage.fromFile(new File("diagram.png")).get().getName(), equalTo("diagram.png"));
-        assertThat(PlantumlImage.fromFile(new File(tempdir, "diagram.png")).get().getName(),
+        assertThat(PlantumlImage.fromFile(config, new File("diagram.png")).get().getName(), equalTo("diagram.png"));
+        assertThat(PlantumlImage.fromFile(config, new File(tempdir, "diagram.png")).get().getName(),
                 equalTo(new File(tempdir, "diagram.png").getPath()));
     }
 
     @Test
     public void testToString() {
-        assertThat(PlantumlImage.fromFile(new File("diagram.png")), hasToString("Optional[diagram.png]"));
-        assertThat(PlantumlImage.fromFile(new File(tempdir, "diagram.png")), hasToString("Optional[diagram.png]"));
+        assertThat(PlantumlImage.fromFile(config, new File("diagram.png")), hasToString("Optional[diagram.png]"));
+        assertThat(PlantumlImage.fromFile(config, new File(tempdir, "diagram.png")), hasToString("Optional[diagram.png]"));
     }
 
     @Test
@@ -110,7 +116,7 @@ public class PlantumlImageTest {
         File pngDir = new File(tempdir, "directory.png");
         assertThat(pngDir.mkdir(), is(true));
         try {
-            PlantumlImage.fromFile(pngDir).get().renderPlantuml(uml);
+            PlantumlImage.fromFile(config, pngDir).get().renderPlantuml(uml);
             fail("Runtime exception expected");
         } catch (RuntimeException expected) {
             assertThat(expected, hasToString(stringContainsInOrder(asList("Could not create writer", "directory.png"))));
@@ -122,7 +128,7 @@ public class PlantumlImageTest {
     @Test
     public void testRenderImage() throws IOException {
         File png = new File(tempdir, "diagram.png");
-        PlantumlImage.fromFile(png).get().renderPlantuml(uml);
+        PlantumlImage.fromFile(config, png).get().renderPlantuml(uml);
         assertThat(png.isFile(), is(true));
         assertThat(png.length(), is(greaterThan(0L)));
     }
