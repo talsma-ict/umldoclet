@@ -35,7 +35,7 @@ import static java.util.Objects.requireNonNull;
  * @author Sjoerd Talsma
  */
 public class PlantumlImage {
-    private static final Pattern LINK_PATTERN = Pattern.compile("\\[\\[\\S+]]");
+    private static final Pattern LINK_PATTERN = Pattern.compile("(\\s?\\[\\[)(\\S+)(]])");
 
     private final Configuration config;
     private final File file;
@@ -65,15 +65,15 @@ public class PlantumlImage {
     }
 
     private String filterBrokenLinks(String uml) {
-        return LINK_PATTERN.matcher(uml).replaceAll(result -> {
-            String link = uml.substring(result.start() + 2, result.end() - 2);
-            return fixLink(link).map(lnk -> "[[" + lnk + "]]").orElse("");
-        });
+        return LINK_PATTERN.matcher(uml)
+                .replaceAll(res -> fixLink(res.group(2)).map(lnk -> res.group(1) + lnk + res.group(3)).orElse(""));
     }
 
     private Optional<String> fixLink(String link) {
         // For now only keep links that work relative from where the diagram ends up
-        File f = new File(file.getParent(), link);
+        // Workaround: HTML is not generated yet, but the .puml stays where the HTML lives,
+        // so simply check for that file first.
+        File f = new File(file.getParent(), link.replaceFirst("\\.html$", ".puml"));
         if (f.exists()) {
             return Optional.of(link);
         }

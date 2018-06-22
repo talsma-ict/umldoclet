@@ -55,7 +55,7 @@ public class Issue64Test {
         ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
                 "-sourcepath", "src/test/java",
-                "-d", "target/test-issue64",
+                "-d", "target/test-64",
                 "-doclet", UMLDoclet.class.getName(),
                 getClass().getPackageName()
         );
@@ -66,7 +66,7 @@ public class Issue64Test {
 
     private static String readEmptySetUml() {
         try {
-            return Testing.readUml(new FileInputStream("target/test-issue64/nl/talsmasoftware/umldoclet/issues/Issue64Test.EmptySet.puml"));
+            return Testing.readUml(new FileInputStream("target/test-64/nl/talsmasoftware/umldoclet/issues/Issue64Test.EmptySet.puml"));
         } catch (IOException ioe) {
             throw new IllegalStateException("Couldn't open class UML.", ioe);
         }

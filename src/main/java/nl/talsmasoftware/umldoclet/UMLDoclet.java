@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static nl.talsmasoftware.umldoclet.logging.Message.DOCLET_COPYRIGHT;
 import static nl.talsmasoftware.umldoclet.logging.Message.DOCLET_VERSION;
@@ -89,7 +90,10 @@ public class UMLDoclet extends StandardDoclet {
             config.logger().info(PLANTUML_COPYRIGHT, Version.versionString());
 
             UMLFactory factory = new UMLFactory(config, docEnv);
-            return docEnv.getIncludedElements().stream()
+            Set<? extends Element> includedElements = docEnv.getIncludedElements();
+            return Stream.concat(
+                    includedElements.stream().filter(TypeElement.class::isInstance),
+                    includedElements.stream().filter(PackageElement.class::isInstance))
                     .map(element -> mapToDiagram(factory, element))
                     .filter(Optional::isPresent).map(Optional::get)
                     .map(UMLDiagram::render)
