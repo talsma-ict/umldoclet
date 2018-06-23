@@ -29,6 +29,9 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
@@ -90,10 +93,7 @@ public class UMLDoclet extends StandardDoclet {
             config.logger().info(PLANTUML_COPYRIGHT, Version.versionString());
 
             UMLFactory factory = new UMLFactory(config, docEnv);
-            Set<? extends Element> includedElements = docEnv.getIncludedElements();
-            return Stream.concat(
-                    includedElements.stream().filter(TypeElement.class::isInstance),
-                    includedElements.stream().filter(PackageElement.class::isInstance))
+            return streamIncludedElements(docEnv.getIncludedElements())
                     .map(element -> mapToDiagram(factory, element))
                     .filter(Optional::isPresent).map(Optional::get)
                     .map(UMLDiagram::render)
@@ -125,6 +125,20 @@ public class UMLDoclet extends StandardDoclet {
             return Optional.of(factory.createClassDiagram((TypeElement) element));
         }
         return Optional.empty();
+    }
+
+    /**
+     * Orders included elements where types are rendered first before packages.
+     * This helps detecting broken links to classes that are not included.
+     *
+     * @param elements The elements to be ordered, types-first
+     * @return The ordered elements
+     */
+    private static Stream<? extends Element> streamIncludedElements(Collection<? extends Element> elements) {
+        final List<Element> types = new ArrayList<>();
+        final List<Element> other = new ArrayList<>();
+        elements.forEach(elem -> (elem instanceof TypeElement ? types : other).add(elem));
+        return Stream.concat(types.stream(), other.stream());
     }
 
 }

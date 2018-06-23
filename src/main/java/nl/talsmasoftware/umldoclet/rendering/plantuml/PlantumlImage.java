@@ -19,6 +19,7 @@ import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.util.FileUtils;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -70,15 +71,22 @@ public class PlantumlImage {
     }
 
     private Optional<String> fixLink(String link) {
-        // For now only keep links that work relative from where the diagram ends up
-        // Workaround: HTML is not generated yet, but the .puml stays where the HTML lives,
-        // so simply check for that file first.
-        File f = new File(file.getParent(), link.replaceFirst("\\.html$", ".puml"));
-        if (f.exists()) {
+        // HTML hasn't been generated yet, verify whether targeted .puml file exists instead
+        String puml = link.replaceFirst("\\.html$", ".puml");
+        if (new File(file.getParent(), puml).exists()) {
             return Optional.of(link);
+        } else if (config.images().directory().isPresent()) {
+            String path = file.getName();
+            path = path.replace('.', '/');
+            for (int lastslash = path.lastIndexOf('/'); lastslash > 0; lastslash = path.lastIndexOf('/')) {
+                if (new File(config.destinationDirectory(), path + '/' + puml).exists()) {
+                    String relative = FileUtils.relativePath(file, new File(config.destinationDirectory(), path + '/' + link));
+                    return Optional.of(relative);
+                }
+                path = path.substring(0, lastslash);
+            }
         }
-        // TODO: Fix images relative to possible umlImagedir
-        // TODO: Fix possible JDK documentation links?
+        // TODO: Possibly add standard JDK documentation links?
         return Optional.empty();
     }
 
