@@ -17,7 +17,6 @@ package nl.talsmasoftware.umldoclet.issues;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.util.Testing;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -30,10 +29,12 @@ import static org.hamcrest.Matchers.stringContainsInOrder;
 /**
  * @author Sjoerd Talsma
  */
-@Ignore // Links are not built yet
 public class Issue69LinksTest {
     static final File testoutput = new File("target/test-69");
     static final String packageAsPath = Issue69LinksTest.class.getPackageName().replace('.', '/');
+
+    public static class InnerClass {
+    }
 
     @Test
     public void testLink_sameDirectory() {
@@ -47,24 +48,10 @@ public class Issue69LinksTest {
         );
 
         String uml = Testing.read(packageUml);
+        // Check link to test class
         assertThat(uml, stringContainsInOrder(asList("Issue69LinksTest", "[[Issue69LinksTest.html]]")));
-    }
-
-    @Test
-    public void testLink_otherDirectory() {
-        File outputdir = new File(testoutput, "other-dir");
-        File packageUml = new File(outputdir, packageAsPath + "/package.puml");
-
-        ToolProvider.findFirst("javadoc").get().run(
-                System.out, System.err,
-                "-d", outputdir.getPath(),
-                "-umlImageDirectory", "images",
-                "-doclet", UMLDoclet.class.getName(),
-                "src/test/java/" + packageAsPath + '/' + getClass().getSimpleName() + ".java"
-        );
-
-        String uml = Testing.read(packageUml);
-        assertThat(uml, stringContainsInOrder(asList("Issue69LinksTest", "[[../nl/talsmasoftware/umldoclet/issues/Issue69LinksTest.html]]")));
+        // Check link to inner class
+        assertThat(uml, stringContainsInOrder(asList("InnerClass", "[[Issue69LinksTest.InnerClass.html]]")));
     }
 
 }

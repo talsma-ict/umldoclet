@@ -102,7 +102,18 @@ public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
         output.append(classfication.toUml()).whitespace();
         writeNameTo(output, namespace).whitespace();
         if (isDeprecated) output.append("<<deprecated>>").whitespace();
+        writeLinkTo(output).whitespace();
         writeChildrenTo(output).newline();
+        return output;
+    }
+
+    private <IPW extends IndentingPrintWriter> IPW writeLinkTo(IPW output) {
+        final String prefix = getNamespace().name + '.';
+        if (name.qualified.startsWith(prefix)) {
+            output.append("[[");
+            output.append(name.qualified.substring(prefix.length()));
+            output.append(".html]]");
+        }
         return output;
     }
 

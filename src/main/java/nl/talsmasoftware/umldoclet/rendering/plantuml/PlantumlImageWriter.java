@@ -15,9 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.rendering.plantuml;
 
-import net.sourceforge.plantuml.SourceStringReader;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.rendering.writers.StringBufferingWriter;
 
 import java.io.File;
@@ -63,7 +61,7 @@ public class PlantumlImageWriter extends StringBufferingWriter {
             Charset umlCharset = config.umlCharset();
             OutputStreamWriter plantumlWriter = new OutputStreamWriter(new FileOutputStream(plantumlFile), umlCharset);
             return new PlantumlImageWriter(config, plantumlWriter, Stream.of(imageFiles)
-                    .map(file -> fileToImage(config.logger(), file))
+                    .map(file -> fileToImage(config, file))
                     .filter(Optional::isPresent).map(Optional::get)
                     .collect(Collectors.toList()));
         } catch (IOException ioe) {
@@ -82,10 +80,10 @@ public class PlantumlImageWriter extends StringBufferingWriter {
     public void close() throws IOException {
         super.close();
         if (!images.isEmpty()) {
-            SourceStringReader sourceStringReader = new SourceStringReader(getBuffer().toString());
+            final String uml = getBuffer().toString();
             for (PlantumlImage image : images) {
                 config.logger().info(INFO_GENERATING_FILE, image.getName());
-                image.renderPlantuml(sourceStringReader);
+                image.renderPlantuml(uml);
             }
         }
     }
@@ -98,10 +96,10 @@ public class PlantumlImageWriter extends StringBufferingWriter {
         return getClass().getSimpleName() + images;
     }
 
-    private static Optional<PlantumlImage> fileToImage(Logger logger, File file) {
-        Optional<PlantumlImage> plantumlImage = PlantumlImage.fromFile(file);
+    private static Optional<PlantumlImage> fileToImage(Configuration config, File file) {
+        Optional<PlantumlImage> plantumlImage = PlantumlImage.fromFile(config, file);
         if (!plantumlImage.isPresent() && !file.getName().endsWith(".none")) {
-            logger.warn(WARNING_UNRECOGNIZED_IMAGE_FORMAT, file.getName());
+            config.logger().warn(WARNING_UNRECOGNIZED_IMAGE_FORMAT, file.getName());
         }
         return plantumlImage;
     }

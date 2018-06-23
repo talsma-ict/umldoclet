@@ -92,10 +92,16 @@ final class UmlClassDiagram extends UmlDiagram {
         }
 
         private String getImageTag() {
+            String style = " style=\"max-width:60%;float:right;\"";
+            if (relativePath.endsWith(".svg")) {
+                // Render SVG images as objects to make their links work
+                return "<object type=\"image/svg+xml\" data=\"" + relativePath + "\" " + style + "></object>";
+            }
+
             String name = relativePath.substring(relativePath.lastIndexOf('/') + 1);
             int dotIdx = name.lastIndexOf('.');
             if (dotIdx > 0) name = name.substring(0, dotIdx);
-            return "<img src=\"" + relativePath + "\" alt=\"" + name + " UML Diagram\" style=\"max-width:60%;float:right;\"/>";
+            return "<img src=\"" + relativePath + "\" alt=\"" + name + " UML Diagram\"" + style + "/>";
         }
 
         private String clearSummaryDiv(String line) {

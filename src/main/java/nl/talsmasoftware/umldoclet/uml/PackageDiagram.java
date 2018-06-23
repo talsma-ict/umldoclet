@@ -27,7 +27,7 @@ import static java.util.Objects.requireNonNull;
  */
 public class PackageDiagram extends UMLDiagram {
 
-    private final String packageName;
+    final String packageName;
     private File pumlFile = null;
 
     public PackageDiagram(Configuration config, String packageName) {

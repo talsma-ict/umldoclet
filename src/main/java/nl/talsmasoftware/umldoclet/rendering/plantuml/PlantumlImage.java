@@ -18,6 +18,8 @@ package nl.talsmasoftware.umldoclet.rendering.plantuml;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
+import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.util.FileUtils;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -26,6 +28,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 import static java.util.Objects.requireNonNull;
 
@@ -33,36 +36,64 @@ import static java.util.Objects.requireNonNull;
  * @author Sjoerd Talsma
  */
 public class PlantumlImage {
+    private static final Pattern LINK_PATTERN = Pattern.compile("(\\s?\\[\\[)(\\S+)(]])");
 
-    private final String name;
+    private final Configuration config;
+    private final File file;
     private final FileFormat fileFormat;
     private final Supplier<OutputStream> outputStreamSupplier;
 
-    protected PlantumlImage(String name, FileFormat fileFormat, Supplier<OutputStream> outputStreamSupplier) {
-        this.name = requireNonNull(name, "Image name is <null>.");
+    protected PlantumlImage(Configuration config, File file, FileFormat fileFormat, Supplier<OutputStream> outputStreamSupplier) {
+        this.config = requireNonNull(config, "Configuration is <null>.");
+        this.file = requireNonNull(file, "Image file is <null>.");
         this.fileFormat = requireNonNull(fileFormat, "File format is <null>.");
         this.outputStreamSupplier = requireNonNull(outputStreamSupplier, "Output stream supplier is <null>.");
     }
 
-    public static Optional<PlantumlImage> fromFile(File file) {
-        return fileFormatOf(file).map(format -> new PlantumlImage(file.getPath(), format, () -> createFileOutputStream(file)));
+    public static Optional<PlantumlImage> fromFile(Configuration config, File file) {
+        return fileFormatOf(file).map(format -> new PlantumlImage(config, file, format, () -> createFileOutputStream(file)));
     }
 
     public String getName() {
-        return name;
+        return file.getPath();
     }
 
-    final void renderPlantuml(SourceStringReader plantumlSource) throws IOException {
-        requireNonNull(plantumlSource, "PlantUML source is <null>.");
+    final void renderPlantuml(String uml) throws IOException {
+        requireNonNull(uml, "PlantUML diagram is <null>.");
         try (OutputStream imageOutput = new BufferedOutputStream(outputStreamSupplier.get())) {
-            plantumlSource.outputImage(imageOutput, new FileFormatOption(fileFormat));
+            new SourceStringReader(filterBrokenLinks(uml)).outputImage(imageOutput, new FileFormatOption(fileFormat));
         }
+    }
+
+    private String filterBrokenLinks(String uml) {
+        return LINK_PATTERN.matcher(uml)
+                .replaceAll(res -> fixLink(res.group(2)).map(lnk -> res.group(1) + lnk + res.group(3)).orElse(""));
+    }
+
+    private Optional<String> fixLink(String link) {
+        // HTML hasn't been generated yet, verify whether targeted .puml file exists instead
+        String puml = link.replaceFirst("\\.html$", ".puml");
+        if (new File(file.getParent(), puml).exists()) {
+            return Optional.of(link);
+        } else if (config.images().directory().isPresent()) {
+            String path = file.getName();
+            path = path.replace('.', '/');
+            for (int lastslash = path.lastIndexOf('/'); lastslash > 0; lastslash = path.lastIndexOf('/')) {
+                if (new File(config.destinationDirectory(), path + '/' + puml).exists()) {
+                    String relative = FileUtils.relativePath(file, new File(config.destinationDirectory(), path + '/' + link));
+                    return Optional.of(relative);
+                }
+                path = path.substring(0, lastslash);
+            }
+        }
+        // TODO: Link to documented files in other packages?
+        // TODO: Possibly add standard JDK documentation links?
+        return Optional.empty();
     }
 
     @Override
     public String toString() {
-        final int sep = name.lastIndexOf(File.separatorChar);
-        return sep >= 0 ? name.substring(sep + 1) : name;
+        return file.getName();
     }
 
     private static Optional<FileFormat> fileFormatOf(File file) {
