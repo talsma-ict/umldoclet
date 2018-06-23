@@ -86,6 +86,7 @@ public class PlantumlImage {
                 path = path.substring(0, lastslash);
             }
         }
+        // TODO: Link to documented files in other packages?
         // TODO: Possibly add standard JDK documentation links?
         return Optional.empty();
     }
