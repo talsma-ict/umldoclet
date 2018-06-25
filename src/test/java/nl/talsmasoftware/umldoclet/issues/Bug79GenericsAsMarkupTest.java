@@ -21,7 +21,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.function.Supplier;
+import java.util.Optional;
 import java.util.spi.ToolProvider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -29,35 +29,46 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
-/**
- * @author Sjoerd Talsma
- */
-public class Bug74DuplicateGenericsTest {
-    private static final String packageAsPath = Bug74DuplicateGenericsTest.class.getPackageName().replace('.', '/');
-    private static final File outputdir = new File("target/test-74");
-    private static String classUml, packageUml;
+public class Bug79GenericsAsMarkupTest {
+    private static final String packageAsPath = Bug79GenericsAsMarkupTest.class.getPackageName().replace('.', '/');
+    private static final File outputdir = new File("target/test-79");
+    private static String classUml;
 
-    public interface MySupplier<T> extends Supplier<T> {
+    public <U> Optional<U> underlineMarkup() {
+        return Optional.empty();
+    }
+
+    public <I> Optional<I> italicMarkup() {
+        return Optional.empty();
+    }
+
+    public <B> Optional<B> boldMarkup() {
+        return Optional.empty();
     }
 
     @BeforeClass
     public static void createJavadoc() {
-        String classAsPath = packageAsPath + '/' + Bug74DuplicateGenericsTest.class.getSimpleName();
+        String classAsPath = packageAsPath + '/' + Bug79GenericsAsMarkupTest.class.getSimpleName();
         assertThat("Javadoc result", ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
                 "-d", outputdir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet",
-                "src/test/java/" + Bug74DuplicateGenericsTest.class.getName().replace('.', '/') + ".java"
+                "src/test/java/" + Bug79GenericsAsMarkupTest.class.getName().replace('.', '/') + ".java"
         ), is(0));
-        classUml = Testing.read(new File(outputdir, classAsPath + ".MySupplier.puml"));
-        packageUml = Testing.read(new File(outputdir, packageAsPath + "/package.puml"));
+        classUml = Testing.read(new File(outputdir, classAsPath + ".puml"));
     }
 
     @Test
-    public void testDuplicateGenerics() {
-        assertThat(classUml, containsString("as java.util.function.Supplier<T>"));
-        assertThat(classUml, containsString("<size:14>Supplier\\n"));
+    public void testNoMarkup() {
+        assertThat(classUml, not(containsString("Optional<U>")));
+        assertThat(classUml, not(containsString("Optional<I>")));
+        assertThat(classUml, not(containsString("Optional<B>")));
+
+        String stripped = classUml.replace('\u200B', '?'); // Make zero-width-space 'visible' for test
+        assertThat(stripped, containsString("Optional<?U>"));
+        assertThat(stripped, containsString("Optional<?I>"));
+        assertThat(stripped, containsString("Optional<?B>"));
     }
 
 }

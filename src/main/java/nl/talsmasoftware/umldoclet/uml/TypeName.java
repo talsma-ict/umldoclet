@@ -77,14 +77,25 @@ public class TypeName implements Comparable<TypeName> {
 
     private <A extends Appendable> A writeGenericsTo(A output, TypeDisplay genericDisplay) throws IOException {
         if (generics.length > 0) {
+            StringBuilder buffer = new StringBuilder();
             String sep = "<";
             for (TypeName generic : generics) {
-                output.append(sep).append(generic.toUml(genericDisplay, null));
+                buffer.append(sep).append(generic.toUml(genericDisplay, null));
                 sep = ", ";
             }
-            output.append('>');
+            String res = buffer.toString();
+            if (isMarkupTag(res)) {
+                res = "<\u200B" + res.substring(1); // Insert zero-width-space character between < and markup character.
+            }
+            output.append(res).append(">");
         }
         return output;
+    }
+
+    private static boolean isMarkupTag(String value) {
+        return value.equalsIgnoreCase("<u")
+                || value.equalsIgnoreCase("<b")
+                || value.equalsIgnoreCase("<i");
     }
 
     @Override

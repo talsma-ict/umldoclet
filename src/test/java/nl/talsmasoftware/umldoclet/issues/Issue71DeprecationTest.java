@@ -62,6 +62,7 @@ public class Issue71DeprecationTest {
                 System.out, System.err,
                 "-d", outputdir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
+                "-quiet",
                 "src/test/java/" + classAsPath + ".java"
         );
         classUml = Testing.read(new File(outputdir, classAsPath + ".puml"));
