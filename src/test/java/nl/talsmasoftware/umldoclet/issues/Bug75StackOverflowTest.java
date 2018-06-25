@@ -49,7 +49,7 @@ public class Bug75StackOverflowTest {
                 System.out, System.err,
                 "-d", outputdir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
-                "-umlImageDirectory", "images",
+                "-quiet",
                 "src/test/java/" + Bug75StackOverflowTest.class.getName().replace('.', '/') + ".java"
         ), is(0));
         classUml = Testing.read(new File(outputdir, classAsPath + ".puml"));

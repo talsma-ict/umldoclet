@@ -32,19 +32,19 @@ import static org.hamcrest.Matchers.not;
  *
  * @author Sjoerd Talsma
  */
-public class Issue30Test {
+public class Issue30JavaBeanPropertiesTest {
 
     // Method that should not be seen as a bean property.
-    public Issue30Test getSomeValue(Boolean withArgument) {
+    public Issue30JavaBeanPropertiesTest getSomeValue(Boolean withArgument) {
         return this;
     }
 
     // Method that SHOULD be seen as a bean property.
-    public Issue30Test getSomeProperty() {
+    public Issue30JavaBeanPropertiesTest getSomeProperty() {
         return this;
     }
 
-    public void setSomeProperty(Issue30Test someProperty) {
+    public void setSomeProperty(Issue30JavaBeanPropertiesTest someProperty) {
     }
 
     @Test
@@ -55,6 +55,7 @@ public class Issue30Test {
                 System.out, System.err,
                 "-d", "target/test-30",
                 "-doclet", UMLDoclet.class.getName(),
+                "-quiet",
                 "src/test/java/" + classAsPath + ".java"
         );
         String uml = Testing.read(new File("target/test-30/" + packageAsPath + "/package.puml"));

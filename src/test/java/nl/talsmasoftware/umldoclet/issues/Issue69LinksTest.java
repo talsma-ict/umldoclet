@@ -44,6 +44,7 @@ public class Issue69LinksTest {
                 System.out, System.err,
                 "-d", outputdir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
+                "-quiet",
                 "src/test/java/" + packageAsPath + '/' + getClass().getSimpleName() + ".java"
         );
 

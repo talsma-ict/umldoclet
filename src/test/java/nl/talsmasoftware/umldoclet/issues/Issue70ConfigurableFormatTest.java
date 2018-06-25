@@ -52,6 +52,7 @@ public class Issue70ConfigurableFormatTest {
                 System.out, System.err,
                 "-d", outputDir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
+                "-quiet",
                 SOURCE_FILE
         );
 
@@ -71,6 +72,7 @@ public class Issue70ConfigurableFormatTest {
                 "-d", outputDir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
                 "-umlImageFormat", "none",
+                "-quiet",
                 SOURCE_FILE
         );
 
@@ -90,6 +92,7 @@ public class Issue70ConfigurableFormatTest {
                 "-d", outputDir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
                 "-umlImageFormat", "svg",
+                "-quiet",
                 SOURCE_FILE
         );
 
@@ -106,6 +109,7 @@ public class Issue70ConfigurableFormatTest {
                 "-d", outputDir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
                 "-umlImageFormat", "png",
+                "-quiet",
                 SOURCE_FILE
         );
 
@@ -124,6 +128,7 @@ public class Issue70ConfigurableFormatTest {
                 "-umlImageFormat", "svg",
                 "-umlImageFormat", "png",
                 "-umlImageFormat", "eps",
+                "-quiet",
                 SOURCE_FILE
         );
 
@@ -140,6 +145,7 @@ public class Issue70ConfigurableFormatTest {
                 "-d", outputDir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
                 "-umlImageFormat", "eps",
+                "-quiet",
                 SOURCE_FILE
         );
 
@@ -156,6 +162,7 @@ public class Issue70ConfigurableFormatTest {
                 "-d", outputDir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
                 "-umlImageFormat", "unrecognized",
+                "-quiet",
                 SOURCE_FILE
         );
 

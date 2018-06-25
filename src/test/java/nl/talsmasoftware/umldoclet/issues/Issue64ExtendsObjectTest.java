@@ -34,7 +34,7 @@ import static org.hamcrest.Matchers.not;
  * Test that any generic {@code EmptySet<T>} doesn't get rendered in UML as
  * {@code EmptySet<T extends Object>}.
  */
-public class Issue64Test {
+public class Issue64ExtendsObjectTest {
     ToolProvider javadoc = ToolProvider.findFirst("javadoc").get();
 
     public static class EmptySet<T> extends AbstractSet<T> {
@@ -57,6 +57,7 @@ public class Issue64Test {
                 "-sourcepath", "src/test/java",
                 "-d", "target/test-64",
                 "-doclet", UMLDoclet.class.getName(),
+                "-quiet",
                 getClass().getPackageName()
         );
         String emptySetUml = readEmptySetUml();
@@ -66,7 +67,7 @@ public class Issue64Test {
 
     private static String readEmptySetUml() {
         try {
-            return Testing.readUml(new FileInputStream("target/test-64/nl/talsmasoftware/umldoclet/issues/Issue64Test.EmptySet.puml"));
+            return Testing.readUml(new FileInputStream("target/test-64/nl/talsmasoftware/umldoclet/issues/Issue64ExtendsObjectTest.EmptySet.puml"));
         } catch (IOException ioe) {
             throw new IllegalStateException("Couldn't open class UML.", ioe);
         }
