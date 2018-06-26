@@ -31,7 +31,12 @@ public interface ImageConfig {
     Optional<String> directory();
 
     /**
-     * @return The image formats that are generated.
+     * By default {@code SVG} images will be generated because they are a lot smaller than for instance {@code PNG}
+     * images and they can include links to Javadoc {@code HTML} pages.
+     * <p>
+     * Providing one or more {@code "-umlImageFormat"} option values overrides this setting.
+     *
+     * @return The image formats that are generated (by default only {@code SVG}).
      */
     Collection<String> formats();
 

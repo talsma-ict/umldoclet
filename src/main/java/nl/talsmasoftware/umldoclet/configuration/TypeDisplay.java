@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.configuration;
 
 /**
- * The ways in which a type can be rendered in the resulting UML.
+ * The ways in which a type is rendered in the resulting UML.
  *
  * @author Sjoerd Talsma
  */

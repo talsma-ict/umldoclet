@@ -43,14 +43,14 @@ public final class Indentation implements CharSequence, Serializable {
     public static final Indentation DEFAULT = FOUR_SPACES[0];
 
     /**
-     * A reusable constant for no indentation at all (even after calls to {@link #increase()}.
+     * A reusable constant for no indentation at all (even after calls to {@link #increase()}).
      */
     public static final Indentation NONE = new Indentation(0, ' ', 0);
 
     // All fields of Indentation class are final.
-    final int width, level;
-    final char ch;
-    final String value;
+    private final int width, level;
+    private final char ch;
+    private final transient String value;
 
     private Indentation(final int width, final char ch, final int level) {
         this.width = width > 0 ? width : 0;
@@ -89,6 +89,14 @@ public final class Indentation implements CharSequence, Serializable {
                 : new Indentation(width, ' ', level);
     }
 
+    /**
+     * Internal 'factory' method that tries to resolve a constant indentation instance before returning a new object.
+     *
+     * @param width The indentation width for one indentation unit
+     * @param ch    The character used in the indentation
+     * @param level The numer of logical indentations to apply
+     * @return the requested indentation either as a resolved constant instance or a new object
+     */
     private static Indentation resolve(final int width, final char ch, final int level) {
         return width == 0 ? NONE
                 : ch == ' ' ? spaces(width, level)
@@ -97,23 +105,23 @@ public final class Indentation implements CharSequence, Serializable {
     }
 
     /**
-     * @return This indentation with the level increased by one.
+     * @return An indentation instance with the level increased by one.
      */
     public Indentation increase() {
         return resolve(width, ch, level + 1);
     }
 
     /**
-     * @return This indentation with the level decreased by one (if there was indentation left to decrease).
+     * @return An indentation instance with the level decreased by one (if there was indentation left to decrease).
      */
     public Indentation decrease() {
         return level == 0 ? this : resolve(width, ch, level - 1);
     }
 
     /**
-     * Makes sure that after deserialization, objects from cache are used where possible.
+     * Makes sure that after deserialization, the constant instances are resolved where possible.
      *
-     * @return The deserialized object from the cache if possible.
+     * @return The deserialized object from the cache if possible or a new instance otherwise.
      */
     private Object readResolve() {
         return resolve(width, ch, level);

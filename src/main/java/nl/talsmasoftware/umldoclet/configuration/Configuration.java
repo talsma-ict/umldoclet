@@ -22,12 +22,19 @@ import java.nio.charset.Charset;
 import java.util.List;
 
 /**
- * Configuration about <em>how</em> UML should be rendered.
+ * Configuration that influences <em>how</em> UML should be rendered.
  *
  * @author Sjoerd Talsma
  */
 public interface Configuration {
 
+    /**
+     * Custom logger implementation that only supports fixed messages.
+     * <p>
+     * This allows us to write unit tests that verify resource bundle availability of all loggable text.
+     *
+     * @return The logger for this application
+     */
     Logger logger();
 
     /**
@@ -61,11 +68,25 @@ public interface Configuration {
     List<String> excludedTypeReferences();
 
     /**
+     * The UML character set can be explicitly configured with the {@code "-umlEncoding"} option.
+     * <p>
+     * If this is not explicitly set, the {@linkplain #htmlCharset()} will also be used
+     * for the {@code PlantUML} source files.
+     *
      * @return The charset to use for PlantUML files
      */
     Charset umlCharset();
 
     /**
+     * The {@code HTML} character set is determined the same way the {@code Standard} doclet uses,
+     * as we delegate the initial rendering to it:
+     * <ol>
+     * <li>use the {@code "-docencoding"} if set,</li>
+     * <li>otherwise the source encoding ({@code "-encoding"})</li>
+     * <li>finally, if no encodings are specified at all,
+     * the {@code default platform encoding} is used as implicit fallback</li>
+     * </ol>
+     *
      * @return The charset used for Javadoc HTML files
      */
     Charset htmlCharset();

@@ -18,6 +18,8 @@ package nl.talsmasoftware.umldoclet.configuration;
 import nl.talsmasoftware.umldoclet.uml.Visibility;
 
 /**
+ * Influences how Fields are rendered in the UML.
+ *
  * @author Sjoerd Talsma
  */
 public interface FieldConfig {
