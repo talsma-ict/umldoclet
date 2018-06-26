@@ -38,7 +38,7 @@ To use the doclet together with the JavaDoc tool, the following is required.
 
 ## Usage
 
-- Please see the separate [the Usage page][Usage]
+- Please see the separate [Usage page][Usage]
   on how to use the UML doclet in your own Java projects.
 
 ## Examples
