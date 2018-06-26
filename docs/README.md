@@ -41,6 +41,16 @@ To use the doclet together with the JavaDoc tool, the following is required.
 - Please see the separate [the Usage page][Usage]
   on how to use the UML doclet in your own Java projects.
 
+## Examples
+
+The javadoc of the UMLDoclet itself is probably a decent example of what the
+default settings provides for you:
+
+- [Main javadoc page](https://javadoc.io/doc/nl.talsmasoftware/umldoclet)
+- [Simple package example: _nl.talsmasoftware.umldoclet.rendering_](https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/package-summary.html)
+- [Complex package example: _nl.talsmasoftware.umldoclet.uml_](https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/uml/package-summary.html)
+- [Class example: _nl.talsmasoftware.umldoclet.rendering.indent.Indentation_](https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/indent/Indentation.html)
+
 ## Feedback
 
 - Please search the [open issues](https://github.com/talsma-ict/umldoclet/issues)
