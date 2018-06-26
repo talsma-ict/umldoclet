@@ -31,7 +31,7 @@ public abstract class TypeMember extends UMLPart implements Comparable<TypeMembe
 
     protected final Type containingType;
     protected final Visibility visibility;
-    protected final boolean isAbstract, isStatic, isDeprecated;
+    public final boolean isAbstract, isStatic, isDeprecated;
     public final String name;
     protected final TypeName type;
 

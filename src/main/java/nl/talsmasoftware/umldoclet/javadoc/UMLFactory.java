@@ -16,8 +16,8 @@
 package nl.talsmasoftware.umldoclet.javadoc;
 
 import jdk.javadoc.doclet.DocletEnvironment;
-import nl.talsmasoftware.umldoclet.uml.*;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.uml.*;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -71,7 +71,9 @@ public class UMLFactory {
                 Element superclass = env.getTypeUtils().asElement(classElement.getSuperclass());
                 if (superclass instanceof TypeElement) {
                     classDiagram.addChild(sep);
-                    classDiagram.addChild(createType(null, (TypeElement) superclass));
+                    Type superType = createAndPopulateType(null, (TypeElement) superclass);
+                    superType.getChildren().removeIf(child -> !(child instanceof TypeMember) || !((TypeMember) child).isAbstract);
+                    classDiagram.addChild(superType);
                     sep = Literal.EMPTY;
                 }
                 references.add(new Reference(from(type.name.qualified), "--|>", to(superclassName)).canonical());
@@ -86,12 +88,16 @@ public class UMLFactory {
                 Element implementedInterface = env.getTypeUtils().asElement(interfaceType);
                 if (implementedInterface instanceof TypeElement) {
                     classDiagram.addChild(sep);
-                    classDiagram.addChild(createType(null, (TypeElement) implementedInterface));
+                    Type implementedType = createAndPopulateType(null, (TypeElement) implementedInterface);
+                    implementedType.getChildren().removeIf(child -> !(child instanceof TypeMember) || !((TypeMember) child).isAbstract);
+                    classDiagram.addChild(implementedType);
                     sep = Literal.EMPTY;
                 }
                 references.add(new Reference(from(type.name.qualified), "..|>", to(ifName.qualified)).canonical());
             }
         }
+
+        // TODO: Add inner classes
 
         if (!references.isEmpty()) {
             classDiagram.addChild(Literal.NEWLINE);
