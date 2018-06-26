@@ -41,6 +41,13 @@ import static nl.talsmasoftware.umldoclet.uml.Reference.Side.from;
 import static nl.talsmasoftware.umldoclet.uml.Reference.Side.to;
 
 /**
+ * One big factory to produce UML from analyzed Javadoc elements.
+ * <p>
+ * TODO: This should be refactored into ClassDiagram and PackageDiagram visitor implementations.
+ * This increases flexibility in supporting future language features however may introduce additional risk
+ * with regard to unbounded recursion (see <a href="https://github.com/talsma-ict/umldoclet/issues/75">Issue 75</a>
+ * for example).
+ *
  * @author Sjoerd Talsma
  */
 public class UMLFactory {
@@ -63,7 +70,6 @@ public class UMLFactory {
         List<Reference> references = new ArrayList<>();
         Literal sep = Literal.NEWLINE;
 
-        // TODO see if we can refactor some duplicate logic from package- and class diagrams into separate methods
         // Add superclass
         if (!TypeKind.NONE.equals(classElement.getSuperclass().getKind())) {
             String superclassName = TypeNameVisitor.INSTANCE.visit(classElement.getSuperclass()).qualified;
@@ -81,7 +87,6 @@ public class UMLFactory {
         }
 
         // Add interfaces
-
         for (TypeMirror interfaceType : classElement.getInterfaces()) {
             TypeName ifName = TypeNameVisitor.INSTANCE.visit(interfaceType);
             if (!config.excludedTypeReferences().contains(ifName.qualified)) {
@@ -97,7 +102,15 @@ public class UMLFactory {
             }
         }
 
-        // TODO: Add inner classes
+        // Add inner classes
+        classElement.getEnclosedElements().stream()
+                .filter(child -> child.getKind().isInterface() || child.getKind().isClass())
+                .filter(TypeElement.class::isInstance).map(TypeElement.class::cast)
+                .forEach(innerclassElem -> {
+                    Type innerType = createType(null, innerclassElem);
+                    classDiagram.addChild(innerType);
+                    references.add(new Reference(from(type.name.qualified), "+--", to(innerType.name.qualified)).canonical());
+                });
 
         if (!references.isEmpty()) {
             classDiagram.addChild(Literal.NEWLINE);

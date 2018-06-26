@@ -39,6 +39,7 @@ import static java.util.stream.Collectors.joining;
  * <ul>
  * <li>The 'extends' reference: {@code "--|>"}</li>
  * <li>The 'implements' reference: {@code "..|>"}</li>
+ * <li>The 'inner class' reference: {@code "+--"}</li>
  * </ul>
  *
  * @author Sjoerd Talsma
