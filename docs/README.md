@@ -44,7 +44,7 @@ To use the doclet together with the JavaDoc tool, the following is required.
 ## Examples
 
 The javadoc of the UMLDoclet itself is probably a decent example of what the
-default settings provides for you:
+default settings provide for you:
 
 - [Main javadoc page](https://javadoc.io/doc/nl.talsmasoftware/umldoclet)
 - [Simple package example: _nl.talsmasoftware.umldoclet.rendering_](https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/package-summary.html)
