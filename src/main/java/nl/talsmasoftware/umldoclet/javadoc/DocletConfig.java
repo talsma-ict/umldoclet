@@ -97,7 +97,6 @@ public class DocletConfig implements Configuration {
     List<String> excludedReferences = new ArrayList<>(asList(
             "java.lang.Object", "java.lang.Enum", "java.lang.annotation.Annotation"));
 
-    // TODO decide whether we want to make this configurable at all.
     private Indentation indentation = Indentation.DEFAULT;
 
     public DocletConfig(UMLDoclet doclet) {

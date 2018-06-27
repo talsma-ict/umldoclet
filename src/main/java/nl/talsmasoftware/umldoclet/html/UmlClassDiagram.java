@@ -21,11 +21,15 @@ import java.io.File;
 import java.util.Optional;
 
 /**
- * Abstraction for a generated diagram file.
+ * Abstraction for a generated class diagram file.
  * <p>
- * This class determines the relative path to the diagram from a corresponding HTML file.
+ * The {@link #createPostprocessor(HtmlFile)} method determines whether
+ * a found {@code HTML} file corresponds to this class diagram
+ * and if so, returns a postprocessor for it.
  * <p>
- * TODO: Does not yet work correctly with inner classes!
+ * Furthermore, this class 'knows' where (in the HTML) to insert the
+ * UML diagram and how to do it. The {@link #newInserter(String)} method
+ * provides such an {@link Postprocessor.Inserter inserter} to the postprocessor.
  *
  * @author Sjoerd Talsma
  */
@@ -66,12 +70,19 @@ final class UmlClassDiagram extends UmlDiagram {
     }
 
     private final class Inserter extends Postprocessor.Inserter {
-        private boolean summaryDivCleared = false;
+        private boolean clearRightAdded = false;
 
         private Inserter(String relativePath) {
             super(relativePath);
         }
 
+        /**
+         * Processes a single line from the {@code HTML} and inserts the image in the correct line and clears the
+         * 'float' style at the correct place.
+         *
+         * @param line A single line from the {@code HTML} to be processed.
+         * @return The processed line
+         */
         @Override
         String process(String line) {
             if (!inserted) {
@@ -81,36 +92,53 @@ final class UmlClassDiagram extends UmlDiagram {
                     inserted = true;
                     return line.substring(0, idx) + System.lineSeparator() + getImageTag() + line.substring(idx);
                 }
-            } else if (!summaryDivCleared) {
-                String cleared = clearSummaryDiv(line);
+            } else if (!clearRightAdded) {
+                String cleared = addClearRightStyle(line);
                 if (cleared != null) {
-                    summaryDivCleared = true;
+                    clearRightAdded = true;
                     return cleared;
                 }
             }
             return line;
         }
 
+        /**
+         * @return The {@code <img>} tag for this diagram including styling,
+         * or an {@code <object>} tag for {@code SVG} diagrams to enable their links.
+         */
         private String getImageTag() {
             String style = " style=\"max-width:60%;float:right;\"";
             if (relativePath.endsWith(".svg")) {
                 // Render SVG images as objects to make their links work
                 return "<object type=\"image/svg+xml\" data=\"" + relativePath + "\" " + style + "></object>";
             }
-
-            String name = relativePath.substring(relativePath.lastIndexOf('/') + 1);
-            int dotIdx = name.lastIndexOf('.');
-            if (dotIdx > 0) name = name.substring(0, dotIdx);
-            return "<img src=\"" + relativePath + "\" alt=\"" + name + " UML Diagram\"" + style + "/>";
+            return "<img src=\"" + relativePath + "\" alt=\"" + getDiagramName() + " UML Diagram\"" + style + "/>";
         }
 
-        private String clearSummaryDiv(String line) {
+        /**
+         * Add {@code style="clear: right;"} to the {@code summary} div and return the new line.
+         * If the line doesn't contain the summary div, returns {@code null}.
+         *
+         * @param line The line to check for the right place to add clear:right style to.
+         * @return The modified line with the added style or {@code null} if the line was not the right place to do so.
+         */
+        private String addClearRightStyle(String line) {
             final String summaryDiv = "<div class=\"summary\"";
             int idx = line.indexOf(summaryDiv);
             if (idx < 0) return null;
             int ins = idx + summaryDiv.length();
             line = line.substring(0, ins) + " style=\"clear: right;\"" + line.substring(ins);
             return line;
+        }
+
+        /**
+         * @return The diagram name to use for the IMG alt tag
+         */
+        private String getDiagramName() {
+            String name = relativePath.substring(relativePath.lastIndexOf('/') + 1);
+            int dotIdx = name.lastIndexOf('.');
+            if (dotIdx > 0) name = name.substring(0, dotIdx);
+            return name;
         }
     }
 }

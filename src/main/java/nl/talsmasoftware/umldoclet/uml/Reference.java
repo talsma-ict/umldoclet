@@ -55,7 +55,7 @@ public class Reference extends UMLPart implements NameSpaceAware {
     }
 
     private Reference(Side from, String type, Side to, Iterable<String> notes) {
-        super(null); // TODO maybe add a parent in the future?
+        super(null);
         this.from = requireNonNull(from, "Reference \"from\" side is <null>.");
         this.type = requireNonNull(type, "Reference type is <null>.").trim();
         if (this.type.isEmpty()) throw new IllegalArgumentException("Reference type is empty.");
