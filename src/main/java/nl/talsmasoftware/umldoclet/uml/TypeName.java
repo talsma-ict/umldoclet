@@ -59,6 +59,7 @@ public class TypeName implements Comparable<TypeName> {
 
             if (namespace != null && this.qualified.startsWith(namespace.name + ".")) {
                 String name = this.qualified.substring(namespace.name.length() + 1);
+                // Workaround for PlantUML problem with namespace and inner classes
                 if (name.indexOf('.') > 0) name = this.qualified;
                 output.append(name);
             } else if (isQualified(display)) {

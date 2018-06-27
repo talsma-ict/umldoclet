@@ -27,7 +27,7 @@ import static java.util.Objects.requireNonNull;
  */
 public class ClassDiagram extends UMLDiagram {
 
-    private final Type type;
+    final Type type;
     private File pumlFile = null;
 
     public ClassDiagram(Configuration config, Type type) {

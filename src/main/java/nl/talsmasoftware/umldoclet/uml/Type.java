@@ -21,6 +21,7 @@ import nl.talsmasoftware.umldoclet.uml.Namespace.NameSpaceAware;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
@@ -88,9 +89,10 @@ public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
     }
 
     private <IPW extends IndentingPrintWriter> IPW writeNameTo(IPW output, Namespace namespace) {
-        if (addPackageToName) {
-            output.append("\"<size:14>").append(stripGenerics(name.toUml(TypeDisplay.SIMPLE, namespace)))
-                    .append("\\n<size:10>").append(getNamespace().name)
+        if (addPackageToName && name.qualified.startsWith(this.namespace.name + '.')) {
+            String nameInPackage = name.qualified.substring(this.namespace.name.length() + 1);
+            output.append("\"<size:14>").append(nameInPackage)
+                    .append("\\n<size:10>").append(this.namespace.name)
                     .append("\" as ");
         }
         output.append(name.toUml(TypeDisplay.QUALIFIED, namespace));
@@ -107,12 +109,24 @@ public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
         return output;
     }
 
+    private Optional<Namespace> diagramPackage() {
+        UMLDiagram diagram = getDiagram();
+        if (diagram instanceof PackageDiagram) {
+            return Optional.of(new Namespace(diagram, ((PackageDiagram) diagram).packageName));
+        } else if (diagram instanceof ClassDiagram) {
+            return Optional.of(((ClassDiagram) diagram).type.namespace);
+        }
+        return Optional.empty();
+    }
+
     private <IPW extends IndentingPrintWriter> IPW writeLinkTo(IPW output) {
-        final String prefix = getNamespace().name + '.';
-        if (name.qualified.startsWith(prefix)) {
-            output.append("[[");
-            output.append(name.qualified.substring(prefix.length()));
-            output.append(".html]]");
+        Optional<String> relativeNameToDiagram = diagramPackage()
+                .filter(ns -> name.qualified.startsWith(ns.name + '.'))
+                .map(ns -> name.qualified.substring(ns.name.length() + 1));
+        if (relativeNameToDiagram.isPresent()) {
+            output.append("[[").append(relativeNameToDiagram.get()).append(".html]]");
+        } else {
+            output.append("[[fqn:").append(name.qualified).append(".html]]");
         }
         return output;
     }
@@ -136,19 +150,6 @@ public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
     @Override
     public boolean equals(Object other) {
         return this == other || (other instanceof Type && this.compareTo((Type) other) == 0);
-    }
-
-    /**
-     * This static utility method returns a substring if the name contains generics.
-     * <p>
-     * This was added as a fix for <a href="https://github.com/talsma-ict/umldoclet/issues/74">bug 74</a>.
-     *
-     * @param name The name (possibly with generics)
-     * @return The name without generics
-     */
-    private static String stripGenerics(String name) {
-        int lt = name.indexOf('<');
-        return lt > 0 ? name.substring(0, lt) : name;
     }
 
 }
