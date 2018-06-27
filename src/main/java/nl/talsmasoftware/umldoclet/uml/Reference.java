@@ -100,7 +100,7 @@ public class Reference extends UMLPart implements NameSpaceAware {
     public Reference canonical() {
         return type.startsWith("<--") || type.startsWith("<..")
                 || type.endsWith("--|>") || type.endsWith("..|>")
-                || type.endsWith("--*") || type.endsWith("--o")
+                || type.endsWith("--*") || type.endsWith("--o") || type.endsWith("--+")
                 ? inverse() : this;
     }
 
@@ -155,7 +155,9 @@ public class Reference extends UMLPart implements NameSpaceAware {
     }
 
     private static char reverseChar(char ch) {
-        return ch == '<' ? '>' : ch == '>' ? '<' : ch;
+        return ch == '<' ? '>' : ch == '>' ? '<'
+                : ch == '{' ? '}' : ch == '}' ? '{'
+                : ch;
     }
 
     public static final class Side {

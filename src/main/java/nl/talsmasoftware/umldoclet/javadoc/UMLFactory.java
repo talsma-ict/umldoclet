@@ -102,6 +102,23 @@ public class UMLFactory {
             }
         }
 
+        // Add containing class reference
+        ElementKind enclosingKind = classElement.getEnclosingElement().getKind();
+        if (enclosingKind.isClass() || enclosingKind.isInterface()) {
+            String enclosingTypeName = TypeNameVisitor.INSTANCE.visit(classElement.getEnclosingElement().asType()).qualified;
+            if (!config.excludedTypeReferences().contains(enclosingTypeName)) {
+                Element enclosingElement = classElement.getEnclosingElement();
+                if (enclosingElement instanceof TypeElement) {
+                    classDiagram.addChild(sep);
+                    Type enclosingType = createAndPopulateType(null, (TypeElement) enclosingElement);
+                    enclosingType.getChildren().removeIf(child -> !(child instanceof TypeMember) || !((TypeMember) child).isAbstract);
+                    classDiagram.addChild(enclosingType);
+                    sep = Literal.EMPTY;
+                }
+                references.add(new Reference(from(type.name.qualified), "--+", to(enclosingTypeName)).canonical());
+            }
+        }
+
         // Add inner classes
         classElement.getEnclosedElements().stream()
                 .filter(child -> child.getKind().isInterface() || child.getKind().isClass())

@@ -17,6 +17,7 @@ package nl.talsmasoftware.umldoclet.issues;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.util.Testing;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.FileInputStream;
@@ -35,7 +36,7 @@ import static org.hamcrest.Matchers.not;
  * {@code EmptySet<T extends Object>}.
  */
 public class Issue64ExtendsObjectTest {
-    ToolProvider javadoc = ToolProvider.findFirst("javadoc").get();
+    private static String emptySetUml;
 
     public static class EmptySet<T> extends AbstractSet<T> {
         @Override
@@ -50,26 +51,32 @@ public class Issue64ExtendsObjectTest {
         }
     }
 
-    @Test
-    public void testIssue64_TextendsObject() {
+    @BeforeClass
+    public static void produceUml() throws IOException {
         ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
                 "-sourcepath", "src/test/java",
                 "-d", "target/test-64",
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet",
-                getClass().getPackageName()
+                Issue64ExtendsObjectTest.class.getPackageName()
         );
-        String emptySetUml = readEmptySetUml();
+        emptySetUml = Testing.readUml(new FileInputStream(
+                "target/test-64/nl/talsmasoftware/umldoclet/issues/Issue64ExtendsObjectTest.EmptySet.puml"));
+    }
+
+    @Test
+    public void testIssue64_TextendsObject() {
         assertThat(emptySetUml, not(containsString("EmptySet<T extends Object>")));
         assertThat(emptySetUml, containsString("EmptySet<T>"));
     }
 
-    private static String readEmptySetUml() {
-        try {
-            return Testing.readUml(new FileInputStream("target/test-64/nl/talsmasoftware/umldoclet/issues/Issue64ExtendsObjectTest.EmptySet.puml"));
-        } catch (IOException ioe) {
-            throw new IllegalStateException("Couldn't open class UML.", ioe);
-        }
+    @Test
+    public void testIssue82_ContainingClassReference() {
+        assertThat(emptySetUml, containsString(
+                Issue64ExtendsObjectTest.class.getName()
+                        + " +-- "
+                        + EmptySet.class.getName().replace('$', '.')));
     }
+
 }
