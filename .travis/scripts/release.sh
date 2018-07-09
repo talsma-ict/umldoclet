@@ -45,7 +45,7 @@ create_release() {
 
     # Merge to develop and switch to next snapshot
     local nextSnapshot="$(next_snapshot_version ${release_version})"
-    if [[ switch_to_branch "develop-v${major_version}" ]]; then
+    if [ switch_to_branch "develop-v${major_version}" ]; then
         [[ "$(get_local_branch)" = "develop-v${major_version}" ]] || fatal "Could not switch to develop-v${major_version} branch."
         log "Merging to develop-v${major_version} and updating version to '${nextSnapshot}'."
         git merge --no-edit "${branch}"
