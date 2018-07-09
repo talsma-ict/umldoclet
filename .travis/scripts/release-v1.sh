@@ -5,21 +5,14 @@ set -eu -o pipefail
 declare -f debug > /dev/null || source "$(dirname $0)/logging.sh"
 declare -f is_semantic_version > /dev/null || source "$(dirname $0)/versioning.sh"
 declare -f is_pull_request > /dev/null || source "$(dirname $0)/git-functions.sh"
-declare -f create_release_v1 > /dev/null || source "$(dirname $0)/release-v1.sh"
 
-create_release() {
+create_release_v1() {
     local branch="${1:-}"
     debug "Performing release from branch ${branch}."
     is_release_version "${branch}" || fatal "Not a valid release branch: '${branch}'."
     local release_version="${branch#*/}"
     debug "Detected version '${release_version}'."
     validate_version "${release_version}"
-    local major_version=$(major_version_of ${release_version})
-    if [ -e "$(dirname $0)/release-v${major_version}.sh" ]; then
-        // TODO source + call release-v1.sh script
-        echo "TODO CALL RELEASE v1";
-    fi
-
     switch_to_branch "${branch}" || create_branch "${branch}"
     log "Releasing version ${release_version} from branch ${branch}."
 
@@ -58,16 +51,3 @@ create_release() {
     git push origin develop
     git push origin --delete "${branch}"
 }
-
-#----------------------
-# MAIN
-#----------------------
-
-[ -n "${GIT_BRANCH:-}" ] || GIT_BRANCH=$(find_remote_branch)
-
-if is_release_version "${GIT_BRANCH}"; then
-    log "Creating a new release from branch '${GIT_BRANCH}'."
-    create_release "${GIT_BRANCH}"
-else
-    log "Nothing to release, not on a release branch: '${GIT_BRANCH}'."
-fi

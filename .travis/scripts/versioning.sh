@@ -32,6 +32,16 @@ is_release_version() {
     fi
 }
 
+# Returns the major version for a valid semantic version string, undefined otherwise
+major_version_of() {
+    echo "${1}" | cut -d '.' -f 1
+}
+
+# Returns the major version for a valid semantic version string, undefined otherwise
+minor_version_of() {
+    echo "${1}" | cut -d '.' -f 2
+}
+
 # Returns the next snapshot version for the version specified in the first argument
 next_snapshot_version() {
     validate_version "${1:-}"
