@@ -1,6 +1,6 @@
 [![Build Status][ci-img]][ci]
 [![Coverage Status][coveralls-img]][coveralls]
-[![Released Version][maven-img]][maven]
+[![Maven-central Version][maven-img]][maven]
 [![Javadoc][javadoc-img]][javadoc]
 
 # UMLDoclet
@@ -76,7 +76,7 @@ default settings provide for you:
   [ci-img]: https://img.shields.io/travis/talsma-ict/umldoclet/develop.svg
   [ci]: https://travis-ci.org/talsma-ict/umldoclet
   [maven-img]: https://img.shields.io/maven-central/v/nl.talsmasoftware/umldoclet.svg
-  [maven]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22nl.talsmasoftware%22%20AND%20a%3A%22umldoclet%22
+  [maven]: http://mvnrepository.com/artifact/nl.talsmasoftware/umldoclet
   [coveralls-img]: https://coveralls.io/repos/github/talsma-ict/umldoclet/badge.svg
   [coveralls]: https://coveralls.io/github/talsma-ict/umldoclet
   [javadoc-img]: https://www.javadoc.io/badge/nl.talsmasoftware/umldoclet.svg
