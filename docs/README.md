@@ -73,7 +73,7 @@ default settings provide for you:
 - [Apache 2.0 license](../LICENSE)
 
 
-  [ci-img]: https://img.shields.io/travis/talsma-ict/umldoclet/develop.svg
+  [ci-img]: https://travis-ci.org/talsma-ict/umldoclet.svg?branch=develop
   [ci]: https://travis-ci.org/talsma-ict/umldoclet
   [maven-img]: https://img.shields.io/maven-central/v/nl.talsmasoftware/umldoclet.svg
   [maven]: http://mvnrepository.com/artifact/nl.talsmasoftware/umldoclet
