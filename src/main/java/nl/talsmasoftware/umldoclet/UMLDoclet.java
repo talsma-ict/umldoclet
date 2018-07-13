@@ -82,8 +82,8 @@ public class UMLDoclet extends StandardDoclet {
 
     @Override
     public boolean run(DocletEnvironment docEnv) {
-        return generateUMLDiagrams(docEnv)
-                && super.run(docEnv)
+        return super.run(docEnv)
+                && generateUMLDiagrams(docEnv)
                 && postProcessHtml();
     }
 
