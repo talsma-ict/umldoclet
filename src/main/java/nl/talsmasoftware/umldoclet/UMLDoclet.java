@@ -84,13 +84,13 @@ public class UMLDoclet extends StandardDoclet {
     public boolean run(DocletEnvironment docEnv) {
         return super.run(docEnv)
                 && generateUMLDiagrams(docEnv)
+                && generateDiagrams(docEnv)
                 && postProcessHtml();
     }
 
     private boolean generateUMLDiagrams(DocletEnvironment docEnv) {
         try {
             config.logger().info(DOCLET_COPYRIGHT, DOCLET_VERSION);
-            config.logger().info(PLANTUML_COPYRIGHT, Version.versionString());
 
             UMLFactory factory = new UMLFactory(config, docEnv);
             return streamIncludedElements(docEnv.getIncludedElements())
@@ -104,6 +104,12 @@ public class UMLDoclet extends StandardDoclet {
             rte.printStackTrace(System.err);
             return false;
         }
+    }
+
+    private boolean generateDiagrams(DocletEnvironment docEnv) {
+        config.logger().info(PLANTUML_COPYRIGHT, Version.versionString());
+        // TODO Generate diagrams from all created .puml files
+        return true;
     }
 
     private boolean postProcessHtml() {

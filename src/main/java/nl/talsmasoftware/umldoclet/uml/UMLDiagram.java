@@ -15,14 +15,18 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
+import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlImageWriter;
-import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.util.FileUtils;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -147,7 +151,13 @@ public abstract class UMLDiagram extends UMLPart {
                 .map(format -> new File(imageDir, baseName + "." + format))
                 .toArray(File[]::new);
 
-        return IndentingPrintWriter.wrap(PlantumlImageWriter.create(config, pumlFile, imageFiles), config.indentation());
+        try {
+//            return IndentingPrintWriter.wrap(PlantumlImageWriter.create(config, pumlFile, imageFiles), config.indentation());
+            Writer pumlWriter = new OutputStreamWriter(new FileOutputStream(pumlFile), config.umlCharset());
+            return IndentingPrintWriter.wrap(pumlWriter, config.indentation());
+        } catch (IOException ioe) {
+            throw new IllegalStateException("Could not create writer to PlantUML file: " + pumlFile, ioe);
+        }
     }
 
 }
