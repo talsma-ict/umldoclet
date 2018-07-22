@@ -39,6 +39,7 @@ import java.util.stream.Stream;
 
 import static nl.talsmasoftware.umldoclet.logging.Message.DOCLET_COPYRIGHT;
 import static nl.talsmasoftware.umldoclet.logging.Message.DOCLET_VERSION;
+import static nl.talsmasoftware.umldoclet.logging.Message.ERROR_UNANTICIPATED_ERROR_GENERATING_DIAGRAMS;
 import static nl.talsmasoftware.umldoclet.logging.Message.ERROR_UNANTICIPATED_ERROR_GENERATING_UML;
 import static nl.talsmasoftware.umldoclet.logging.Message.ERROR_UNANTICIPATED_ERROR_POSTPROCESSING_HTML;
 import static nl.talsmasoftware.umldoclet.logging.Message.PLANTUML_COPYRIGHT;
@@ -107,9 +108,16 @@ public class UMLDoclet extends StandardDoclet {
     }
 
     private boolean generateDiagrams(DocletEnvironment docEnv) {
-        config.logger().info(PLANTUML_COPYRIGHT, Version.versionString());
-        // TODO Generate diagrams from all created .puml files
-        return true;
+        try {
+            config.logger().info(PLANTUML_COPYRIGHT, Version.versionString());
+
+            // TODO Generate diagrams from all created .puml files
+            return true;
+        } catch (RuntimeException rte) {
+            config.logger().error(ERROR_UNANTICIPATED_ERROR_GENERATING_DIAGRAMS, rte);
+            rte.printStackTrace(System.err);
+            return false;
+        }
     }
 
     private boolean postProcessHtml() {
