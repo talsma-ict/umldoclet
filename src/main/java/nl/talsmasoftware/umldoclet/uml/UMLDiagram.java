@@ -67,9 +67,9 @@ public abstract class UMLDiagram extends UMLPart {
     /**
      * This method determines the physical file where the plantuml diagram should be rendered.
      *
-     * @return The physical file where this plantuml diagram in question should be rendered.
+     * @return The physical file where the plantuml should be rendered.
      */
-    protected abstract File pumlFile();
+    public abstract File pumlFile();
 
     @Override
     public Collection<? extends UMLPart> getChildren() {
@@ -96,19 +96,16 @@ public abstract class UMLDiagram extends UMLPart {
 
     /**
      * Renders this diagram to a designated {@link #pumlFile() .puml file}.
-     *
-     * @return Whether the rendering succeeded.
      */
-    public boolean render() {
+    public void render() {
         final File pumlFile = pumlFile();
         final Logger logger = getConfiguration().logger();
         try (IndentingPrintWriter writer = createPlantumlWriter(pumlFile)) {
             logger.info(INFO_GENERATING_FILE, pumlFile);
             this.writeTo(IndentingPrintWriter.wrap(writer, getConfiguration().indentation()));
-            return true;
-        } catch (RuntimeException e) {
-            logger.error(ERROR_COULDNT_RENDER_UML, pumlFile, e);
-            return false;
+        } catch (RuntimeException rte) {
+            logger.error(ERROR_COULDNT_RENDER_UML, pumlFile, rte);
+            throw rte;
         }
     }
 

@@ -37,6 +37,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toList;
 import static nl.talsmasoftware.umldoclet.logging.Message.DOCLET_COPYRIGHT;
 import static nl.talsmasoftware.umldoclet.logging.Message.DOCLET_VERSION;
 import static nl.talsmasoftware.umldoclet.logging.Message.ERROR_UNANTICIPATED_ERROR_GENERATING_DIAGRAMS;
@@ -83,13 +84,21 @@ public class UMLDoclet extends StandardDoclet {
 
     @Override
     public boolean run(DocletEnvironment docEnv) {
-        return super.run(docEnv)
-                && generateUMLDiagrams(docEnv)
-                && generateDiagrams(docEnv)
-                && postProcessHtml();
+        boolean result = super.run(docEnv);
+        if (result) {
+            try {
+                Collection<UMLDiagram> umlDiagrams = generateUMLDiagrams(docEnv);
+                result = generateDiagrams(docEnv)
+                        && postProcessHtml();
+            } catch (UMLDocletException docletException) {
+                docletException.logTo(config.logger());
+                result = false;
+            }
+        }
+        return result;
     }
 
-    private boolean generateUMLDiagrams(DocletEnvironment docEnv) {
+    private Collection<UMLDiagram> generateUMLDiagrams(DocletEnvironment docEnv) {
         try {
             config.logger().info(DOCLET_COPYRIGHT, DOCLET_VERSION);
 
@@ -97,13 +106,11 @@ public class UMLDoclet extends StandardDoclet {
             return streamIncludedElements(docEnv.getIncludedElements())
                     .map(element -> mapToDiagram(factory, element))
                     .filter(Optional::isPresent).map(Optional::get)
-                    .map(UMLDiagram::render)
-                    .reduce(Boolean.TRUE, (a, b) -> a & b);
+                    .peek(UMLDiagram::render)
+                    .collect(toList());
 
         } catch (RuntimeException rte) {
-            config.logger().error(ERROR_UNANTICIPATED_ERROR_GENERATING_UML, rte);
-            rte.printStackTrace(System.err);
-            return false;
+            throw new UMLDocletException(ERROR_UNANTICIPATED_ERROR_GENERATING_UML, rte);
         }
     }
 
