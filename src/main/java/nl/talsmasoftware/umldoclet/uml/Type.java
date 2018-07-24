@@ -20,7 +20,6 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Optional;
 import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
@@ -43,6 +42,7 @@ public class Type extends UMLPart implements Comparable<Type> {
     private final Classification classfication;
     public final TypeName name;
     private final boolean isDeprecated, addPackageToName;
+    private final Link link;
     private final Set<UMLPart> children = new LinkedHashSet<>();
 
     public Type(Namespace namespace, Classification classification, TypeName name) {
@@ -57,6 +57,7 @@ public class Type extends UMLPart implements Comparable<Type> {
         this.name = requireNonNull(name, "Type name is <null>.");
         this.isDeprecated = isDeprecated;
         this.addPackageToName = addPackageToName;
+        this.link = new Link(this, name.qualified + ".html");
         if (children != null) this.children.addAll(children);
     }
 
@@ -106,30 +107,8 @@ public class Type extends UMLPart implements Comparable<Type> {
         output.append(classfication.toUml()).whitespace();
         writeNameTo(output, namespace).whitespace();
         if (isDeprecated) output.append("<<deprecated>>").whitespace();
-        writeLinkTo(output).whitespace();
+        link.writeTo(output).whitespace();
         writeChildrenTo(output).newline();
-        return output;
-    }
-
-    private Optional<Namespace> diagramPackage() {
-        UMLRoot diagram = getRootUMLPart();
-        if (diagram instanceof PackageUml) {
-            return Optional.of(new Namespace(diagram, ((PackageUml) diagram).packageName));
-        } else if (diagram instanceof ClassUml) {
-            return Optional.of(((ClassUml) diagram).type.namespace);
-        }
-        return Optional.empty();
-    }
-
-    private <IPW extends IndentingPrintWriter> IPW writeLinkTo(IPW output) {
-        Optional<String> relativeNameToDiagram = diagramPackage()
-                .filter(ns -> name.qualified.startsWith(ns.name + '.'))
-                .map(ns -> name.qualified.substring(ns.name.length() + 1));
-        if (relativeNameToDiagram.isPresent()) {
-            output.append("[[").append(relativeNameToDiagram.get()).append(".html]]");
-        } else {
-            output.append("[[fqn:").append(name.qualified).append(".html]]");
-        }
         return output;
     }
 
