@@ -19,7 +19,6 @@ import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
-import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlImageWriter;
 import nl.talsmasoftware.umldoclet.util.FileUtils;
 
 import java.io.File;
@@ -44,9 +43,7 @@ import static nl.talsmasoftware.umldoclet.util.FileUtils.ensureParentDir;
  * The <code>{@literal @}startuml</code> and <code>{@literal @}enduml</code> lines with the children within.
  * Subclasses of {@code UMLRoot} are responsible for adding appropriate child renderers.
  * <p>
- * The diagram is rendered to a {@code .puml} output file.
- * Writing happens to the {@link PlantumlImageWriter} which caches the written plantuml file and
- * will generate one or more corresponding images from the diagram when the writer is closed.
+ * The diagram is rendered to a {@code .puml} output file if the {@code -createPumlFiles} option is enabled.
  *
  * @author Sjoerd Talsma
  */
@@ -99,14 +96,16 @@ public abstract class UMLRoot extends UMLPart {
      * Renders this diagram to a designated {@link #pumlFile() .puml file}.
      */
     public void render() {
-        final File pumlFile = pumlFile();
-        final Logger logger = getConfiguration().logger();
-        try (IndentingPrintWriter writer = createPlantumlWriter(pumlFile)) {
-            logger.info(INFO_GENERATING_FILE, pumlFile);
-            this.writeTo(IndentingPrintWriter.wrap(writer, getConfiguration().indentation()));
-        } catch (RuntimeException rte) {
-            logger.error(ERROR_COULDNT_RENDER_UML, pumlFile, rte);
-            throw rte;
+        if (config.renderPumlFile()) {
+            final File pumlFile = pumlFile();
+            final Logger logger = getConfiguration().logger();
+            try (IndentingPrintWriter writer = createPlantumlWriter(pumlFile)) {
+                logger.info(INFO_GENERATING_FILE, pumlFile);
+                this.writeTo(IndentingPrintWriter.wrap(writer, getConfiguration().indentation()));
+            } catch (RuntimeException rte) {
+                logger.error(ERROR_COULDNT_RENDER_UML, pumlFile, rte);
+                throw rte;
+            }
         }
     }
 

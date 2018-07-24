@@ -45,6 +45,7 @@ public class Issue69LinksTest {
                 "-d", outputdir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet",
+                "-createPumlFiles",
                 "src/test/java/" + packageAsPath + '/' + getClass().getSimpleName() + ".java"
         );
 

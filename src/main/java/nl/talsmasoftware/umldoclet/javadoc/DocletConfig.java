@@ -60,6 +60,13 @@ public class DocletConfig implements Configuration {
     String destDirName = "";
 
     /**
+     * Whether or not to render PlantUML {@code .puml} files.
+     * <p>
+     * Set by option {@code -umlPlantumlFiles}, default is {@code false}.
+     */
+    boolean renderPumlFile = false;
+
+    /**
      * Whether the doclet should run more quite (errors must still be displayed).
      * <p>
      * Set by (Standard) doclet option {@code -quiet}, default is {@code false}.
@@ -130,6 +137,11 @@ public class DocletConfig implements Configuration {
     @Override
     public String destinationDirectory() {
         return destDirName;
+    }
+
+    @Override
+    public boolean renderPumlFile() {
+        return renderPumlFile;
     }
 
     @Override
