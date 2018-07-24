@@ -16,6 +16,8 @@
 package nl.talsmasoftware.umldoclet.diagrams;
 
 import net.sourceforge.plantuml.FileFormat;
+import net.sourceforge.plantuml.FileFormatOption;
+import net.sourceforge.plantuml.SourceStringReader;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.uml.UMLRoot;
 import nl.talsmasoftware.umldoclet.util.FileUtils;
@@ -64,7 +66,7 @@ public class Diagram {
         try (OutputStream out = new FileOutputStream(ensureParentDir(diagramFile))) {
             umlRoot.getConfiguration().logger().info(INFO_GENERATING_FILE, diagramFile);
 
-            // TODO
+            new SourceStringReader(umlRoot.toString()).outputImage(out, new FileFormatOption(format));
 
         } catch (IOException ioe) {
             throw new IllegalStateException("I/O error rendering " + this + ": " + ioe.getMessage(), ioe);
