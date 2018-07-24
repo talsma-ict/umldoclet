@@ -16,23 +16,64 @@
 package nl.talsmasoftware.umldoclet.diagrams;
 
 import net.sourceforge.plantuml.FileFormat;
+import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.uml.UMLFile;
+import nl.talsmasoftware.umldoclet.util.FileUtils;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 import static java.util.Objects.requireNonNull;
+import static nl.talsmasoftware.umldoclet.logging.Message.INFO_GENERATING_FILE;
+import static nl.talsmasoftware.umldoclet.util.FileUtils.ensureParentDir;
+import static nl.talsmasoftware.umldoclet.util.FileUtils.withoutExtension;
 
 public class Diagram {
 
     private final UMLFile umlFile;
     private final FileFormat format;
+    private File diagramFile;
 
     public Diagram(UMLFile plantUMLFile, FileFormat format) {
         this.umlFile = requireNonNull(plantUMLFile, "PlantUML file is <null>.");
         this.format = requireNonNull(format, "Diagram file format is <null>.");
-        System.out.println("TODO: Rendering " + format + " " + umlFile.pumlFile());
+    }
+
+    private File getDiagramFile() {
+        if (diagramFile == null) {
+            Configuration config = umlFile.getConfiguration();
+            File destinationDir = new File(config.destinationDirectory());
+            String relativePumlFile = FileUtils.relativePath(destinationDir, umlFile.pumlFile());
+            diagramFile = config.images().directory()
+                    .map(imgDir -> new File(destinationDir, imgDir))
+                    .map(imgDir -> new File(imgDir, relativePumlFile.replace('/', '.')))
+                    .map(file -> new File(file.getParent(), withDiagramExtension(file.getName())))
+                    .orElseGet(() -> new File(destinationDir, withDiagramExtension(relativePumlFile)));
+        }
+        return diagramFile;
+    }
+
+    private String withDiagramExtension(String path) {
+        return withoutExtension(path) + format.getFileSuffix();
     }
 
     public void render() {
-        // TODO
+        File diagramFile = getDiagramFile();
+        try (OutputStream out = new FileOutputStream(ensureParentDir(diagramFile))) {
+            umlFile.getConfiguration().logger().info(INFO_GENERATING_FILE, diagramFile);
+
+            // TODO
+
+        } catch (IOException ioe) {
+            throw new IllegalStateException("I/O error rendering " + this + ": " + ioe.getMessage(), ioe);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return getDiagramFile().getPath();
     }
 
 }

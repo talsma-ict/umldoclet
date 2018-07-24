@@ -133,7 +133,7 @@ public class UMLDoclet extends StandardDoclet {
     private boolean postProcessHtml(Collection<Diagram> diagrams) {
         try {
 
-            return new HtmlPostprocessor(config).postProcessHtml();
+            return new HtmlPostprocessor(config, diagrams).postProcessHtml();
 
         } catch (IOException | RuntimeException ex) {
             config.logger().error(ERROR_UNANTICIPATED_ERROR_POSTPROCESSING_HTML, ex);

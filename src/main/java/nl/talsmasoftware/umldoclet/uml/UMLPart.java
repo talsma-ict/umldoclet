@@ -54,8 +54,8 @@ public abstract class UMLPart implements IndentingRenderer {
         return requireNonNull(parent, () -> getClass().getSimpleName() + " seems to be an orphan, it has no parent.");
     }
 
-    protected UMLFile getDiagram() {
-        return requireParent().getDiagram();
+    protected UMLFile getRootUMLPart() {
+        return requireParent().getRootUMLPart();
     }
 
     /**
@@ -74,7 +74,7 @@ public abstract class UMLPart implements IndentingRenderer {
     }
 
     protected Configuration getConfiguration() {
-        return getDiagram().config;
+        return getRootUMLPart().config;
     }
 
     protected Indentation getIndentation() {

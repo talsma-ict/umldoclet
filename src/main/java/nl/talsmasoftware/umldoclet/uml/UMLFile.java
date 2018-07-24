@@ -35,6 +35,7 @@ import java.util.Optional;
 import static java.util.Objects.requireNonNull;
 import static nl.talsmasoftware.umldoclet.logging.Message.ERROR_COULDNT_RENDER_UML;
 import static nl.talsmasoftware.umldoclet.logging.Message.INFO_GENERATING_FILE;
+import static nl.talsmasoftware.umldoclet.util.FileUtils.ensureParentDir;
 
 /**
  * Renders a new UML diagram.
@@ -60,7 +61,7 @@ public abstract class UMLFile extends UMLPart {
     }
 
     @Override
-    protected UMLFile getDiagram() {
+    protected UMLFile getRootUMLPart() {
         return this;
     }
 
@@ -137,11 +138,10 @@ public abstract class UMLFile extends UMLPart {
     }
 
     private IndentingPrintWriter createPlantumlWriter(File pumlFile) {
-        final File imageDir = configuredImageDirectory().orElseGet(pumlFile::getParentFile);
-        final String baseName = imageBasename(pumlFile);
+//        final File imageDir = configuredImageDirectory().orElseGet(pumlFile::getParentFile);
+//        final String baseName = imageBasename(pumlFile);
 
-        FileUtils.ensureParentDir(pumlFile);
-        FileUtils.ensureParentDir(new File(imageDir, baseName));
+//        FileUtils.ensureParentDir(new File(imageDir, baseName));
 
 //        File[] imageFiles = config.images().formats().stream()
 //                .map(String::toLowerCase)
@@ -150,7 +150,7 @@ public abstract class UMLFile extends UMLPart {
 
         try {
 //            return IndentingPrintWriter.wrap(PlantumlImageWriter.create(config, pumlFile, imageFiles), config.indentation());
-            Writer pumlWriter = new OutputStreamWriter(new FileOutputStream(pumlFile), config.umlCharset());
+            Writer pumlWriter = new OutputStreamWriter(new FileOutputStream(ensureParentDir(pumlFile)), config.umlCharset());
             return IndentingPrintWriter.wrap(pumlWriter, config.indentation());
         } catch (IOException ioe) {
             throw new IllegalStateException("Could not create writer to PlantUML file: " + pumlFile, ioe);
