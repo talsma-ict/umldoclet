@@ -19,7 +19,7 @@ import jdk.javadoc.doclet.DocletEnvironment;
 import jdk.javadoc.doclet.Reporter;
 import jdk.javadoc.doclet.StandardDoclet;
 import net.sourceforge.plantuml.version.Version;
-import nl.talsmasoftware.umldoclet.diagrams.Diagram;
+import nl.talsmasoftware.umldoclet.uml.Diagram;
 import nl.talsmasoftware.umldoclet.html.HtmlPostprocessor;
 import nl.talsmasoftware.umldoclet.javadoc.DocletConfig;
 import nl.talsmasoftware.umldoclet.javadoc.UMLFactory;
@@ -107,8 +107,8 @@ public class UMLDoclet extends StandardDoclet {
         try {
 
             UMLFactory factory = new UMLFactory(config, docEnv);
-            return streamIncludedElements(docEnv.getIncludedElements())
-//            return docEnv.getIncludedElements().stream()
+//            return streamIncludedElements(docEnv.getIncludedElements())
+            return docEnv.getIncludedElements().stream()
                     .map(element -> mapToDiagram(factory, element))
                     .filter(Optional::isPresent).map(Optional::get)
                     .peek(UMLRoot::render);

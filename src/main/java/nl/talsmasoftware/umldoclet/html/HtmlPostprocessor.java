@@ -16,12 +16,11 @@
 package nl.talsmasoftware.umldoclet.html;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.diagrams.Diagram;
+import nl.talsmasoftware.umldoclet.uml.Diagram;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Collection;
 
 import static java.util.Objects.requireNonNull;
