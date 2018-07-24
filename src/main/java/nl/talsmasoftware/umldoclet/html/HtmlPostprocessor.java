@@ -16,6 +16,7 @@
 package nl.talsmasoftware.umldoclet.html;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.diagrams.Diagram;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,9 +33,11 @@ import static java.util.Objects.requireNonNull;
  */
 public class HtmlPostprocessor {
     private final Configuration config;
+    private final Collection<Diagram> diagrams;
 
-    public HtmlPostprocessor(Configuration config) {
+    public HtmlPostprocessor(Configuration config, Collection<Diagram> diagrams) {
         this.config = requireNonNull(config, "Configuration is <null>.");
+        this.diagrams = requireNonNull(diagrams, "Generated diagram collection is <null>.");
     }
 
     public boolean postProcessHtml() throws IOException {

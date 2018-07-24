@@ -42,7 +42,7 @@ public class Namespace extends UMLPart implements Comparable<Namespace> {
     public final String name;
     private final Collection<UMLPart> children = new ArrayList<>();
 
-    public Namespace(UMLDiagram diagram, String name) {
+    public Namespace(UMLFile diagram, String name) {
         super(diagram);
         this.name = requireNonNull(name, "Package name is <null>.").trim();
         if (this.name.isEmpty()) throw new IllegalArgumentException("Package name is empty.");

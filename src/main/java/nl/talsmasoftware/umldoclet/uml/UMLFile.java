@@ -41,7 +41,7 @@ import static nl.talsmasoftware.umldoclet.logging.Message.INFO_GENERATING_FILE;
  * <p>
  * Responsible for rendering the UML diagram itself:
  * The <code>{@literal @}startuml</code> and <code>{@literal @}enduml</code> lines with the children within.
- * Subclasses of {@code UMLDiagram} are responsible for adding appropriate child renderers.
+ * Subclasses of {@code UMLFile} are responsible for adding appropriate child renderers.
  * <p>
  * The diagram is rendered to a {@code .puml} output file.
  * Writing happens to the {@link PlantumlImageWriter} which caches the written plantuml file and
@@ -49,18 +49,18 @@ import static nl.talsmasoftware.umldoclet.logging.Message.INFO_GENERATING_FILE;
  *
  * @author Sjoerd Talsma
  */
-public abstract class UMLDiagram extends UMLPart {
+public abstract class UMLFile extends UMLPart {
 
     final Configuration config;
     protected final List<UMLPart> children = new ArrayList<>();
 
-    protected UMLDiagram(Configuration config) {
+    protected UMLFile(Configuration config) {
         super(null);
         this.config = requireNonNull(config, "Configuration is <null>.");
     }
 
     @Override
-    protected UMLDiagram getDiagram() {
+    protected UMLFile getDiagram() {
         return this;
     }
 
@@ -143,10 +143,10 @@ public abstract class UMLDiagram extends UMLPart {
         FileUtils.ensureParentDir(pumlFile);
         FileUtils.ensureParentDir(new File(imageDir, baseName));
 
-        File[] imageFiles = config.images().formats().stream()
-                .map(String::toLowerCase)
-                .map(format -> new File(imageDir, baseName + "." + format))
-                .toArray(File[]::new);
+//        File[] imageFiles = config.images().formats().stream()
+//                .map(String::toLowerCase)
+//                .map(format -> new File(imageDir, baseName + "." + format))
+//                .toArray(File[]::new);
 
         try {
 //            return IndentingPrintWriter.wrap(PlantumlImageWriter.create(config, pumlFile, imageFiles), config.indentation());

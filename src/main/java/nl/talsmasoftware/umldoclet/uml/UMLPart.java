@@ -54,7 +54,7 @@ public abstract class UMLPart implements IndentingRenderer {
         return requireNonNull(parent, () -> getClass().getSimpleName() + " seems to be an orphan, it has no parent.");
     }
 
-    protected UMLDiagram getDiagram() {
+    protected UMLFile getDiagram() {
         return requireParent().getDiagram();
     }
 

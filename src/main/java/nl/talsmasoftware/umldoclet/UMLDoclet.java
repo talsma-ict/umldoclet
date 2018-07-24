@@ -19,10 +19,11 @@ import jdk.javadoc.doclet.DocletEnvironment;
 import jdk.javadoc.doclet.Reporter;
 import jdk.javadoc.doclet.StandardDoclet;
 import net.sourceforge.plantuml.version.Version;
+import nl.talsmasoftware.umldoclet.diagrams.Diagram;
 import nl.talsmasoftware.umldoclet.html.HtmlPostprocessor;
 import nl.talsmasoftware.umldoclet.javadoc.DocletConfig;
 import nl.talsmasoftware.umldoclet.javadoc.UMLFactory;
-import nl.talsmasoftware.umldoclet.uml.UMLDiagram;
+import nl.talsmasoftware.umldoclet.uml.UMLFile;
 
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
@@ -84,50 +85,52 @@ public class UMLDoclet extends StandardDoclet {
 
     @Override
     public boolean run(DocletEnvironment docEnv) {
-        boolean result = super.run(docEnv);
-        if (result) {
-            try {
-                Collection<UMLDiagram> umlDiagrams = generateUMLDiagrams(docEnv);
-                result = generateDiagrams(docEnv)
-                        && postProcessHtml();
-            } catch (UMLDocletException docletException) {
-                docletException.logTo(config.logger());
-                result = false;
-            }
+        config.logger().info(DOCLET_COPYRIGHT, DOCLET_VERSION);
+        config.logger().info(PLANTUML_COPYRIGHT, Version.versionString());
+
+        // First generate Standard HTML documentation
+        if (!super.run(docEnv)) return false;
+
+        try {
+            Collection<Diagram> umlDiagrams = generatePlantUMLFiles(docEnv)
+                    .flatMap(this::generateDiagrams)
+                    .collect(toList());
+
+            return postProcessHtml(umlDiagrams);
+        } catch (UMLDocletException docletException) {
+            docletException.logTo(config.logger());
+            return false;
         }
-        return result;
     }
 
-    private Collection<UMLDiagram> generateUMLDiagrams(DocletEnvironment docEnv) {
+    private Stream<UMLFile> generatePlantUMLFiles(DocletEnvironment docEnv) {
         try {
-            config.logger().info(DOCLET_COPYRIGHT, DOCLET_VERSION);
 
             UMLFactory factory = new UMLFactory(config, docEnv);
             return streamIncludedElements(docEnv.getIncludedElements())
+//            return docEnv.getIncludedElements().stream()
                     .map(element -> mapToDiagram(factory, element))
                     .filter(Optional::isPresent).map(Optional::get)
-                    .peek(UMLDiagram::render)
-                    .collect(toList());
+                    .peek(UMLFile::render);
 
         } catch (RuntimeException rte) {
             throw new UMLDocletException(ERROR_UNANTICIPATED_ERROR_GENERATING_UML, rte);
         }
     }
 
-    private boolean generateDiagrams(DocletEnvironment docEnv) {
+    private Stream<Diagram> generateDiagrams(UMLFile plantUMLFile) {
         try {
-            config.logger().info(PLANTUML_COPYRIGHT, Version.versionString());
 
-            // TODO Generate diagrams from all created .puml files
-            return true;
+            return config.images().formats().stream()
+                    .map(format -> new Diagram(plantUMLFile, format))
+                    .peek(Diagram::render);
+
         } catch (RuntimeException rte) {
-            config.logger().error(ERROR_UNANTICIPATED_ERROR_GENERATING_DIAGRAMS, rte);
-            rte.printStackTrace(System.err);
-            return false;
+            throw new UMLDocletException(ERROR_UNANTICIPATED_ERROR_GENERATING_DIAGRAMS, rte);
         }
     }
 
-    private boolean postProcessHtml() {
+    private boolean postProcessHtml(Collection<Diagram> diagrams) {
         try {
 
             return new HtmlPostprocessor(config).postProcessHtml();
@@ -139,7 +142,7 @@ public class UMLDoclet extends StandardDoclet {
         }
     }
 
-    private Optional<UMLDiagram> mapToDiagram(UMLFactory factory, Element element) {
+    private Optional<UMLFile> mapToDiagram(UMLFactory factory, Element element) {
         if (element instanceof PackageElement) {
             return Optional.of(factory.createPackageDiagram((PackageElement) element));
         } else if (element instanceof TypeElement && (element.getKind().isClass() || element.getKind().isInterface())) {

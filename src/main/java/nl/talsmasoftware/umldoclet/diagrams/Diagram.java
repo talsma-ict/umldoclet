@@ -15,9 +15,21 @@
  */
 package nl.talsmasoftware.umldoclet.diagrams;
 
+import net.sourceforge.plantuml.FileFormat;
+import nl.talsmasoftware.umldoclet.uml.UMLFile;
+
+import static java.util.Objects.requireNonNull;
+
 public class Diagram {
 
+    private final UMLFile umlFile;
+    private final FileFormat format;
 
+    public Diagram(UMLFile plantUMLFile, FileFormat format) {
+        this.umlFile = requireNonNull(plantUMLFile, "PlantUML file is <null>.");
+        this.format = requireNonNull(format, "Diagram file format is <null>.");
+        System.out.println("TODO: Rendering " + format + " " + umlFile.pumlFile());
+    }
 
     public void render() {
         // TODO

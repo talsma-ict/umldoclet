@@ -110,11 +110,11 @@ public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
     }
 
     private Optional<Namespace> diagramPackage() {
-        UMLDiagram diagram = getDiagram();
-        if (diagram instanceof PackageDiagram) {
-            return Optional.of(new Namespace(diagram, ((PackageDiagram) diagram).packageName));
-        } else if (diagram instanceof ClassDiagram) {
-            return Optional.of(((ClassDiagram) diagram).type.namespace);
+        UMLFile diagram = getDiagram();
+        if (diagram instanceof PackageUml) {
+            return Optional.of(new Namespace(diagram, ((PackageUml) diagram).packageName));
+        } else if (diagram instanceof ClassUml) {
+            return Optional.of(((ClassUml) diagram).type.namespace);
         }
         return Optional.empty();
     }

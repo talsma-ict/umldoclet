@@ -17,15 +17,17 @@ package nl.talsmasoftware.umldoclet.javadoc;
 
 import jdk.javadoc.doclet.Doclet;
 import jdk.javadoc.doclet.Reporter;
+import net.sourceforge.plantuml.FileFormat;
 import nl.talsmasoftware.umldoclet.UMLDoclet;
-import nl.talsmasoftware.umldoclet.logging.Logger;
-import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
-import nl.talsmasoftware.umldoclet.uml.Visibility;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.FieldConfig;
 import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
 import nl.talsmasoftware.umldoclet.configuration.MethodConfig;
 import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
+import nl.talsmasoftware.umldoclet.logging.Logger;
+import nl.talsmasoftware.umldoclet.logging.Message;
+import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
+import nl.talsmasoftware.umldoclet.uml.Visibility;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -40,7 +42,9 @@ import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
+import static java.util.Locale.ENGLISH;
 import static java.util.Objects.requireNonNull;
+import static net.sourceforge.plantuml.FileFormat.SVG;
 
 public class DocletConfig implements Configuration {
 
@@ -161,9 +165,9 @@ public class DocletConfig implements Configuration {
                 : Charset.defaultCharset();
     }
 
-    static final class ImageCfg implements ImageConfig {
+    final class ImageCfg implements ImageConfig {
         String directory = null;
-        Collection<String> imageFormats = null;
+        Collection<FileFormat> imageFormats = null;
 
         /**
          * Directory where UML images are generated.
@@ -183,14 +187,28 @@ public class DocletConfig implements Configuration {
                         .map(String::trim)
                         .map(s -> s.replaceFirst("^\\.", ""))
                         .map(String::toUpperCase)
-                        .filter(s -> !s.isEmpty())
+                        .filter(s -> !s.isEmpty() && !"NONE".equals(s))
+                        .map(this::toFileFormat)
+                        .filter(Optional::isPresent).map(Optional::get)
                         .forEach(imageFormats::add);
             }
         }
 
+        private Optional<FileFormat> toFileFormat(String format) {
+            String formatAsSuffix = "." + format.toLowerCase(ENGLISH);
+            Optional<FileFormat> fileFormat = Stream.concat(
+                    Stream.of(FileFormat.values()).filter(ff -> format.equals(ff.name())),
+                    Stream.of(FileFormat.values()).filter(ff -> formatAsSuffix.equals(ff.getFileSuffix())))
+                    .findFirst();
+            if (!fileFormat.isPresent()) {
+                logger().warn(Message.WARNING_UNRECOGNIZED_IMAGE_FORMAT, format);
+            }
+            return fileFormat;
+        }
+
         @Override
-        public Collection<String> formats() {
-            return Optional.ofNullable(imageFormats).orElseGet(() -> singleton("SVG"));
+        public Collection<FileFormat> formats() {
+            return Optional.ofNullable(imageFormats).orElseGet(() -> singleton(SVG));
         }
     }
 
