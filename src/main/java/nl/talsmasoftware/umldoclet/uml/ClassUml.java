@@ -25,7 +25,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * @author Sjoerd Talsma
  */
-public class ClassUml extends UMLFile {
+public class ClassUml extends UMLRoot {
 
     final Type type;
     private File pumlFile = null;

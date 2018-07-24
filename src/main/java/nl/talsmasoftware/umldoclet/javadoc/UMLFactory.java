@@ -53,7 +53,7 @@ import static nl.talsmasoftware.umldoclet.uml.Reference.Side.to;
 public class UMLFactory {
 
     final Configuration config;
-    final ThreadLocal<UMLFile> diagram = new ThreadLocal<>();
+    final ThreadLocal<UMLRoot> diagram = new ThreadLocal<>();
     private final DocletEnvironment env;
     private final Function<TypeMirror, TypeNameWithCardinality> typeNameWithCardinality;
 
@@ -63,7 +63,7 @@ public class UMLFactory {
         this.typeNameWithCardinality = TypeNameWithCardinality.function(env.getTypeUtils());
     }
 
-    public UMLFile createClassDiagram(TypeElement classElement) {
+    public UMLRoot createClassDiagram(TypeElement classElement) {
         Type type = createAndPopulateType(null, classElement);
         ClassUml classUml = new ClassUml(config, type);
 
@@ -137,7 +137,7 @@ public class UMLFactory {
         return classUml;
     }
 
-    public UMLFile createPackageDiagram(PackageElement packageElement) {
+    public UMLRoot createPackageDiagram(PackageElement packageElement) {
         PackageUml packageUml = new PackageUml(config, packageElement.getQualifiedName().toString());
         Map<Namespace, Collection<Type>> foreignTypes = new LinkedHashMap<>();
         List<Reference> references = new ArrayList<>();
@@ -497,7 +497,7 @@ public class UMLFactory {
                 .flatMap(UMLFactory::innerTypes));
     }
 
-    Namespace createPackage(UMLFile diagram,
+    Namespace createPackage(UMLRoot diagram,
                             PackageElement packageElement,
                             Map<Namespace, Collection<Type>> foreignTypes,
                             List<Reference> references) {

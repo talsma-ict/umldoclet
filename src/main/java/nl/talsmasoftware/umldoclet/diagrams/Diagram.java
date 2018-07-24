@@ -17,7 +17,7 @@ package nl.talsmasoftware.umldoclet.diagrams;
 
 import net.sourceforge.plantuml.FileFormat;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.uml.UMLFile;
+import nl.talsmasoftware.umldoclet.uml.UMLRoot;
 import nl.talsmasoftware.umldoclet.util.FileUtils;
 
 import java.io.File;
@@ -32,20 +32,20 @@ import static nl.talsmasoftware.umldoclet.util.FileUtils.withoutExtension;
 
 public class Diagram {
 
-    private final UMLFile umlFile;
+    private final UMLRoot umlRoot;
     private final FileFormat format;
     private File diagramFile;
 
-    public Diagram(UMLFile plantUMLFile, FileFormat format) {
-        this.umlFile = requireNonNull(plantUMLFile, "PlantUML file is <null>.");
+    public Diagram(UMLRoot plantUMLRoot, FileFormat format) {
+        this.umlRoot = requireNonNull(plantUMLRoot, "PlantUML file is <null>.");
         this.format = requireNonNull(format, "Diagram file format is <null>.");
     }
 
     private File getDiagramFile() {
         if (diagramFile == null) {
-            Configuration config = umlFile.getConfiguration();
+            Configuration config = umlRoot.getConfiguration();
             File destinationDir = new File(config.destinationDirectory());
-            String relativePumlFile = FileUtils.relativePath(destinationDir, umlFile.pumlFile());
+            String relativePumlFile = FileUtils.relativePath(destinationDir, umlRoot.pumlFile());
             diagramFile = config.images().directory()
                     .map(imgDir -> new File(destinationDir, imgDir))
                     .map(imgDir -> new File(imgDir, relativePumlFile.replace('/', '.')))
@@ -62,7 +62,7 @@ public class Diagram {
     public void render() {
         File diagramFile = getDiagramFile();
         try (OutputStream out = new FileOutputStream(ensureParentDir(diagramFile))) {
-            umlFile.getConfiguration().logger().info(INFO_GENERATING_FILE, diagramFile);
+            umlRoot.getConfiguration().logger().info(INFO_GENERATING_FILE, diagramFile);
 
             // TODO
 

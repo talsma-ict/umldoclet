@@ -25,7 +25,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * @author Sjoerd Talsma
  */
-public class PackageUml extends UMLFile {
+public class PackageUml extends UMLRoot {
 
     final String packageName;
     private File pumlFile = null;

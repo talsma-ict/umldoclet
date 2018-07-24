@@ -42,7 +42,7 @@ import static nl.talsmasoftware.umldoclet.util.FileUtils.ensureParentDir;
  * <p>
  * Responsible for rendering the UML diagram itself:
  * The <code>{@literal @}startuml</code> and <code>{@literal @}enduml</code> lines with the children within.
- * Subclasses of {@code UMLFile} are responsible for adding appropriate child renderers.
+ * Subclasses of {@code UMLRoot} are responsible for adding appropriate child renderers.
  * <p>
  * The diagram is rendered to a {@code .puml} output file.
  * Writing happens to the {@link PlantumlImageWriter} which caches the written plantuml file and
@@ -50,18 +50,18 @@ import static nl.talsmasoftware.umldoclet.util.FileUtils.ensureParentDir;
  *
  * @author Sjoerd Talsma
  */
-public abstract class UMLFile extends UMLPart {
+public abstract class UMLRoot extends UMLPart {
 
     final Configuration config;
     protected final List<UMLPart> children = new ArrayList<>();
 
-    protected UMLFile(Configuration config) {
+    protected UMLRoot(Configuration config) {
         super(null);
         this.config = requireNonNull(config, "Configuration is <null>.");
     }
 
     @Override
-    protected UMLFile getRootUMLPart() {
+    protected UMLRoot getRootUMLPart() {
         return this;
     }
 

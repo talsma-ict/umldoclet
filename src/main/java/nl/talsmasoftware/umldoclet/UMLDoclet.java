@@ -23,7 +23,7 @@ import nl.talsmasoftware.umldoclet.diagrams.Diagram;
 import nl.talsmasoftware.umldoclet.html.HtmlPostprocessor;
 import nl.talsmasoftware.umldoclet.javadoc.DocletConfig;
 import nl.talsmasoftware.umldoclet.javadoc.UMLFactory;
-import nl.talsmasoftware.umldoclet.uml.UMLFile;
+import nl.talsmasoftware.umldoclet.uml.UMLRoot;
 
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
@@ -92,7 +92,7 @@ public class UMLDoclet extends StandardDoclet {
         if (!super.run(docEnv)) return false;
 
         try {
-            Collection<Diagram> umlDiagrams = generatePlantUMLFiles(docEnv)
+            Collection<Diagram> umlDiagrams = generatePlantUMLContent(docEnv)
                     .flatMap(this::generateDiagrams)
                     .collect(toList());
 
@@ -103,7 +103,7 @@ public class UMLDoclet extends StandardDoclet {
         }
     }
 
-    private Stream<UMLFile> generatePlantUMLFiles(DocletEnvironment docEnv) {
+    private Stream<UMLRoot> generatePlantUMLContent(DocletEnvironment docEnv) {
         try {
 
             UMLFactory factory = new UMLFactory(config, docEnv);
@@ -111,18 +111,18 @@ public class UMLDoclet extends StandardDoclet {
 //            return docEnv.getIncludedElements().stream()
                     .map(element -> mapToDiagram(factory, element))
                     .filter(Optional::isPresent).map(Optional::get)
-                    .peek(UMLFile::render);
+                    .peek(UMLRoot::render);
 
         } catch (RuntimeException rte) {
             throw new UMLDocletException(ERROR_UNANTICIPATED_ERROR_GENERATING_UML, rte);
         }
     }
 
-    private Stream<Diagram> generateDiagrams(UMLFile plantUMLFile) {
+    private Stream<Diagram> generateDiagrams(UMLRoot plantUMLRoot) {
         try {
 
             return config.images().formats().stream()
-                    .map(format -> new Diagram(plantUMLFile, format))
+                    .map(format -> new Diagram(plantUMLRoot, format))
                     .peek(Diagram::render);
 
         } catch (RuntimeException rte) {
@@ -142,7 +142,7 @@ public class UMLDoclet extends StandardDoclet {
         }
     }
 
-    private Optional<UMLFile> mapToDiagram(UMLFactory factory, Element element) {
+    private Optional<UMLRoot> mapToDiagram(UMLFactory factory, Element element) {
         if (element instanceof PackageElement) {
             return Optional.of(factory.createPackageDiagram((PackageElement) element));
         } else if (element instanceof TypeElement && (element.getKind().isClass() || element.getKind().isInterface())) {
