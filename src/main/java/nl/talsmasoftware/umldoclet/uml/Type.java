@@ -17,7 +17,6 @@ package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
-import nl.talsmasoftware.umldoclet.uml.Namespace.NameSpaceAware;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -26,7 +25,7 @@ import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 
-public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
+public class Type extends UMLPart implements Comparable<Type> {
     /**
      * Classification of a UML Type.
      *
@@ -100,7 +99,10 @@ public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output, Namespace namespace) {
+    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+        // Namespace aware compensation
+        final Namespace namespace = getParent() instanceof PackageUml
+                ? new Namespace(getRootUMLPart(), ((PackageUml) getParent()).packageName) : null;
         output.append(classfication.toUml()).whitespace();
         writeNameTo(output, namespace).whitespace();
         if (isDeprecated) output.append("<<deprecated>>").whitespace();

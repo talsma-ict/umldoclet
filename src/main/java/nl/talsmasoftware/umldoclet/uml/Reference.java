@@ -16,7 +16,6 @@
 package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
-import nl.talsmasoftware.umldoclet.uml.Namespace.NameSpaceAware;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -44,7 +43,7 @@ import static java.util.stream.Collectors.joining;
  *
  * @author Sjoerd Talsma
  */
-public class Reference extends UMLPart implements NameSpaceAware {
+public class Reference extends UMLPart /*implements NameSpaceAware */ {
 
     public final Side from, to;
     public final String type;
@@ -104,7 +103,11 @@ public class Reference extends UMLPart implements NameSpaceAware {
                 ? inverse() : this;
     }
 
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output, Namespace namespace) {
+    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+        // Namespace aware compensation
+        final Namespace namespace = getParent() instanceof PackageUml
+                ? new Namespace(getRootUMLPart(), ((PackageUml) getParent()).packageName) : null;
+
         output.append(from.toString(namespace)).whitespace()
                 .append(type).whitespace()
                 .append(to.toString(namespace));
