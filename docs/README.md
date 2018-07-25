@@ -7,10 +7,7 @@
 
 Doclet for the JavaDoc tool that generates UML diagrams from the code.  
 
-__Note:__ Version `2.0.0` of the `UMLDoclet` is a full rewrite as 
-a [Javadoc 9 doclet][doclet], reusing only the internal rendering of `.puml` files.  
-UMLDoclet v2 requires a JDK 9 compatible version of `javadoc` to run.  
-For earlier versions of javadoc, please use the [latest `1.x` version][v1.x] of this doclet.
+__Note:__ _Version `2.0.0` is a full rewrite as a [Javadoc 9 doclet][doclet]._  
 
 Released versions can be found in the [maven central repository][maven]
 or on [github](https://github.com/talsma-ict/umldoclet/releases).  
@@ -22,7 +19,8 @@ It automatically generates [UML diagrams][plantuml] from your code.
 
 To use the doclet together with the JavaDoc tool, the following is required.
 
-- JDK version 9 or higher (for older Javadoc versions please use [v1.x]).
+- [Javadoc version 9][doclet] or higher.  
+  For earlier versions of javadoc, please use the [latest `1.x` version][v1.x] of this doclet.
 - This doclet jar.
 
 ## Usage
