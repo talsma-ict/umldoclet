@@ -15,6 +15,8 @@
  */
 package nl.talsmasoftware.umldoclet.configuration;
 
+import net.sourceforge.plantuml.FileFormat;
+
 import java.util.Collection;
 import java.util.Optional;
 
@@ -38,6 +40,6 @@ public interface ImageConfig {
      *
      * @return The image formats that are generated (by default only {@code SVG}).
      */
-    Collection<String> formats();
+    Collection<FileFormat> formats();
 
 }

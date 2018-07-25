@@ -19,10 +19,11 @@ import jdk.javadoc.doclet.DocletEnvironment;
 import jdk.javadoc.doclet.Reporter;
 import jdk.javadoc.doclet.StandardDoclet;
 import net.sourceforge.plantuml.version.Version;
+import nl.talsmasoftware.umldoclet.uml.Diagram;
 import nl.talsmasoftware.umldoclet.html.HtmlPostprocessor;
 import nl.talsmasoftware.umldoclet.javadoc.DocletConfig;
 import nl.talsmasoftware.umldoclet.javadoc.UMLFactory;
-import nl.talsmasoftware.umldoclet.uml.UMLDiagram;
+import nl.talsmasoftware.umldoclet.uml.UMLRoot;
 
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
@@ -37,8 +38,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toList;
 import static nl.talsmasoftware.umldoclet.logging.Message.DOCLET_COPYRIGHT;
 import static nl.talsmasoftware.umldoclet.logging.Message.DOCLET_VERSION;
+import static nl.talsmasoftware.umldoclet.logging.Message.ERROR_UNANTICIPATED_ERROR_GENERATING_DIAGRAMS;
 import static nl.talsmasoftware.umldoclet.logging.Message.ERROR_UNANTICIPATED_ERROR_GENERATING_UML;
 import static nl.talsmasoftware.umldoclet.logging.Message.ERROR_UNANTICIPATED_ERROR_POSTPROCESSING_HTML;
 import static nl.talsmasoftware.umldoclet.logging.Message.PLANTUML_COPYRIGHT;
@@ -82,34 +85,55 @@ public class UMLDoclet extends StandardDoclet {
 
     @Override
     public boolean run(DocletEnvironment docEnv) {
-        return generateUMLDiagrams(docEnv)
-                && super.run(docEnv)
-                && postProcessHtml();
-    }
+        config.logger().info(DOCLET_COPYRIGHT, DOCLET_VERSION);
+        config.logger().info(PLANTUML_COPYRIGHT, Version.versionString());
 
-    private boolean generateUMLDiagrams(DocletEnvironment docEnv) {
+        // First generate Standard HTML documentation
+        if (!super.run(docEnv)) return false;
+
         try {
-            config.logger().info(DOCLET_COPYRIGHT, DOCLET_VERSION);
-            config.logger().info(PLANTUML_COPYRIGHT, Version.versionString());
+            Collection<Diagram> umlDiagrams = generatePlantUMLContent(docEnv)
+                    .flatMap(this::generateDiagrams)
+                    .collect(toList());
 
-            UMLFactory factory = new UMLFactory(config, docEnv);
-            return streamIncludedElements(docEnv.getIncludedElements())
-                    .map(element -> mapToDiagram(factory, element))
-                    .filter(Optional::isPresent).map(Optional::get)
-                    .map(UMLDiagram::render)
-                    .reduce(Boolean.TRUE, (a, b) -> a & b);
-
-        } catch (RuntimeException rte) {
-            config.logger().error(ERROR_UNANTICIPATED_ERROR_GENERATING_UML, rte);
-            rte.printStackTrace(System.err);
+            return postProcessHtml(umlDiagrams);
+        } catch (UMLDocletException docletException) {
+            docletException.logTo(config.logger());
             return false;
         }
     }
 
-    private boolean postProcessHtml() {
+    private Stream<UMLRoot> generatePlantUMLContent(DocletEnvironment docEnv) {
         try {
 
-            return new HtmlPostprocessor(config).postProcessHtml();
+            UMLFactory factory = new UMLFactory(config, docEnv);
+//            return streamIncludedElements(docEnv.getIncludedElements())
+            return docEnv.getIncludedElements().stream()
+                    .map(element -> mapToDiagram(factory, element))
+                    .filter(Optional::isPresent).map(Optional::get)
+                    .peek(UMLRoot::render);
+
+        } catch (RuntimeException rte) {
+            throw new UMLDocletException(ERROR_UNANTICIPATED_ERROR_GENERATING_UML, rte);
+        }
+    }
+
+    private Stream<Diagram> generateDiagrams(UMLRoot plantUMLRoot) {
+        try {
+
+            return config.images().formats().stream()
+                    .map(format -> new Diagram(plantUMLRoot, format))
+                    .peek(Diagram::render);
+
+        } catch (RuntimeException rte) {
+            throw new UMLDocletException(ERROR_UNANTICIPATED_ERROR_GENERATING_DIAGRAMS, rte);
+        }
+    }
+
+    private boolean postProcessHtml(Collection<Diagram> diagrams) {
+        try {
+
+            return new HtmlPostprocessor(config, diagrams).postProcessHtml();
 
         } catch (IOException | RuntimeException ex) {
             config.logger().error(ERROR_UNANTICIPATED_ERROR_POSTPROCESSING_HTML, ex);
@@ -118,7 +142,7 @@ public class UMLDoclet extends StandardDoclet {
         }
     }
 
-    private Optional<UMLDiagram> mapToDiagram(UMLFactory factory, Element element) {
+    private Optional<UMLRoot> mapToDiagram(UMLFactory factory, Element element) {
         if (element instanceof PackageElement) {
             return Optional.of(factory.createPackageDiagram((PackageElement) element));
         } else if (element instanceof TypeElement && (element.getKind().isClass() || element.getKind().isInterface())) {

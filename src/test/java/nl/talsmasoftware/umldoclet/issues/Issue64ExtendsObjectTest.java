@@ -59,6 +59,7 @@ public class Issue64ExtendsObjectTest {
                 "-d", "target/test-64",
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet",
+                "-createPumlFiles",
                 Issue64ExtendsObjectTest.class.getPackageName()
         );
         emptySetUml = Testing.readUml(new FileInputStream(

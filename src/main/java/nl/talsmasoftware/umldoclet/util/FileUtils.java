@@ -95,6 +95,14 @@ public final class FileUtils {
         return path.substring(Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\')) + 1);
     }
 
+    public static String withoutExtension(String path) {
+        if (path != null) {
+            int lastDot = path.lastIndexOf('.');
+            if (lastDot > 0) path = path.substring(0, lastDot);
+        }
+        return path;
+    }
+
     public static boolean hasExtension(Object file, String extension) {
         if (file == null || extension == null) return false;
         if (!extension.startsWith(".")) extension = '.' + extension;

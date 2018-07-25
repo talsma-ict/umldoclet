@@ -56,6 +56,7 @@ public class Issue30JavaBeanPropertiesTest {
                 "-d", "target/test-30",
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet",
+                "-createPumlFiles",
                 "src/test/java/" + classAsPath + ".java"
         );
         String uml = Testing.read(new File("target/test-30/" + packageAsPath + "/package.puml"));

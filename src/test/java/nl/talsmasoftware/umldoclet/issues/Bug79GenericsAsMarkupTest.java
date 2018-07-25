@@ -54,6 +54,7 @@ public class Bug79GenericsAsMarkupTest {
                 "-d", outputdir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet",
+                "-createPumlFiles",
                 "src/test/java/" + Bug79GenericsAsMarkupTest.class.getName().replace('.', '/') + ".java"
         ), is(0));
         classUml = Testing.read(new File(outputdir, classAsPath + ".puml"));

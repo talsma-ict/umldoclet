@@ -16,19 +16,19 @@
 package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
-import nl.talsmasoftware.umldoclet.uml.Namespace.NameSpaceAware;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
-import static java.util.Collections.unmodifiableSet;
+import static java.util.Collections.unmodifiableCollection;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 
@@ -44,7 +44,7 @@ import static java.util.stream.Collectors.joining;
  *
  * @author Sjoerd Talsma
  */
-public class Reference extends UMLPart implements NameSpaceAware {
+public class Reference extends UMLPart {
 
     public final Side from, to;
     public final String type;
@@ -54,24 +54,19 @@ public class Reference extends UMLPart implements NameSpaceAware {
         this(from, type, to, notes != null && notes.length > 0 ? asList(notes) : null);
     }
 
-    private Reference(Side from, String type, Side to, Iterable<String> notes) {
+    private Reference(Side from, String type, Side to, Collection<String> notes) {
         super(null);
         this.from = requireNonNull(from, "Reference \"from\" side is <null>.");
         this.type = requireNonNull(type, "Reference type is <null>.").trim();
         if (this.type.isEmpty()) throw new IllegalArgumentException("Reference type is empty.");
         this.to = requireNonNull(to, "Reference \"to\" side is <null>.");
 
-        if (notes == null) this.notes = emptySet();
-        else { // Copy notes via an accumulator collection.
-            final Set<String> notesAcc = new LinkedHashSet<>();
-            for (String note : notes) {
-                final String trimmed = note != null ? note.trim() : "";
-                if (!trimmed.isEmpty()) notesAcc.add(trimmed);
-            }
-            if (notesAcc.isEmpty()) this.notes = emptySet();
-            else if (notesAcc.size() == 1) this.notes = singleton(notesAcc.iterator().next());
-            else this.notes = unmodifiableSet(notesAcc);
-        }
+        notes = (notes == null ? Stream.<String>empty() : notes.stream()).filter(Objects::nonNull)
+                .map(String::trim).filter(s -> !s.isEmpty())
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+        this.notes = notes.isEmpty() ? emptySet()
+                : notes.size() == 1 ? singleton(notes.iterator().next())
+                : unmodifiableCollection(notes);
     }
 
     public boolean isSelfReference() {
@@ -104,7 +99,11 @@ public class Reference extends UMLPart implements NameSpaceAware {
                 ? inverse() : this;
     }
 
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output, Namespace namespace) {
+    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+        // Namespace aware compensation
+        final Namespace namespace = getParent() instanceof PackageUml
+                ? new Namespace(getRootUMLPart(), ((PackageUml) getParent()).packageName) : null;
+
         output.append(from.toString(namespace)).whitespace()
                 .append(type).whitespace()
                 .append(to.toString(namespace));
