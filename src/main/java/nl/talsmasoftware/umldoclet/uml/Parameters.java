@@ -106,7 +106,7 @@ public class Parameters extends UMLPart implements Comparable<Parameters> {
                 String typeUml = type.toUml(methodConfig.paramTypes(), null);
                 if (varargs && typeUml.endsWith("[]")) typeUml = typeUml.substring(0, typeUml.length() - 2) + "...";
                 output.append(sep).append(typeUml);
-                sep = ": ";
+                sep = " ";
             }
             if (name != null && MethodConfig.ParamNames.AFTER_TYPE.equals(methodConfig.paramNames())) {
                 output.append(sep).append(name);

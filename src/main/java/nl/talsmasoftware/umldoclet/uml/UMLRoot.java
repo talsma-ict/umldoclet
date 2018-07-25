@@ -19,17 +19,14 @@ import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
-import nl.talsmasoftware.umldoclet.util.FileUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
-import static nl.talsmasoftware.umldoclet.logging.Message.ERROR_COULDNT_RENDER_UML;
 import static nl.talsmasoftware.umldoclet.logging.Message.INFO_GENERATING_FILE;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.ensureParentDir;
 
@@ -93,38 +90,8 @@ public abstract class UMLRoot extends UMLPart {
             try (IndentingPrintWriter writer = createPlantumlWriter(pumlFile)) {
                 logger.info(INFO_GENERATING_FILE, pumlFile);
                 this.writeTo(IndentingPrintWriter.wrap(writer, getConfiguration().indentation()));
-            } catch (RuntimeException rte) {
-                logger.error(ERROR_COULDNT_RENDER_UML, pumlFile, rte);
-                throw rte;
             }
         }
-    }
-
-    private Optional<File> configuredImageDirectory() {
-        return config.images().directory().map(imageDir -> {
-            final String baseDir = config.destinationDirectory();
-            final File imgDir = new File(imageDir);
-            return baseDir.isEmpty() || imgDir.isAbsolute() ? imgDir : new File(baseDir, imageDir);
-        });
-    }
-
-    /**
-     * Returns the name for the image, without the file extension.
-     * <p>
-     * This method also takes the {@link #configuredImageDirectory()} into consideration.
-     *
-     * @param file The file to return the base filename for.
-     * @return The filename to use for images, without the file extension.
-     */
-    private String imageBasename(File file) {
-        String baseName = file.getName();
-        int dotIdx = baseName.lastIndexOf('.');
-        if (dotIdx > 0) baseName = baseName.substring(0, dotIdx);
-        if (configuredImageDirectory().isPresent()) {
-            String relativeDir = FileUtils.relativePath(new File(config.destinationDirectory()), file.getParentFile());
-            if (!relativeDir.isEmpty()) baseName = relativeDir.replace('/', '.') + '.' + baseName;
-        }
-        return baseName;
     }
 
     private IndentingPrintWriter createPlantumlWriter(File pumlFile) {
