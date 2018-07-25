@@ -15,20 +15,17 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.configuration.MethodConfig;
 import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.Iterator;
 
 /**
  * @author Sjoerd Talsma
  */
 public class Parameters extends UMLPart implements Comparable<Parameters> {
 
-    private final List<Parameter> params = new ArrayList<>();
     private boolean varargs = false;
     private Method method;
 
@@ -46,12 +43,12 @@ public class Parameters extends UMLPart implements Comparable<Parameters> {
     }
 
     @Override
-    public Collection<? extends Parameter> getChildren() {
-        return params;
+    public void addChild(UMLPart child) {
+        if (child instanceof Parameter) super.addChild(child);
     }
 
     public Parameters add(String name, TypeName type) {
-        params.add(new Parameter(name, type));
+        addChild(new Parameter(name, type));
         return this;
     }
 
@@ -69,7 +66,7 @@ public class Parameters extends UMLPart implements Comparable<Parameters> {
     public <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
         output.append('(');
         String sep = "";
-        for (Parameter param : getChildren()) {
+        for (UMLPart param : getChildren()) {
             param.writeTo(output.append(sep));
             sep = ", ";
         }
@@ -79,9 +76,10 @@ public class Parameters extends UMLPart implements Comparable<Parameters> {
 
     @Override
     public int compareTo(Parameters other) {
-        int delta = Integer.compare(this.params.size(), other.params.size());
-        for (int i = 0; delta == 0 && i < this.params.size(); i++) {
-            delta = this.params.get(i).type.compareTo(other.params.get(i).type);
+        int delta = Integer.compare(this.getChildren().size(), other.getChildren().size());
+        for (Iterator<UMLPart> ours = this.getChildren().iterator(), theirs = other.getChildren().iterator();
+             delta == 0 && ours.hasNext() && theirs.hasNext(); ) {
+            delta = ((Parameter) ours.next()).type.compareTo(((Parameter) theirs.next()).type);
         }
         return delta;
     }

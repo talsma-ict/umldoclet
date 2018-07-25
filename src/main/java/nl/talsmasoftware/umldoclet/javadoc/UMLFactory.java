@@ -78,7 +78,7 @@ public class UMLFactory {
                 if (superclass instanceof TypeElement) {
                     classUml.addChild(sep);
                     Type superType = createAndPopulateType(null, (TypeElement) superclass);
-                    superType.getChildren().removeIf(child -> !(child instanceof TypeMember) || !((TypeMember) child).isAbstract);
+                    superType.removeChildren(child -> !(child instanceof TypeMember) || !((TypeMember) child).isAbstract);
                     classUml.addChild(superType);
                     sep = Literal.EMPTY;
                 }
@@ -94,7 +94,7 @@ public class UMLFactory {
                 if (implementedInterface instanceof TypeElement) {
                     classUml.addChild(sep);
                     Type implementedType = createAndPopulateType(null, (TypeElement) implementedInterface);
-                    implementedType.getChildren().removeIf(child -> !(child instanceof TypeMember) || !((TypeMember) child).isAbstract);
+                    implementedType.removeChildren(child -> !(child instanceof TypeMember) || !((TypeMember) child).isAbstract);
                     classUml.addChild(implementedType);
                     sep = Literal.EMPTY;
                 }
@@ -111,7 +111,7 @@ public class UMLFactory {
                 if (enclosingElement instanceof TypeElement) {
                     classUml.addChild(sep);
                     Type enclosingType = createAndPopulateType(null, (TypeElement) enclosingElement);
-                    enclosingType.getChildren().removeIf(child -> !(child instanceof TypeMember) || !((TypeMember) child).isAbstract);
+                    enclosingType.removeChildren(child -> !(child instanceof TypeMember) || !((TypeMember) child).isAbstract);
                     classUml.addChild(enclosingType);
                     sep = Literal.EMPTY;
                 }
@@ -141,7 +141,8 @@ public class UMLFactory {
         PackageUml packageUml = new PackageUml(config, packageElement.getQualifiedName().toString());
         Map<Namespace, Collection<Type>> foreignTypes = new LinkedHashMap<>();
         List<Reference> references = new ArrayList<>();
-        packageUml.addChild(createPackage(packageUml, packageElement, foreignTypes, references));
+        Namespace namespace = createPackage(packageUml, packageElement, foreignTypes, references);
+        packageUml.addChild(namespace);
 
         // Filter "java.lang" or "java.util" references that occur >= 3 times
         // Maybe somehow make this configurable as well?
@@ -169,8 +170,8 @@ public class UMLFactory {
                 .flatMap(foreignPackage -> Stream.of(Literal.NEWLINE, foreignPackage))
                 .forEach(packageUml::addChild);
 
-        packageUml.addChild(Literal.NEWLINE);
-        references.stream().map(Reference::canonical).forEach(packageUml::addChild);
+        namespace.addChild(Literal.NEWLINE);
+        references.stream().map(Reference::canonical).forEach(namespace::addChild);
 
         return packageUml;
     }
@@ -417,8 +418,7 @@ public class UMLFactory {
                                 "-->",
                                 to(fieldType.typeName.qualified, fieldType.cardinality),
                                 fieldName));
-                        type.getChildren().removeIf(child -> child instanceof Field
-                                && ((Field) child).name.equals(fieldName));
+                        type.removeChildren(child -> child instanceof Field && ((Field) child).name.equals(fieldName));
                     }
                 });
 
@@ -437,7 +437,7 @@ public class UMLFactory {
                                     "-->",
                                     to(returnType.typeName.qualified, returnType.cardinality),
                                     propertyName));
-                            type.getChildren().removeIf(child -> child instanceof Method
+                            type.removeChildren(child -> child instanceof Method
                                     && ((Method) child).name.equals(method.getSimpleName().toString()));
                         }
                     }

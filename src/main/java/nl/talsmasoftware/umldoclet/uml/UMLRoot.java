@@ -26,9 +26,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
@@ -50,7 +47,6 @@ import static nl.talsmasoftware.umldoclet.util.FileUtils.ensureParentDir;
 public abstract class UMLRoot extends UMLPart {
 
     final Configuration config;
-    protected final List<UMLPart> children = new ArrayList<>();
 
     protected UMLRoot(Configuration config) {
         super(null);
@@ -68,11 +64,6 @@ public abstract class UMLRoot extends UMLPart {
      * @return The physical file where the plantuml should be rendered.
      */
     public abstract File pumlFile();
-
-    @Override
-    public Collection<? extends UMLPart> getChildren() {
-        return children;
-    }
 
     @Override
     public Configuration getConfiguration() {
@@ -137,20 +128,11 @@ public abstract class UMLRoot extends UMLPart {
     }
 
     private IndentingPrintWriter createPlantumlWriter(File pumlFile) {
-//        final File imageDir = configuredImageDirectory().orElseGet(pumlFile::getParentFile);
-//        final String baseName = imageBasename(pumlFile);
-
-//        FileUtils.ensureParentDir(new File(imageDir, baseName));
-
-//        File[] imageFiles = config.images().formats().stream()
-//                .map(String::toLowerCase)
-//                .map(format -> new File(imageDir, baseName + "." + format))
-//                .toArray(File[]::new);
-
         try {
-//            return IndentingPrintWriter.wrap(PlantumlImageWriter.create(config, pumlFile, imageFiles), config.indentation());
+
             Writer pumlWriter = new OutputStreamWriter(new FileOutputStream(ensureParentDir(pumlFile)), config.umlCharset());
             return IndentingPrintWriter.wrap(pumlWriter, config.indentation());
+
         } catch (IOException ioe) {
             throw new IllegalStateException("Could not create writer to PlantUML file: " + pumlFile, ioe);
         }

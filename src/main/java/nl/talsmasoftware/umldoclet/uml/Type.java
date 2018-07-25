@@ -19,8 +19,6 @@ import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 
@@ -42,7 +40,6 @@ public class Type extends UMLPart implements Comparable<Type> {
     private final Classification classfication;
     public final TypeName name;
     private final boolean isDeprecated, addPackageToName;
-    private final Set<UMLPart> children = new LinkedHashSet<>();
     private Link link;
 
     public Type(Namespace namespace, Classification classification, TypeName name) {
@@ -57,7 +54,7 @@ public class Type extends UMLPart implements Comparable<Type> {
         this.name = requireNonNull(name, "Type name is <null>.");
         this.isDeprecated = isDeprecated;
         this.addPackageToName = addPackageToName;
-        if (children != null) this.children.addAll(children);
+        if (children != null) children.forEach(this::addChild);
     }
 
     private Link link() {
@@ -66,11 +63,11 @@ public class Type extends UMLPart implements Comparable<Type> {
     }
 
     public Type deprecated() {
-        return new Type(getNamespace(), classfication, name, true, addPackageToName, children);
+        return new Type(getNamespace(), classfication, name, true, addPackageToName, getChildren());
     }
 
     public Type addPackageToName() {
-        return new Type(getNamespace(), classfication, name, isDeprecated, true, children);
+        return new Type(getNamespace(), classfication, name, isDeprecated, true, getChildren());
     }
 
     public Namespace getNamespace() {
@@ -79,11 +76,6 @@ public class Type extends UMLPart implements Comparable<Type> {
 
     public Classification getClassfication() {
         return classfication;
-    }
-
-    @Override
-    public Collection<? extends UMLPart> getChildren() {
-        return children;
     }
 
     @Override
@@ -118,7 +110,7 @@ public class Type extends UMLPart implements Comparable<Type> {
 
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
-        if (!children.isEmpty()) super.writeChildrenTo(output.append('{').newline()).append('}');
+        if (!getChildren().isEmpty()) super.writeChildrenTo(output.append('{').newline()).append('}');
         return output;
     }
 
