@@ -130,10 +130,10 @@ public class LocalizedReporterTest {
     @Test
     public void testError_when_quiet() {
         config.quiet = true;
-        localizedReporter.error(Message.ERROR_COULDNT_RENDER_UML, "uml", "reason");
+        localizedReporter.error(Message.ERROR_UNANTICIPATED_ERROR_GENERATING_UML, "reason");
 
         verify(mockReporter).print(eq(Diagnostic.Kind.ERROR),
-                eq("Could not render \"uml\": reason"));
+                eq("Unanticipated error generating UML: reason"));
     }
 
     @Test

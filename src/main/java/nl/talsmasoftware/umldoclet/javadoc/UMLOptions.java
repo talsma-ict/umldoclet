@@ -65,6 +65,7 @@ final class UMLOptions {
 
             // Our own options
             add(new Option("-d", 1, Kind.STANDARD, (args) -> config.destDirName = args.get(0)));
+            add(new Option("-createPumlFiles", 0, Kind.STANDARD, (args) -> config.renderPumlFile = true));
             add(new Option("-umlImageDirectory", 1, Kind.STANDARD, (args) -> config.images.directory = args.get(0)));
             add(new Option("-umlImageFormat", 1, Kind.STANDARD, (args) -> config.images.addImageFormat(args.get(0))));
             add(new Option("-umlEncoding", 1, Kind.STANDARD, (args) -> config.umlencoding = args.get(0)));

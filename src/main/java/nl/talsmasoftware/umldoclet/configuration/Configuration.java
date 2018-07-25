@@ -48,6 +48,11 @@ public interface Configuration {
     String destinationDirectory();
 
     /**
+     * @return Whether or not to render PlantUML {@code .puml} files.
+     */
+    boolean renderPumlFile();
+
+    /**
      * @return The configuration for the images that are generated.
      */
     ImageConfig images();

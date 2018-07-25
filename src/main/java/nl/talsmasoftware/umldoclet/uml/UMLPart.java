@@ -15,15 +15,17 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
+import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingRenderer;
-import nl.talsmasoftware.umldoclet.configuration.Configuration;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.function.Predicate;
 
-import static java.util.Collections.emptySet;
+import static java.util.Collections.unmodifiableCollection;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -37,6 +39,7 @@ import static java.util.Objects.requireNonNull;
  */
 public abstract class UMLPart implements IndentingRenderer {
     private UMLPart parent;
+    private final Collection<UMLPart> children = new ArrayList<>();
 
     protected UMLPart(UMLPart parent) {
         this.parent = parent;
@@ -54,27 +57,25 @@ public abstract class UMLPart implements IndentingRenderer {
         return requireNonNull(parent, () -> getClass().getSimpleName() + " seems to be an orphan, it has no parent.");
     }
 
-    protected UMLDiagram getDiagram() {
-        return requireParent().getDiagram();
+    protected UMLRoot getRootUMLPart() {
+        return requireParent().getRootUMLPart();
     }
 
-    /**
-     * To be overridden by parts that actually have children.
-     *
-     * @return The children for this renderer.
-     */
-    public Collection<? extends UMLPart> getChildren() {
-        return emptySet();
+    public Collection<UMLPart> getChildren() {
+        return unmodifiableCollection(children);
     }
 
     public void addChild(UMLPart child) {
-        Collection<UMLPart> children = (Collection<UMLPart>) getChildren();
         children.add(child);
         child.setParent(this);
     }
 
+    public void removeChildren(Predicate<? super UMLPart> condition) {
+        children.removeIf(condition);
+    }
+
     protected Configuration getConfiguration() {
-        return getDiagram().config;
+        return getRootUMLPart().config;
     }
 
     protected Indentation getIndentation() {

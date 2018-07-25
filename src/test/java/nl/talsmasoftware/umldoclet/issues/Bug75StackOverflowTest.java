@@ -50,6 +50,7 @@ public class Bug75StackOverflowTest {
                 "-d", outputdir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet",
+                "-createPumlFiles",
                 "src/test/java/" + Bug75StackOverflowTest.class.getName().replace('.', '/') + ".java"
         ), is(0));
         classUml = Testing.read(new File(outputdir, classAsPath + ".puml"));

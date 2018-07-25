@@ -40,6 +40,7 @@ public class Issue72DefaultConstructorTest {
                 "-d", outputdir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet",
+                "-createPumlFiles",
                 "src/test/java/" + classAsPath + ".java"
         );
         classUml = Testing.read(new File(outputdir, classAsPath + ".puml"));

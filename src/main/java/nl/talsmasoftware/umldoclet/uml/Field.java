@@ -17,6 +17,8 @@ package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
+import static nl.talsmasoftware.umldoclet.uml.Type.Classification.ENUM;
+
 /**
  * Model object for a Field in an UML class.
  *
@@ -35,6 +37,17 @@ public class Field extends TypeMember {
 
     public Field deprecated() {
         return new Field(containingType, visibility, isStatic, true, name, type);
+    }
+
+    private boolean isEnumType() {
+        return isStatic
+                && ENUM.equals(containingType.getClassfication())
+                && containingType.name.equals(type);
+    }
+
+    @Override
+    protected <IPW extends IndentingPrintWriter> IPW writeTypeTo(IPW output) {
+        return isEnumType() ? output : super.writeTypeTo(output);
     }
 
     @Override

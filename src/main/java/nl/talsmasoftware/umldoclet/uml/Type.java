@@ -17,16 +17,12 @@ package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
-import nl.talsmasoftware.umldoclet.uml.Namespace.NameSpaceAware;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Optional;
-import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 
-public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
+public class Type extends UMLPart implements Comparable<Type> {
     /**
      * Classification of a UML Type.
      *
@@ -44,7 +40,7 @@ public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
     private final Classification classfication;
     public final TypeName name;
     private final boolean isDeprecated, addPackageToName;
-    private final Set<UMLPart> children = new LinkedHashSet<>();
+    private Link link;
 
     public Type(Namespace namespace, Classification classification, TypeName name) {
         this(namespace, classification, name, false, false, null);
@@ -58,15 +54,20 @@ public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
         this.name = requireNonNull(name, "Type name is <null>.");
         this.isDeprecated = isDeprecated;
         this.addPackageToName = addPackageToName;
-        if (children != null) this.children.addAll(children);
+        if (children != null) children.forEach(this::addChild);
+    }
+
+    private Link link() {
+        if (link == null) link = Link.toType(this);
+        return link;
     }
 
     public Type deprecated() {
-        return new Type(getNamespace(), classfication, name, true, addPackageToName, children);
+        return new Type(getNamespace(), classfication, name, true, addPackageToName, getChildren());
     }
 
     public Type addPackageToName() {
-        return new Type(getNamespace(), classfication, name, isDeprecated, true, children);
+        return new Type(getNamespace(), classfication, name, isDeprecated, true, getChildren());
     }
 
     public Namespace getNamespace() {
@@ -75,11 +76,6 @@ public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
 
     public Classification getClassfication() {
         return classfication;
-    }
-
-    @Override
-    public Collection<? extends UMLPart> getChildren() {
-        return children;
     }
 
     @Override
@@ -100,40 +96,21 @@ public class Type extends UMLPart implements NameSpaceAware, Comparable<Type> {
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output, Namespace namespace) {
+    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+        // Namespace aware compensation
+        final Namespace namespace = getParent() instanceof PackageUml
+                ? new Namespace(getRootUMLPart(), ((PackageUml) getParent()).packageName) : null;
         output.append(classfication.toUml()).whitespace();
         writeNameTo(output, namespace).whitespace();
         if (isDeprecated) output.append("<<deprecated>>").whitespace();
-        writeLinkTo(output).whitespace();
+        link().writeTo(output).whitespace();
         writeChildrenTo(output).newline();
-        return output;
-    }
-
-    private Optional<Namespace> diagramPackage() {
-        UMLDiagram diagram = getDiagram();
-        if (diagram instanceof PackageDiagram) {
-            return Optional.of(new Namespace(diagram, ((PackageDiagram) diagram).packageName));
-        } else if (diagram instanceof ClassDiagram) {
-            return Optional.of(((ClassDiagram) diagram).type.namespace);
-        }
-        return Optional.empty();
-    }
-
-    private <IPW extends IndentingPrintWriter> IPW writeLinkTo(IPW output) {
-        Optional<String> relativeNameToDiagram = diagramPackage()
-                .filter(ns -> name.qualified.startsWith(ns.name + '.'))
-                .map(ns -> name.qualified.substring(ns.name.length() + 1));
-        if (relativeNameToDiagram.isPresent()) {
-            output.append("[[").append(relativeNameToDiagram.get()).append(".html]]");
-        } else {
-            output.append("[[fqn:").append(name.qualified).append(".html]]");
-        }
         return output;
     }
 
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
-        if (!children.isEmpty()) super.writeChildrenTo(output.append('{').newline()).append('}');
+        if (!getChildren().isEmpty()) super.writeChildrenTo(output.append('{').newline()).append('}');
         return output;
     }
 
