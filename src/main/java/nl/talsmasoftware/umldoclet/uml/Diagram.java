@@ -64,12 +64,15 @@ public class Diagram {
     public void render() {
         File diagramFile = getDiagramFile();
         try (OutputStream out = new FileOutputStream(ensureParentDir(diagramFile))) {
+            Link.linkFrom(diagramFile.getParent());
             umlRoot.getConfiguration().logger().info(INFO_GENERATING_FILE, diagramFile);
 
             new SourceStringReader(umlRoot.toString()).outputImage(out, new FileFormatOption(format));
 
         } catch (IOException ioe) {
             throw new IllegalStateException("I/O error rendering " + this + ": " + ioe.getMessage(), ioe);
+        } finally {
+            Link.linkFrom(null);
         }
     }
 

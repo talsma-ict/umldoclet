@@ -42,8 +42,8 @@ public class Type extends UMLPart implements Comparable<Type> {
     private final Classification classfication;
     public final TypeName name;
     private final boolean isDeprecated, addPackageToName;
-    private final Link link;
     private final Set<UMLPart> children = new LinkedHashSet<>();
+    private Link link;
 
     public Type(Namespace namespace, Classification classification, TypeName name) {
         this(namespace, classification, name, false, false, null);
@@ -57,8 +57,12 @@ public class Type extends UMLPart implements Comparable<Type> {
         this.name = requireNonNull(name, "Type name is <null>.");
         this.isDeprecated = isDeprecated;
         this.addPackageToName = addPackageToName;
-        this.link = new Link(this, name.qualified + ".html");
         if (children != null) this.children.addAll(children);
+    }
+
+    private Link link() {
+        if (link == null) link = Link.toType(this);
+        return link;
     }
 
     public Type deprecated() {
@@ -107,7 +111,7 @@ public class Type extends UMLPart implements Comparable<Type> {
         output.append(classfication.toUml()).whitespace();
         writeNameTo(output, namespace).whitespace();
         if (isDeprecated) output.append("<<deprecated>>").whitespace();
-        link.writeTo(output).whitespace();
+        link().writeTo(output).whitespace();
         writeChildrenTo(output).newline();
         return output;
     }
