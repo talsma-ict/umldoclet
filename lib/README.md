@@ -73,5 +73,20 @@ mvn install:install-file \
     -DcreateChecksum=true
 ```
 
+## How to replace a git subdirectory in branch X with branch Y version
+
+First remove the local revisions of the directory
+(e.g. the `develop-v1` branch of `lib`)
+
+```bash
+git checkout develop-v1
+git rm -r lib
+```
+
+And replace it by the most recent `develop` version:
+```bash
+git read-tree --prefix=lib/ -u origin/develop:lib
+```
+
 
   [plantuml-asl-location]: https://sourceforge.net/projects/plantuml/files/
