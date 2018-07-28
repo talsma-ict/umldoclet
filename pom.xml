@@ -69,7 +69,7 @@
         <build.java.version>1.7</build.java.version>
 
         <!-- included -->
-        <plantuml.version>1.2018.5</plantuml.version>
+        <plantuml.version>1.2018.8</plantuml.version>
 
         <!-- test -->
         <junit.version>4.12</junit.version>
@@ -145,7 +145,9 @@
                 <version>${license-maven-plugin.version}</version>
                 <executions>
                     <execution>
-                        <goals><goal>check</goal></goals>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
                         <phase>compile</phase>
                     </execution>
                 </executions>
