@@ -7,6 +7,7 @@ declare -f is_semantic_version > /dev/null || source "$(dirname $0)/versioning.s
 declare -f is_pull_request > /dev/null || source "$(dirname $0)/git-functions.sh"
 
 create_release() {
+    fix_travis_fetch
     local branch="${1:-}"
     debug "Performing release from branch ${branch}."
     is_release_version "${branch}" || fatal "Not a valid release branch: '${branch}'."

@@ -1,5 +1,7 @@
 sudo: false
 dist: trusty
+git:
+  depth: false
 
 language: java
 jdk:
