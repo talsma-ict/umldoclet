@@ -36,35 +36,36 @@ create_release() {
     switch_to_branch master || create_branch master
     [[ "$(get_local_branch)" = "master" ]] || fatal "Could not switch to master branch."
     local master_version="$(get_version)"
+    local merge_to_master="true"
     if [[ ${major_version} -ge $(major_version_of ${master_version}) ]]; then
-        debug "Merging ${release_version} to master (v${master_version})."
+        log "Merging ${release_version} to master (v${master_version})."
         git merge --no-edit --ff-only "${branch}"
     else
-        debug "Not merging ${release_version} to master (v${master_version})."
+        log "Not merging ${release_version} to master (v${master_version})."
+        merge_to_master="false"
     fi
 
     # Merge to develop and switch to next snapshot
     local nextSnapshot="$(next_snapshot_version ${release_version})"
-    if [ switch_to_branch "develop-v${major_version}" ]; then
-        [[ "$(get_local_branch)" = "develop-v${major_version}" ]] || fatal "Could not switch to develop-v${major_version} branch."
-        log "Merging to develop-v${major_version} and updating version to '${nextSnapshot}'."
-        git merge --no-edit "${branch}"
-        set_version ${nextSnapshot}
-        git commit -s -am "Release: Set next development version to ${nextSnapshot}"
+    local develop_branch="develop"
+    if [[ $(switch_to_branch "develop-v${major_version}") ]]; then
+        develop_branch="develop-v${major_version}"
+        [[ "$(get_local_branch)" = "${develop_branch}" ]] || fatal "Could not switch to ${develop_branch} branch."
+        log "Merging to ${develop_branch} and updating version to '${nextSnapshot}'."
     else
         log "Merging to develop and updating version to '${nextSnapshot}'."
-        switch_to_branch develop || create_branch develop
-        [[ "$(get_local_branch)" = "develop" ]] || fatal "Could not switch to develop branch."
-        git merge --no-edit "${branch}"
-        set_version ${nextSnapshot}
-        git commit -s -am "Release: Set next development version to ${nextSnapshot}"
+        switch_to_branch "${develop_branch}" || create_branch "${develop_branch}"
+        [[ "$(get_local_branch)" = "${develop_branch}" ]] || fatal "Could not switch to ${develop_branch} branch."
     fi
+    git merge --no-edit "${branch}"
+    set_version ${nextSnapshot}
+    git commit -s -am "Release: Set next development version to ${nextSnapshot}"
 
     log "Pushing release to origin and deleting branch '${branch}'."
     git branch -d "${branch}" || warn "Could not delete local release branch '${branch}'."
     git push origin "${tagname}"
-    git push origin master
-    git push origin develop
+    [[ "${merge_to_master}" = "true" ]] && git push origin master
+    git push origin "${develop_branch}"
     git push origin --delete "${branch}"
 }
 
