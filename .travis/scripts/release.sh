@@ -55,7 +55,7 @@ create_release() {
         log "Merging to ${develop_branch} and updating version to '${nextSnapshot}'."
     else
         log "Merging to develop and updating version to '${nextSnapshot}'."
-        switch_to_branch "${develop_branch}" || create_branch "${develop_branch}"
+        switch_to_branch "${develop_branch}"
         [[ "$(get_local_branch)" = "${develop_branch}" ]] || fatal "Could not switch to ${develop_branch} branch."
     fi
     git merge --no-edit "${branch}"
@@ -63,7 +63,7 @@ create_release() {
     git commit -s -am "Release: Set next development version to ${nextSnapshot}"
 
     log "Pushing release to origin and deleting branch '${branch}'."
-    git branch -d "${branch}" || warn "Could not delete local release branch '${branch}'."
+    git branch -D "${branch}" || warn "Could not delete local release branch '${branch}'."
     git push origin "${tagname}"
     [[ "${merge_to_master}" = "true" ]] && git push origin master
     git push origin "${develop_branch}"
