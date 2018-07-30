@@ -49,6 +49,10 @@ elif [[ "${GIT_BRANCH}" = "master" ]]; then
         log "No release tag found on branch '${GIT_BRANCH}' for version '${VERSION}', running a test build."
         build_and_test
     fi
+elif [[ "${GIT_BRANCH:-}" = '' ]] && [[ "${TRAVIS_TAG:-}" = "${VERSION}" ]]; then
+    log "Publishing '${VERSION}' from tag (not merged back to master)."
+    validate_version "${VERSION}"
+    build_and_publish_artifacts
 else
     log "Not publishing '${VERSION}' from branch '${GIT_BRANCH}', running a test build."
     build_and_test

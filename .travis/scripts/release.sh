@@ -34,7 +34,7 @@ create_release() {
 
     # Merge to master and delete local release branch
     debug "Checking if we have to merge ${branch} to master"
-    switch_to_branch master || git remote -v
+    switch_to_branch master
     [[ "$(get_local_branch)" = "master" ]] || fatal "Could not switch to master branch."
     local master_version="$(get_version)"
     local merge_to_master="true"
