@@ -51,13 +51,11 @@ create_release() {
     local develop_branch="develop"
     if [[ $(switch_to_branch "develop-v${major_version}") ]]; then
         develop_branch="develop-v${major_version}"
-        [[ "$(get_local_branch)" = "${develop_branch}" ]] || fatal "Could not switch to ${develop_branch} branch."
-        log "Merging to ${develop_branch} and updating version to '${nextSnapshot}'."
     else
-        log "Merging to develop and updating version to '${nextSnapshot}'."
         switch_to_branch "${develop_branch}"
-        [[ "$(get_local_branch)" = "${develop_branch}" ]] || fatal "Could not switch to ${develop_branch} branch."
     fi
+    [[ "$(get_local_branch)" = "${develop_branch}" ]] || fatal "Could not switch to ${develop_branch} branch."
+    log "Merging to ${develop_branch} and updating version to '${nextSnapshot}'."
     git merge --no-edit "${branch}"
     set_version ${nextSnapshot}
     git commit -s -am "Release: Set next development version to ${nextSnapshot}"
