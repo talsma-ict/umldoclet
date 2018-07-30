@@ -22,7 +22,7 @@ get_maven_version() {
 }
 
 set_maven_version() {
-    $(maven_command) --batch-mode versions:set versions:commit -DnewVersion="${1}"
+    $(maven_command) --batch-mode versions:set versions:commit -DnewVersion="${1}" >/dev/null || fatal "Could not set project version to ${1}!"
 }
 
 build_and_test_maven() {

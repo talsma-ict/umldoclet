@@ -6,6 +6,11 @@ declare -f debug > /dev/null || source "$(dirname $0)/logging.sh"
 # Script containing some handy git functions because CI (travis) runs on a detached HEAD
 #
 
+fix_travis_fetch() {
+    debug "Fixing broken 'git fetch' on travis..."
+    git config --replace-all remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
+}
+
 is_pull_request() {
     git ls-remote origin | grep $(git rev-parse HEAD) | grep "refs/pull/"
     return $?

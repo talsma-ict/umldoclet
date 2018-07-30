@@ -7,6 +7,7 @@ declare -f is_semantic_version > /dev/null || source "$(dirname $0)/versioning.s
 declare -f is_pull_request > /dev/null || source "$(dirname $0)/git-functions.sh"
 
 create_release() {
+    fix_travis_fetch
     local branch="${1:-}"
     debug "Performing release from branch ${branch}."
     is_release_version "${branch}" || fatal "Not a valid release branch: '${branch}'."
@@ -32,8 +33,8 @@ create_release() {
     git tag -m "Release version ${release_version}" "${tagname}"
 
     # Merge to master and delete local release branch
-    log "Merging ${branch} to master"
-    switch_to_branch master || create_branch master
+    debug "Checking if we have to merge ${branch} to master"
+    switch_to_branch master
     [[ "$(get_local_branch)" = "master" ]] || fatal "Could not switch to master branch."
     local master_version="$(get_version)"
     local merge_to_master="true"
