@@ -14,7 +14,7 @@ It automatically generates UML diagrams from your code as separate
 To use the doclet together with the JavaDoc tool, the following is required.
 
 - JDK version 1.7 or 1.8 (JDK 9 no longer has a `tools.jar` and 
-  will require [version 2.x](https://github.com/talsma-ict/umldoclet/pull/46) 
+  will require [version 2.x](https://github.com/talsma-ict/umldoclet) 
   of the UML Doclet).
 - Availability of tools.jar containing the Sun JavaDoc API.
 - The doclet jar or a build system that knows how to get it (see [usage](USAGE.md)).
@@ -44,7 +44,7 @@ Or, look at the [the generated plantuml source file](../example/rendering-packag
 _Thanks for using the doclet, I hope it may be of benefit to your project!_  
 _Also a big thank you goes to the developers of the excellent [PlantUML project](http://plantuml.com/)._
 
-  [ci-img]: https://img.shields.io/travis/talsma-ict/umldoclet/develop.svg
-  [ci]: https://travis-ci.org/talsma-ict/umldoclet
-  [maven-img]: https://img.shields.io/maven-central/v/nl.talsmasoftware/umldoclet.svg
-  [maven]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22nl.talsmasoftware%22%20AND%20a%3A%22umldoclet%22
+  [ci-img]: https://img.shields.io/travis/talsma-ict/umldoclet/develop-v1.svg
+  [ci]: https://travis-ci.org/talsma-ict/umldoclet/branches
+  [maven-img]: https://img.shields.io/maven-central/v/nl.talsmasoftware/umldoclet/1.svg
+  [maven]: http://mvnrepository.com/artifact/nl.talsmasoftware/umldoclet
