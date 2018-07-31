@@ -9,7 +9,7 @@ This module is intended to be used as a git `submodule`.
 
 Our build and release scripts are designed to be compatible with the 
 `git-flow` branching model
-[as described by Vincent Driessen in 2010](https://nvie.com/posts/a-successful-git-branching-model/).
+[as described by Vincent Driessen](https://nvie.com/posts/a-successful-git-branching-model/) in 2010.
 
 ### Continuous integration builds
 
