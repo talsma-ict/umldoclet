@@ -31,6 +31,8 @@ build_and_publish_artifacts() {
 [ -n "${VERSION:-}" ] || VERSION=$(get_version)
 [ -n "${GIT_BRANCH:-}" ] || GIT_BRANCH=$(find_remote_branch)
 
+log ".. checking if ci-scripts get updated by travis checkout .."
+
 if is_pull_request; then
     log "Testing code for pull-request."
     build_and_test
