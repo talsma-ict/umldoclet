@@ -40,7 +40,7 @@ find_remote_branch() {
 switch_to_branch() {
     log "Switching to branch ${1}"
     git fetch origin
-    git checkout "${1}" || git checkout -B "${1}" "origin/${1}" && git pull
+    git checkout "${1}" || git checkout -B "${1}" "origin/${1}" && git pull && git submodule update --init --recursive
 }
 
 create_branch() {
