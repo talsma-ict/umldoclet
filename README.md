@@ -11,11 +11,15 @@ Our build and release scripts are designed to be compatible with the
 `git-flow` branching model
 [as described by Vincent Driessen in 2010](https://nvie.com/posts/a-successful-git-branching-model/).
 
+### Continuous integration builds
+
 This means SNAPSHOT builds can be created from the `develop` branch while releases
 should be for [semver 2.0](https://semver.org/) compatible versions, tagged as such on the `master` branch.  
 
 Our build and release scripts allow developers to focus mainly on the `develop` and other `feature` branches
 and should only rarely -if ever- need to meddle with the `master` branch.
+
+### Performing a release
 
 To perform a release, a developer just needs to push the corresponding code from `develop` to a
 new `release/x.y.z` branch on `origin`.
