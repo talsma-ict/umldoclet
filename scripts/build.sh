@@ -32,10 +32,10 @@ build_and_publish_artifacts() {
 [ -n "${GIT_BRANCH:-}" ] || GIT_BRANCH=$(find_remote_branch)
 
 if is_pull_request; then
-    log "Testing code for pull-request."
+    log "Pull request detected: Running a 'build and test' job without publishing artifacts..."
     build_and_test
 elif is_snapshot_version "${VERSION}" && [[ "${GIT_BRANCH}" = "develop" ]]; then
-    log "Publishing '${VERSION}' from branch '${GIT_BRANCH}'."
+    log "Snapshot detected: Publishing '${VERSION}' from branch '${GIT_BRANCH}'."
     build_and_publish_artifacts
 elif [[ "${GIT_BRANCH}" = "master" ]]; then
     if [[ "${TRAVIS_BRANCH:-}" != "${TRAVIS_TAG:-}" ]]; then
