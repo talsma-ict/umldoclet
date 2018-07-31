@@ -12,7 +12,7 @@ fix_travis_fetch() {
 }
 
 is_pull_request() {
-    git ls-remote origin | grep $(git rev-parse HEAD) | grep "refs/pull/"
+    git ls-remote origin | grep $(git rev-parse HEAD) | grep "refs/pull/" >/dev/null
     return $?
 }
 
