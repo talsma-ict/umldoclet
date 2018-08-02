@@ -46,6 +46,10 @@ git rm -r .travis
 git commit -m "Remove .travis directory (preparing for submodule)"
 ```
 
+For the scripts to continue to work (which involves some branch-switching), 
+it's best to do this on the `master` branch and merge the change to `develop` from there
+or cherry-pick the commits if you like.
+
 ### Adding the submodule to a git project
 
 If you want to add the _ci-scripts_ to your project into the `.travis` directory (for building with travis)
