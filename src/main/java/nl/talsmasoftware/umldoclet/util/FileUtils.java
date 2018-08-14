@@ -107,15 +107,30 @@ public final class FileUtils {
         return path;
     }
 
-    public static Reader openReaderTo(String destinationDirectory, URI uri, String charsetName) throws IOException {
-        if ("file".equals(uri.getScheme())) {
-            return new InputStreamReader(new FileInputStream(new File(uri)), charsetName);
-        } else try {
+    /**
+     * Opens a reader to the specified URI.
+     * <p>
+     * If the call {@code uri.toURL().openStream()} succeeds, a reader is wrapped and returned.
+     * Otherwise, if the URI is absolute, an attempt is made to open it as a file. If this also fails,
+     * a last effort is made to open the uri relative to the specified {@code basedir} directory.
+     *
+     * @param basedir     The base directory to use if the URI turns out to be a relative file link.
+     * @param uri         The URI to read from.
+     * @param charsetName The character set to use for reading.
+     * @return The opened reader.
+     * @throws IOException in case the call to {@code uri.toURL().openStream()} threw an I/O Exception.
+     */
+    public static Reader openReaderTo(String basedir, URI uri, String charsetName) throws IOException {
+        try {
             return new InputStreamReader(uri.toURL().openStream(), charsetName);
         } catch (IOException | RuntimeException ex) {
-            File uriAsFile = new File(uri.toASCIIString());
-            if (!uri.isAbsolute() && !uriAsFile.isFile()) uriAsFile = new File(destinationDirectory, uri.toASCIIString());
-            if (uriAsFile.isFile()) return new InputStreamReader(new FileInputStream(uriAsFile), charsetName);
+            try {
+                File uriAsFile = uri.isAbsolute() && "file".equals(uri.getScheme()) ? new File(uri) : new File(uri.toASCIIString());
+                if (!uriAsFile.isFile()) uriAsFile = new File(basedir, uri.toASCIIString());
+                if (uriAsFile.isFile()) return new InputStreamReader(new FileInputStream(uriAsFile), charsetName);
+            } catch (IOException | RuntimeException secondaryEx) {
+                ex.addSuppressed(secondaryEx);
+            }
             throw ex;
         }
     }

@@ -47,7 +47,7 @@ public class ExternalLinksTest {
     @Test
     public void testRelativeExternalLink() {
         File externalDir = createDirectory(new File(testoutput, "externalApidocs"));
-        File packageList = Testing.write(new File(externalDir, "package-list"), Serializable.class.getPackageName());
+        Testing.write(new File(externalDir, "package-list"), Serializable.class.getPackageName());
         File outputdir = createDirectory(new File(testoutput, "link-relative"));
 
         ToolProvider.findFirst("javadoc").get().run(

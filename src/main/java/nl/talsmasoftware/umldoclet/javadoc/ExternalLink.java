@@ -29,6 +29,7 @@ import java.util.Set;
 
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableSet;
+import static java.util.Objects.requireNonNull;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.openReaderTo;
 
 final class ExternalLink {
@@ -38,8 +39,9 @@ final class ExternalLink {
     private Set<String> packages;
 
     ExternalLink(Configuration config, String apidoc, String packageList) {
-        this.config = config;
-        this.docUri = createUri(apidoc);
+        this.config = requireNonNull(config, "Configuration is <null>.");
+        this.docUri = createUri(requireNonNull(apidoc, "External apidoc URI is <null>."));
+        requireNonNull(packageList, "Location URI for \"package-list\" is <null>.");
         this.packageListUri = addPathComponent(createUri(packageList), "package-list");
     }
 
