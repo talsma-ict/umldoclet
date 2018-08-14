@@ -29,6 +29,7 @@ import nl.talsmasoftware.umldoclet.logging.Message;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 import nl.talsmasoftware.umldoclet.uml.Visibility;
 
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -162,6 +163,11 @@ public class DocletConfig implements Configuration {
     @Override
     public List<String> excludedTypeReferences() {
         return excludedReferences;
+    }
+
+    @Override
+    public Optional<URI> resolveExternalLinkToType(String packageName, String type) {
+        return Optional.empty();
     }
 
     @Override

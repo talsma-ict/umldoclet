@@ -18,8 +18,10 @@ package nl.talsmasoftware.umldoclet.configuration;
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Configuration that influences <em>how</em> UML should be rendered.
@@ -71,6 +73,15 @@ public interface Configuration {
      * @return The types (classes, interfaces) that are excluded as references.
      */
     List<String> excludedTypeReferences();
+
+    /**
+     * Resolves an external link to the specified type.
+     *
+     * @param packageName The package of the type.
+     * @param type        The type name within the package.
+     * @return The external link, if resolved
+     */
+    Optional<URI> resolveExternalLinkToType(String packageName, String type);
 
     /**
      * The UML character set can be explicitly configured with the {@code "-umlEncoding"} option.
