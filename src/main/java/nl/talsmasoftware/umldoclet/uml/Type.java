@@ -58,7 +58,7 @@ public class Type extends UMLPart implements Comparable<Type> {
     }
 
     private Link link() {
-        if (link == null) link = Link.toType(this);
+        if (link == null) link = Link.forType(this);
         return link;
     }
 

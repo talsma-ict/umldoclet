@@ -33,7 +33,7 @@ public class Link extends UMLPart {
         this.target = target;
     }
 
-    public static Link toType(Type type) {
+    public static Link forType(Type type) {
         final String packageName = type.getNamespace().name;
         File file = new File(type.getConfiguration().destinationDirectory());
         file = new File(file, packageName.replace('.', '/'));
@@ -50,9 +50,16 @@ public class Link extends UMLPart {
         return new Link(type, null);
     }
 
-    public static void linkFrom(String path) {
-        if (path == null) LINK_FROM.remove();
-        else LINK_FROM.set(path);
+    /**
+     * Sets the base path where relative links should be rendered from.
+     * <p>
+     * This setting is configured on a per-thread basis.
+     *
+     * @param basePath The base path to define relative links from.
+     */
+    public static void linkFrom(String basePath) {
+        if (basePath == null) LINK_FROM.remove();
+        else LINK_FROM.set(basePath);
     }
 
     private Optional<Namespace> diagramPackage() {

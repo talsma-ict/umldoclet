@@ -267,7 +267,7 @@
                                 <version>${project.version}</version>
                             </docletArtifact>
                             <additionalOptions>
-                                <!--<additionalOption>-verbose</additionalOption>-->
+                                <additionalOption>-verbose</additionalOption>
                                 <!--<additionalOption>-quiet</additionalOption>-->
                                 <!--<aditionalOption>-umlImageDirectory images</aditionalOption>-->
                             </additionalOptions>
