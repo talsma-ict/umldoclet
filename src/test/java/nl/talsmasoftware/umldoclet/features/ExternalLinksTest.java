@@ -17,6 +17,7 @@ package nl.talsmasoftware.umldoclet.features;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.util.Testing;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
@@ -24,6 +25,7 @@ import java.io.Serializable;
 import java.util.spi.ToolProvider;
 
 import static java.util.Arrays.asList;
+import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.stringContainsInOrder;
 
@@ -44,23 +46,28 @@ public class ExternalLinksTest {
 
     @Test
     public void testRelativeExternalLink() {
-        Testing.write(new File(testoutput, "externalApidocs/package-list"), Serializable.class.getPackageName());
+        File externalDir = new File(testoutput, "externalApidocs");
+        externalDir.mkdirs();
         File outputdir = new File(testoutput, "link-relative");
+        outputdir.mkdirs();
+        Testing.write(new File(externalDir, "package-list"), Serializable.class.getPackageName());
 
-        File packageUml = new File(outputdir, packageAsPath + "/package.puml");
         ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
                 "-d", outputdir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet",
                 "-createPumlFiles",
-                "-link", "../externalApidocs",
+                "-link", relativePath(outputdir, externalDir),
                 "src/test/java/" + packageAsPath + '/' + getClass().getSimpleName() + ".java"
         );
 
+        File packageUml = new File(outputdir, packageAsPath + "/package.puml");
         String uml = Testing.read(packageUml);
+
         // Check link to Serializable javadoc
-        assertThat(uml, stringContainsInOrder(asList("interface", "Serializable", "externalApidocs/java/io/Serializable.html]]")));
+        assertThat(uml, stringContainsInOrder(asList("interface", "Serializable",
+                "[[" + relativePath(packageUml, externalDir) + "/java/io/Serializable.html]]")));
     }
 
     @Test
