@@ -62,6 +62,7 @@ final class UMLOptions {
             add(new Option("-verbose", 0, Kind.OTHER, (args) -> config.verbose = true));
             add(new Option("-docencoding", 1, Kind.OTHER, (args) -> config.docencoding = args.get(0)));
             add(new Option("-encoding", 1, Kind.OTHER, (args) -> config.encoding = args.get(0)));
+            add(new Option("-link", 1, Kind.OTHER, (args) -> config.externalLinks.add(new ExternalLink(config, args.get(0), null))));
 
             // Our own options
             add(new Option("-d", 1, Kind.STANDARD, (args) -> config.destDirName = args.get(0)));

@@ -109,6 +109,8 @@ public class DocletConfig implements Configuration {
     List<String> excludedReferences = new ArrayList<>(asList(
             "java.lang.Object", "java.lang.Enum", "java.lang.annotation.Annotation"));
 
+    List<ExternalLink> externalLinks = new ArrayList<>();
+
     private Indentation indentation = Indentation.DEFAULT;
 
     public DocletConfig(UMLDoclet doclet) {
@@ -167,7 +169,10 @@ public class DocletConfig implements Configuration {
 
     @Override
     public Optional<URI> resolveExternalLinkToType(String packageName, String type) {
-        return Optional.empty();
+        return externalLinks.stream()
+                .map(link -> link.resolveType(packageName, type))
+                .filter(Optional::isPresent).map(Optional::get)
+                .findFirst();
     }
 
     @Override
