@@ -16,6 +16,7 @@
 package nl.talsmasoftware.umldoclet.javadoc;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.logging.Message;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,6 +27,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableSet;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.openReaderTo;
 
@@ -53,7 +55,8 @@ final class ExternalLink {
         if (packages == null) try {
             synchronized (this) {
                 Set<String> pkglist = new HashSet<>();
-                try (BufferedReader reader = new BufferedReader(openReaderTo(config.destinationDirectory(), packageListUri, "UTF-8"))) {
+                try (BufferedReader reader = new BufferedReader(
+                        openReaderTo(config.destinationDirectory(), packageListUri, "UTF-8"))) {
                     for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                         line = line.trim();
                         if (!line.isEmpty()) pkglist.add(line);
@@ -61,8 +64,9 @@ final class ExternalLink {
                 }
                 packages = unmodifiableSet(pkglist);
             }
-        } catch (IOException ioe) {
-            throw new IllegalStateException("Cannot read package-list from: " + packageListUri, ioe);
+        } catch (IOException | RuntimeException ex) {
+            config.logger().warn(Message.WARNING_CANNOT_READ_PACKAGE_LIST, packageListUri, ex);
+            packages = emptySet();
         }
         return packages;
     }
