@@ -113,8 +113,9 @@ public final class FileUtils {
         } else try {
             return new InputStreamReader(uri.toURL().openStream(), charsetName);
         } catch (IOException | RuntimeException ex) {
-            File uriAsFile = uri.isAbsolute() ? new File(uri.toASCIIString()) : new File(destinationDirectory, uri.toASCIIString());
-            if (uriAsFile.canRead()) return new InputStreamReader(new FileInputStream(uriAsFile), charsetName);
+            File uriAsFile = new File(uri.toASCIIString());
+            if (!uri.isAbsolute() && !uriAsFile.isFile()) uriAsFile = new File(destinationDirectory, uri.toASCIIString());
+            if (uriAsFile.isFile()) return new InputStreamReader(new FileInputStream(uriAsFile), charsetName);
             throw ex;
         }
     }
