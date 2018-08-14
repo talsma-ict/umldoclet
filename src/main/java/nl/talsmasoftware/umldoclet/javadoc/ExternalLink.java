@@ -44,7 +44,7 @@ final class ExternalLink {
     Optional<URI> resolveType(String packagename, String typeName) {
         if (packages().contains(packagename)) {
             String document = packagename.replace('.', '/') + "/" + typeName + ".html";
-            return Optional.of(makeAbsolute(addPathComponent(docUri, document)));
+            return Optional.of(addIsExternalParam(makeAbsolute(addPathComponent(docUri, document))));
         }
         return Optional.empty();
     }
@@ -53,7 +53,7 @@ final class ExternalLink {
         if (packages == null) try {
             synchronized (this) {
                 Set<String> pkglist = new HashSet<>();
-                try (BufferedReader reader = new BufferedReader(openReaderTo(makeAbsolute(packageListUri), "UTF-8"))) {
+                try (BufferedReader reader = new BufferedReader(openReaderTo(config.destinationDirectory(), packageListUri, "UTF-8"))) {
                     for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                         line = line.trim();
                         if (!line.isEmpty()) pkglist.add(line);
@@ -102,7 +102,7 @@ final class ExternalLink {
         }
     }
 
-    private static URI addQueryParam(URI uri, String name, String value) {
+    private static URI addIsExternalParam(URI uri) {
         try {
             String scheme = uri.getScheme();
             String userInfo = uri.getUserInfo();
@@ -110,12 +110,14 @@ final class ExternalLink {
             int port = uri.getPort();
             String path = uri.getPath();
             String query = uri.getQuery();
-            if (query == null || query.isEmpty()) query = name + "=" + value;
-            else query = query + "&" + name + "=" + value;
+            if (scheme != null && !"file".equals(scheme)) {
+                if (query == null || query.isEmpty()) query = "is-external=true";
+                else query += "&is-external=true";
+            }
             String fragment = uri.getFragment();
             return new URI(scheme, userInfo, host, port, path, query, fragment);
         } catch (URISyntaxException use) {
-            throw new IllegalStateException("Could not add path query parameter \"" + name + "=" + value + "\" to " + uri + ": "
+            throw new IllegalStateException("Could not add path query parameter \"is-external=true\" to " + uri + ": "
                     + use.getMessage(), use);
         }
     }

@@ -20,7 +20,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -108,15 +107,15 @@ public final class FileUtils {
         return path;
     }
 
-    public static Reader openReaderTo(URI uri, String charsetName) throws IOException {
+    public static Reader openReaderTo(String destinationDirectory, URI uri, String charsetName) throws IOException {
         if ("file".equals(uri.getScheme())) {
             return new InputStreamReader(new FileInputStream(new File(uri)), charsetName);
         } else try {
             return new InputStreamReader(uri.toURL().openStream(), charsetName);
-        } catch (MalformedURLException murle) {
-            File uriAsFile = new File(uri.toASCIIString());
+        } catch (IOException | RuntimeException ex) {
+            File uriAsFile = uri.isAbsolute() ? new File(uri.toASCIIString()) : new File(destinationDirectory, uri.toASCIIString());
             if (uriAsFile.canRead()) return new InputStreamReader(new FileInputStream(uriAsFile), charsetName);
-            throw murle;
+            throw ex;
         }
     }
 

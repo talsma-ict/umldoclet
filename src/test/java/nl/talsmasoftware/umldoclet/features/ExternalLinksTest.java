@@ -86,11 +86,11 @@ public class ExternalLinksTest {
         String uml = Testing.read(packageUml);
         // Check link to Serializable javadoc
         assertThat(uml, stringContainsInOrder(asList("interface", "Serializable",
-                "[[https://docs.oracle.com/javase/9/docs/api/java/io/Serializable.html]]")));
+                "[[https://docs.oracle.com/javase/9/docs/api/java/io/Serializable.html?is-external=true]]")));
     }
 
     @Test
-    public void testOfflineExternalLink() throws Exception {
+    public void testOfflineExternalLink() {
         File externalDir = createDirectory(new File(testoutput, "externalApidocs"));
         File packageList = Testing.write(new File(externalDir, "package-list"), Serializable.class.getPackageName());
         File outputdir = createDirectory(new File(testoutput, "link-offline"));
@@ -109,7 +109,7 @@ public class ExternalLinksTest {
         String uml = Testing.read(packageUml);
         // Check link to Serializable javadoc
         assertThat(uml, stringContainsInOrder(asList("interface", "Serializable",
-                "[[https://docs.oracle.com/javase/9/docs/api/java/io/Serializable.html]]")));
+                "[[https://docs.oracle.com/javase/9/docs/api/java/io/Serializable.html?is-external=true]]")));
     }
 
 }
