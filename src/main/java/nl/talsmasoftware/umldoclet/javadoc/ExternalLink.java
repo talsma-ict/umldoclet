@@ -20,7 +20,6 @@ import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
@@ -28,6 +27,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static java.util.Collections.unmodifiableSet;
+import static nl.talsmasoftware.umldoclet.util.FileUtils.openReaderTo;
 
 final class ExternalLink {
 
@@ -38,15 +38,22 @@ final class ExternalLink {
     ExternalLink(Configuration config, String apidoc, String packageList) {
         this.config = config;
         this.docUri = createUri(apidoc);
-        this.packageListUri = packageList == null ? addPathComponent(this.docUri, "package-list") : createUri(packageList);
+        this.packageListUri = addPathComponent(createUri(packageList), "package-list");
+    }
+
+    Optional<URI> resolveType(String packagename, String typeName) {
+        if (packages().contains(packagename)) {
+            String document = packagename.replace('.', '/') + "/" + typeName + ".html";
+            return Optional.of(makeAbsolute(addPathComponent(docUri, document)));
+        }
+        return Optional.empty();
     }
 
     private Set<String> packages() {
         if (packages == null) try {
             synchronized (this) {
                 Set<String> pkglist = new HashSet<>();
-                try (BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(makeAbsolute(packageListUri).toURL().openStream(), "UTF-8"))) {
+                try (BufferedReader reader = new BufferedReader(openReaderTo(makeAbsolute(packageListUri), "UTF-8"))) {
                     for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                         line = line.trim();
                         if (!line.isEmpty()) pkglist.add(line);
@@ -61,17 +68,10 @@ final class ExternalLink {
     }
 
     private URI makeAbsolute(URI uri) {
-        if (uri != null && !uri.isAbsolute())
+        if (uri != null && !uri.isAbsolute()) {
             uri = new File(config.destinationDirectory(), uri.toASCIIString()).toURI();
-        return uri;
-    }
-
-    Optional<URI> resolveType(String packagename, String typeName) {
-        if (packages().contains(packagename)) {
-            String document = packagename.replace('.', '/') + "/" + typeName + ".html";
-            return Optional.of(makeAbsolute(addPathComponent(docUri, document)));
         }
-        return Optional.empty();
+        return uri;
     }
 
     private static URI createUri(String uri) {

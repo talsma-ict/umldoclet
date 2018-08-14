@@ -17,7 +17,6 @@ package nl.talsmasoftware.umldoclet.features;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.util.Testing;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
@@ -26,6 +25,7 @@ import java.util.spi.ToolProvider;
 
 import static java.util.Arrays.asList;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
+import static nl.talsmasoftware.umldoclet.util.Testing.createDirectory;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.stringContainsInOrder;
 
@@ -38,7 +38,7 @@ import static org.hamcrest.Matchers.stringContainsInOrder;
  */
 public class ExternalLinksTest {
 
-    static final File testoutput = new File("target/test-96");
+    static final File testoutput = Testing.deleteRecursive(new File("target/test-96"));
     static final String packageAsPath = ExternalLinksTest.class.getPackageName().replace('.', '/');
 
     public static class TestClass implements Serializable {
@@ -46,11 +46,9 @@ public class ExternalLinksTest {
 
     @Test
     public void testRelativeExternalLink() {
-        File externalDir = new File(testoutput, "externalApidocs");
-        externalDir.mkdirs();
-        File outputdir = new File(testoutput, "link-relative");
-        outputdir.mkdirs();
-        Testing.write(new File(externalDir, "package-list"), Serializable.class.getPackageName());
+        File externalDir = createDirectory(new File(testoutput, "externalApidocs"));
+        File packageList = Testing.write(new File(externalDir, "package-list"), Serializable.class.getPackageName());
+        File outputdir = createDirectory(new File(testoutput, "link-relative"));
 
         ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
@@ -72,7 +70,7 @@ public class ExternalLinksTest {
 
     @Test
     public void testOnlineExternalLink() {
-        File outputdir = new File(testoutput, "link-online");
+        File outputdir = createDirectory(new File(testoutput, "link-online"));
 
         File packageUml = new File(outputdir, packageAsPath + "/package.puml");
         ToolProvider.findFirst("javadoc").get().run(
@@ -82,6 +80,29 @@ public class ExternalLinksTest {
                 "-quiet",
                 "-createPumlFiles",
                 "-link", "https://docs.oracle.com/javase/9/docs/api",
+                "src/test/java/" + packageAsPath + '/' + getClass().getSimpleName() + ".java"
+        );
+
+        String uml = Testing.read(packageUml);
+        // Check link to Serializable javadoc
+        assertThat(uml, stringContainsInOrder(asList("interface", "Serializable",
+                "[[https://docs.oracle.com/javase/9/docs/api/java/io/Serializable.html]]")));
+    }
+
+    @Test
+    public void testOfflineExternalLink() throws Exception {
+        File externalDir = createDirectory(new File(testoutput, "externalApidocs"));
+        File packageList = Testing.write(new File(externalDir, "package-list"), Serializable.class.getPackageName());
+        File outputdir = createDirectory(new File(testoutput, "link-offline"));
+
+        File packageUml = new File(outputdir, packageAsPath + "/package.puml");
+        ToolProvider.findFirst("javadoc").get().run(
+                System.out, System.err,
+                "-d", outputdir.getPath(),
+                "-doclet", UMLDoclet.class.getName(),
+                "-quiet",
+                "-createPumlFiles",
+                "-linkoffline", "https://docs.oracle.com/javase/9/docs/api", packageList.getParent(),
                 "src/test/java/" + packageAsPath + '/' + getClass().getSimpleName() + ".java"
         );
 

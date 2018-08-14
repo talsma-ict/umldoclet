@@ -16,7 +16,12 @@
 package nl.talsmasoftware.umldoclet.util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -101,6 +106,18 @@ public final class FileUtils {
             if (lastDot > 0) path = path.substring(0, lastDot);
         }
         return path;
+    }
+
+    public static Reader openReaderTo(URI uri, String charsetName) throws IOException {
+        if ("file".equals(uri.getScheme())) {
+            return new InputStreamReader(new FileInputStream(new File(uri)), charsetName);
+        } else try {
+            return new InputStreamReader(uri.toURL().openStream(), charsetName);
+        } catch (MalformedURLException murle) {
+            File uriAsFile = new File(uri.toASCIIString());
+            if (uriAsFile.canRead()) return new InputStreamReader(new FileInputStream(uriAsFile), charsetName);
+            throw murle;
+        }
     }
 
     public static boolean hasExtension(Object file, String extension) {

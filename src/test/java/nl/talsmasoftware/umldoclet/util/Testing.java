@@ -82,13 +82,14 @@ public final class Testing {
         }
     }
 
-    public static void write(File file, String content) {
-        file.getParentFile().mkdirs();
+    public static File write(File file, String content) {
+        createDirectory(file.getParentFile());
         try (Writer writer = new FileWriter(file)) {
             writer.write(content);
         } catch (IOException e) {
             throw new IllegalStateException("Could not write content to " + file + ": " + e.getMessage(), e);
         }
+        return file;
     }
 
     public static String readClassUml(Class<?> type) {
@@ -110,6 +111,18 @@ public final class Testing {
         } catch (IOException ioe) {
             throw new IllegalStateException("Cannot read from stream: " + ioe.getMessage(), ioe);
         }
+    }
+
+    public static File deleteRecursive(File file) {
+        if (file.isDirectory()) for (File child : file.listFiles()) deleteRecursive(child);
+        if (file.exists() && !file.delete()) throw new IllegalStateException("Couldn't delete " + file);
+        return file;
+    }
+
+    public static File createDirectory(File dir) {
+        dir.mkdirs();
+        if (!dir.isDirectory()) throw new IllegalStateException("Not a directory: " + dir);
+        return dir;
     }
 
 }
