@@ -82,7 +82,7 @@ public final class FileUtils {
      * @throws IllegalStateException in case the parent directory did not yet exist and could not be created either.
      */
     public static File ensureParentDir(File file) {
-        if (file != null && !file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
+        if (file != null && !file.getParentFile().isDirectory() && !file.getParentFile().mkdirs()) {
             throw new IllegalStateException("Can't create directory \"" + file.getParent() + "\".");
         }
         return file;
