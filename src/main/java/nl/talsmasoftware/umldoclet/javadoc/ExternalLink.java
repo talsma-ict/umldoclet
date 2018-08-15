@@ -31,6 +31,7 @@ import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.requireNonNull;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.openReaderTo;
+import static nl.talsmasoftware.umldoclet.util.UriUtils.addParam;
 
 final class ExternalLink {
 
@@ -48,7 +49,7 @@ final class ExternalLink {
     Optional<URI> resolveType(String packagename, String typeName) {
         if (packages().contains(packagename)) {
             String document = packagename.replace('.', '/') + "/" + typeName + ".html";
-            return Optional.of(addIsExternalParam(makeAbsolute(addPathComponent(docUri, document))));
+            return Optional.of(addParam(makeAbsolute(addPathComponent(docUri, document)), "is-external", "true"));
         }
         return Optional.empty();
     }
@@ -104,26 +105,6 @@ final class ExternalLink {
             return new URI(scheme, userInfo, host, port, path, query, fragment);
         } catch (URISyntaxException use) {
             throw new IllegalStateException("Could not add path component \"" + component + "\" to " + uri + ": "
-                    + use.getMessage(), use);
-        }
-    }
-
-    private static URI addIsExternalParam(URI uri) {
-        try {
-            String scheme = uri.getScheme();
-            String userInfo = uri.getUserInfo();
-            String host = uri.getHost();
-            int port = uri.getPort();
-            String path = uri.getPath();
-            String query = uri.getQuery();
-            if (scheme != null && !"file".equals(scheme)) {
-                if (query == null || query.isEmpty()) query = "is-external=true";
-                else query += "&is-external=true";
-            }
-            String fragment = uri.getFragment();
-            return new URI(scheme, userInfo, host, port, path, query, fragment);
-        } catch (URISyntaxException use) {
-            throw new IllegalStateException("Could not add path query parameter \"is-external=true\" to " + uri + ": "
                     + use.getMessage(), use);
         }
     }
