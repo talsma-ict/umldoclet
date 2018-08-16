@@ -22,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -33,6 +34,15 @@ import static nl.talsmasoftware.umldoclet.util.FileUtils.openReaderTo;
 import static nl.talsmasoftware.umldoclet.util.UriUtils.addHttpParam;
 import static nl.talsmasoftware.umldoclet.util.UriUtils.addPathComponent;
 
+/**
+ * Processes {@code -link} and {@code -linkoffline} javadoc options
+ * and contains functionality to read a set of externally documented packages.
+ * <p>
+ * Since the {@code -link} option only has a single URI parameter,
+ * this uri must be used as both {@code docUri} and {@code packageListUri}.
+ *
+ * @author Sjoerd Talsma
+ */
 final class ExternalLink {
 
     private final Configuration config;
@@ -83,10 +93,10 @@ final class ExternalLink {
 
     private static URI createUri(String uri) {
         try {
-            return URI.create(uri);
-        } catch (IllegalArgumentException iae) {
+            return new URI(uri);
+        } catch (URISyntaxException use) {
             if (new File(uri).exists()) return new File(uri).toURI();
-            throw iae;
+            throw new IllegalArgumentException(use.getMessage(), use);
         }
     }
 

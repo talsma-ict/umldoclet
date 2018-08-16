@@ -77,4 +77,9 @@ public class ExternalLinkTest {
         assertThat(logger.countMessages(Message.WARNING_CANNOT_READ_PACKAGE_LIST::equals), is(1));
         verify(config, times(1)).destinationDirectory();
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testIllegalUrls() {
+        new ExternalLink(config, "https://www.google.com?\nq=query", "");
+    }
 }
