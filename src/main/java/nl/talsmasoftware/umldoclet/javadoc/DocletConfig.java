@@ -29,6 +29,7 @@ import nl.talsmasoftware.umldoclet.logging.Message;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 import nl.talsmasoftware.umldoclet.uml.Visibility;
 
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -108,6 +109,8 @@ public class DocletConfig implements Configuration {
     List<String> excludedReferences = new ArrayList<>(asList(
             "java.lang.Object", "java.lang.Enum", "java.lang.annotation.Annotation"));
 
+    List<ExternalLink> externalLinks = new ArrayList<>();
+
     private Indentation indentation = Indentation.DEFAULT;
 
     public DocletConfig(UMLDoclet doclet) {
@@ -162,6 +165,14 @@ public class DocletConfig implements Configuration {
     @Override
     public List<String> excludedTypeReferences() {
         return excludedReferences;
+    }
+
+    @Override
+    public Optional<URI> resolveExternalLinkToType(String packageName, String type) {
+        return externalLinks.stream()
+                .map(link -> link.resolveType(packageName, type))
+                .filter(Optional::isPresent).map(Optional::get)
+                .findFirst();
     }
 
     @Override

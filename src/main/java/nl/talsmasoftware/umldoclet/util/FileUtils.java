@@ -16,7 +16,11 @@
 package nl.talsmasoftware.umldoclet.util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -78,7 +82,7 @@ public final class FileUtils {
      * @throws IllegalStateException in case the parent directory did not yet exist and could not be created either.
      */
     public static File ensureParentDir(File file) {
-        if (file != null && !file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
+        if (file != null && !file.getParentFile().isDirectory() && !file.getParentFile().mkdirs()) {
             throw new IllegalStateException("Can't create directory \"" + file.getParent() + "\".");
         }
         return file;
@@ -101,6 +105,34 @@ public final class FileUtils {
             if (lastDot > 0) path = path.substring(0, lastDot);
         }
         return path;
+    }
+
+    /**
+     * Opens a reader to the specified URI.
+     * <p>
+     * If the call {@code uri.toURL().openStream()} succeeds, a reader is wrapped and returned.
+     * Otherwise, if the URI is absolute, an attempt is made to open it as a file. If this also fails,
+     * a last effort is made to open the uri relative to the specified {@code basedir} directory.
+     *
+     * @param basedir     The base directory to use if the URI turns out to be a relative file link.
+     * @param uri         The URI to read from.
+     * @param charsetName The character set to use for reading.
+     * @return The opened reader.
+     * @throws IOException in case the call to {@code uri.toURL().openStream()} threw an I/O Exception.
+     */
+    public static Reader openReaderTo(String basedir, URI uri, String charsetName) throws IOException {
+        try {
+            return new InputStreamReader(uri.toURL().openStream(), charsetName);
+        } catch (IOException | RuntimeException ex) {
+            try {
+                File uriAsFile = uri.isAbsolute() && "file".equals(uri.getScheme()) ? new File(uri) : new File(uri.toASCIIString());
+                if (!uriAsFile.isFile()) uriAsFile = new File(basedir, uri.toASCIIString());
+                if (uriAsFile.isFile()) return new InputStreamReader(new FileInputStream(uriAsFile), charsetName);
+            } catch (IOException | RuntimeException secondaryEx) {
+                ex.addSuppressed(secondaryEx);
+            }
+            throw ex;
+        }
     }
 
     public static boolean hasExtension(Object file, String extension) {

@@ -23,6 +23,11 @@ import java.util.Optional;
 
 import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
 
+/**
+ * Class for rendering links in the generated UML
+ *
+ * @author Sjoerd Talsma
+ */
 public class Link extends UMLPart {
     private static final ThreadLocal<String> LINK_FROM = new ThreadLocal<>();
 
@@ -33,26 +38,35 @@ public class Link extends UMLPart {
         this.target = target;
     }
 
-    public static Link toType(Type type) {
+    public static Link forType(Type type) {
+        final String destinationDirectory = type.getConfiguration().destinationDirectory();
         final String packageName = type.getNamespace().name;
-        File file = new File(type.getConfiguration().destinationDirectory());
-        file = new File(file, packageName.replace('.', '/'));
-        if (type.name.qualified.startsWith(packageName + ".")) {
-            file = new File(file, type.name.qualified.substring(packageName.length() + 1) + ".html");
-        } else {
-            file = new File(file, type.name.simple + ".html");
-        }
-        if (file.isFile()) {
-            return new Link(type, file.toURI());
-        }
+        final String nameInPackage = type.name.qualified.startsWith(packageName + ".")
+                ? type.name.qualified.substring(packageName.length() + 1) : type.name.simple;
 
-        // Otherwise maybe provide an URL to Oracle's javadoc for JDK classes etc?
-        return new Link(type, null);
+        Optional<URI> target = relativeHtmlFile(destinationDirectory, packageName, nameInPackage)
+                .or(() -> type.getConfiguration().resolveExternalLinkToType(packageName, nameInPackage));
+
+        return new Link(type, target.orElse(null));
     }
 
-    public static void linkFrom(String path) {
-        if (path == null) LINK_FROM.remove();
-        else LINK_FROM.set(path);
+    private static Optional<URI> relativeHtmlFile(String destinationDirectory, String packageName, String nameInPackage) {
+        final String directory = destinationDirectory + "/" + packageName.replace('.', '/');
+        return Optional.of(new File(directory, nameInPackage + ".html"))
+                .filter(File::isFile)
+                .map(File::toURI);
+    }
+
+    /**
+     * Sets the base path where relative links should be rendered from.
+     * <p>
+     * This setting is configured on a per-thread basis.
+     *
+     * @param basePath The base path to define relative links from.
+     */
+    public static void linkFrom(String basePath) {
+        if (basePath == null) LINK_FROM.remove();
+        else LINK_FROM.set(basePath);
     }
 
     private Optional<Namespace> diagramPackage() {
@@ -78,15 +92,15 @@ public class Link extends UMLPart {
 
     private Optional<String> relativeTarget() {
         return Optional.ofNullable(target)
-                .filter(uri -> "file".equals(uri.getScheme()))
-                .map(File::new)
+                .filter(uri -> "file".equals(uri.getScheme())).map(File::new)
                 .flatMap(targetFile -> linkFromDir().map(dir -> relativePath(dir, targetFile)));
     }
 
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-        relativeTarget()
-                .ifPresent(link -> output.append("[[").append(link).append("]]"));
+        if (target != null) {
+            output.append("[[").append(relativeTarget().orElseGet(target::toASCIIString)).append("]]");
+        }
         return output;
     }
 
