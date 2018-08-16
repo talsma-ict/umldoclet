@@ -22,7 +22,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -31,7 +30,8 @@ import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.requireNonNull;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.openReaderTo;
-import static nl.talsmasoftware.umldoclet.util.UriUtils.addParam;
+import static nl.talsmasoftware.umldoclet.util.UriUtils.addHttpParam;
+import static nl.talsmasoftware.umldoclet.util.UriUtils.addPathComponent;
 
 final class ExternalLink {
 
@@ -49,7 +49,7 @@ final class ExternalLink {
     Optional<URI> resolveType(String packagename, String typeName) {
         if (packages().contains(packagename)) {
             String document = packagename.replace('.', '/') + "/" + typeName + ".html";
-            return Optional.of(addParam(makeAbsolute(addPathComponent(docUri, document)), "is-external", "true"));
+            return Optional.of(addHttpParam(makeAbsolute(addPathComponent(docUri, document)), "is-external", "true"));
         }
         return Optional.empty();
     }
@@ -87,25 +87,6 @@ final class ExternalLink {
         } catch (IllegalArgumentException iae) {
             if (new File(uri).exists()) return new File(uri).toURI();
             throw iae;
-        }
-    }
-
-    private static URI addPathComponent(URI uri, String component) {
-        try {
-            String scheme = uri.getScheme();
-            String userInfo = uri.getUserInfo();
-            String host = uri.getHost();
-            int port = uri.getPort();
-            String path = uri.getPath();
-            path = path == null ? component
-                    : path.endsWith("/") || component.startsWith("/") ? path + component
-                    : path + "/" + component;
-            String query = uri.getQuery();
-            String fragment = uri.getFragment();
-            return new URI(scheme, userInfo, host, port, path, query, fragment);
-        } catch (URISyntaxException use) {
-            throw new IllegalStateException("Could not add path component \"" + component + "\" to " + uri + ": "
-                    + use.getMessage(), use);
         }
     }
 
