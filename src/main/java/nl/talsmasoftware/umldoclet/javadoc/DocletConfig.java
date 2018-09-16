@@ -63,7 +63,7 @@ public class DocletConfig implements Configuration {
     /**
      * Whether or not to render PlantUML {@code .puml} files.
      * <p>
-     * Set by option {@code -umlPlantumlFiles}, default is {@code false}.
+     * Set by option {@code -createPumlFiles}, default is {@code false}.
      */
     boolean renderPumlFile = false;
 
