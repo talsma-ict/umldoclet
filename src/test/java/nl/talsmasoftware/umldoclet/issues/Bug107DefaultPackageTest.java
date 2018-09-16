@@ -21,17 +21,20 @@ import org.junit.Test;
 
 import java.util.spi.ToolProvider;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 public class Bug107DefaultPackageTest {
 
     @BeforeClass
     public static void createJavadoc() {
-        ToolProvider.findFirst("javadoc").get().run(
+        assertThat(ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
-                "-d", "target/test-25",
+                "-d", "target/test-107",
                 "-doclet", UMLDoclet.class.getName(),
-                "-umlImageDirectory", "images",
+                "-createPumlFiles",
                 "src/test/java/Foo.java"
-        );
+        ), is(0));
     }
 
     @Test

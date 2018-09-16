@@ -33,12 +33,25 @@ public class Namespace extends UMLPart implements Comparable<Namespace> {
     public Namespace(UMLRoot diagram, String name) {
         super(diagram);
         this.name = requireNonNull(name, "Package name is <null>.").trim();
-        if (this.name.isEmpty()) throw new IllegalArgumentException("Package name is empty.");
+    }
+
+    /**
+     * Adds the package name to the diagram.
+     * Re: bug 107: If the package name is empty (i.e. the 'default' package),
+     * render {@code "unnamed"} because an empty name is not valid in PlantUML.
+     *
+     * @param output The output to append the package name to.
+     * @param <IPW>  The type of the output object.
+     * @return The same output instance for method chaining.
+     */
+    private <IPW extends IndentingPrintWriter> IPW writeNameTo(IPW output) {
+        output.append(name.isEmpty() ? "unnamed" : name).whitespace();
+        return output;
     }
 
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-        output.append("namespace").whitespace().append(name).whitespace().append('{').newline();
+        writeNameTo(output.append("namespace").whitespace()).append('{').newline();
         writeChildrenTo(output);
         output.append('}').newline();
         return output;
