@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,9 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 
-import static nl.talsmasoftware.umldoclet.logging.LogSupport.*;
+import static nl.talsmasoftware.umldoclet.logging.LogSupport.debug;
+import static nl.talsmasoftware.umldoclet.logging.LogSupport.trace;
+import static nl.talsmasoftware.umldoclet.logging.LogSupport.warn;
 import static nl.talsmasoftware.umldoclet.model.Reference.Side.from;
 import static nl.talsmasoftware.umldoclet.model.Reference.Side.to;
 
@@ -39,35 +41,35 @@ public enum LegacyTag {
     /**
      * Add support for @extends Controller
      * <p>
-     * Pattern: &lt;associated class>
+     * Pattern: &lt;associated class&gt;
      */
     EXTENDS("<|--", 0),
 
     /**
      * Add support for @implements Interface
      * <p>
-     * Pattern: &lt;associated class>
+     * Pattern: &lt;associated class&gt;
      */
     IMPLEMENTS("<|..", 0),
 
     /**
      * Add support for @assoc
      * <p>
-     * Pattern: &lt;cardinality> - &lt;cardinality> &lt;assoziated class>
+     * Pattern: &lt;cardinality&gt; - &lt;cardinality&gt; &lt;assoziated class&gt;
      */
     ASSOC("--", 3),
 
     /**
      * Add support for @navassoc
      * <p>
-     * Pattern: &lt;cardinality> - &lt;cardinality> &lt;assoziated class>
+     * Pattern: &lt;cardinality&gt; - &lt;cardinality&gt; &lt;assoziated class&gt;
      */
     NAVASSOC("<--", 3),
 
     /**
      * Add support for @depend
      * <p>
-     * Pattern: &lt;cardinality> - &lt;cardinality> &lt;assoziated class>
+     * Pattern: &lt;cardinality&gt; - &lt;cardinality&gt; &lt;assoziated class&gt;
      */
     DEPEND("<..", 3);
 
