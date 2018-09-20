@@ -18,6 +18,7 @@ To use the doclet together with the JavaDoc tool, the following is required.
   of the UML Doclet).
 - Availability of tools.jar containing the Sun JavaDoc API.
 - The doclet jar or a build system that knows how to get it (see [usage](USAGE.md)).
+- An installed version of [graphviz](http://plantuml.com/graphviz-dot), at least until [pure java visualization](https://github.com/talsma-ict/umldoclet/issues/51) works.
 
 ## Usage
 
