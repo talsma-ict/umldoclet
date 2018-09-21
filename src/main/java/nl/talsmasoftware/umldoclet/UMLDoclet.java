@@ -19,10 +19,10 @@ import jdk.javadoc.doclet.DocletEnvironment;
 import jdk.javadoc.doclet.Reporter;
 import jdk.javadoc.doclet.StandardDoclet;
 import net.sourceforge.plantuml.version.Version;
-import nl.talsmasoftware.umldoclet.uml.Diagram;
 import nl.talsmasoftware.umldoclet.html.HtmlPostprocessor;
 import nl.talsmasoftware.umldoclet.javadoc.DocletConfig;
 import nl.talsmasoftware.umldoclet.javadoc.UMLFactory;
+import nl.talsmasoftware.umldoclet.uml.Diagram;
 import nl.talsmasoftware.umldoclet.uml.UMLRoot;
 
 import javax.lang.model.SourceVersion;
@@ -30,9 +30,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
@@ -107,7 +105,6 @@ public class UMLDoclet extends StandardDoclet {
         try {
 
             UMLFactory factory = new UMLFactory(config, docEnv);
-//            return streamIncludedElements(docEnv.getIncludedElements())
             return docEnv.getIncludedElements().stream()
                     .map(element -> mapToDiagram(factory, element))
                     .filter(Optional::isPresent).map(Optional::get)
@@ -149,20 +146,6 @@ public class UMLDoclet extends StandardDoclet {
             return Optional.of(factory.createClassDiagram((TypeElement) element));
         }
         return Optional.empty();
-    }
-
-    /**
-     * Orders included elements where types are rendered first before packages.
-     * This helps detecting broken links to classes that are not included.
-     *
-     * @param elements The elements to be ordered, types-first
-     * @return The ordered elements
-     */
-    private static Stream<? extends Element> streamIncludedElements(Collection<? extends Element> elements) {
-        final List<Element> types = new ArrayList<>();
-        final List<Element> other = new ArrayList<>();
-        elements.forEach(elem -> (elem instanceof TypeElement ? types : other).add(elem));
-        return Stream.concat(types.stream(), other.stream());
     }
 
 }
