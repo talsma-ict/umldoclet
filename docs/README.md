@@ -21,7 +21,8 @@ To use the doclet together with the JavaDoc tool, the following is required.
 
 - [Javadoc version 9][doclet] or higher.  
   For earlier versions of javadoc, please use the [latest `1.x` version][v1.x] of this doclet.
-- This doclet jar.
+- This doclet jar. An apache-licensed version of plantuml is included in the jar.
+- An installed version of [graphviz](http://plantuml.com/graphviz-dot), at least until [pure java visualization](https://github.com/talsma-ict/umldoclet/issues/51) works.
 
 ## Usage
 
