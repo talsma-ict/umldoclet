@@ -34,7 +34,7 @@ install:
   - ./mvnw --version
 
 script:
-  - .travis/scripts/build.sh
+  - MAVEN_JAVADOC_SKIP=false .travis/scripts/build.sh
   - .travis/scripts/release.sh
 
 after_success:
