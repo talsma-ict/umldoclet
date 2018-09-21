@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,38 @@
  */
 package nl.talsmasoftware.umldoclet;
 
-import com.sun.javadoc.*;
+import com.sun.javadoc.ClassDoc;
+import com.sun.javadoc.DocErrorReporter;
+import com.sun.javadoc.LanguageVersion;
+import com.sun.javadoc.PackageDoc;
+import com.sun.javadoc.RootDoc;
 import com.sun.tools.doclets.standard.Standard;
 import net.sourceforge.plantuml.version.Version;
 import nl.talsmasoftware.umldoclet.config.UMLDocletConfig;
+import nl.talsmasoftware.umldoclet.html.HtmlPostprocessor;
 import nl.talsmasoftware.umldoclet.logging.GlobalPosition;
+import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.rendering.DiagramRenderer;
 import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlImageWriter;
 import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlSupport;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Comparator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import static java.util.Objects.requireNonNull;
-import static nl.talsmasoftware.umldoclet.logging.LogSupport.*;
+import static nl.talsmasoftware.umldoclet.logging.LogSupport.debug;
+import static nl.talsmasoftware.umldoclet.logging.LogSupport.error;
+import static nl.talsmasoftware.umldoclet.logging.LogSupport.info;
+import static nl.talsmasoftware.umldoclet.logging.LogSupport.isTraceEnabled;
+import static nl.talsmasoftware.umldoclet.logging.LogSupport.trace;
 
 /**
  * UML doclet that generates <a href="http://plantuml.com">PlantUML</a> class diagrams from your java code just as
@@ -81,17 +97,15 @@ public class UMLDoclet extends Standard {
 
     public static boolean start(RootDoc rootDoc) {
         UMLDoclet umlDoclet = new UMLDoclet(rootDoc);
-        boolean umlDocletResult = umlDoclet.generateUMLDiagrams();
-        // Regarding issue #13: I don't understand why the Standard doclet will run on a 'bad' javadoc
-        // contained in RootDoc somewhere after UMLDoclet has done it's thing, but
-        // send us a (correct) JavaDoc ERROR if ran on the same rootDoc 'untouched'...
-        // Think about this; Is there some way to 'clone' it and pass the original rootDoc to the
-        // Standard doclet??
-        // TODO re-test this issue with the added 'languageVersion()' method.
-        if (umlDocletResult && !umlDoclet.config.skipStandardDoclet()) {
-            return Standard.start(rootDoc);
+
+        // First generate Standard HTML documentation
+        if (!umlDoclet.config.skipStandardDoclet()) {
+            if (!Standard.start(rootDoc)) return false;
         }
-        return umlDocletResult;
+
+        // Then generate UML and postprocess the javadoc HTML files
+        return umlDoclet.generateUMLDiagrams()
+                && umlDoclet.postProcessHtml();
     }
 
     public boolean generateUMLDiagrams() {
@@ -231,6 +245,18 @@ public class UMLDoclet extends Standard {
             }
         }
         throw new IllegalStateException("Error creating: " + umlFile);
+    }
+
+    private boolean postProcessHtml() {
+        try {
+
+            return new HtmlPostprocessor(config).postProcessHtml();
+
+        } catch (IOException | RuntimeException ex) {
+            LogSupport.error("Unanticipated error post-processing HTML: {0}", ex);
+            ex.printStackTrace(System.err);
+            return false;
+        }
     }
 
 }

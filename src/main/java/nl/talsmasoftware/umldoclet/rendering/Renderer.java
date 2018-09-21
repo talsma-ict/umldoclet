@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * Base implementation for any 'renderer' subclass.
- * <p/>
+ * <p>
  * Renderers are capable of rendering themselves to {@link IndentingPrintWriter} instances and have
  * chaining methods returning these writers for easier appending.
  *

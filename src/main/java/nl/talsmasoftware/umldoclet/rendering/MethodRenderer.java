@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ public class MethodRenderer extends Renderer {
     /**
      * Important method that determines whether or not the documented method or constructor should be included in the
      * UML diagram.
-     * <p/>
+     * <p>
      * This method is rather complex because it is highly configurable whether or not a method should be rendered.
      *
      * @return Whether this method or constructor should be included in the UML diagram.
