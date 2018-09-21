@@ -78,12 +78,10 @@ final class HtmlFile {
         File original = path.toFile();
         if (!original.delete()) throw new IllegalStateException("Cannot delete " + original);
         if (tempFile.renameTo(original)) {
-//            TODO: Sync actual message when I'm back online
-// config.logger().debug(DEBUG_RENAMED_FILE_FROM, original, tempFile);
+            LogSupport.debug("Renamed {0} from {1}.", original, tempFile);
         } else {
             FileUtils.copyToFile(tempFile, original);
-//            TODO: Sync actual message when I'm back online
-//            config.logger().debug(DEBUG_COPIED_FILE_FROM, original, tempFile);
+            LogSupport.debug("Copied {0} from {1}.", original, tempFile);
             if (!tempFile.delete()) {
                 throw new IllegalStateException("Cannot delete " + tempFile + " after postprocessing!");
             }
