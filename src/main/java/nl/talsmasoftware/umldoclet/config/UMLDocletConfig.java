@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,11 +23,19 @@ import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Properties;
 import java.util.regex.Matcher;
 
 import static nl.talsmasoftware.umldoclet.config.UMLDocletConfig.Setting.*;
-import static nl.talsmasoftware.umldoclet.logging.LogSupport.*;
+import static nl.talsmasoftware.umldoclet.logging.LogSupport.debug;
+import static nl.talsmasoftware.umldoclet.logging.LogSupport.error;
+import static nl.talsmasoftware.umldoclet.logging.LogSupport.trace;
+import static nl.talsmasoftware.umldoclet.logging.LogSupport.warn;
 import static nl.talsmasoftware.umldoclet.model.Model.isDeprecated;
 import static nl.talsmasoftware.umldoclet.rendering.indent.Indentation.spaces;
 import static nl.talsmasoftware.umldoclet.rendering.indent.Indentation.tabs;
@@ -216,21 +224,54 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
         // TODO: look for default setting "-docEncoding" as fallback..
         String encoding = UML_FILE_ENCODING.value(this);
         if (encoding == null) {
-            for (String[] stdOption : standardOptions) {
-                if (stdOption.length > 1 && "-docEncoding".equalsIgnoreCase(stdOption[0])) {
-                    encoding = stdOption[1];
-                    debug("Setting UML file encoding to \"{0}\" from standard Doclet option \"{1}\", because \"{2}\" was not specified.",
-                            encoding, "-docEncoding", "-" + UML_FILE_ENCODING.delegate.name);
-                    break;
-                }
-            }
-            if (encoding == null) {
-                encoding = "UTF-8";
-                debug("Setting UML file encoding to \"{0}\" by default.", encoding);
-            }
+            encoding = htmlFileEncoding().name();
+            debug("Setting UML file encoding to evaluated document encoding {0} from standard doclet.", encoding);
             this.put(UML_FILE_ENCODING, encoding);
         }
         return encoding;
+    }
+
+    private Charset _htmlFileEncoding = null;
+
+    /**
+     * The {@code HTML} character set is determined the same way the {@code Standard} doclet uses,
+     * as we delegate the initial rendering to it:
+     * <ol>
+     * <li>use the {@code "-docencoding"} if set,</li>
+     * <li>otherwise the source encoding ({@code "-encoding"})</li>
+     * <li>finally, if no encodings are specified at all,
+     * the {@code default platform encoding} is used as implicit fallback</li>
+     * </ol>
+     *
+     * @return The charset used for Javadoc HTML files
+     */
+    public Charset htmlFileEncoding() {
+        if (_htmlFileEncoding == null) {
+            Charset encoding = null;
+            for (String[] stdOption : standardOptions) {
+                if (stdOption.length > 1 && "-docEncoding".equalsIgnoreCase(stdOption[0])) {
+                    return _htmlFileEncoding = Charset.forName(stdOption[1]);
+                } else if (stdOption.length > 1 && "-encoding".equalsIgnoreCase(stdOption[0])) {
+                    encoding = Charset.forName(stdOption[1]);
+                }
+            }
+            _htmlFileEncoding = encoding != null ? encoding : Charset.defaultCharset();
+        }
+        return _htmlFileEncoding;
+    }
+
+    private String _htmlDestinationDirectory;
+
+    public String htmlDestinationDirectory() {
+        if (_htmlDestinationDirectory == null) {
+            for (String[] stdOption : standardOptions) {
+                if (stdOption.length > 1 && "-d".equals(stdOption[0])) {
+                    return _htmlDestinationDirectory = stdOption[1];
+                }
+            }
+            _htmlDestinationDirectory = basePath();
+        }
+        return _htmlDestinationDirectory;
     }
 
     public boolean skipStandardDoclet() {
