@@ -23,7 +23,9 @@ import com.sun.javadoc.RootDoc;
 import com.sun.tools.doclets.standard.Standard;
 import net.sourceforge.plantuml.version.Version;
 import nl.talsmasoftware.umldoclet.config.UMLDocletConfig;
+import nl.talsmasoftware.umldoclet.html.HtmlPostprocessor;
 import nl.talsmasoftware.umldoclet.logging.GlobalPosition;
+import nl.talsmasoftware.umldoclet.logging.LogSupport;
 import nl.talsmasoftware.umldoclet.rendering.DiagramRenderer;
 import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlImageWriter;
 import nl.talsmasoftware.umldoclet.rendering.plantuml.PlantumlSupport;
@@ -101,8 +103,9 @@ public class UMLDoclet extends Standard {
             if (!Standard.start(rootDoc)) return false;
         }
 
-        return umlDoclet.generateUMLDiagrams();
-        // TODO postProcessHtml
+        // Then generate UML and postprocess the javadoc HTML files
+        return umlDoclet.generateUMLDiagrams()
+                && umlDoclet.postProcessHtml();
     }
 
     public boolean generateUMLDiagrams() {
@@ -242,6 +245,18 @@ public class UMLDoclet extends Standard {
             }
         }
         throw new IllegalStateException("Error creating: " + umlFile);
+    }
+
+    private boolean postProcessHtml() {
+        try {
+
+            return new HtmlPostprocessor(config).postProcessHtml();
+
+        } catch (IOException | RuntimeException ex) {
+            LogSupport.error("Unanticipated error post-processing HTML: {0}", ex);
+            ex.printStackTrace(System.err);
+            return false;
+        }
     }
 
 }

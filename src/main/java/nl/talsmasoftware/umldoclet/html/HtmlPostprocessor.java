@@ -33,11 +33,9 @@ import static java.util.Objects.requireNonNull;
  */
 public class HtmlPostprocessor {
     private final UMLDocletConfig config;
-    private final Collection<Object> diagrams;
 
-    public HtmlPostprocessor(UMLDocletConfig config, Collection<Object> diagrams) {
+    public HtmlPostprocessor(UMLDocletConfig config) {
         this.config = requireNonNull(config, "Configuration is <null>.");
-        this.diagrams = requireNonNull(diagrams, "Generated diagram collection is <null>.");
     }
 
     public boolean postProcessHtml() throws IOException {
@@ -45,15 +43,9 @@ public class HtmlPostprocessor {
         if (!destinationDir.isDirectory() || !destinationDir.canRead()) {
             throw new IllegalStateException("Cannot read from configured destination directory \"" + destinationDir + "\"!");
         }
+
         final Collection<UmlDiagram> diagrams = new DiagramCollector(config).collectDiagrams();
-
-        long count = 0;
-
-//        Files.walk(destinationDir.toPath())
-//                .filter(HtmlFile::isHtmlFile)
-//                .map(path -> new HtmlFile(config, path))
-//                .map(htmlFile -> htmlFile.process(diagrams))
-//                .filter(Boolean::booleanValue).count();
+        for (HtmlFile htmlFile : allHtmlFiles(destinationDir)) htmlFile.process(diagrams);
         return true;
     }
 
