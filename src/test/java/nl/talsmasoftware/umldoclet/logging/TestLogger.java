@@ -17,6 +17,7 @@ package nl.talsmasoftware.umldoclet.logging;
 
 import org.slf4j.event.Level;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -33,6 +34,14 @@ public class TestLogger implements Logger {
             this.level = level;
             this.message = key;
             this.arguments = asList(args);
+        }
+
+        @Override
+        public String toString() {
+            String message = level == null ? "" : level.toString() + ": ";
+            message += this.message.toString();
+            if (!arguments.isEmpty()) message = MessageFormat.format(message, arguments);
+            return message;
         }
     }
 
@@ -60,6 +69,11 @@ public class TestLogger implements Logger {
     @Override
     public void error(Message key, Object... args) {
         logged.add(new LogRecord(Level.ERROR, key, args));
+    }
+
+    @Override
+    public String localize(Message key, Object... args) {
+        return new LogRecord(null, key, args).toString();
     }
 
 }

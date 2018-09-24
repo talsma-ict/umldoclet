@@ -33,6 +33,7 @@ import static java.util.ResourceBundle.getBundle;
 public enum Message {
     DOCLET_VERSION,
     DOCLET_COPYRIGHT,
+    DOCLET_UML_FOOTER,
     PLANTUML_COPYRIGHT,
     DEBUG_CONFIGURED_IMAGE_FORMATS,
     DEBUG_SKIPPING_FILE,

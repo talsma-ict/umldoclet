@@ -65,12 +65,18 @@ final class LocalizedReporter implements Reporter, Logger {
 
     private void log(Diagnostic.Kind kind, DocTreePath path, Element elem, Message key, Object... args) {
         if (mustPrint(kind)) {
-            String message = key.toString(locale);
-            if (args.length > 0) message = MessageFormat.format(message, localize(args));
+            final String message = localize(key, args);
             if (path != null) print(kind, path, message);
             else if (elem != null) print(kind, elem, message);
             else print(kind, message);
         }
+    }
+
+    @Override
+    public String localize(Message key, Object... args) {
+        String message = key.toString(locale);
+        if (args.length > 0) message = MessageFormat.format(message, localize(args));
+        return message;
     }
 
     private Object[] localize(Object... args) {
