@@ -22,6 +22,8 @@ package nl.talsmasoftware.umldoclet.logging;
  */
 public interface Logger {
 
+    String localize(Message key, Object... args);
+
     void debug(Message key, Object... args);
 
     void info(Message key, Object... args);

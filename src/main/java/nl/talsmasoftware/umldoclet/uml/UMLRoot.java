@@ -27,6 +27,9 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 import static java.util.Objects.requireNonNull;
+import static net.sourceforge.plantuml.version.Version.versionString;
+import static nl.talsmasoftware.umldoclet.logging.Message.DOCLET_UML_FOOTER;
+import static nl.talsmasoftware.umldoclet.logging.Message.DOCLET_VERSION;
 import static nl.talsmasoftware.umldoclet.logging.Message.INFO_GENERATING_FILE;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.ensureParentDir;
 
@@ -76,7 +79,16 @@ public abstract class UMLRoot extends UMLPart {
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         output.append("@startuml").newline().newline();
         writeChildrenTo(output);
+        writeFooterTo(output);
         output.newline().append("@enduml").newline();
+        return output;
+    }
+
+    public <IPW extends IndentingPrintWriter> IPW writeFooterTo(IPW output) {
+        output.indent().newline()
+                .append("center footer").whitespace()
+                .append(config.logger().localize(DOCLET_UML_FOOTER, DOCLET_VERSION, versionString()))
+                .newline();
         return output;
     }
 
