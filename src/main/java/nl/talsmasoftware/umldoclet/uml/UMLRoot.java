@@ -86,7 +86,7 @@ public abstract class UMLRoot extends UMLPart {
 
     public <IPW extends IndentingPrintWriter> IPW writeFooterTo(IPW output) {
         output.indent().newline()
-                .append("right footer").whitespace()
+                .append("center footer").whitespace()
                 .append(config.logger().localize(DOCLET_UML_FOOTER, DOCLET_VERSION, versionString()))
                 .newline();
         return output;
