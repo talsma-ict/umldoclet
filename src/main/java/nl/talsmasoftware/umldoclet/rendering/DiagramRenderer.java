@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
+import static net.sourceforge.plantuml.version.Version.versionString;
 
 /**
  * Created on 17-02-2016.
@@ -69,7 +70,16 @@ public class DiagramRenderer extends Renderer {
     protected IndentingPrintWriter writeTo(IndentingPrintWriter out) {
         out.append("@startuml").newline().newline();
         writeChildrenTo(out);
+        writeFooterTo(out);
         return out.append("@enduml").newline();
+    }
+
+    protected <IPW extends IndentingPrintWriter> IPW writeFooterTo(IPW output) {
+        output.indent().newline()
+                .append("center footer").whitespace()
+                .append("UMLDoclet ").append(config.version()).append(", PlantUML ").append(versionString())
+                .newline();
+        return output;
     }
 
     private void addGlobalCommandsTo(Collection<Renderer> renderers) {
