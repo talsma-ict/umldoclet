@@ -141,6 +141,7 @@ public class UMLFactory {
         PackageUml packageUml = new PackageUml(config, packageElement.getQualifiedName().toString());
         Map<Namespace, Collection<Type>> foreignTypes = new LinkedHashMap<>();
         List<Reference> references = new ArrayList<>();
+
         Namespace namespace = createPackage(packageUml, packageElement, foreignTypes, references);
         packageUml.addChild(namespace);
 
@@ -364,6 +365,9 @@ public class UMLFactory {
     private void addForeignType(Map<Namespace, Collection<Type>> foreignTypes, Element typeElement) {
         if (foreignTypes != null && typeElement instanceof TypeElement) {
             Type type = createAndPopulateType(null, (TypeElement) typeElement);
+            if (typeElement.getKind().isClass()) {
+                type.removeChildren(child -> child instanceof Method && !((Method) child).isAbstract);
+            }
             foreignTypes.computeIfAbsent(type.getNamespace(), (namespace) -> new LinkedHashSet<>()).add(type);
         }
     }
@@ -374,23 +378,21 @@ public class UMLFactory {
 
         // Superclass reference.
         if (!TypeKind.NONE.equals(typeElement.getSuperclass().getKind())) {
-            String superclass = TypeNameVisitor.INSTANCE.visit(typeElement.getSuperclass()).qualified;
-            if (!config.excludedTypeReferences().contains(superclass)) {
-                references.add(new Reference(
-                        from(type.name.qualified), "--|>",
-                        to(superclass)
-                ));
+            TypeName superclass = TypeNameVisitor.INSTANCE.visit(typeElement.getSuperclass());
+            if (!config.excludedTypeReferences().contains(superclass.qualified)) {
+                references.add(new Reference(from(type.name.qualified), "--|>", to(superclass.qualified)));
+                if (!namespace.contains(superclass)) {
+                    addForeignType(foreignTypes, env.getTypeUtils().asElement(typeElement.getSuperclass()));
+                }
             }
         }
 
         // Implemented interfaces.
         typeElement.getInterfaces().forEach(interfaceType -> {
-            TypeName ifName = TypeNameVisitor.INSTANCE.visit(interfaceType);
-            if (!config.excludedTypeReferences().contains(ifName.qualified)) {
-                references.add(new Reference(
-                        from(type.name.qualified), "..|>",
-                        to(ifName.qualified)));
-                if (!namespace.contains(ifName)) {
+            TypeName interfaceName = TypeNameVisitor.INSTANCE.visit(interfaceType);
+            if (!config.excludedTypeReferences().contains(interfaceName.qualified)) {
+                references.add(new Reference(from(type.name.qualified), "..|>", to(interfaceName.qualified)));
+                if (!namespace.contains(interfaceName)) {
                     addForeignType(foreignTypes, env.getTypeUtils().asElement(interfaceType));
                 }
             }
@@ -399,9 +401,9 @@ public class UMLFactory {
         // Add reference to containing class from innner classes.
         ElementKind enclosingKind = typeElement.getEnclosingElement().getKind();
         if (enclosingKind.isClass() || enclosingKind.isInterface()) {
-            references.add(new Reference(
-                    from(TypeNameVisitor.INSTANCE.visit(typeElement.getEnclosingElement().asType()).qualified),
-                    "+--", to(type.name.qualified)));
+            TypeName parentType = TypeNameVisitor.INSTANCE.visit(typeElement.getEnclosingElement().asType());
+            references.add(new Reference(from(parentType.qualified), "+--", to(type.name.qualified)));
+            // No check needed whether parent type lives in our namespace.
         }
 
         // Add 'uses' references by replacing visible fields
