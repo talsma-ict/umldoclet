@@ -141,6 +141,7 @@ public class UMLFactory {
         PackageUml packageUml = new PackageUml(config, packageElement.getQualifiedName().toString());
         Map<Namespace, Collection<Type>> foreignTypes = new LinkedHashMap<>();
         List<Reference> references = new ArrayList<>();
+
         Namespace namespace = createPackage(packageUml, packageElement, foreignTypes, references);
         packageUml.addChild(namespace);
 
@@ -364,6 +365,9 @@ public class UMLFactory {
     private void addForeignType(Map<Namespace, Collection<Type>> foreignTypes, Element typeElement) {
         if (foreignTypes != null && typeElement instanceof TypeElement) {
             Type type = createAndPopulateType(null, (TypeElement) typeElement);
+            if (typeElement.getKind().isClass()) {
+                type.removeChildren(child -> child instanceof Method && !((Method) child).isAbstract);
+            }
             foreignTypes.computeIfAbsent(type.getNamespace(), (namespace) -> new LinkedHashSet<>()).add(type);
         }
     }
