@@ -60,7 +60,7 @@ final class UmlPackageDiagram extends UmlDiagram {
     }
 
     private static final class Inserter extends Postprocessor.Inserter {
-        private static final String CENTER_STYLE = " style=\"display:block;margin-left:auto;margin-right:auto;max-width:100%;\"";
+        private static final String CENTER_STYLE = "style=\"display:block;margin-left:auto;margin-right:auto;max-width:100%;\"";
 
         private Inserter(String relativePath) {
             super(relativePath);
@@ -83,7 +83,7 @@ final class UmlPackageDiagram extends UmlDiagram {
                 // Render SVG images as objects to make their links work
                 return "<object type=\"image/svg+xml\" data=\"" + relativePath + "\" " + CENTER_STYLE + "></object>";
             }
-            return "<img src=\"" + relativePath + "\" alt=\"Package summary UML Diagram\"" + CENTER_STYLE + "/>";
+            return "<img src=\"" + relativePath + "\" alt=\"Package summary UML Diagram\" " + CENTER_STYLE + "/>";
         }
     }
 
