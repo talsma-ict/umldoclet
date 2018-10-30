@@ -67,6 +67,7 @@ final class UmlClassDiagram extends UmlDiagram {
     }
 
     private final class Inserter extends Postprocessor.Inserter {
+        private boolean wrappingAddedToPre = false;
         private boolean clearRightAdded = false;
 
         private Inserter(String relativePath) {
@@ -90,6 +91,13 @@ final class UmlClassDiagram extends UmlDiagram {
                     return line.substring(0, idx) + System.lineSeparator() + getImageTag() + line.substring(idx);
                 }
             } else if (!clearRightAdded) {
+                if (!wrappingAddedToPre) {
+                    int idx = line.indexOf("<pre>");
+                    if (idx >= 0) {
+                        wrappingAddedToPre = true;
+                        return line.substring(0, idx) + "<pre style=\"white-space:pre-wrap;\">" + line.substring(idx + 5);
+                    }
+                }
                 String cleared = addClearRightStyle(line);
                 if (cleared != null) {
                     clearRightAdded = true;
@@ -124,7 +132,7 @@ final class UmlClassDiagram extends UmlDiagram {
             int idx = line.indexOf(summaryDiv);
             if (idx < 0) return null;
             int ins = idx + summaryDiv.length();
-            line = line.substring(0, ins) + " style=\"clear: right;\"" + line.substring(ins);
+            line = line.substring(0, ins) + " style=\"clear:right;\"" + line.substring(ins);
             return line;
         }
 
