@@ -70,10 +70,13 @@ public class UMLFactory {
         List<Reference> references = new ArrayList<>();
         Literal sep = Literal.NEWLINE;
 
+        List<TypeName> foundTypeVariables = new ArrayList<>();
+
         // Add superclass
         if (!TypeKind.NONE.equals(classElement.getSuperclass().getKind())) {
-            String superclassName = TypeNameVisitor.INSTANCE.visit(classElement.getSuperclass()).qualified;
-            if (!config.excludedTypeReferences().contains(superclassName)) {
+            TypeName superclassName = TypeNameVisitor.INSTANCE.visit(classElement.getSuperclass());
+            if (superclassName.getGenerics().length > 0) foundTypeVariables.add(superclassName);
+            if (!config.excludedTypeReferences().contains(superclassName.qualified)) {
                 Element superclass = env.getTypeUtils().asElement(classElement.getSuperclass());
                 if (superclass instanceof TypeElement) {
                     classUml.addChild(sep);
@@ -82,13 +85,14 @@ public class UMLFactory {
                     classUml.addChild(superType);
                     sep = Literal.EMPTY;
                 }
-                references.add(new Reference(from(type.name.qualified), "--|>", to(superclassName)).canonical());
+                references.add(new Reference(from(type.name.qualified), "--|>", to(superclassName.qualified)).canonical());
             }
         }
 
         // Add interfaces
         for (TypeMirror interfaceType : classElement.getInterfaces()) {
             TypeName ifName = TypeNameVisitor.INSTANCE.visit(interfaceType);
+            if (ifName.getGenerics().length > 0) foundTypeVariables.add(ifName);
             if (!config.excludedTypeReferences().contains(ifName.qualified)) {
                 Element implementedInterface = env.getTypeUtils().asElement(interfaceType);
                 if (implementedInterface instanceof TypeElement) {
@@ -105,8 +109,9 @@ public class UMLFactory {
         // Add containing class reference
         ElementKind enclosingKind = classElement.getEnclosingElement().getKind();
         if (enclosingKind.isClass() || enclosingKind.isInterface()) {
-            String enclosingTypeName = TypeNameVisitor.INSTANCE.visit(classElement.getEnclosingElement().asType()).qualified;
-            if (!config.excludedTypeReferences().contains(enclosingTypeName)) {
+            TypeName enclosingTypeName = TypeNameVisitor.INSTANCE.visit(classElement.getEnclosingElement().asType());
+            if (enclosingTypeName.getGenerics().length > 0) foundTypeVariables.add(enclosingTypeName);
+            if (!config.excludedTypeReferences().contains(enclosingTypeName.qualified)) {
                 Element enclosingElement = classElement.getEnclosingElement();
                 if (enclosingElement instanceof TypeElement) {
                     classUml.addChild(sep);
@@ -115,7 +120,7 @@ public class UMLFactory {
                     classUml.addChild(enclosingType);
                     sep = Literal.EMPTY;
                 }
-                references.add(new Reference(from(type.name.qualified), "--+", to(enclosingTypeName)).canonical());
+                references.add(new Reference(from(type.name.qualified), "--+", to(enclosingTypeName.qualified)).canonical());
             }
         }
 
@@ -134,7 +139,40 @@ public class UMLFactory {
             references.forEach(classUml::addChild);
         }
 
+        if (!foundTypeVariables.isEmpty()) {
+            Collections.sort(foundTypeVariables);
+            for (int i = foundTypeVariables.size() - 1; i >= 0; i--) {
+                TypeName foundTypeVariable = foundTypeVariables.get(i);
+                if (i > 0 && foundTypeVariable.equals(foundTypeVariables.get(i - 1))) { // duplicate, skip these.
+                    i--;
+                } else {
+                    classUml.getChildren().stream()
+                            .filter(Type.class::isInstance).map(Type.class::cast)
+                            .forEach(tp -> fixTypeVariable(tp, foundTypeVariable));
+                }
+            }
+        }
+
         return classUml;
+    }
+
+    private static void fixTypeVariable(Type type, TypeName nameWithTypeVariable) {
+        if (type.name.qualified.equals(nameWithTypeVariable.qualified)) {
+            type.name = nameWithTypeVariable;
+//            type.getChildren().stream()
+//                    .filter(TypeMember.class::isInstance).map(TypeMember.class::cast)
+//                    .forEach(member -> {
+//                        if (member.type.map(nameWithTypeVariable::equals).isPresent()) {
+//                            member.type = Optional.ofNullable(nameWithTypeVariable);
+//                        }
+//                        if (member instanceof Method) {
+//                            ((Method) member).parameters.getChildren().stream()
+//                                    .filter(Parameters.Parameter.class::isInstance).map(Parameters.Parameter.class::cast)
+//                                    .filter(param -> param.type.qualified.equals(nameWithTypeVariable.qualified))
+//                                    .forEach(param -> param.type = nameWithTypeVariable);
+//                        }
+//                    });
+        }
     }
 
     public UMLRoot createPackageDiagram(PackageElement packageElement) {
@@ -392,6 +430,7 @@ public class UMLFactory {
             TypeName interfaceName = TypeNameVisitor.INSTANCE.visit(interfaceType);
             if (!config.excludedTypeReferences().contains(interfaceName.qualified)) {
                 references.add(new Reference(from(type.name.qualified), "..|>", to(interfaceName.qualified)));
+                // TODO Figure out what to do IF the interface is found BUT has a different typename
                 if (!namespace.contains(interfaceName)) {
                     addForeignType(foreignTypes, env.getTypeUtils().asElement(interfaceType));
                 }

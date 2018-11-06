@@ -38,7 +38,7 @@ public class Type extends UMLPart implements Comparable<Type> {
 
     private final Namespace namespace;
     private final Classification classfication;
-    public final TypeName name;
+    public TypeName name;
     private final boolean isDeprecated, addPackageToName;
     private Link link;
 

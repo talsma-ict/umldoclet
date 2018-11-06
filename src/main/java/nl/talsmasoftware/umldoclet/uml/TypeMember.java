@@ -18,6 +18,7 @@ package nl.talsmasoftware.umldoclet.uml;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
@@ -33,7 +34,7 @@ public abstract class TypeMember extends UMLPart implements Comparable<TypeMembe
     protected final Visibility visibility;
     public final boolean isAbstract, isStatic, isDeprecated;
     public final String name;
-    protected final TypeName type;
+    public Optional<TypeName> type;
 
     public TypeMember(Type containingType, Visibility visibility, boolean isAbstract, boolean isStatic,
                       boolean isDeprecated, String name, TypeName type) {
@@ -45,11 +46,11 @@ public abstract class TypeMember extends UMLPart implements Comparable<TypeMembe
         this.isDeprecated = isDeprecated;
         this.name = requireNonNull(name, "Member name is <null>.").trim();
         if (this.name.isEmpty()) throw new IllegalArgumentException("Member name is empty.");
-        this.type = type;
+        this.type = Optional.ofNullable(type);
     }
 
     protected <IPW extends IndentingPrintWriter> IPW writeTypeTo(IPW output) {
-        if (type != null) output.append(": ").append(type.toString());
+        type.ifPresent(tp -> output.append(": ").append(tp.toString()));
         return output;
     }
 

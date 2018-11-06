@@ -84,9 +84,9 @@ public class Parameters extends UMLPart implements Comparable<Parameters> {
         return delta;
     }
 
-    private class Parameter extends UMLPart {
+    public class Parameter extends UMLPart {
         private final String name;
-        private final TypeName type;
+        public TypeName type;
 
         private Parameter(String name, TypeName type) {
             super(Parameters.this);
