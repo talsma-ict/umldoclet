@@ -28,7 +28,7 @@ import static java.util.Objects.requireNonNull;
  */
 public class Method extends TypeMember {
 
-    public final Parameters parameters;
+    private final Parameters parameters;
 
     public Method(Type containingType, Visibility visibility, boolean isAbstract, boolean isStatic,
                   String name, Parameters parameters, TypeName returnType) {
