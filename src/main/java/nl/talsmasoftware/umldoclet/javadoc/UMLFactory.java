@@ -17,7 +17,19 @@ package nl.talsmasoftware.umldoclet.javadoc;
 
 import jdk.javadoc.doclet.DocletEnvironment;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.uml.*;
+import nl.talsmasoftware.umldoclet.uml.ClassUml;
+import nl.talsmasoftware.umldoclet.uml.Field;
+import nl.talsmasoftware.umldoclet.uml.Literal;
+import nl.talsmasoftware.umldoclet.uml.Method;
+import nl.talsmasoftware.umldoclet.uml.Namespace;
+import nl.talsmasoftware.umldoclet.uml.PackageUml;
+import nl.talsmasoftware.umldoclet.uml.Parameters;
+import nl.talsmasoftware.umldoclet.uml.Reference;
+import nl.talsmasoftware.umldoclet.uml.Type;
+import nl.talsmasoftware.umldoclet.uml.TypeMember;
+import nl.talsmasoftware.umldoclet.uml.TypeName;
+import nl.talsmasoftware.umldoclet.uml.UMLRoot;
+import nl.talsmasoftware.umldoclet.uml.Visibility;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -29,7 +41,17 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -67,10 +89,9 @@ public class UMLFactory {
         Type type = createAndPopulateType(null, classElement);
         ClassUml classUml = new ClassUml(config, type);
 
+        List<TypeName> foundTypeVariables = new ArrayList<>();
         List<Reference> references = new ArrayList<>();
         Literal sep = Literal.NEWLINE;
-
-        List<TypeName> foundTypeVariables = new ArrayList<>();
 
         // Add superclass
         if (!TypeKind.NONE.equals(classElement.getSuperclass().getKind())) {
@@ -85,7 +106,7 @@ public class UMLFactory {
                     classUml.addChild(superType);
                     sep = Literal.EMPTY;
                 }
-                references.add(new Reference(from(type.name.qualified), "--|>", to(superclassName.qualified)).canonical());
+                references.add(new Reference(from(type.getName().qualified), "--|>", to(superclassName.qualified)).canonical());
             }
         }
 
@@ -102,7 +123,7 @@ public class UMLFactory {
                     classUml.addChild(implementedType);
                     sep = Literal.EMPTY;
                 }
-                references.add(new Reference(from(type.name.qualified), "..|>", to(ifName.qualified)).canonical());
+                references.add(new Reference(from(type.getName().qualified), "..|>", to(ifName.qualified)).canonical());
             }
         }
 
@@ -120,7 +141,7 @@ public class UMLFactory {
                     classUml.addChild(enclosingType);
                     sep = Literal.EMPTY;
                 }
-                references.add(new Reference(from(type.name.qualified), "--+", to(enclosingTypeName.qualified)).canonical());
+                references.add(new Reference(from(type.getName().qualified), "--+", to(enclosingTypeName.qualified)).canonical());
             }
         }
 
@@ -131,7 +152,7 @@ public class UMLFactory {
                 .forEach(innerclassElem -> {
                     Type innerType = createType(null, innerclassElem);
                     classUml.addChild(innerType);
-                    references.add(new Reference(from(type.name.qualified), "+--", to(innerType.name.qualified)).canonical());
+                    references.add(new Reference(from(type.getName().qualified), "+--", to(innerType.getName().qualified)).canonical());
                 });
 
         if (!references.isEmpty()) {
@@ -143,36 +164,18 @@ public class UMLFactory {
             Collections.sort(foundTypeVariables);
             for (int i = foundTypeVariables.size() - 1; i >= 0; i--) {
                 TypeName foundTypeVariable = foundTypeVariables.get(i);
-                if (i > 0 && foundTypeVariable.equals(foundTypeVariables.get(i - 1))) { // duplicate, skip these.
-                    i--;
+                if (i > 0 && foundTypeVariable.equals(foundTypeVariables.get(i - 1))) {
+                    i--; // duplicate, skip these.
                 } else {
                     classUml.getChildren().stream()
                             .filter(Type.class::isInstance).map(Type.class::cast)
-                            .forEach(tp -> fixTypeVariable(tp, foundTypeVariable));
+                            .filter(tp -> foundTypeVariable.equals(tp.getName()))
+                            .forEach(tp -> tp.setName(foundTypeVariable));
                 }
             }
         }
 
         return classUml;
-    }
-
-    private static void fixTypeVariable(Type type, TypeName nameWithTypeVariable) {
-        if (type.name.qualified.equals(nameWithTypeVariable.qualified)) {
-            type.name = nameWithTypeVariable;
-//            type.getChildren().stream()
-//                    .filter(TypeMember.class::isInstance).map(TypeMember.class::cast)
-//                    .forEach(member -> {
-//                        if (member.type.map(nameWithTypeVariable::equals).isPresent()) {
-//                            member.type = Optional.ofNullable(nameWithTypeVariable);
-//                        }
-//                        if (member instanceof Method) {
-//                            ((Method) member).parameters.getChildren().stream()
-//                                    .filter(Parameters.Parameter.class::isInstance).map(Parameters.Parameter.class::cast)
-//                                    .filter(param -> param.type.qualified.equals(nameWithTypeVariable.qualified))
-//                                    .forEach(param -> param.type = nameWithTypeVariable);
-//                        }
-//                    });
-        }
     }
 
     public UMLRoot createPackageDiagram(PackageElement packageElement) {
@@ -191,8 +194,8 @@ public class UMLFactory {
                 .forEach(types -> {
                     for (Iterator<Type> it = types.iterator(); it.hasNext(); ) {
                         Type type = it.next();
-                        if (references.stream().filter(ref -> ref.contains(type.name)).limit(3).count() > 2) {
-                            references.removeIf(ref -> ref.contains(type.name));
+                        if (references.stream().filter(ref -> ref.contains(type.getName())).limit(3).count() > 2) {
+                            references.removeIf(ref -> ref.contains(type.getName()));
                             it.remove();
                         }
                     }
@@ -251,7 +254,7 @@ public class UMLFactory {
                 visibilityOf(modifiers),
                 modifiers.contains(Modifier.ABSTRACT),
                 modifiers.contains(Modifier.STATIC),
-                containingType.name.simple,
+                containingType.getName().simple,
                 createParameters(executableElement.getParameters()),
                 null
         );
@@ -418,7 +421,7 @@ public class UMLFactory {
         if (!TypeKind.NONE.equals(typeElement.getSuperclass().getKind())) {
             TypeName superclass = TypeNameVisitor.INSTANCE.visit(typeElement.getSuperclass());
             if (!config.excludedTypeReferences().contains(superclass.qualified)) {
-                references.add(new Reference(from(type.name.qualified), "--|>", to(superclass.qualified)));
+                references.add(new Reference(from(type.getName().qualified), "--|>", to(superclass.qualified)));
                 if (!namespace.contains(superclass)) {
                     addForeignType(foreignTypes, env.getTypeUtils().asElement(typeElement.getSuperclass()));
                 }
@@ -429,7 +432,7 @@ public class UMLFactory {
         typeElement.getInterfaces().forEach(interfaceType -> {
             TypeName interfaceName = TypeNameVisitor.INSTANCE.visit(interfaceType);
             if (!config.excludedTypeReferences().contains(interfaceName.qualified)) {
-                references.add(new Reference(from(type.name.qualified), "..|>", to(interfaceName.qualified)));
+                references.add(new Reference(from(type.getName().qualified), "..|>", to(interfaceName.qualified)));
                 // TODO Figure out what to do IF the interface is found BUT has a different typename
                 if (!namespace.contains(interfaceName)) {
                     addForeignType(foreignTypes, env.getTypeUtils().asElement(interfaceType));
@@ -441,7 +444,7 @@ public class UMLFactory {
         ElementKind enclosingKind = typeElement.getEnclosingElement().getKind();
         if (enclosingKind.isClass() || enclosingKind.isInterface()) {
             TypeName parentType = TypeNameVisitor.INSTANCE.visit(typeElement.getEnclosingElement().asType());
-            references.add(new Reference(from(parentType.qualified), "+--", to(type.name.qualified)));
+            references.add(new Reference(from(parentType.qualified), "+--", to(type.getName().qualified)));
             // No check needed whether parent type lives in our namespace.
         }
 
@@ -455,7 +458,7 @@ public class UMLFactory {
                     TypeNameWithCardinality fieldType = typeNameWithCardinality.apply(field.asType());
                     if (namespace.contains(fieldType.typeName)) {
                         addReference(references, new Reference(
-                                from(type.name.qualified),
+                                from(type.getName().qualified),
                                 "-->",
                                 to(fieldType.typeName.qualified, fieldType.cardinality),
                                 fieldName));
@@ -474,7 +477,7 @@ public class UMLFactory {
                         TypeNameWithCardinality returnType = typeNameWithCardinality.apply(propertyType(method));
                         if (namespace.contains(returnType.typeName)) {
                             addReference(references, new Reference(
-                                    from(type.name.qualified),
+                                    from(type.getName().qualified),
                                     "-->",
                                     to(returnType.typeName.qualified, returnType.cardinality),
                                     propertyName));

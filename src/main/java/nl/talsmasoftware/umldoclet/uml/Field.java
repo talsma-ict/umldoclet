@@ -36,13 +36,13 @@ public class Field extends TypeMember {
     }
 
     public Field deprecated() {
-        return new Field(containingType, visibility, isStatic, true, name, type.get());
+        return new Field(containingType, visibility, isStatic, true, name, type);
     }
 
     private boolean isEnumType() {
         return isStatic
                 && ENUM.equals(containingType.getClassfication())
-                && containingType.name.equals(type.get());
+                && containingType.getName().equals(type);
     }
 
     @Override

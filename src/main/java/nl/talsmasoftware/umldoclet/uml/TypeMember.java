@@ -18,7 +18,6 @@ package nl.talsmasoftware.umldoclet.uml;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Objects;
-import java.util.Optional;
 
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
@@ -34,7 +33,7 @@ public abstract class TypeMember extends UMLPart implements Comparable<TypeMembe
     protected final Visibility visibility;
     public final boolean isAbstract, isStatic, isDeprecated;
     public final String name;
-    public Optional<TypeName> type;
+    protected TypeName type;
 
     public TypeMember(Type containingType, Visibility visibility, boolean isAbstract, boolean isStatic,
                       boolean isDeprecated, String name, TypeName type) {
@@ -46,12 +45,20 @@ public abstract class TypeMember extends UMLPart implements Comparable<TypeMembe
         this.isDeprecated = isDeprecated;
         this.name = requireNonNull(name, "Member name is <null>.").trim();
         if (this.name.isEmpty()) throw new IllegalArgumentException("Member name is empty.");
-        this.type = Optional.ofNullable(type);
+        this.type = type;
     }
 
     protected <IPW extends IndentingPrintWriter> IPW writeTypeTo(IPW output) {
-        type.ifPresent(tp -> output.append(": ").append(tp.toString()));
+        if (type != null) {
+            output.append(": ").append(type.toString());
+        }
         return output;
+    }
+
+    void replaceParameterizedType(TypeName from, TypeName to) {
+        if (from != null && from.equals(this.type)) {
+            this.type = to;
+        }
     }
 
     protected <IPW extends IndentingPrintWriter> IPW writeParametersTo(IPW output) {

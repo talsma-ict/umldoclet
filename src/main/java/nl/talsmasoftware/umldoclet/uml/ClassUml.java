@@ -53,10 +53,10 @@ public class ClassUml extends UMLRoot {
             if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');
             String containingPackage = type.getNamespace().name;
             result.append(containingPackage.replace('.', '/')).append('/');
-            if (type.name.qualified.startsWith(containingPackage + ".")) {
-                result.append(type.name.qualified.substring(containingPackage.length() + 1));
+            if (type.getName().qualified.startsWith(containingPackage + ".")) {
+                result.append(type.getName().qualified.substring(containingPackage.length() + 1));
             } else {
-                result.append(type.name.simple);
+                result.append(type.getName().simple);
             }
             pumlFile = FileUtils.ensureParentDir(new File(result.append(".puml").toString()));
         }

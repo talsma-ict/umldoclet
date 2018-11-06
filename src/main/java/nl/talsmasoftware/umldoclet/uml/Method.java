@@ -38,12 +38,12 @@ public class Method extends TypeMember {
     private Method(Type containingType, Visibility visibility, boolean isAbstract, boolean isStatic, boolean isDeprecated,
                    String name, Parameters parameters, TypeName returnType) {
         super(containingType, visibility, isAbstract, isStatic, isDeprecated, name, returnType);
-        this.parameters = requireNonNull(parameters, () -> "No parameters for method " + containingType.name + "." + name);
+        this.parameters = requireNonNull(parameters, () -> "No parameters for method " + containingType.getName() + "." + name);
         this.parameters.setMethod(this);
     }
 
     public Method deprecated() {
-        return new Method(containingType, visibility, isAbstract, isStatic, true, name, parameters, type.orElse(null));
+        return new Method(containingType, visibility, isAbstract, isStatic, true, name, parameters, type);
     }
 
     @Override
@@ -60,10 +60,16 @@ public class Method extends TypeMember {
     @Override
     protected <IPW extends IndentingPrintWriter> IPW writeTypeTo(IPW output) {
         TypeDisplay returnTypeDisplay = getConfiguration().methods().returnType();
-        if (!TypeDisplay.NONE.equals(returnTypeDisplay)) {
-            type.ifPresent(tp -> output.append(": ").append(tp.toUml(returnTypeDisplay, null)));
+        if (type != null && !TypeDisplay.NONE.equals(returnTypeDisplay)) {
+            output.append(": ").append(type.toUml(returnTypeDisplay, null));
         }
         return output;
+    }
+
+    @Override
+    void replaceParameterizedType(TypeName from, TypeName to) {
+        super.replaceParameterizedType(from, to);
+        parameters.replaceParameterizedType(from, to);
     }
 
     @Override
