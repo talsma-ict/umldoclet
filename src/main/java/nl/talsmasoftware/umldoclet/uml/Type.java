@@ -38,7 +38,7 @@ public class Type extends UMLPart implements Comparable<Type> {
 
     private final Namespace namespace;
     private final Classification classfication;
-    public final TypeName name;
+    private TypeName name;
     private final boolean isDeprecated, addPackageToName;
     private Link link;
 
@@ -55,6 +55,26 @@ public class Type extends UMLPart implements Comparable<Type> {
         this.isDeprecated = isDeprecated;
         this.addPackageToName = addPackageToName;
         if (children != null) children.forEach(this::addChild);
+    }
+
+    public TypeName getName() {
+        return name;
+    }
+
+    public void updateGenericTypeVariables(TypeName name) {
+        if (name != null && name.qualified.equals(this.name.qualified)) {
+            final TypeName[] generics = this.name.getGenerics();
+            this.name = name;
+            if (generics.length == name.getGenerics().length) {
+                getChildren().stream()
+                        .filter(TypeMember.class::isInstance).map(TypeMember.class::cast)
+                        .forEach(member -> {
+                            for (int i = 0; i < generics.length; i++) {
+                                member.replaceParameterizedType(generics[i], name.getGenerics()[i]);
+                            }
+                        });
+            }
+        }
     }
 
     private Link link() {

@@ -74,6 +74,15 @@ public class Parameters extends UMLPart implements Comparable<Parameters> {
         return output;
     }
 
+    void replaceParameterizedType(TypeName from, TypeName to) {
+        if (from != null) {
+            getChildren().stream()
+                    .filter(Parameter.class::isInstance).map(Parameter.class::cast)
+                    .filter(p -> from.equals(p.type))
+                    .forEach(p -> p.type = to);
+        }
+    }
+
     @Override
     public int compareTo(Parameters other) {
         int delta = Integer.compare(this.getChildren().size(), other.getChildren().size());
@@ -86,7 +95,7 @@ public class Parameters extends UMLPart implements Comparable<Parameters> {
 
     private class Parameter extends UMLPart {
         private final String name;
-        private final TypeName type;
+        private TypeName type;
 
         private Parameter(String name, TypeName type) {
             super(Parameters.this);

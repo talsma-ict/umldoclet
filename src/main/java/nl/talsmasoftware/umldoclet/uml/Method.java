@@ -15,8 +15,8 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Objects;
 
@@ -38,7 +38,7 @@ public class Method extends TypeMember {
     private Method(Type containingType, Visibility visibility, boolean isAbstract, boolean isStatic, boolean isDeprecated,
                    String name, Parameters parameters, TypeName returnType) {
         super(containingType, visibility, isAbstract, isStatic, isDeprecated, name, returnType);
-        this.parameters = requireNonNull(parameters, () -> "No parameters for method " + containingType.name + "." + name);
+        this.parameters = requireNonNull(parameters, () -> "No parameters for method " + containingType.getName() + "." + name);
         this.parameters.setMethod(this);
     }
 
@@ -64,6 +64,12 @@ public class Method extends TypeMember {
             output.append(": ").append(type.toUml(returnTypeDisplay, null));
         }
         return output;
+    }
+
+    @Override
+    void replaceParameterizedType(TypeName from, TypeName to) {
+        super.replaceParameterizedType(from, to);
+        parameters.replaceParameterizedType(from, to);
     }
 
     @Override

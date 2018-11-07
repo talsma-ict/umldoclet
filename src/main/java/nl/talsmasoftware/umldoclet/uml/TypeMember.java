@@ -33,7 +33,7 @@ public abstract class TypeMember extends UMLPart implements Comparable<TypeMembe
     protected final Visibility visibility;
     public final boolean isAbstract, isStatic, isDeprecated;
     public final String name;
-    protected final TypeName type;
+    protected TypeName type;
 
     public TypeMember(Type containingType, Visibility visibility, boolean isAbstract, boolean isStatic,
                       boolean isDeprecated, String name, TypeName type) {
@@ -49,8 +49,16 @@ public abstract class TypeMember extends UMLPart implements Comparable<TypeMembe
     }
 
     protected <IPW extends IndentingPrintWriter> IPW writeTypeTo(IPW output) {
-        if (type != null) output.append(": ").append(type.toString());
+        if (type != null) {
+            output.append(": ").append(type.toString());
+        }
         return output;
+    }
+
+    void replaceParameterizedType(TypeName from, TypeName to) {
+        if (from != null && from.equals(this.type)) {
+            this.type = to;
+        }
     }
 
     protected <IPW extends IndentingPrintWriter> IPW writeParametersTo(IPW output) {

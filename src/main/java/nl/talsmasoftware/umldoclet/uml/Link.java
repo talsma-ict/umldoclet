@@ -41,8 +41,8 @@ public class Link extends UMLPart {
     public static Link forType(Type type) {
         final String destinationDirectory = type.getConfiguration().destinationDirectory();
         final String packageName = type.getNamespace().name;
-        final String nameInPackage = type.name.qualified.startsWith(packageName + ".")
-                ? type.name.qualified.substring(packageName.length() + 1) : type.name.simple;
+        final String nameInPackage = type.getName().qualified.startsWith(packageName + ".")
+                ? type.getName().qualified.substring(packageName.length() + 1) : type.getName().simple;
 
         Optional<URI> target = relativeHtmlFile(destinationDirectory, packageName, nameInPackage)
                 .or(() -> type.getConfiguration().resolveExternalLinkToType(packageName, nameInPackage));

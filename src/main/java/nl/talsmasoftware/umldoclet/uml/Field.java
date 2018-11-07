@@ -42,7 +42,7 @@ public class Field extends TypeMember {
     private boolean isEnumType() {
         return isStatic
                 && ENUM.equals(containingType.getClassfication())
-                && containingType.name.equals(type);
+                && containingType.getName().equals(type);
     }
 
     @Override
