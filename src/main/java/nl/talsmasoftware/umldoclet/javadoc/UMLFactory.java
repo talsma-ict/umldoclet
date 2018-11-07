@@ -170,7 +170,7 @@ public class UMLFactory {
                     classUml.getChildren().stream()
                             .filter(Type.class::isInstance).map(Type.class::cast)
                             .filter(tp -> foundTypeVariable.equals(tp.getName()))
-                            .forEach(tp -> tp.setName(foundTypeVariable));
+                            .forEach(tp -> tp.updateGenericTypeVariables(foundTypeVariable));
                 }
             }
         }

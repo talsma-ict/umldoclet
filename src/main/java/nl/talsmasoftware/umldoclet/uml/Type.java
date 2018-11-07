@@ -61,7 +61,7 @@ public class Type extends UMLPart implements Comparable<Type> {
         return name;
     }
 
-    public void setName(TypeName name) {
+    public void updateGenericTypeVariables(TypeName name) {
         if (name != null && name.qualified.equals(this.name.qualified)) {
             final TypeName[] generics = this.name.getGenerics();
             this.name = name;
