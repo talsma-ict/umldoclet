@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+§ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -132,7 +132,7 @@ public class LogSupport implements DocErrorReporter {
             if (reporter == null) {
                 LOGGER.log(Level.FINEST, format(msg, args), findException(args));
             } else {
-                reporter.printNotice(GlobalPosition.current(), format(msg, args));
+                reporter.printNotice(/*GlobalPosition.current(), */format(msg, args));
             }
         }
     }
@@ -150,7 +150,7 @@ public class LogSupport implements DocErrorReporter {
             if (reporter == null) {
                 LOGGER.log(Level.FINE, format(msg, args), findException(args));
             } else {
-                reporter.printNotice(GlobalPosition.current(), format(msg, args));
+                reporter.printNotice(/*GlobalPosition.current(), */format(msg, args));
             }
         }
     }
@@ -169,7 +169,7 @@ public class LogSupport implements DocErrorReporter {
             if (reporter == null) {
                 LOGGER.log(Level.INFO, format(msg, args), findException(args));
             } else {
-                reporter.printNotice(GlobalPosition.current(), format(msg, args));
+                reporter.printNotice(/*GlobalPosition.current(), */format(msg, args));
             }
         }
     }
@@ -188,7 +188,7 @@ public class LogSupport implements DocErrorReporter {
             if (reporter == null) {
                 LOGGER.log(Level.WARNING, format(msg, args), findException(args));
             } else {
-                reporter.printWarning(GlobalPosition.current(), format(msg, args));
+                reporter.printWarning(/*GlobalPosition.current(), */format(msg, args));
             }
         }
     }
