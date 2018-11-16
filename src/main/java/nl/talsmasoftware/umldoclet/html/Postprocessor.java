@@ -42,7 +42,7 @@ final class Postprocessor implements Callable<Boolean> {
     @Override
     public Boolean call() throws IOException {
         synchronized (htmlFile) {
-            File tempFile = File.createTempFile(htmlFile.path.getFileName().toString(), ".tmp");
+            File tempFile = htmlFile.createNewTempFile();
             List<String> html = htmlFile.readLines();
             boolean alreadyContainsDiagram = false;
             final Inserter inserter = umlDiagram.newInserter(relativePath);
