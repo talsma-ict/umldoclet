@@ -80,6 +80,13 @@ final class HtmlFile {
         return Files.readAllLines(path, config.htmlCharset());
     }
 
+    File createNewTempFile() throws IOException {
+        final String fileName = path.getFileName().toString();
+        final int lastDot = fileName.lastIndexOf('.');
+        return lastDot <= 0 ? File.createTempFile(fileName, ".tmp")
+                : File.createTempFile(fileName.substring(0, lastDot), fileName.substring(lastDot));
+    }
+
     public void replaceBy(File tempFile) throws IOException {
         File original = path.toFile();
         if (!original.delete()) throw new IllegalStateException("Cannot delete " + original);
