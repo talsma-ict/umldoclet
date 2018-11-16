@@ -154,7 +154,7 @@ If you happen to come accross badly chosen default parameters, please let me kno
 | Since _version 1.0.1_:                       |||
 | -umlAlwaysUseQualifiedClassnames <br> _boolean_ | `false`    | Whether the new simplified classnames within packages (namespaces) must be disabled. Simplified names should have no effect on the rendered diagrams, but instead only result in more easily readable `.puml` sources. This setting was introduced to be able to turn off the changes from [enhancement 15](https://github.com/talsma-ict/umldoclet/issues/15). |
 | Since _version 1.0.2_:                       |||
-| -umlImageFormat <br> image formats           | _none_        | The image formats to be generated in case the plantuml library is detected on the classpath. Options that are supported out of the box include: `PNG`, `SVG`, `EPS` and `LATEX` (see `net.sourceforge.plantuml.FileFormat`). To generate rendered diagrams in multiple formats, simply provide the `-umlImageFormat` parameter more than once. Please note, since version 1.0.3, the default changed from `PNG` to _none_ to avoid excessively large javadoc JAR files. `SVG` also generates considerably smaller images which scale better and allow moderate copy-paste functionality. |
+| -umlImageFormat <br> image formats           | `SVG`         | The image formats to be generated in case the plantuml library is detected on the classpath. Options that are supported out of the box include: `PNG`, `SVG`, `EPS` and `LATEX` (see `net.sourceforge.plantuml.FileFormat`). To generate rendered diagrams in multiple formats, simply provide the `-umlImageFormat` parameter more than once. Please note, since version 1.0.3, the default changed from `PNG` to _none_ to avoid excessively large javadoc JAR files. `SVG` also generates considerably smaller images which scale better and allow moderate copy-paste functionality. |
 | Since _version 1.0.4_:                       |||
 | -umlImageDirectory <br> image directory      | _none_        | The (single) directory where all images will be generated to. By default images are placed in the directory containing their package documentation. When a single directory is configured for the images, the filename for the image will include the full package names (for more details, see [enhancement 25](https://github.com/talsma-ict/umldoclet/issues/25) ). |
 | Since _version 1.0.5_:                       |||
@@ -163,7 +163,7 @@ If you happen to come accross badly chosen default parameters, please let me kno
 | -umlIncludeHyperlinks <br> _boolean_         | !umlSkipStandardDoclet | Whether hyperlinks to regular JavaDoc should be included in the generated uml. |
 
 
-  [maven-img]: https://img.shields.io/maven-central/v/nl.talsmasoftware/umldoclet.svg
+  [maven-img]: https://img.shields.io/maven-central/v/nl.talsmasoftware/umldoclet/1.svg
   [maven]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22nl.talsmasoftware%22%20AND%20a%3A%22umldoclet%22
   [plantuml]: http://plantuml.com
   [ivy]: http://ant.apache.org/ivy
