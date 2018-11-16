@@ -85,7 +85,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
         UML_INCLUDE_HYPERLINKS("umlIncludeHyperlinks", null),
         UML_COMMAND(new ListSetting("umlCommand")),
         UML_ALWAYS_USE_QUALIFIED_CLASSNAMES("umlAlwaysUseQualifiedClassnames", false),
-        UML_IMAGE_FORMAT(new ListSetting("umlImageFormat")),
+        UML_IMAGE_FORMAT(new ListSetting("umlImageFormat", "SVG")),
         UML_IMAGE_DIRECTORY("umlImageDirectory", null);
 
         private final AbstractSetting<?> delegate;

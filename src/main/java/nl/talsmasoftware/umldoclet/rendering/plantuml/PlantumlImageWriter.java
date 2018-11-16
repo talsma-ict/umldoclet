@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Talsma ICT
+ * Copyright 2016-2018 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,7 +74,7 @@ public class PlantumlImageWriter extends StringBufferingWriter {
             File imageFile = new File(directory, baseName + imageFormat.getFileSuffix());
             LogSupport.info("Generating {0}...", imageFile);
             try (OutputStream imageOutput = new BufferedOutputStream(new FileOutputStream(imageFile))) {
-                new SourceStringReader(getBuffer().toString()).generateImage(imageOutput, new FileFormatOption(imageFormat));
+                new SourceStringReader(getBuffer().toString()).outputImage(imageOutput, new FileFormatOption(imageFormat));
                 LogSupport.debug("Finished image {0}.", imageFile);
             }
         }

@@ -262,10 +262,11 @@
                                 <artifactId>umldoclet</artifactId>
                                 <version>${project.version}</version>
                             </docletArtifact>
+<!--
                             <additionalOptions>
                                 <additionalOption>-umlLogLevel DEBUG</additionalOption>
-                                <additionalOption>-umlImageFormat SVG</additionalOption>
                             </additionalOptions>
+-->
                         </configuration>
                     </execution>
                     <execution>
