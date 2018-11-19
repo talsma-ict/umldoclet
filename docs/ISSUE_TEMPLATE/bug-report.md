@@ -22,5 +22,4 @@ labels:
   - Version:
   - Platform:
   - Java version:
-  - Maven / Gradle version:
   - _Open source_: Project link:
