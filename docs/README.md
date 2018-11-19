@@ -46,7 +46,7 @@ default settings provide for you:
   
 ## Contributing
 
-- See [Contributing] (CONTRIBUTING.md)
+- See [Contributing](CONTRIBUTING.md)
 
 ## Thanks!
 
