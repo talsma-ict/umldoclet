@@ -46,7 +46,7 @@ default settings provide for you:
   
 ## Contributing
 
-- See [Contributing] (__TODO__)
+- See [Contributing] (CONTRIBUTING.md)
 
 ## Thanks!
 
