@@ -15,6 +15,15 @@ Javadoc generation can be integrated into many build systems such
 as _[maven](#configuring-your-maven-build)_, 
 _[gradle](#using-gradle)_ or even _[ant](#using-ant)_.
 
+:information_source: **Tip:**
+_The [javadoc][javadoc-command] commandline becomes verbose rather quickly,
+please consider using one of the following build systems for your projects:_
+- [Maven](#configuring-your-maven-build) 
+- [Gradle](#using-gradle)
+- [Ant](#using-ant)
+
+## Commandline
+
 The commandline javadoc command is [explained here by Oracle][javadoc-command]
 but the main syntax is as follows:
 ```bash
@@ -30,12 +39,6 @@ javadoc -sourcepath src -classpath lib -d apidocs \
     -docletpath umldoclet-2.x.jar -doclet nl.talsmasoftware.umldoclet.UMLDoclet \
     com.foobar
 ``` 
-
-:information_source: **Tip:**
-_The [javadoc][javadoc-command] commandline becomes verbose rather quickly,
-therefore please consider using one of the following build systems for your projects:_
-- [Maven](#configuring-your-maven-build) 
-- [Gradle](#using-gradle)
 
 ## Configuring your maven build
 
