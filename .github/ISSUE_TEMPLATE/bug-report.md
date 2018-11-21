@@ -22,4 +22,4 @@ labels:
   - Version:
   - Platform:
   - Java version:
-  - (If open source:) Project link:
+  - (If open source) Project link:
