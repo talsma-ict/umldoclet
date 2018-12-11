@@ -88,7 +88,7 @@ final class HtmlFile {
             prefix = fileName.substring(0, lastDot);
             suffix = fileName.substring(lastDot);
         }
-        if (prefix.length() < 3) prefix += "---".substring(0, 3 - prefix.length());
+        prefix += "---".substring(0, Math.max(1, 3 - prefix.length())); // Make sure the prefix is at least 3 chars.
         return File.createTempFile(prefix, suffix);
     }
 
