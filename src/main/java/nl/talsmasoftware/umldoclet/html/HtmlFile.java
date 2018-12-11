@@ -83,8 +83,13 @@ final class HtmlFile {
     File createNewTempFile() throws IOException {
         final String fileName = path.getFileName().toString();
         final int lastDot = fileName.lastIndexOf('.');
-        return lastDot <= 0 ? File.createTempFile(fileName, ".tmp")
-                : File.createTempFile(fileName.substring(0, lastDot), fileName.substring(lastDot));
+        String prefix = fileName, suffix = null;
+        if (lastDot > 0) {
+            prefix = fileName.substring(0, lastDot);
+            suffix = fileName.substring(lastDot);
+        }
+        if (prefix.length() < 3) prefix += "---".substring(0, 3 - prefix.length());
+        return File.createTempFile(prefix, suffix);
     }
 
     public void replaceBy(File tempFile) throws IOException {
