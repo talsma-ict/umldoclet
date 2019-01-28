@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -551,6 +551,7 @@ public class UMLFactory {
         packageElement.getEnclosedElements().stream()
                 .filter(TypeElement.class::isInstance).map(TypeElement.class::cast)
                 .flatMap(UMLFactory::innerTypes)
+                .filter(env::isIncluded)
                 .map(typeElement -> {
                     Type type = createAndPopulateType(pkg, typeElement);
                     references.addAll(findPackageReferences(pkg, foreignTypes, typeElement, type));
