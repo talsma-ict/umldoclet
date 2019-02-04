@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
  *
  * @author Sjoerd Talsma
  */
-public class Literal extends UMLPart {
+public class Literal extends UMLNode {
     public static final Literal EMPTY = new Literal("");
     public static final Literal NEWLINE = new Literal.Line("");
 
@@ -37,7 +37,7 @@ public class Literal extends UMLPart {
         return new Literal.Line(line);
     }
 
-    void setParent(UMLPart parent) {
+    public void setParent(UMLNode parent) {
         // Parent is neither required nor supported.
     }
 

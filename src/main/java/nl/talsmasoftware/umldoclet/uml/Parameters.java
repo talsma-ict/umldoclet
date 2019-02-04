@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import java.util.Iterator;
 /**
  * @author Sjoerd Talsma
  */
-public class Parameters extends UMLPart implements Comparable<Parameters> {
+public class Parameters extends UMLNode implements Comparable<Parameters> {
 
     private boolean varargs = false;
     private Method method;
@@ -38,12 +38,12 @@ public class Parameters extends UMLPart implements Comparable<Parameters> {
     }
 
     @Override
-    protected UMLPart requireParent() {
+    protected UMLNode requireParent() {
         return method == null ? super.requireParent() : method;
     }
 
     @Override
-    public void addChild(UMLPart child) {
+    public void addChild(UMLNode child) {
         if (child instanceof Parameter) super.addChild(child);
     }
 
@@ -66,7 +66,7 @@ public class Parameters extends UMLPart implements Comparable<Parameters> {
     public <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
         output.append('(');
         String sep = "";
-        for (UMLPart param : getChildren()) {
+        for (UMLNode param : getChildren()) {
             param.writeTo(output.append(sep));
             sep = ", ";
         }
@@ -86,14 +86,14 @@ public class Parameters extends UMLPart implements Comparable<Parameters> {
     @Override
     public int compareTo(Parameters other) {
         int delta = Integer.compare(this.getChildren().size(), other.getChildren().size());
-        for (Iterator<UMLPart> ours = this.getChildren().iterator(), theirs = other.getChildren().iterator();
+        for (Iterator<UMLNode> ours = this.getChildren().iterator(), theirs = other.getChildren().iterator();
              delta == 0 && ours.hasNext() && theirs.hasNext(); ) {
             delta = ((Parameter) ours.next()).type.compareTo(((Parameter) theirs.next()).type);
         }
         return delta;
     }
 
-    private class Parameter extends UMLPart {
+    private class Parameter extends UMLNode {
         private final String name;
         private TypeName type;
 

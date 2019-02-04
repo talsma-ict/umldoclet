@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,12 +28,12 @@ import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
  *
  * @author Sjoerd Talsma
  */
-public class Link extends UMLPart {
+public class Link extends UMLNode {
     private static final ThreadLocal<String> LINK_FROM = new ThreadLocal<>();
 
     private final URI target;
 
-    private Link(UMLPart parent, URI target) {
+    private Link(UMLNode parent, URI target) {
         super(parent);
         this.target = target;
     }

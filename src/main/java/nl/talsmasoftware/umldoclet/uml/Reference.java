@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ import static java.util.stream.Collectors.joining;
  *
  * @author Sjoerd Talsma
  */
-public class Reference extends UMLPart {
+public class Reference extends UMLNode {
 
     public final Side from, to;
     public final String type;

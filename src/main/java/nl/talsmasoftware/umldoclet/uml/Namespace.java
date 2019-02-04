@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Sjoerd Talsma
  */
-public class Namespace extends UMLPart implements Comparable<Namespace> {
+public class Namespace extends UMLNode implements Comparable<Namespace> {
 
     public final String name;
 

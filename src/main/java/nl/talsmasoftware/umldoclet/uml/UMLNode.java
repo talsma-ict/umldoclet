@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,9 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingRenderer;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Predicate;
 
-import static java.util.Collections.unmodifiableCollection;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -37,23 +37,23 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Sjoerd Talsma
  */
-public abstract class UMLPart implements IndentingRenderer {
-    private UMLPart parent;
-    private final Collection<UMLPart> children = new ArrayList<>();
+public abstract class UMLNode implements IndentingRenderer {
+    private UMLNode parent;
+    private final List<UMLNode> children = new ArrayList<>();
 
-    protected UMLPart(UMLPart parent) {
+    protected UMLNode(UMLNode parent) {
         this.parent = parent;
     }
 
-    public UMLPart getParent() {
+    public UMLNode getParent() {
         return parent;
     }
 
-    void setParent(UMLPart parent) {
+    public void setParent(UMLNode parent) {
         this.parent = parent;
     }
 
-    protected UMLPart requireParent() {
+    protected UMLNode requireParent() {
         return requireNonNull(parent, () -> getClass().getSimpleName() + " seems to be an orphan, it has no parent.");
     }
 
@@ -61,16 +61,16 @@ public abstract class UMLPart implements IndentingRenderer {
         return requireParent().getRootUMLPart();
     }
 
-    public Collection<UMLPart> getChildren() {
-        return unmodifiableCollection(children);
+    public List<UMLNode> getChildren() {
+        return children;
     }
 
-    public void addChild(UMLPart child) {
+    public void addChild(UMLNode child) {
         children.add(child);
         child.setParent(this);
     }
 
-    public void removeChildren(Predicate<? super UMLPart> condition) {
+    public void removeChildren(Predicate<? super UMLNode> condition) {
         children.removeIf(condition);
     }
 
@@ -93,7 +93,7 @@ public abstract class UMLPart implements IndentingRenderer {
      * @return A reference to the output for method chaining purposes.
      */
     protected <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
-        Collection<? extends UMLPart> children = getChildren();
+        Collection<? extends UMLNode> children = getChildren();
         if (children != null && !children.isEmpty()) {
             IndentingPrintWriter indented = output.indent();
             children.forEach(child -> child.writeTo(indented));

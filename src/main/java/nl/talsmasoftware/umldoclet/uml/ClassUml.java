@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ public class ClassUml extends UMLRoot {
     }
 
     @Override
-    public void addChild(UMLPart child) {
+    public void addChild(UMLNode child) {
         if (child instanceof Type) child = ((Type) child).addPackageToName();
         super.addChild(child);
     }

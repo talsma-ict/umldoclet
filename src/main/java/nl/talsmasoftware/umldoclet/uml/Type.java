@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import java.util.Collection;
 
 import static java.util.Objects.requireNonNull;
 
-public class Type extends UMLPart implements Comparable<Type> {
+public class Type extends UMLNode implements Comparable<Type> {
     /**
      * Classification of a UML Type.
      *
@@ -47,7 +47,7 @@ public class Type extends UMLPart implements Comparable<Type> {
     }
 
     private Type(Namespace namespace, Classification classification, TypeName name, boolean isDeprecated,
-                 boolean addPackageToName, Collection<? extends UMLPart> children) {
+                 boolean addPackageToName, Collection<? extends UMLNode> children) {
         super(namespace);
         this.namespace = requireNonNull(namespace, "Containing package is <null>.");
         this.classfication = requireNonNull(classification, "Type classification is <null>.");
@@ -99,7 +99,7 @@ public class Type extends UMLPart implements Comparable<Type> {
     }
 
     @Override
-    void setParent(UMLPart parent) {
+    public void setParent(UMLNode parent) {
         super.setParent(parent);
         if (namespace.getParent() == null) namespace.setParent(parent);
     }
