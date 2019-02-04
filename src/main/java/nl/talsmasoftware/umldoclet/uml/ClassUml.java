@@ -46,8 +46,8 @@ public class ClassUml extends UMLRoot {
         super.addChild(child);
     }
 
-    @Override
-    public File pumlFile() {
+    @Deprecated
+    File pumlFile() {
         if (pumlFile == null) {
             StringBuilder result = new StringBuilder(getConfiguration().destinationDirectory());
             if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');

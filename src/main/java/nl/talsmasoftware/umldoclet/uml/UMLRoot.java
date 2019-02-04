@@ -58,13 +58,6 @@ public abstract class UMLRoot extends UMLNode {
         return this;
     }
 
-    /**
-     * This method determines the physical file where the plantuml diagram should be rendered.
-     *
-     * @return The physical file where the plantuml should be rendered.
-     */
-    public abstract File pumlFile();
-
     @Override
     public Configuration getConfiguration() {
         return config;
@@ -92,14 +85,11 @@ public abstract class UMLRoot extends UMLNode {
         return output;
     }
 
-    /**
-     * Renders this diagram to a designated {@link #pumlFile() .puml file}.
-     */
-    public void render() {
+    @Deprecated
+    void renderPlantuml(File pumlFile) {
         if (config.renderPumlFile()) {
-            final File pumlFile = pumlFile();
             final Logger logger = getConfiguration().logger();
-            try (IndentingPrintWriter writer = createPlantumlWriter(pumlFile)) {
+            try (IndentingPrintWriter writer = createPlantumlWriter(requireNonNull(pumlFile, "Plantuml File is <null>."))) {
                 logger.info(INFO_GENERATING_FILE, pumlFile);
                 this.writeTo(IndentingPrintWriter.wrap(writer, getConfiguration().indentation()));
             }

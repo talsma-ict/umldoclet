@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
@@ -94,6 +95,19 @@ public class UMLDoclet extends StandardDoclet {
                     .flatMap(this::generateDiagrams)
                     .collect(toList());
 
+            // TODO: Fix hack by letting diagram 'just render' itself again.
+            // Maybe keep the two phases for link validation?
+            umlDiagrams.stream().reduce(new LinkedHashMap<String, Diagram>(), (map, diag) -> {
+                String name = diag.getPumlFilename();
+                if (!map.containsKey(name)) map.put(name, diag);
+                return map;
+            }, (a, b) -> {
+                a.putAll(b);
+                return a;
+            }).values().forEach(Diagram::renderPlantuml);
+            umlDiagrams.forEach(Diagram::render);
+
+
             return postProcessHtml(umlDiagrams);
         } catch (UMLDocletException docletException) {
             docletException.logTo(config.logger());
@@ -107,8 +121,7 @@ public class UMLDoclet extends StandardDoclet {
             UMLFactory factory = new UMLFactory(config, docEnv);
             return docEnv.getIncludedElements().stream()
                     .map(element -> mapToDiagram(factory, element))
-                    .filter(Optional::isPresent).map(Optional::get)
-                    .peek(UMLRoot::render);
+                    .filter(Optional::isPresent).map(Optional::get);
 
         } catch (RuntimeException rte) {
             throw new UMLDocletException(ERROR_UNANTICIPATED_ERROR_GENERATING_UML, rte);
@@ -119,8 +132,7 @@ public class UMLDoclet extends StandardDoclet {
         try {
 
             return config.images().formats().stream()
-                    .map(format -> new Diagram(plantUMLRoot, format))
-                    .peek(Diagram::render);
+                    .map(format -> new Diagram(plantUMLRoot, format));
 
         } catch (RuntimeException rte) {
             throw new UMLDocletException(ERROR_UNANTICIPATED_ERROR_GENERATING_DIAGRAMS, rte);
