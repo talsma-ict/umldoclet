@@ -25,8 +25,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.joining;
 import static nl.talsmasoftware.umldoclet.logging.Message.INFO_GENERATING_FILE;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.ensureParentDir;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.withoutExtension;
@@ -34,18 +36,18 @@ import static nl.talsmasoftware.umldoclet.util.FileUtils.withoutExtension;
 public class Diagram {
 
     private UMLNode umlRoot;
-    private final FileFormat format; // TODO Back to formats (plural!)
+    private FileFormat[] formats;
     private File pumlFile, diagramFile;
 
-    public Diagram(UMLRoot plantUMLRoot, FileFormat format) {
-        this.umlRoot = requireNonNull(plantUMLRoot, "PlantUML root is <null>.");
-        this.format = requireNonNull(format, "Diagram file format is <null>.");
+    public Diagram(UMLRoot plantUMLRoot, FileFormat... formats) {
+        this.umlRoot = requireNonNull(plantUMLRoot, "UML root is <null>.");
+        this.formats = requireNonNull(formats, "Diagram file format is <null>.");
     }
 
     /**
      * @return The physical file for the plantuml output.
      */
-    public File getPumlFile() {
+    private File getPumlFile() {
         if (pumlFile == null) {
             if (umlRoot instanceof ClassUml) pumlFile = ((ClassUml) umlRoot).pumlFile();
             else if (umlRoot instanceof PackageUml) pumlFile = ((PackageUml) umlRoot).pumlFile();
@@ -70,14 +72,10 @@ public class Diagram {
             diagramFile = config.images().directory()
                     .map(imgDir -> new File(destinationDir, imgDir))
                     .map(imgDir -> new File(imgDir, relativePumlFile.replace('/', '.')))
-                    .map(file -> new File(file.getParent(), withDiagramExtension(file.getName())))
-                    .orElseGet(() -> new File(destinationDir, withDiagramExtension(relativePumlFile)));
+//                    .map(file -> new File(file.getParent(), file.getName()))
+                    .orElseGet(() -> new File(destinationDir, relativePumlFile));
         }
         return diagramFile;
-    }
-
-    private String withDiagramExtension(String path) {
-        return withoutExtension(path) + format.getFileSuffix();
     }
 
     @Deprecated // TODO: Refactor this into a single render() call
@@ -86,23 +84,32 @@ public class Diagram {
     }
 
     public void render() {
-        File diagramFile = getDiagramFile();
-        try (OutputStream out = new FileOutputStream(ensureParentDir(diagramFile))) {
-            Link.linkFrom(diagramFile.getParent());
-            umlRoot.getConfiguration().logger().info(INFO_GENERATING_FILE, diagramFile);
+        File diagramFile = null;
+        for (FileFormat format : formats) {
+            if (diagramFile == null) diagramFile = getDiagramFile();
+            diagramFile = new File(diagramFile.getParent(), withoutExtension(diagramFile.getName()) + format.getFileSuffix());
 
-            new SourceStringReader(umlRoot.toString()).outputImage(out, new FileFormatOption(format));
+            try (OutputStream out = new FileOutputStream(ensureParentDir(diagramFile))) {
+                Link.linkFrom(diagramFile.getParent());
+                umlRoot.getConfiguration().logger().info(INFO_GENERATING_FILE, diagramFile);
 
-        } catch (IOException ioe) {
-            throw new IllegalStateException("I/O error rendering " + this + ": " + ioe.getMessage(), ioe);
-        } finally {
-            Link.linkFrom(null);
+                new SourceStringReader(umlRoot.toString()).outputImage(out, new FileFormatOption(format));
+
+            } catch (IOException ioe) {
+                throw new IllegalStateException("I/O error rendering " + this + ": " + ioe.getMessage(), ioe);
+            } finally {
+                Link.linkFrom(null);
+            }
         }
     }
 
     @Override
     public String toString() {
-        return getDiagramFile().getPath();
+        return withoutExtension(getDiagramFile().getPath()) +
+                Stream.of(formats)
+                        .map(FileFormat::getFileSuffix)
+                        .map(s -> s.substring(1))
+                        .collect(joining("/", ".", ""));
     }
 
 }
