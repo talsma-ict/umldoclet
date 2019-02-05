@@ -58,15 +58,6 @@ public class Diagram {
         return requireNonNull(pumlFile, "No physical .puml file location!");
     }
 
-    public String getPumlFilename() {
-        try {
-            return getPumlFile().getCanonicalPath();
-        } catch (IOException ioe) {
-            throw new IllegalStateException("Exception obtaining canonical path of " + pumlFile + ": "
-                    + ioe.getMessage(), ioe);
-        }
-    }
-
     private File getDiagramFile() {
         if (diagramFile == null) {
             Configuration config = umlRoot.getConfiguration();
@@ -75,18 +66,16 @@ public class Diagram {
             diagramFile = config.images().directory()
                     .map(imgDir -> new File(destinationDir, imgDir))
                     .map(imgDir -> new File(imgDir, relativePumlFile.replace('/', '.')))
-//                    .map(file -> new File(file.getParent(), file.getName()))
                     .orElseGet(() -> new File(destinationDir, relativePumlFile));
         }
         return diagramFile;
     }
 
-    @Deprecated // TODO: Refactor this into a single render() call
-    public void renderPlantuml() {
-        ((UMLRoot) umlRoot).renderPlantuml(getPumlFile());
-    }
-
     public void render() {
+        // 1. Render UML sources
+        ((UMLRoot) umlRoot).renderPlantuml(getPumlFile());
+
+        // 2. Render each diagram.
         File diagramFile = null;
         for (FileFormat format : formats) {
             if (diagramFile == null) diagramFile = getDiagramFile();
@@ -111,8 +100,8 @@ public class Diagram {
         final String name = withoutExtension(getDiagramFile().getPath());
         if (formats.length == 1) return name + formats[0].getFileSuffix();
         return name + Stream.of(formats).map(FileFormat::getFileSuffix)
-                        .map(s -> s.substring(1))
-                        .collect(joining(",", ".[", "]"));
+                .map(s -> s.substring(1))
+                .collect(joining(",", ".[", "]"));
     }
 
 }
