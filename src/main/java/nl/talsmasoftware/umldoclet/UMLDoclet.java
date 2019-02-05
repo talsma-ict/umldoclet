@@ -18,6 +18,7 @@ package nl.talsmasoftware.umldoclet;
 import jdk.javadoc.doclet.DocletEnvironment;
 import jdk.javadoc.doclet.Reporter;
 import jdk.javadoc.doclet.StandardDoclet;
+import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.version.Version;
 import nl.talsmasoftware.umldoclet.html.HtmlPostprocessor;
 import nl.talsmasoftware.umldoclet.javadoc.DocletConfig;
@@ -91,9 +92,7 @@ public class UMLDoclet extends StandardDoclet {
         if (!super.run(docEnv)) return false;
 
         try {
-            Collection<Diagram> umlDiagrams = generatePlantUMLContent(docEnv)
-                    .flatMap(this::generateDiagrams)
-                    .collect(toList());
+            Collection<Diagram> umlDiagrams = generateDiagrams(docEnv).collect(toList());
 
             // TODO: Fix hack by letting diagram 'just render' itself again.
             // Maybe keep the two phases for link validation?
@@ -115,7 +114,7 @@ public class UMLDoclet extends StandardDoclet {
         }
     }
 
-    private Stream<UMLRoot> generatePlantUMLContent(DocletEnvironment docEnv) {
+    private Stream<Diagram> generateDiagrams(DocletEnvironment docEnv) {
         try {
 
             UMLFactory factory = new UMLFactory(config, docEnv);
@@ -125,17 +124,6 @@ public class UMLDoclet extends StandardDoclet {
 
         } catch (RuntimeException rte) {
             throw new UMLDocletException(ERROR_UNANTICIPATED_ERROR_GENERATING_UML, rte);
-        }
-    }
-
-    private Stream<Diagram> generateDiagrams(UMLRoot plantUMLRoot) {
-        try {
-
-            return config.images().formats().stream()
-                    .map(format -> new Diagram(plantUMLRoot, format));
-
-        } catch (RuntimeException rte) {
-            throw new UMLDocletException(ERROR_UNANTICIPATED_ERROR_GENERATING_DIAGRAMS, rte);
         }
     }
 
@@ -151,11 +139,13 @@ public class UMLDoclet extends StandardDoclet {
         }
     }
 
-    private Optional<UMLRoot> mapToDiagram(UMLFactory factory, Element element) {
+    private Optional<Diagram> mapToDiagram(UMLFactory factory, Element element) {
         if (element instanceof PackageElement) {
-            return Optional.of(factory.createPackageDiagram((PackageElement) element));
+            return Optional.of(factory.createPackageDiagram((PackageElement) element))
+                    .map(uml -> new Diagram(uml, config.images().formats()));
         } else if (element instanceof TypeElement && (element.getKind().isClass() || element.getKind().isInterface())) {
-            return Optional.of(factory.createClassDiagram((TypeElement) element));
+            return Optional.of(factory.createClassDiagram((TypeElement) element))
+                    .map(uml -> new Diagram(uml, config.images().formats()));
         }
         return Optional.empty();
     }

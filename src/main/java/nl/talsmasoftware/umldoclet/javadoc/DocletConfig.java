@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -206,7 +206,7 @@ public class DocletConfig implements Configuration {
         void addImageFormat(String imageFormat) {
             if (imageFormat != null) {
                 if (imageFormats == null) imageFormats = new LinkedHashSet<>();
-                Stream.of(imageFormat.split(",;"))
+                Stream.of(imageFormat.split("[,;]"))
                         .map(String::trim)
                         .map(s -> s.replaceFirst("^\\.", ""))
                         .map(String::toUpperCase)

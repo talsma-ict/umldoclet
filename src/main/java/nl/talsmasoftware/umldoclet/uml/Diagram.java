@@ -25,6 +25,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collection;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
@@ -39,9 +41,10 @@ public class Diagram {
     private FileFormat[] formats;
     private File pumlFile, diagramFile;
 
-    public Diagram(UMLRoot plantUMLRoot, FileFormat... formats) {
-        this.umlRoot = requireNonNull(plantUMLRoot, "UML root is <null>.");
-        this.formats = requireNonNull(formats, "Diagram file format is <null>.");
+    public Diagram(UMLNode umlRoot, Collection<FileFormat> formats) {
+        this.umlRoot = requireNonNull(umlRoot, "UML root is <null>.");
+        this.formats = requireNonNull(formats, "Diagram file formats are <null>.").stream()
+                .filter(Objects::nonNull).toArray(FileFormat[]::new);
     }
 
     /**
@@ -105,11 +108,11 @@ public class Diagram {
 
     @Override
     public String toString() {
-        return withoutExtension(getDiagramFile().getPath()) +
-                Stream.of(formats)
-                        .map(FileFormat::getFileSuffix)
+        final String name = withoutExtension(getDiagramFile().getPath());
+        if (formats.length == 1) return name + formats[0].getFileSuffix();
+        return name + Stream.of(formats).map(FileFormat::getFileSuffix)
                         .map(s -> s.substring(1))
-                        .collect(joining("/", ".", ""));
+                        .collect(joining(",", ".[", "]"));
     }
 
 }
