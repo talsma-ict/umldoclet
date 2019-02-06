@@ -85,26 +85,4 @@ public abstract class UMLRoot extends UMLNode {
         return output;
     }
 
-    @Deprecated
-    void renderPlantuml(File pumlFile) {
-        if (config.renderPumlFile()) {
-            final Logger logger = getConfiguration().logger();
-            try (IndentingPrintWriter writer = createPlantumlWriter(requireNonNull(pumlFile, "Plantuml File is <null>."))) {
-                logger.info(INFO_GENERATING_FILE, pumlFile);
-                this.writeTo(IndentingPrintWriter.wrap(writer, getConfiguration().indentation()));
-            }
-        }
-    }
-
-    private IndentingPrintWriter createPlantumlWriter(File pumlFile) {
-        try {
-
-            Writer pumlWriter = new OutputStreamWriter(new FileOutputStream(ensureParentDir(pumlFile)), config.umlCharset());
-            return IndentingPrintWriter.wrap(pumlWriter, config.indentation());
-
-        } catch (IOException ioe) {
-            throw new IllegalStateException("Could not create writer to PlantUML file: " + pumlFile, ioe);
-        }
-    }
-
 }
