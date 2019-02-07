@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -102,7 +102,8 @@ public final class FileUtils {
     public static String withoutExtension(String path) {
         if (path != null) {
             int lastDot = path.lastIndexOf('.');
-            if (lastDot > 0) path = path.substring(0, lastDot);
+            int lastSlash = path.lastIndexOf('/');
+            if (lastDot > 0 && lastDot > lastSlash) path = path.substring(0, lastDot);
         }
         return path;
     }

@@ -20,14 +20,13 @@ import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
-import nl.talsmasoftware.umldoclet.util.FileUtils;
+import nl.talsmasoftware.umldoclet.rendering.writers.StringBufferingWriter;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -36,6 +35,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 import static nl.talsmasoftware.umldoclet.logging.Message.INFO_GENERATING_FILE;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.ensureParentDir;
+import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.withoutExtension;
 
 public class Diagram {
@@ -43,7 +43,7 @@ public class Diagram {
     private final Configuration config;
     private final UMLNode umlRoot;
     private final FileFormat[] formats;
-    private File pumlFile, diagramFile;
+    private File pumlFile, diagramBaseFile;
 
     public Diagram(UMLNode umlRoot, Collection<FileFormat> formats) {
         this.umlRoot = requireNonNull(umlRoot, "UML root is <null>.");
@@ -63,68 +63,81 @@ public class Diagram {
         return requireNonNull(pumlFile, "No physical .puml file location!");
     }
 
-    private File getDiagramFile() {
-        if (diagramFile == null) {
+    private File getDiagramBaseFile() {
+        if (diagramBaseFile == null) {
             Configuration config = umlRoot.getConfiguration();
             File destinationDir = new File(config.destinationDirectory());
-            String relativePumlFile = FileUtils.relativePath(destinationDir, getPlantUmlFile());
-            diagramFile = config.images().directory()
-                    .map(imgDir -> new File(destinationDir, imgDir))
-                    .map(imgDir -> new File(imgDir, relativePumlFile.replace('/', '.')))
-                    .orElseGet(() -> new File(destinationDir, relativePumlFile));
+            String relativeBaseFile = withoutExtension(relativePath(destinationDir, getPlantUmlFile()));
+            if (config.images().directory().isPresent()) {
+                File imageDir = new File(destinationDir, config.images().directory().get());
+                diagramBaseFile = new File(imageDir, relativeBaseFile.replace('/', '.'));
+            } else {
+                diagramBaseFile = new File(destinationDir, relativeBaseFile);
+            }
         }
-        return diagramFile;
+        return diagramBaseFile;
+    }
+
+    private File getDiagramFile(FileFormat format) {
+        File base = getDiagramBaseFile();
+        return new File(base.getParent(), base.getName() + format.getFileSuffix());
     }
 
     public void render() {
-        // 1. Render UML sources
-        final String plantumlSource = renderPlantumlSource();
-
-        // 2. Render each diagram.
-        File diagramFile = null; // TODO: Iterate diagram files, not formats
-        for (FileFormat format : formats) {
-            if (diagramFile == null) diagramFile = getDiagramFile();
-            diagramFile = new File(diagramFile.getParent(), withoutExtension(diagramFile.getName()) + format.getFileSuffix());
-
-            try (OutputStream out = new FileOutputStream(ensureParentDir(diagramFile))) {
-                Link.linkFrom(diagramFile.getParent());
-                umlRoot.getConfiguration().logger().info(INFO_GENERATING_FILE, diagramFile);
-
-                new SourceStringReader(plantumlSource).outputImage(out, new FileFormatOption(format));
-
-            } catch (IOException ioe) {
-                throw new IllegalStateException("I/O error rendering " + this + ": " + ioe.getMessage(), ioe);
-            } finally {
-                Link.linkFrom(null);
-            }
-        }
-    }
-
-    private String renderPlantumlSource() {
-        if (config.renderPumlFile()) {
-            File pumlFile = getPlantUmlFile();
-            try (IndentingPrintWriter writer = createPlantumlWriter(requireNonNull(pumlFile, "Plantuml File is <null>."))) {
-                config.logger().info(INFO_GENERATING_FILE, pumlFile);
-                umlRoot.writeTo(IndentingPrintWriter.wrap(writer, config.indentation()));
-            }
-        }
-        return umlRoot.toString(); // TODO: re-use rendered source.
-    }
-
-    private IndentingPrintWriter createPlantumlWriter(File pumlFile) {
         try {
+            // 1. Render UML sources
+            final String plantumlSource = renderPlantumlSource();
 
-            Writer pumlWriter = new OutputStreamWriter(new FileOutputStream(ensureParentDir(pumlFile)), config.umlCharset());
-            return IndentingPrintWriter.wrap(pumlWriter, config.indentation());
-
+            // 2. Render each diagram.
+            for (FileFormat format : formats) {
+                renderDiagramFile(plantumlSource, format);
+            }
         } catch (IOException ioe) {
-            throw new IllegalStateException("Could not create writer to PlantUML file: " + pumlFile, ioe);
+            throw new IllegalStateException("I/O error rendering " + this + ": " + ioe.getMessage(), ioe);
+        }
+    }
+
+    private String renderPlantumlSource() throws IOException {
+        if (config.renderPumlFile()) {
+            return writePlantumlSourceToFile();
+        } else {
+            return umlRoot.toString();
+        }
+    }
+
+    private String writePlantumlSourceToFile() throws IOException {
+        File pumlFile = getPlantUmlFile();
+        config.logger().info(INFO_GENERATING_FILE, pumlFile);
+
+        try (StringBufferingWriter writer = createBufferingPlantumlFileWriter(pumlFile)) {
+            umlRoot.writeTo(IndentingPrintWriter.wrap(writer, config.indentation()));
+            return writer.getBuffer().toString();
+        }
+    }
+
+    private StringBufferingWriter createBufferingPlantumlFileWriter(File pumlFile) throws IOException {
+        requireNonNull(pumlFile, "Plantuml File is <null>.");
+        ensureParentDir(pumlFile);
+        return new StringBufferingWriter(
+                new OutputStreamWriter(
+                        new FileOutputStream(pumlFile), config.umlCharset()));
+    }
+
+    private void renderDiagramFile(String plantumlSource, FileFormat format) throws IOException {
+        final File diagramFile = getDiagramFile(format);
+        umlRoot.getConfiguration().logger().info(INFO_GENERATING_FILE, diagramFile);
+        ensureParentDir(diagramFile);
+        try (OutputStream out = new FileOutputStream(diagramFile)) {
+            Link.linkFrom(diagramFile.getParent());
+            new SourceStringReader(plantumlSource).outputImage(out, new FileFormatOption(format));
+        } finally {
+            Link.linkFrom(null);
         }
     }
 
     @Override
     public String toString() {
-        final String name = withoutExtension(getDiagramFile().getPath());
+        final String name = getDiagramBaseFile().getPath();
         if (formats.length == 1) return name + formats[0].getFileSuffix();
         return name + Stream.of(formats).map(FileFormat::getFileSuffix)
                 .map(s -> s.substring(1))
