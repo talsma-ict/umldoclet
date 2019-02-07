@@ -5,13 +5,15 @@ git:
 
 language: java
 jdk:
-  - oraclejdk9
+#  - oraclejdk9
+  - openjdk11
 
 addons:
   apt:
     packages:
       - graphviz
-      - openjdk-11-jdk
+#      - openjdk-11-jdk
+
 cache:
   directories:
     - $HOME/.m2/repository
