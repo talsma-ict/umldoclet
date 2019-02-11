@@ -54,11 +54,6 @@ public abstract class UMLRoot extends UMLNode {
     }
 
     @Override
-    protected UMLRoot getRootUMLPart() {
-        return this;
-    }
-
-    @Override
     public Configuration getConfiguration() {
         return config;
     }

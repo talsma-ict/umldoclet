@@ -57,14 +57,10 @@ public abstract class UMLNode implements IndentingRenderer {
         this.parent = parent;
     }
 
-    protected UMLNode requireParent() {
-        return requireNonNull(parent, () -> getClass().getSimpleName() + " seems to be an orphan, it has no parent.");
-    }
-
-    protected UMLNode getRootUMLPart() {
-        UMLNode parent = getParent();
-        return parent == null || parent == this ? this : parent.getRootUMLPart();
-    }
+//    protected UMLNode getRootUMLPart() {
+//        UMLNode parent = getParent();
+//        return parent == null || parent == this ? this : parent.getRootUMLPart();
+//    }
 
     public List<UMLNode> getChildren() {
         return children;

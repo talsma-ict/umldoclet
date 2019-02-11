@@ -101,8 +101,9 @@ public class Reference extends UMLNode {
 
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         // Namespace aware compensation
-        final Namespace namespace = getParent() instanceof PackageUml
-                ? new Namespace(getRootUMLPart(), ((PackageUml) getParent()).packageName) : null;
+        final Namespace namespace = findParent(Namespace.class).orElse(null);
+//        final Namespace namespace = getParent() instanceof PackageUml
+//                ? new Namespace(getRootUMLPart(), ((PackageUml) getParent()).packageName) : null;
 
         output.append(from.toString(namespace)).whitespace()
                 .append(type).whitespace()
