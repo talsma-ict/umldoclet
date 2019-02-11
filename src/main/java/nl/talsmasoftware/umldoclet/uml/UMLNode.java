@@ -23,9 +23,13 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingRenderer;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 
+import static java.util.Collections.newSetFromMap;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -57,8 +61,9 @@ public abstract class UMLNode implements IndentingRenderer {
         return requireNonNull(parent, () -> getClass().getSimpleName() + " seems to be an orphan, it has no parent.");
     }
 
-    protected UMLRoot getRootUMLPart() {
-        return requireParent().getRootUMLPart();
+    protected UMLNode getRootUMLPart() {
+        UMLNode parent = getParent();
+        return parent == null || parent == this ? this : parent.getRootUMLPart();
     }
 
     public List<UMLNode> getChildren() {
@@ -74,8 +79,20 @@ public abstract class UMLNode implements IndentingRenderer {
         children.removeIf(condition);
     }
 
+    protected <U extends UMLNode> Optional<U> findParent(Class<U> nodeType) {
+        final Set<UMLNode> traversed = newSetFromMap(new IdentityHashMap<>());
+        for (UMLNode parent = getParent();
+             parent != null && traversed.add(parent);
+             parent = parent.getParent()) {
+            if (nodeType.isInstance(parent)) return Optional.of(nodeType.cast(parent));
+        }
+        return Optional.empty();
+    }
+
     protected Configuration getConfiguration() {
-        return getRootUMLPart().config;
+        return findParent(UMLRoot.class)
+                .map(UMLRoot::getConfiguration)
+                .orElseThrow(() -> new IllegalStateException("Cannot obtain configuration!"));
     }
 
     protected Indentation getIndentation() {

@@ -19,8 +19,11 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.io.File;
 import java.net.URI;
+import java.util.IdentityHashMap;
 import java.util.Optional;
+import java.util.Set;
 
+import static java.util.Collections.newSetFromMap;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
 
 /**
@@ -69,24 +72,27 @@ public class Link extends UMLNode {
         else LINK_FROM.set(basePath);
     }
 
-    private Optional<Namespace> diagramPackage() {
-        UMLRoot diagram = getRootUMLPart();
-        if (diagram instanceof PackageUml) {
-            return Optional.of(new Namespace(diagram, ((PackageUml) diagram).packageName));
-        } else if (diagram instanceof ClassUml) {
-            return Optional.of(((ClassUml) diagram).type.getNamespace());
+    private Optional<Namespace> findOuterNamespace() {
+        final Set<UMLNode> traversed = newSetFromMap(new IdentityHashMap<>());
+        Namespace namespace = null;
+        for (UMLNode parent = getParent();
+             parent != null && traversed.add(parent);
+             parent = parent.getParent()) {
+            if (parent instanceof Namespace) namespace = (Namespace) parent;
+            else if (parent instanceof PackageUml) namespace = new Namespace(parent, ((PackageUml) parent).packageName);
+            else if (parent instanceof ClassUml) namespace = ((ClassUml) parent).type.getNamespace();
         }
-        return Optional.empty();
+        return Optional.ofNullable(namespace);
     }
 
     private Optional<File> linkFromDir() {
         final File fromDir = new File(
                 Optional.ofNullable(LINK_FROM.get())
-                        .or(() -> diagramPackage()
+                        .or(() -> findOuterNamespace()
                                 .map(namespace -> namespace.name)
                                 .map(packageName -> packageName.replace('.', '/'))
-                                .map(packageDir -> getRootUMLPart().config.destinationDirectory() + "/" + packageDir))
-                        .orElseGet(() -> getRootUMLPart().config.destinationDirectory()));
+                                .map(packageDir -> getConfiguration().destinationDirectory() + "/" + packageDir))
+                        .orElseGet(() -> getConfiguration().destinationDirectory()));
         return fromDir.isDirectory() ? Optional.of(fromDir) : Optional.empty();
     }
 

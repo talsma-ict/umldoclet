@@ -63,6 +63,10 @@ public class Diagram {
         return requireNonNull(pumlFile, "No physical .puml file location!");
     }
 
+    /**
+     * @return The diagram file without extension.
+     * @see #getDiagramFile(FileFormat)
+     */
     private File getDiagramBaseFile() {
         if (diagramBaseFile == null) {
             Configuration config = umlRoot.getConfiguration();
@@ -78,6 +82,11 @@ public class Diagram {
         return diagramBaseFile;
     }
 
+    /**
+     * The diagram file in the specified format.
+     * @param format The diagram file format.
+     * @return The diagram file.
+     */
     private File getDiagramFile(FileFormat format) {
         File base = getDiagramBaseFile();
         return new File(base.getParent(), base.getName() + format.getFileSuffix());

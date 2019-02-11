@@ -118,8 +118,9 @@ public class Type extends UMLNode implements Comparable<Type> {
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         // Namespace aware compensation
-        final Namespace namespace = getParent() instanceof PackageUml
-                ? new Namespace(getRootUMLPart(), ((PackageUml) getParent()).packageName) : null;
+        final Namespace namespace = findParent(Namespace.class)
+                .orElseGet(() -> findParent(PackageUml.class).map(pkg -> new Namespace(pkg, pkg.packageName))
+                        .orElse(null));
         output.append(classfication.toUml()).whitespace();
         writeNameTo(output, namespace).whitespace();
         if (isDeprecated) output.append("<<deprecated>>").whitespace();

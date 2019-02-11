@@ -30,8 +30,8 @@ public class Namespace extends UMLNode implements Comparable<Namespace> {
 
     public final String name;
 
-    public Namespace(UMLRoot diagram, String name) {
-        super(diagram);
+    public Namespace(UMLNode parent, String name) {
+        super(parent);
         this.name = requireNonNull(name, "Package name is <null>.").trim();
     }
 

@@ -27,19 +27,19 @@ import java.util.Iterator;
 public class Parameters extends UMLNode implements Comparable<Parameters> {
 
     private boolean varargs = false;
-    private Method method;
 
+    @Deprecated
     public Parameters() {
-        super(null);
+        this(null);
     }
 
+    public Parameters(UMLNode parent) {
+        super(parent);
+    }
+
+    @Deprecated
     void setMethod(Method method) {
-        this.method = method; // TODO: refactor this 'hack' away!
-    }
-
-    @Override
-    protected UMLNode requireParent() {
-        return method == null ? super.requireParent() : method;
+        setParent(method);
     }
 
     @Override
