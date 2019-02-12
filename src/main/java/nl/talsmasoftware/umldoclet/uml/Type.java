@@ -39,7 +39,7 @@ public class Type extends UMLNode implements Comparable<Type> {
     private final Namespace namespace;
     private final Classification classfication;
     private TypeName name;
-    private final boolean isDeprecated, addPackageToName;
+    private boolean isDeprecated, addPackageToName;
     private Link link;
 
     public Type(Namespace namespace, Classification classification, TypeName name) {
@@ -86,8 +86,8 @@ public class Type extends UMLNode implements Comparable<Type> {
         return new Type(getNamespace(), classfication, name, true, addPackageToName, getChildren());
     }
 
-    public Type addPackageToName() {
-        return new Type(getNamespace(), classfication, name, isDeprecated, true, getChildren());
+    void addPackageToName() {
+        this.addPackageToName = true;
     }
 
     public Namespace getNamespace() {
@@ -119,7 +119,7 @@ public class Type extends UMLNode implements Comparable<Type> {
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         // Namespace aware compensation
         final Namespace namespace = findParent(Namespace.class)
-                .orElseGet(() -> findParent(PackageUml.class).map(pkg -> new Namespace(pkg, pkg.packageName))
+                .orElseGet(() -> findParent(PackageDiagram.class).map(pkg -> new Namespace(pkg, pkg.packageName))
                         .orElse(null));
         output.append(classfication.toUml()).whitespace();
         writeNameTo(output, namespace).whitespace();

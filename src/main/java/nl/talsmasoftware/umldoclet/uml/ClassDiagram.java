@@ -20,19 +20,12 @@ import nl.talsmasoftware.umldoclet.util.FileUtils;
 
 import java.io.File;
 
-import static java.util.Objects.requireNonNull;
+public class ClassDiagram extends Diagram {
 
-/**
- * @author Sjoerd Talsma
- */
-public class ClassUml extends UMLRoot {
-
-    final Type type;
     private File pumlFile = null;
 
-    public ClassUml(Configuration config, Type type) {
+    public ClassDiagram(Configuration config, Type type) {
         super(config);
-        this.type = requireNonNull(type, "Type in classdiagram is <null>.");
         addChild(Literal.line("set namespaceSeparator none"));
         addChild(Literal.line("hide empty fields"));
         addChild(Literal.line("hide empty methods"));
@@ -40,15 +33,22 @@ public class ClassUml extends UMLRoot {
         addChild(type);
     }
 
-    @Override
-    public void addChild(UMLNode child) {
-        if (child instanceof Type) child = ((Type) child).addPackageToName();
-        super.addChild(child);
+    public Type getType() {
+        return getChildren().stream()
+                .filter(Type.class::isInstance).map(Type.class::cast)
+                .findFirst().orElseThrow(() -> new IllegalStateException("No Type defined in Class diagram!"));
     }
 
-    @Deprecated
-    File pumlFile() {
+    @Override
+    public void addChild(UMLNode child) {
+        super.addChild(child);
+        if (child instanceof Type) ((Type) child).addPackageToName();
+    }
+
+    @Override
+    protected File getPlantUmlFile() {
         if (pumlFile == null) {
+            final Type type = getType();
             StringBuilder result = new StringBuilder(getConfiguration().destinationDirectory());
             if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');
             String containingPackage = type.getNamespace().name;

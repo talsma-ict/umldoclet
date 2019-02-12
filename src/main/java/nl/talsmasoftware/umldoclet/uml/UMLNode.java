@@ -30,7 +30,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import static java.util.Collections.newSetFromMap;
-import static java.util.Objects.requireNonNull;
 
 /**
  * Smallest 'independent' part of an UML diagram that can be rendered,
@@ -42,6 +41,7 @@ import static java.util.Objects.requireNonNull;
  * @author Sjoerd Talsma
  */
 public abstract class UMLNode implements IndentingRenderer {
+
     private UMLNode parent;
     private final List<UMLNode> children = new ArrayList<>();
 
@@ -86,8 +86,8 @@ public abstract class UMLNode implements IndentingRenderer {
     }
 
     protected Configuration getConfiguration() {
-        return findParent(UMLRoot.class)
-                .map(UMLRoot::getConfiguration)
+        return findParent(Diagram.class)
+                .map(Diagram::getConfiguration)
                 .orElseThrow(() -> new IllegalStateException("Cannot obtain configuration!"));
     }
 

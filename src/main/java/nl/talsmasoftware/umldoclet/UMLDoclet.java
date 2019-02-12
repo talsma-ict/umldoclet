@@ -114,11 +114,9 @@ public class UMLDoclet extends StandardDoclet {
 
     private Optional<Diagram> mapToDiagram(UMLFactory factory, Element element) {
         if (element instanceof PackageElement) {
-            return Optional.of(factory.createPackageDiagram((PackageElement) element))
-                    .map(uml -> new Diagram(uml, config.images().formats()));
+            return Optional.of(factory.createPackageDiagram((PackageElement) element));
         } else if (element instanceof TypeElement && (element.getKind().isClass() || element.getKind().isInterface())) {
-            return Optional.of(factory.createClassDiagram((TypeElement) element))
-                    .map(uml -> new Diagram(uml, config.images().formats()));
+            return Optional.of(factory.createClassDiagram((TypeElement) element));
         }
         return Optional.empty();
     }

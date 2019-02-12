@@ -25,18 +25,18 @@ import static java.util.Objects.requireNonNull;
 /**
  * @author Sjoerd Talsma
  */
-public class PackageUml extends UMLRoot {
+public class PackageDiagram extends Diagram {
 
-    final String packageName;
+    final String packageName; // TODO: maybe auto-detect lazily by first addChild() of type Namespace?
     private File pumlFile = null;
 
-    public PackageUml(Configuration config, String packageName) {
+    public PackageDiagram(Configuration config, String packageName) {
         super(config);
         this.packageName = requireNonNull(packageName, "Package name is <null>.");
     }
 
-    @Deprecated
-    File pumlFile() {
+    @Override
+    protected File getPlantUmlFile() {
         if (pumlFile == null) {
             StringBuilder result = new StringBuilder(getConfiguration().destinationDirectory());
             if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');

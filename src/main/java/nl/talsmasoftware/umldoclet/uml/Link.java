@@ -79,8 +79,9 @@ public class Link extends UMLNode {
              parent != null && traversed.add(parent);
              parent = parent.getParent()) {
             if (parent instanceof Namespace) namespace = (Namespace) parent;
-            else if (parent instanceof PackageUml) namespace = new Namespace(parent, ((PackageUml) parent).packageName);
-            else if (parent instanceof ClassUml) namespace = ((ClassUml) parent).type.getNamespace();
+            else if (parent instanceof PackageDiagram) namespace = new Namespace(parent, ((PackageDiagram) parent).packageName);
+//            else if (parent instanceof ClassDiagram) namespace = ((ClassDiagram) parent).type.getNamespace();
+            else if (parent instanceof ClassDiagram) namespace = findParent(Type.class).map(Type::getNamespace).orElse(null);
         }
         return Optional.ofNullable(namespace);
     }

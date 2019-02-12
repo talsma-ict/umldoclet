@@ -19,6 +19,7 @@ import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.logging.Message;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.rendering.writers.StringBufferingWriter;
 
@@ -27,41 +28,60 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
-import static nl.talsmasoftware.umldoclet.logging.Message.INFO_GENERATING_FILE;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.ensureParentDir;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.withoutExtension;
 
-public class Diagram {
+public abstract class Diagram extends UMLNode {
 
     private final Configuration config;
-    private final UMLNode umlRoot;
     private final FileFormat[] formats;
-    private File pumlFile, diagramBaseFile;
+    private File diagramBaseFile;
 
-    public Diagram(UMLNode umlRoot, Collection<FileFormat> formats) {
-        this.umlRoot = requireNonNull(umlRoot, "UML root is <null>.");
-        this.config = requireNonNull(umlRoot.getConfiguration(), "Configuration is <null>");
-        this.formats = requireNonNull(formats, "Diagram file formats are <null>.").stream()
-                .filter(Objects::nonNull).toArray(FileFormat[]::new);
+    protected Diagram(Configuration config) {
+        super(null);
+        this.config = requireNonNull(config, "Configuration is <null>");
+        this.formats = config.images().formats().stream().filter(Objects::nonNull).toArray(FileFormat[]::new);
+    }
+
+    @Override
+    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+        output.append("@startuml").newline().newline();
+        writeChildrenTo(output);
+        writeFooterTo(output);
+        output.newline().append("@enduml").newline();
+        return output;
+    }
+
+    private <IPW extends IndentingPrintWriter> IPW writeFooterTo(IPW output) {
+        output.indent().newline()
+                .append("center footer").whitespace()
+                .append(config.logger().localize(
+                        Message.DOCLET_UML_FOOTER,
+                        Message.DOCLET_VERSION,
+                        net.sourceforge.plantuml.version.Version.versionString()))
+                .newline();
+        return output;
+    }
+
+    public Configuration getConfiguration() {
+        return config;
     }
 
     /**
+     * Determine the physical file location for the plantuml output.
+     *
+     * <p>This will even be called if {@code -createPumlFiles} is not enabled,
+     * to determine the {@linkplain #getDiagramBaseFile()}.
+     *
      * @return The physical file for the plantuml output.
      */
-    private File getPlantUmlFile() {
-        if (pumlFile == null) {
-            if (umlRoot instanceof ClassUml) pumlFile = ((ClassUml) umlRoot).pumlFile();
-            else if (umlRoot instanceof PackageUml) pumlFile = ((PackageUml) umlRoot).pumlFile();
-        }
-        return requireNonNull(pumlFile, "No physical .puml file location!");
-    }
+    protected abstract File getPlantUmlFile();
 
     /**
      * @return The diagram file without extension.
@@ -69,7 +89,6 @@ public class Diagram {
      */
     private File getDiagramBaseFile() {
         if (diagramBaseFile == null) {
-            Configuration config = umlRoot.getConfiguration();
             File destinationDir = new File(config.destinationDirectory());
             String relativeBaseFile = withoutExtension(relativePath(destinationDir, getPlantUmlFile()));
             if (config.images().directory().isPresent()) {
@@ -84,6 +103,7 @@ public class Diagram {
 
     /**
      * The diagram file in the specified format.
+     *
      * @param format The diagram file format.
      * @return The diagram file.
      */
@@ -110,16 +130,16 @@ public class Diagram {
         if (config.renderPumlFile()) {
             return writePlantumlSourceToFile();
         } else {
-            return umlRoot.toString();
+            return super.toString();
         }
     }
 
     private String writePlantumlSourceToFile() throws IOException {
         File pumlFile = getPlantUmlFile();
-        config.logger().info(INFO_GENERATING_FILE, pumlFile);
+        config.logger().info(Message.INFO_GENERATING_FILE, pumlFile);
 
         try (StringBufferingWriter writer = createBufferingPlantumlFileWriter(pumlFile)) {
-            umlRoot.writeTo(IndentingPrintWriter.wrap(writer, config.indentation()));
+            writeTo(IndentingPrintWriter.wrap(writer, config.indentation()));
             return writer.getBuffer().toString();
         }
     }
@@ -134,7 +154,7 @@ public class Diagram {
 
     private void renderDiagramFile(String plantumlSource, FileFormat format) throws IOException {
         final File diagramFile = getDiagramFile(format);
-        umlRoot.getConfiguration().logger().info(INFO_GENERATING_FILE, diagramFile);
+        config.logger().info(Message.INFO_GENERATING_FILE, diagramFile);
         ensureParentDir(diagramFile);
         try (OutputStream out = new FileOutputStream(diagramFile)) {
             Link.linkFrom(diagramFile.getParent());

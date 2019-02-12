@@ -17,19 +17,7 @@ package nl.talsmasoftware.umldoclet.javadoc;
 
 import jdk.javadoc.doclet.DocletEnvironment;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.uml.ClassUml;
-import nl.talsmasoftware.umldoclet.uml.Field;
-import nl.talsmasoftware.umldoclet.uml.Literal;
-import nl.talsmasoftware.umldoclet.uml.Method;
-import nl.talsmasoftware.umldoclet.uml.Namespace;
-import nl.talsmasoftware.umldoclet.uml.PackageUml;
-import nl.talsmasoftware.umldoclet.uml.Parameters;
-import nl.talsmasoftware.umldoclet.uml.Reference;
-import nl.talsmasoftware.umldoclet.uml.Type;
-import nl.talsmasoftware.umldoclet.uml.TypeMember;
-import nl.talsmasoftware.umldoclet.uml.TypeName;
-import nl.talsmasoftware.umldoclet.uml.UMLRoot;
-import nl.talsmasoftware.umldoclet.uml.Visibility;
+import nl.talsmasoftware.umldoclet.uml.*;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -41,17 +29,7 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -65,7 +43,7 @@ import static nl.talsmasoftware.umldoclet.uml.Reference.Side.to;
 /**
  * One big factory to produce UML from analyzed Javadoc elements.
  * <p>
- * TODO: This should be refactored into ClassUml and PackageUml visitor implementations.
+ * TODO: This should be refactored into ClassDiagram and PackageDiagram visitor implementations.
  * This increases flexibility in supporting future language features however may introduce additional risk
  * with regard to unbounded recursion (see <a href="https://github.com/talsma-ict/umldoclet/issues/75">Issue 75</a>
  * for example).
@@ -75,7 +53,7 @@ import static nl.talsmasoftware.umldoclet.uml.Reference.Side.to;
 public class UMLFactory {
 
     final Configuration config;
-    final ThreadLocal<UMLRoot> diagram = new ThreadLocal<>();
+    final ThreadLocal<Diagram> diagram = new ThreadLocal<>(); // TODO no longer needed?
     private final DocletEnvironment env;
     private final Function<TypeMirror, TypeNameWithCardinality> typeNameWithCardinality;
 
@@ -85,9 +63,9 @@ public class UMLFactory {
         this.typeNameWithCardinality = TypeNameWithCardinality.function(env.getTypeUtils());
     }
 
-    public UMLRoot createClassDiagram(TypeElement classElement) {
+    public Diagram createClassDiagram(TypeElement classElement) {
         Type type = createAndPopulateType(null, classElement);
-        ClassUml classUml = new ClassUml(config, type);
+        ClassDiagram classDiagram = new ClassDiagram(config, type);
 
         List<TypeName> foundTypeVariables = new ArrayList<>();
         List<Reference> references = new ArrayList<>();
@@ -100,10 +78,10 @@ public class UMLFactory {
             if (!config.excludedTypeReferences().contains(superclassName.qualified)) {
                 Element superclass = env.getTypeUtils().asElement(classElement.getSuperclass());
                 if (superclass instanceof TypeElement) {
-                    classUml.addChild(sep);
+                    classDiagram.addChild(sep);
                     Type superType = createAndPopulateType(null, (TypeElement) superclass);
                     superType.removeChildren(child -> !(child instanceof TypeMember) || !((TypeMember) child).isAbstract);
-                    classUml.addChild(superType);
+                    classDiagram.addChild(superType);
                     sep = Literal.EMPTY;
                 }
                 references.add(new Reference(from(type.getName().qualified), "--|>", to(superclassName.qualified)).canonical());
@@ -117,10 +95,10 @@ public class UMLFactory {
             if (!config.excludedTypeReferences().contains(ifName.qualified)) {
                 Element implementedInterface = env.getTypeUtils().asElement(interfaceType);
                 if (implementedInterface instanceof TypeElement) {
-                    classUml.addChild(sep);
+                    classDiagram.addChild(sep);
                     Type implementedType = createAndPopulateType(null, (TypeElement) implementedInterface);
                     implementedType.removeChildren(child -> !(child instanceof TypeMember) || !((TypeMember) child).isAbstract);
-                    classUml.addChild(implementedType);
+                    classDiagram.addChild(implementedType);
                     sep = Literal.EMPTY;
                 }
                 references.add(new Reference(from(type.getName().qualified), "..|>", to(ifName.qualified)).canonical());
@@ -135,10 +113,10 @@ public class UMLFactory {
             if (!config.excludedTypeReferences().contains(enclosingTypeName.qualified)) {
                 Element enclosingElement = classElement.getEnclosingElement();
                 if (enclosingElement instanceof TypeElement) {
-                    classUml.addChild(sep);
+                    classDiagram.addChild(sep);
                     Type enclosingType = createAndPopulateType(null, (TypeElement) enclosingElement);
                     enclosingType.removeChildren(child -> !(child instanceof TypeMember) || !((TypeMember) child).isAbstract);
-                    classUml.addChild(enclosingType);
+                    classDiagram.addChild(enclosingType);
                     sep = Literal.EMPTY;
                 }
                 references.add(new Reference(from(type.getName().qualified), "--+", to(enclosingTypeName.qualified)).canonical());
@@ -151,13 +129,13 @@ public class UMLFactory {
                 .filter(TypeElement.class::isInstance).map(TypeElement.class::cast)
                 .forEach(innerclassElem -> {
                     Type innerType = createType(null, innerclassElem);
-                    classUml.addChild(innerType);
+                    classDiagram.addChild(innerType);
                     references.add(new Reference(from(type.getName().qualified), "+--", to(innerType.getName().qualified)).canonical());
                 });
 
         if (!references.isEmpty()) {
-            classUml.addChild(Literal.NEWLINE);
-            references.forEach(classUml::addChild);
+            classDiagram.addChild(Literal.NEWLINE);
+            references.forEach(classDiagram::addChild);
         }
 
         if (!foundTypeVariables.isEmpty()) {
@@ -167,7 +145,7 @@ public class UMLFactory {
                 if (i > 0 && foundTypeVariable.equals(foundTypeVariables.get(i - 1))) {
                     i--; // duplicate, skip these.
                 } else {
-                    classUml.getChildren().stream()
+                    classDiagram.getChildren().stream()
                             .filter(Type.class::isInstance).map(Type.class::cast)
                             .filter(tp -> foundTypeVariable.equals(tp.getName()))
                             .forEach(tp -> tp.updateGenericTypeVariables(foundTypeVariable));
@@ -175,16 +153,16 @@ public class UMLFactory {
             }
         }
 
-        return classUml;
+        return classDiagram;
     }
 
-    public UMLRoot createPackageDiagram(PackageElement packageElement) {
-        PackageUml packageUml = new PackageUml(config, packageElement.getQualifiedName().toString());
+    public Diagram createPackageDiagram(PackageElement packageElement) {
+        PackageDiagram packageDiagram = new PackageDiagram(config, packageElement.getQualifiedName().toString());
         Map<Namespace, Collection<Type>> foreignTypes = new LinkedHashMap<>();
         List<Reference> references = new ArrayList<>();
 
-        Namespace namespace = createPackage(packageUml, packageElement, foreignTypes, references);
-        packageUml.addChild(namespace);
+        Namespace namespace = createPackage(packageDiagram, packageElement, foreignTypes, references);
+        packageDiagram.addChild(namespace);
 
         // Filter "java.lang" or "java.util" references that occur >= 3 times
         // Maybe somehow make this configurable as well?
@@ -210,12 +188,12 @@ public class UMLFactory {
                     return foreignPackage;
                 })
                 .flatMap(foreignPackage -> Stream.of(Literal.NEWLINE, foreignPackage))
-                .forEach(packageUml::addChild);
+                .forEach(packageDiagram::addChild);
 
         namespace.addChild(Literal.NEWLINE);
         references.stream().map(Reference::canonical).forEach(namespace::addChild);
 
-        return packageUml;
+        return packageDiagram;
     }
 
     Namespace packageOf(TypeElement typeElement) {
@@ -541,7 +519,7 @@ public class UMLFactory {
                 .flatMap(UMLFactory::innerTypes));
     }
 
-    Namespace createPackage(UMLRoot diagram,
+    Namespace createPackage(Diagram diagram,
                             PackageElement packageElement,
                             Map<Namespace, Collection<Type>> foreignTypes,
                             List<Reference> references) {
