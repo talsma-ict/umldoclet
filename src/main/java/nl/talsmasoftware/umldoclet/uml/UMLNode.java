@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import static java.util.Collections.newSetFromMap;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Smallest 'independent' part of an UML diagram that can be rendered,
@@ -58,6 +59,16 @@ public abstract class UMLNode implements IndentingRenderer {
         this.parent = parent;
     }
 
+    protected <U extends UMLNode> Optional<U> findParent(Class<U> nodeType) {
+        final Set<UMLNode> traversed = newSetFromMap(new IdentityHashMap<>());
+        for (UMLNode parent = getParent();
+             parent != null && traversed.add(parent);
+             parent = parent.getParent()) {
+            if (nodeType.isInstance(parent)) return Optional.of(nodeType.cast(parent));
+        }
+        return Optional.empty();
+    }
+
     public List<UMLNode> getChildren() {
         return Collections.unmodifiableList(children);
     }
@@ -71,24 +82,10 @@ public abstract class UMLNode implements IndentingRenderer {
         children.removeIf(condition);
     }
 
-    protected <U extends UMLNode> Optional<U> findParent(Class<U> nodeType) {
-        final Set<UMLNode> traversed = newSetFromMap(new IdentityHashMap<>());
-        for (UMLNode parent = getParent();
-             parent != null && traversed.add(parent);
-             parent = parent.getParent()) {
-            if (nodeType.isInstance(parent)) return Optional.of(nodeType.cast(parent));
-        }
-        return Optional.empty();
-    }
-
     protected Configuration getConfiguration() {
         return findParent(Diagram.class)
                 .map(Diagram::getConfiguration)
                 .orElseThrow(() -> new IllegalStateException("Cannot obtain configuration!"));
-    }
-
-    protected Indentation getIndentation() {
-        return parent == null ? Indentation.DEFAULT : parent.getIndentation();
     }
 
     /**
@@ -116,7 +113,17 @@ public abstract class UMLNode implements IndentingRenderer {
      * @return The rendered content of this renderer.
      */
     public String toString() {
-        return writeTo(IndentingPrintWriter.wrap(new StringWriter(), getIndentation())).toString();
+        return writeTo(IndentingPrintWriter.wrap(new StringWriter(), indentation())).toString();
     }
 
+    /**
+     * @return never-null indentation for use in toString
+     */
+    private Indentation indentation() {
+        try {
+            return requireNonNull(getConfiguration().indentation());
+        } catch (RuntimeException noConfig) {
+            return Indentation.DEFAULT;
+        }
+    }
 }
