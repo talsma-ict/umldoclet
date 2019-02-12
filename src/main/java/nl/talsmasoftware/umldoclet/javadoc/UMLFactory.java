@@ -69,7 +69,7 @@ public class UMLFactory {
 
         List<TypeName> foundTypeVariables = new ArrayList<>();
         List<Reference> references = new ArrayList<>();
-        LiteralUmlNode sep = LiteralUmlNode.NEWLINE;
+        UmlCharacters sep = UmlCharacters.NEWLINE;
 
         // Add superclass
         if (!TypeKind.NONE.equals(classElement.getSuperclass().getKind())) {
@@ -82,7 +82,7 @@ public class UMLFactory {
                     Type superType = createAndPopulateType(null, (TypeElement) superclass);
                     superType.removeChildren(child -> !(child instanceof TypeMember) || !((TypeMember) child).isAbstract);
                     classDiagram.addChild(superType);
-                    sep = LiteralUmlNode.EMPTY;
+                    sep = UmlCharacters.EMPTY;
                 }
                 references.add(new Reference(from(type.getName().qualified), "--|>", to(superclassName.qualified)).canonical());
             }
@@ -99,7 +99,7 @@ public class UMLFactory {
                     Type implementedType = createAndPopulateType(null, (TypeElement) implementedInterface);
                     implementedType.removeChildren(child -> !(child instanceof TypeMember) || !((TypeMember) child).isAbstract);
                     classDiagram.addChild(implementedType);
-                    sep = LiteralUmlNode.EMPTY;
+                    sep = UmlCharacters.EMPTY;
                 }
                 references.add(new Reference(from(type.getName().qualified), "..|>", to(ifName.qualified)).canonical());
             }
@@ -117,7 +117,7 @@ public class UMLFactory {
                     Type enclosingType = createAndPopulateType(null, (TypeElement) enclosingElement);
                     enclosingType.removeChildren(child -> !(child instanceof TypeMember) || !((TypeMember) child).isAbstract);
                     classDiagram.addChild(enclosingType);
-                    sep = LiteralUmlNode.EMPTY;
+                    sep = UmlCharacters.EMPTY;
                 }
                 references.add(new Reference(from(type.getName().qualified), "--+", to(enclosingTypeName.qualified)).canonical());
             }
@@ -134,7 +134,7 @@ public class UMLFactory {
                 });
 
         if (!references.isEmpty()) {
-            classDiagram.addChild(LiteralUmlNode.NEWLINE);
+            classDiagram.addChild(UmlCharacters.NEWLINE);
             references.forEach(classDiagram::addChild);
         }
 
@@ -187,10 +187,10 @@ public class UMLFactory {
                     entry.getValue().forEach(foreignPackage::addChild);
                     return foreignPackage;
                 })
-                .flatMap(foreignPackage -> Stream.of(LiteralUmlNode.NEWLINE, foreignPackage))
+                .flatMap(foreignPackage -> Stream.of(UmlCharacters.NEWLINE, foreignPackage))
                 .forEach(packageDiagram::addChild);
 
-        namespace.addChild(LiteralUmlNode.NEWLINE);
+        namespace.addChild(UmlCharacters.NEWLINE);
         references.stream().map(Reference::canonical).forEach(namespace::addChild);
 
         return packageDiagram;
@@ -535,7 +535,7 @@ public class UMLFactory {
                     references.addAll(findPackageReferences(pkg, foreignTypes, typeElement, type));
                     return type;
                 })
-                .flatMap(type -> Stream.of(LiteralUmlNode.NEWLINE, type))
+                .flatMap(type -> Stream.of(UmlCharacters.NEWLINE, type))
                 .forEach(pkg::addChild);
 
         return pkg;

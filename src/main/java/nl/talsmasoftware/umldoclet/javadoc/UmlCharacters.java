@@ -23,23 +23,15 @@ import nl.talsmasoftware.umldoclet.uml.UMLNode;
  *
  * @author Sjoerd Talsma
  */
-class LiteralUmlNode extends UMLNode {
-    public static final LiteralUmlNode EMPTY = new LiteralUmlNode("");
-    public static final LiteralUmlNode NEWLINE = new LiteralUmlNode.Line("");
+class UmlCharacters extends UMLNode {
+    static final UmlCharacters EMPTY = new UmlCharacters("");
+    static final UmlCharacters NEWLINE = new UmlLine("");
 
     private final String content;
 
-    private LiteralUmlNode(String content) {
+    private UmlCharacters(String content) {
         super(null);
         this.content = content;
-    }
-
-    static LiteralUmlNode line(String line) {
-        return new LiteralUmlNode.Line(line);
-    }
-
-    public void setParent(UMLNode parent) {
-        // Parent is neither required nor supported.
     }
 
     @Override
@@ -48,8 +40,8 @@ class LiteralUmlNode extends UMLNode {
         return output;
     }
 
-    private static class Line extends LiteralUmlNode {
-        private Line(String line) {
+    static class UmlLine extends UmlCharacters {
+        private UmlLine(String line) {
             super(line);
         }
 
@@ -58,6 +50,5 @@ class LiteralUmlNode extends UMLNode {
             super.writeTo(output).newline();
             return output;
         }
-
     }
 }
