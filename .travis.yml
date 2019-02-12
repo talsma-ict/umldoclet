@@ -5,14 +5,12 @@ git:
 
 language: java
 jdk:
-#  - oraclejdk9
   - openjdk11
 
 addons:
   apt:
     packages:
       - graphviz
-#      - openjdk-11-jdk
 
 cache:
   directories:
