@@ -23,6 +23,7 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingRenderer;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Optional;
@@ -57,13 +58,8 @@ public abstract class UMLNode implements IndentingRenderer {
         this.parent = parent;
     }
 
-//    protected UMLNode getRootUMLPart() {
-//        UMLNode parent = getParent();
-//        return parent == null || parent == this ? this : parent.getRootUMLPart();
-//    }
-
     public List<UMLNode> getChildren() {
-        return children;
+        return Collections.unmodifiableList(children);
     }
 
     public void addChild(UMLNode child) {

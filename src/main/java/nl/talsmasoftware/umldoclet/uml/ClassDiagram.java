@@ -16,6 +16,7 @@
 package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.util.FileUtils;
 
 import java.io.File;
@@ -26,10 +27,6 @@ public class ClassDiagram extends Diagram {
 
     public ClassDiagram(Configuration config, Type type) {
         super(config);
-        addChild(Literal.line("set namespaceSeparator none"));
-        addChild(Literal.line("hide empty fields"));
-        addChild(Literal.line("hide empty methods"));
-        addChild(Literal.NEWLINE);
         addChild(type);
     }
 
@@ -43,6 +40,16 @@ public class ClassDiagram extends Diagram {
     public void addChild(UMLNode child) {
         super.addChild(child);
         if (child instanceof Type) ((Type) child).addPackageToName();
+    }
+
+    @Override
+    protected <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
+        output.indent()
+                .append("set namespaceSeparator none").newline()
+                .append("hide empty fields").newline()
+                .append("hide empty methods").newline()
+                .newline();
+        return super.writeChildrenTo(output);
     }
 
     @Override

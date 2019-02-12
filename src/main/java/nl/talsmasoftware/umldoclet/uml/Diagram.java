@@ -51,15 +51,16 @@ public abstract class Diagram extends UMLNode {
 
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-        output.append("@startuml").newline().newline();
+        output.append("@startuml").newline();
         writeChildrenTo(output);
+        output.newline();
         writeFooterTo(output);
-        output.newline().append("@enduml").newline();
+        output.append("@enduml").newline();
         return output;
     }
 
     private <IPW extends IndentingPrintWriter> IPW writeFooterTo(IPW output) {
-        output.indent().newline()
+        output.indent()
                 .append("center footer").whitespace()
                 .append(config.logger().localize(
                         Message.DOCLET_UML_FOOTER,

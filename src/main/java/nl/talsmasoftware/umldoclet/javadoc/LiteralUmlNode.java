@@ -13,28 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.uml;
+package nl.talsmasoftware.umldoclet.javadoc;
 
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.uml.UMLNode;
 
 /**
  * A literal piece of UML.
  *
  * @author Sjoerd Talsma
  */
-public class Literal extends UMLNode {
-    public static final Literal EMPTY = new Literal("");
-    public static final Literal NEWLINE = new Literal.Line("");
+class LiteralUmlNode extends UMLNode {
+    public static final LiteralUmlNode EMPTY = new LiteralUmlNode("");
+    public static final LiteralUmlNode NEWLINE = new LiteralUmlNode.Line("");
 
     private final String content;
 
-    private Literal(String content) {
+    private LiteralUmlNode(String content) {
         super(null);
         this.content = content;
     }
 
-    public static Literal line(String line) {
-        return new Literal.Line(line);
+    static LiteralUmlNode line(String line) {
+        return new LiteralUmlNode.Line(line);
     }
 
     public void setParent(UMLNode parent) {
@@ -47,7 +48,7 @@ public class Literal extends UMLNode {
         return output;
     }
 
-    private static class Line extends Literal {
+    private static class Line extends LiteralUmlNode {
         private Line(String line) {
             super(line);
         }
