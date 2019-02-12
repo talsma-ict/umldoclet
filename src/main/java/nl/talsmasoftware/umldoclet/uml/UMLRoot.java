@@ -59,11 +59,6 @@ public abstract class UMLRoot extends UMLNode {
     }
 
     @Override
-    protected Indentation getIndentation() {
-        return config.indentation();
-    }
-
-    @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         output.append("@startuml").newline().newline();
         writeChildrenTo(output);
