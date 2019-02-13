@@ -158,7 +158,7 @@ public class UMLFactory {
 
     public Diagram createPackageDiagram(PackageElement packageElement) {
         PackageDiagram packageDiagram = new PackageDiagram(config, packageElement.getQualifiedName().toString());
-        Map<Namespace, Collection<Type>> foreignTypes = new LinkedHashMap<>();
+        Map<String, Collection<Type>> foreignTypes = new LinkedHashMap<>();
         List<Reference> references = new ArrayList<>();
 
         Namespace namespace = createPackage(packageDiagram, packageElement, foreignTypes, references);
@@ -167,7 +167,7 @@ public class UMLFactory {
         // Filter "java.lang" or "java.util" references that occur >= 3 times
         // Maybe somehow make this configurable as well?
         foreignTypes.entrySet().stream()
-                .filter(entry -> "java.lang".equals(entry.getKey().name) || "java.util".equals(entry.getKey().name))
+                .filter(entry -> "java.lang".equals(entry.getKey()) || "java.util".equals(entry.getKey()))
                 .map(Map.Entry::getValue)
                 .forEach(types -> {
                     for (Iterator<Type> it = types.iterator(); it.hasNext(); ) {
@@ -183,9 +183,10 @@ public class UMLFactory {
         foreignTypes.entrySet().stream()
                 .filter(entry -> !entry.getValue().isEmpty())
                 .map(entry -> {
-                    Namespace foreignPackage = entry.getKey();
-                    entry.getValue().forEach(foreignPackage::addChild);
-                    return foreignPackage;
+                    String foreignPackage = entry.getKey();
+                    Namespace foreignNamespace = new Namespace(packageDiagram, foreignPackage);
+                    entry.getValue().forEach(foreignNamespace::addChild);
+                    return foreignNamespace;
                 })
                 .flatMap(foreignPackage -> Stream.of(UmlCharacters.NEWLINE, foreignPackage))
                 .forEach(packageDiagram::addChild);
@@ -381,18 +382,18 @@ public class UMLFactory {
         return assignable1 || assignable2;
     }
 
-    private void addForeignType(Map<Namespace, Collection<Type>> foreignTypes, Element typeElement) {
+    private void addForeignType(Map<String, Collection<Type>> foreignTypes, Element typeElement) {
         if (foreignTypes != null && typeElement instanceof TypeElement) {
             Type type = createAndPopulateType(null, (TypeElement) typeElement);
             if (typeElement.getKind().isClass()) {
                 type.removeChildren(child -> child instanceof Method && !((Method) child).isAbstract);
             }
-            foreignTypes.computeIfAbsent(type.getNamespace(), (namespace) -> new LinkedHashSet<>()).add(type);
+            foreignTypes.computeIfAbsent(type.getPackagename(), (namespace) -> new LinkedHashSet<>()).add(type);
         }
     }
 
     private Collection<Reference> findPackageReferences(
-            Namespace namespace, Map<Namespace, Collection<Type>> foreignTypes, TypeElement typeElement, Type type) {
+            Namespace namespace, Map<String, Collection<Type>> foreignTypes, TypeElement typeElement, Type type) {
         Collection<Reference> references = new LinkedHashSet<>();
 
         // Superclass reference.
@@ -521,7 +522,7 @@ public class UMLFactory {
 
     Namespace createPackage(Diagram diagram,
                             PackageElement packageElement,
-                            Map<Namespace, Collection<Type>> foreignTypes,
+                            Map<String, Collection<Type>> foreignTypes,
                             List<Reference> references) {
         Namespace pkg = new Namespace(diagram, packageElement.getQualifiedName().toString());
 

@@ -36,10 +36,10 @@ public class Type extends UMLNode implements Comparable<Type> {
         }
     }
 
-    private Namespace namespace;
+    private Namespace packageNamespace;
     private Classification classfication;
     private TypeName name;
-    private boolean isDeprecated, addPackageToName;
+    private boolean isDeprecated, includePackagename;
     private Link link;
 
     public Type(Namespace namespace, Classification classification, TypeName name) {
@@ -49,11 +49,11 @@ public class Type extends UMLNode implements Comparable<Type> {
     private Type(Namespace namespace, Classification classification, TypeName name, boolean isDeprecated,
                  boolean addPackageToName, Collection<? extends UMLNode> children) {
         super(namespace);
-        this.namespace = requireNonNull(namespace, "Containing package is <null>.");
+        this.packageNamespace = requireNonNull(namespace, "Containing package is <null>.");
         this.classfication = requireNonNull(classification, "Type classification is <null>.");
         this.name = requireNonNull(name, "Type name is <null>.");
         this.isDeprecated = isDeprecated;
-        this.addPackageToName = addPackageToName;
+        this.includePackagename = addPackageToName;
         if (children != null) children.forEach(this::addChild);
     }
 
@@ -83,21 +83,16 @@ public class Type extends UMLNode implements Comparable<Type> {
     }
 
     public Type deprecated() {
-        return new Type(getNamespace(), classfication, name, true, addPackageToName, getChildren());
+        this.isDeprecated = true;
+        return this;
     }
 
-    // TODO: Refactor this obscurity into something understandable
-    void addPackageToName() {
-        this.addPackageToName = true;
+    public void setIncludePackagename(boolean include) {
+        this.includePackagename = include;
     }
 
-    /**
-     * @return The package for this class (not necessarily any parent node)
-     * @deprecated // TODO Should probably be replaced by something like name.getPackage(env) instead!
-     */
-    @Deprecated
-    public Namespace getNamespace() {
-        return namespace;
+    public String getPackagename() {
+        return packageNamespace.name;
     }
 
     public Classification getClassfication() {
@@ -108,28 +103,27 @@ public class Type extends UMLNode implements Comparable<Type> {
     public void setParent(UMLNode parent) {
         super.setParent(parent);
         // TODO: this probably shouldn't be necessary either??
-        if (namespace.getParent() == null) namespace.setParent(parent);
+        if (packageNamespace.getParent() == null) packageNamespace.setParent(parent);
     }
 
-    private <IPW extends IndentingPrintWriter> IPW writeNameTo(IPW output, Namespace namespace) {
-        if (addPackageToName && name.qualified.startsWith(this.namespace.name + '.')) {
-            String nameInPackage = name.qualified.substring(this.namespace.name.length() + 1);
+    private <IPW extends IndentingPrintWriter> IPW writeNameTo(IPW output) {
+        if (includePackagename && name.qualified.startsWith(this.packageNamespace.name + '.')) {
+            String nameInPackage = name.qualified.substring(this.packageNamespace.name.length() + 1);
             output.append("\"<size:14>").append(nameInPackage)
-                    .append("\\n<size:10>").append(this.namespace.name)
+                    .append("\\n<size:10>").append(this.packageNamespace.name)
                     .append("\" as ");
         }
+
+        // Namespace aware compensation // TODO Simplify this complex logic and make sure all is still needed!
+        Namespace namespace = findParent(Namespace.class).orElse(null);
         output.append(name.toUml(TypeDisplay.QUALIFIED, namespace));
         return output;
     }
 
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-        // Namespace aware compensation
-        final Namespace namespace = findParent(Namespace.class)
-                .orElseGet(() -> findParent(PackageDiagram.class).map(pkg -> new Namespace(pkg, pkg.packageName))
-                        .orElse(null));
         output.append(classfication.toUml()).whitespace();
-        writeNameTo(output, namespace).whitespace();
+        writeNameTo(output).whitespace();
         if (isDeprecated) output.append("<<deprecated>>").whitespace();
         link().writeTo(output).whitespace();
         writeChildrenTo(output).newline();

@@ -43,7 +43,7 @@ public class Link extends UMLNode {
 
     public static Link forType(Type type) {
         final String destinationDirectory = type.getConfiguration().destinationDirectory();
-        final String packageName = type.getNamespace().name;
+        final String packageName = type.getPackagename();
         final String nameInPackage = type.getName().qualified.startsWith(packageName + ".")
                 ? type.getName().qualified.substring(packageName.length() + 1) : type.getName().simple;
 
@@ -78,10 +78,14 @@ public class Link extends UMLNode {
         for (UMLNode parent = getParent();
              parent != null && traversed.add(parent);
              parent = parent.getParent()) {
-            if (parent instanceof Namespace) namespace = (Namespace) parent;
-            else if (parent instanceof PackageDiagram) namespace = new Namespace(parent, ((PackageDiagram) parent).packageName);
+            if (parent instanceof Namespace) {
+                namespace = (Namespace) parent;
+            } else if (parent instanceof PackageDiagram) {
+                namespace = new Namespace(parent, ((PackageDiagram) parent).packageName);
 //            else if (parent instanceof ClassDiagram) namespace = ((ClassDiagram) parent).type.getNamespace();
-            else if (parent instanceof ClassDiagram) namespace = findParent(Type.class).map(Type::getNamespace).orElse(null);
+            } else if (parent instanceof ClassDiagram) {
+                namespace = findParent(Type.class).map(type -> new Namespace(getParent(), type.getPackagename())).orElse(null);
+            }
         }
         return Optional.ofNullable(namespace);
     }
