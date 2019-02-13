@@ -36,8 +36,8 @@ public class Type extends UMLNode implements Comparable<Type> {
         }
     }
 
-    private final Namespace namespace;
-    private final Classification classfication;
+    private Namespace namespace;
+    private Classification classfication;
     private TypeName name;
     private boolean isDeprecated, addPackageToName;
     private Link link;
@@ -86,10 +86,16 @@ public class Type extends UMLNode implements Comparable<Type> {
         return new Type(getNamespace(), classfication, name, true, addPackageToName, getChildren());
     }
 
+    // TODO: Refactor this obscurity into something understandable
     void addPackageToName() {
         this.addPackageToName = true;
     }
 
+    /**
+     * @return The package for this class (not necessarily any parent node)
+     * @deprecated // TODO Should probably be replaced by something like name.getPackage(env) instead!
+     */
+    @Deprecated
     public Namespace getNamespace() {
         return namespace;
     }
@@ -101,6 +107,7 @@ public class Type extends UMLNode implements Comparable<Type> {
     @Override
     public void setParent(UMLNode parent) {
         super.setParent(parent);
+        // TODO: this probably shouldn't be necessary either??
         if (namespace.getParent() == null) namespace.setParent(parent);
     }
 

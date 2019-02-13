@@ -100,7 +100,7 @@ public abstract class UMLNode implements IndentingRenderer {
      */
     protected <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
         Collection<? extends UMLNode> children = getChildren();
-        if (children != null && !children.isEmpty()) {
+        if (!children.isEmpty()) {
             IndentingPrintWriter indented = output.indent();
             children.forEach(child -> child.writeTo(indented));
         }
