@@ -99,13 +99,6 @@ public class Type extends UMLNode implements Comparable<Type> {
         return classfication;
     }
 
-    @Override
-    public void setParent(UMLNode parent) {
-        super.setParent(parent);
-        // TODO: this probably shouldn't be necessary either??
-        if (packageNamespace.getParent() == null) packageNamespace.setParent(parent);
-    }
-
     private <IPW extends IndentingPrintWriter> IPW writeNameTo(IPW output) {
         if (includePackagename && name.qualified.startsWith(this.packageNamespace.name + '.')) {
             String nameInPackage = name.qualified.substring(this.packageNamespace.name.length() + 1);
@@ -114,7 +107,7 @@ public class Type extends UMLNode implements Comparable<Type> {
                     .append("\" as ");
         }
 
-        // Namespace aware compensation // TODO Simplify this complex logic and make sure all is still needed!
+        // Namespace aware compensation // TODO Simplify this package logic and make sure all is still needed!
         Namespace namespace = findParent(Namespace.class).orElse(null);
         output.append(name.toUml(TypeDisplay.QUALIFIED, namespace));
         return output;
