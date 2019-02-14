@@ -124,7 +124,7 @@ public class LocalizedReporterTest {
         localizedReporter.warn(Message.WARNING_UNRECOGNIZED_IMAGE_FORMAT, ".doc");
 
         verify(mockReporter).print(eq(Diagnostic.Kind.WARNING),
-                eq("Unrecognized image format encountered: \".doc\"."));
+                eq("Unrecognized image format: \".doc\"."));
     }
 
     @Test

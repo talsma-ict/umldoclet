@@ -78,7 +78,9 @@ public abstract class TypeMember extends UMLNode implements Comparable<TypeMembe
         return output;
     }
 
-    @Override
+    @Override // TODO: Why implement comparable?
+    // Isn't this a concern of the producing package instead of the UML package?
+    // Even then, why expose the Comparable interface instead of encapsulating a private comparator?
     public int compareTo(TypeMember other) {
         return comparing((TypeMember member) -> member.getClass().getSimpleName())
                 .thenComparing(member -> member.name.toLowerCase())

@@ -98,6 +98,7 @@ public class Reference extends UMLNode {
                 ? inverse() : this;
     }
 
+    @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         // Namespace aware compensation
         final Namespace namespace = findParent(Namespace.class).orElse(null);
@@ -195,7 +196,7 @@ public class Reference extends UMLNode {
                     && this.cardinality.equals(((Side) other).cardinality));
         }
 
-        public String toString(Namespace namespace) {
+        private String toString(Namespace namespace) {
             String name = qualifiedName;
             if (namespace != null && name.startsWith(namespace.name + ".")) {
                 name = name.substring(namespace.name.length() + 1);
