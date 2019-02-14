@@ -84,7 +84,11 @@ public class UMLFactory {
                     classDiagram.addChild(superType);
                     sep = UmlCharacters.EMPTY;
                 }
-                references.add(new Reference(from(type.getName().qualified), "--|>", to(superclassName.qualified)).canonical());
+                references.add(new Reference(
+                        from(type.getName().qualified, null),
+                        "--|>",
+                        to(superclassName.qualified, null))
+                        .canonical());
             }
         }
 
@@ -101,7 +105,11 @@ public class UMLFactory {
                     classDiagram.addChild(implementedType);
                     sep = UmlCharacters.EMPTY;
                 }
-                references.add(new Reference(from(type.getName().qualified), "..|>", to(ifName.qualified)).canonical());
+                references.add(new Reference(
+                        from(type.getName().qualified, null),
+                        "..|>",
+                        to(ifName.qualified, null))
+                        .canonical());
             }
         }
 
@@ -119,7 +127,11 @@ public class UMLFactory {
                     classDiagram.addChild(enclosingType);
                     sep = UmlCharacters.EMPTY;
                 }
-                references.add(new Reference(from(type.getName().qualified), "--+", to(enclosingTypeName.qualified)).canonical());
+                references.add(new Reference(
+                        from(type.getName().qualified, null),
+                        "--+",
+                        to(enclosingTypeName.qualified, null))
+                        .canonical());
             }
         }
 
@@ -130,7 +142,11 @@ public class UMLFactory {
                 .forEach(innerclassElem -> {
                     Type innerType = createType(null, innerclassElem);
                     classDiagram.addChild(innerType);
-                    references.add(new Reference(from(type.getName().qualified), "+--", to(innerType.getName().qualified)).canonical());
+                    references.add(new Reference(
+                            from(type.getName().qualified, null),
+                            "+--",
+                            to(innerType.getName().qualified, null))
+                            .canonical());
                 });
 
         if (!references.isEmpty()) {
@@ -400,7 +416,7 @@ public class UMLFactory {
         if (!TypeKind.NONE.equals(typeElement.getSuperclass().getKind())) {
             TypeName superclass = TypeNameVisitor.INSTANCE.visit(typeElement.getSuperclass());
             if (!config.excludedTypeReferences().contains(superclass.qualified)) {
-                references.add(new Reference(from(type.getName().qualified), "--|>", to(superclass.qualified)));
+                references.add(new Reference(from(type.getName().qualified, null), "--|>", to(superclass.qualified, null)));
                 if (!namespace.contains(superclass)) {
                     addForeignType(foreignTypes, env.getTypeUtils().asElement(typeElement.getSuperclass()));
                 }
@@ -411,7 +427,7 @@ public class UMLFactory {
         typeElement.getInterfaces().forEach(interfaceType -> {
             TypeName interfaceName = TypeNameVisitor.INSTANCE.visit(interfaceType);
             if (!config.excludedTypeReferences().contains(interfaceName.qualified)) {
-                references.add(new Reference(from(type.getName().qualified), "..|>", to(interfaceName.qualified)));
+                references.add(new Reference(from(type.getName().qualified, null), "..|>", to(interfaceName.qualified, null)));
                 // TODO Figure out what to do IF the interface is found BUT has a different typename
                 if (!namespace.contains(interfaceName)) {
                     addForeignType(foreignTypes, env.getTypeUtils().asElement(interfaceType));
@@ -423,7 +439,7 @@ public class UMLFactory {
         ElementKind enclosingKind = typeElement.getEnclosingElement().getKind();
         if (enclosingKind.isClass() || enclosingKind.isInterface()) {
             TypeName parentType = TypeNameVisitor.INSTANCE.visit(typeElement.getEnclosingElement().asType());
-            references.add(new Reference(from(parentType.qualified), "+--", to(type.getName().qualified)));
+            references.add(new Reference(from(parentType.qualified, null), "+--", to(type.getName().qualified, null)));
             // No check needed whether parent type lives in our namespace.
         }
 
@@ -437,7 +453,7 @@ public class UMLFactory {
                     TypeNameWithCardinality fieldType = typeNameWithCardinality.apply(field.asType());
                     if (namespace.contains(fieldType.typeName)) {
                         addReference(references, new Reference(
-                                from(type.getName().qualified),
+                                from(type.getName().qualified, null),
                                 "-->",
                                 to(fieldType.typeName.qualified, fieldType.cardinality),
                                 fieldName));
@@ -456,7 +472,7 @@ public class UMLFactory {
                         TypeNameWithCardinality returnType = typeNameWithCardinality.apply(propertyType(method));
                         if (namespace.contains(returnType.typeName)) {
                             addReference(references, new Reference(
-                                    from(type.getName().qualified),
+                                    from(type.getName().qualified, null),
                                     "-->",
                                     to(returnType.typeName.qualified, returnType.cardinality),
                                     propertyName));

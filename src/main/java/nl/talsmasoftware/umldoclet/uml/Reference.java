@@ -30,7 +30,6 @@ import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableCollection;
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.joining;
 
 /**
  * Reference between two types.
@@ -102,13 +101,11 @@ public class Reference extends UMLNode {
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         // Namespace aware compensation
         final Namespace namespace = findParent(Namespace.class).orElse(null);
-//        final Namespace namespace = getParent() instanceof PackageDiagram
-//                ? new Namespace(getRootUMLPart(), ((PackageDiagram) getParent()).packageName) : null;
 
         output.append(from.toString(namespace)).whitespace()
                 .append(type).whitespace()
                 .append(to.toString(namespace));
-        if (!notes.isEmpty()) output.append(": ").append(notes.stream().collect(joining("\\n")));
+        if (!notes.isEmpty()) output.append(": ").append(String.join("\\n", notes));
         output.newline();
         return output;
     }
@@ -162,25 +159,17 @@ public class Reference extends UMLNode {
 
     public static final class Side {
         private final boolean nameFirst;
-        public final String qualifiedName, cardinality;
+        private final String qualifiedName, cardinality;
 
-        public static Side from(String fromQualifiedName) {
-            return from(fromQualifiedName, null);
+        public static Side from(String qualifiedName, String cardinality) {
+            return new Side(qualifiedName, cardinality, true);
         }
 
-        public static Side from(String fromQualifiedName, String fromCardinality) {
-            return new Side(fromQualifiedName, fromCardinality, true);
+        public static Side to(String qualifiedName, String cardinality) {
+            return new Side(qualifiedName, cardinality, false);
         }
 
-        public static Side to(String toQualifiedName) {
-            return to(toQualifiedName, null);
-        }
-
-        public static Side to(String toQualifiedName, String toCardinality) {
-            return new Side(toQualifiedName, toCardinality, false);
-        }
-
-        protected Side(String qualifiedName, String cardinality, boolean nameFirst) {
+        private Side(String qualifiedName, String cardinality, boolean nameFirst) {
             requireNonNull(qualifiedName, "Name of referred object is <null>.");
             int genericIdx = qualifiedName.indexOf('<');
             if (genericIdx > 0) qualifiedName = qualifiedName.substring(0, genericIdx);
