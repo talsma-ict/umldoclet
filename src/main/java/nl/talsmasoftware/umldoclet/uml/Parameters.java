@@ -28,7 +28,7 @@ public class Parameters extends UMLNode implements Comparable<Parameters> {
 
     private boolean varargs = false;
 
-    @Deprecated
+    @Deprecated // TODO Refactor away?
     public Parameters() {
         this(null);
     }
