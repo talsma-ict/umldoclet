@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -123,6 +123,15 @@ public final class Testing {
         dir.mkdirs();
         if (!dir.isDirectory()) throw new IllegalStateException("Not a directory: " + dir);
         return dir;
+    }
+
+    /**
+     * Creates a new, empty file (if it doesn't already exist).
+     *
+     * @param file The file to create.
+     */
+    public static void touch(File file) {
+        write(file, "");
     }
 
 }
