@@ -76,8 +76,8 @@
         <!-- test -->
         <junit.version>4.12</junit.version>
         <hamcrest.version>2.1</hamcrest.version>
-        <mockito.version>2.24.0</mockito.version>
-        <slf4j.version>1.7.25</slf4j.version>
+        <mockito.version>2.24.5</mockito.version>
+        <slf4j.version>1.7.26</slf4j.version>
         <logback.version>1.2.3</logback.version>
         <maven-invoker.version>3.0.1</maven-invoker.version>
 
@@ -266,11 +266,14 @@
                                 <artifactId>umldoclet</artifactId>
                                 <version>${project.version}</version>
                             </docletArtifact>
-                            <additionalOptions>
-                                <additionalOption>-verbose</additionalOption>
-                                <!--<additionalOption>-quiet</additionalOption>-->
-                                <!--<aditionalOption>-umlImageDirectory images</aditionalOption>-->
-                            </additionalOptions>
+                            <jdkToolchain>
+                                <version>9</version>
+                            </jdkToolchain>
+                            <links>
+                                <link>https://docs.oracle.com/javase/9/docs/api</link>
+                                <!--<link>https://docs.oracle.com/javase/10/docs/api</link>-->
+                                <!--<link>https://docs.oracle.com/en/java/javase/11/docs/api</link>-->
+                            </links>
                         </configuration>
                     </execution>
                 </executions>

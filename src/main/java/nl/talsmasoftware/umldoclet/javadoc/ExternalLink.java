@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,21 @@ import nl.talsmasoftware.umldoclet.logging.Message;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
+import static java.util.Collections.singletonMap;
+import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.requireNonNull;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.openReaderTo;
@@ -44,49 +52,113 @@ import static nl.talsmasoftware.umldoclet.util.UriUtils.addPathComponent;
  * @author Sjoerd Talsma
  */
 final class ExternalLink {
-
     private final Configuration config;
-    private final URI docUri, packageListUri;
-    private Set<String> packages;
+    private final URI docUri, baseUri;
+    private Map<String, Set<String>> modules;
+    private final Map<String, URI> packageUriCache = new HashMap<>();
 
     ExternalLink(Configuration config, String apidoc, String packageList) {
         this.config = requireNonNull(config, "Configuration is <null>.");
         this.docUri = createUri(requireNonNull(apidoc, "External apidoc URI is <null>."));
         requireNonNull(packageList, "Location URI for \"package-list\" is <null>.");
-        this.packageListUri = addPathComponent(createUri(packageList), "package-list");
+        this.baseUri = createUri(packageList);
+    }
+
+    private Map<String, Set<String>> modules() {
+        if (modules == null) {
+            synchronized (this) {
+                Map<String, Set<String>> moduleMap = tryReadModules();
+                this.modules = moduleMap.isEmpty() ? singletonMap("", tryReadPackages()) : moduleMap;
+            }
+        }
+        return modules;
     }
 
     Optional<URI> resolveType(String packagename, String typeName) {
-        if (packages().contains(packagename)) {
-            String document = packagename.replace('.', '/') + "/" + typeName + ".html";
-            return Optional.of(addHttpParam(makeAbsolute(addPathComponent(docUri, document)), "is-external", "true"));
-        }
-        return Optional.empty();
+        return modules().entrySet().stream()
+                .filter(entry -> entry.getValue().contains(packagename))
+                .findFirst()
+                .map(entry -> cached(packagename, () -> findPackageUri(entry.getKey(), packagename)))
+                .map(uri -> addPathComponent(uri, typeName + ".html"))
+                .map(uri -> addHttpParam(uri, "is-external", "true"));
     }
 
-    private Set<String> packages() {
-        if (packages == null) try {
-            synchronized (this) {
-                Set<String> pkglist = new HashSet<>();
-                try (BufferedReader reader = new BufferedReader(
-                        openReaderTo(config.destinationDirectory(), packageListUri, "UTF-8"))) {
-                    for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                        line = line.trim();
-                        if (!line.isEmpty()) pkglist.add(line);
-                    }
+    private URI findPackageUri(String modulename, String packagename) {
+        String packagePath = packagename.replace('.', '/');
+        if (!modulename.isEmpty()) {
+            URI withModule = addPathComponent(addPathComponent(makeAbsolute(docUri), modulename), packagePath);
+            if (testLivePackageLocation(withModule)) return withModule;
+        }
+        URI packageUri = addPathComponent(makeAbsolute(docUri), packagePath);
+        if (testLivePackageLocation(packageUri)) return packageUri;
+        return null; // No package-summary.html found in either location.
+    }
+
+    private Map<String, Set<String>> tryReadModules() {
+        final URI elementListUri = addPathComponent(baseUri, "element-list");
+        final Map<String, Set<String>> modules = new LinkedHashMap<>();
+        try (BufferedReader reader = new BufferedReader(
+                openReaderTo(config.destinationDirectory(), elementListUri, "UTF-8"))) {
+            String module = ""; // default to unnamed module
+            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                line = line.trim();
+                if (line.startsWith("module:")) {
+                    module = line.substring("module:".length()).trim();
+                } else if (!line.isEmpty()) {
+                    if (!modules.containsKey(module)) modules.put(module, new LinkedHashSet<>());
+                    modules.get(module).add(line);
                 }
-                packages = unmodifiableSet(pkglist);
+            }
+        } catch (IOException | RuntimeException ex) {
+            config.logger().debug(Message.DEBUG_CANNOT_READ_ELEMENT_LIST, elementListUri, ex);
+        }
+        return modules.isEmpty() ? emptyMap() : unmodifiableMap(modules);
+    }
+
+    private Set<String> tryReadPackages() {
+        final URI packageListUri = addPathComponent(baseUri, "package-list");
+        final Set<String> packages = new LinkedHashSet<>();
+        try {
+            try (BufferedReader reader = new BufferedReader(
+                    openReaderTo(config.destinationDirectory(), packageListUri, "UTF-8"))) {
+                for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                    line = line.trim();
+                    if (!line.isEmpty()) packages.add(line);
+                }
             }
         } catch (IOException | RuntimeException ex) {
             config.logger().warn(Message.WARNING_CANNOT_READ_PACKAGE_LIST, packageListUri, ex);
-            packages = emptySet();
         }
-        return packages;
+        return packages.isEmpty() ? emptySet() : unmodifiableSet(packages);
+    }
+
+    /**
+     * Test for existence of {@code package-summary.html} in the specified location.
+     *
+     * @param packageUri The package URI to test.
+     * @return Whether or not a {@code package-summary.html} could be found at the given URI.
+     */
+    private boolean testLivePackageLocation(URI packageUri) {
+        try {
+            try (InputStream in = addPathComponent(packageUri, "package-summary.html").toURL().openStream()) {
+                return in.read() >= 0;
+            }
+        } catch (IOException | RuntimeException notFound) {
+            config.logger().debug(Message.DEBUG_LIVE_PACKAGE_URL_NOT_FOUND, packageUri, notFound);
+            return false;
+        }
+    }
+
+    private URI cached(String packagename, Supplier<URI> uri) {
+        synchronized (packageUriCache) {
+            if (!packageUriCache.containsKey(packagename)) packageUriCache.put(packagename, uri.get());
+        }
+        return packageUriCache.get(packagename);
     }
 
     private URI makeAbsolute(URI uri) {
         if (uri != null && !uri.isAbsolute()) {
-            uri = new File(config.destinationDirectory(), uri.toASCIIString()).toURI();
+            uri = new File(config.destinationDirectory(), uri.toASCIIString()).toURI().normalize();
         }
         return uri;
     }

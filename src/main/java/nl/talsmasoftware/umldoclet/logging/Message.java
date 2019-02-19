@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,8 @@ public enum Message {
     DEBUG_SKIPPING_FILE,
     DEBUG_RENAMED_FILE_FROM,
     DEBUG_COPIED_FILE_FROM,
+    DEBUG_CANNOT_READ_ELEMENT_LIST,
+    DEBUG_LIVE_PACKAGE_URL_NOT_FOUND,
     INFO_GENERATING_FILE,
     INFO_ADD_DIAGRAM_TO_FILE,
     WARNING_UNRECOGNIZED_IMAGE_FORMAT,
