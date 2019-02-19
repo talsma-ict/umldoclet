@@ -91,8 +91,7 @@ final class ExternalLink {
         }
         URI packageUri = addPathComponent(makeAbsolute(docUri), packagePath);
         if (testLivePackageLocation(packageUri)) return packageUri;
-        // TODO: what else?
-        return null;
+        return null; // No package-summary.html found in either location.
     }
 
     private Map<String, Set<String>> tryReadModules() {
@@ -111,7 +110,7 @@ final class ExternalLink {
                 }
             }
         } catch (IOException | RuntimeException ex) {
-            // TODO!
+            config.logger().debug(Message.DEBUG_CANNOT_READ_ELEMENT_LIST, elementListUri, ex);
         }
         return modules.isEmpty() ? emptyMap() : unmodifiableMap(modules);
     }
