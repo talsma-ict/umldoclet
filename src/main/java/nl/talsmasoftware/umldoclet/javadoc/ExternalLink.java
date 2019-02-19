@@ -21,6 +21,7 @@ import nl.talsmasoftware.umldoclet.logging.Message;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
@@ -60,17 +61,6 @@ final class ExternalLink {
         this.baseUri = createUri(packageList);
     }
 
-    Optional<URI> resolveType(String packagename, String typeName) {
-        return modules().entrySet().stream()
-                .filter(entry -> entry.getValue().contains(packagename))
-                .findFirst()
-                .map(entry -> entry.getKey().isEmpty() ? docUri : addPathComponent(docUri, entry.getKey()))
-                .map(uri -> addPathComponent(uri, packagename.replace('.', '/')))
-                .map(uri -> addPathComponent(uri, typeName + ".html"))
-                .map(this::makeAbsolute)
-                .map(uri -> addHttpParam(uri, "is-external", "true"));
-    }
-
     private Map<String, Set<String>> modules() {
         if (modules == null) {
             synchronized (this) {
@@ -79,6 +69,28 @@ final class ExternalLink {
             }
         }
         return modules;
+    }
+
+    Optional<URI> resolveType(String packagename, String typeName) {
+        return modules().entrySet().stream()
+                .filter(entry -> entry.getValue().contains(packagename))
+                .findFirst()
+                .map(entry -> findPackageUri(entry.getKey(), packagename))
+                .map(uri -> addPathComponent(uri, typeName + ".html"))
+                .map(uri -> addHttpParam(uri, "is-external", "true"));
+    }
+
+    private URI findPackageUri(String modulename, String packagename) {
+        // TODO: Introduce a cache of URI's per package so each supported package is analyzed only once
+        String packagePath = packagename.replace('.', '/');
+        if (!modulename.isEmpty()) {
+            URI withModule = addPathComponent(addPathComponent(makeAbsolute(docUri), modulename), packagePath);
+            if (testLivePackageLocation(withModule)) return withModule;
+        }
+        URI packageUri = addPathComponent(makeAbsolute(docUri), packagePath);
+        if (testLivePackageLocation(packageUri)) return packageUri;
+        // TODO: what else?
+        return null;
     }
 
     private Map<String, Set<String>> tryReadModules() {
@@ -121,7 +133,7 @@ final class ExternalLink {
 
     private URI makeAbsolute(URI uri) {
         if (uri != null && !uri.isAbsolute()) {
-            uri = new File(config.destinationDirectory(), uri.toASCIIString()).toURI();
+            uri = new File(config.destinationDirectory(), uri.toASCIIString()).toURI().normalize();
         }
         return uri;
     }
@@ -135,4 +147,20 @@ final class ExternalLink {
         }
     }
 
+    /**
+     * Test for existence of {@code package-summary.html} in the specified location.
+     *
+     * @param packageUri The package URI to test.
+     * @return Whether or not a {@code package-summary.html} could be found at the given URI.
+     */
+    private boolean testLivePackageLocation(URI packageUri) {
+        try {
+            try (InputStream in = addPathComponent(packageUri, "package-summary.html").toURL().openStream()) {
+                return in.read() >= 0;
+            }
+        } catch (IOException | RuntimeException notFound) {
+            System.out.println(">> ??? Testing [" + packageUri + "]: " + notFound);
+            return false;
+        }
+    }
 }
