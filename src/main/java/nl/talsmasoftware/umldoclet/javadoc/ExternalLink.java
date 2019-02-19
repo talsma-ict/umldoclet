@@ -24,11 +24,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
@@ -53,6 +55,7 @@ final class ExternalLink {
     private final Configuration config;
     private final URI docUri, baseUri;
     private Map<String, Set<String>> modules;
+    private final Map<String, URI> packageUriCache = new HashMap<>();
 
     ExternalLink(Configuration config, String apidoc, String packageList) {
         this.config = requireNonNull(config, "Configuration is <null>.");
@@ -75,13 +78,12 @@ final class ExternalLink {
         return modules().entrySet().stream()
                 .filter(entry -> entry.getValue().contains(packagename))
                 .findFirst()
-                .map(entry -> findPackageUri(entry.getKey(), packagename))
+                .map(entry -> cached(packagename, () -> findPackageUri(entry.getKey(), packagename)))
                 .map(uri -> addPathComponent(uri, typeName + ".html"))
                 .map(uri -> addHttpParam(uri, "is-external", "true"));
     }
 
     private URI findPackageUri(String modulename, String packagename) {
-        // TODO: Introduce a cache of URI's per package so each supported package is analyzed only once
         String packagePath = packagename.replace('.', '/');
         if (!modulename.isEmpty()) {
             URI withModule = addPathComponent(addPathComponent(makeAbsolute(docUri), modulename), packagePath);
@@ -131,22 +133,6 @@ final class ExternalLink {
         return packages.isEmpty() ? emptySet() : unmodifiableSet(packages);
     }
 
-    private URI makeAbsolute(URI uri) {
-        if (uri != null && !uri.isAbsolute()) {
-            uri = new File(config.destinationDirectory(), uri.toASCIIString()).toURI().normalize();
-        }
-        return uri;
-    }
-
-    private static URI createUri(String uri) {
-        try {
-            return new URI(uri);
-        } catch (URISyntaxException use) {
-            if (new File(uri).exists()) return new File(uri).toURI();
-            throw new IllegalArgumentException(use.getMessage(), use);
-        }
-    }
-
     /**
      * Test for existence of {@code package-summary.html} in the specified location.
      *
@@ -163,4 +149,28 @@ final class ExternalLink {
             return false;
         }
     }
+
+    private URI cached(String packagename, Supplier<URI> uri) {
+        synchronized (packageUriCache) {
+            if (!packageUriCache.containsKey(packagename)) packageUriCache.put(packagename, uri.get());
+        }
+        return packageUriCache.get(packagename);
+    }
+
+    private URI makeAbsolute(URI uri) {
+        if (uri != null && !uri.isAbsolute()) {
+            uri = new File(config.destinationDirectory(), uri.toASCIIString()).toURI().normalize();
+        }
+        return uri;
+    }
+
+    private static URI createUri(String uri) {
+        try {
+            return new URI(uri);
+        } catch (URISyntaxException use) {
+            if (new File(uri).exists()) return new File(uri).toURI();
+            throw new IllegalArgumentException(use.getMessage(), use);
+        }
+    }
+
 }
