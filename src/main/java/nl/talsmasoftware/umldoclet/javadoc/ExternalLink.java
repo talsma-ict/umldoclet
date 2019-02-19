@@ -145,7 +145,7 @@ final class ExternalLink {
                 return in.read() >= 0;
             }
         } catch (IOException | RuntimeException notFound) {
-            System.out.println(">> ??? Testing [" + packageUri + "]: " + notFound);
+            config.logger().debug(Message.DEBUG_LIVE_PACKAGE_URL_NOT_FOUND, packageUri, notFound);
             return false;
         }
     }
