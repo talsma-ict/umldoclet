@@ -266,15 +266,14 @@
                                 <artifactId>umldoclet</artifactId>
                                 <version>${project.version}</version>
                             </docletArtifact>
+                            <jdkToolchain>
+                                <version>9</version>
+                            </jdkToolchain>
                             <links>
+                                <link>https://docs.oracle.com/javase/9/docs/api</link>
                                 <!--<link>https://docs.oracle.com/javase/10/docs/api</link>-->
-                                <link>https://docs.oracle.com/en/java/javase/11/docs/api</link>
+                                <!--<link>https://docs.oracle.com/en/java/javase/11/docs/api</link>-->
                             </links>
-                            <additionalOptions>
-                                <!--<additionalOption>-verbose</additionalOption>-->
-                                <!--<additionalOption>-quiet</additionalOption>-->
-                                <!--<aditionalOption>-umlImageDirectory images</aditionalOption>-->
-                            </additionalOptions>
                         </configuration>
                     </execution>
                 </executions>
