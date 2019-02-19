@@ -39,7 +39,7 @@ script:
   - .travis/scripts/release.sh
 
 after_success:
-  - if [ -f target/jacoco.exec ]; then ./mvnw jacoco:report coveralls:report; fi
+  - if [ -f target/jacoco.exec ]; then ./mvnw -DTRAVIS_JOB_ID=$TRAVIS_JOB_ID jacoco:report coveralls:report; fi
 
 deploy:
   provider: releases
