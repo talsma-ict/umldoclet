@@ -29,6 +29,8 @@ import java.nio.charset.Charset;
 import java.util.Optional;
 
 import static java.util.Collections.singleton;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -61,19 +63,29 @@ public class ClassDiagramTest {
     }
 
     @Test
-    public void testClassWithSubclassInAnotherPackage_relativePath() {
+    public void testClassWithSuperClassInAnotherPackage_relativePath() {
         Testing.touch(new File("target/test-classdiagram/foo/bar/Bar.html"));
-        Namespace barPackage = new Namespace(null, "foo.bar");
-        Type clazz = new Type(barPackage,
+        Testing.touch(new File("target/test-classdiagram/foo/Foo.html"));
+        Type bar = new Type(new Namespace(null, "foo.bar"),
                 Type.Classification.CLASS,
                 new TypeName("Bar", "foo.bar.Bar"));
 
-        ClassDiagram classDiagram = new ClassDiagram(config, clazz);
-        barPackage.setParent(classDiagram);
+        ClassDiagram classDiagram = new ClassDiagram(config, bar);
 
         // Add Superclass com.foo.Foo
+        Type foo = new Type(new Namespace(null, "foo"),
+                Type.Classification.CLASS,
+                new TypeName("Foo", "foo.Foo"));
+        classDiagram.addChild(foo);
+        classDiagram.addChild(new Reference(
+                Reference.Side.from("foo.Foo", null),
+                "<|--",
+                Reference.Side.to("foo.bar.Bar", null)));
 
         classDiagram.render();
+        String uml = Testing.read(new File("target/test-classdiagram/foo/bar/Bar.puml"));
+        assertThat(uml, containsString("foo.bar.Bar [[Bar.html]]"));
+        assertThat(uml, containsString("foo.Foo [[../Foo.html]]"));
     }
 
 }

@@ -116,14 +116,20 @@ public abstract class Diagram extends UMLNode {
     public void render() {
         try {
             // 1. Render UML sources
-            final String plantumlSource = renderPlantumlSource();
+            Link.linkFrom(getPlantUmlFile().getParent());
+            String plantumlSource = renderPlantumlSource();
 
             // 2. Render each diagram.
+            if (Link.linkFrom(getDiagramBaseFile().getParent())) {
+                plantumlSource = super.toString(); // Re-render because different link base paths.
+            }
             for (FileFormat format : formats) {
                 renderDiagramFile(plantumlSource, format);
             }
         } catch (IOException ioe) {
             throw new IllegalStateException("I/O error rendering " + this + ": " + ioe.getMessage(), ioe);
+        } finally {
+            Link.linkFrom(null);
         }
     }
 
@@ -158,10 +164,7 @@ public abstract class Diagram extends UMLNode {
         config.logger().info(Message.INFO_GENERATING_FILE, diagramFile);
         ensureParentDir(diagramFile);
         try (OutputStream out = new FileOutputStream(diagramFile)) {
-            Link.linkFrom(diagramFile.getParent());
             new SourceStringReader(plantumlSource).outputImage(out, new FileFormatOption(format));
-        } finally {
-            Link.linkFrom(null);
         }
     }
 

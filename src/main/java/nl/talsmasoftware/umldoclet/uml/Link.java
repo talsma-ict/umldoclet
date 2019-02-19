@@ -20,6 +20,7 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import java.io.File;
 import java.net.URI;
 import java.util.IdentityHashMap;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -66,10 +67,13 @@ public class Link extends UMLNode {
      * This setting is configured on a per-thread basis.
      *
      * @param basePath The base path to define relative links from.
+     * @return whether the base path was modified or not
      */
-    public static void linkFrom(String basePath) {
+    public static boolean linkFrom(String basePath) {
+        if (Objects.equals(basePath, LINK_FROM.get())) return false;
         if (basePath == null) LINK_FROM.remove();
         else LINK_FROM.set(basePath);
+        return true;
     }
 
     private Optional<Namespace> findOuterNamespace() {
@@ -82,7 +86,6 @@ public class Link extends UMLNode {
                 namespace = (Namespace) parent;
             } else if (parent instanceof PackageDiagram) {
                 namespace = new Namespace(parent, ((PackageDiagram) parent).packageName);
-//            else if (parent instanceof ClassDiagram) namespace = ((ClassDiagram) parent).type.getNamespace();
             } else if (parent instanceof ClassDiagram) {
                 namespace = findParent(Type.class).map(type -> new Namespace(getParent(), type.getPackagename())).orElse(null);
             }
