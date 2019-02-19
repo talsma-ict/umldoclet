@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,7 +75,7 @@ public class ExternalLinkTest {
         assertThat(resolved, is(Optional.empty()));
 
         assertThat(logger.countMessages(Message.WARNING_CANNOT_READ_PACKAGE_LIST::equals), is(1));
-        verify(config, times(1)).destinationDirectory();
+        verify(config, times(2)).destinationDirectory();
     }
 
     @Test(expected = IllegalArgumentException.class)
