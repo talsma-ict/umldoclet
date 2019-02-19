@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -31,6 +30,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonMap;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
@@ -75,10 +75,7 @@ final class ExternalLink {
         if (modules == null) {
             synchronized (this) {
                 Map<String, Set<String>> moduleMap = tryReadModules();
-                Set<String> packages = moduleMap == null ? tryReadPackages() : null;
-                modules = moduleMap != null ? moduleMap
-                        : packages != null ? singletonMap("", packages) // the 'unnamed' module
-                        : emptyMap();
+                this.modules = moduleMap.isEmpty() ? singletonMap("", tryReadPackages()) : moduleMap;
             }
         }
         return modules;
@@ -102,25 +99,24 @@ final class ExternalLink {
         } catch (IOException | RuntimeException ex) {
             // TODO!
         }
-        return modules.isEmpty() ? null : unmodifiableMap(modules);
+        return modules.isEmpty() ? emptyMap() : unmodifiableMap(modules);
     }
 
     private Set<String> tryReadPackages() {
         final URI packageListUri = addPathComponent(baseUri, "package-list");
+        final Set<String> packages = new LinkedHashSet<>();
         try {
-            Set<String> pkglist = new HashSet<>();
             try (BufferedReader reader = new BufferedReader(
                     openReaderTo(config.destinationDirectory(), packageListUri, "UTF-8"))) {
                 for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                     line = line.trim();
-                    if (!line.isEmpty()) pkglist.add(line);
+                    if (!line.isEmpty()) packages.add(line);
                 }
             }
-            return unmodifiableSet(pkglist);
         } catch (IOException | RuntimeException ex) {
             config.logger().warn(Message.WARNING_CANNOT_READ_PACKAGE_LIST, packageListUri, ex);
         }
-        return null;
+        return packages.isEmpty() ? emptySet() : unmodifiableSet(packages);
     }
 
     private URI makeAbsolute(URI uri) {
