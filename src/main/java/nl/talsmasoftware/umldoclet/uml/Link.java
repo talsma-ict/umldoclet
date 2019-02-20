@@ -53,9 +53,7 @@ public class Link extends UMLNode {
 
     private static Optional<URI> relativeHtmlFile(String destinationDirectory, String packageName, String nameInPackage) {
         final String directory = destinationDirectory + "/" + packageName.replace('.', '/');
-        return Optional.of(new File(directory, nameInPackage + ".html"))
-                .filter(File::isFile)
-                .map(File::toURI);
+        return Optional.of(new File(directory, nameInPackage + ".html")).filter(File::isFile).map(File::toURI);
     }
 
     /**

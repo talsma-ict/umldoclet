@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,19 +39,24 @@ public class HtmlPostprocessor {
         this.diagrams = requireNonNull(diagrams, "Generated diagram collection is <null>.");
     }
 
-    public boolean postProcessHtml() throws IOException {
-        final File destinationDir = new File(config.destinationDirectory());
-        if (!destinationDir.isDirectory() || !destinationDir.canRead()) {
-            throw new IllegalStateException("Cannot read from configured destination directory \"" + destinationDir + "\"!");
-        }
-        final Collection<UmlDiagram> diagrams = new DiagramCollector(config).collectDiagrams();
+    public boolean postProcessHtml() {
+        try {
+            final File destinationDir = new File(config.destinationDirectory());
+            if (!destinationDir.isDirectory() || !destinationDir.canRead()) {
+                throw new IllegalStateException("Cannot read from configured destination directory \"" + destinationDir + "\"!");
+            }
+            final Collection<UmlDiagram> diagrams = new DiagramCollector(config).collectDiagrams();
 
-        long count = Files.walk(destinationDir.toPath())
-                .filter(HtmlFile::isHtmlFile)
-                .map(path -> new HtmlFile(config, path))
-                .map(htmlFile -> htmlFile.process(diagrams))
-                .filter(Boolean::booleanValue).count();
-        return true;
+            long count = Files.walk(destinationDir.toPath())
+                    .filter(HtmlFile::isHtmlFile)
+                    .map(path -> new HtmlFile(config, path))
+                    .map(htmlFile -> htmlFile.process(diagrams))
+                    .filter(Boolean::booleanValue).count();
+            return true;
+        } catch (IOException ioe) {
+            throw new IllegalStateException("I/O exception postprocessing HTML files in "
+                    + config.destinationDirectory() + ": " + ioe.getMessage(), ioe);
+        }
     }
 
 }
