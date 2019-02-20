@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableCollection;
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.joining;
 
 /**
  * Reference between two types.
@@ -44,7 +43,7 @@ import static java.util.stream.Collectors.joining;
  *
  * @author Sjoerd Talsma
  */
-public class Reference extends UMLPart {
+public class Reference extends UMLNode {
 
     public final Side from, to;
     public final String type;
@@ -99,15 +98,15 @@ public class Reference extends UMLPart {
                 ? inverse() : this;
     }
 
+    @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         // Namespace aware compensation
-        final Namespace namespace = getParent() instanceof PackageUml
-                ? new Namespace(getRootUMLPart(), ((PackageUml) getParent()).packageName) : null;
+        final Namespace namespace = findParent(Namespace.class).orElse(null);
 
         output.append(from.toString(namespace)).whitespace()
                 .append(type).whitespace()
                 .append(to.toString(namespace));
-        if (!notes.isEmpty()) output.append(": ").append(notes.stream().collect(joining("\\n")));
+        if (!notes.isEmpty()) output.append(": ").append(String.join("\\n", notes));
         output.newline();
         return output;
     }
@@ -161,25 +160,17 @@ public class Reference extends UMLPart {
 
     public static final class Side {
         private final boolean nameFirst;
-        public final String qualifiedName, cardinality;
+        private final String qualifiedName, cardinality;
 
-        public static Side from(String fromQualifiedName) {
-            return from(fromQualifiedName, null);
+        public static Side from(String qualifiedName, String cardinality) {
+            return new Side(qualifiedName, cardinality, true);
         }
 
-        public static Side from(String fromQualifiedName, String fromCardinality) {
-            return new Side(fromQualifiedName, fromCardinality, true);
+        public static Side to(String qualifiedName, String cardinality) {
+            return new Side(qualifiedName, cardinality, false);
         }
 
-        public static Side to(String toQualifiedName) {
-            return to(toQualifiedName, null);
-        }
-
-        public static Side to(String toQualifiedName, String toCardinality) {
-            return new Side(toQualifiedName, toCardinality, false);
-        }
-
-        protected Side(String qualifiedName, String cardinality, boolean nameFirst) {
+        private Side(String qualifiedName, String cardinality, boolean nameFirst) {
             requireNonNull(qualifiedName, "Name of referred object is <null>.");
             int genericIdx = qualifiedName.indexOf('<');
             if (genericIdx > 0) qualifiedName = qualifiedName.substring(0, genericIdx);
@@ -205,7 +196,7 @@ public class Reference extends UMLPart {
                     && this.cardinality.equals(((Side) other).cardinality));
         }
 
-        public String toString(Namespace namespace) {
+        private String toString(Namespace namespace) {
             String name = qualifiedName;
             if (namespace != null && name.startsWith(namespace.name + ".")) {
                 name = name.substring(namespace.name.length() + 1);

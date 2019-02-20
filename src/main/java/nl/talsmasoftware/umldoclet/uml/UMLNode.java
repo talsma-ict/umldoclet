@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,14 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingRenderer;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 
-import static java.util.Collections.unmodifiableCollection;
+import static java.util.Collections.newSetFromMap;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -37,49 +42,50 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Sjoerd Talsma
  */
-public abstract class UMLPart implements IndentingRenderer {
-    private UMLPart parent;
-    private final Collection<UMLPart> children = new ArrayList<>();
+public abstract class UMLNode implements IndentingRenderer {
 
-    protected UMLPart(UMLPart parent) {
+    private UMLNode parent;
+    private final List<UMLNode> children = new ArrayList<>();
+
+    protected UMLNode(UMLNode parent) {
         this.parent = parent;
     }
 
-    public UMLPart getParent() {
+    public UMLNode getParent() {
         return parent;
     }
 
-    void setParent(UMLPart parent) {
+    public void setParent(UMLNode parent) {
         this.parent = parent;
     }
 
-    protected UMLPart requireParent() {
-        return requireNonNull(parent, () -> getClass().getSimpleName() + " seems to be an orphan, it has no parent.");
+    protected <U extends UMLNode> Optional<U> findParent(Class<U> nodeType) {
+        final Set<UMLNode> traversed = newSetFromMap(new IdentityHashMap<>());
+        for (UMLNode parent = getParent();
+             parent != null && traversed.add(parent);
+             parent = parent.getParent()) {
+            if (nodeType.isInstance(parent)) return Optional.of(nodeType.cast(parent));
+        }
+        return Optional.empty();
     }
 
-    protected UMLRoot getRootUMLPart() {
-        return requireParent().getRootUMLPart();
+    public List<UMLNode> getChildren() {
+        return Collections.unmodifiableList(children);
     }
 
-    public Collection<UMLPart> getChildren() {
-        return unmodifiableCollection(children);
-    }
-
-    public void addChild(UMLPart child) {
+    public void addChild(UMLNode child) {
         children.add(child);
         child.setParent(this);
     }
 
-    public void removeChildren(Predicate<? super UMLPart> condition) {
+    public void removeChildren(Predicate<? super UMLNode> condition) {
         children.removeIf(condition);
     }
 
     protected Configuration getConfiguration() {
-        return getRootUMLPart().config;
-    }
-
-    protected Indentation getIndentation() {
-        return parent == null ? Indentation.DEFAULT : parent.getIndentation();
+        return findParent(Diagram.class)
+                .map(Diagram::getConfiguration)
+                .orElseThrow(() -> new IllegalStateException("Cannot obtain configuration!"));
     }
 
     /**
@@ -93,8 +99,8 @@ public abstract class UMLPart implements IndentingRenderer {
      * @return A reference to the output for method chaining purposes.
      */
     protected <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
-        Collection<? extends UMLPart> children = getChildren();
-        if (children != null && !children.isEmpty()) {
+        Collection<? extends UMLNode> children = getChildren();
+        if (!children.isEmpty()) {
             IndentingPrintWriter indented = output.indent();
             children.forEach(child -> child.writeTo(indented));
         }
@@ -107,7 +113,17 @@ public abstract class UMLPart implements IndentingRenderer {
      * @return The rendered content of this renderer.
      */
     public String toString() {
-        return writeTo(IndentingPrintWriter.wrap(new StringWriter(), getIndentation())).toString();
+        return writeTo(IndentingPrintWriter.wrap(new StringWriter(), indentation())).toString();
     }
 
+    /**
+     * @return never-null indentation for use in toString
+     */
+    private Indentation indentation() {
+        try {
+            return requireNonNull(getConfiguration().indentation());
+        } catch (RuntimeException noConfig) {
+            return Indentation.DEFAULT;
+        }
+    }
 }

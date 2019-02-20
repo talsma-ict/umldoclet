@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,21 +15,37 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
+import net.sourceforge.plantuml.FileFormat;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
+import org.junit.Before;
 import org.junit.Test;
 
+import static java.util.Collections.singleton;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class NamespaceTest {
 
+    Configuration config;
+    ImageConfig images;
+
+    @Before
+    public void setup() {
+        config = mock(Configuration.class);
+        images = mock(ImageConfig.class);
+        when(config.images()).thenReturn(images);
+        when(images.formats()).thenReturn(singleton(FileFormat.SVG));
+    }
+
     @Test
     public void testEquals() {
-        PackageUml packageUml = new PackageUml(mock(Configuration.class), "a.b.c");
+        PackageDiagram packageUml = new PackageDiagram(config, "a.b.c");
         Namespace namespace = new Namespace(packageUml, "a.b.c");
         assertThat(namespace.equals(namespace), is(true));
         assertThat(namespace, is(equalTo(new Namespace(null, "a.b.c"))));
@@ -39,7 +55,7 @@ public class NamespaceTest {
 
     @Test
     public void testCompareTo() {
-        PackageUml packageUml = new PackageUml(mock(Configuration.class), "a.b.c");
+        PackageDiagram packageUml = new PackageDiagram(config, "a.b.c");
         Namespace namespace = new Namespace(packageUml, "a.b.c");
 
         assertThat(namespace.compareTo(namespace), is(0));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.io.File;
 import java.net.URI;
+import java.util.Objects;
 import java.util.Optional;
 
 import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
@@ -28,19 +29,19 @@ import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
  *
  * @author Sjoerd Talsma
  */
-public class Link extends UMLPart {
+public class Link extends UMLNode {
     private static final ThreadLocal<String> LINK_FROM = new ThreadLocal<>();
 
     private final URI target;
 
-    private Link(UMLPart parent, URI target) {
+    private Link(UMLNode parent, URI target) {
         super(parent);
         this.target = target;
     }
 
     public static Link forType(Type type) {
         final String destinationDirectory = type.getConfiguration().destinationDirectory();
-        final String packageName = type.getNamespace().name;
+        final String packageName = type.getPackagename();
         final String nameInPackage = type.getName().qualified.startsWith(packageName + ".")
                 ? type.getName().qualified.substring(packageName.length() + 1) : type.getName().simple;
 
@@ -52,9 +53,7 @@ public class Link extends UMLPart {
 
     private static Optional<URI> relativeHtmlFile(String destinationDirectory, String packageName, String nameInPackage) {
         final String directory = destinationDirectory + "/" + packageName.replace('.', '/');
-        return Optional.of(new File(directory, nameInPackage + ".html"))
-                .filter(File::isFile)
-                .map(File::toURI);
+        return Optional.of(new File(directory, nameInPackage + ".html")).filter(File::isFile).map(File::toURI);
     }
 
     /**
@@ -63,30 +62,19 @@ public class Link extends UMLPart {
      * This setting is configured on a per-thread basis.
      *
      * @param basePath The base path to define relative links from.
+     * @return whether the base path was modified or not
      */
-    public static void linkFrom(String basePath) {
+    public static boolean linkFrom(String basePath) {
+        if (Objects.equals(basePath, LINK_FROM.get())) return false;
         if (basePath == null) LINK_FROM.remove();
         else LINK_FROM.set(basePath);
-    }
-
-    private Optional<Namespace> diagramPackage() {
-        UMLRoot diagram = getRootUMLPart();
-        if (diagram instanceof PackageUml) {
-            return Optional.of(new Namespace(diagram, ((PackageUml) diagram).packageName));
-        } else if (diagram instanceof ClassUml) {
-            return Optional.of(((ClassUml) diagram).type.getNamespace());
-        }
-        return Optional.empty();
+        return true;
     }
 
     private Optional<File> linkFromDir() {
-        final File fromDir = new File(
-                Optional.ofNullable(LINK_FROM.get())
-                        .or(() -> diagramPackage()
-                                .map(namespace -> namespace.name)
-                                .map(packageName -> packageName.replace('.', '/'))
-                                .map(packageDir -> getRootUMLPart().config.destinationDirectory() + "/" + packageDir))
-                        .orElseGet(() -> getRootUMLPart().config.destinationDirectory()));
+        String dir = LINK_FROM.get();
+        if (dir == null) dir = getConfiguration().destinationDirectory();
+        final File fromDir = new File(dir);
         return fromDir.isDirectory() ? Optional.of(fromDir) : Optional.empty();
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Sjoerd Talsma
  */
-public abstract class TypeMember extends UMLPart implements Comparable<TypeMember> {
+public abstract class TypeMember extends UMLNode implements Comparable<TypeMember> {
 
     protected final Type containingType;
     protected final Visibility visibility;
@@ -78,7 +78,9 @@ public abstract class TypeMember extends UMLPart implements Comparable<TypeMembe
         return output;
     }
 
-    @Override
+    @Override // TODO: Why implement comparable?
+    // Isn't this a concern of the producing package instead of the UML package?
+    // Even then, why expose the Comparable interface instead of encapsulating a private comparator?
     public int compareTo(TypeMember other) {
         return comparing((TypeMember member) -> member.getClass().getSimpleName())
                 .thenComparing(member -> member.name.toLowerCase())

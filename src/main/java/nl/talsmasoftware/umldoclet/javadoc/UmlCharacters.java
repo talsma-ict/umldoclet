@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,32 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.uml;
+package nl.talsmasoftware.umldoclet.javadoc;
 
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.uml.UMLNode;
 
 /**
  * A literal piece of UML.
  *
  * @author Sjoerd Talsma
  */
-public class Literal extends UMLPart {
-    public static final Literal EMPTY = new Literal("");
-    public static final Literal NEWLINE = new Literal.Line("");
+class UmlCharacters extends UMLNode {
+    static final UmlCharacters EMPTY = new UmlCharacters("");
+    static final UmlCharacters NEWLINE = new UmlLine("");
 
     private final String content;
 
-    private Literal(String content) {
+    private UmlCharacters(String content) {
         super(null);
         this.content = content;
-    }
-
-    public static Literal line(String line) {
-        return new Literal.Line(line);
-    }
-
-    void setParent(UMLPart parent) {
-        // Parent is neither required nor supported.
     }
 
     @Override
@@ -47,8 +40,8 @@ public class Literal extends UMLPart {
         return output;
     }
 
-    private static class Line extends Literal {
-        private Line(String line) {
+    static class UmlLine extends UmlCharacters {
+        private UmlLine(String line) {
             super(line);
         }
 
@@ -57,6 +50,5 @@ public class Literal extends UMLPart {
             super.writeTo(output).newline();
             return output;
         }
-
     }
 }

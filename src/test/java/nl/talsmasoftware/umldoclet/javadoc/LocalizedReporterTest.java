@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -124,7 +124,7 @@ public class LocalizedReporterTest {
         localizedReporter.warn(Message.WARNING_UNRECOGNIZED_IMAGE_FORMAT, ".doc");
 
         verify(mockReporter).print(eq(Diagnostic.Kind.WARNING),
-                eq("Unrecognized image format encountered: \".doc\"."));
+                eq("Unrecognized image format: \".doc\"."));
     }
 
     @Test

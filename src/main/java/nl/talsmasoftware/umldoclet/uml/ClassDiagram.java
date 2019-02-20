@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,42 +16,49 @@
 package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.util.FileUtils;
 
 import java.io.File;
 
-import static java.util.Objects.requireNonNull;
+public class ClassDiagram extends Diagram {
 
-/**
- * @author Sjoerd Talsma
- */
-public class ClassUml extends UMLRoot {
-
-    final Type type;
     private File pumlFile = null;
 
-    public ClassUml(Configuration config, Type type) {
+    public ClassDiagram(Configuration config, Type type) {
         super(config);
-        this.type = requireNonNull(type, "Type in classdiagram is <null>.");
-        addChild(Literal.line("set namespaceSeparator none"));
-        addChild(Literal.line("hide empty fields"));
-        addChild(Literal.line("hide empty methods"));
-        addChild(Literal.NEWLINE);
         addChild(type);
     }
 
-    @Override
-    public void addChild(UMLPart child) {
-        if (child instanceof Type) child = ((Type) child).addPackageToName();
-        super.addChild(child);
+    public Type getType() {
+        return getChildren().stream()
+                .filter(Type.class::isInstance).map(Type.class::cast)
+                .findFirst().orElseThrow(() -> new IllegalStateException("No Type defined in Class diagram!"));
     }
 
     @Override
-    public File pumlFile() {
+    public void addChild(UMLNode child) {
+        super.addChild(child);
+        if (child instanceof Type) ((Type) child).setIncludePackagename(true);
+    }
+
+    @Override
+    protected <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
+        output.indent()
+                .append("set namespaceSeparator none").newline()
+                .append("hide empty fields").newline()
+                .append("hide empty methods").newline()
+                .newline();
+        return super.writeChildrenTo(output);
+    }
+
+    @Override
+    protected File getPlantUmlFile() {
         if (pumlFile == null) {
+            final Type type = getType();
             StringBuilder result = new StringBuilder(getConfiguration().destinationDirectory());
             if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');
-            String containingPackage = type.getNamespace().name;
+            String containingPackage = type.getPackagename();
             result.append(containingPackage.replace('.', '/')).append('/');
             if (type.getName().qualified.startsWith(containingPackage + ".")) {
                 result.append(type.getName().qualified.substring(containingPackage.length() + 1));

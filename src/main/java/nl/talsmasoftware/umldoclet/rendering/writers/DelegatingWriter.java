@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -126,7 +126,7 @@ public class DelegatingWriter extends Writer {
      * @param exceptions The exceptions to merge into one IOException.
      * @return The merged IOException.
      */
-    protected IOException mergeExceptions(String actionVerb, Collection<Exception> exceptions) {
+    private IOException mergeExceptions(String actionVerb, Collection<Exception> exceptions) {
         if (exceptions.size() == 1) {
             Exception singleException = exceptions.iterator().next();
             if (singleException instanceof RuntimeException) {

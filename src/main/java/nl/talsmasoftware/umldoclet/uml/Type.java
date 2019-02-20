@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import java.util.Collection;
 
 import static java.util.Objects.requireNonNull;
 
-public class Type extends UMLPart implements Comparable<Type> {
+public class Type extends UMLNode implements Comparable<Type> {
     /**
      * Classification of a UML Type.
      *
@@ -36,10 +36,10 @@ public class Type extends UMLPart implements Comparable<Type> {
         }
     }
 
-    private final Namespace namespace;
-    private final Classification classfication;
+    private Namespace packageNamespace;
+    private Classification classfication;
     private TypeName name;
-    private final boolean isDeprecated, addPackageToName;
+    private boolean isDeprecated, includePackagename;
     private Link link;
 
     public Type(Namespace namespace, Classification classification, TypeName name) {
@@ -47,13 +47,13 @@ public class Type extends UMLPart implements Comparable<Type> {
     }
 
     private Type(Namespace namespace, Classification classification, TypeName name, boolean isDeprecated,
-                 boolean addPackageToName, Collection<? extends UMLPart> children) {
+                 boolean addPackageToName, Collection<? extends UMLNode> children) {
         super(namespace);
-        this.namespace = requireNonNull(namespace, "Containing package is <null>.");
+        this.packageNamespace = requireNonNull(namespace, "Containing package is <null>.");
         this.classfication = requireNonNull(classification, "Type classification is <null>.");
         this.name = requireNonNull(name, "Type name is <null>.");
         this.isDeprecated = isDeprecated;
-        this.addPackageToName = addPackageToName;
+        this.includePackagename = addPackageToName;
         if (children != null) children.forEach(this::addChild);
     }
 
@@ -83,45 +83,40 @@ public class Type extends UMLPart implements Comparable<Type> {
     }
 
     public Type deprecated() {
-        return new Type(getNamespace(), classfication, name, true, addPackageToName, getChildren());
+        this.isDeprecated = true;
+        return this;
     }
 
-    public Type addPackageToName() {
-        return new Type(getNamespace(), classfication, name, isDeprecated, true, getChildren());
+    public void setIncludePackagename(boolean include) {
+        this.includePackagename = include;
     }
 
-    public Namespace getNamespace() {
-        return namespace;
+    public String getPackagename() {
+        return packageNamespace.name;
     }
 
     public Classification getClassfication() {
         return classfication;
     }
 
-    @Override
-    void setParent(UMLPart parent) {
-        super.setParent(parent);
-        if (namespace.getParent() == null) namespace.setParent(parent);
-    }
-
-    private <IPW extends IndentingPrintWriter> IPW writeNameTo(IPW output, Namespace namespace) {
-        if (addPackageToName && name.qualified.startsWith(this.namespace.name + '.')) {
-            String nameInPackage = name.qualified.substring(this.namespace.name.length() + 1);
+    private <IPW extends IndentingPrintWriter> IPW writeNameTo(IPW output) {
+        if (includePackagename && name.qualified.startsWith(this.packageNamespace.name + '.')) {
+            String nameInPackage = name.qualified.substring(this.packageNamespace.name.length() + 1);
             output.append("\"<size:14>").append(nameInPackage)
-                    .append("\\n<size:10>").append(this.namespace.name)
+                    .append("\\n<size:10>").append(this.packageNamespace.name)
                     .append("\" as ");
         }
+
+        // Namespace aware compensation // TODO Simplify this package logic and make sure all is still needed!
+        Namespace namespace = findParent(Namespace.class).orElse(null);
         output.append(name.toUml(TypeDisplay.QUALIFIED, namespace));
         return output;
     }
 
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-        // Namespace aware compensation
-        final Namespace namespace = getParent() instanceof PackageUml
-                ? new Namespace(getRootUMLPart(), ((PackageUml) getParent()).packageName) : null;
         output.append(classfication.toUml()).whitespace();
-        writeNameTo(output, namespace).whitespace();
+        writeNameTo(output).whitespace();
         if (isDeprecated) output.append("<<deprecated>>").whitespace();
         link().writeTo(output).whitespace();
         writeChildrenTo(output).newline();

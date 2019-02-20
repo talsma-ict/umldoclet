@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,18 +25,18 @@ import static java.util.Objects.requireNonNull;
 /**
  * @author Sjoerd Talsma
  */
-public class PackageUml extends UMLRoot {
+public class PackageDiagram extends Diagram {
 
-    final String packageName;
+    final String packageName; // TODO: maybe auto-detect lazily by first addChild() of type Namespace?
     private File pumlFile = null;
 
-    public PackageUml(Configuration config, String packageName) {
+    public PackageDiagram(Configuration config, String packageName) {
         super(config);
         this.packageName = requireNonNull(packageName, "Package name is <null>.");
     }
 
     @Override
-    public File pumlFile() {
+    protected File getPlantUmlFile() {
         if (pumlFile == null) {
             StringBuilder result = new StringBuilder(getConfiguration().destinationDirectory());
             if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');
@@ -46,5 +46,4 @@ public class PackageUml extends UMLRoot {
         }
         return pumlFile;
     }
-
 }
