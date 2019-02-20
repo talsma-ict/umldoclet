@@ -22,7 +22,7 @@ import java.util.Collection;
 
 import static java.util.Objects.requireNonNull;
 
-public class Type extends UMLNode implements Comparable<Type> {
+public class Type extends UMLNode {
     /**
      * Classification of a UML Type.
      *
@@ -135,13 +135,8 @@ public class Type extends UMLNode implements Comparable<Type> {
     }
 
     @Override
-    public int compareTo(Type other) {
-        return name.compareTo(requireNonNull(other, "Cannot compare Type to <null>.").name);
-    }
-
-    @Override
     public boolean equals(Object other) {
-        return this == other || (other instanceof Type && this.compareTo((Type) other) == 0);
+        return this == other || (other instanceof Type && this.name.equals(((Type) other).name));
     }
 
 }
