@@ -19,12 +19,10 @@ import nl.talsmasoftware.umldoclet.configuration.MethodConfig;
 import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
-import java.util.Iterator;
-
 /**
  * @author Sjoerd Talsma
  */
-public class Parameters extends UMLNode implements Comparable<Parameters> {
+public class Parameters extends UMLNode {
 
     private boolean varargs = false;
 
@@ -71,16 +69,6 @@ public class Parameters extends UMLNode implements Comparable<Parameters> {
                     .filter(p -> from.equals(p.type))
                     .forEach(p -> p.type = to);
         }
-    }
-
-    @Override
-    public int compareTo(Parameters other) {
-        int delta = Integer.compare(this.getChildren().size(), other.getChildren().size());
-        for (Iterator<UMLNode> ours = this.getChildren().iterator(), theirs = other.getChildren().iterator();
-             delta == 0 && ours.hasNext() && theirs.hasNext(); ) {
-            delta = ((Parameter) ours.next()).type.compareTo(((Parameter) theirs.next()).type);
-        }
-        return delta;
     }
 
     private class Parameter extends UMLNode {

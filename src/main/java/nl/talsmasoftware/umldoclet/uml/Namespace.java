@@ -26,7 +26,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Sjoerd Talsma
  */
-public class Namespace extends UMLNode implements Comparable<Namespace> {
+public class Namespace extends UMLNode {
 
     public final String name;
 
@@ -67,14 +67,7 @@ public class Namespace extends UMLNode implements Comparable<Namespace> {
     }
 
     @Override
-    public int compareTo(Namespace other) {
-        requireNonNull(other, "Cannot compare with namespace <null>.");
-        int diff = name.compareToIgnoreCase(other.name);
-        return diff == 0 ? name.compareTo(other.name) : diff;
-    }
-
-    @Override
     public boolean equals(Object other) {
-        return this == other || (other instanceof Namespace && this.compareTo((Namespace) other) == 0);
+        return this == other || (other instanceof Namespace && name.equals(((Namespace) other).name));
     }
 }

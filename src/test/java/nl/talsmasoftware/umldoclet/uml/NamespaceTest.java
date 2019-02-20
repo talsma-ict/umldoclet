@@ -53,14 +53,4 @@ public class NamespaceTest {
         assertThat(namespace, is(not(equalTo(new Namespace(packageUml, "A.B.C")))));
     }
 
-    @Test
-    public void testCompareTo() {
-        PackageDiagram packageUml = new PackageDiagram(config, "a.b.c");
-        Namespace namespace = new Namespace(packageUml, "a.b.c");
-
-        assertThat(namespace.compareTo(namespace), is(0));
-        assertThat(namespace.compareTo(new Namespace(null, "a.b.c.d")), is(lessThan(0)));
-        assertThat(namespace.compareTo(new Namespace(null, "A.B.C")), is(not(0)));
-    }
-
 }
