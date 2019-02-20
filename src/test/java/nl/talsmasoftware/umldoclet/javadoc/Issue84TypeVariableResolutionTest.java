@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package nl.talsmasoftware.umldoclet.javadoc;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
-import nl.talsmasoftware.umldoclet.uml.TypeMember;
 import nl.talsmasoftware.umldoclet.util.Testing;
 import org.junit.Test;
 
@@ -32,20 +31,19 @@ public class Issue84TypeVariableResolutionTest {
 
     @Test
     public void testTypeMemberImplementsComparableTypeMember() throws FileNotFoundException {
-        String typeMemberPath = TypeMember.class.getName().replace('.', '/');
+        String testObjectPath = TestObject.class.getName().replace('.', '/');
         ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
                 "-d", "target/test-84",
                 "-doclet", UMLDoclet.class.getName(),
-                "-quiet",
-                "-createPumlFiles",
-                "src/main/java/" + typeMemberPath + ".java"
+                "-quiet", "-createPumlFiles",
+                "src/test/java/" + testObjectPath + ".java"
         );
 
-        assertThat(Testing.readUml(new FileInputStream("target/test-84/" + typeMemberPath + ".puml")),
+        assertThat(Testing.readUml(new FileInputStream("target/test-84/" + testObjectPath + ".puml")),
                 stringContainsInOrder(asList(
-                        "java.lang.Comparable<TypeMember>",
-                        "{abstract} +compareTo(TypeMember): int")));
+                        "java.lang.Comparable<TestObject>",
+                        "{abstract} +compareTo(TestObject): int")));
     }
 
 }

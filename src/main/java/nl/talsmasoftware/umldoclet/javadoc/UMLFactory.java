@@ -220,17 +220,16 @@ public class UMLFactory {
     Field createField(Type containingType, VariableElement variable) {
         Set<Modifier> modifiers = requireNonNull(variable, "Variable element is <null>.").getModifiers();
         Field field = new Field(containingType,
-                visibilityOf(modifiers),
-                modifiers.contains(Modifier.STATIC),
                 variable.getSimpleName().toString(),
-                TypeNameVisitor.INSTANCE.visit(variable.asType())
-        );
-        if (env.getElementUtils().isDeprecated(variable)) field = field.deprecated();
+                TypeNameVisitor.INSTANCE.visit(variable.asType()));
+        field.setVisibility(visibilityOf(modifiers));
+        field.isStatic = modifiers.contains(Modifier.STATIC);
+        field.isDeprecated = env.getElementUtils().isDeprecated(variable);
         return field;
     }
 
     private Parameters createParameters(List<? extends VariableElement> params) {
-        Parameters result = new Parameters();
+        Parameters result = new Parameters(null);
         Boolean varargs = null;
         for (VariableElement param : params) {
             if (varargs == null) result = result.varargs(varargs = isVarArgsMethod(param.getEnclosingElement()));
@@ -245,29 +244,26 @@ public class UMLFactory {
 
     Method createConstructor(Type containingType, ExecutableElement executableElement) {
         Set<Modifier> modifiers = requireNonNull(executableElement, "Executable element is <null>.").getModifiers();
-        Method constructor = new Method(containingType,
-                visibilityOf(modifiers),
-                modifiers.contains(Modifier.ABSTRACT),
-                modifiers.contains(Modifier.STATIC),
-                containingType.getName().simple,
-                createParameters(executableElement.getParameters()),
-                null
-        );
-        if (env.getElementUtils().isDeprecated(executableElement)) constructor = constructor.deprecated();
+        Method constructor = new Method(containingType, containingType.getName().simple, null);
+        constructor.setVisibility(visibilityOf(modifiers));
+        constructor.isAbstract = modifiers.contains(Modifier.ABSTRACT);
+        constructor.isStatic = modifiers.contains(Modifier.STATIC);
+        constructor.isDeprecated = env.getElementUtils().isDeprecated(executableElement);
+        constructor.addChild(createParameters(executableElement.getParameters()));
         return constructor;
     }
 
     Method createMethod(Type containingType, ExecutableElement executableElement) {
         Set<Modifier> modifiers = requireNonNull(executableElement, "Executable element is <null>.").getModifiers();
         Method method = new Method(containingType,
-                visibilityOf(modifiers),
-                modifiers.contains(Modifier.ABSTRACT),
-                modifiers.contains(Modifier.STATIC),
                 executableElement.getSimpleName().toString(),
-                createParameters(executableElement.getParameters()),
                 TypeNameVisitor.INSTANCE.visit(executableElement.getReturnType())
         );
-        if (env.getElementUtils().isDeprecated(executableElement)) method = method.deprecated();
+        method.setVisibility(visibilityOf(modifiers));
+        method.isAbstract = modifiers.contains(Modifier.ABSTRACT);
+        method.isStatic = modifiers.contains(Modifier.STATIC);
+        method.isDeprecated = env.getElementUtils().isDeprecated(executableElement);
+        method.addChild(createParameters(executableElement.getParameters()));
         return method;
     }
 

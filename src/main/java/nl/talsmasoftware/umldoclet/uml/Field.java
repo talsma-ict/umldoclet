@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,23 +26,15 @@ import static nl.talsmasoftware.umldoclet.uml.Type.Classification.ENUM;
  */
 public class Field extends TypeMember {
 
-    private Field(Type containingType, Visibility visibility, boolean isStatic, boolean isDeprecated, String name,
-                  TypeName type) {
-        super(containingType, visibility, false, isStatic, isDeprecated, name, type);
-    }
-
-    public Field(Type containingType, Visibility visibility, boolean isStatic, String name, TypeName type) {
-        this(containingType, visibility, isStatic, false, name, type);
-    }
-
-    public Field deprecated() {
-        return new Field(containingType, visibility, isStatic, true, name, type);
+    public Field(Type containingType, String name, TypeName type) {
+        super(containingType, name, type);
     }
 
     private boolean isEnumType() {
         return isStatic
-                && ENUM.equals(containingType.getClassfication())
-                && containingType.getName().equals(type);
+                && getParent() instanceof Type
+                && ENUM.equals(((Type) getParent()).getClassfication())
+                && ((Type) getParent()).getName().equals(type);
     }
 
     @Override
@@ -52,8 +44,8 @@ public class Field extends TypeMember {
 
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-        if (getConfiguration().fields().include(visibility)) super.writeTo(output);
-        return output;
+        if (!getConfiguration().fields().include(getVisibility())) return output;
+        return super.writeTo(output);
     }
 
 }

@@ -19,7 +19,6 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Objects;
 
-import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -27,25 +26,26 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Sjoerd Talsma
  */
-public abstract class TypeMember extends UMLNode implements Comparable<TypeMember> {
+public abstract class TypeMember extends UMLNode {
 
-    protected final Type containingType;
-    protected final Visibility visibility;
-    public final boolean isAbstract, isStatic, isDeprecated;
     public final String name;
     protected TypeName type;
+    private Visibility visibility;
+    public boolean isAbstract, isStatic, isDeprecated;
 
-    public TypeMember(Type containingType, Visibility visibility, boolean isAbstract, boolean isStatic,
-                      boolean isDeprecated, String name, TypeName type) {
+    protected TypeMember(Type containingType, String name, TypeName type) {
         super(containingType);
-        this.containingType = requireNonNull(containingType, "Containing type is <null>.");
-        this.visibility = requireNonNull(visibility, "Member visibility is <null>.");
-        this.isAbstract = isAbstract;
-        this.isStatic = isStatic;
-        this.isDeprecated = isDeprecated;
         this.name = requireNonNull(name, "Member name is <null>.").trim();
         if (this.name.isEmpty()) throw new IllegalArgumentException("Member name is empty.");
         this.type = type;
+    }
+
+    public Visibility getVisibility() {
+        return visibility == null ? Visibility.PUBLIC : visibility;
+    }
+
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
     }
 
     protected <IPW extends IndentingPrintWriter> IPW writeTypeTo(IPW output) {
@@ -69,7 +69,7 @@ public abstract class TypeMember extends UMLNode implements Comparable<TypeMembe
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         if (isAbstract) output.append("{abstract}").whitespace();
         if (isStatic) output.append("{static}").whitespace();
-        output.append(visibility.toUml());
+        output.append(getVisibility().toUml());
         if (isDeprecated) output.append("--").append(name).append("--");
         else output.append(name);
         writeParametersTo(output);
@@ -78,24 +78,17 @@ public abstract class TypeMember extends UMLNode implements Comparable<TypeMembe
         return output;
     }
 
-    @Override // TODO: Why implement comparable?
-    // Isn't this a concern of the producing package instead of the UML package?
-    // Even then, why expose the Comparable interface instead of encapsulating a private comparator?
-    public int compareTo(TypeMember other) {
-        return comparing((TypeMember member) -> member.getClass().getSimpleName())
-                .thenComparing(member -> member.name.toLowerCase())
-                .thenComparing(member -> member.name)
-                .compare(this, other);
-    }
-
     @Override
     public int hashCode() {
-        return Objects.hash(containingType, name);
+        return Objects.hash(getParent(), name);
     }
 
     @Override
     public boolean equals(Object other) {
-        return this == other || (other instanceof TypeMember && this.compareTo((TypeMember) other) == 0);
+        return this == other || (other != null && getClass().equals(other.getClass())
+                && Objects.equals(getParent(), ((TypeMember) other).getParent())
+                && name.equals(((TypeMember) other).name)
+        );
     }
 
 }

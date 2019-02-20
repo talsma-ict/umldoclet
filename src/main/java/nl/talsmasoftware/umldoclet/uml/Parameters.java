@@ -28,18 +28,8 @@ public class Parameters extends UMLNode implements Comparable<Parameters> {
 
     private boolean varargs = false;
 
-    @Deprecated // TODO Refactor away?
-    public Parameters() {
-        this(null);
-    }
-
     public Parameters(UMLNode parent) {
         super(parent);
-    }
-
-    @Deprecated
-    void setMethod(Method method) {
-        setParent(method);
     }
 
     @Override

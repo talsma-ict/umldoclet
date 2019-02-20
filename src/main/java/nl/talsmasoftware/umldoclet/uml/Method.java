@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,41 +20,31 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Objects;
 
-import static java.util.Comparator.comparing;
-import static java.util.Objects.requireNonNull;
-
 /**
  * @author Sjoerd Talsma
  */
 public class Method extends TypeMember {
 
-    private final Parameters parameters;
-
-    public Method(Type containingType, Visibility visibility, boolean isAbstract, boolean isStatic,
-                  String name, Parameters parameters, TypeName returnType) {
-        this(containingType, visibility, isAbstract, isStatic, false, name, parameters, returnType);
+    public Method(Type containingType, String name, TypeName returnType) {
+        super(containingType, name, returnType);
     }
 
-    private Method(Type containingType, Visibility visibility, boolean isAbstract, boolean isStatic, boolean isDeprecated,
-                   String name, Parameters parameters, TypeName returnType) {
-        super(containingType, visibility, isAbstract, isStatic, isDeprecated, name, returnType);
-        this.parameters = requireNonNull(parameters, () -> "No parameters for method " + containingType.getName() + "." + name);
-        this.parameters.setMethod(this);
-    }
-
-    public Method deprecated() {
-        return new Method(containingType, visibility, isAbstract, isStatic, true, name, parameters, type);
+    private Parameters getParameters() {
+        return getChildren().stream()
+                .filter(Parameters.class::isInstance).map(Parameters.class::cast)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No method parameters found!")); // TODO: 'no parameters'?
     }
 
     @Override
     protected <IPW extends IndentingPrintWriter> IPW writeParametersTo(IPW output) {
-        return parameters.writeTo(output);
+        return getParameters().writeTo(output);
     }
 
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-        if (getConfiguration().methods().include(visibility)) super.writeTo(output);
-        return output;
+        if (!getConfiguration().methods().include(getVisibility())) return output;
+        return super.writeTo(output);
     }
 
     @Override
@@ -69,19 +59,18 @@ public class Method extends TypeMember {
     @Override
     void replaceParameterizedType(TypeName from, TypeName to) {
         super.replaceParameterizedType(from, to);
-        parameters.replaceParameterizedType(from, to);
-    }
-
-    @Override
-    public int compareTo(TypeMember other) {
-        return comparing(super::compareTo)
-                .thenComparing(method -> ((Method) method).parameters)
-                .compare(this, other);
+        getParameters().replaceParameterizedType(from, to);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), parameters);
+        return Objects.hash(super.hashCode(), getParameters());
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return super.equals(other)
+                && getParameters().equals(((Method) other).getParameters());
     }
 
 }
