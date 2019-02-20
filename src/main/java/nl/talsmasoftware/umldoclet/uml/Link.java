@@ -19,12 +19,9 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.io.File;
 import java.net.URI;
-import java.util.IdentityHashMap;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
-import static java.util.Collections.newSetFromMap;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
 
 /**
@@ -76,31 +73,10 @@ public class Link extends UMLNode {
         return true;
     }
 
-//    private Optional<Namespace> findOuterNamespace() {
-//        final Set<UMLNode> traversed = newSetFromMap(new IdentityHashMap<>());
-//        Namespace namespace = null;
-//        for (UMLNode parent = getParent();
-//             parent != null && traversed.add(parent);
-//             parent = parent.getParent()) {
-//            if (parent instanceof Namespace) {
-//                namespace = (Namespace) parent;
-//            } else if (parent instanceof PackageDiagram) {
-//                namespace = new Namespace(parent, ((PackageDiagram) parent).packageName);
-//            } else if (parent instanceof ClassDiagram) {
-//                namespace = findParent(Type.class).map(type -> new Namespace(getParent(), type.getPackagename())).orElse(null);
-//            }
-//        }
-//        return Optional.ofNullable(namespace);
-//    }
-
     private Optional<File> linkFromDir() {
-        final File fromDir = new File(
-                Optional.ofNullable(LINK_FROM.get())
-//                        .or(() -> findOuterNamespace()
-//                                .map(namespace -> namespace.name)
-//                                .map(packageName -> packageName.replace('.', '/'))
-//                                .map(packageDir -> getConfiguration().destinationDirectory() + "/" + packageDir))
-                        .orElseGet(() -> getConfiguration().destinationDirectory()));
+        String dir = LINK_FROM.get();
+        if (dir == null) dir = getConfiguration().destinationDirectory();
+        final File fromDir = new File(dir);
         return fromDir.isDirectory() ? Optional.of(fromDir) : Optional.empty();
     }
 
