@@ -38,6 +38,7 @@ import static org.mockito.Mockito.when;
 
 public class ClassDiagramTest {
 
+    private static final String testdir = "target/test-uml/classdiagram";
     private ImageConfig images;
     private Configuration config;
     private TestLogger logger;
@@ -48,7 +49,7 @@ public class ClassDiagramTest {
         config = mock(Configuration.class);
         logger = new TestLogger();
         when(config.images()).thenReturn(images);
-        when(config.destinationDirectory()).thenReturn("target/test-classdiagram");
+        when(config.destinationDirectory()).thenReturn(testdir);
         when(config.renderPumlFile()).thenReturn(true);
         when(config.logger()).thenReturn(logger);
         when(config.umlCharset()).thenReturn(Charset.forName("UTF-8"));
@@ -64,8 +65,8 @@ public class ClassDiagramTest {
 
     @Test
     public void testClassWithSuperClassInAnotherPackage_relativePath() {
-        Testing.touch(new File("target/test-classdiagram/foo/bar/Bar.html"));
-        Testing.touch(new File("target/test-classdiagram/foo/Foo.html"));
+        Testing.touch(new File(testdir + "/foo/bar/Bar.html"));
+        Testing.touch(new File(testdir + "/foo/Foo.html"));
         Type bar = new Type(new Namespace(null, "foo.bar"),
                 Type.Classification.CLASS,
                 new TypeName("Bar", "foo.bar.Bar"));
@@ -83,7 +84,7 @@ public class ClassDiagramTest {
                 Reference.Side.to("foo.bar.Bar", null)));
 
         classDiagram.render();
-        String uml = Testing.read(new File("target/test-classdiagram/foo/bar/Bar.puml"));
+        String uml = Testing.read(new File(testdir + "/foo/bar/Bar.puml"));
         assertThat(uml, containsString("foo.bar.Bar [[Bar.html]]"));
         assertThat(uml, containsString("foo.Foo [[../Foo.html]]"));
     }

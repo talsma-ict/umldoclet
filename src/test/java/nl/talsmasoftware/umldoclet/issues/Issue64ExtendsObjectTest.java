@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,14 +56,14 @@ public class Issue64ExtendsObjectTest {
         ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
                 "-sourcepath", "src/test/java",
-                "-d", "target/test-64",
+                "-d", "target/issues/64",
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet",
                 "-createPumlFiles",
                 Issue64ExtendsObjectTest.class.getPackageName()
         );
         emptySetUml = Testing.readUml(new FileInputStream(
-                "target/test-64/nl/talsmasoftware/umldoclet/issues/Issue64ExtendsObjectTest.EmptySet.puml"));
+                "target/issues/64/nl/talsmasoftware/umldoclet/issues/Issue64ExtendsObjectTest.EmptySet.puml"));
     }
 
     @Test

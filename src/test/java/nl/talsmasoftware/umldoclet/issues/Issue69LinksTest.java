@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import static org.hamcrest.Matchers.stringContainsInOrder;
  * @author Sjoerd Talsma
  */
 public class Issue69LinksTest {
-    static final File testoutput = new File("target/test-69");
+    static final File testoutput = new File("target/issues/69");
     static final String packageAsPath = Issue69LinksTest.class.getPackageName().replace('.', '/');
 
     public static class InnerClass {

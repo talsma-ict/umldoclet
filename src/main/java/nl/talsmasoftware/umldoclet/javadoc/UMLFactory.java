@@ -26,7 +26,6 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
 import java.util.*;
@@ -72,18 +71,21 @@ public class UMLFactory {
         UmlCharacters sep = UmlCharacters.NEWLINE;
 
         // Add superclass
-        if (!TypeKind.NONE.equals(classElement.getSuperclass().getKind())) {
-            TypeName superclassName = TypeNameVisitor.INSTANCE.visit(classElement.getSuperclass());
+        TypeMirror superclassType = classElement.getSuperclass();
+        Element superclassElement = env.getTypeUtils().asElement(superclassType);
+        while (superclassElement instanceof TypeElement && !includeSuperclass((TypeElement) superclassElement)) {
+            superclassType = ((TypeElement) superclassElement).getSuperclass();
+            superclassElement = env.getTypeUtils().asElement(superclassType);
+        }
+        if (superclassElement instanceof TypeElement) {
+            final TypeName superclassName = TypeNameVisitor.INSTANCE.visit(superclassType);
             if (superclassName.getGenerics().length > 0) foundTypeVariables.add(superclassName);
             if (!config.excludedTypeReferences().contains(superclassName.qualified)) {
-                Element superclass = env.getTypeUtils().asElement(classElement.getSuperclass());
-                if (superclass instanceof TypeElement) {
-                    classDiagram.addChild(sep);
-                    Type superType = createAndPopulateType(null, (TypeElement) superclass);
-                    superType.removeChildren(child -> !(child instanceof TypeMember) || !((TypeMember) child).isAbstract);
-                    classDiagram.addChild(superType);
-                    sep = UmlCharacters.EMPTY;
-                }
+                classDiagram.addChild(sep);
+                Type superType = createAndPopulateType(null, (TypeElement) superclassElement);
+                superType.removeChildren(child -> !(child instanceof TypeMember) || !((TypeMember) child).isAbstract);
+                classDiagram.addChild(superType);
+                sep = UmlCharacters.EMPTY;
                 references.add(new Reference(
                         from(type.getName().qualified, null),
                         "--|>",
@@ -170,6 +172,13 @@ public class UMLFactory {
         }
 
         return classDiagram;
+    }
+
+    // Fix issue 146: skip superclass is not included in the documentation
+    private boolean includeSuperclass(TypeElement superclass) {
+        if (env.isIncluded(superclass)) return true;
+        // TODO figure out which logic the actual Javadoc uses here!
+        return superclass.getModifiers().contains(Modifier.PUBLIC);
     }
 
     public Diagram createPackageDiagram(PackageElement packageElement) {
@@ -409,12 +418,21 @@ public class UMLFactory {
         Collection<Reference> references = new LinkedHashSet<>();
 
         // Superclass reference.
-        if (!TypeKind.NONE.equals(typeElement.getSuperclass().getKind())) {
-            TypeName superclass = TypeNameVisitor.INSTANCE.visit(typeElement.getSuperclass());
-            if (!config.excludedTypeReferences().contains(superclass.qualified)) {
-                references.add(new Reference(from(type.getName().qualified, null), "--|>", to(superclass.qualified, null)));
-                if (!namespace.contains(superclass)) {
-                    addForeignType(foreignTypes, env.getTypeUtils().asElement(typeElement.getSuperclass()));
+        TypeMirror superclassType = typeElement.getSuperclass();
+        Element superclassElement = env.getTypeUtils().asElement(superclassType);
+        while (superclassElement instanceof TypeElement && !includeSuperclass((TypeElement) superclassElement)) {
+            superclassType = ((TypeElement) superclassElement).getSuperclass();
+            superclassElement = env.getTypeUtils().asElement(superclassType);
+        }
+        if (superclassElement instanceof TypeElement) {
+            TypeName superclassName = TypeNameVisitor.INSTANCE.visit(superclassType);
+            if (!config.excludedTypeReferences().contains(superclassName.qualified)) {
+                references.add(new Reference(
+                        from(type.getName().qualified, null),
+                        "--|>",
+                        to(superclassName.qualified, null)));
+                if (!namespace.contains(superclassName)) {
+                    addForeignType(foreignTypes, superclassElement);
                 }
             }
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ public class Issue25ImagedirTest {
     public static void createJavadoc() {
         ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
-                "-d", "target/test-25",
+                "-d", "target/issues/25",
                 "-doclet", UMLDoclet.class.getName(),
                 "-umlImageDirectory", "images",
                 "src/test/java/" + Issue25ImagedirTest.class.getName().replace('.', '/') + ".java"
@@ -49,14 +49,14 @@ public class Issue25ImagedirTest {
 
     @Test
     public void testImagesDirectoryPresence() {
-        File imagesDir = new File("target/test-25/images");
+        File imagesDir = new File("target/issues/25/images");
         assertThat("images dir exists", imagesDir.exists(), is(true));
         assertThat("images dir is directory", imagesDir.isDirectory(), is(true));
     }
 
     @Test
     public void testEnhancement25ImagePresence() {
-        File imageFile = new File("target/test-25/images/" + getClass().getName() + ".svg");
+        File imageFile = new File("target/issues/25/images/" + getClass().getName() + ".svg");
         assertThat("image " + imageFile +  " exists", imageFile.exists(), is(true));
         assertThat("image is directory", imageFile.isDirectory(), is(false));
         assertThat("image is file", imageFile.isFile(), is(true));

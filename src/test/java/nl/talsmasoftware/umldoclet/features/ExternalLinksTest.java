@@ -38,7 +38,7 @@ import static org.hamcrest.Matchers.stringContainsInOrder;
  */
 public class ExternalLinksTest {
 
-    static final File testoutput = Testing.deleteRecursive(new File("target/test-96"));
+    static final File testoutput = Testing.deleteRecursive(new File("target/issues/96"));
     static final String packageAsPath = ExternalLinksTest.class.getPackageName().replace('.', '/');
 
     public static class TestClass implements Serializable {

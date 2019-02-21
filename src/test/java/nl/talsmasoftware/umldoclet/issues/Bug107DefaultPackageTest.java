@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ public class Bug107DefaultPackageTest {
     public static void createJavadoc() {
         assertThat(ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
-                "-d", "target/test-107",
+                "-d", "target/issues/107",
                 "-doclet", UMLDoclet.class.getName(),
                 "-createPumlFiles",
                 "src/test/java/Foo.java"

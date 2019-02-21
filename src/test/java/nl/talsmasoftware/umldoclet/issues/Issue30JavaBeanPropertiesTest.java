@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,13 +53,13 @@ public class Issue30JavaBeanPropertiesTest {
         String classAsPath = packageAsPath + "/" + getClass().getSimpleName();
         ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
-                "-d", "target/test-30",
+                "-d", "target/issues/30",
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet",
                 "-createPumlFiles",
                 "src/test/java/" + classAsPath + ".java"
         );
-        String uml = Testing.read(new File("target/test-30/" + packageAsPath + "/package.puml"));
+        String uml = Testing.read(new File("target/issues/30/" + packageAsPath + "/package.puml"));
 
         String name = getClass().getName();
         String simpleName = getClass().getSimpleName();
