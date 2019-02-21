@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import static org.hamcrest.Matchers.not;
  */
 public class Bug74DuplicateGenericsTest {
     private static final String packageAsPath = Bug74DuplicateGenericsTest.class.getPackageName().replace('.', '/');
-    private static final File outputdir = new File("target/test-74");
+    private static final File outputdir = new File("target/issues/74");
     private static String classUml, packageUml;
 
     public interface MySupplier<T> extends Supplier<T> {

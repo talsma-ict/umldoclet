@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.issues;
+package nl.talsmasoftware.umldoclet.issues.bug146;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.util.Testing;
@@ -24,17 +24,18 @@ import java.io.File;
 import java.util.spi.ToolProvider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 
-public class Issue72DefaultConstructorTest {
-    private static final String packageAsPath = Issue72DefaultConstructorTest.class.getPackageName().replace('.', '/');
-    private static final File outputdir = new File("target/issues/72");
+public class Bug146SkipSuperclassTest {
+    private static final String packageAsPath = Bug146SkipSuperclassTest.class.getPackageName().replace('.', '/');
+    private static final File outputdir = new File("target/issues/146");
     private static String classUml, packageUml;
 
     @BeforeClass
     public static void setup() {
-        String classAsPath = packageAsPath + '/' + Issue72DefaultConstructorTest.class.getSimpleName();
+        String classAsPath = packageAsPath + '/' + PublicTestClass.class.getSimpleName();
         ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
                 "-d", outputdir.getPath(),
@@ -48,8 +49,20 @@ public class Issue72DefaultConstructorTest {
     }
 
     @Test
-    public void testDefaultConstructorShouldBeHidden() {
-        assertThat(classUml, not(containsString("+Issue72DefaultConstructorTest()")));
+    public void testPackageProtectedSuperclassShouldBeSkipped() {
+        assertThat(packageUml, allOf(
+                containsString("java.util.AbstractList <|-- PublicTestClass"),
+                not(containsString("PackageProtectedSuperclass <|-- PublicTestClass"))
+        ));
+        assertThat(classUml, allOf(
+                containsString(
+                        "java.util.AbstractList " +
+                                "<|-- nl.talsmasoftware.umldoclet.issues.bug146.PublicTestClass"),
+                not(containsString(
+                        "nl.talsmasoftware.umldoclet.issues.bug146.PackageProtectedSuperclass " +
+                                "<|-- nl.talsmasoftware.umldoclet.issues.bug146.PublicTestClass")
+                )));
     }
+
 
 }

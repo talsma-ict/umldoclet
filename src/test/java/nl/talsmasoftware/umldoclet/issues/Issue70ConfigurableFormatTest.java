@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ public class Issue70ConfigurableFormatTest {
 
     @Before
     public void setup() {
-        outputDir = new File("target/test-70");
+        outputDir = new File("target/issues/70");
     }
 
     private void assertImageExists(String type, Matcher<Boolean> matcher) {
