@@ -174,11 +174,23 @@ public class UMLFactory {
         return classDiagram;
     }
 
-    // Fix issue 146: skip superclass is not included in the documentation
+    /**
+     * Determine whether a superclass is included in the documentation.
+     *
+     * <p>
+     * Introduced to fix <a href="https://github.com/talsma-ict/umldoclet/issues/146">issue 146</a>:
+     * skip superclass if not included in the documentation.
+     *
+     * @param superclass The superclass to test.
+     * @return {@code true} if the superclass is within the documented javadoc part,
+     * or if its modifiers have the 'right' accesibility. See {#148} for accessibility details.
+     */
     private boolean includeSuperclass(TypeElement superclass) {
         if (env.isIncluded(superclass)) return true;
-        // TODO figure out which logic the actual Javadoc uses here!
-        return superclass.getModifiers().contains(Modifier.PUBLIC);
+        // TODO Make configurable:
+        // See https://github.com/talsma-ict/umldoclet/issues/148
+        return superclass.getModifiers().contains(Modifier.PUBLIC)
+                || superclass.getModifiers().contains(Modifier.PROTECTED);
     }
 
     public Diagram createPackageDiagram(PackageElement packageElement) {
