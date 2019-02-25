@@ -188,6 +188,14 @@ public class DocletConfig implements Configuration {
                 : Charset.defaultCharset();
     }
 
+    void showMembers(String value) {
+        Set<Visibility> visibility = EnumSet.of(Visibility.PUBLIC, Visibility.PROTECTED);
+        if ("private".equals(value)) visibility = EnumSet.allOf(Visibility.class);
+        else throw new IllegalArgumentException("Unknown visibility: " + value);
+        fieldConfig.visibilities = visibility;
+        methodConfig.visibilities = visibility;
+    }
+
     final class ImageCfg implements ImageConfig {
         String directory = null;
         Collection<FileFormat> imageFormats = null;

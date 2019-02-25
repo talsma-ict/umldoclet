@@ -17,7 +17,6 @@ package nl.talsmasoftware.umldoclet.features;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.util.Testing;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import java.io.File;
@@ -29,6 +28,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 /**
  * Test the include options by the Standard doclet.
@@ -78,7 +78,7 @@ public class Issue148StandardIncludeOptionsTest {
     public void testOptionPrivate() {
         File dir = createJavadoc("-private");
         String packageUml = Testing.read(new File(dir, "package.puml"));
-        String privateClassUml = Testing.read(new File(dir, "Acces.PrivateClass.puml"));
+        String privateClassUml = Testing.read(new File(dir, "Access.PrivateClass.puml"));
 
         assertThat(privateClassUml, containsString("+publicField"));
         assertThat(privateClassUml, containsString("#protectedField"));
@@ -89,6 +89,18 @@ public class Issue148StandardIncludeOptionsTest {
         assertThat(privateClassUml, containsString("#getProtectedValue()"));
         assertThat(privateClassUml, containsString("~getPackageProtectedValue()"));
         assertThat(privateClassUml, containsString("-getPrivateValue()"));
+
+        assertThat(packageUml, containsString(
+                "class nl.talsmasoftware.umldoclet.features.Access.PrivateClass [[Access.PrivateClass.html]]"
+        ));
+        assertThat(packageUml, containsString("+publicField"));
+        assertThat(packageUml, containsString("#protectedField"));
+        assertThat(packageUml, containsString("~packageProtectedField"));
+        assertThat(packageUml, containsString("-privateField"));
+        assertThat(packageUml, containsString("+getPublicValue()"));
+        assertThat(packageUml, containsString("#getProtectedValue()"));
+        assertThat(packageUml, containsString("~getPackageProtectedValue()"));
+        assertThat(packageUml, containsString("-getPrivateValue()"));
     }
 
     @Test
@@ -149,6 +161,18 @@ public class Issue148StandardIncludeOptionsTest {
     @Test
     public void testOptionShowMembersPrivate() {
         File dir = createJavadoc("--show-members", "private");
+        String packageUml = Testing.read(new File(dir, "package.puml"));
+        assertThat(new File(dir, "Access.PrivateClass.puml").exists(), is(false));
+
+        assertThat(packageUml, not(containsString("Access.PrivateClass")));
+        assertThat(packageUml, containsString("+publicField"));
+        assertThat(packageUml, containsString("#protectedField"));
+        assertThat(packageUml, containsString("~packageProtectedField"));
+        assertThat(packageUml, containsString("-privateField"));
+        assertThat(packageUml, containsString("+getPublicValue()"));
+        assertThat(packageUml, containsString("#getProtectedValue()"));
+        assertThat(packageUml, containsString("~getPackageProtectedValue()"));
+        assertThat(packageUml, containsString("-getPrivateValue()"));
     }
 
     @Test

@@ -64,6 +64,8 @@ final class UMLOptions {
             add(new Option("-encoding", 1, Kind.OTHER, (args) -> config.encoding = args.get(0)));
             add(new Option("-link", 1, Kind.OTHER, (args) -> config.externalLinks.add(new ExternalLink(config, args.get(0), args.get(0)))));
             add(new Option("-linkoffline", 2, Kind.OTHER, (args) -> config.externalLinks.add(new ExternalLink(config, args.get(0), args.get(1)))));
+            add(new Option("-private", 0, Kind.OTHER, (args) -> config.showMembers("private")));
+            add(new Option("--show-members", 1, Kind.OTHER, (args) -> config.showMembers(args.get(0))));
 
             // Our own options
             add(new Option("-d", 1, Kind.STANDARD, (args) -> config.destDirName = args.get(0)));
