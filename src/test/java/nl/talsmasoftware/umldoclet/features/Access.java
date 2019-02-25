@@ -19,24 +19,24 @@ public class Access {
     private static class PrivateClass {
 
         private String privateField;
-        protected String protectedField;
         String packageProtectedField;
+        protected String protectedField;
         public String publicField;
 
         private PrivateClass() {
-            this.privateField = protectedField = packageProtectedField = publicField = null;
+            this.privateField = packageProtectedField = protectedField = publicField = null;
         }
 
         private String getPrivateValue() {
             return privateField;
         }
 
-        protected String getProtectedValue() {
-            return protectedField;
-        }
-
         String getPackageProtectedValue() {
             return packageProtectedField;
+        }
+
+        protected String getProtectedValue() {
+            return protectedField;
         }
 
         public String getPublicValue() {
@@ -46,24 +46,24 @@ public class Access {
 
     protected static class ProtectedClass {
         private String privateField;
-        protected String protectedField;
         String packageProtectedField;
+        protected String protectedField;
         public String publicField;
 
         protected ProtectedClass() {
-            this.privateField = protectedField = packageProtectedField = publicField = null;
+            this.privateField = packageProtectedField = protectedField = publicField = null;
         }
 
         private String getPrivateValue() {
             return privateField;
         }
 
-        protected String getProtectedValue() {
-            return protectedField;
-        }
-
         String getPackageProtectedValue() {
             return packageProtectedField;
+        }
+
+        protected String getProtectedValue() {
+            return protectedField;
         }
 
         public String getPublicValue() {

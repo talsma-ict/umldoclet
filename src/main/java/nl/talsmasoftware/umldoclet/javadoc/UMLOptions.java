@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,6 +65,7 @@ final class UMLOptions {
             add(new Option("-link", 1, Kind.OTHER, (args) -> config.externalLinks.add(new ExternalLink(config, args.get(0), args.get(0)))));
             add(new Option("-linkoffline", 2, Kind.OTHER, (args) -> config.externalLinks.add(new ExternalLink(config, args.get(0), args.get(1)))));
             add(new Option("-private", 0, Kind.OTHER, (args) -> config.showMembers("private")));
+            add(new Option("-package", 0, Kind.OTHER, (args) -> config.showMembers("package")));
             add(new Option("--show-members", 1, Kind.OTHER, (args) -> config.showMembers(args.get(0))));
 
             // Our own options

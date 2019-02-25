@@ -46,6 +46,9 @@ import static java.util.Collections.singleton;
 import static java.util.Locale.ENGLISH;
 import static java.util.Objects.requireNonNull;
 import static net.sourceforge.plantuml.FileFormat.SVG;
+import static nl.talsmasoftware.umldoclet.uml.Visibility.PACKAGE_PRIVATE;
+import static nl.talsmasoftware.umldoclet.uml.Visibility.PROTECTED;
+import static nl.talsmasoftware.umldoclet.uml.Visibility.PUBLIC;
 
 public class DocletConfig implements Configuration {
 
@@ -188,10 +191,16 @@ public class DocletConfig implements Configuration {
                 : Charset.defaultCharset();
     }
 
+    private static Set<Visibility> parseVisibility(String value) {
+        if ("private".equals(value)) return EnumSet.allOf(Visibility.class);
+        else if ("package".equals(value)) return EnumSet.of(PACKAGE_PRIVATE, PROTECTED, PUBLIC);
+
+        // TODO: Log 'unknown visibility: value' warning and fall back to default visibility
+        return EnumSet.of(PUBLIC, PROTECTED);
+    }
+
     void showMembers(String value) {
-        Set<Visibility> visibility = EnumSet.of(Visibility.PUBLIC, Visibility.PROTECTED);
-        if ("private".equals(value)) visibility = EnumSet.allOf(Visibility.class);
-        else throw new IllegalArgumentException("Unknown visibility: " + value);
+        Set<Visibility> visibility = parseVisibility(value);
         fieldConfig.visibilities = visibility;
         methodConfig.visibilities = visibility;
     }
@@ -246,7 +255,7 @@ public class DocletConfig implements Configuration {
     static final class FieldCfg implements FieldConfig {
 
         TypeDisplay typeDisplay = TypeDisplay.SIMPLE;
-        Set<Visibility> visibilities = EnumSet.of(Visibility.PROTECTED, Visibility.PUBLIC);
+        Set<Visibility> visibilities = EnumSet.of(PROTECTED, PUBLIC);
 
         @Override
         public TypeDisplay typeDisplay() {
@@ -264,7 +273,7 @@ public class DocletConfig implements Configuration {
         ParamNames paramNames = ParamNames.NONE;
         TypeDisplay paramTypes = TypeDisplay.SIMPLE;
         TypeDisplay returnType = TypeDisplay.SIMPLE;
-        Set<Visibility> visibilities = EnumSet.of(Visibility.PROTECTED, Visibility.PUBLIC);
+        Set<Visibility> visibilities = EnumSet.of(PROTECTED, PUBLIC);
 
         @Override
         public ParamNames paramNames() {

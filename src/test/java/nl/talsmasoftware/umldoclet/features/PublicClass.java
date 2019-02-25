@@ -17,24 +17,24 @@ package nl.talsmasoftware.umldoclet.features;
 
 public class PublicClass {
     private String privateField;
-    protected String protectedField;
     String packageProtectedField;
+    protected String protectedField;
     public String publicField;
 
     public PublicClass() {
-        this.privateField = protectedField = packageProtectedField = publicField = null;
+        this.privateField = packageProtectedField = protectedField = publicField = null;
     }
 
     private String getPrivateValue() {
         return privateField;
     }
 
-    protected String getProtectedValue() {
-        return protectedField;
-    }
-
     String getPackageProtectedValue() {
         return packageProtectedField;
+    }
+
+    protected String getProtectedValue() {
+        return protectedField;
     }
 
     public String getPublicValue() {
