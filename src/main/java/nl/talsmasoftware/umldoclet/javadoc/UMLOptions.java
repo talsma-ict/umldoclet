@@ -67,6 +67,7 @@ final class UMLOptions {
             add(new Option("-private", 0, Kind.OTHER, (args) -> config.showMembers("private")));
             add(new Option("-package", 0, Kind.OTHER, (args) -> config.showMembers("package")));
             add(new Option("-protected", 0, Kind.OTHER, (args) -> config.showMembers("protected")));
+            add(new Option("-public", 0, Kind.OTHER, (args) -> config.showMembers("public")));
             add(new Option("--show-members", 1, Kind.OTHER, (args) -> config.showMembers(args.get(0))));
 
             // Our own options

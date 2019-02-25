@@ -194,9 +194,11 @@ public class DocletConfig implements Configuration {
     private static Set<Visibility> parseVisibility(String value) {
         if ("private".equals(value)) return EnumSet.allOf(Visibility.class);
         else if ("package".equals(value)) return EnumSet.of(PACKAGE_PRIVATE, PROTECTED, PUBLIC);
+        else if ("protected".equals(value)) return EnumSet.of(PUBLIC, PROTECTED);
+        else if ("public".equals(value)) return EnumSet.of(PUBLIC);
 
-        // TODO: Log 'unknown visibility: value' warning and fall back to default visibility
-        return EnumSet.of(PUBLIC, PROTECTED);
+        // TODO: Log 'unknown visibility: value' warning
+        return parseVisibility("protected"); // The default for javadoc
     }
 
     void showMembers(String value) {
