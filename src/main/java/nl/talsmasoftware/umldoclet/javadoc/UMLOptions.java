@@ -66,6 +66,7 @@ final class UMLOptions {
             add(new Option("-linkoffline", 2, Kind.OTHER, (args) -> config.externalLinks.add(new ExternalLink(config, args.get(0), args.get(1)))));
             add(new Option("-private", 0, Kind.OTHER, (args) -> config.showMembers("private")));
             add(new Option("-package", 0, Kind.OTHER, (args) -> config.showMembers("package")));
+            add(new Option("-protected", 0, Kind.OTHER, (args) -> config.showMembers("protected")));
             add(new Option("--show-members", 1, Kind.OTHER, (args) -> config.showMembers(args.get(0))));
 
             // Our own options
