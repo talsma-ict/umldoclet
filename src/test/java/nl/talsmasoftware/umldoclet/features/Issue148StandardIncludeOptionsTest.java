@@ -237,21 +237,129 @@ public class Issue148StandardIncludeOptionsTest {
     @Test
     public void testOptionShowTypesPrivate() {
         File dir = createJavadoc("--show-types", "private");
-    }
+        String packageUml = Testing.read(new File(dir, "package.puml"));
+        assertThat(packageUml, allOf(
+                containsString("[[Access.PrivateClass.html]]"),
+                containsString("[[PackageProtectedClass.html]]"),
+                containsString("[[Access.ProtectedClass.html]]"),
+                containsString("[[PublicClass.html]]")
+        ));
+        assertThat(packageUml, not(containsString("-privateField")));
+        assertThat(packageUml, not(containsString("~packageProtectedField")));
+        assertThat(packageUml, containsString("#protectedField"));
+        assertThat(packageUml, containsString("+publicField"));
 
-    @Test
-    public void testOptionShowTypesProtected() {
-        File dir = createJavadoc("--show-types", "protected");
+        assertThat(packageUml, not(containsString("-getPrivateValue()")));
+        assertThat(packageUml, not(containsString("~getPackageProtectedValue()")));
+        assertThat(packageUml, containsString("#getProtectedValue()"));
+        assertThat(packageUml, containsString("+getPublicValue()"));
+
+        String privateClassUml = Testing.read(new File(dir, "Access.PrivateClass.puml"));
+        assertThat(privateClassUml, not(containsString("-privateField")));
+        assertThat(privateClassUml, not(containsString("~packageProtectedField")));
+        assertThat(privateClassUml, containsString("#protectedField"));
+        assertThat(privateClassUml, containsString("+publicField"));
+
+        assertThat(privateClassUml, not(containsString("-getPrivateValue()")));
+        assertThat(privateClassUml, not(containsString("~getPackageProtectedValue()")));
+        assertThat(privateClassUml, containsString("#getProtectedValue()"));
+        assertThat(privateClassUml, containsString("+getPublicValue()"));
     }
 
     @Test
     public void testOptionShowTypesPackage() {
         File dir = createJavadoc("--show-types", "package");
+        String packageUml = Testing.read(new File(dir, "package.puml"));
+        assertThat(packageUml, allOf(
+                not(containsString("[[Access.PrivateClass.html]]")),
+                containsString("[[PackageProtectedClass.html]]"),
+                containsString("[[Access.ProtectedClass.html]]"),
+                containsString("[[PublicClass.html]]")
+        ));
+        assertThat(packageUml, not(containsString("-privateField")));
+        assertThat(packageUml, not(containsString("~packageProtectedField")));
+        assertThat(packageUml, containsString("#protectedField"));
+        assertThat(packageUml, containsString("+publicField"));
+
+        assertThat(packageUml, not(containsString("-getPrivateValue()")));
+        assertThat(packageUml, not(containsString("~getPackageProtectedValue()")));
+        assertThat(packageUml, containsString("#getProtectedValue()"));
+        assertThat(packageUml, containsString("+getPublicValue()"));
+
+        String packageProtectedClassUml = Testing.read(new File(dir, "PackageProtectedClass.puml"));
+        assertThat(packageProtectedClassUml, not(containsString("-privateField")));
+        assertThat(packageProtectedClassUml, not(containsString("~packageProtectedField")));
+        assertThat(packageProtectedClassUml, containsString("#protectedField"));
+        assertThat(packageProtectedClassUml, containsString("+publicField"));
+
+        assertThat(packageProtectedClassUml, not(containsString("-getPrivateValue()")));
+        assertThat(packageProtectedClassUml, not(containsString("~getPackageProtectedValue()")));
+        assertThat(packageProtectedClassUml, containsString("#getProtectedValue()"));
+        assertThat(packageProtectedClassUml, containsString("+getPublicValue()"));
+    }
+
+    @Test
+    public void testOptionShowTypesProtected() {
+        File dir = createJavadoc("--show-types", "protected");
+        String packageUml = Testing.read(new File(dir, "package.puml"));
+        assertThat(packageUml, allOf(
+                not(containsString("[[Access.PrivateClass.html]]")),
+                not(containsString("[[PackageProtectedClass.html]]")),
+                containsString("[[Access.ProtectedClass.html]]"),
+                containsString("[[PublicClass.html]]")
+        ));
+        assertThat(packageUml, not(containsString("-privateField")));
+        assertThat(packageUml, not(containsString("~packageProtectedField")));
+        assertThat(packageUml, containsString("#protectedField"));
+        assertThat(packageUml, containsString("+publicField"));
+
+        assertThat(packageUml, not(containsString("-getPrivateValue()")));
+        assertThat(packageUml, not(containsString("~getPackageProtectedValue()")));
+        assertThat(packageUml, containsString("#getProtectedValue()"));
+        assertThat(packageUml, containsString("+getPublicValue()"));
+
+        String protectedClassUml = Testing.read(new File(dir, "Access.ProtectedClass.puml"));
+        assertThat(protectedClassUml, not(containsString("-privateField")));
+        assertThat(protectedClassUml, not(containsString("~packageProtectedField")));
+        assertThat(protectedClassUml, containsString("#protectedField"));
+        assertThat(protectedClassUml, containsString("+publicField"));
+
+        assertThat(protectedClassUml, not(containsString("-getPrivateValue()")));
+        assertThat(protectedClassUml, not(containsString("~getPackageProtectedValue()")));
+        assertThat(protectedClassUml, containsString("#getProtectedValue()"));
+        assertThat(protectedClassUml, containsString("+getPublicValue()"));
     }
 
     @Test
     public void testOptionShowTypesPublic() {
         File dir = createJavadoc("--show-types", "public");
+        String packageUml = Testing.read(new File(dir, "package.puml"));
+        assertThat(packageUml, allOf(
+                not(containsString("[[Access.PrivateClass.html]]")),
+                not(containsString("[[PackageProtectedClass.html]]")),
+                not(containsString("[[Access.ProtectedClass.html]]")),
+                containsString("[[PublicClass.html]]")
+        ));
+        assertThat(packageUml, not(containsString("-privateField")));
+        assertThat(packageUml, not(containsString("~packageProtectedField")));
+        assertThat(packageUml, containsString("#protectedField"));
+        assertThat(packageUml, containsString("+publicField"));
+
+        assertThat(packageUml, not(containsString("-getPrivateValue()")));
+        assertThat(packageUml, not(containsString("~getPackageProtectedValue()")));
+        assertThat(packageUml, containsString("#getProtectedValue()"));
+        assertThat(packageUml, containsString("+getPublicValue()"));
+
+        String publicClassUml = Testing.read(new File(dir, "PublicClass.puml"));
+        assertThat(publicClassUml, not(containsString("-privateField")));
+        assertThat(publicClassUml, not(containsString("~packageProtectedField")));
+        assertThat(publicClassUml, containsString("#protectedField"));
+        assertThat(publicClassUml, containsString("+publicField"));
+
+        assertThat(publicClassUml, not(containsString("-getPrivateValue()")));
+        assertThat(publicClassUml, not(containsString("~getPackageProtectedValue()")));
+        assertThat(publicClassUml, containsString("#getProtectedValue()"));
+        assertThat(publicClassUml, containsString("+getPublicValue()"));
     }
 
     @Test
@@ -264,15 +372,15 @@ public class Issue148StandardIncludeOptionsTest {
                 containsString("[[Access.ProtectedClass.html]]"),
                 containsString("[[PublicClass.html]]")
         ));
-        assertThat(packageUml, containsString("+publicField"));
+        assertThat(packageUml, containsString("-privateField"));
         assertThat(packageUml, containsString("~packageProtectedField"));
         assertThat(packageUml, containsString("#protectedField"));
-        assertThat(packageUml, containsString("-privateField"));
+        assertThat(packageUml, containsString("+publicField"));
 
-        assertThat(packageUml, containsString("+getPublicValue()"));
+        assertThat(packageUml, containsString("-getPrivateValue()"));
         assertThat(packageUml, containsString("~getPackageProtectedValue()"));
         assertThat(packageUml, containsString("#getProtectedValue()"));
-        assertThat(packageUml, containsString("-getPrivateValue()"));
+        assertThat(packageUml, containsString("+getPublicValue()"));
 
         String publicClassUml = Testing.read(new File(dir, "PublicClass.puml"));
         assertThat(publicClassUml, containsString("-privateField"));
