@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,9 +66,9 @@ final class LocalizedReporter implements Reporter, Logger {
     private void log(Diagnostic.Kind kind, DocTreePath path, Element elem, Message key, Object... args) {
         if (mustPrint(kind)) {
             final String message = localize(key, args);
-            if (path != null) print(kind, path, message);
-            else if (elem != null) print(kind, elem, message);
-            else print(kind, message);
+            if (path != null) doPrint(kind, path, message);
+            else if (elem != null) doPrint(kind, elem, message);
+            else doPrint(kind, message);
         }
     }
 
@@ -95,25 +95,31 @@ final class LocalizedReporter implements Reporter, Logger {
 
     @Override
     public void print(Diagnostic.Kind kind, String msg) {
-        if (mustPrint(kind)) {
-            if (delegate == null) System.out.println(msg);
-            else delegate.print(kind, msg);
-        }
+        if (mustPrint(kind)) doPrint(kind, msg);
     }
 
     @Override
     public void print(Diagnostic.Kind kind, DocTreePath path, String msg) {
-        if (mustPrint(kind)) {
-            if (delegate == null) System.out.println(msg);
-            else delegate.print(kind, path, msg);
-        }
+        if (mustPrint(kind)) doPrint(kind, path, msg);
     }
 
     @Override
     public void print(Diagnostic.Kind kind, Element elem, String msg) {
-        if (mustPrint(kind)) {
-            if (delegate == null) System.out.println(msg);
-            else delegate.print(kind, elem, msg);
-        }
+        if (mustPrint(kind)) doPrint(kind, elem, msg);
+    }
+
+    private void doPrint(Diagnostic.Kind kind, String msg) {
+        if (delegate == null) System.out.println(msg);
+        else delegate.print(kind, msg);
+    }
+
+    private void doPrint(Diagnostic.Kind kind, DocTreePath path, String msg) {
+        if (delegate == null) System.out.println(msg);
+        else delegate.print(kind, path, msg);
+    }
+
+    private void doPrint(Diagnostic.Kind kind, Element elem, String msg) {
+        if (delegate == null) System.out.println(msg);
+        else delegate.print(kind, elem, msg);
     }
 }

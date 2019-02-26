@@ -46,6 +46,9 @@ import static java.util.Collections.singleton;
 import static java.util.Locale.ENGLISH;
 import static java.util.Objects.requireNonNull;
 import static net.sourceforge.plantuml.FileFormat.SVG;
+import static nl.talsmasoftware.umldoclet.uml.Visibility.PACKAGE_PRIVATE;
+import static nl.talsmasoftware.umldoclet.uml.Visibility.PROTECTED;
+import static nl.talsmasoftware.umldoclet.uml.Visibility.PUBLIC;
 
 public class DocletConfig implements Configuration {
 
@@ -188,6 +191,22 @@ public class DocletConfig implements Configuration {
                 : Charset.defaultCharset();
     }
 
+    private Set<Visibility> parseVisibility(String value) {
+        if ("private".equals(value)) return EnumSet.allOf(Visibility.class);
+        else if ("package".equals(value)) return EnumSet.of(PACKAGE_PRIVATE, PROTECTED, PUBLIC);
+        else if ("protected".equals(value)) return EnumSet.of(PUBLIC, PROTECTED);
+        else if ("public".equals(value)) return EnumSet.of(PUBLIC);
+
+        reporter.warn(Message.WARNING_UNKNOWN_VISIBILITY, value);
+        return parseVisibility("protected"); // The default for javadoc
+    }
+
+    void showMembers(String value) {
+        Set<Visibility> visibility = parseVisibility(value);
+        fieldConfig.visibilities = visibility;
+        methodConfig.visibilities = visibility;
+    }
+
     final class ImageCfg implements ImageConfig {
         String directory = null;
         Collection<FileFormat> imageFormats = null;
@@ -238,7 +257,7 @@ public class DocletConfig implements Configuration {
     static final class FieldCfg implements FieldConfig {
 
         TypeDisplay typeDisplay = TypeDisplay.SIMPLE;
-        Set<Visibility> visibilities = EnumSet.of(Visibility.PROTECTED, Visibility.PUBLIC);
+        Set<Visibility> visibilities = EnumSet.of(PROTECTED, PUBLIC);
 
         @Override
         public TypeDisplay typeDisplay() {
@@ -256,7 +275,7 @@ public class DocletConfig implements Configuration {
         ParamNames paramNames = ParamNames.NONE;
         TypeDisplay paramTypes = TypeDisplay.SIMPLE;
         TypeDisplay returnType = TypeDisplay.SIMPLE;
-        Set<Visibility> visibilities = EnumSet.of(Visibility.PROTECTED, Visibility.PUBLIC);
+        Set<Visibility> visibilities = EnumSet.of(PROTECTED, PUBLIC);
 
         @Override
         public ParamNames paramNames() {

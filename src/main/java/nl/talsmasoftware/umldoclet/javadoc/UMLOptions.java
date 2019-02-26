@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Talsma ICT
+ * Copyright 2016-2019 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ final class UMLOptions {
     private UMLOptions(DocletConfig config, Set<Doclet.Option> standardOptions) {
         this.config = requireNonNull(config, "Configuration is <null>.");
         this.standardOptions = standardOptions;
-        this.options = new TreeSet<Doclet.Option>(comparing(o -> o.getNames().get(0), String::compareTo)) {{
+        this.options = new TreeSet<>(comparing(o -> o.getNames().get(0), String::compareTo)) {{
             // Options from Standard doclet that we also support
             add(new Option("-quiet", 0, Kind.OTHER, (args) -> config.quiet = true));
             add(new Option("-verbose", 0, Kind.OTHER, (args) -> config.verbose = true));
@@ -64,6 +64,11 @@ final class UMLOptions {
             add(new Option("-encoding", 1, Kind.OTHER, (args) -> config.encoding = args.get(0)));
             add(new Option("-link", 1, Kind.OTHER, (args) -> config.externalLinks.add(new ExternalLink(config, args.get(0), args.get(0)))));
             add(new Option("-linkoffline", 2, Kind.OTHER, (args) -> config.externalLinks.add(new ExternalLink(config, args.get(0), args.get(1)))));
+            add(new Option("-private", 0, Kind.OTHER, (args) -> config.showMembers("private")));
+            add(new Option("-package", 0, Kind.OTHER, (args) -> config.showMembers("package")));
+            add(new Option("-protected", 0, Kind.OTHER, (args) -> config.showMembers("protected")));
+            add(new Option("-public", 0, Kind.OTHER, (args) -> config.showMembers("public")));
+            add(new Option("--show-members", 1, Kind.OTHER, (args) -> config.showMembers(args.get(0))));
 
             // Our own options
             add(new Option("-d", 1, Kind.STANDARD, (args) -> config.destDirName = args.get(0)));
