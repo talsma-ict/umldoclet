@@ -45,8 +45,6 @@ import static org.hamcrest.Matchers.not;
  * <li>{@code -private}
  * <li>{@code -protected}
  * <li>{@code -public}
- * <li>{@code --show-module-contents [api|all]}
- * <li>{@code --show-packages [exported|all]}
  * <li>{@code --show-types [private|protected|package|all]}
  * <li>{@code --show-members [private|protected|package|all]}
  * </ul>
@@ -212,26 +210,6 @@ public class Issue148StandardIncludeOptionsTest {
         assertThat(publicClassUml, not(containsString("~getPackageProtectedValue()")));
         assertThat(publicClassUml, not(containsString("#getProtectedValue()")));
         assertThat(publicClassUml, containsString("+getPublicValue()"));
-    }
-
-    @Test
-    public void testOptionShowModuleContentsApi() {
-        File dir = createJavadoc("--show-module-contents", "api");
-    }
-
-    @Test
-    public void testOptionShowModuleContentsAll() {
-        File dir = createJavadoc("--show-module-contents", "all");
-    }
-
-    @Test
-    public void testOptionShowPackagesExported() {
-        File dir = createJavadoc("--show-packages", "exported");
-    }
-
-    @Test
-    public void testOptionShowPackagesAll() {
-        File dir = createJavadoc("--show-packages", "all");
     }
 
     @Test
