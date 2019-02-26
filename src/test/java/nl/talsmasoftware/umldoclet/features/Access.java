@@ -17,7 +17,6 @@ package nl.talsmasoftware.umldoclet.features;
 
 public class Access {
     private static class PrivateClass {
-
         private String privateField;
         String packageProtectedField;
         protected String protectedField;

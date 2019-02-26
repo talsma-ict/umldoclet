@@ -192,7 +192,7 @@ public class DocletConfig implements Configuration {
     }
 
     private Set<Visibility> parseVisibility(String value) {
-        if ("private".equals(value)) return EnumSet.allOf(Visibility.class);
+        if ("private".equals(value) || "all".equals(value)) return EnumSet.allOf(Visibility.class);
         else if ("package".equals(value)) return EnumSet.of(PACKAGE_PRIVATE, PROTECTED, PUBLIC);
         else if ("protected".equals(value)) return EnumSet.of(PUBLIC, PROTECTED);
         else if ("public".equals(value)) return EnumSet.of(PUBLIC);

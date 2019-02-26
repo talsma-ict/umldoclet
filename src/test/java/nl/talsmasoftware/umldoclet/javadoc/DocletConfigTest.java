@@ -98,6 +98,15 @@ public class DocletConfigTest {
     }
 
     @Test
+    public void testShowMembers_all() {
+        config.showMembers("all");
+        assertMemberVisibility(Visibility.PRIVATE, true);
+        assertMemberVisibility(Visibility.PACKAGE_PRIVATE, true);
+        assertMemberVisibility(Visibility.PROTECTED, true);
+        assertMemberVisibility(Visibility.PUBLIC, true);
+    }
+
+    @Test
     public void testShowMembers_unknown() {
         // Unknown setting defaults to the Javadoc standard 'protected'
         config.showMembers("unknown");
