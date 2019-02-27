@@ -141,6 +141,7 @@ public class UMLFactory {
         classElement.getEnclosedElements().stream()
                 .filter(child -> child.getKind().isInterface() || child.getKind().isClass())
                 .filter(TypeElement.class::isInstance).map(TypeElement.class::cast)
+                .filter(env::isIncluded)
                 .forEach(innerclassElem -> {
                     Type innerType = createType(null, innerclassElem);
                     classDiagram.addChild(innerType);

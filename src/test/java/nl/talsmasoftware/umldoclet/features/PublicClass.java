@@ -40,4 +40,16 @@ public class PublicClass {
     public String getPublicValue() {
         return publicField;
     }
+
+    private static final class PrivateInnerClass {
+    }
+
+    static final class PackageProtectedInnerClass {
+    }
+
+    protected static final class ProtectedInnerClass {
+    }
+
+    public static final class PublicInnerClass {
+    }
 }
