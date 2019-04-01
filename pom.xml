@@ -71,7 +71,7 @@
         <maven.compiler.release>9</maven.compiler.release>
 
         <!-- included -->
-        <plantuml.version>1.2019.1</plantuml.version>
+        <plantuml.version>1.2019.4</plantuml.version>
 
         <!-- test -->
         <junit.version>4.12</junit.version>
