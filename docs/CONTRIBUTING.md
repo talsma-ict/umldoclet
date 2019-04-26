@@ -14,6 +14,15 @@ please feel free to create a [GitHub pull request](https://help.github.com/artic
 from [your own fork](https://help.github.com/articles/about-forks/) of this repository.
 Please make sure to request the merge towards the `develop` branch.
 
+## Signing off
+
+Each contribution should be signed off under 
+the [Developer Certificate of Origin](https://developercertificate.org) (DCO)
+using the `--signoff` [git option](https://git-scm.com/docs/git-commit#Documentation/git-commit.txt---signoff)
+(or its `-s` shorthand).
+
+Contributions will be checked by the [github DCO bot](https://probot.github.io/apps/dco/).
+
 ## License
 
 By contributing your code, you license it under the terms of the APLv2: 
@@ -41,12 +50,3 @@ This can be automatically added by running `./mvnw license:format`
  * limitations under the License.
  */
 ```
-
-## Signing off
-
-Each contribution should be signed off under 
-the [Developer Certificate of Origin](https://developercertificate.org) (DCO)
-using the `--signoff` [git option](https://git-scm.com/docs/git-commit#Documentation/git-commit.txt---signoff)
-(or its `-s` shorthand).
-
-Contributions will be checked by the [github DCO bot](https://probot.github.io/apps/dco/).
