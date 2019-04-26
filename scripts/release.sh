@@ -23,7 +23,7 @@ create_release() {
     if [[ "${current_version}" != "${release_version}" ]]; then
         log "Updating version from ${current_version} to ${release_version}."
         set_version "${release_version}"
-        git commit -s -am "Release: Set project version to ${release_version}"
+        git commit -sam "Release: Set project version to ${release_version}"
     else
         log "No need to update project version. It is already '${release_version}'."
     fi
@@ -58,7 +58,7 @@ create_release() {
     log "Merging to ${develop_branch} and updating version to '${nextSnapshot}'."
     git merge --no-edit "${branch}"
     set_version ${nextSnapshot}
-    git commit -s -am "Release: Set next development version to ${nextSnapshot}"
+    git commit -sam "Release: Set next development version to ${nextSnapshot}"
 
     log "Pushing release to origin and deleting branch '${branch}'."
     git branch -D "${branch}" || warn "Could not delete local release branch '${branch}'."
