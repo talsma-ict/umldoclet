@@ -2,18 +2,17 @@
 
 First of all, thank you very much for making an effort to contribute! :clap:
 
-## Did you find a bug?  
+## Did you find a bug?
+
 Bugs are tracked by [GitHub issues](https://guides.github.com/features/issues/) for this repository at:
 https://github.com/talsma-ict/umldoclet/issues
 
 ## Pull requests
+
 If you have code or a bugfix you would like to contribute,
 please feel free to create a [GitHub pull request](https://help.github.com/articles/creating-a-pull-request-from-a-fork/)
 from [your own fork](https://help.github.com/articles/about-forks/) of this repository.
 Please make sure to request the merge towards the `develop` branch.
-
-By contributing your code, you agree to donate your contribution to the `talsma-ict` organization on Github
-under the Apache 2.0 license:
 
 ## License
 
@@ -42,3 +41,12 @@ This can be automatically added by running `./mvnw license:format`
  * limitations under the License.
  */
 ```
+
+## Signing off
+
+Each contribution should be signed off under 
+the [Developer Certificate of Origin](https://developercertificate.org) (DCO)
+using the `--signoff` [git option](https://git-scm.com/docs/git-commit#Documentation/git-commit.txt---signoff)
+(or its `-s` shorthand).
+
+Contributions will be checked by the [github DCO bot](https://probot.github.io/apps/dco/).
