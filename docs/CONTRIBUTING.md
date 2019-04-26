@@ -12,7 +12,7 @@ please feel free to create a [GitHub pull request](https://help.github.com/artic
 from [your own fork](https://help.github.com/articles/about-forks/) of this repository.
 Please make sure to request the merge towards the `develop` branch.
 
-By contributing your code, you agree to donate your controbution to the `talsma-ict` organization on Github
+By contributing your code, you agree to donate your contribution to the `talsma-ict` organization on Github
 under the Apache 2.0 license:
 
 ## License
