@@ -34,7 +34,7 @@ build_and_publish_artifacts() {
 if is_pull_request; then
     log "Pull request detected: Running a 'build and test' job without publishing artifacts..."
     build_and_test
-elif is_snapshot_version "${VERSION}" && [[ "${GIT_BRANCH}" = "develop" ]]; then
+elif is_snapshot_version "${VERSION}" && [[ "${GIT_BRANCH}" == "develop"* ]]; then
     log "Snapshot detected: Publishing '${VERSION}' from branch '${GIT_BRANCH}'."
     build_and_publish_artifacts
 elif [[ "${GIT_BRANCH}" = "master" ]]; then
