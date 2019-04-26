@@ -51,7 +51,7 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
     enum Setting {
         UML_LOGLEVEL("umlLogLevel", "INFO"),
         UML_INDENTATION("umlIndentation", "-1"),
-        UML_BASE_PATH("umlBasePath", "."),
+        UML_BASE_PATH("umlBasePath", null),
         UML_FILE_EXTENSION("umlFileExtension", ".puml"),
         UML_FILE_ENCODING("umlFileEncoding", null),
         UML_SKIP_STANDARD_DOCLET("umlSkipStandardDoclet", false),
@@ -145,20 +145,20 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
         this.valid = allOptionsValid;
         this.standardOptions = stdOpts.toArray(new String[stdOpts.size()][]);
         LogSupport.setLevel(UML_LOGLEVEL.value(this));
-        try {
-            String basePath = UML_BASE_PATH.value(this);
+        String basePath = UML_BASE_PATH.value(this);
+        if (basePath != null) {
             trace("Configured UML base path: \"{0}\".", basePath);
-            if (basePath.startsWith("file:")) {
+            if (basePath.startsWith("file:")) try {
                 basePath = basePath.substring("file:".length());
                 if (!"/".equals(File.separator)) {
                     basePath = basePath.replaceAll("/", Matcher.quoteReplacement(File.separator));
                 }
                 trace("Translated UML base path: \"{0}\".", basePath);
+                this.put(UML_BASE_PATH, new File(basePath).getCanonicalPath());
+            } catch (IOException ioe) {
+                warn("Error converting base path \"{0}\" to a canonical path: {1}",
+                        UML_BASE_PATH.value(this), ioe);
             }
-            this.put(UML_BASE_PATH, new File(basePath).getCanonicalPath());
-        } catch (IOException ioe) {
-            warn("Error converting base path \"{0}\" to a canonical path: {1}",
-                    UML_BASE_PATH.value(this), ioe);
         }
         this.properties = new Properties();
         try (InputStream in = getClass().getResourceAsStream("/META-INF/umldoclet.properties")) {
@@ -186,11 +186,17 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
         return properties.getProperty("version", "<unknown version>");
     }
 
+    private String _basePath = null;
+
     /**
      * @return The base path where the documentation should be created.
      */
     public String basePath() {
-        return UML_BASE_PATH.value(this);
+        if (_basePath == null) {
+            _basePath = UML_BASE_PATH.value(this);
+            if (_basePath == null) _basePath = javadocOutputDirectory();
+        }
+        return _basePath;
     }
 
     /**
@@ -260,16 +266,23 @@ public class UMLDocletConfig extends EnumMap<UMLDocletConfig.Setting, Object> {
         return _htmlFileEncoding;
     }
 
+    /**
+     * @return The standard Javadoc output directory '-d' or {@code the current directory} if unconfigured.
+     */
+    private String javadocOutputDirectory() {
+        for (String[] stdOption : standardOptions) {
+            if (stdOption.length > 1 && "-d".equals(stdOption[0])) {
+                return stdOption[1];
+            }
+        }
+        return new File(".").getAbsolutePath();
+    }
+
     private String _htmlDestinationDirectory;
 
     public String htmlDestinationDirectory() {
         if (_htmlDestinationDirectory == null) {
-            for (String[] stdOption : standardOptions) {
-                if (stdOption.length > 1 && "-d".equals(stdOption[0])) {
-                    return _htmlDestinationDirectory = stdOption[1];
-                }
-            }
-            _htmlDestinationDirectory = basePath();
+            _htmlDestinationDirectory = javadocOutputDirectory();
         }
         return _htmlDestinationDirectory;
     }
