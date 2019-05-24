@@ -64,7 +64,8 @@ public class PackageDependenciesElementScanner extends ElementScanner9<Set<Refer
     @Override
     public Set<Reference> visitVariable(VariableElement e, Namespace fromPackage) {
         Set<Reference> dependencies = DEFAULT_VALUE;
-        addIfNonNull(dependencies, packageDependency(e.asType(), fromPackage));
+        TypeMirror variableType = e.asType();
+        addIfNonNull(dependencies, packageDependency(variableType, fromPackage));
         // dependencies.addAll(super.visitVariable(e, fromPackage)); // Shared single-set optimization;
         super.visitVariable(e, fromPackage);
         return dependencies;
@@ -101,11 +102,13 @@ public class PackageDependenciesElementScanner extends ElementScanner9<Set<Refer
     }
 
     private Reference packageDependency(TypeMirror toType, Namespace fromPackage) {
-        return packageDependency(NamespaceTypeVisitor.INSTANCE.visit(toType), fromPackage);
+        Namespace toPackage = NamespaceTypeVisitor.INSTANCE.visit(toType);
+        return packageDependency(toPackage, fromPackage);
     }
 
     private Reference packageDependency(Element toElement, Namespace fromPackage) {
-        return packageDependency(NamespaceElementVisitor.INSTANCE.visit(toElement), fromPackage);
+        Namespace toPackage = NamespaceElementVisitor.INSTANCE.visit(toElement);
+        return packageDependency(toPackage, fromPackage);
     }
 
     private static Reference packageDependency(Namespace toPackage, Namespace fromPackage) {
