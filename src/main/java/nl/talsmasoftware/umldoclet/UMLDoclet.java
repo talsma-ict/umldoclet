@@ -22,7 +22,7 @@ import net.sourceforge.plantuml.version.Version;
 import nl.talsmasoftware.umldoclet.html.HtmlPostprocessor;
 import nl.talsmasoftware.umldoclet.javadoc.DocletConfig;
 import nl.talsmasoftware.umldoclet.javadoc.UMLFactory;
-import nl.talsmasoftware.umldoclet.javadoc.packagedependencies.PackageDependenciesElementScanner;
+import nl.talsmasoftware.umldoclet.javadoc.dependencies.PackageDependenciesElementScanner;
 import nl.talsmasoftware.umldoclet.uml.Diagram;
 import nl.talsmasoftware.umldoclet.uml.Namespace;
 import nl.talsmasoftware.umldoclet.uml.Reference;
