@@ -19,6 +19,8 @@ import nl.talsmasoftware.umldoclet.uml.Namespace;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.PackageElement;
+import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.SimpleElementVisitor9;
 
 /**
