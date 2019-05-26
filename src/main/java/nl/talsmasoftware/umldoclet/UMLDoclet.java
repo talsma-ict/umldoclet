@@ -22,18 +22,14 @@ import net.sourceforge.plantuml.version.Version;
 import nl.talsmasoftware.umldoclet.html.HtmlPostprocessor;
 import nl.talsmasoftware.umldoclet.javadoc.DocletConfig;
 import nl.talsmasoftware.umldoclet.javadoc.UMLFactory;
-import nl.talsmasoftware.umldoclet.javadoc.dependencies.PackageDependenciesElementScanner;
+import nl.talsmasoftware.umldoclet.javadoc.dependencies.DependenciesElementScanner;
+import nl.talsmasoftware.umldoclet.javadoc.dependencies.Dependency;
 import nl.talsmasoftware.umldoclet.uml.Diagram;
-import nl.talsmasoftware.umldoclet.uml.Namespace;
-import nl.talsmasoftware.umldoclet.uml.Reference;
 
 import javax.lang.model.element.Element;
-import javax.lang.model.element.Name;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.util.ElementScanner9;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
@@ -88,12 +84,16 @@ public class UMLDoclet extends StandardDoclet {
 
         try {
 
-            // debug
-            Set<Reference> packageDependencies = findPackageDependencies(docEnv);
-            System.out.println(">> Package dependencies:\n" + packageDependencies
-                    .stream()
-                    .map(dep -> " - " + dep.toString().trim())
-                    .collect(joining("\n")));
+            // Experiment with package dependency diagrams
+            Set<Dependency> packageDependencies = findPackageDependencies(docEnv);
+            System.out.println(">> Package dependencies:\n" + packageDependencies.stream()
+                    .filter(dep -> !dep.toPackage.startsWith("java.") && !dep.toPackage.startsWith("javax."))
+                    .map(dep -> dep.fromPackage.isEmpty() ? new Dependency("unnamed", dep.toPackage) : dep)
+                    .map(dep -> dep.toPackage.isEmpty() ? new Dependency(dep.fromPackage, "unnamed") : dep)
+                    .map(dep -> "    \"" + dep.fromPackage + "\" -> \"" + dep.toPackage + '"')
+                    .collect(joining("\n",
+                            "@startdot\ndigraph packagedependencies {\n",
+                            "\n}\n@enddot\n")));
 
             Collection<Diagram> umlDiagrams = generateDiagrams(docEnv).collect(toList());
             umlDiagrams.forEach(Diagram::render);
@@ -121,25 +121,12 @@ public class UMLDoclet extends StandardDoclet {
         return Optional.empty();
     }
 
-    private Set<Reference> findPackageDependencies(DocletEnvironment docEnv) {
-        return new PackageDependenciesElementScanner()
-                .scan(docEnv.getIncludedElements(), new Namespace(null, ""));
+    private Set<Dependency> findPackageDependencies(DocletEnvironment docEnv) {
+        return new DependenciesElementScanner().scan(docEnv.getIncludedElements(), "");
     }
 
     private boolean postProcessHtml(Collection<Diagram> diagrams) {
         return new HtmlPostprocessor(config, diagrams).postProcessHtml();
     }
 
-    private Set<Namespace> findIncludedPackages(DocletEnvironment docEnv) {
-        final Set<Namespace> packages = new LinkedHashSet<>();
-        new ElementScanner9<Void, Void>() {
-            @Override
-            public Void visitPackage(PackageElement e, Void aVoid) {
-                Name packageName = e.getQualifiedName();
-                packages.add(new Namespace(null, packageName.toString()));
-                return super.visitPackage(e, aVoid);
-            }
-        }.scan(docEnv.getIncludedElements(), null);
-        return packages;
-    }
 }

@@ -19,7 +19,7 @@ import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.html.HtmlPostprocessor;
 import nl.talsmasoftware.umldoclet.javadoc.DocletConfig;
-import nl.talsmasoftware.umldoclet.javadoc.dependencies.PackageDependenciesElementScanner;
+import nl.talsmasoftware.umldoclet.javadoc.dependencies.DependenciesElementScanner;
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.rendering.Renderer;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
@@ -44,7 +44,7 @@ public class Issue164PackageDependenciesTest {
             Configuration.class.getPackageName(),
             HtmlPostprocessor.class.getPackageName(),
             DocletConfig.class.getPackageName(),
-            PackageDependenciesElementScanner.class.getPackageName(),
+            DependenciesElementScanner.class.getPackageName(),
             Logger.class.getPackageName(),
             Renderer.class.getPackageName(),
             Indentation.class.getPackageName(),
