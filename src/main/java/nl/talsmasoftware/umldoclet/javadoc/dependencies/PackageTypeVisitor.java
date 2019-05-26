@@ -15,8 +15,6 @@
  */
 package nl.talsmasoftware.umldoclet.javadoc.dependencies;
 
-import nl.talsmasoftware.umldoclet.uml.Namespace;
-
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.ErrorType;
@@ -25,38 +23,38 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.WildcardType;
 import javax.lang.model.util.SimpleTypeVisitor9;
 
-class NamespaceTypeVisitor extends SimpleTypeVisitor9<Namespace, Void> {
-    static final NamespaceTypeVisitor INSTANCE = new NamespaceTypeVisitor();
+class PackageTypeVisitor extends SimpleTypeVisitor9<String, Void> {
+    static final PackageTypeVisitor INSTANCE = new PackageTypeVisitor();
 
     @Override
-    public Namespace visitUnknown(TypeMirror t, Void aVoid) {
+    public String visitUnknown(TypeMirror t, Void aVoid) {
         return null;
     }
 
     @Override
-    public Namespace visitArray(ArrayType t, Void aVoid) {
+    public String visitArray(ArrayType t, Void aVoid) {
         return this.visit(t.getComponentType(), aVoid);
     }
 
     @Override
-    public Namespace visitDeclared(DeclaredType t, Void aVoid) {
-        return NamespaceElementVisitor.INSTANCE.visit(t.asElement().getEnclosingElement(), aVoid);
+    public String visitDeclared(DeclaredType t, Void aVoid) {
+        return PackageElementVisitor.INSTANCE.visit(t.asElement().getEnclosingElement(), aVoid);
     }
 
     @Override
-    public Namespace visitError(ErrorType t, Void aVoid) {
-        return NamespaceElementVisitor.INSTANCE.visit(t.asElement().getEnclosingElement(), aVoid);
+    public String visitError(ErrorType t, Void aVoid) {
+        return PackageElementVisitor.INSTANCE.visit(t.asElement().getEnclosingElement(), aVoid);
     }
 
     @Override
-    public Namespace visitWildcard(WildcardType t, Void aVoid) {
+    public String visitWildcard(WildcardType t, Void aVoid) {
         TypeMirror bound = t.getExtendsBound();
         if (bound == null) bound = t.getSuperBound();
         return bound == null ? null : this.visit(bound, aVoid);
     }
 
     @Override
-    public Namespace visitExecutable(ExecutableType t, Void aVoid) {
+    public String visitExecutable(ExecutableType t, Void aVoid) {
         TypeMirror receiverType = t.getReceiverType();
         return receiverType == null ? null : this.visit(receiverType);
     }
