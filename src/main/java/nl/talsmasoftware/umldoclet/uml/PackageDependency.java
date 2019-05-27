@@ -18,7 +18,7 @@ package nl.talsmasoftware.umldoclet.uml;
 public class PackageDependency extends Reference {
 
     public PackageDependency(String fromPackage, String toPackage) {
-        super(Side.from(packageName(fromPackage), null), "..>", Side.to(packageName(toPackage), null));
+        super(Side.from(packageName(fromPackage), null), "-->", Side.to(packageName(toPackage), null));
     }
 
     private static String packageName(String packageName) {

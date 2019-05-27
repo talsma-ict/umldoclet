@@ -31,17 +31,18 @@ public class DependencyDiagram extends Diagram {
     @Override
     protected File getPlantUmlFile() {
         if (pumlFile == null) {
-            pumlFile = new File(getConfiguration().destinationDirectory(), "overview-dependencies.puml");
+            pumlFile = new File(getConfiguration().destinationDirectory(), "package-dependencies.puml");
         }
         return pumlFile;
     }
 
     @Override
     protected <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
-        output.append("set namespaceSeparator none").newline()
+        output.indent()
+                .append("set namespaceSeparator none").newline()
                 .append("hide circle").newline()
                 .append("hide empty fields").newline()
-                .append("hide empty methods").newline();
+                .append("hide empty methods").newline().newline();
         return super.writeChildrenTo(output);
     }
 }
