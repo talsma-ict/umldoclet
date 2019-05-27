@@ -126,7 +126,10 @@ public class UMLDoclet extends StandardDoclet {
 //        return new DependenciesElementScanner().scan(docEnv.getIncludedElements(), "");
         DependencyDiagram dependencies = new DependencyDiagram(config);
         new DependenciesElementScanner().scan(docEnv.getIncludedElements(), "").stream()
-                .filter(dep -> !dep.fromPackage.startsWith("java.") && !dep.fromPackage.startsWith("javax."))
+// TODO: Make java. and javax. some configurable option
+                .filter(dep -> !dep.toPackage.startsWith("java.") && !dep.toPackage.startsWith("javax."))
+// TODO: Figure out why "unnamed" and "net.sourceforge.plantuml" are in the fromPackage
+                .filter(dep -> !dep.fromPackage.isEmpty() && !dep.fromPackage.startsWith("net.sourceforge.plantuml"))
                 .map(dep -> new PackageDependency(dep.fromPackage, dep.toPackage))
                 .forEach(dependencies::addChild);
         return dependencies;
