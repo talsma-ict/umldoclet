@@ -23,8 +23,9 @@ import nl.talsmasoftware.umldoclet.html.HtmlPostprocessor;
 import nl.talsmasoftware.umldoclet.javadoc.DocletConfig;
 import nl.talsmasoftware.umldoclet.javadoc.UMLFactory;
 import nl.talsmasoftware.umldoclet.javadoc.dependencies.DependenciesElementScanner;
-import nl.talsmasoftware.umldoclet.javadoc.dependencies.Dependency;
+import nl.talsmasoftware.umldoclet.uml.DependencyDiagram;
 import nl.talsmasoftware.umldoclet.uml.Diagram;
+import nl.talsmasoftware.umldoclet.uml.PackageDependency;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.PackageElement;
@@ -35,7 +36,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static nl.talsmasoftware.umldoclet.logging.Message.DOCLET_COPYRIGHT;
 import static nl.talsmasoftware.umldoclet.logging.Message.DOCLET_VERSION;
@@ -84,16 +84,16 @@ public class UMLDoclet extends StandardDoclet {
 
         try {
 
-            // Experiment with package dependency diagrams
-            Set<Dependency> packageDependencies = findPackageDependencies(docEnv);
-            System.out.println(">> Package dependencies:\n" + packageDependencies.stream()
-                    .filter(dep -> !dep.toPackage.startsWith("java.") && !dep.toPackage.startsWith("javax."))
-                    .map(dep -> dep.fromPackage.isEmpty() ? new Dependency("unnamed", dep.toPackage) : dep)
-                    .map(dep -> dep.toPackage.isEmpty() ? new Dependency(dep.fromPackage, "unnamed") : dep)
-                    .map(dep -> "    \"" + dep.fromPackage + "\" -> \"" + dep.toPackage + '"')
-                    .collect(joining("\n",
-                            "@startdot\ndigraph packagedependencies {\n",
-                            "\n}\n@enddot\n")));
+//            // Experiment with package dependency diagrams
+//            Set<Dependency> packageDependencies = findPackageDependencies(docEnv);
+//            System.out.println(">> Package dependencies:\n" + packageDependencies.stream()
+//                    .filter(dep -> !dep.toPackage.startsWith("java.") && !dep.toPackage.startsWith("javax."))
+//                    .map(dep -> dep.fromPackage.isEmpty() ? new Dependency("unnamed", dep.toPackage) : dep)
+//                    .map(dep -> dep.toPackage.isEmpty() ? new Dependency(dep.fromPackage, "unnamed") : dep)
+//                    .map(dep -> "    \"" + dep.fromPackage + "\" -> \"" + dep.toPackage + '"')
+//                    .collect(joining("\n",
+//                            "@startdot\ndigraph packagedependencies {\n",
+//                            "\n}\n@enddot\n")));
 
             Collection<Diagram> umlDiagrams = generateDiagrams(docEnv).collect(toList());
             umlDiagrams.forEach(Diagram::render);
@@ -107,9 +107,10 @@ public class UMLDoclet extends StandardDoclet {
 
     private Stream<Diagram> generateDiagrams(DocletEnvironment docEnv) {
         UMLFactory factory = new UMLFactory(config, docEnv);
-        return docEnv.getIncludedElements().stream()
-                .map(element -> mapToDiagram(factory, element))
-                .filter(Optional::isPresent).map(Optional::get);
+        return Stream.concat(Stream.of(findPackageDependencies(docEnv)),
+                docEnv.getIncludedElements().stream()
+                        .map(element -> mapToDiagram(factory, element))
+                        .filter(Optional::isPresent).map(Optional::get));
     }
 
     private Optional<Diagram> mapToDiagram(UMLFactory factory, Element element) {
@@ -121,8 +122,14 @@ public class UMLDoclet extends StandardDoclet {
         return Optional.empty();
     }
 
-    private Set<Dependency> findPackageDependencies(DocletEnvironment docEnv) {
-        return new DependenciesElementScanner().scan(docEnv.getIncludedElements(), "");
+    private DependencyDiagram findPackageDependencies(DocletEnvironment docEnv) {
+//        return new DependenciesElementScanner().scan(docEnv.getIncludedElements(), "");
+        DependencyDiagram dependencies = new DependencyDiagram(config);
+        new DependenciesElementScanner().scan(docEnv.getIncludedElements(), "").stream()
+                .filter(dep -> !dep.fromPackage.startsWith("java.") && !dep.fromPackage.startsWith("javax."))
+                .map(dep -> new PackageDependency(dep.fromPackage, dep.toPackage))
+                .forEach(dependencies::addChild);
+        return dependencies;
     }
 
     private boolean postProcessHtml(Collection<Diagram> diagrams) {

@@ -1,0 +1,10 @@
+@startuml
+    set namespaceSeparator none
+    hide circle
+    hide empty fields
+    hide empty methods
+
+    "nl.talsmasoftware.umldoclet" ..> "java.lang"
+    "nl.talsmasoftware.umldoclet" ..> "java.lang"
+
+@enduml

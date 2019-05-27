@@ -92,9 +92,10 @@ public class Reference extends UMLNode {
      * @return The canonical type that can be used for equality matching.
      */
     public Reference canonical() {
-        return type.startsWith("<--") || type.startsWith("<..")
-                || type.endsWith("--|>") || type.endsWith("..|>")
-                || type.endsWith("--*") || type.endsWith("--o") || type.endsWith("--+")
+        return type.startsWith("<-") || type.startsWith("<..")
+                || type.endsWith("-|>") || type.endsWith("..|>")
+                || type.endsWith("-*") || type.endsWith("-o")
+                || type.endsWith("-+")
                 ? inverse() : this;
     }
 
