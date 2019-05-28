@@ -112,7 +112,7 @@ public class UMLDoclet extends StandardDoclet {
 
     private DependencyDiagram findPackageDependencies(DocletEnvironment docEnv) {
         DependencyDiagram dependencyDiagram = new DependencyDiagram(config, "package-dependencies.puml");
-        new DependenciesElementScanner().scan(docEnv.getIncludedElements(), "")
+        new DependenciesElementScanner(docEnv).scan(docEnv.getIncludedElements(), null)
                 .forEach(dep -> dependencyDiagram.addPackageDependency(dep.fromPackage, dep.toPackage));
         return dependencyDiagram;
     }
