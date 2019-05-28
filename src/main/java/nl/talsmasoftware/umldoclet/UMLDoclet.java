@@ -25,7 +25,6 @@ import nl.talsmasoftware.umldoclet.javadoc.UMLFactory;
 import nl.talsmasoftware.umldoclet.javadoc.dependencies.DependenciesElementScanner;
 import nl.talsmasoftware.umldoclet.uml.DependencyDiagram;
 import nl.talsmasoftware.umldoclet.uml.Diagram;
-import nl.talsmasoftware.umldoclet.uml.PackageDependency;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.PackageElement;
@@ -123,16 +122,10 @@ public class UMLDoclet extends StandardDoclet {
     }
 
     private DependencyDiagram findPackageDependencies(DocletEnvironment docEnv) {
-//        return new DependenciesElementScanner().scan(docEnv.getIncludedElements(), "");
-        DependencyDiagram dependencies = new DependencyDiagram(config);
-        new DependenciesElementScanner().scan(docEnv.getIncludedElements(), "").stream()
-// TODO: Make java. and javax. some configurable option
-                .filter(dep -> !dep.toPackage.startsWith("java.") && !dep.toPackage.startsWith("javax."))
-// TODO: Figure out why "unnamed" and "net.sourceforge.plantuml" are in the fromPackage
-                .filter(dep -> !dep.fromPackage.isEmpty() && !dep.fromPackage.startsWith("net.sourceforge.plantuml"))
-                .map(dep -> new PackageDependency(dep.fromPackage, dep.toPackage))
-                .forEach(dependencies::addChild);
-        return dependencies;
+        DependencyDiagram dependencyDiagram = new DependencyDiagram(config, "package-dependencies.puml");
+        new DependenciesElementScanner().scan(docEnv.getIncludedElements(), "")
+                .forEach(dep -> dependencyDiagram.addPackageDependency(dep.fromPackage, dep.toPackage));
+        return dependencyDiagram;
     }
 
     private boolean postProcessHtml(Collection<Diagram> diagrams) {

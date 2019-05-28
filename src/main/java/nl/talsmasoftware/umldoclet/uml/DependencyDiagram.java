@@ -17,21 +17,32 @@ package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.uml.Reference.Side;
 
 import java.io.File;
 
 public class DependencyDiagram extends Diagram {
 
+    private String pumlFileName;
     private File pumlFile = null;
 
-    public DependencyDiagram(Configuration config) {
+    public DependencyDiagram(Configuration config, String pumlFileName) {
         super(config);
+        this.pumlFileName = pumlFileName;
+    }
+
+    public void addPackageDependency(String fromPackage, String toPackage) {
+        // TODO extract filter method + make configurable!
+        if (toPackage.startsWith("java.") || toPackage.startsWith("javax.")) return;
+        if (fromPackage.isEmpty()) fromPackage = "unnamed";
+        if (toPackage.isEmpty()) toPackage = "unnamed";
+        addChild(new Reference(Side.from(fromPackage, null), "-->", Side.to(toPackage, null)));
     }
 
     @Override
     protected File getPlantUmlFile() {
         if (pumlFile == null) {
-            pumlFile = new File(getConfiguration().destinationDirectory(), "package-dependencies.puml");
+            pumlFile = new File(getConfiguration().destinationDirectory(), pumlFileName);
         }
         return pumlFile;
     }
