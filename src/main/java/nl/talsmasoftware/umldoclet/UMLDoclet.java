@@ -83,17 +83,6 @@ public class UMLDoclet extends StandardDoclet {
 
         try {
 
-//            // Experiment with package dependency diagrams
-//            Set<Dependency> packageDependencies = findPackageDependencies(docEnv);
-//            System.out.println(">> Package dependencies:\n" + packageDependencies.stream()
-//                    .filter(dep -> !dep.toPackage.startsWith("java.") && !dep.toPackage.startsWith("javax."))
-//                    .map(dep -> dep.fromPackage.isEmpty() ? new Dependency("unnamed", dep.toPackage) : dep)
-//                    .map(dep -> dep.toPackage.isEmpty() ? new Dependency(dep.fromPackage, "unnamed") : dep)
-//                    .map(dep -> "    \"" + dep.fromPackage + "\" -> \"" + dep.toPackage + '"')
-//                    .collect(joining("\n",
-//                            "@startdot\ndigraph packagedependencies {\n",
-//                            "\n}\n@enddot\n")));
-
             Collection<Diagram> umlDiagrams = generateDiagrams(docEnv).collect(toList());
             umlDiagrams.forEach(Diagram::render);
             return postProcessHtml(umlDiagrams);
