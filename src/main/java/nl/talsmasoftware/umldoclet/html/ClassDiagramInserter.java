@@ -33,14 +33,12 @@ import java.util.Optional;
  *
  * @author Sjoerd Talsma
  */
-final class UmlClassDiagram extends UmlDiagram {
+final class ClassDiagramInserter extends UmlDiagram {
 
-    private final File basedir, diagramFile;
     private final String extension, pathToCompare;
 
-    UmlClassDiagram(File basedir, File diagramFile, boolean hasImagesDirectory) {
-        this.basedir = basedir;
-        this.diagramFile = diagramFile;
+    ClassDiagramInserter(File basedir, File diagramFile, boolean hasImagesDirectory) {
+        super(basedir, diagramFile);
         final String fileName = diagramFile.getName();
         int dotIdx = fileName.lastIndexOf('.');
         this.extension = fileName.substring(dotIdx);
@@ -59,7 +57,7 @@ final class UmlClassDiagram extends UmlDiagram {
     Optional<Postprocessor> createPostprocessor(HtmlFile html) {
         File htmlFile = html.path.toFile();
         if (pathToCompare.equals(changeHtmlFileNameExtension(FileUtils.relativePath(basedir, htmlFile)))) {
-            return Optional.of(new Postprocessor(html, this, FileUtils.relativePath(htmlFile, diagramFile)));
+            return Optional.of(new Postprocessor(html, this/*, FileUtils.relativePath(htmlFile, diagramFile)*/));
         }
         return Optional.empty();
     }

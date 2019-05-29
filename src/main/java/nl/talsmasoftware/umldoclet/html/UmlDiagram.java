@@ -15,12 +15,20 @@
  */
 package nl.talsmasoftware.umldoclet.html;
 
+import java.io.File;
 import java.util.Optional;
 
 /**
  * @author Sjoerd Talsma
  */
 abstract class UmlDiagram {
+
+    protected final File basedir, diagramFile;
+
+    UmlDiagram(File basedir, File diagramFile) {
+        this.basedir = basedir;
+        this.diagramFile = diagramFile;
+    }
 
     /**
      * Creates a postprocessor <strong>if</strong> this diagram corresponds to the HTML file.
