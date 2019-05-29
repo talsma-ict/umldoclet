@@ -16,7 +16,6 @@
 package nl.talsmasoftware.umldoclet.html;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.uml.Diagram;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,14 +31,16 @@ import static java.util.Objects.requireNonNull;
  */
 public class HtmlPostprocessor {
     private final Configuration config;
-    private final Collection<Diagram> diagrams;
 
-    public HtmlPostprocessor(Configuration config, Collection<Diagram> diagrams) {
+    public HtmlPostprocessor(Configuration config) {
         this.config = requireNonNull(config, "Configuration is <null>.");
-        this.diagrams = requireNonNull(diagrams, "Generated diagram collection is <null>.");
     }
 
     public boolean postProcessHtml() {
+        // TODO: Experimental: Add package-dependencies to overview-summary:
+        //  For overview-summary.html:
+        //      <center><object type="image/svg+xml" data="package-dependencies.svg" style="max-width:80%;"></object></center>
+        //  Between <div class="contentContainer"> and <a name="Packages">
         try {
             final File destinationDir = new File(config.destinationDirectory());
             if (!destinationDir.isDirectory() || !destinationDir.canRead()) {
