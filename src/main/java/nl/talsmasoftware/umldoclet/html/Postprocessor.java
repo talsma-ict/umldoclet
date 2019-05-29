@@ -31,10 +31,10 @@ import static nl.talsmasoftware.umldoclet.util.FileUtils.fileNameOf;
 final class Postprocessor implements Callable<Boolean> {
 
     private final HtmlFile htmlFile;
-    private final UmlDiagram umlDiagram;
+    private final DiagramFile umlDiagram;
     private final String relativePath, diagramFileName;
 
-    Postprocessor(HtmlFile htmlFile, UmlDiagram umlDiagram/*, String relativePath*/) {
+    Postprocessor(HtmlFile htmlFile, DiagramFile umlDiagram/*, String relativePath*/) {
         this.htmlFile = htmlFile;
         this.umlDiagram = umlDiagram;
         this.relativePath = FileUtils.relativePath(htmlFile.path.toFile(), umlDiagram.diagramFile);

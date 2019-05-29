@@ -49,7 +49,7 @@ final class DiagramCollector extends SimpleFileVisitor<Path> {
     private final File basedir;
     private final Optional<File> imagesDirectory;
     private final List<String> diagramExtensions;
-    private final ThreadLocal<Collection<UmlDiagram>> collected = ThreadLocal.withInitial(ArrayList::new);
+    private final ThreadLocal<Collection<DiagramFile>> collected = ThreadLocal.withInitial(ArrayList::new);
 
     DiagramCollector(Configuration config) {
         this.basedir = new File(config.destinationDirectory());
@@ -68,7 +68,7 @@ final class DiagramCollector extends SimpleFileVisitor<Path> {
      * @return The collected diagrams
      * @throws IOException In case there were I/O errors walking the path
      */
-    Collection<UmlDiagram> collectDiagrams() throws IOException {
+    Collection<DiagramFile> collectDiagrams() throws IOException {
         if (diagramExtensions.isEmpty()) return Collections.emptySet();
         try {
             Files.walkFileTree(imagesDirectory.orElse(basedir).toPath(), this);
@@ -94,7 +94,7 @@ final class DiagramCollector extends SimpleFileVisitor<Path> {
         return PACKAGE_DEPENDENCY_DIAGRAM_PATTERN.matcher(diagramFile.getName()).find();
     }
 
-    private UmlDiagram createDiagramInstance(Path diagramPath) {
+    private DiagramFile createDiagramInstance(Path diagramPath) {
         File diagramFile = diagramPath.normalize().toFile();
         if (isPackageDiagram(diagramFile)) {
             return new PackageDiagramInserter(basedir, diagramFile, imagesDirectory.isPresent());

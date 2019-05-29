@@ -37,22 +37,19 @@ public class HtmlPostprocessor {
     }
 
     public boolean postProcessHtml() {
-        // TODO: Experimental: Add package-dependencies to overview-summary:
-        //  For overview-summary.html:
-        //      <center><object type="image/svg+xml" data="package-dependencies.svg" style="max-width:80%;"></object></center>
-        //  Between <div class="contentContainer"> and <a name="Packages">
         try {
             final File destinationDir = new File(config.destinationDirectory());
             if (!destinationDir.isDirectory() || !destinationDir.canRead()) {
                 throw new IllegalStateException("Cannot read from configured destination directory \"" + destinationDir + "\"!");
             }
-            final Collection<UmlDiagram> diagrams = new DiagramCollector(config).collectDiagrams();
+            final Collection<DiagramFile> diagrams = new DiagramCollector(config).collectDiagrams();
 
             long count = Files.walk(destinationDir.toPath())
                     .filter(HtmlFile::isHtmlFile)
                     .map(path -> new HtmlFile(config, path))
                     .map(htmlFile -> htmlFile.process(diagrams))
                     .filter(Boolean::booleanValue).count();
+            // TODO debug the number of postprocessed HTML files?
             return true;
         } catch (IOException ioe) {
             throw new IllegalStateException("I/O exception postprocessing HTML files in "

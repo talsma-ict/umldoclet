@@ -15,15 +15,14 @@
  */
 package nl.talsmasoftware.umldoclet.html;
 
-import nl.talsmasoftware.umldoclet.util.FileUtils;
-
 import java.io.File;
-import java.util.Optional;
+
+import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
 
 /**
  * @author Sjoerd Talsma
  */
-final class PackageDiagramInserter extends UmlDiagram {
+final class PackageDiagramInserter extends DiagramFile {
 
     private final String extension, pathToCompare;
 
@@ -35,7 +34,7 @@ final class PackageDiagramInserter extends UmlDiagram {
         if (hasImagesDirectory) {
             this.pathToCompare = fileName.substring(0, dotIdx).replace('.', '/') + extension;
         } else {
-            this.pathToCompare = FileUtils.relativePath(this.basedir, this.diagramFile);
+            this.pathToCompare = relativePath(this.basedir, this.diagramFile);
         }
     }
 
@@ -44,12 +43,8 @@ final class PackageDiagramInserter extends UmlDiagram {
     }
 
     @Override
-    Optional<Postprocessor> createPostprocessor(HtmlFile html) {
-        File htmlFile = html.path.toFile();
-        if (pathToCompare.equals(changeHtmlFileNameToDiagram(FileUtils.relativePath(basedir, htmlFile)))) {
-            return Optional.of(new Postprocessor(html, this/*, FileUtils.relativePath(htmlFile, diagramFile)*/));
-        }
-        return Optional.empty();
+    boolean matches(HtmlFile html) {
+        return pathToCompare.equals(changeHtmlFileNameToDiagram(relativePath(basedir, html.path.toFile())));
     }
 
     @Override

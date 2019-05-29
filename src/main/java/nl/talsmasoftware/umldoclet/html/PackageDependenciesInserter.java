@@ -16,19 +16,19 @@
 package nl.talsmasoftware.umldoclet.html;
 
 import java.io.File;
-import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-final class PackageDependenciesInserter extends UmlDiagram {
+final class PackageDependenciesInserter extends DiagramFile {
+    private static final Pattern CONTENT_CONTAINER_DIV = Pattern.compile("<div[^>]+class=\"(\\d+,\\s*)*contentContainer\\W[^>]*>");
 
     PackageDependenciesInserter(File basedir, File diagramFile) {
         super(basedir, diagramFile);
     }
 
-    Optional<Postprocessor> createPostprocessor(HtmlFile htmlFile) {
-        if (htmlFile.path.equals(new File(basedir, "overview-summary.html").toPath())) {
-            return Optional.of(new Postprocessor(htmlFile, this));
-        }
-        return Optional.empty();
+    @Override
+    boolean matches(HtmlFile htmlFile) {
+        return htmlFile.path.equals(new File(basedir, "overview-summary.html").toPath());
     }
 
     @Override
@@ -40,11 +40,18 @@ final class PackageDependenciesInserter extends UmlDiagram {
         return new Postprocessor.Inserter(relativePathToDiagram) {
             @Override
             String process(String line) {
-                if (!inserted && line.contains("<div class=\"contentContainer\">")) {
-                    line = line.replace("<div class=\"contentContainer\">", "<div class=\"contentContainer\">"
-                            + "<center><object type=\"image/svg+xml\" data=\"" + relativePathToDiagram +
-                            "\" style=\"max-width:80%\"></object></center>");
-                    inserted = true;
+                if (!inserted) {
+                    Matcher m = CONTENT_CONTAINER_DIV.matcher(line);
+                    if (m.find()) {
+                        int insertionPoint = m.end();
+                        // TODO similar to class + package diagrams, create both SVG and IMG versions
+                        line = line.substring(0, insertionPoint)
+                                + "<center><object type=\"image/svg+xml\" data=\""
+                                + relativePathToDiagram +
+                                "\" style=\"max-width:80%;\"></object></center>"
+                                + line.substring(insertionPoint);
+                        inserted = true;
+                    }
                 }
                 return line;
             }
