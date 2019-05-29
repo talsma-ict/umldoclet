@@ -112,6 +112,9 @@ public class DocletConfig implements Configuration {
     List<String> excludedReferences = new ArrayList<>(asList(
             "java.lang.Object", "java.lang.Enum", "java.lang.annotation.Annotation"));
 
+    List<String> excludedPackageDependencies = new ArrayList<>(asList(
+            "java", "javax"));
+
     List<ExternalLink> externalLinks = new ArrayList<>();
 
     private Indentation indentation = Indentation.DEFAULT;
@@ -168,6 +171,11 @@ public class DocletConfig implements Configuration {
     @Override
     public List<String> excludedTypeReferences() {
         return excludedReferences;
+    }
+
+    @Override
+    public List<String> excludedPackageDependencies() {
+        return excludedPackageDependencies;
     }
 
     @Override
