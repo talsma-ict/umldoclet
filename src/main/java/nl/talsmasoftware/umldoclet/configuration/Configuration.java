@@ -75,6 +75,11 @@ public interface Configuration {
     List<String> excludedTypeReferences();
 
     /**
+     * @return The packages (including subpackages) excluded from the package dependencies.
+     */
+    List<String> excludedPackageDependencies();
+
+    /**
      * Resolves an external link to the specified type.
      *
      * @param packageName The package of the type.

@@ -32,11 +32,17 @@ public class DependencyDiagram extends Diagram {
     }
 
     public void addPackageDependency(String fromPackage, String toPackage) {
-        // TODO extract filter method + make configurable!
-        if (toPackage.startsWith("java.") || toPackage.startsWith("javax.")) return;
-        if (fromPackage.isEmpty()) fromPackage = "unnamed";
-        if (toPackage.isEmpty()) toPackage = "unnamed";
-        addChild(new Reference(Side.from(fromPackage, null), "-->", Side.to(toPackage, null)));
+        if (fromPackage != null && toPackage != null && !isExcludedPackage(toPackage)) {
+            if (fromPackage.isEmpty()) fromPackage = "unnamed";
+            if (toPackage.isEmpty()) toPackage = "unnamed";
+            addChild(new Reference(Side.from(fromPackage, null), "-->", Side.to(toPackage, null)));
+        }
+    }
+
+    private boolean isExcludedPackage(String toPackage) {
+        return getConfiguration().excludedPackageDependencies().stream()
+                .map(excluded -> excluded.endsWith(".") ? excluded : excluded + '.')
+                .anyMatch(toPackage::startsWith);
     }
 
     @Override
