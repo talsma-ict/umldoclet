@@ -15,17 +15,18 @@
  */
 package nl.talsmasoftware.umldoclet.html;
 
-import nl.talsmasoftware.umldoclet.util.FileUtils;
-
 import java.io.File;
-import java.util.Optional;
+
+import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
 
 /**
  * Abstraction for a generated class diagram file.
+ *
  * <p>
- * The {@link #createPostprocessor(HtmlFile)} method determines whether
+ * The {@link #matches(HtmlFile)} method determines whether
  * a found {@code HTML} file corresponds to this class diagram
- * and if so, returns a postprocessor for it.
+ * and if so, a postprocessor should be run for it.
+ *
  * <p>
  * Furthermore, this class 'knows' where (in the HTML) to insert the
  * UML diagram and how to do it. The {@link #newInserter(String)} method
@@ -33,7 +34,7 @@ import java.util.Optional;
  *
  * @author Sjoerd Talsma
  */
-final class ClassDiagramInserter extends UmlDiagram {
+final class ClassDiagramInserter extends DiagramFile {
 
     private final String extension, pathToCompare;
 
@@ -45,7 +46,7 @@ final class ClassDiagramInserter extends UmlDiagram {
         if (hasImagesDirectory) {
             this.pathToCompare = fileName.substring(0, dotIdx).replace('.', '/') + extension;
         } else {
-            this.pathToCompare = FileUtils.relativePath(this.basedir, this.diagramFile);
+            this.pathToCompare = relativePath(this.basedir, this.diagramFile);
         }
     }
 
@@ -54,12 +55,8 @@ final class ClassDiagramInserter extends UmlDiagram {
     }
 
     @Override
-    Optional<Postprocessor> createPostprocessor(HtmlFile html) {
-        File htmlFile = html.path.toFile();
-        if (pathToCompare.equals(changeHtmlFileNameExtension(FileUtils.relativePath(basedir, htmlFile)))) {
-            return Optional.of(new Postprocessor(html, this/*, FileUtils.relativePath(htmlFile, diagramFile)*/));
-        }
-        return Optional.empty();
+    boolean matches(HtmlFile html) {
+        return pathToCompare.equals(changeHtmlFileNameExtension(relativePath(basedir, html.path.toFile())));
     }
 
     @Override
