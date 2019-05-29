@@ -15,6 +15,8 @@
  */
 package nl.talsmasoftware.umldoclet.html;
 
+import nl.talsmasoftware.umldoclet.util.FileUtils;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,10 +34,10 @@ final class Postprocessor implements Callable<Boolean> {
     private final UmlDiagram umlDiagram;
     private final String relativePath, diagramFileName;
 
-    Postprocessor(HtmlFile htmlFile, UmlDiagram umlDiagram, String relativePath) {
+    Postprocessor(HtmlFile htmlFile, UmlDiagram umlDiagram/*, String relativePath*/) {
         this.htmlFile = htmlFile;
         this.umlDiagram = umlDiagram;
-        this.relativePath = relativePath;
+        this.relativePath = FileUtils.relativePath(htmlFile.path.toFile(), umlDiagram.diagramFile);
         this.diagramFileName = fileNameOf(relativePath);
     }
 

@@ -48,10 +48,8 @@ final class HtmlFile {
     }
 
     static boolean isHtmlFile(Path path) {
-        return Optional.ofNullable(path).map(Path::toFile)
-                .filter(File::isFile).filter(File::canRead)
-                .map(File::getName).filter(name -> name.endsWith(".html"))
-                .isPresent();
+        final File file = path == null ? null : path.toFile();
+        return file != null && file.isFile() && file.canRead() && file.getName().endsWith(".html");
     }
 
     boolean process(Collection<UmlDiagram> diagrams) {
