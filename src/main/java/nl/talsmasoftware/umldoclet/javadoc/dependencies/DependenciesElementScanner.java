@@ -55,10 +55,11 @@ public class DependenciesElementScanner extends ElementScanner9<Set<Dependency>,
 
     @Override
     public Set<Dependency> visitType(TypeElement e, String fromPackage) {
-        addDependency(fromPackage, e.getSuperclass());
-        e.getInterfaces().forEach(implemented -> addDependency(fromPackage, implemented));
+        String pkg = fromPackage == null && docEnv.isIncluded(e) ? PackageElementVisitor.INSTANCE.visit(e) : fromPackage;
+        addDependency(pkg, e.getSuperclass());
+        e.getInterfaces().forEach(implemented -> addDependency(pkg, implemented));
         // TODO: figure out if there is a way to add the class' imports dependencies!
-        return super.visitType(e, fromPackage);
+        return super.visitType(e, pkg);
     }
 
     @Override
