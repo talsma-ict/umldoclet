@@ -29,13 +29,11 @@ import nl.talsmasoftware.umldoclet.uml.Diagram;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
-import java.util.Collection;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toList;
 import static nl.talsmasoftware.umldoclet.logging.Message.DOCLET_COPYRIGHT;
 import static nl.talsmasoftware.umldoclet.logging.Message.DOCLET_VERSION;
 import static nl.talsmasoftware.umldoclet.logging.Message.ERROR_UNANTICIPATED_ERROR_GENERATING_UML;
@@ -83,9 +81,8 @@ public class UMLDoclet extends StandardDoclet {
 
         try {
 
-            Collection<Diagram> umlDiagrams = generateDiagrams(docEnv).collect(toList());
-            umlDiagrams.forEach(Diagram::render);
-            return postProcessHtml(umlDiagrams);
+            generateDiagrams(docEnv).forEach(Diagram::render);
+            return new HtmlPostprocessor(config).postProcessHtml();
 
         } catch (RuntimeException unanticipatedException) {
             config.logger().error(ERROR_UNANTICIPATED_ERROR_GENERATING_UML, unanticipatedException);
@@ -115,10 +112,6 @@ public class UMLDoclet extends StandardDoclet {
         new DependenciesElementScanner(docEnv).scan(docEnv.getIncludedElements(), null)
                 .forEach(dep -> dependencyDiagram.addPackageDependency(dep.fromPackage, dep.toPackage));
         return dependencyDiagram;
-    }
-
-    private boolean postProcessHtml(Collection<Diagram> diagrams) {
-        return new HtmlPostprocessor(config, diagrams).postProcessHtml();
     }
 
 }
