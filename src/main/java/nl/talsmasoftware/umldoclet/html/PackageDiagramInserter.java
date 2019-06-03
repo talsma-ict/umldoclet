@@ -64,8 +64,8 @@ final class PackageDiagramInserter extends DiagramFile {
             if (!inserted) {
                 int idx = line.indexOf("<table");
                 if (idx >= 0) {
+                    line = line.substring(0, idx) + getImageTag() + System.lineSeparator() + line.substring(idx);
                     inserted = true;
-                    return line.substring(0, idx) + getImageTag() + System.lineSeparator() + line.substring(idx);
                 }
             }
             return line;

@@ -16,45 +16,52 @@
 package nl.talsmasoftware.umldoclet.html;
 
 import java.io.File;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.nio.file.Path;
 
 final class PackageDependenciesInserter extends DiagramFile {
-    private static final Pattern CONTENT_CONTAINER_DIV = Pattern.compile("<div[^>]+class=\"(\\d+,\\s*)*contentContainer\\W[^>]*>");
+    private final Path htmlFileToMatch;
 
     PackageDependenciesInserter(File basedir, File diagramFile) {
         super(basedir, diagramFile);
+        this.htmlFileToMatch = new File(basedir, "overview-summary.html").toPath();
     }
 
     @Override
     boolean matches(HtmlFile htmlFile) {
-        return htmlFile.path.equals(new File(basedir, "overview-summary.html").toPath());
+        return htmlFile.path.equals(htmlFileToMatch);
     }
 
     @Override
     public Postprocessor.Inserter newInserter(String relativePathToDiagram) {
-        //  For overview-summary.html:
-        //      <center><object type="image/svg+xml" data="package-dependencies.svg" style="max-width:80%;"></object></center>
-        //  Between <div class="contentContainer"> and <a name="Packages">
+        return new Inserter(relativePathToDiagram);
+    }
 
-        return new Postprocessor.Inserter(relativePathToDiagram) {
-            @Override
-            String process(String line) {
-                if (!inserted) {
-                    Matcher m = CONTENT_CONTAINER_DIV.matcher(line);
-                    if (m.find()) {
-                        int insertionPoint = m.end();
-                        // TODO similar to class + package diagrams, create both SVG and IMG versions
-                        line = line.substring(0, insertionPoint)
-                                + "<center><object type=\"image/svg+xml\" data=\""
-                                + relativePathToDiagram +
-                                "\" style=\"max-width:80%;\"></object></center>"
-                                + line.substring(insertionPoint);
-                        inserted = true;
-                    }
+    private static final class Inserter extends Postprocessor.Inserter {
+        private static final String CENTER_STYLE = "style=\"display:block;margin-left:auto;margin-right:auto;max-width:95%;\"";
+
+        private Inserter(String relativePath) {
+            super(relativePath);
+        }
+
+        @Override
+        String process(String line) {
+            if (!inserted) {
+                int idx = line.indexOf("<table");
+                if (idx >= 0) {
+                    line = line.substring(0, idx) + getImageTag() + System.lineSeparator() + line.substring(idx);
+                    inserted = true;
                 }
-                return line;
             }
-        };
+            return line;
+        }
+
+        private String getImageTag() {
+            if (relativePath.endsWith(".svg")) {
+                // Render SVG images as objects to make their links work
+                return "<object type=\"image/svg+xml\" data=\"" + relativePath + "\" " + CENTER_STYLE + "></object>";
+            }
+            return "<img src=\"" + relativePath + "\" alt=\"Package dependencies\" " + CENTER_STYLE + "/>";
+        }
+
     }
 }
