@@ -15,7 +15,16 @@
  */
 package nl.talsmasoftware.umldoclet.util;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
@@ -90,14 +99,6 @@ public final class Testing {
             throw new IllegalStateException("Could not write content to " + file + ": " + e.getMessage(), e);
         }
         return file;
-    }
-
-    public static String readClassUml(Class<?> type) {
-        try (InputStream in = new FileInputStream("target/apidocs/" + type.getName().replace('.', '/') + ".puml")) {
-            return readUml(in);
-        } catch (Exception e) {
-            throw new IllegalStateException("Cannot read .puml file of " + type, e);
-        }
     }
 
     public static String readUml(InputStream inputStream) {
