@@ -56,13 +56,12 @@ public class DependencyDiagram extends Diagram {
 
     @Override
     protected <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
-        output.indent()
-                .append("set namespaceSeparator none").newline()
+        output.append("set namespaceSeparator none").newline()
                 .append("hide circle").newline()
                 .append("hide empty fields").newline()
                 .append("hide empty methods").newline().newline();
         super.writeChildrenTo(output);
-        writePackageLinksTo(output.indent().newline());
+        writePackageLinksTo(output.newline());
         return output;
     }
 
