@@ -79,6 +79,13 @@ public class DiagramTest {
                 hasToString(equalTo("target/test-classes/images/foo.bar.svg")));
     }
 
+    @Test
+    public void testDiagramToString_multipleFormats() {
+        formats.add(FileFormat.PNG);
+        assertThat(new TestDiagram(config, new File("target/test-classes/foo/bar.puml")),
+                hasToString(equalTo("target/test-classes/images/foo.bar.[svg,png]")));
+    }
+
     static class TestDiagram extends Diagram {
         private final File plantumlFile;
 
