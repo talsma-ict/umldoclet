@@ -22,7 +22,6 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingRenderer;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -99,11 +98,7 @@ public abstract class UMLNode implements IndentingRenderer {
      * @return A reference to the output for method chaining purposes.
      */
     protected <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
-        Collection<? extends UMLNode> children = getChildren();
-        if (!children.isEmpty()) {
-            IndentingPrintWriter indented = output.indent();
-            children.forEach(child -> child.writeTo(indented));
-        }
+        getChildren().forEach(child -> child.writeTo(output));
         return output;
     }
 

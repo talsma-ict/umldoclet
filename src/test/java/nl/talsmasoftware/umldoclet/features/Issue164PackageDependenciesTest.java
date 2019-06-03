@@ -20,13 +20,13 @@ import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.html.HtmlPostprocessor;
 import nl.talsmasoftware.umldoclet.javadoc.DocletConfig;
 import nl.talsmasoftware.umldoclet.javadoc.dependencies.DependenciesElementScanner;
-import nl.talsmasoftware.umldoclet.javadoc.dependencies.Dependency;
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.rendering.Renderer;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 import nl.talsmasoftware.umldoclet.rendering.writers.DelegatingWriter;
 import nl.talsmasoftware.umldoclet.uml.UMLNode;
 import nl.talsmasoftware.umldoclet.util.FileUtils;
+import nl.talsmasoftware.umldoclet.util.Testing;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -37,6 +37,7 @@ import java.util.spi.ToolProvider;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 public class Issue164PackageDependenciesTest {
@@ -53,7 +54,7 @@ public class Issue164PackageDependenciesTest {
             UMLNode.class.getPackageName(),
             FileUtils.class.getPackageName()
     );
-    private static final File outputdir = new File("target/issues/152");
+    private static final File outputdir = new File("target/issues/164");
 
     @BeforeClass
     public static void createJavaDoc() {
@@ -61,7 +62,6 @@ public class Issue164PackageDependenciesTest {
                 "-d", outputdir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet", "-createPumlFiles",
-                "--show-types", "public",
                 "-sourcepath", "src/main/java"));
         args.addAll(packageNames);
         assertThat("Javadoc result", ToolProvider.findFirst("javadoc").get().run(
@@ -70,7 +70,12 @@ public class Issue164PackageDependenciesTest {
 
     @Test
     public void testPackageDependencies() {
-        //
+        String packageDependencies = Testing.read(new File(outputdir, "package-dependencies.puml"));
+
+        assertThat("Doclet superclass dependency", packageDependencies,
+                containsString("nl.talsmasoftware.umldoclet --> jdk.javadoc.doclet"));
+        assertThat("UML contains package-summary links", packageDependencies,
+                containsString("\"nl.talsmasoftware.umldoclet\" [[nl/talsmasoftware/umldoclet/package-summary.html]]"));
     }
 
 }

@@ -52,16 +52,16 @@ public abstract class Diagram extends UMLNode {
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         output.append("@startuml").newline();
-        writeChildrenTo(output);
-        output.newline();
-        writeFooterTo(output);
+        IndentingPrintWriter indented = output.indent();
+        writeChildrenTo(indented);
+        indented.newline();
+        writeFooterTo(indented);
         output.append("@enduml").newline();
         return output;
     }
 
     private <IPW extends IndentingPrintWriter> IPW writeFooterTo(IPW output) {
-        output.indent()
-                .append("center footer").whitespace()
+        output.append("center footer").whitespace()
                 .append(config.logger().localize(
                         Message.DOCLET_UML_FOOTER,
                         Message.DOCLET_VERSION,
@@ -116,13 +116,12 @@ public abstract class Diagram extends UMLNode {
     public void render() {
         try {
             // 1. Render UML sources
-            Link.linkFrom(getPlantUmlFile().getParent());
             String plantumlSource = renderPlantumlSource();
+            if (Link.linkFrom(getDiagramBaseFile().getParent()) || plantumlSource == null) {
+                plantumlSource = super.toString(); // Must re-render in case of different link base paths.
+            }
 
             // 2. Render each diagram.
-            if (Link.linkFrom(getDiagramBaseFile().getParent())) {
-                plantumlSource = super.toString(); // Re-render because different link base paths.
-            }
             for (FileFormat format : formats) {
                 renderDiagramFile(plantumlSource, format);
             }
@@ -137,7 +136,7 @@ public abstract class Diagram extends UMLNode {
         if (config.renderPumlFile()) {
             return writePlantumlSourceToFile();
         } else {
-            return super.toString();
+            return null;
         }
     }
 
@@ -145,6 +144,7 @@ public abstract class Diagram extends UMLNode {
         File pumlFile = getPlantUmlFile();
         config.logger().info(Message.INFO_GENERATING_FILE, pumlFile);
 
+        Link.linkFrom(pumlFile.getParent());
         try (StringBufferingWriter writer = createBufferingPlantumlFileWriter(pumlFile)) {
             writeTo(IndentingPrintWriter.wrap(writer, config.indentation()));
             return writer.getBuffer().toString();
