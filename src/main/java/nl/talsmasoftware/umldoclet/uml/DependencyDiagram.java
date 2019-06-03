@@ -20,6 +20,7 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.uml.Reference.Side;
 
 import java.io.File;
+import java.util.stream.Stream;
 
 public class DependencyDiagram extends Diagram {
 
@@ -60,6 +61,26 @@ public class DependencyDiagram extends Diagram {
                 .append("hide circle").newline()
                 .append("hide empty fields").newline()
                 .append("hide empty methods").newline().newline();
-        return super.writeChildrenTo(output);
+        super.writeChildrenTo(output);
+        writePackageLinksTo(output.indent().newline());
+        return output;
+    }
+
+    private <IPW extends IndentingPrintWriter> IPW writePackageLinksTo(IPW output) {
+        output.println("' Package links");
+        getChildren().stream()
+                .filter(Reference.class::isInstance).map(Reference.class::cast)
+                .flatMap(reference -> Stream.of(reference.from.toString(), reference.to.toString()))
+                .distinct().map(packageName -> new Namespace(this, packageName))
+                .forEach(namespace -> writePackageLinkTo(output, namespace));
+        return output;
+    }
+
+    private <IPW extends IndentingPrintWriter> IPW writePackageLinkTo(IPW output, Namespace namespace) {
+        String link = Link.forPackage(namespace).toString().trim();
+        if (!link.isEmpty()) {
+            output.append("class \"").append(namespace.name).append("\" ").append(link).append(" {\n}\n");
+        }
+        return output;
     }
 }
