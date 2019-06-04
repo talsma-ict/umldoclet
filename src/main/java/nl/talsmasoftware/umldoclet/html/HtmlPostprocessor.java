@@ -16,7 +16,6 @@
 package nl.talsmasoftware.umldoclet.html;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.uml.Diagram;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,11 +31,9 @@ import static java.util.Objects.requireNonNull;
  */
 public class HtmlPostprocessor {
     private final Configuration config;
-    private final Collection<Diagram> diagrams;
 
-    public HtmlPostprocessor(Configuration config, Collection<Diagram> diagrams) {
+    public HtmlPostprocessor(Configuration config) {
         this.config = requireNonNull(config, "Configuration is <null>.");
-        this.diagrams = requireNonNull(diagrams, "Generated diagram collection is <null>.");
     }
 
     public boolean postProcessHtml() {
@@ -45,13 +42,14 @@ public class HtmlPostprocessor {
             if (!destinationDir.isDirectory() || !destinationDir.canRead()) {
                 throw new IllegalStateException("Cannot read from configured destination directory \"" + destinationDir + "\"!");
             }
-            final Collection<UmlDiagram> diagrams = new DiagramCollector(config).collectDiagrams();
+            final Collection<DiagramFile> diagrams = new DiagramCollector(config).collectDiagrams();
 
             long count = Files.walk(destinationDir.toPath())
                     .filter(HtmlFile::isHtmlFile)
                     .map(path -> new HtmlFile(config, path))
                     .map(htmlFile -> htmlFile.process(diagrams))
                     .filter(Boolean::booleanValue).count();
+            // TODO debug the number of postprocessed HTML files?
             return true;
         } catch (IOException ioe) {
             throw new IllegalStateException("I/O exception postprocessing HTML files in "

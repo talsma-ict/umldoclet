@@ -43,12 +43,13 @@ import static java.util.stream.Collectors.toList;
  * @author Sjoerd Talsma
  */
 final class DiagramCollector extends SimpleFileVisitor<Path> {
-    private static final Pattern PACKAGE_DIAGRAM_PATTERN = Pattern.compile("package.[a-z]+$");
+    private static final Pattern PACKAGE_DIAGRAM_PATTERN = Pattern.compile("package\\.[a-z]+$");
+    private static final Pattern PACKAGE_DEPENDENCY_DIAGRAM_PATTERN = Pattern.compile("package-dependencies\\.[a-z]+$");
 
     private final File basedir;
     private final Optional<File> imagesDirectory;
     private final List<String> diagramExtensions;
-    private final ThreadLocal<Collection<UmlDiagram>> collected = ThreadLocal.withInitial(ArrayList::new);
+    private final ThreadLocal<Collection<DiagramFile>> collected = ThreadLocal.withInitial(ArrayList::new);
 
     DiagramCollector(Configuration config) {
         this.basedir = new File(config.destinationDirectory());
@@ -67,7 +68,7 @@ final class DiagramCollector extends SimpleFileVisitor<Path> {
      * @return The collected diagrams
      * @throws IOException In case there were I/O errors walking the path
      */
-    Collection<UmlDiagram> collectDiagrams() throws IOException {
+    Collection<DiagramFile> collectDiagrams() throws IOException {
         if (diagramExtensions.isEmpty()) return Collections.emptySet();
         try {
             Files.walkFileTree(imagesDirectory.orElse(basedir).toPath(), this);
@@ -80,7 +81,7 @@ final class DiagramCollector extends SimpleFileVisitor<Path> {
     @Override
     public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
         if (attrs.isRegularFile() && FileUtils.hasExtension(path, diagramExtensions.get(0))) {
-            createDiagramInstance(path).ifPresent(collected.get()::add);
+            collected.get().add(createDiagramInstance(path));
         }
         return super.visitFile(path, attrs);
     }
@@ -89,12 +90,18 @@ final class DiagramCollector extends SimpleFileVisitor<Path> {
         return PACKAGE_DIAGRAM_PATTERN.matcher(diagramFile.getName()).find();
     }
 
-    private Optional<UmlDiagram> createDiagramInstance(Path diagramPath) {
+    private boolean isPackageDependencyDiagram(File diagramFile) {
+        return PACKAGE_DEPENDENCY_DIAGRAM_PATTERN.matcher(diagramFile.getName()).find();
+    }
+
+    private DiagramFile createDiagramInstance(Path diagramPath) {
         File diagramFile = diagramPath.normalize().toFile();
         if (isPackageDiagram(diagramFile)) {
-            return Optional.of(new UmlPackageDiagram(basedir, diagramFile, imagesDirectory.isPresent()));
+            return new PackageDiagramInserter(basedir, diagramFile, imagesDirectory.isPresent());
+        } else if (isPackageDependencyDiagram(diagramFile)) {
+            return new PackageDependenciesInserter(basedir, diagramFile);
         }
-        return Optional.of(new UmlClassDiagram(basedir, diagramFile, imagesDirectory.isPresent()));
+        return new ClassDiagramInserter(basedir, diagramFile, imagesDirectory.isPresent());
     }
 
 }

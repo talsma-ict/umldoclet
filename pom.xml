@@ -269,6 +269,9 @@
                             <jdkToolchain>
                                 <version>9</version>
                             </jdkToolchain>
+                            <additionalOptions>
+                                <additionalOption>-createPumlFiles</additionalOption>
+                            </additionalOptions>
                         </configuration>
                     </execution>
                 </executions>

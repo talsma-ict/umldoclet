@@ -24,7 +24,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 import static nl.talsmasoftware.umldoclet.logging.Message.DEBUG_COPIED_FILE_FROM;
@@ -48,18 +47,17 @@ final class HtmlFile {
     }
 
     static boolean isHtmlFile(Path path) {
-        return Optional.ofNullable(path).map(Path::toFile)
-                .filter(File::isFile).filter(File::canRead)
-                .map(File::getName).filter(name -> name.endsWith(".html"))
-                .isPresent();
+        final File file = path == null ? null : path.toFile();
+        return file != null && file.isFile() && file.canRead() && file.getName().endsWith(".html");
     }
 
-    boolean process(Collection<UmlDiagram> diagrams) {
+    boolean process(Collection<DiagramFile> diagrams) {
         return diagrams.stream()
-                .map(diagram -> diagram.createPostprocessor(this))
-                .filter(Optional::isPresent).map(Optional::get).findFirst()
+                .filter(diagram -> diagram.matches(this))
+                .map(diagram -> new Postprocessor(this, diagram))
                 .map(this::process)
-                .orElseGet(this::skip);
+                .reduce(Boolean.FALSE, Boolean::logicalOr)
+                || skip();
     }
 
     private boolean skip() {

@@ -47,8 +47,17 @@ public class Link extends UMLNode {
 
         Optional<URI> target = relativeHtmlFile(destinationDirectory, packageName, nameInPackage)
                 .or(() -> type.getConfiguration().resolveExternalLinkToType(packageName, nameInPackage));
-
         return new Link(type, target.orElse(null));
+    }
+
+    public static Link forPackage(Namespace namespace) {
+        final String destinationDirectory = namespace.getConfiguration().destinationDirectory();
+        final String packageName = namespace.name;
+        final String nameInPackage = "package-summary";
+
+        Optional<URI> target = relativeHtmlFile(destinationDirectory, packageName, nameInPackage)
+                .or(() -> namespace.getConfiguration().resolveExternalLinkToType(packageName, nameInPackage));
+        return new Link(namespace, target.orElse(null));
     }
 
     private static Optional<URI> relativeHtmlFile(String destinationDirectory, String packageName, String nameInPackage) {

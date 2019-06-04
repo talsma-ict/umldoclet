@@ -15,29 +15,26 @@
  */
 package nl.talsmasoftware.umldoclet.html;
 
-import nl.talsmasoftware.umldoclet.util.FileUtils;
-
 import java.io.File;
-import java.util.Optional;
+
+import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
 
 /**
  * @author Sjoerd Talsma
  */
-final class UmlPackageDiagram extends UmlDiagram {
+final class PackageDiagramInserter extends DiagramFile {
 
-    private final File basedir, diagramFile;
     private final String extension, pathToCompare;
 
-    UmlPackageDiagram(File basedir, File diagramFile, boolean hasImagesDirectory) {
-        this.basedir = basedir;
-        this.diagramFile = diagramFile;
+    PackageDiagramInserter(File basedir, File diagramFile, boolean hasImagesDirectory) {
+        super(basedir, diagramFile);
         final String fileName = diagramFile.getName();
         int dotIdx = fileName.lastIndexOf('.');
         this.extension = fileName.substring(dotIdx);
         if (hasImagesDirectory) {
             this.pathToCompare = fileName.substring(0, dotIdx).replace('.', '/') + extension;
         } else {
-            this.pathToCompare = FileUtils.relativePath(this.basedir, this.diagramFile);
+            this.pathToCompare = relativePath(this.basedir, this.diagramFile);
         }
     }
 
@@ -46,12 +43,8 @@ final class UmlPackageDiagram extends UmlDiagram {
     }
 
     @Override
-    Optional<Postprocessor> createPostprocessor(HtmlFile html) {
-        File htmlFile = html.path.toFile();
-        if (pathToCompare.equals(changeHtmlFileNameToDiagram(FileUtils.relativePath(basedir, htmlFile)))) {
-            return Optional.of(new Postprocessor(html, this, FileUtils.relativePath(htmlFile, diagramFile)));
-        }
-        return Optional.empty();
+    boolean matches(HtmlFile html) {
+        return pathToCompare.equals(changeHtmlFileNameToDiagram(relativePath(basedir, html.path.toFile())));
     }
 
     @Override
@@ -71,8 +64,8 @@ final class UmlPackageDiagram extends UmlDiagram {
             if (!inserted) {
                 int idx = line.indexOf("<table");
                 if (idx >= 0) {
+                    line = line.substring(0, idx) + getImageTag() + System.lineSeparator() + line.substring(idx);
                     inserted = true;
-                    return line.substring(0, idx) + getImageTag() + System.lineSeparator() + line.substring(idx);
                 }
             }
             return line;
