@@ -270,7 +270,6 @@
                                 <version>9</version>
                             </jdkToolchain>
                             <additionalOptions>
-<!--                                <additionalOption>-verbose</additionalOption>-->
                                 <additionalOption>-createPumlFiles</additionalOption>
                             </additionalOptions>
                         </configuration>

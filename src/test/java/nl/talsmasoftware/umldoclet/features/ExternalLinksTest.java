@@ -31,8 +31,17 @@ import static org.hamcrest.Matchers.stringContainsInOrder;
 
 /**
  * Tests the 'external links' feature
+ *
  * <p>
  * This feature is tracked by <a href="https://github.com/talsma-ict/umldoclet/issues/96">issue 96 on github</a>
+ *
+ * <p>
+ * For later reference, some JDK links:
+ * <dl>
+ * <dt>JDK 9</dt><dd>{@code <link>https://docs.oracle.com/javase/9/docs/api</link>}</dd>
+ * <dt>JDK 10</dt><dd>{@code <link>https://docs.oracle.com/javase/10/docs/api</link>}</dd>
+ * <dt>JDK 11</dt><dd>{@code <link>https://docs.oracle.com/en/java/javase/11/docs/api</link>}</dd>
+ * </dl>
  *
  * @author Sjoerd Talsma
  */
