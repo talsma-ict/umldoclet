@@ -1,5 +1,6 @@
 [![Build Status][ci-img]][ci]
 [![Coverage Status][coveralls-img]][coveralls]
+[![LGTM Status][lgtm-img]][lgtm]
 [![Maven Version][maven-img]][maven]
 [![Javadoc][javadoc-img]][javadoc]
 
@@ -61,12 +62,14 @@ default settings provide for you:
 
   [ci-img]: https://travis-ci.org/talsma-ict/umldoclet.svg?branch=develop
   [ci]: https://travis-ci.org/talsma-ict/umldoclet
-  [maven-img]: https://img.shields.io/maven-metadata/v/http/central.maven.org/maven2/nl/talsmasoftware/umldoclet/maven-metadata.xml.svg
-  [maven]: http://mvnrepository.com/artifact/nl.talsmasoftware/umldoclet
   [coveralls-img]: https://coveralls.io/repos/github/talsma-ict/umldoclet/badge.svg
   [coveralls]: https://coveralls.io/github/talsma-ict/umldoclet
+  [lgtm]: https://lgtm.com/projects/g/talsma-ict/umldoclet
+  [lgtm-img]: https://img.shields.io/lgtm/grade/java/github/talsma-ict/umldoclet.svg?label=java&logo=lgtm
+  [maven-img]: https://img.shields.io/maven-metadata/v/http/central.maven.org/maven2/nl/talsmasoftware/umldoclet/maven-metadata.xml.svg
+  [maven]: http://mvnrepository.com/artifact/nl.talsmasoftware/umldoclet
   [javadoc-img]: https://www.javadoc.io/badge/nl.talsmasoftware/umldoclet.svg
-  [javadoc]: https://www.javadoc.io/doc/nl.talsmasoftware/umldoclet 
+  [javadoc]: https://www.javadoc.io/doc/nl.talsmasoftware/umldoclet
   
   [usage]: USAGE.md
   [contributing]: Contributing.md
