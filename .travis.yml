@@ -26,7 +26,6 @@ before_install:
   # allocate commits by travis to the CI user
   - git config user.name "Talsma CI"
   - git config user.email "ci-user@talsma-ict.nl"
-  - git config commit.gpgsign true
   # setup https authentication credentials for github, used by ./mvnw release:prepare
   - git config credential.helper "store --file=.git/credentials"
   - echo "https://$GH_TOKEN:@github.com" > .git/credentials
