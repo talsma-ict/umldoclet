@@ -40,6 +40,7 @@ script:
 
 after_success:
   - if [ -f target/jacoco.exec ]; then ./mvnw -DTRAVIS_JOB_ID=$TRAVIS_JOB_ID jacoco:report coveralls:report; fi
+  - if [ -f target/site/jacoco/jacoco.xml ]; then curl -Ls -o codacy-coverage-reporter-assembly.jar $(curl -Ls https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r '.assets | map({content_type, browser_download_url} | select(.content_type | contains("java-archive"))) | .[0].browser_download_url') && java -jar codacy-coverage-reporter-assembly.jar report -l Java -r target/site/jacoco/jacoco.xml; fi
 
 deploy:
   provider: releases
