@@ -11,6 +11,7 @@ addons:
   apt:
     packages:
       - graphviz
+      - jq
 
 cache:
   directories:
@@ -29,6 +30,8 @@ before_install:
   # setup https authentication credentials for github, used by ./mvnw release:prepare
   - git config credential.helper "store --file=.git/credentials"
   - echo "https://$GH_TOKEN:@github.com" > .git/credentials
+  # get the codacy reporter
+  - curl $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r '.assets | map({content_type, browser_download_url} | select(.content_type | contains("application/x-java-archive"))) | .[0].browser_download_url') -o codacy-coverage-reporter-assembly.jar
 
 install:
   - ls -laF /usr/lib/jvm
@@ -40,7 +43,7 @@ script:
 
 after_success:
   - if [ -f target/jacoco.exec ]; then ./mvnw -DTRAVIS_JOB_ID=$TRAVIS_JOB_ID jacoco:report coveralls:report; fi
-  - if [ -f target/site/jacoco/jacoco.xml ]; then curl -Ls -o codacy-coverage-reporter-assembly.jar $(curl -Ls https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r '.assets | map({content_type, browser_download_url} | select(.content_type | contains("java-archive"))) | .[0].browser_download_url') && java -jar codacy-coverage-reporter-assembly.jar report -l Java -r target/site/jacoco/jacoco.xml; fi
+  - if [ -f target/site/jacoco/jacoco.xml ]; then java -jar ~/codacy-coverage-reporter-assembly.jar report -l Java -r target/site/jacoco/jacoco.xml; fi
 
 deploy:
   provider: releases
