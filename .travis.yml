@@ -42,8 +42,8 @@ script:
   - .travis/scripts/release.sh
 
 after_success:
-  - if [ -f target/jacoco.exec ]; then ./mvnw -DTRAVIS_JOB_ID=$TRAVIS_JOB_ID jacoco:report coveralls:report; fi
-  - if [ -f target/site/jacoco/jacoco.xml ]; then ./mvnw com.gavinmogan:codacy-maven-plugin:coverage -DcoverageReportFile=target/site/jacoco/jacoco.xml -DprojectToken=${CODACY_PROJECT_TOKEN}; fi
+  - if [ -f target/jacoco.exec ]; then ./mvnw --batch-mode -DTRAVIS_JOB_ID=$TRAVIS_JOB_ID jacoco:report coveralls:report; fi
+  - if [ -f target/site/jacoco/jacoco.xml ]; then ./mvnw --batch-mode com.gavinmogan:codacy-maven-plugin:coverage -DcoverageReportFile=target/site/jacoco/jacoco.xml -DprojectToken=${CODACY_PROJECT_TOKEN}; fi
 
 deploy:
   provider: releases
