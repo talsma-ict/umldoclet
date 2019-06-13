@@ -1,6 +1,6 @@
-[![Released Version][maven-img]][maven]
-
 # UML Doclet Usage
+
+[![Released Version][maven-img]][maven]
 
 ## Usage
 
@@ -76,7 +76,7 @@ as part of the rest of your build:
 </build>
 ```
 
-Please don't forget to change the `2.x` above to the latest release (see top of this page). 
+Please don't forget to change the `2.x` above to the latest release (see [top of this page](#uml-doclet-usage)). 
 
 :exclamation: **Note:**
 _Version 2 and higher uses the new [Javadoc API][javadoc-oracle] from JDK 9 and above.
@@ -106,7 +106,7 @@ javadoc {
 }
 ```
 
-Please don't forget to change the `2.x` above to the latest release (see top of this page).
+Please don't forget to change the `2.x` above to the latest release (see [top of this page](#uml-doclet-usage)).
 
 Obviously, replace `additionalParamName` and `additionalParamValue` with the
 [additional options](#additional-options) you require.
