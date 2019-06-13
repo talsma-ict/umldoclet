@@ -17,7 +17,6 @@ package nl.talsmasoftware.umldoclet.issues;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.util.Testing;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
@@ -30,35 +29,28 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
-/**
- * @author Sjoerd Talsma
- */
 public class Bug75StackOverflowTest {
     private static final String packageAsPath = Bug75StackOverflowTest.class.getPackageName().replace('.', '/');
-    private static final File outputdir = new File("target/issues/75");
-    private static String classUml, packageUml;
+    private static final File outputDir = new File("target/issues/75");
 
     public interface Comparable<T> {
         <U extends Comparable<? super U>> Comparator<T> thenComparing(Function<? super T, ? extends U> keyExtractor);
     }
 
-    @BeforeClass
-    public static void createJavadoc() {
+    @Test
+    public void testInifiniteRecursionIsBounded() {
         String classAsPath = packageAsPath + '/' + Bug75StackOverflowTest.class.getSimpleName();
         assertThat("Javadoc result", ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
-                "-d", outputdir.getPath(),
+                "-d", outputDir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet",
                 "-createPumlFiles",
                 "src/test/java/" + Bug75StackOverflowTest.class.getName().replace('.', '/') + ".java"
         ), is(0));
-        classUml = Testing.read(new File(outputdir, classAsPath + ".puml"));
-        packageUml = Testing.read(new File(outputdir, packageAsPath + "/package.puml"));
-    }
+        Testing.read(new File(outputDir, classAsPath + ".puml"));
+        String packageUml = Testing.read(new File(outputDir, packageAsPath + "/package.puml"));
 
-    @Test
-    public void testInifiniteRecursionIsBounded() {
         assertThat(packageUml, not(containsString("? extends Comparable<? super Comparable<? super Comparable")));
     }
 

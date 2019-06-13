@@ -37,7 +37,8 @@ import static java.util.Objects.requireNonNull;
  * @author Sjoerd Talsma
  */
 public class TypeName implements Comparable<TypeName> {
-    public final String simple, qualified;
+    public final String simple;
+    public final String qualified;
     private final TypeName[] generics;
 
     public TypeName(String simpleName, String qualifiedName, TypeName... generics) {

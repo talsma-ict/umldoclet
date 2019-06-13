@@ -25,6 +25,8 @@ import java.util.function.Predicate;
 import static java.util.Arrays.asList;
 
 public class TestLogger implements Logger {
+    public List<LogRecord> logged = new ArrayList<>();
+
     public static final class LogRecord {
         public final Level level;
         public final Message message;
@@ -44,8 +46,6 @@ public class TestLogger implements Logger {
             return message;
         }
     }
-
-    public List<LogRecord> logged = new ArrayList<>();
 
     public int countMessages(Predicate<Message> predicate) {
         return (int) logged.stream().filter(record -> predicate.test(record.message)).count();

@@ -74,7 +74,7 @@ public class IndentingWriterTest {
     }
 
     @Test
-    public void testClose_rethrowingRuntimeExceptions() throws IOException {
+    public void testCloseRethrowingRuntimeExceptions() throws IOException {
         RuntimeException runtimeException = new RuntimeException("Runtime exception!");
         try {
             new IndentingWriter(throwing(runtimeException), Indentation.DEFAULT).close();
@@ -85,7 +85,7 @@ public class IndentingWriterTest {
     }
 
     @Test
-    public void testClose_rethrowingIOExceptions() {
+    public void testCloseRethrowingIOExceptions() {
         IOException ioException = new IOException("I/O exception!");
         try {
             new IndentingWriter(throwing(ioException), Indentation.DEFAULT).close();
@@ -96,7 +96,7 @@ public class IndentingWriterTest {
     }
 
     @Test
-    public void testClose_wrappingCheckedExceptions() throws IOException {
+    public void testCloseWrappingCheckedExceptions() throws IOException {
         Exception checkedException = new Exception("Checked exception!");
         try {
             new IndentingWriter(throwing(checkedException), Indentation.DEFAULT).close();

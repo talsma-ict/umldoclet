@@ -44,7 +44,7 @@ public class ClassDiagramTest {
     private TestLogger logger;
 
     @Before
-    public void setup() {
+    public void initializeMocks() {
         images = mock(ImageConfig.class);
         config = mock(Configuration.class);
         logger = new TestLogger();
@@ -58,7 +58,7 @@ public class ClassDiagramTest {
     }
 
     @After
-    public void tearDown() {
+    public void verifyMocks() {
         verify(config, atLeast(1)).images();
         verify(images, atLeast(1)).formats();
     }

@@ -26,17 +26,14 @@ import java.util.spi.ToolProvider;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-/**
- * @author Sjoerd Talsma
- */
 public class Issue70ConfigurableFormatTest {
     private static final String CLASS_AS_PATH = Issue70ConfigurableFormatTest.class.getName().replace('.', '/');
     private static final String SOURCE_FILE = "src/test/java/" + CLASS_AS_PATH + ".java";
 
-    File outputDir = null;
+    private File outputDir = null;
 
     @Before
-    public void setup() {
+    public void resetCommonOutputDir() {
         outputDir = new File("target/issues/70");
     }
 
@@ -46,7 +43,7 @@ public class Issue70ConfigurableFormatTest {
     }
 
     @Test
-    public void testImageFormat_defaults() {
+    public void testImageFormatDefaults() {
         outputDir = new File(outputDir, "defaults");
         ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
@@ -65,7 +62,7 @@ public class Issue70ConfigurableFormatTest {
     }
 
     @Test
-    public void testImageFormat_none() {
+    public void testImageFormatNone() {
         outputDir = new File(outputDir, "none");
         ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
@@ -85,7 +82,7 @@ public class Issue70ConfigurableFormatTest {
     }
 
     @Test
-    public void testImageFormat_svg() {
+    public void testImageFormatSvg() {
         outputDir = new File(outputDir, "svg");
         ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
@@ -102,7 +99,7 @@ public class Issue70ConfigurableFormatTest {
     }
 
     @Test
-    public void testImageFormat_png() {
+    public void testImageFormatPng() {
         outputDir = new File(outputDir, "png");
         ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
@@ -119,7 +116,7 @@ public class Issue70ConfigurableFormatTest {
     }
 
     @Test
-    public void testImageFormat_svg_png_eps() {
+    public void testImageFormatSvgPngEps() {
         outputDir = new File(outputDir, "svg_png_eps");
         ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
@@ -138,7 +135,7 @@ public class Issue70ConfigurableFormatTest {
     }
 
     @Test
-    public void testImageFormat_eps() {
+    public void testImageFormatEps() {
         outputDir = new File(outputDir, "eps");
         ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
@@ -155,7 +152,7 @@ public class Issue70ConfigurableFormatTest {
     }
 
     @Test
-    public void testImageFormat_unrecognized() {
+    public void testImageFormatUnrecognized() {
         outputDir = new File(outputDir, "unrecognized");
         ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,

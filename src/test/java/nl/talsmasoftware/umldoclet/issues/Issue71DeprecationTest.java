@@ -34,8 +34,9 @@ import static org.hamcrest.Matchers.is;
 @Deprecated
 public class Issue71DeprecationTest {
     private static final String packageAsPath = Issue71DeprecationTest.class.getPackageName().replace('.', '/');
-    private static final File outputdir = new File("target/issues/71");
-    private static String classUml, packageUml;
+    private static final File outputDir = new File("target/issues/71");
+    private static String classUml;
+    private static String packageUml;
 
     @Deprecated
     public String deprecatedByAnnotation;
@@ -56,18 +57,18 @@ public class Issue71DeprecationTest {
     }
 
     @BeforeClass
-    public static void setup() {
+    public static void prepareJavadocWithPumlFiles() {
         String classAsPath = packageAsPath + '/' + Issue71DeprecationTest.class.getSimpleName();
         ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
-                "-d", outputdir.getPath(),
+                "-d", outputDir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet",
                 "-createPumlFiles",
                 "src/test/java/" + classAsPath + ".java"
         );
-        classUml = Testing.read(new File(outputdir, classAsPath + ".puml"));
-        packageUml = Testing.read(new File(outputdir, packageAsPath + "/package.puml"));
+        classUml = Testing.read(new File(outputDir, classAsPath + ".puml"));
+        packageUml = Testing.read(new File(outputDir, packageAsPath + "/package.puml"));
     }
 
     @Test
@@ -112,7 +113,7 @@ public class Issue71DeprecationTest {
 
     @Test
     public void testIssue73_innerClassImageName() {
-        File innerClassFile = new File(outputdir, "nl/talsmasoftware/umldoclet/issues/Issue71DeprecationTest.MoreDeprecation.svg");
+        File innerClassFile = new File(outputDir, "nl/talsmasoftware/umldoclet/issues/Issue71DeprecationTest.MoreDeprecation.svg");
         assertThat(innerClassFile + " exists?", innerClassFile.exists(), is(true));
     }
 

@@ -30,9 +30,6 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-/**
- * @author Sjoerd Talsma
- */
 public class DelegatingWriterTest {
 
     @Test
@@ -55,7 +52,7 @@ public class DelegatingWriterTest {
     }
 
     @Test
-    public void testWrite_singleIOException() throws IOException {
+    public void testWriteSingleIOException() throws IOException {
         IOException ioException = new IOException("IO error!");
         DelegatingWriter delegatingWriter = new DelegatingWriter(ThrowingWriter.throwing(ioException));
         try {
@@ -67,7 +64,7 @@ public class DelegatingWriterTest {
     }
 
     @Test
-    public void testWrite_singleRuntimeException() throws IOException {
+    public void testWriteSingleRuntimeException() throws IOException {
         RuntimeException runtimeException = new IllegalStateException("Illegal state!");
         DelegatingWriter delegatingWriter = new DelegatingWriter(ThrowingWriter.throwing(runtimeException));
         try {
@@ -79,7 +76,7 @@ public class DelegatingWriterTest {
     }
 
     @Test
-    public void testWrite_multipleExceptions() throws IOException {
+    public void testWriteMultipleExceptions() throws IOException {
         IOException expectedException1 = new IOException("IO error!");
         RuntimeException expectedException2 = new IllegalStateException("Illegal state!");
         DelegatingWriter delegatingWriter = new DelegatingWriter(
@@ -97,7 +94,7 @@ public class DelegatingWriterTest {
     }
 
     @Test
-    public void testWrite_combinedSuccessAndException() throws IOException {
+    public void testWriteCombinedSuccessAndException() throws IOException {
         ThrowingWriter throwingWriter = ThrowingWriter.throwing(new IllegalStateException("Illegal state!"));
         StringWriter stringWriter = new StringWriter();
         DelegatingWriter delegatingWriter = new DelegatingWriter(throwingWriter, stringWriter);
@@ -111,7 +108,7 @@ public class DelegatingWriterTest {
     }
 
     @Test
-    public void testFlush_singleIOException() throws IOException {
+    public void testFlushSingleIOException() throws IOException {
         IOException ioException = new IOException("IO error!");
         DelegatingWriter delegatingWriter = new DelegatingWriter(ThrowingWriter.throwing(ioException));
         try {
@@ -123,7 +120,7 @@ public class DelegatingWriterTest {
     }
 
     @Test
-    public void testFlush_singleRuntimeException() throws IOException {
+    public void testFlushSingleRuntimeException() throws IOException {
         RuntimeException runtimeException = new IllegalStateException("Illegal state!");
         DelegatingWriter delegatingWriter = new DelegatingWriter(ThrowingWriter.throwing(runtimeException));
         try {
@@ -135,7 +132,7 @@ public class DelegatingWriterTest {
     }
 
     @Test
-    public void testFlush_multipleExceptions() throws IOException {
+    public void testFlushMultipleExceptions() throws IOException {
         IOException expectedException1 = new IOException("IO error!");
         RuntimeException expectedException2 = new IllegalStateException("Illegal state!");
         DelegatingWriter delegatingWriter = new DelegatingWriter(
@@ -153,7 +150,7 @@ public class DelegatingWriterTest {
     }
 
     @Test
-    public void testFlush_combinedSuccessAndException() throws IOException {
+    public void testFlushCombinedSuccessAndException() throws IOException {
         ThrowingWriter throwingWriter = ThrowingWriter.throwing(new IllegalStateException("Illegal state!"));
         Writer mockWriter = mock(Writer.class);
         DelegatingWriter delegatingWriter = new DelegatingWriter(throwingWriter, mockWriter);
@@ -167,7 +164,7 @@ public class DelegatingWriterTest {
     }
 
     @Test
-    public void testClose_singleIOException() throws IOException {
+    public void testCloseSingleIOException() throws IOException {
         IOException ioException = new IOException("IO error!");
         DelegatingWriter delegatingWriter = new DelegatingWriter(ThrowingWriter.throwing(ioException));
         try {
@@ -179,7 +176,7 @@ public class DelegatingWriterTest {
     }
 
     @Test
-    public void testClose_singleRuntimeException() throws IOException {
+    public void testCloseSingleRuntimeException() throws IOException {
         RuntimeException runtimeException = new IllegalStateException("Illegal state!");
         DelegatingWriter delegatingWriter = new DelegatingWriter(ThrowingWriter.throwing(runtimeException));
         try {
@@ -191,7 +188,7 @@ public class DelegatingWriterTest {
     }
 
     @Test
-    public void testClose_multipleExceptions() throws IOException {
+    public void testCloseMultipleExceptions() throws IOException {
         IOException expectedException1 = new IOException("IO error!");
         RuntimeException expectedException2 = new IllegalStateException("Illegal state!");
         DelegatingWriter delegatingWriter = new DelegatingWriter(
@@ -209,7 +206,7 @@ public class DelegatingWriterTest {
     }
 
     @Test
-    public void testClose_combinedSuccessAndException() throws IOException {
+    public void testCloseCombinedSuccessAndException() throws IOException {
         ThrowingWriter throwingWriter = ThrowingWriter.throwing(new IllegalStateException("Illegal state!"));
         Writer mockWriter = mock(Writer.class);
         DelegatingWriter delegatingWriter = new DelegatingWriter(throwingWriter, mockWriter);

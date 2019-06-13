@@ -16,18 +16,20 @@
 package nl.talsmasoftware.umldoclet.issues;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
-import org.junit.BeforeClass;
+import nl.talsmasoftware.umldoclet.util.Testing;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.spi.ToolProvider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 public class Bug107DefaultPackageTest {
 
-    @BeforeClass
-    public static void createJavadoc() {
+    @Test
+    public void testDefaultPackageDocumentation() {
         assertThat(ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
                 "-d", "target/issues/107",
@@ -35,11 +37,10 @@ public class Bug107DefaultPackageTest {
                 "-createPumlFiles",
                 "src/test/java/Foo.java"
         ), is(0));
-    }
 
-    @Test
-    public void testDefaultPackageDocumentation() {
-
+        String uml = Testing.read(new File("target/issues/107/package.puml"));
+        assertThat(uml, containsString("namespace unnamed"));
+        assertThat(uml, containsString("class Foo"));
     }
 
 }

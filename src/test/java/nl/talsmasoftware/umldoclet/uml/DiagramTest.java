@@ -40,9 +40,9 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 public class DiagramTest {
-    Configuration config;
-    ImageConfig imageconfig;
-    Collection<FileFormat> formats = new ArrayList<>(singleton(FileFormat.SVG));
+    private Configuration config;
+    private ImageConfig imageconfig;
+    private Collection<FileFormat> formats = new ArrayList<>(singleton(FileFormat.SVG));
 
     @Before
     public void setup() {

@@ -32,9 +32,10 @@ final class Postprocessor implements Callable<Boolean> {
 
     private final HtmlFile htmlFile;
     private final DiagramFile umlDiagram;
-    private final String relativePath, diagramFileName;
+    private final String relativePath;
+    private final String diagramFileName;
 
-    Postprocessor(HtmlFile htmlFile, DiagramFile umlDiagram/*, String relativePath*/) {
+    Postprocessor(HtmlFile htmlFile, DiagramFile umlDiagram) {
         this.htmlFile = htmlFile;
         this.umlDiagram = umlDiagram;
         this.relativePath = FileUtils.relativePath(htmlFile.path.toFile(), umlDiagram.diagramFile);
@@ -66,7 +67,7 @@ final class Postprocessor implements Callable<Boolean> {
                 htmlFile.replaceBy(tempFile);
                 result = true;
             } else if (!tempFile.delete()) {
-                throw new IllegalStateException("Couldn't delete " + tempFile + " after postprocessing!");
+                throw new IllegalStateException("Could not delete " + tempFile + " after postprocessing!");
             }
             return result;
         }

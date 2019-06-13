@@ -25,18 +25,17 @@ import static java.util.Collections.singleton;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class NamespaceTest {
 
-    Configuration config;
-    ImageConfig images;
+    private Configuration config;
+    private ImageConfig images;
 
     @Before
-    public void setup() {
+    public void initializeMocks() {
         config = mock(Configuration.class);
         images = mock(ImageConfig.class);
         when(config.images()).thenReturn(images);

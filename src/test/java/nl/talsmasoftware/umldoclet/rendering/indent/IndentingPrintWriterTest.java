@@ -72,7 +72,7 @@ public class IndentingPrintWriterTest {
     }
 
     @Test
-    public void testWhitespaceRendering_beforeNewlines() throws IOException {
+    public void testWhitespaceRenderingBeforeNewlines() throws IOException {
         StringWriter output = new StringWriter();
         final IndentingPrintWriter writer = IndentingPrintWriter.wrap(output, Indentation.DEFAULT);
         writer.append('-').whitespace().append('\n').flush();
@@ -85,7 +85,7 @@ public class IndentingPrintWriterTest {
     }
 
     @Test
-    public void testWhitespaceRendering_afterNewlines() throws IOException {
+    public void testWhitespaceRenderingAfterNewlines() throws IOException {
         StringWriter output = new StringWriter();
         final IndentingPrintWriter writer = IndentingPrintWriter.wrap(output, Indentation.DEFAULT);
         writer.append('\n').whitespace().append('-').flush();
@@ -98,7 +98,7 @@ public class IndentingPrintWriterTest {
     }
 
     @Test
-    public void testWhitespace_modifiedUnderlyingWriter() {
+    public void testWhitespaceModifiedUnderlyingWriter() {
         final StringWriter output = new StringWriter();
         IndentingPrintWriter writer = new IndentingPrintWriter(output, Indentation.DEFAULT) {{
             out = output;
@@ -109,7 +109,7 @@ public class IndentingPrintWriterTest {
     }
 
     @Test(expected = RuntimeException.class)
-    public void testWhitespace_ioeByUnderlyingWriter() {
+    public void testWhitespaceIoeByUnderlyingWriter() {
         new IndentingPrintWriter(new StringWriter(), Indentation.DEFAULT) {{
             out = ThrowingWriter.throwing(new IOException("Buffer is full!"));
         }}.whitespace();
@@ -117,7 +117,7 @@ public class IndentingPrintWriterTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void testIndent_modifiedUnderlyingWriter() {
+    public void testIndentModifiedUnderlyingWriter() {
         final StringWriter output = new StringWriter();
         new IndentingPrintWriter(output, Indentation.DEFAULT) {{
             out = output;

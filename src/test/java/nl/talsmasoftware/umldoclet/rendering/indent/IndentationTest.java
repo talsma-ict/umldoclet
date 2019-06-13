@@ -25,7 +25,10 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasToString;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.sameInstance;
 
 /**
  * @author Sjoerd Talsma
@@ -67,7 +70,7 @@ public class IndentationTest {
     }
 
     @Test
-    public void testSpaces_width0() {
+    public void testSpacesWidth0() {
         final int width = 0;
         assertThat(Indentation.spaces(width, -1), is(sameInstance(Indentation.spaces(width, 0))));
         assertThat(Indentation.spaces(width, 0), is(sameInstance(Indentation.NONE)));
@@ -77,7 +80,7 @@ public class IndentationTest {
     }
 
     @Test
-    public void testSpaces_width1() {
+    public void testSpacesWidth1() {
         final int width = 1;
         assertThat(Indentation.spaces(width, -1), is(equalTo(Indentation.spaces(width, 0))));
         assertThat(Indentation.spaces(width, 0), hasToString(""));
@@ -87,7 +90,7 @@ public class IndentationTest {
     }
 
     @Test
-    public void testSpaces_width2() {
+    public void testSpacesWidth2() {
         final int width = 2;
         assertThat(Indentation.spaces(width, -1), is(sameInstance(Indentation.spaces(width, 0))));
         assertThat(Indentation.spaces(width, 0), hasToString(""));
@@ -97,7 +100,7 @@ public class IndentationTest {
     }
 
     @Test
-    public void testSpaces_width3() {
+    public void testSpacesWidth3() {
         final int width = 3;
         assertThat(Indentation.spaces(width, -1), is(equalTo(Indentation.spaces(width, 0))));
         assertThat(Indentation.spaces(width, 0), hasToString(""));
@@ -107,7 +110,7 @@ public class IndentationTest {
     }
 
     @Test
-    public void testSpaces_width4() {
+    public void testSpacesWidth4() {
         final int width = 4;
         assertThat(Indentation.spaces(width, -1), is(sameInstance(Indentation.spaces(width, 0))));
         assertThat(Indentation.spaces(width, 0), hasToString(""));

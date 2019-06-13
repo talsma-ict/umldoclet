@@ -59,17 +59,17 @@ public class FileUtilsTest {
     }
 
     @Test
-    public void testRelativePath_fromNull() {
+    public void testRelativePathFromNull() {
         assertThat(relativePath(null, new File("testfile.adoc")), is(nullValue()));
     }
 
     @Test
-    public void testRelativePath_toNull() {
+    public void testRelativePathToNull() {
         assertThat(relativePath(new File("."), null), is(nullValue()));
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testCreateParentDir_whenParentIsFile() throws IOException {
+    public void testCreateParentDirWhenParentIsFile() throws IOException {
         File tempFile = File.createTempFile("umldoclet-", "-test.tmp");
         try {
             FileUtils.ensureParentDir(new File(tempFile, "sub-file"));

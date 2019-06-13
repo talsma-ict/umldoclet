@@ -33,8 +33,9 @@ import static org.hamcrest.Matchers.is;
  */
 public class Bug74DuplicateGenericsTest {
     private static final String packageAsPath = Bug74DuplicateGenericsTest.class.getPackageName().replace('.', '/');
-    private static final File outputdir = new File("target/issues/74");
-    private static String classUml, packageUml;
+    private static final File outputDir = new File("target/issues/74");
+    private static String classUml;
+    private static String packageUml;
 
     public interface MySupplier<T> extends Supplier<T> {
     }
@@ -44,18 +45,18 @@ public class Bug74DuplicateGenericsTest {
         String classAsPath = packageAsPath + '/' + Bug74DuplicateGenericsTest.class.getSimpleName();
         assertThat("Javadoc result", ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
-                "-d", outputdir.getPath(),
+                "-d", outputDir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet",
                 "-createPumlFiles",
                 "src/test/java/" + Bug74DuplicateGenericsTest.class.getName().replace('.', '/') + ".java"
         ), is(0));
-        classUml = Testing.read(new File(outputdir, classAsPath + ".MySupplier.puml"));
-        packageUml = Testing.read(new File(outputdir, packageAsPath + "/package.puml"));
+        classUml = Testing.read(new File(outputDir, classAsPath + ".MySupplier.puml"));
+        packageUml = Testing.read(new File(outputDir, packageAsPath + "/package.puml"));
     }
 
     @Test
-    public void testDuplicateGenerics() {
+    public void testGenericsNotDuplicated() {
         assertThat(classUml, containsString("as java.util.function.Supplier<T>"));
         assertThat(classUml, containsString("<size:14>Supplier\\n"));
     }

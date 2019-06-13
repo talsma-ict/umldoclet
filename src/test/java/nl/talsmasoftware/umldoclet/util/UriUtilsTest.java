@@ -33,7 +33,7 @@ public class UriUtilsTest {
     }
 
     @Test
-    public void testAddPathComponent_nulls() {
+    public void testAddPathComponentNulls() {
         final URI uri = URI.create("http://www.google.com");
         assertThat(UriUtils.addPathComponent(null, "component"), is(nullValue()));
         assertThat(UriUtils.addPathComponent(uri, null), is(sameInstance(uri)));
@@ -59,7 +59,7 @@ public class UriUtilsTest {
     }
 
     @Test
-    public void testAddPathComponent_specialCharacters() {
+    public void testAddPathComponentSpecialCharacters() {
         URI uri = URI.create("http://www.google.com?q=query#fragment");
         String expectedPath = "http://www.google.com";
         String query = "?q=query#fragment";
@@ -78,12 +78,12 @@ public class UriUtilsTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testAddPathComponent_relativePathInAbsoluteUri() {
+    public void testAddPathComponentRelativePathInAbsoluteUri() {
         UriUtils.addPathComponent(URI.create("http://www.google.com?q=query"), "relative");
     }
 
     @Test
-    public void testAddParam_nulls() {
+    public void testAddParamNulls() {
         final URI uri = URI.create("http://www.google.com");
         assertThat(UriUtils.addHttpParam(null, "name", "value"), is(nullValue()));
         assertThat(UriUtils.addHttpParam(uri, null, "value"), is(equalTo(URI.create("http://www.google.com"))));
@@ -91,33 +91,33 @@ public class UriUtilsTest {
     }
 
     @Test
-    public void testAddParam_relativeLink() {
+    public void testAddParamRelativeLink() {
         final URI uri = URI.create("../relativepath");
         assertThat(UriUtils.addHttpParam(uri, "name", "value"), is(equalTo(uri)));
     }
 
     @Test
-    public void testAddParam_fileLink() {
+    public void testAddParamFileLink() {
         final URI uri = URI.create("file:/absolutepath");
         assertThat(UriUtils.addHttpParam(uri, "name", "value"), is(equalTo(uri)));
     }
 
     @Test
-    public void testAddParam_httpLink() {
+    public void testAddParamHttpLink() {
         final URI uri = URI.create("http://www.google.com");
         assertThat(UriUtils.addHttpParam(uri, "q", "This is my query"),
                 is(equalTo(URI.create("http://www.google.com?q=This%20is%20my%20query"))));
     }
 
     @Test
-    public void testAddParam_secondParameter_withFragment() {
+    public void testAddParamSecondParameter_withFragment() {
         final URI uri = URI.create("https://www.google.com?q=This%20is%20my%20query#fragment");
         assertThat(UriUtils.addHttpParam(uri, "q", "And this is my second"),
                 is(equalTo(URI.create("https://www.google.com?q=This%20is%20my%20query&q=And%20this%20is%20my%20second#fragment"))));
     }
 
     @Test
-    public void testAddParam_specialQueryCharacters() {
+    public void testAddParamSpecialQueryCharacters() {
         URI uri = URI.create("http://www.google.com#fragment");
         uri = UriUtils.addHttpParam(uri, "query parameter#", "left = right");
         String expected = "http://www.google.com?query%20parameter%23=left%20%3D%20right";
