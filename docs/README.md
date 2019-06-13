@@ -1,6 +1,7 @@
 [![Build Status][ci-img]][ci]
 [![Coverage Status][coveralls-img]][coveralls]
 [![LGTM Status][lgtm-img]][lgtm]
+[![Codacy Badge][codacy-img]][codacy]
 [![Maven Version][maven-img]][maven]
 [![Javadoc][javadoc-img]][javadoc]
 
@@ -66,6 +67,8 @@ default settings provide for you:
   [coveralls]: https://coveralls.io/github/talsma-ict/umldoclet
   [lgtm]: https://lgtm.com/projects/g/talsma-ict/umldoclet
   [lgtm-img]: https://img.shields.io/lgtm/grade/java/github/talsma-ict/umldoclet.svg?label=java&logo=lgtm
+  [codacy]: https://www.codacy.com/app/talsma-ict/umldoclet?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=talsma-ict/umldoclet&amp;utm_campaign=Badge_Grade
+  [codacy-img]: https://api.codacy.com/project/badge/Grade/b191c058492e466cb7044c1d53123d9a
   [maven-img]: https://img.shields.io/maven-metadata/v/http/central.maven.org/maven2/nl/talsmasoftware/umldoclet/maven-metadata.xml.svg
   [maven]: http://mvnrepository.com/artifact/nl.talsmasoftware/umldoclet
   [javadoc-img]: https://www.javadoc.io/badge/nl.talsmasoftware/umldoclet.svg
