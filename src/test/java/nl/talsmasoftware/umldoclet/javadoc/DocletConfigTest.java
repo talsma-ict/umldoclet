@@ -21,8 +21,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.util.spi.ToolProvider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -39,21 +39,27 @@ public class DocletConfigTest {
     DocletConfig config;
 
     @Before
-    public void setup() {
+    public void createDocletConfig() {
         config = new DocletConfig(new UMLDoclet());
     }
 
+    private String getDocletHelpOutput() {
+        try {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            try (PrintStream out = new PrintStream(bytes, true, UTF_8)) {
+                ToolProvider.findFirst("javadoc").get().run(
+                        out, out, "-doclet", UMLDoclet.class.getName(), "--help"
+                );
+            }
+            return new String(bytes.toByteArray(), UTF_8);
+        } catch (IOException ioe) {
+            throw new AssertionError("Could not get doclet help", ioe);
+        }
+    }
 
     @Test
-    public void testUndocumentedOptions() throws UnsupportedEncodingException {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        try (PrintStream out = new PrintStream(bytes, true, UTF_8)) {
-            ToolProvider.findFirst("javadoc").get().run(
-                    out, out, "-doclet", UMLDoclet.class.getName(), "--help"
-            );
-        }
-
-        assertThat(new String(bytes.toByteArray(), UTF_8), not(containsString("<MISSING KEY>")));
+    public void testForUndocumentedMissingKeys() {
+        assertThat(getDocletHelpOutput(), not(containsString("<MISSING KEY>")));
     }
 
     private void assertMemberVisibility(Visibility visibility, boolean expected) {
@@ -62,7 +68,7 @@ public class DocletConfigTest {
     }
 
     @Test
-    public void testShowMembers_public() {
+    public void testShowMembersPublic() {
         config.showMembers("public");
         assertMemberVisibility(Visibility.PRIVATE, false);
         assertMemberVisibility(Visibility.PACKAGE_PRIVATE, false);
@@ -71,7 +77,7 @@ public class DocletConfigTest {
     }
 
     @Test
-    public void testShowMembers_protected() {
+    public void testShowMembersProtected() {
         config.showMembers("protected");
         assertMemberVisibility(Visibility.PRIVATE, false);
         assertMemberVisibility(Visibility.PACKAGE_PRIVATE, false);
@@ -80,7 +86,7 @@ public class DocletConfigTest {
     }
 
     @Test
-    public void testShowMembers_package() {
+    public void testShowMembersPackage() {
         config.showMembers("package");
         assertMemberVisibility(Visibility.PRIVATE, false);
         assertMemberVisibility(Visibility.PACKAGE_PRIVATE, true);
@@ -89,7 +95,7 @@ public class DocletConfigTest {
     }
 
     @Test
-    public void testShowMembers_private() {
+    public void testShowMembersPrivate() {
         config.showMembers("private");
         assertMemberVisibility(Visibility.PRIVATE, true);
         assertMemberVisibility(Visibility.PACKAGE_PRIVATE, true);
@@ -98,7 +104,7 @@ public class DocletConfigTest {
     }
 
     @Test
-    public void testShowMembers_all() {
+    public void testShowMembersAll() {
         config.showMembers("all");
         assertMemberVisibility(Visibility.PRIVATE, true);
         assertMemberVisibility(Visibility.PACKAGE_PRIVATE, true);
@@ -107,12 +113,19 @@ public class DocletConfigTest {
     }
 
     @Test
-    public void testShowMembers_unknown() {
+    public void testShowMembersUnknown() {
         // Unknown setting defaults to the Javadoc standard 'protected'
         config.showMembers("unknown");
         assertMemberVisibility(Visibility.PRIVATE, false);
         assertMemberVisibility(Visibility.PACKAGE_PRIVATE, false);
         assertMemberVisibility(Visibility.PROTECTED, true);
         assertMemberVisibility(Visibility.PUBLIC, true);
+    }
+
+    @Test
+    public void testOptionDocExcludedPackageDependencies() {
+        String help = getDocletHelpOutput();
+        assertThat(help, containsString("-umlExcludedPackageDependencies <package>(,<package>)*"));
+        assertThat(help, containsString("Defaults to 'java,javax'"));
     }
 }

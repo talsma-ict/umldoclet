@@ -69,13 +69,14 @@ final class UMLOptions {
             add(new Option("-protected", 0, Kind.OTHER, (args) -> config.showMembers("protected")));
             add(new Option("-public", 0, Kind.OTHER, (args) -> config.showMembers("public")));
             add(new Option("--show-members", 1, Kind.OTHER, (args) -> config.showMembers(args.get(0))));
+            add(new Option("-d", 1, Kind.OTHER, (args) -> config.destDirName = args.get(0)));
 
             // Our own options
-            add(new Option("-d", 1, Kind.STANDARD, (args) -> config.destDirName = args.get(0)));
             add(new Option("-createPumlFiles", 0, Kind.STANDARD, (args) -> config.renderPumlFile = true));
             add(new Option("-umlImageDirectory", 1, Kind.STANDARD, (args) -> config.images.directory = args.get(0)));
             add(new Option("-umlImageFormat", 1, Kind.STANDARD, (args) -> config.images.addImageFormat(args.get(0))));
             add(new Option("-umlEncoding", 1, Kind.STANDARD, (args) -> config.umlencoding = args.get(0)));
+            add(new Option("-umlExcludedPackageDependencies", 1, Kind.STANDARD, (args) -> {}));
         }};
     }
 
