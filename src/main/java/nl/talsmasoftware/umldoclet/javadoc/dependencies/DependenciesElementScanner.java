@@ -37,11 +37,6 @@ public class DependenciesElementScanner extends ElementScanner9<Set<Dependency>,
         this.docEnv = docEnv;
     }
 
-//    @Override
-//    public Set<Dependency> visitModule(ModuleElement e, String fromPackage) {
-//        return super.visitModule(e, fromPackage);
-//    }
-
     @Override
     public Set<Dependency> visitPackage(PackageElement e, String fromPackage) {
         boolean included = docEnv.isIncluded(e);
