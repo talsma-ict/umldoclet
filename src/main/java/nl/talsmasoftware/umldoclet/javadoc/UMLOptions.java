@@ -27,10 +27,12 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Type that serves as an 'anti-corruption' facade between our Doclet
@@ -69,13 +71,15 @@ final class UMLOptions {
             add(new Option("-protected", 0, Kind.OTHER, (args) -> config.showMembers("protected")));
             add(new Option("-public", 0, Kind.OTHER, (args) -> config.showMembers("public")));
             add(new Option("--show-members", 1, Kind.OTHER, (args) -> config.showMembers(args.get(0))));
+            add(new Option("-d", 1, Kind.OTHER, (args) -> config.destDirName = args.get(0)));
 
             // Our own options
-            add(new Option("-d", 1, Kind.STANDARD, (args) -> config.destDirName = args.get(0)));
             add(new Option("-createPumlFiles", 0, Kind.STANDARD, (args) -> config.renderPumlFile = true));
             add(new Option("-umlImageDirectory", 1, Kind.STANDARD, (args) -> config.images.directory = args.get(0)));
             add(new Option("-umlImageFormat", 1, Kind.STANDARD, (args) -> config.images.addImageFormat(args.get(0))));
             add(new Option("-umlEncoding", 1, Kind.STANDARD, (args) -> config.umlencoding = args.get(0)));
+            add(new Option("-umlExcludedPackageDependencies", 1, Kind.STANDARD,
+                    (args) -> config.excludedPackageDependencies = splitToList(args.get(0))));
         }};
     }
 
@@ -84,6 +88,18 @@ final class UMLOptions {
         Set<Doclet.Option> copy = new UMLOptions(config, standardOptions).options;
         copy.addAll(standardOptions);
         return copy;
+    }
+
+    /**
+     * Split a value on comma and semicolon ({@code ','} and {@code ';'}) and trim each value,
+     * then collect each non-empty value into a list.
+     *
+     * @param value The value to split into a list.
+     * @return The split value as a list.
+     */
+    private static List<String> splitToList(String value) {
+        return value == null || value.isEmpty() ? emptyList()
+                : Stream.of(value.split("[,;]")).map(String::trim).filter(s -> !s.isEmpty()).collect(toList());
     }
 
     private class Option implements Doclet.Option {

@@ -42,8 +42,13 @@ public class DependencyDiagram extends Diagram {
 
     private boolean isExcludedPackage(String toPackage) {
         return getConfiguration().excludedPackageDependencies().stream()
-                .map(excluded -> excluded.endsWith(".") ? excluded : excluded + '.')
-                .anyMatch(toPackage::startsWith);
+                .anyMatch(excluded -> excluded.equals(toPackage)
+                        || toPackage.startsWith(dotSuffixed(excluded))
+                        || ("unnamed".equals(excluded) && toPackage.isEmpty()));
+    }
+
+    private static String dotSuffixed(String packageName) {
+        return packageName.endsWith(".") ? packageName : packageName + '.';
     }
 
     @Override
