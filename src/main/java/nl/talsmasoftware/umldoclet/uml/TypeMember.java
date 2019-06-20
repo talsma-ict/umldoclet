@@ -89,8 +89,9 @@ public abstract class TypeMember extends UMLNode {
                 return "~";
             case PUBLIC:
                 return "+";
+            default:
+                return "";
         }
-        return "";
     }
 
     @Override
