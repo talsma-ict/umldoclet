@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
+import nl.talsmasoftware.umldoclet.configuration.Visibility;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Objects;
@@ -69,13 +70,26 @@ public abstract class TypeMember extends UMLNode {
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         if (isAbstract) output.append("{abstract}").whitespace();
         if (isStatic) output.append("{static}").whitespace();
-        output.append(getVisibility().toUml());
+        output.append(umlVisibility());
         if (isDeprecated) output.append("--").append(name).append("--");
         else output.append(name);
         writeParametersTo(output);
         writeTypeTo(output);
         output.newline();
         return output;
+    }
+
+    private String umlVisibility() {
+        switch (getVisibility()) {
+            case PRIVATE:
+                return "-";
+            case PROTECTED:
+                return "#";
+            case PACKAGE_PRIVATE:
+                return "~";
+            default: // assume PUBLIC
+                return "+";
+        }
     }
 
     @Override

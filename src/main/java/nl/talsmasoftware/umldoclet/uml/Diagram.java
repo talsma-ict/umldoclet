@@ -19,6 +19,7 @@ import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
 import nl.talsmasoftware.umldoclet.logging.Message;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.rendering.writers.StringBufferingWriter;
@@ -46,7 +47,9 @@ public abstract class Diagram extends UMLNode {
     protected Diagram(Configuration config) {
         super(null);
         this.config = requireNonNull(config, "Configuration is <null>");
-        this.formats = config.images().formats().stream().filter(Objects::nonNull).toArray(FileFormat[]::new);
+        this.formats = config.images().formats().stream()
+                .map(this::toFileFormat).filter(Objects::nonNull)
+                .toArray(FileFormat[]::new);
     }
 
     @Override
@@ -175,6 +178,21 @@ public abstract class Diagram extends UMLNode {
         return name + Stream.of(formats).map(FileFormat::getFileSuffix)
                 .map(s -> s.substring(1))
                 .collect(joining(",", ".[", "]"));
+    }
+
+    /**
+     * Static utility method to convert an image format to PlantUML {@linkplain FileFormat} with the same name.
+     *
+     * @param format The image format to convert into PlantUML fileformat.
+     * @return The PlantUML file format.
+     */
+    private FileFormat toFileFormat(ImageConfig.Format format) {
+        try {
+            return FileFormat.valueOf(format.name());
+        } catch (RuntimeException incompatibleFormatOrNull) {
+            config.logger().debug(Message.WARNING_UNRECOGNIZED_IMAGE_FORMAT, format);
+        }
+        return null;
     }
 
 }

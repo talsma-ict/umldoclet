@@ -13,26 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.uml;
+package nl.talsmasoftware.umldoclet.configuration;
 
 /**
- * The visibility values of members in UML diagrams.
+ * The visibility values for classes, methods and fields.
  *
  * @author Sjoerd Talsma
  */
 public enum Visibility {
-    PRIVATE("-"),
-    PROTECTED("#"),
-    PACKAGE_PRIVATE("~"),
-    PUBLIC("+");
-
-    private final String umlVisibility;
-
-    Visibility(String umlVisibility) {
-        this.umlVisibility = umlVisibility;
-    }
-
-    public String toUml() {
-        return umlVisibility;
-    }
+    PRIVATE, PROTECTED, PACKAGE_PRIVATE, PUBLIC
 }

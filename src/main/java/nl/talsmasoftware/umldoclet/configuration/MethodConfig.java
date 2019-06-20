@@ -15,8 +15,6 @@
  */
 package nl.talsmasoftware.umldoclet.configuration;
 
-import nl.talsmasoftware.umldoclet.uml.Visibility;
-
 /**
  * Influences how Methods are rendered in the UML.
  *

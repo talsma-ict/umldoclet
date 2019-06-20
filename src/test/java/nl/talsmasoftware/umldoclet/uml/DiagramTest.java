@@ -15,7 +15,6 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
-import net.sourceforge.plantuml.FileFormat;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
 import org.junit.After;
@@ -28,6 +27,8 @@ import java.util.Collection;
 import java.util.Optional;
 
 import static java.util.Collections.singleton;
+import static nl.talsmasoftware.umldoclet.configuration.ImageConfig.Format.PNG;
+import static nl.talsmasoftware.umldoclet.configuration.ImageConfig.Format.SVG;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasToString;
@@ -42,7 +43,7 @@ import static org.mockito.Mockito.when;
 public class DiagramTest {
     private Configuration config;
     private ImageConfig imageconfig;
-    private Collection<FileFormat> formats = new ArrayList<>(singleton(FileFormat.SVG));
+    private Collection<ImageConfig.Format> formats = new ArrayList<>(singleton(SVG));
 
     @Before
     public void setup() {
@@ -81,7 +82,7 @@ public class DiagramTest {
 
     @Test
     public void testDiagramToString_multipleFormats() {
-        formats.add(FileFormat.PNG);
+        formats.add(PNG);
         assertThat(new TestDiagram(config, new File("target/test-classes/foo/bar.puml")),
                 hasToString(equalTo("target/test-classes/images/foo.bar.[svg,png]")));
     }
