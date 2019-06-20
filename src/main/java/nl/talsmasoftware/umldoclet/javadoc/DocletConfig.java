@@ -17,17 +17,16 @@ package nl.talsmasoftware.umldoclet.javadoc;
 
 import jdk.javadoc.doclet.Doclet;
 import jdk.javadoc.doclet.Reporter;
-import net.sourceforge.plantuml.FileFormat;
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.FieldConfig;
 import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
 import nl.talsmasoftware.umldoclet.configuration.MethodConfig;
 import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
+import nl.talsmasoftware.umldoclet.configuration.Visibility;
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.logging.Message;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
-import nl.talsmasoftware.umldoclet.uml.Visibility;
 
 import java.net.URI;
 import java.nio.charset.Charset;
@@ -37,18 +36,18 @@ import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
-import static java.util.Locale.ENGLISH;
 import static java.util.Objects.requireNonNull;
-import static net.sourceforge.plantuml.FileFormat.SVG;
-import static nl.talsmasoftware.umldoclet.uml.Visibility.PACKAGE_PRIVATE;
-import static nl.talsmasoftware.umldoclet.uml.Visibility.PROTECTED;
-import static nl.talsmasoftware.umldoclet.uml.Visibility.PUBLIC;
+import static nl.talsmasoftware.umldoclet.configuration.ImageConfig.Format.SVG;
+import static nl.talsmasoftware.umldoclet.configuration.Visibility.PACKAGE_PRIVATE;
+import static nl.talsmasoftware.umldoclet.configuration.Visibility.PROTECTED;
+import static nl.talsmasoftware.umldoclet.configuration.Visibility.PUBLIC;
 
 public class DocletConfig implements Configuration {
 
@@ -217,7 +216,7 @@ public class DocletConfig implements Configuration {
 
     final class ImageCfg implements ImageConfig {
         String directory = null;
-        Collection<FileFormat> imageFormats = null;
+        Collection<Format> formats = null;
 
         /**
          * Directory where UML images are generated.
@@ -232,33 +231,28 @@ public class DocletConfig implements Configuration {
 
         void addImageFormat(String imageFormat) {
             if (imageFormat != null) {
-                if (imageFormats == null) imageFormats = new LinkedHashSet<>();
+                if (formats == null) formats = new LinkedHashSet<>();
                 Stream.of(imageFormat.split("[,;]"))
-                        .map(String::trim)
+                        .map(String::trim).map(String::toUpperCase)
                         .map(s -> s.replaceFirst("^\\.", ""))
-                        .map(String::toUpperCase)
                         .filter(s -> !s.isEmpty() && !"NONE".equals(s))
-                        .map(this::toFileFormat)
-                        .filter(Optional::isPresent).map(Optional::get)
-                        .forEach(imageFormats::add);
+                        .map(this::parseFormat).filter(Objects::nonNull)
+                        .forEach(formats::add);
             }
         }
 
-        private Optional<FileFormat> toFileFormat(String format) {
-            String formatAsSuffix = "." + format.toLowerCase(ENGLISH);
-            Optional<FileFormat> fileFormat = Stream.concat(
-                    Stream.of(FileFormat.values()).filter(ff -> format.equals(ff.name())),
-                    Stream.of(FileFormat.values()).filter(ff -> formatAsSuffix.equals(ff.getFileSuffix())))
-                    .findFirst();
-            if (!fileFormat.isPresent()) {
+        private Format parseFormat(String format) {
+            try {
+                return Format.valueOf(format);
+            } catch (IllegalArgumentException unrecognizedFormat) {
                 logger().warn(Message.WARNING_UNRECOGNIZED_IMAGE_FORMAT, format);
+                return null;
             }
-            return fileFormat;
         }
 
         @Override
-        public Collection<FileFormat> formats() {
-            return Optional.ofNullable(imageFormats).orElseGet(() -> singleton(SVG));
+        public Collection<Format> formats() {
+            return Optional.ofNullable(formats).orElseGet(() -> singleton(SVG));
         }
     }
 

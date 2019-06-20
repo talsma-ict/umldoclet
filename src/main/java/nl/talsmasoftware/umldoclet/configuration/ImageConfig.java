@@ -15,8 +15,6 @@
  */
 package nl.talsmasoftware.umldoclet.configuration;
 
-import net.sourceforge.plantuml.FileFormat;
-
 import java.util.Collection;
 import java.util.Optional;
 
@@ -26,6 +24,12 @@ import java.util.Optional;
  * @author Sjoerd Talsma
  */
 public interface ImageConfig {
+    /**
+     * Supported image formats.
+     */
+    enum Format {
+        SVG, PNG, EPS
+    }
 
     /**
      * @return The image directory for the UML diagrams, if explicitly specified.
@@ -40,6 +44,6 @@ public interface ImageConfig {
      *
      * @return The image formats that are generated (by default only {@code SVG}).
      */
-    Collection<FileFormat> formats();
+    Collection<Format> formats();
 
 }

@@ -15,7 +15,6 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
-import net.sourceforge.plantuml.FileFormat;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
 import org.junit.After;
@@ -51,7 +50,7 @@ public class DependencyDiagramTest {
         mockImages = mock(ImageConfig.class);
         mockConfig = mock(Configuration.class);
         when(mockConfig.images()).thenReturn(mockImages);
-        when(mockImages.formats()).thenReturn(singleton(FileFormat.SVG));
+        when(mockImages.formats()).thenReturn(singleton(ImageConfig.Format.SVG));
         when(mockConfig.excludedPackageDependencies()).thenReturn(excluded);
         diagram = new DependencyDiagram(mockConfig, "package-dependencies.puml");
     }

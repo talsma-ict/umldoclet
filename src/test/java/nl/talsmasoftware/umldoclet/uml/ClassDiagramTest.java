@@ -15,7 +15,6 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
-import net.sourceforge.plantuml.FileFormat;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
 import nl.talsmasoftware.umldoclet.logging.TestLogger;
@@ -29,6 +28,7 @@ import java.nio.charset.Charset;
 import java.util.Optional;
 
 import static java.util.Collections.singleton;
+import static nl.talsmasoftware.umldoclet.configuration.ImageConfig.Format.SVG;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.atLeast;
@@ -53,7 +53,7 @@ public class ClassDiagramTest {
         when(config.renderPumlFile()).thenReturn(true);
         when(config.logger()).thenReturn(logger);
         when(config.umlCharset()).thenReturn(Charset.forName("UTF-8"));
-        when(images.formats()).thenReturn(singleton(FileFormat.SVG));
+        when(images.formats()).thenReturn(singleton(SVG));
         when(images.directory()).thenReturn(Optional.empty());
     }
 

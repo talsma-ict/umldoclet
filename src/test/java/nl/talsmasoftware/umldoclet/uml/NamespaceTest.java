@@ -15,13 +15,13 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
-import net.sourceforge.plantuml.FileFormat;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
 import org.junit.Before;
 import org.junit.Test;
 
 import static java.util.Collections.singleton;
+import static nl.talsmasoftware.umldoclet.configuration.ImageConfig.Format.SVG;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -39,7 +39,7 @@ public class NamespaceTest {
         config = mock(Configuration.class);
         images = mock(ImageConfig.class);
         when(config.images()).thenReturn(images);
-        when(images.formats()).thenReturn(singleton(FileFormat.SVG));
+        when(images.formats()).thenReturn(singleton(SVG));
     }
 
     @Test

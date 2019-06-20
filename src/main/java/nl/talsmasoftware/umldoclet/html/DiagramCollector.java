@@ -15,8 +15,8 @@
  */
 package nl.talsmasoftware.umldoclet.html;
 
-import net.sourceforge.plantuml.FileFormat;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
 import nl.talsmasoftware.umldoclet.util.FileUtils;
 
 import java.io.File;
@@ -54,7 +54,7 @@ final class DiagramCollector extends SimpleFileVisitor<Path> {
     DiagramCollector(Configuration config) {
         this.basedir = new File(config.destinationDirectory());
         this.diagramExtensions = unmodifiableList(config.images().formats().stream()
-                .map(FileFormat::getFileSuffix)
+                .map(ImageConfig.Format::name)
                 .map(String::toLowerCase)
                 .map(format -> format.startsWith(".") ? format : "." + format)
                 .collect(toList()));

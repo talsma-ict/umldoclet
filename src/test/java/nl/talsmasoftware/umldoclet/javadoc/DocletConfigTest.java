@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.javadoc;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
-import nl.talsmasoftware.umldoclet.uml.Visibility;
+import nl.talsmasoftware.umldoclet.configuration.Visibility;
 import org.junit.Before;
 import org.junit.Test;
 
