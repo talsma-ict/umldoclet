@@ -87,10 +87,8 @@ public abstract class TypeMember extends UMLNode {
                 return "#";
             case PACKAGE_PRIVATE:
                 return "~";
-            case PUBLIC:
+            default: // assume PUBLIC
                 return "+";
-            default:
-                return "";
         }
     }
 
