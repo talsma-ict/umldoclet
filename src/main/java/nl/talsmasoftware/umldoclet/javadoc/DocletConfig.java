@@ -17,7 +17,6 @@ package nl.talsmasoftware.umldoclet.javadoc;
 
 import jdk.javadoc.doclet.Doclet;
 import jdk.javadoc.doclet.Reporter;
-import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.FieldConfig;
 import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
@@ -118,8 +117,8 @@ public class DocletConfig implements Configuration {
 
     private Indentation indentation = Indentation.DEFAULT;
 
-    public DocletConfig(UMLDoclet doclet) {
-        this.doclet = requireNonNull(doclet, "UML Doclet is <null>.");
+    public DocletConfig(Doclet doclet) {
+        this.doclet = requireNonNull(doclet, "Doclet is <null>.");
         this.options = new UMLOptions(this);
         this.reporter = new LocalizedReporter(this, null, null);
     }
