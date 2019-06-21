@@ -28,7 +28,7 @@ import javax.lang.model.util.ElementScanner9;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class DependenciesElementScanner extends ElementScanner9<Set<Dependency>, String> {
+public class DependenciesElementScanner extends ElementScanner9<Set<PackageDependency>, String> {
 
     private final DocletEnvironment docEnv;
 
@@ -38,7 +38,7 @@ public class DependenciesElementScanner extends ElementScanner9<Set<Dependency>,
     }
 
     @Override
-    public Set<Dependency> visitPackage(PackageElement e, String fromPackage) {
+    public Set<PackageDependency> visitPackage(PackageElement e, String fromPackage) {
         boolean included = docEnv.isIncluded(e);
         String visitedPackage = e.getQualifiedName().toString();
         if (!included) {
@@ -49,7 +49,7 @@ public class DependenciesElementScanner extends ElementScanner9<Set<Dependency>,
     }
 
     @Override
-    public Set<Dependency> visitType(TypeElement e, String fromPackage) {
+    public Set<PackageDependency> visitType(TypeElement e, String fromPackage) {
         String pkg = fromPackage == null && docEnv.isIncluded(e) ? PackageElementVisitor.INSTANCE.visit(e) : fromPackage;
         addDependency(pkg, e.getSuperclass());
         e.getInterfaces().forEach(implemented -> addDependency(pkg, implemented));
@@ -58,26 +58,26 @@ public class DependenciesElementScanner extends ElementScanner9<Set<Dependency>,
     }
 
     @Override
-    public Set<Dependency> visitVariable(VariableElement e, String fromPackage) {
+    public Set<PackageDependency> visitVariable(VariableElement e, String fromPackage) {
         addDependency(fromPackage, e.asType());
         return super.visitVariable(e, fromPackage);
     }
 
     @Override
-    public Set<Dependency> visitExecutable(ExecutableElement e, String fromPackage) {
+    public Set<PackageDependency> visitExecutable(ExecutableElement e, String fromPackage) {
         addDependency(fromPackage, e.getReturnType());
         return super.visitExecutable(e, fromPackage); // will add the argument dependencies
     }
 
     @Override
-    public Set<Dependency> visitTypeParameter(TypeParameterElement e, String fromPackage) {
+    public Set<PackageDependency> visitTypeParameter(TypeParameterElement e, String fromPackage) {
         addDependency(fromPackage, e.getGenericElement());
         e.getBounds().forEach(bound -> addDependency(fromPackage, bound));
         return super.visitTypeParameter(e, fromPackage);
     }
 
     @Override
-    public Set<Dependency> visitUnknown(Element e, String fromPackage) {
+    public Set<PackageDependency> visitUnknown(Element e, String fromPackage) {
         return DEFAULT_VALUE;
     }
 
@@ -93,7 +93,7 @@ public class DependenciesElementScanner extends ElementScanner9<Set<Dependency>,
 
     private void addDependency(String fromPackage, String toPackage) {
         if (fromPackage != null && toPackage != null && !fromPackage.equals(toPackage)) {
-            DEFAULT_VALUE.add(new Dependency(fromPackage, toPackage));
+            DEFAULT_VALUE.add(new PackageDependency(fromPackage, toPackage));
         }
     }
 

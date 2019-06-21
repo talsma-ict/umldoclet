@@ -24,33 +24,33 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.fail;
 
-public class DependencyTest {
+public class PackageDependencyTest {
     @Test(expected = NullPointerException.class)
     public void testDependencyWithoutFromPackage() {
-        new Dependency(null, "b");
+        new PackageDependency(null, "b");
         fail("Exception expected");
     }
 
     @Test(expected = NullPointerException.class)
     public void testDependencyWithoutToPackage() {
-        new Dependency("a", null);
+        new PackageDependency("a", null);
         fail("Exception expected");
     }
 
     @Test
     public void testHashCode() {
-        assertThat(new Dependency("a", "b").hashCode(), is(new Dependency("a", "b").hashCode()));
+        assertThat(new PackageDependency("a", "b").hashCode(), is(new PackageDependency("a", "b").hashCode()));
     }
 
     @Test
     public void testEquals() {
-        assertThat(new Dependency("a", "b"), is(equalTo(new Dependency("a", "b"))));
-        assertThat(new Dependency("a", "b"), not(equalTo(new Dependency("a", "a"))));
-        assertThat(new Dependency("a", "b"), not(equalTo(new Dependency("b", "b"))));
+        assertThat(new PackageDependency("a", "b"), is(equalTo(new PackageDependency("a", "b"))));
+        assertThat(new PackageDependency("a", "b"), not(equalTo(new PackageDependency("a", "a"))));
+        assertThat(new PackageDependency("a", "b"), not(equalTo(new PackageDependency("b", "b"))));
     }
 
     @Test
     public void testToString() {
-        assertThat(new Dependency("a", "b"), hasToString("a->b"));
+        assertThat(new PackageDependency("a", "b"), hasToString("a->b"));
     }
 }
