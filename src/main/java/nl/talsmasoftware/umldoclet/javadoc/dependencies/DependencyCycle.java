@@ -15,8 +15,17 @@
  */
 package nl.talsmasoftware.umldoclet.javadoc.dependencies;
 
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.RandomAccess;
+import java.util.Set;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * A cycle of dependencies.
@@ -27,10 +36,74 @@ import java.util.List;
  * dependencies: {@code a --> b}, {@code b --> c}, they will form a cycle if you somehow create a dependency back to
  * {@code a}, e.g. {@code b -> a} or {@code c --> a}.
  */
-public class DependencyCycle {
+public class DependencyCycle extends AbstractList<Dependency> implements RandomAccess {
 
-    public static Collection<DependencyCycle> detect(List<Dependency> dependencies) {
-        return null;
+    private final Dependency[] cycle;
+
+    public DependencyCycle(Dependency... dependencies) {
+        if (dependencies.length < 1) {
+            throw new IllegalArgumentException("A dependency cycle may not be empty.");
+        }
+        // check for an actual cycle
+        for (int i = 0; i < dependencies.length; i++) {
+            String to = dependencies[i].toPackage;
+            String from = dependencies[(i + 1) % dependencies.length].fromPackage;
+            if (!to.equals(from)) {
+                throw new IllegalArgumentException("Not a dependency cycle: '" + to + "' != '" + from + "'.");
+            }
+        }
+        this.cycle = dependencies;
     }
 
+    public static Collection<DependencyCycle> detect(List<Dependency> dependencies) {
+        List<Dependency[]> chains = new LinkedList<>();
+        for (Dependency dependency : dependencies) {
+            List<Dependency[]> newChains = new ArrayList<>();
+            for (Dependency[] chain : chains) {
+                if (dependency.fromPackage.equals(last(chain))) {
+                    Dependency[] longerChain = growChain(chain, dependency);
+                    if (longerChain != null) newChains.add(longerChain);
+                }
+            }
+            chains.addAll(newChains);
+            chains.add(new Dependency[]{dependency});
+        }
+        Set<DependencyCycle> cycles = new LinkedHashSet<>();
+        for (Iterator<Dependency[]> it = chains.iterator(); it.hasNext(); it.remove()) {
+            Dependency[] chain = it.next();
+            if (chain.length > 1 && chain[0].fromPackage.equals(last(chain))) {
+                cycles.add(new DependencyCycle(chain));
+            }
+        }
+        return cycles;
+    }
+
+    private static String last(Dependency[] chain) {
+        return chain.length == 0 ? null : chain[chain.length - 1].toPackage;
+    }
+
+    private static Dependency[] growChain(Dependency[] chain, Dependency dependency) {
+        Dependency[] longerChain = new Dependency[chain.length + 1];
+        for (int i = 0; i < chain.length; i++) {
+            if (dependency.equals(chain[i])) return null;
+            else longerChain[i] = chain[i];
+        }
+        longerChain[chain.length] = dependency;
+        return longerChain;
+    }
+
+    @Override
+    public Dependency get(int index) {
+        return cycle[index];
+    }
+
+    @Override
+    public int size() {
+        return cycle.length;
+    }
+
+    @Override
+    public String toString() {
+        return cycle[0].fromPackage + " > " + stream().map(dep -> dep.toPackage).collect(joining(" > "));
+    }
 }

@@ -41,4 +41,9 @@ public class Dependency {
                 && toPackage.equals(((Dependency) other).toPackage)
         );
     }
+
+    @Override
+    public String toString() {
+        return fromPackage + "->" + toPackage;
+    }
 }
