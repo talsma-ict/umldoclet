@@ -113,6 +113,8 @@ public class DocletConfig implements Configuration {
     List<String> excludedPackageDependencies = new ArrayList<>(asList(
             "java", "javax"));
 
+    boolean failOnCyclicPackageDependencies = false;
+
     List<ExternalLink> externalLinks = new ArrayList<>();
 
     private Indentation indentation = Indentation.DEFAULT;
@@ -174,6 +176,11 @@ public class DocletConfig implements Configuration {
     @Override
     public List<String> excludedPackageDependencies() {
         return excludedPackageDependencies;
+    }
+
+    @Override
+    public boolean failOnCyclicPackageDependencies() {
+        return failOnCyclicPackageDependencies;
     }
 
     @Override

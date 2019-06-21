@@ -114,7 +114,7 @@ public class UMLDoclet extends StandardDoclet {
 
     private DependencyDiagram generatePackageDependencyDiagram(DocletEnvironment docEnv) {
         Set<PackageDependency> packageDependencies = scanPackageDependencies(docEnv);
-        Set<PackageDependencyCycle> cycles = detectPackageDependencyCycles(packageDependencies);
+        detectPackageDependencyCycles(packageDependencies);
         DependencyDiagram dependencyDiagram = new DependencyDiagram(config, "package-dependencies.puml");
         packageDependencies.forEach(dep -> dependencyDiagram.addPackageDependency(dep.fromPackage, dep.toPackage));
         return dependencyDiagram;
@@ -128,7 +128,11 @@ public class UMLDoclet extends StandardDoclet {
         Set<PackageDependencyCycle> cycles = PackageDependencyCycle.detectCycles(packageDependencies);
         if (!cycles.isEmpty()) {
             String cyclesString = cycles.stream().map(cycle -> " - " + cycle).collect(joining("\n", "\n", ""));
-            config.logger().warn(Message.WARNING_PACKAGE_DEPENDENCY_CYCLES, cyclesString);
+            if (config.failOnCyclicPackageDependencies()) {
+                config.logger().error(Message.WARNING_PACKAGE_DEPENDENCY_CYCLES, cyclesString);
+            } else {
+                config.logger().warn(Message.WARNING_PACKAGE_DEPENDENCY_CYCLES, cyclesString);
+            }
         }
         return cycles;
     }

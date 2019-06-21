@@ -80,6 +80,11 @@ public interface Configuration {
     List<String> excludedPackageDependencies();
 
     /**
+     * @return Whether or not to fail when cyclic package dependencies are detected.
+     */
+    boolean failOnCyclicPackageDependencies();
+
+    /**
      * Resolves an external link to the specified type.
      *
      * @param packageName The package of the type.
