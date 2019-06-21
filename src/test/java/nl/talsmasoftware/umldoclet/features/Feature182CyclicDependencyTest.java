@@ -32,8 +32,8 @@ import static org.hamcrest.Matchers.is;
 public class Feature182CyclicDependencyTest {
     private static final File outputdir = new File("target/issues/182");
 
-    // Method intentionally causing a cyclic package dependency.
     public void cycle(CyclicDependencyClass dummy) {
+        // Method intentionally causing a cyclic package dependency.
     }
 
     @Test
