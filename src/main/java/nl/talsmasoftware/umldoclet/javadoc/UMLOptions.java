@@ -80,6 +80,8 @@ final class UMLOptions {
             add(new Option("-umlEncoding", 1, Kind.STANDARD, (args) -> config.umlencoding = args.get(0)));
             add(new Option("-umlExcludedPackageDependencies", 1, Kind.STANDARD,
                     (args) -> config.excludedPackageDependencies = splitToList(args.get(0))));
+            add(new Option("-failOnCyclicPackageDependencies", 1, Kind.STANDARD,
+                    (args) -> config.failOnCyclicPackageDependencies = asBoolean(args.get(0))));
         }};
     }
 
@@ -100,6 +102,10 @@ final class UMLOptions {
     private static List<String> splitToList(String value) {
         return value == null || value.isEmpty() ? emptyList()
                 : Stream.of(value.split("[,;]")).map(String::trim).filter(s -> !s.isEmpty()).collect(toList());
+    }
+
+    private static boolean asBoolean(String value) {
+        return "true".equalsIgnoreCase(value);
     }
 
     private class Option implements Doclet.Option {

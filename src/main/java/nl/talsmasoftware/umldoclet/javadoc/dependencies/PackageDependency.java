@@ -19,12 +19,12 @@ import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
-public class Dependency {
+public class PackageDependency {
 
     public final String fromPackage;
     public final String toPackage;
 
-    public Dependency(String fromPackage, String toPackage) {
+    public PackageDependency(String fromPackage, String toPackage) {
         this.fromPackage = requireNonNull(fromPackage, "No 'from' package defined for dependency.");
         this.toPackage = requireNonNull(toPackage, "No 'to' package defined for dependency.");
     }
@@ -36,9 +36,14 @@ public class Dependency {
 
     @Override
     public boolean equals(Object other) {
-        return this == other || (other instanceof Dependency
-                && fromPackage.equals(((Dependency) other).fromPackage)
-                && toPackage.equals(((Dependency) other).toPackage)
+        return this == other || (other instanceof PackageDependency
+                && fromPackage.equals(((PackageDependency) other).fromPackage)
+                && toPackage.equals(((PackageDependency) other).toPackage)
         );
+    }
+
+    @Override
+    public String toString() {
+        return fromPackage + "->" + toPackage;
     }
 }

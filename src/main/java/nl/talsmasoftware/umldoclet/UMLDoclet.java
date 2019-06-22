@@ -23,6 +23,9 @@ import nl.talsmasoftware.umldoclet.html.HtmlPostprocessor;
 import nl.talsmasoftware.umldoclet.javadoc.DocletConfig;
 import nl.talsmasoftware.umldoclet.javadoc.UMLFactory;
 import nl.talsmasoftware.umldoclet.javadoc.dependencies.DependenciesElementScanner;
+import nl.talsmasoftware.umldoclet.javadoc.dependencies.PackageDependency;
+import nl.talsmasoftware.umldoclet.javadoc.dependencies.PackageDependencyCycle;
+import nl.talsmasoftware.umldoclet.logging.Message;
 import nl.talsmasoftware.umldoclet.uml.DependencyDiagram;
 import nl.talsmasoftware.umldoclet.uml.Diagram;
 
@@ -30,10 +33,11 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import java.util.Locale;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.joining;
 import static nl.talsmasoftware.umldoclet.logging.Message.DOCLET_COPYRIGHT;
 import static nl.talsmasoftware.umldoclet.logging.Message.DOCLET_VERSION;
 import static nl.talsmasoftware.umldoclet.logging.Message.ERROR_UNANTICIPATED_ERROR_GENERATING_UML;
@@ -92,26 +96,44 @@ public class UMLDoclet extends StandardDoclet {
 
     private Stream<Diagram> generateDiagrams(DocletEnvironment docEnv) {
         UMLFactory factory = new UMLFactory(config, docEnv);
-        return Stream.concat(Stream.of(findPackageDependencies(docEnv)),
+        return Stream.concat(
                 docEnv.getIncludedElements().stream()
-                        .map(element -> mapToDiagram(factory, element))
-                        .filter(Optional::isPresent).map(Optional::get));
+                        .map(element -> generateDiagram(factory, element))
+                        .filter(Objects::nonNull),
+                Stream.of(generatePackageDependencyDiagram(docEnv)));
     }
 
-    private Optional<Diagram> mapToDiagram(UMLFactory factory, Element element) {
+    private Diagram generateDiagram(UMLFactory factory, Element element) {
         if (element instanceof PackageElement) {
-            return Optional.of(factory.createPackageDiagram((PackageElement) element));
+            return factory.createPackageDiagram((PackageElement) element);
         } else if (element instanceof TypeElement && (element.getKind().isClass() || element.getKind().isInterface())) {
-            return Optional.of(factory.createClassDiagram((TypeElement) element));
+            return factory.createClassDiagram((TypeElement) element);
         }
-        return Optional.empty();
+        return null;
     }
 
-    private DependencyDiagram findPackageDependencies(DocletEnvironment docEnv) {
+    private DependencyDiagram generatePackageDependencyDiagram(DocletEnvironment docEnv) {
+        Set<PackageDependency> packageDependencies = scanPackageDependencies(docEnv);
+        detectPackageDependencyCycles(packageDependencies);
         DependencyDiagram dependencyDiagram = new DependencyDiagram(config, "package-dependencies.puml");
-        new DependenciesElementScanner(docEnv).scan(docEnv.getIncludedElements(), null)
-                .forEach(dep -> dependencyDiagram.addPackageDependency(dep.fromPackage, dep.toPackage));
+        packageDependencies.forEach(dep -> dependencyDiagram.addPackageDependency(dep.fromPackage, dep.toPackage));
         return dependencyDiagram;
     }
 
+    private static Set<PackageDependency> scanPackageDependencies(DocletEnvironment docEnv) {
+        return new DependenciesElementScanner(docEnv).scan(docEnv.getIncludedElements(), null);
+    }
+
+    private Set<PackageDependencyCycle> detectPackageDependencyCycles(Set<PackageDependency> packageDependencies) {
+        Set<PackageDependencyCycle> cycles = PackageDependencyCycle.detectCycles(packageDependencies);
+        if (!cycles.isEmpty()) {
+            String cyclesString = cycles.stream().map(cycle -> " - " + cycle).collect(joining("\n", "\n", ""));
+            if (config.failOnCyclicPackageDependencies()) {
+                config.logger().error(Message.WARNING_PACKAGE_DEPENDENCY_CYCLES, cyclesString);
+            } else {
+                config.logger().warn(Message.WARNING_PACKAGE_DEPENDENCY_CYCLES, cyclesString);
+            }
+        }
+        return cycles;
+    }
 }
