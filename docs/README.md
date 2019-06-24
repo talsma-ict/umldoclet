@@ -19,7 +19,7 @@ the following [UML diagrams][plantuml] and add them to your documentation:
 - Package diagrams
 - A package dependency diagram
 
-The doclet will warn (and optionally fail) on cyclic package dependencies.
+The doclet will warn about (and optionally fail on) cyclic package dependencies.
 
 ## Requirements:
 
