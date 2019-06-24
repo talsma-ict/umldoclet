@@ -12,8 +12,14 @@ Doclet for the JavaDoc tool that generates UML diagrams from the code.
 Released versions can be found in the [maven central repository][maven]
 or on [github](https://github.com/talsma-ict/umldoclet/releases).  
 
-This doclet uses the metadata available in JavaDoc 
-to automatically generate [UML diagrams][plantuml] and add them to your documentation.
+This doclet uses JavaDoc metadata available to automatically generate
+the following [UML diagrams][plantuml] and add them to your documentation:
+
+- Class diagrams
+- Package diagrams
+- A package dependency diagram
+
+The doclet will warn (and optionally fail) on cyclic package dependencies.
 
 ## Requirements:
 
