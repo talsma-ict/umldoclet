@@ -67,11 +67,14 @@ final class HtmlFile {
 
     private boolean process(Postprocessor postprocessor) {
         try {
-            config.logger().info(INFO_ADD_DIAGRAM_TO_FILE, path);
-            return postprocessor.call();
+            if (postprocessor.call()) {
+                config.logger().info(INFO_ADD_DIAGRAM_TO_FILE, path);
+                return true;
+            }
         } catch (IOException ioe) {
             throw new IllegalStateException("I/O exception postprocessing " + path, ioe);
         }
+        return false; // should log skip after all diagram types were processed
     }
 
     public List<String> readLines() throws IOException {

@@ -19,16 +19,19 @@ import java.io.File;
 import java.nio.file.Path;
 
 final class PackageDependenciesInserter extends DiagramFile {
-    private final Path htmlFileToMatch;
+    private final Path index;
+    private final Path overviewSummary;
 
     PackageDependenciesInserter(File basedir, File diagramFile) {
         super(basedir, diagramFile);
-        this.htmlFileToMatch = new File(basedir, "overview-summary.html").toPath();
+        this.index = new File(basedir, "index.html").toPath();
+        this.overviewSummary = new File(basedir, "overview-summary.html").toPath();
     }
 
     @Override
     boolean matches(HtmlFile htmlFile) {
-        return htmlFile.path.equals(htmlFileToMatch);
+        final Path path = htmlFile.path;
+        return index.equals(path) || overviewSummary.equals(path);
     }
 
     @Override

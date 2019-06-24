@@ -32,8 +32,8 @@ import static java.util.stream.Collectors.joining;
  * <p>
  * Package Dependencies can form a cycle if the chain of package dependencies somehow 'return' to the
  * initial package. For example if you have three packages {@code a}, {@code b} and {@code c} and the following
- * dependencies: {@code a --> b}, {@code b --> c}, they will form a cycle if you somehow create a dependency back to
- * {@code a}, e.g. {@code b -> a} or {@code c --> a}.
+ * dependencies: {@code a -> b}, {@code b -> c}, they will form a cycle if you somehow create a dependency back to
+ * {@code a}, e.g. {@code b -> a} or {@code c -> a}.
  */
 public class PackageDependencyCycle extends AbstractList<PackageDependency> implements RandomAccess {
 
@@ -43,15 +43,15 @@ public class PackageDependencyCycle extends AbstractList<PackageDependency> impl
         if (dependencies.length < 1) {
             throw new IllegalArgumentException("A dependency cycle may not be empty.");
         }
+        this.cycle = dependencies;
         // check for an actual cycle
         for (int i = 0; i < dependencies.length; i++) {
             String to = dependencies[i].toPackage;
             String from = dependencies[(i + 1) % dependencies.length].fromPackage;
             if (!to.equals(from)) {
-                throw new IllegalArgumentException("Not a dependency cycle: '" + to + "' != '" + from + "'.");
+                throw new IllegalArgumentException("Not a dependency cycle: '" + to + "' != '" + from + "': " + this);
             }
         }
-        this.cycle = dependencies;
     }
 
     public static Set<PackageDependencyCycle> detectCycles(Iterable<PackageDependency> dependencies) {
