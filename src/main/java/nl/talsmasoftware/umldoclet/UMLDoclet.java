@@ -120,8 +120,8 @@ public class UMLDoclet extends StandardDoclet {
         return dependencyDiagram;
     }
 
-    private static Set<PackageDependency> scanPackageDependencies(DocletEnvironment docEnv) {
-        return new DependenciesElementScanner(docEnv).scan(docEnv.getIncludedElements(), null);
+    private Set<PackageDependency> scanPackageDependencies(DocletEnvironment docEnv) {
+        return new DependenciesElementScanner(docEnv, config).scan(docEnv.getIncludedElements(), null);
     }
 
     private Set<PackageDependencyCycle> detectPackageDependencyCycles(Set<PackageDependency> packageDependencies) {

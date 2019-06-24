@@ -16,6 +16,8 @@
 package nl.talsmasoftware.umldoclet.javadoc.dependencies;
 
 import jdk.javadoc.doclet.DocletEnvironment;
+import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.logging.Message;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -28,13 +30,17 @@ import javax.lang.model.util.ElementScanner9;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static java.util.Objects.requireNonNull;
+
 public class DependenciesElementScanner extends ElementScanner9<Set<PackageDependency>, String> {
 
     private final DocletEnvironment docEnv;
+    private final Configuration config;
 
-    public DependenciesElementScanner(DocletEnvironment docEnv) {
+    public DependenciesElementScanner(DocletEnvironment docEnv, Configuration config) {
         super(new LinkedHashSet<>());
         this.docEnv = docEnv;
+        this.config = requireNonNull(config, "Configuration is <null>");
     }
 
     @Override
@@ -42,7 +48,7 @@ public class DependenciesElementScanner extends ElementScanner9<Set<PackageDepen
         boolean included = docEnv.isIncluded(e);
         String visitedPackage = e.getQualifiedName().toString();
         if (!included) {
-//            System.out.println("Package \"" + visitedPackage + "\" is visited, but not included in the JavaDoc!");
+            config.logger().debug(Message.DEBUG_PACKAGE_VISITED_BUT_UNDOCUMENTED, visitedPackage);
             return DEFAULT_VALUE;
         }
         return super.visitPackage(e, visitedPackage);
