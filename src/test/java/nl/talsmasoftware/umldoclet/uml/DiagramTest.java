@@ -46,7 +46,7 @@ public class DiagramTest {
     private Collection<ImageConfig.Format> formats = new ArrayList<>(singleton(SVG));
 
     @Before
-    public void setup() {
+    public void setUp() {
         config = mock(Configuration.class);
         imageconfig = mock(ImageConfig.class);
         when(config.images()).thenReturn(imageconfig);
@@ -56,7 +56,7 @@ public class DiagramTest {
     }
 
     @After
-    public void teardown() {
+    public void tearDown() {
         verify(config, atLeast(0)).images();
         verify(config, atLeast(0)).destinationDirectory();
         verify(imageconfig, atLeast(0)).formats();

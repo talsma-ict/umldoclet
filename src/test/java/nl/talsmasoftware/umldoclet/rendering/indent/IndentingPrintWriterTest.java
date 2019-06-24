@@ -20,10 +20,15 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.Writer;
 
 import static nl.talsmasoftware.umldoclet.util.Testing.NEWLINE;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasToString;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.fail;
 
 /**
@@ -100,9 +105,9 @@ public class IndentingPrintWriterTest {
     @Test
     public void testWhitespaceModifiedUnderlyingWriter() {
         final StringWriter output = new StringWriter();
-        IndentingPrintWriter writer = new IndentingPrintWriter(output, Indentation.DEFAULT) {{
-            out = output;
-        }};
+        SettableIndentingPrintWriter writer = new SettableIndentingPrintWriter(output, Indentation.DEFAULT);
+        writer.setOut(output);
+
         writer.append('\n').whitespace().append('-').flush();
         assertThat(output, hasToString(equalTo("\n -")));
         clear(output);
@@ -110,19 +115,32 @@ public class IndentingPrintWriterTest {
 
     @Test(expected = RuntimeException.class)
     public void testWhitespaceIoeByUnderlyingWriter() {
-        new IndentingPrintWriter(new StringWriter(), Indentation.DEFAULT) {{
-            out = ThrowingWriter.throwing(new IOException("Buffer is full!"));
-        }}.whitespace();
+        SettableIndentingPrintWriter writer = new SettableIndentingPrintWriter(new StringWriter(), Indentation.DEFAULT);
+        writer.setOut(ThrowingWriter.throwing(new IOException("Buffer is full!")));
+        writer.whitespace();
         fail("Exception expected.");
     }
 
     @Test(expected = NullPointerException.class)
     public void testIndentModifiedUnderlyingWriter() {
         final StringWriter output = new StringWriter();
-        new IndentingPrintWriter(output, Indentation.DEFAULT) {{
-            out = output;
-        }}.indent();
+        SettableIndentingPrintWriter writer = new SettableIndentingPrintWriter(output, Indentation.DEFAULT);
+        writer.setOut(output);
+        writer.indent();
         fail("Exception expected");
+    }
+
+    /**
+     * IndendingPrintWriter that allows tests to set its {@code out} field.
+     */
+    private static class SettableIndentingPrintWriter extends IndentingPrintWriter {
+        private SettableIndentingPrintWriter(Appendable writer, Indentation indentation) {
+            super(writer, indentation);
+        }
+
+        private void setOut(Writer out) {
+            super.out = out;
+        }
     }
 
     static void clear(StringWriter target) {

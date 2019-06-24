@@ -17,6 +17,7 @@ package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,7 +27,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 public class NamespaceTest {
@@ -40,6 +44,13 @@ public class NamespaceTest {
         images = mock(ImageConfig.class);
         when(config.images()).thenReturn(images);
         when(images.formats()).thenReturn(singleton(SVG));
+    }
+
+    @After
+    public void verifyMocks() {
+        verify(config, atLeast(0)).images();
+        verify(images, atLeast(0)).formats();
+        verifyNoMoreInteractions(config, images);
     }
 
     @Test

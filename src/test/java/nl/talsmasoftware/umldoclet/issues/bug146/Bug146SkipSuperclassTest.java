@@ -34,7 +34,7 @@ public class Bug146SkipSuperclassTest {
     private static String classUml, packageUml;
 
     @BeforeClass
-    public static void setup() {
+    public static void generateJavadoc() {
         String classAsPath = packageAsPath + '/' + PublicTestClass.class.getSimpleName();
         ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,

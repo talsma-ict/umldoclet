@@ -41,17 +41,15 @@ public class ClassDiagramTest {
     private static final String testdir = "target/test-uml/classdiagram";
     private ImageConfig images;
     private Configuration config;
-    private TestLogger logger;
 
     @Before
     public void initializeMocks() {
         images = mock(ImageConfig.class);
         config = mock(Configuration.class);
-        logger = new TestLogger();
         when(config.images()).thenReturn(images);
         when(config.destinationDirectory()).thenReturn(testdir);
         when(config.renderPumlFile()).thenReturn(true);
-        when(config.logger()).thenReturn(logger);
+        when(config.logger()).thenReturn(new TestLogger());
         when(config.umlCharset()).thenReturn(Charset.forName("UTF-8"));
         when(images.formats()).thenReturn(singleton(SVG));
         when(images.directory()).thenReturn(Optional.empty());
