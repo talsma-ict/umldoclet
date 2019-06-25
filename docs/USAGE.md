@@ -157,11 +157,12 @@ images for each diagram, by providing this option more than once.
 #### -failOnCyclicPackageDependencies (true|false)
 
 Since the _package dependencies_ diagram was introduced to the UML doclet, 
-it can analyze dese dependencies to verify there are 
+it can analyze these dependencies to verify there are 
 [no cyclic package dependencies](https://en.wikipedia.org/wiki/Acyclic_dependencies_principle).
-If any are found, the doclet will print a warning, showing the dependency cycles between the packages.  
-This option lets the javadoc task fail by turning that warning into an error.
+If any are found, javadoc will print a warning, listing the dependency cycles found between the packages.  
+This option makes the javadoc task fail by turning this warning into an error.
 The default for this setting is `false`.
+
 
   [maven-img]: https://img.shields.io/maven-central/v/nl.talsmasoftware/umldoclet.svg
   [maven]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22nl.talsmasoftware%22%20AND%20a%3A%22umldoclet%22
