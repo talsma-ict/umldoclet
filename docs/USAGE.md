@@ -156,7 +156,7 @@ images for each diagram, by providing this option more than once.
 
 #### -failOnCyclicPackageDependencies (true|false)
 
-Since the _package dependencies_ diagram was introduced to the UML docled, 
+Since the _package dependencies_ diagram was introduced to the UML doclet, 
 it can analyze dese dependencies to verify there are 
 [no cyclic package dependencies](https://en.wikipedia.org/wiki/Acyclic_dependencies_principle).
 If any are found, the doclet will print a warning, showing the dependency cycles between the packages.  
