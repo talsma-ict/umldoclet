@@ -154,6 +154,14 @@ in size than equivalent `.png` images and scale better.
 This option allows this default to be overridden. You can even generate _multiple_ 
 images for each diagram, by providing this option more than once.
 
+#### -failOnCyclicPackageDependencies (true|false)
+
+Since the _package dependencies_ diagram was introduced to the UML docled, 
+it can analyze dese dependencies to verify there are 
+[no cyclic package dependencies](https://en.wikipedia.org/wiki/Acyclic_dependencies_principle).
+If any are found, the doclet will print a warning, showing the dependency cycles between the packages.  
+This option lets the javadoc task fail by turning that warning into an error.
+The default for this setting is `false`.
 
   [maven-img]: https://img.shields.io/maven-central/v/nl.talsmasoftware/umldoclet.svg
   [maven]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22nl.talsmasoftware%22%20AND%20a%3A%22umldoclet%22
