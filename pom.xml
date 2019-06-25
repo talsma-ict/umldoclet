@@ -271,6 +271,7 @@
                             </jdkToolchain>
                             <additionalOptions>
                                 <additionalOption>-createPumlFiles</additionalOption>
+                                <additionalOption>-failOnCyclicPackageDependencies true</additionalOption>
                             </additionalOptions>
                         </configuration>
                     </execution>
