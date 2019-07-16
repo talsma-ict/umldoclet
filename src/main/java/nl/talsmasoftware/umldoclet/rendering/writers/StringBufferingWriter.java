@@ -19,8 +19,10 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 /**
- * This writer delegates to another {@link Writer} implementation while retaining
- * a {@link StringBuffer} of all written characters.
+ * Delegates to another {@link Writer} retaining a {@link StringBuffer} of all written characters.
+ *
+ * <p>
+ * Manipulating the contained StringBuffer is not thread-safe.
  *
  * @author Sjoerd Talsma
  */
@@ -37,7 +39,12 @@ public class StringBufferingWriter extends DelegatingWriter {
     }
 
     /**
-     * A buffer of the written characters. Changes to this buffer do not propagate towards the delegate writer.
+     * A buffer of the written characters.
+     *
+     * <p>
+     * Changes to this buffer do not propagate towards the delegate writer.
+     * Furthermore, write operations on this writer and buffer changes are not considered
+     * thread-safe and should be avoided.
      *
      * @return A StringBuffer of the written characters.
      */
