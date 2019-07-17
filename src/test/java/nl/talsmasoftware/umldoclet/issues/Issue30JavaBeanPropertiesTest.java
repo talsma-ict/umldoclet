@@ -45,6 +45,7 @@ public class Issue30JavaBeanPropertiesTest {
     }
 
     public void setSomeProperty(Issue30JavaBeanPropertiesTest someProperty) {
+        // Empty body, just to simulate a setter method
     }
 
     @Test

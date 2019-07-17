@@ -45,7 +45,8 @@ import static java.util.Objects.requireNonNull;
  */
 public class Reference extends UMLNode {
 
-    public final Side from, to;
+    public final Side from;
+    public final Side to;
     public final String type;
     public final Collection<String> notes;
 
@@ -161,7 +162,8 @@ public class Reference extends UMLNode {
 
     public static final class Side {
         private final boolean nameFirst;
-        private final String qualifiedName, cardinality;
+        private final String qualifiedName;
+        private final String cardinality;
 
         public static Side from(String qualifiedName, String cardinality) {
             return new Side(qualifiedName, cardinality, true);
