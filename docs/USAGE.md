@@ -147,14 +147,14 @@ which makes directly linking to them from javadoc comments easier in some cases.
 _This option was introduced as a resolution for 
 [issue 25 - Send images to a single directory](https://github.com/talsma-ict/umldoclet/issues/25)_
 
-#### -umlImageFormat (svg|png|eps|none)
+#### -umlImageFormat (_svg_|png|eps|none)
 
 By default `.svg` images are generated as they will be significantly smaller
 in size than equivalent `.png` images and scale better.
-This option allows this default to be overridden. You can even generate _multiple_ 
-images for each diagram, by providing this option more than once.
+You can generate _multiple_ images per diagram by specifying a comma-separated 
+list of formats or providing the option more than once.
 
-#### -failOnCyclicPackageDependencies (true|false)
+#### -failOnCyclicPackageDependencies (true|_false_)
 
 Since the _package dependencies_ diagram was introduced to the UML doclet, 
 it can analyze these dependencies to verify there are 
