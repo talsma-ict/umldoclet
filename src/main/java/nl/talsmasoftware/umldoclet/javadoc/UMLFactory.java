@@ -258,6 +258,12 @@ public class UMLFactory {
         namespace.addChild(UmlCharacters.NEWLINE);
         references.stream().map(Reference::canonical).forEach(namespace::addChild);
 
+        if (config.methods().javaBeanPropertiesAsFields()) {
+            namespace.getChildren().stream()
+                    .filter(Type.class::isInstance).map(Type.class::cast)
+                    .forEach(UmlPostProcessors.javaBeanPropertiesAsFieldsPostProcessor()::accept);
+        }
+
         return packageDiagram;
     }
 

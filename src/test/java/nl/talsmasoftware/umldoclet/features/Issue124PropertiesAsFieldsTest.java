@@ -67,5 +67,23 @@ public class Issue124PropertiesAsFieldsTest {
         assertThat(uml, not(containsString("setChild(")));
     }
 
+    @Test
+    public void testPropertiesAsFieldsForPackageDiagram() {
+        String umlFileName = StandardJavaBean.class.getPackageName().replace('.', '/') + "/package.puml";
+        String uml = Testing.read(new File(outputdir, umlFileName));
+        assertThat(uml, containsString("+stringValue: String"));
+        assertThat(uml, containsString("+intValue: int"));
+        assertThat(uml, containsString("+booleanValue: boolean"));
+        assertThat(uml, containsString("StandardJavaBean --> StandardJavaBean: child"));
+
+        assertThat(uml, not(containsString("getStringValue(")));
+        assertThat(uml, not(containsString("setStringValue(")));
+        assertThat(uml, not(containsString("getIntValue(")));
+        assertThat(uml, not(containsString("setIntValue(")));
+        assertThat(uml, not(containsString("isBooleanValue(")));
+        assertThat(uml, not(containsString("setBooleanValue(")));
+        assertThat(uml, not(containsString("getChild(")));
+        assertThat(uml, not(containsString("setChild(")));
+    }
 
 }
