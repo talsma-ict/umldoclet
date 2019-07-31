@@ -101,14 +101,18 @@ class JavaBeanProperty {
      * is <strong>not</strong>> considered thread-safe!
      */
     void replaceGetterAndSetterByField() {
-        if (field == null && getter != null && setter != null) {
+        if (getter != null && setter != null) {
             // Convert the getter into a field for UML rendering purposes.
             final Type type = (Type) getter.getParent();
             field = new Field(type, name, getter.type);
             field.setVisibility(getter.getVisibility());
-            type.removeChildren(child -> getter.equals(child) || setter.equals(child));
+            type.removeChildren(this::isSameProperty);
             type.addChild(field);
         }
+    }
+
+    private boolean isSameProperty(UMLNode node) {
+        return node instanceof TypeMember && propertyNameOf((TypeMember) node).filter(name::equals).isPresent();
     }
 
     /**
