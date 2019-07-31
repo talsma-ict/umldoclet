@@ -30,7 +30,7 @@ import static java.util.Objects.requireNonNull;
 public abstract class TypeMember extends UMLNode {
 
     public final String name;
-    protected TypeName type;
+    public TypeName type;
     private Visibility visibility;
     public boolean isAbstract, isStatic, isDeprecated;
 

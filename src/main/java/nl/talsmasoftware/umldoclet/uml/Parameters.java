@@ -71,7 +71,7 @@ public class Parameters extends UMLNode {
         }
     }
 
-    private class Parameter extends UMLNode {
+    public class Parameter extends UMLNode {
         private final String name;
         private TypeName type;
 

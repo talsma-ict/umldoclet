@@ -17,6 +17,7 @@ package nl.talsmasoftware.umldoclet.features;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.features.beans.StandardJavaBean;
+import nl.talsmasoftware.umldoclet.util.Testing;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -24,7 +25,9 @@ import java.io.File;
 import java.util.spi.ToolProvider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 /**
  * Test that properties can be rendered as fields with the option {@code -umlPropertiesAsFields true}.
@@ -47,7 +50,21 @@ public class Issue124PropertiesAsFieldsTest {
 
     @Test
     public void testPropertiesAsFieldsForPublicClass() {
+        String umlFileName = StandardJavaBean.class.getName().replace('.', '/') + ".puml";
+        String uml = Testing.read(new File(outputdir, umlFileName));
+        assertThat(uml, containsString("+stringValue: String"));
+        assertThat(uml, containsString("+intValue: int"));
+        assertThat(uml, containsString("+booleanValue: boolean"));
+        assertThat(uml, containsString("+child: StandardJavaBean"));
 
+        assertThat(uml, not(containsString("getStringValue(")));
+        assertThat(uml, not(containsString("setStringValue(")));
+        assertThat(uml, not(containsString("getIntValue(")));
+        assertThat(uml, not(containsString("setIntValue(")));
+        assertThat(uml, not(containsString("isBooleanValue(")));
+        assertThat(uml, not(containsString("setBooleanValue(")));
+        assertThat(uml, not(containsString("getChild(")));
+        assertThat(uml, not(containsString("setChild(")));
     }
 
 

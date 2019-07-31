@@ -29,6 +29,7 @@ import nl.talsmasoftware.umldoclet.uml.Reference;
 import nl.talsmasoftware.umldoclet.uml.Type;
 import nl.talsmasoftware.umldoclet.uml.TypeMember;
 import nl.talsmasoftware.umldoclet.uml.TypeName;
+import nl.talsmasoftware.umldoclet.uml.util.UmlPostProcessors;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -191,6 +192,10 @@ public class UMLFactory {
                             .forEach(tp -> tp.updateGenericTypeVariables(foundTypeVariable));
                 }
             }
+        }
+
+        if (config.methods().javaBeanPropertiesAsFields()) {
+            UmlPostProcessors.javaBeanPropertiesAsFieldsPostProcessor().accept(type);
         }
 
         return classDiagram;
