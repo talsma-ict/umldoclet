@@ -16,7 +16,8 @@
 package nl.talsmasoftware.umldoclet.features;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
-import nl.talsmasoftware.umldoclet.features.beans.StandardBean;
+import nl.talsmasoftware.umldoclet.features.beans.StandardJavaBean;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
@@ -31,17 +32,21 @@ import static org.hamcrest.Matchers.is;
 public class Issue124PropertiesAsFieldsTest {
     private static final File outputdir = new File("target/issues/124");
 
-    @Test
-    public void testPropertiesAsFieldsForPublicClass() {
+    @BeforeClass
+    public static void generateBeansPackageJavadoc() {
         assertThat("Javadoc result", ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
                 "-d", outputdir.getPath(),
                 "-sourcepath", "src/test/java",
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet", "-createPumlFiles",
-//                "-umlPropertiesAsFields", "true",
-                StandardBean.class.getPackageName()
+                "-umlJavaBeanPropertiesAsFields",
+                StandardJavaBean.class.getPackageName()
         ), is(0));
+    }
+
+    @Test
+    public void testPropertiesAsFieldsForPublicClass() {
 
     }
 

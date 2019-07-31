@@ -15,11 +15,12 @@
  */
 package nl.talsmasoftware.umldoclet.features.beans;
 
-public class StandardBean {
+public class StandardJavaBean {
 
     private String stringValue;
     private int intValue;
     private boolean booleanValue;
+    private StandardJavaBean child;
 
     public String getStringValue() {
         return stringValue;
@@ -43,6 +44,14 @@ public class StandardBean {
 
     public void setBooleanValue(boolean booleanValue) {
         this.booleanValue = booleanValue;
+    }
+
+    public StandardJavaBean getChild() {
+        return child;
+    }
+
+    public void setChild(StandardJavaBean child) {
+        this.child = child;
     }
 
 }

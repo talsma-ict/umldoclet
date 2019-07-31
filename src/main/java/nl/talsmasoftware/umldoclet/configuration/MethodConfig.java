@@ -32,4 +32,10 @@ public interface MethodConfig {
     TypeDisplay returnType();
 
     boolean include(Visibility methodVisibility);
+
+    /**
+     * @return Whether JavaBean properties ({@code getXyz(), isXyz(), setXyz(Xyz xyz)}) methods
+     * should be rendered as Fields in UML
+     */
+    boolean javaBeanPropertiesAsFields();
 }
