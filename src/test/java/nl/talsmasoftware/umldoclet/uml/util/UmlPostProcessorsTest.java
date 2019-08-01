@@ -28,7 +28,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.fail;
 
@@ -64,15 +63,22 @@ public class UmlPostProcessorsTest {
     @Test
     public void testJavaBeanPropertiesAsFielsPostProcessorSimpleAccessors() {
         Type simpleBean = new Type(UNNAMED, Classification.CLASS, typeName("SimpleBean"));
+        Method businessMethod = new Method(simpleBean, "someBusinessMethod", null);
         Method getter = new Method(simpleBean, "getStringValue", typeName("java.lang.String"));
         Method setter = new Method(simpleBean, "setStringValue", null);
-        setter.addParameter("stringValue", typeName("java.lang.String"));
+        setter.addParameter("value", typeName("java.lang.String"));
         simpleBean.addChild(getter);
         simpleBean.addChild(setter);
+        simpleBean.addChild(businessMethod);
+
+        assertThat(simpleBean.getChildren(Method.class), hasSize(3));
+        assertThat(simpleBean.getChildren(Field.class), is(empty()));
 
         postProcessors.javaBeanPropertiesAsFieldsPostProcessor().accept(simpleBean);
-        assertThat(simpleBean.getChildren(), hasSize(1));
-        assertThat(simpleBean.getChildren().get(0), instanceOf(Field.class));
+        assertThat(simpleBean.getChildren(Method.class), hasSize(1));
+        assertThat(simpleBean.getChildren(Method.class).get(0).name, equalTo("someBusinessMethod"));
+        assertThat(simpleBean.getChildren(Field.class), hasSize(1));
+        assertThat(simpleBean.getChildren(Field.class).get(0).name, equalTo("stringValue"));
     }
 
     private static TypeName typeName(String qualified) {
