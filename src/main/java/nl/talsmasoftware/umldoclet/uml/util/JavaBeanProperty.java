@@ -50,7 +50,7 @@ class JavaBeanProperty {
     private Method getter;
     private Method setter;
 
-    JavaBeanProperty(String name) {
+    private JavaBeanProperty(String name) {
         this.name = name;
     }
 
@@ -138,7 +138,7 @@ class JavaBeanProperty {
         if (value != null && !value.isEmpty() && !isLowerCase(value.charAt(0))) {
             char[] chars = value.toCharArray();
             chars[0] = toLowerCase(chars[0]);
-            value = new String(chars);
+            return new String(chars);
         }
         return value;
     }

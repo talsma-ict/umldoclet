@@ -21,6 +21,7 @@ import nl.talsmasoftware.umldoclet.uml.Namespace;
 import nl.talsmasoftware.umldoclet.uml.Type;
 import nl.talsmasoftware.umldoclet.uml.Type.Classification;
 import nl.talsmasoftware.umldoclet.uml.TypeName;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -29,19 +30,31 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.fail;
 
 public class UmlPostProcessorsTest {
     private static final Namespace UNNAMED = new Namespace(null, "");
 
+    private UmlPostProcessors postProcessors;
+
+    @Before
+    public void initializePostprocessors() {
+        postProcessors = new UmlPostProcessors();
+    }
+
     @Test
     public void testJavaBeanPropertiesAsFieldsPostProcessorAcceptsNull() {
-        UmlPostProcessors.javaBeanPropertiesAsFieldsPostProcessor().accept(null);
+        try {
+            postProcessors.javaBeanPropertiesAsFieldsPostProcessor().accept(null);
+        } catch (NullPointerException npe) {
+            fail("postprocessor should just accept null.");
+        }
     }
 
     @Test
     public void testJavaBeanPropertiesAsFieldsPostProcessorAcceptsEmptyType() {
         Type emptyType = new Type(UNNAMED, Classification.CLASS, typeName("EmptyType"));
-        UmlPostProcessors.javaBeanPropertiesAsFieldsPostProcessor().accept(emptyType);
+        postProcessors.javaBeanPropertiesAsFieldsPostProcessor().accept(emptyType);
         assertThat(emptyType.getPackagename(), equalTo(""));
         assertThat(emptyType.getClassfication(), is(Classification.CLASS));
         assertThat(emptyType.getName(), equalTo(typeName("EmptyType")));
@@ -57,7 +70,7 @@ public class UmlPostProcessorsTest {
         simpleBean.addChild(getter);
         simpleBean.addChild(setter);
 
-        UmlPostProcessors.javaBeanPropertiesAsFieldsPostProcessor().accept(simpleBean);
+        postProcessors.javaBeanPropertiesAsFieldsPostProcessor().accept(simpleBean);
         assertThat(simpleBean.getChildren(), hasSize(1));
         assertThat(simpleBean.getChildren().get(0), instanceOf(Field.class));
     }

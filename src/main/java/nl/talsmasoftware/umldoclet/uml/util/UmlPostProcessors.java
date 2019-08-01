@@ -22,9 +22,16 @@ import java.util.function.Consumer;
 /**
  * Utility class providing postprocessing functionality for generated UML models.
  */
-public final class UmlPostProcessors {
+public class UmlPostProcessors {
 
-    public static Consumer<Type> javaBeanPropertiesAsFieldsPostProcessor() {
+    /**
+     * A post-processor for a uml {@linkplain Type} to replace getter and setter
+     * {@linkplain nl.talsmasoftware.umldoclet.uml.Method methods}
+     * into {@linkplain nl.talsmasoftware.umldoclet.uml.Field fields}.
+     *
+     * @return The postprocessor that updates types.
+     */
+    public Consumer<Type> javaBeanPropertiesAsFieldsPostProcessor() {
         return type -> JavaBeanProperty.detectFrom(type).forEach(JavaBeanProperty::replaceGetterAndSetterByField);
     }
 

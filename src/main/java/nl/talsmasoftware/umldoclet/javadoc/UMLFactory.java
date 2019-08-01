@@ -73,6 +73,8 @@ import static nl.talsmasoftware.umldoclet.uml.Reference.Side.to;
  */
 public class UMLFactory {
 
+    private static final UmlPostProcessors POST_PROCESSORS = new UmlPostProcessors();
+
     final Configuration config;
     final ThreadLocal<Diagram> diagram = new ThreadLocal<>(); // TODO no longer needed?
     private final DocletEnvironment env;
@@ -195,7 +197,7 @@ public class UMLFactory {
         }
 
         if (config.methods().javaBeanPropertiesAsFields()) {
-            UmlPostProcessors.javaBeanPropertiesAsFieldsPostProcessor().accept(type);
+            POST_PROCESSORS.javaBeanPropertiesAsFieldsPostProcessor().accept(type);
         }
 
         return classDiagram;
@@ -261,7 +263,7 @@ public class UMLFactory {
         if (config.methods().javaBeanPropertiesAsFields()) {
             namespace.getChildren().stream()
                     .filter(Type.class::isInstance).map(Type.class::cast)
-                    .forEach(UmlPostProcessors.javaBeanPropertiesAsFieldsPostProcessor()::accept);
+                    .forEach(POST_PROCESSORS.javaBeanPropertiesAsFieldsPostProcessor()::accept);
         }
 
         return packageDiagram;
