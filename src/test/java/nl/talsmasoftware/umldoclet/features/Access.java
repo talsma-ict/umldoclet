@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.features;
 
+@SuppressWarnings("unused")
 public class Access {
     private static class PrivateClass {
         private String privateField;

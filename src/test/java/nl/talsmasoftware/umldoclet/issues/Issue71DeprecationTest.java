@@ -48,12 +48,14 @@ public class Issue71DeprecationTest {
 
     @Deprecated
     public void getDeprecatedByAnnotation() {
+        // Empty method to test UML generation.
     }
 
     /**
      * @deprecated Testing deprecation by JavaDoc tag with a comment.
      */
     public void getDeprecatedByJavadocTag() {
+        // Empty method to test UML generation.
     }
 
     @BeforeClass
@@ -128,9 +130,10 @@ public class Issue71DeprecationTest {
             this(null);
         }
 
-        @SuppressWarnings("unused") // Used to test generated UML
+        @SuppressWarnings("unused")
         @Deprecated
         public MoreDeprecation(String ignored) {
+            // Empty method to test UML generation.
         }
     }
 }

@@ -50,6 +50,7 @@ public class ExternalLinksTest {
     static final File testoutput = Testing.deleteRecursive(new File("target/issues/96"));
     static final String packageAsPath = ExternalLinksTest.class.getPackageName().replace('.', '/');
 
+    @SuppressWarnings("unused")
     public static class TestClass implements Serializable {
     }
 

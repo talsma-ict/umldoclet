@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.features;
 
+@SuppressWarnings("unused")
 class PackageProtectedClass {
     private String privateField;
     String packageProtectedField;
