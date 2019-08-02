@@ -3,7 +3,7 @@
   <groupId>net.sourceforge.plantuml</groupId>
   <artifactId>plantuml-asl</artifactId>
   <versioning>
-    <release>1.2019.6</release>
+    <release>1.2019.8</release>
     <versions>
       <version>1.2017.19</version>
       <version>1.2017.20</version>
@@ -21,7 +21,8 @@
       <version>1.2019.4</version>
       <version>1.2019.5</version>
       <version>1.2019.6</version>
+      <version>1.2019.8</version>
     </versions>
-    <lastUpdated>20190604174350</lastUpdated>
+    <lastUpdated>20190802152709</lastUpdated>
   </versioning>
 </metadata>
