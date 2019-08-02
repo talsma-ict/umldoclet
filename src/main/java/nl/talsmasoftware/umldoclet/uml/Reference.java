@@ -41,7 +41,8 @@ import static java.util.stream.Collectors.toCollection;
  * @author Sjoerd Talsma
  */
 public class Reference extends UMLNode {
-    public final Side from, to;
+    public final Side from;
+    public final Side to;
     public final String type;
     public final Collection<String> notes;
 
