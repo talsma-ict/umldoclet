@@ -174,8 +174,10 @@ public class JavaBeanProperty {
     private static Optional<String> propertyNameOfAccessor(Method method) {
         Optional<String> propertyName = Optional.empty();
         if (isGetterMethod(method) || isSetterMethod(method)) {
+            // Method name without 'get' / 'set' decapitalized
             propertyName = Optional.of(decapitalize(method.name.substring(3)));
-        } else if (method.name.startsWith("is") && isBooleanType(method.type) && parameterCount(method) == 0) {
+        } else if (isBooleanGetterMethod(method)) {
+            // Method name without 'is' decapitalized
             propertyName = Optional.of(decapitalize(method.name.substring(2)));
         }
         return propertyName;
@@ -183,6 +185,10 @@ public class JavaBeanProperty {
 
     private static boolean isGetterMethod(Method method) {
         return method.type != null && method.name.startsWith("get") && parameterCount(method) == 0;
+    }
+
+    private static boolean isBooleanGetterMethod(Method method) {
+        return isBooleanType(method.type) && method.name.startsWith("is") && parameterCount(method) == 0;
     }
 
     private static boolean isSetterMethod(Method method) {
