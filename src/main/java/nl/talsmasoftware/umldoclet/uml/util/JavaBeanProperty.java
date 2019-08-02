@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.uml.util;
 
+import nl.talsmasoftware.umldoclet.configuration.Visibility;
 import nl.talsmasoftware.umldoclet.uml.Field;
 import nl.talsmasoftware.umldoclet.uml.Method;
 import nl.talsmasoftware.umldoclet.uml.Parameters;
@@ -28,7 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static java.lang.Character.isLowerCase;
+import static java.lang.Character.isUpperCase;
 import static java.lang.Character.toLowerCase;
 import static java.util.Collections.emptySet;
 
@@ -43,7 +44,7 @@ import static java.util.Collections.emptySet;
  * or the <a href="http://www.oracle.com/technetwork/java/javase/documentation/spec-136004.html">Official
  * JavaBeans 1.01 Specification</a>.
  */
-class JavaBeanProperty {
+public class JavaBeanProperty {
     private final String name;
 
     private Field field;
@@ -54,33 +55,68 @@ class JavaBeanProperty {
         this.name = name;
     }
 
-    static Collection<JavaBeanProperty> detectFrom(Type type) {
+    /**
+     * This method detects the JavaBean properties from the uml {@linkplain Type} model of a Java class.
+     *
+     * <p>
+     * The following will be detected as <a href="https://en.wikipedia.org/wiki/JavaBeans">JavaBean</a> property:
+     * <ul>
+     *     <li>A public {@linkplain Field}</li>
+     *     <li>A public getter {@linkplain Method} (including isXyz() boolean getters)</li>
+     *     <li>A public setter {@linkplain Method}</li>
+     * </ul>
+     *
+     * @param type The uml model of a java type.
+     * @return The detected JavaBean poperties in that type.
+     */
+    public static Collection<JavaBeanProperty> detectFrom(Type type) {
         if (type == null) return emptySet();
-        final Map<String, JavaBeanProperty> byName = new LinkedHashMap<>();
+        final Map<String, JavaBeanProperty> propertiesByName = new LinkedHashMap<>();
         type.getChildren().stream()
                 .filter(TypeMember.class::isInstance).map(TypeMember.class::cast)
+                .filter(typeMember -> Visibility.PUBLIC.equals(typeMember.getVisibility()))
                 .forEach(typeMember ->
                         propertyNameOf(typeMember).ifPresent(propertyName ->
-                                byName.computeIfAbsent(propertyName, JavaBeanProperty::new)
+                                propertiesByName.computeIfAbsent(propertyName, JavaBeanProperty::new)
                                         .add(typeMember)));
-        return byName.values();
+        return propertiesByName.values();
     }
 
+    /**
+     * This method checks if a type member matches the JavaBean propertyName convention and returns the
+     * property name if it does.
+     *
+     * <p>
+     * {@linkplain Field} names are returned as-is.
+     * For getter/setter {@linkplain Method methods} the {@code "get"},  {@code "is"} or {@code "set"} prefix
+     * is removed and the initial character of the remaining string is converted to lowercase.
+     *
+     * @param member The type member to evaluate.
+     * @return The property name if the typemember is either a Field or a JavaBean getter/setter method.
+     */
     private static Optional<String> propertyNameOf(TypeMember member) {
+        Optional<String> propertyName = Optional.empty();
         if (member instanceof Field) {
-            return Optional.of(member.name);
+            propertyName = Optional.of(member.name);
         } else if (member instanceof Method) {
-            if (member.name.startsWith("get") && member.type != null && parameterCount(member) == 0) {
-                return Optional.of(decapitalize(member.name.substring(3)));
-            } else if (member.name.startsWith("is") && isBooleanType(member.type) && parameterCount(member) == 0) {
-                return Optional.of(decapitalize(member.name.substring(2)));
-            } else if (member.name.startsWith("set") && parameterCount(member) == 1) {
-                return Optional.of(decapitalize(member.name.substring(3)));
-            }
+            propertyName = propertyNameOfAccessor((Method) member);
         }
-        return Optional.empty();
+        return propertyName;
     }
 
+    /**
+     * Adds a detected {@linkplain Field} or {@linkplain Method} to the property.
+     *
+     * <p>
+     * A javabean property normally consist of a private {@linkplain Field} and public getter and setter
+     * {@linkplain Method methods}.
+     *
+     * <p>
+     * This method assumes that the member conforms to the correct naming convention for JavaBeans,
+     * no additional checks are performed.
+     *
+     * @param member The member to add to this property.
+     */
     private void add(TypeMember member) {
         if (member instanceof Field) {
             this.field = (Field) member;
@@ -111,18 +147,60 @@ class JavaBeanProperty {
         }
     }
 
+    /**
+     * Test whether the {@linkplain #propertyNameOf(TypeMember) property name of} the specified UML node
+     * matches the {@code name} of property.
+     *
+     * <p>
+     * Although the method accepts any {@linkplain UMLNode} argument, only {@linkplain Field} and {@linkplain Method}
+     * instances can ever obtain a positive result.
+     *
+     * @param node The UML node to check
+     * @return {@code true} if this node is a {@linkplain Field} or {@linkplain Method} corresponding to this
+     * JavaBean property.
+     */
     private boolean isSameProperty(UMLNode node) {
         return node instanceof TypeMember && propertyNameOf((TypeMember) node).filter(name::equals).isPresent();
     }
 
     /**
+     * Implements the {@linkplain #propertyNameOf(TypeMember) 'property name of'} evaluation for methods.
+     *
+     * @param method The getter/setter method to return the property name of.
+     * @return The property name of the getter/setter method or {@code empty()} if the method did not start with
+     * {@code "get"}, {@code "is"} or {@code "set"}.
+     * @see #propertyNameOf(TypeMember)
+     */
+    private static Optional<String> propertyNameOfAccessor(Method method) {
+        Optional<String> propertyName = Optional.empty();
+        if (isGetterMethod(method) || isSetterMethod(method)) {
+            propertyName = Optional.of(decapitalize(method.name.substring(3)));
+        } else if (method.name.startsWith("is") && isBooleanType(method.type) && parameterCount(method) == 0) {
+            propertyName = Optional.of(decapitalize(method.name.substring(2)));
+        }
+        return propertyName;
+    }
+
+    private static boolean isGetterMethod(Method method) {
+        return method.type != null && method.name.startsWith("get") && parameterCount(method) == 0;
+    }
+
+    private static boolean isSetterMethod(Method method) {
+        return method.name.startsWith("set") && parameterCount(method) == 1;
+    }
+
+    /**
      * Counts the parameters of a typemember.
      *
-     * @param member The type member to count the parameters of.
+     * <p>
+     * This method is only practically useful for {@linkplain Method} members. This counting method may become obsolete
+     * after a suitable simplification of method parameters.
+     *
+     * @param method The method to count the parameters of.
      * @return The total number of children in {@code Parameters} children of the member.
      */
-    private static int parameterCount(TypeMember member) {
-        return member.getChildren().stream()
+    private static int parameterCount(Method method) {
+        return method.getChildren().stream()
                 .filter(Parameters.class::isInstance)
                 .map(UMLNode::getChildren).mapToInt(Collection::size)
                 .sum();
@@ -135,7 +213,7 @@ class JavaBeanProperty {
      * @return The decapitalized value.
      */
     private static String decapitalize(String value) {
-        if (value != null && !value.isEmpty() && !isLowerCase(value.charAt(0))) {
+        if (value != null && !value.isEmpty() && isUpperCase(value.charAt(0))) {
             char[] chars = value.toCharArray();
             chars[0] = toLowerCase(chars[0]);
             return new String(chars);
