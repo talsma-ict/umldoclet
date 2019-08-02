@@ -138,7 +138,13 @@ public final class FileUtils {
 
     public static boolean hasExtension(Object file, String extension) {
         if (file == null || extension == null) return false;
-        if (!extension.startsWith(".")) extension = '.' + extension;
-        return file.toString().toLowerCase().endsWith(extension.toLowerCase());
+        return endsWithIgnoreCase(file.toString(), extension.startsWith(".") ? extension : '.' + extension);
+    }
+
+    private static boolean endsWithIgnoreCase(String subject, String extension) {
+        int subjectLength = subject.length();
+        int extensionLength = extension.length();
+        return subjectLength >= extensionLength
+                && subject.substring(subjectLength - extensionLength).equalsIgnoreCase(extension);
     }
 }

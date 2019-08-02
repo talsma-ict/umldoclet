@@ -20,6 +20,7 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Collection;
 
+import static java.util.Locale.ENGLISH;
 import static java.util.Objects.requireNonNull;
 
 public class Type extends UMLNode {
@@ -32,7 +33,7 @@ public class Type extends UMLNode {
         ENUM, INTERFACE, ANNOTATION, ABSTRACT_CLASS, CLASS;
 
         public String toUml() {
-            return name().toLowerCase().replace('_', ' ');
+            return name().toLowerCase(ENGLISH).replace('_', ' ');
         }
     }
 
