@@ -32,7 +32,9 @@ public abstract class TypeMember extends UMLNode {
     public final String name;
     public TypeName type;
     private Visibility visibility;
-    public boolean isAbstract, isStatic, isDeprecated;
+    public boolean isAbstract;
+    public boolean isStatic;
+    public boolean isDeprecated;
 
     protected TypeMember(Type containingType, String name, TypeName type) {
         super(containingType);

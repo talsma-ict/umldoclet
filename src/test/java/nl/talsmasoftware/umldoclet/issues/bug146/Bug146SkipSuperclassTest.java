@@ -31,7 +31,8 @@ import static org.hamcrest.Matchers.not;
 public class Bug146SkipSuperclassTest {
     private static final String packageAsPath = Bug146SkipSuperclassTest.class.getPackageName().replace('.', '/');
     private static final File outputdir = new File("target/issues/146");
-    private static String classUml, packageUml;
+    private static String classUml;
+    private static String packageUml;
 
     @BeforeClass
     public static void generateJavadoc() {
