@@ -152,7 +152,7 @@ _This option was introduced as a resolution for
 By default `.svg` images are generated as they will be significantly smaller
 in size than equivalent `.png` images and scale better.
 You can generate _multiple_ images per diagram by specifying a comma-separated 
-list of formats or providing the option more than once.
+list of formats or providing the option multiple times.
 
 #### -failOnCyclicPackageDependencies (true|_false_)
 
