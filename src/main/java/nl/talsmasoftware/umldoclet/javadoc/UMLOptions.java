@@ -58,31 +58,35 @@ final class UMLOptions {
     private UMLOptions(DocletConfig config, Set<Doclet.Option> standardOptions) {
         this.config = requireNonNull(config, "Configuration is <null>.");
         this.standardOptions = standardOptions;
-        this.options = new TreeSet<>(comparing(o -> o.getNames().get(0), String::compareTo)) {{
-            // Options from Standard doclet that we also support
-            add(new Option("-quiet", 0, Kind.OTHER, (args) -> config.quiet = true));
-            add(new Option("-verbose", 0, Kind.OTHER, (args) -> config.verbose = true));
-            add(new Option("-docencoding", 1, Kind.OTHER, (args) -> config.docencoding = args.get(0)));
-            add(new Option("-encoding", 1, Kind.OTHER, (args) -> config.encoding = args.get(0)));
-            add(new Option("-link", 1, Kind.OTHER, (args) -> config.externalLinks.add(new ExternalLink(config, args.get(0), args.get(0)))));
-            add(new Option("-linkoffline", 2, Kind.OTHER, (args) -> config.externalLinks.add(new ExternalLink(config, args.get(0), args.get(1)))));
-            add(new Option("-private", 0, Kind.OTHER, (args) -> config.showMembers("private")));
-            add(new Option("-package", 0, Kind.OTHER, (args) -> config.showMembers("package")));
-            add(new Option("-protected", 0, Kind.OTHER, (args) -> config.showMembers("protected")));
-            add(new Option("-public", 0, Kind.OTHER, (args) -> config.showMembers("public")));
-            add(new Option("--show-members", 1, Kind.OTHER, (args) -> config.showMembers(args.get(0))));
-            add(new Option("-d", 1, Kind.OTHER, (args) -> config.destDirName = args.get(0)));
+        this.options = new TreeSet<>(comparing(o -> o.getNames().get(0), String::compareTo));
 
-            // Our own options
-            add(new Option("-createPumlFiles", 0, Kind.STANDARD, (args) -> config.renderPumlFile = true));
-            add(new Option("-umlImageDirectory", 1, Kind.STANDARD, (args) -> config.images.directory = args.get(0)));
-            add(new Option("-umlImageFormat", 1, Kind.STANDARD, (args) -> config.images.addImageFormat(args.get(0))));
-            add(new Option("-umlEncoding", 1, Kind.STANDARD, (args) -> config.umlencoding = args.get(0)));
-            add(new Option("-umlExcludedPackageDependencies", 1, Kind.STANDARD,
-                    (args) -> config.excludedPackageDependencies = splitToList(args.get(0))));
-            add(new Option("-failOnCyclicPackageDependencies", 1, Kind.STANDARD,
-                    (args) -> config.failOnCyclicPackageDependencies = asBoolean(args.get(0))));
-        }};
+        // Options from Standard doclet that we also support
+        this.options.add(new Option("-quiet", 0, Kind.OTHER, (args) -> config.quiet = true));
+        this.options.add(new Option("-verbose", 0, Kind.OTHER, (args) -> config.verbose = true));
+        this.options.add(new Option("-docencoding", 1, Kind.OTHER, (args) -> config.docencoding = args.get(0)));
+        this.options.add(new Option("-encoding", 1, Kind.OTHER, (args) -> config.encoding = args.get(0)));
+        this.options.add(new Option("-link", 1, Kind.OTHER,
+                (args) -> config.externalLinks.add(new ExternalLink(config, args.get(0), args.get(0)))));
+        this.options.add(new Option("-linkoffline", 2, Kind.OTHER,
+                (args) -> config.externalLinks.add(new ExternalLink(config, args.get(0), args.get(1)))));
+        this.options.add(new Option("-private", 0, Kind.OTHER, (args) -> config.showMembers("private")));
+        this.options.add(new Option("-package", 0, Kind.OTHER, (args) -> config.showMembers("package")));
+        this.options.add(new Option("-protected", 0, Kind.OTHER, (args) -> config.showMembers("protected")));
+        this.options.add(new Option("-public", 0, Kind.OTHER, (args) -> config.showMembers("public")));
+        this.options.add(new Option("--show-members", 1, Kind.OTHER, (args) -> config.showMembers(args.get(0))));
+        this.options.add(new Option("-d", 1, Kind.OTHER, (args) -> config.destDirName = args.get(0)));
+
+        // Our own options
+        this.options.add(new Option("-createPumlFiles", 0, Kind.STANDARD, (args) -> config.renderPumlFile = true));
+        this.options.add(new Option("-umlImageDirectory", 1, Kind.STANDARD, (args) -> config.images.directory = args.get(0)));
+        this.options.add(new Option("-umlImageFormat", 1, Kind.STANDARD, (args) -> config.images.addImageFormat(args.get(0))));
+        this.options.add(new Option("-umlEncoding", 1, Kind.STANDARD, (args) -> config.umlencoding = args.get(0)));
+        this.options.add(new Option("-umlExcludedPackageDependencies", 1, Kind.STANDARD,
+                (args) -> config.excludedPackageDependencies = splitToList(args.get(0))));
+        this.options.add(new Option("-failOnCyclicPackageDependencies", 1, Kind.STANDARD,
+                (args) -> config.failOnCyclicPackageDependencies = asBoolean(args.get(0))));
+        this.options.add(new Option("-umlJavaBeanPropertiesAsFields", 0, Kind.STANDARD,
+                (args) -> config.methodConfig.javaBeanPropertiesAsFields = true));
     }
 
     Set<Doclet.Option> mergeWith(final Set<Doclet.Option> standardOptions) {

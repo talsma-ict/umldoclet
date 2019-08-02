@@ -31,6 +31,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 /**
+ * Tests the Doclet Config parsing.
+ *
  * @author Sjoerd Talsma
  */
 public class DocletConfigTest {
@@ -57,6 +59,13 @@ public class DocletConfigTest {
         }
     }
 
+    /**
+     * Tests whether there were any undocumented options added to the doclet.
+     *
+     * <p>
+     * Please add documentation for the new option(s)
+     * in the {@code nl.talsmasoftware.umldoclet.UMLDoclet} resource bundle.
+     */
     @Test
     public void testForUndocumentedMissingKeys() {
         assertThat(getDocletHelpOutput(), not(containsString("<MISSING KEY>")));

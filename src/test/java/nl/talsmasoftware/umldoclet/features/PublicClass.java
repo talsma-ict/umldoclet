@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.features;
 
+@SuppressWarnings("unused") // used for testing generated UML code
 public class PublicClass {
     private String privateField;
     String packageProtectedField;

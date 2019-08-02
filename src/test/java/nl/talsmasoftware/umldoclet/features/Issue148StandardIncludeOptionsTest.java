@@ -113,7 +113,6 @@ public class Issue148StandardIncludeOptionsTest {
         assertThat(privateClassUml, containsString("~getPackageProtectedValue()"));
         assertThat(privateClassUml, containsString("#getProtectedValue()"));
         assertThat(privateClassUml, containsString("+getPublicValue()"));
-
     }
 
     @Test

@@ -112,7 +112,7 @@ public class Issue71DeprecationTest {
     }
 
     @Test
-    public void testIssue73_innerClassImageName() {
+    public void testIssue73InnerClassImageName() {
         File innerClassFile = new File(outputDir, "nl/talsmasoftware/umldoclet/issues/Issue71DeprecationTest.MoreDeprecation.svg");
         assertThat(innerClassFile + " exists?", innerClassFile.exists(), is(true));
     }
@@ -128,6 +128,7 @@ public class Issue71DeprecationTest {
             this(null);
         }
 
+        @SuppressWarnings("unused") // Used to test generated UML
         @Deprecated
         public MoreDeprecation(String ignored) {
         }

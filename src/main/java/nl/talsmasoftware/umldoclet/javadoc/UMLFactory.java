@@ -29,6 +29,7 @@ import nl.talsmasoftware.umldoclet.uml.Reference;
 import nl.talsmasoftware.umldoclet.uml.Type;
 import nl.talsmasoftware.umldoclet.uml.TypeMember;
 import nl.talsmasoftware.umldoclet.uml.TypeName;
+import nl.talsmasoftware.umldoclet.uml.util.UmlPostProcessors;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -71,6 +72,8 @@ import static nl.talsmasoftware.umldoclet.uml.Reference.Side.to;
  * @author Sjoerd Talsma
  */
 public class UMLFactory {
+
+    private static final UmlPostProcessors POST_PROCESSORS = new UmlPostProcessors();
 
     final Configuration config;
     final ThreadLocal<Diagram> diagram = new ThreadLocal<>(); // TODO no longer needed?
@@ -193,6 +196,10 @@ public class UMLFactory {
             }
         }
 
+        if (config.methods().javaBeanPropertiesAsFields()) {
+            POST_PROCESSORS.javaBeanPropertiesAsFieldsPostProcessor().accept(type);
+        }
+
         return classDiagram;
     }
 
@@ -252,6 +259,12 @@ public class UMLFactory {
 
         namespace.addChild(UmlCharacters.NEWLINE);
         references.stream().map(Reference::canonical).forEach(namespace::addChild);
+
+        if (config.methods().javaBeanPropertiesAsFields()) {
+            namespace.getChildren().stream()
+                    .filter(Type.class::isInstance).map(Type.class::cast)
+                    .forEach(POST_PROCESSORS.javaBeanPropertiesAsFieldsPostProcessor()::accept);
+        }
 
         return packageDiagram;
     }

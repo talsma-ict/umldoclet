@@ -22,7 +22,6 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingRenderer;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +29,9 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import static java.util.Collections.newSetFromMap;
+import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Smallest 'independent' part of an UML diagram that can be rendered,
@@ -69,7 +70,18 @@ public abstract class UMLNode implements IndentingRenderer {
     }
 
     public List<UMLNode> getChildren() {
-        return Collections.unmodifiableList(children);
+        return unmodifiableList(children);
+    }
+
+    /**
+     * Returns all children that are an instance of a particular type.
+     *
+     * @param type The type of {@code UMLNode} to return (required, non-null).
+     * @param <T>  The type of children to obtain.
+     * @return The filtered list of children of this uml node (unmodifiable).
+     */
+    public <T extends UMLNode> List<T> getChildren(Class<T> type) {
+        return unmodifiableList(children.stream().filter(type::isInstance).map(type::cast).collect(toList()));
     }
 
     public void addChild(UMLNode child) {
