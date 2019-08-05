@@ -15,7 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.testing.annotations;
 
-import nl.talsmasoftware.umldoclet.util.Testing;
+import nl.talsmasoftware.umldoclet.util.TestUtil;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -31,7 +31,7 @@ public class AnnotationTest {
 
     @Test
     public void testAnnotationRendering() {
-        String packageUml = Testing.readFile("testing/annotations/package.puml");
+        String packageUml = TestUtil.readFile("testing/annotations/package.puml");
         assertThat(packageUml, containsString("annotation DummyAnnotation"));
     }
 

@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.issues;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
-import nl.talsmasoftware.umldoclet.util.Testing;
+import nl.talsmasoftware.umldoclet.util.TestUtil;
 import org.junit.Test;
 
 import java.io.File;
@@ -38,7 +38,7 @@ public class Bug107DefaultPackageTest {
                 "src/test/java/Foo.java"
         ), is(0));
 
-        String uml = Testing.read(new File("target/issues/107/package.puml"));
+        String uml = TestUtil.read(new File("target/issues/107/package.puml"));
         assertThat(uml, containsString("namespace unnamed"));
         assertThat(uml, containsString("class Foo"));
     }

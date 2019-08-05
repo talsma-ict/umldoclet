@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.issues;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
-import nl.talsmasoftware.umldoclet.util.Testing;
+import nl.talsmasoftware.umldoclet.util.TestUtil;
 import org.junit.Test;
 
 import java.io.File;
@@ -37,7 +37,7 @@ public class Issue69LinksTest {
     }
 
     @Test
-    public void testLink_sameDirectory() {
+    public void testLinkSameDirectory() {
         File outputdir = new File(testoutput, "same-dir");
         File packageUml = new File(outputdir, packageAsPath + "/package.puml");
         ToolProvider.findFirst("javadoc").get().run(
@@ -49,7 +49,7 @@ public class Issue69LinksTest {
                 "src/test/java/" + packageAsPath + '/' + getClass().getSimpleName() + ".java"
         );
 
-        String uml = Testing.read(packageUml);
+        String uml = TestUtil.read(packageUml);
         // Check link to test class
         assertThat(uml, stringContainsInOrder(asList("Issue69LinksTest", "[[Issue69LinksTest.html]]")));
         // Check link to inner class

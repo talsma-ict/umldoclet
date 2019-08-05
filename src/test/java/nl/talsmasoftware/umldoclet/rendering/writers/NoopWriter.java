@@ -25,14 +25,17 @@ import java.io.Writer;
 public final class NoopWriter extends Writer {
     @Override
     public void write(char[] cbuf, int off, int len) {
+        // no-op
     }
 
     @Override
     public void flush() {
+        // no-op
     }
 
     @Override
     public void close() {
+        // no-op
     }
 
     @Override

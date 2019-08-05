@@ -25,7 +25,7 @@ public class DeprecatedBySuperclass extends DeprecatedByJavadocTagAbstractClass 
 
     @Override
     public void someMethod() {
-
+        // no-op, for testing generated UML
     }
 
     public int someOtherMethod() {

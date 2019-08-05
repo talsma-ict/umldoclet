@@ -15,7 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.testing.generics;
 
-import nl.talsmasoftware.umldoclet.util.Testing;
+import nl.talsmasoftware.umldoclet.util.TestUtil;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -36,7 +36,7 @@ public class GenericsTest {
 
     @Test
     public void testGeneratedGenerics() {
-        String constantListUml = Testing.readFile("testing/generics/ConstantList.puml");
+        String constantListUml = TestUtil.readFile("testing/generics/ConstantList.puml");
         assertThat(constantListUml, is(not(nullValue())));
         assertThat(constantListUml, containsString("class ConstantList<T, X>"));
         assertThat(constantListUml, containsString("+delegate: List<T>"));
@@ -48,7 +48,7 @@ public class GenericsTest {
 
     @Test
     public void testGeneratedPackageDiagramGenerics() {
-        String packageUml = Testing.readFile("testing/generics/package.puml");
+        String packageUml = TestUtil.readFile("testing/generics/package.puml");
         // First test whether the class details are rendered, as above:
         assertThat(packageUml, is(not(nullValue())));
         String classdef = QUALIFIED

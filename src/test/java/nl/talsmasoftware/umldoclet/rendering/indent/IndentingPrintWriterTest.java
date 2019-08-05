@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import static nl.talsmasoftware.umldoclet.util.Testing.NEWLINE;
+import static nl.talsmasoftware.umldoclet.util.TestUtil.NEWLINE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasToString;
@@ -41,7 +41,7 @@ import static org.junit.Assert.fail;
 public class IndentingPrintWriterTest {
 
     @Test
-    public void testIndentingPrintWriter_nullWriter() {
+    public void testIndentingPrintWriterNullWriter() {
         try {
             new IndentingPrintWriter(null, Indentation.DEFAULT);
             fail("Exception expected.");
@@ -51,7 +51,7 @@ public class IndentingPrintWriterTest {
     }
 
     @Test
-    public void testIndentingWithNewlinesWithinString() throws IOException {
+    public void testIndentingWithNewlinesWithinString() {
         StringWriter target = new StringWriter();
         IndentingPrintWriter.wrap(target, null)
                 .indent().append("text").newline()
@@ -64,7 +64,7 @@ public class IndentingPrintWriterTest {
     }
 
     @Test
-    public void testWhitespaceRendering() throws IOException {
+    public void testWhitespaceRendering() {
         StringWriter target = new StringWriter();
         IndentingPrintWriter.wrap(target, null)
                 .whitespace().whitespace()
@@ -77,7 +77,7 @@ public class IndentingPrintWriterTest {
     }
 
     @Test
-    public void testWhitespaceRenderingBeforeNewlines() throws IOException {
+    public void testWhitespaceRenderingBeforeNewlines() {
         StringWriter output = new StringWriter();
         final IndentingPrintWriter writer = IndentingPrintWriter.wrap(output, Indentation.DEFAULT);
         writer.append('-').whitespace().append('\n').flush();
@@ -90,7 +90,7 @@ public class IndentingPrintWriterTest {
     }
 
     @Test
-    public void testWhitespaceRenderingAfterNewlines() throws IOException {
+    public void testWhitespaceRenderingAfterNewlines() {
         StringWriter output = new StringWriter();
         final IndentingPrintWriter writer = IndentingPrintWriter.wrap(output, Indentation.DEFAULT);
         writer.append('\n').whitespace().append('-').flush();

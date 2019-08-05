@@ -19,6 +19,8 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
+import static java.lang.Math.max;
+
 /**
  * Type to capture the indentation as an immutable type containing a pre-filled buffer to quickly be written.
  *
@@ -48,13 +50,14 @@ public final class Indentation implements CharSequence, Serializable {
     public static final Indentation NONE = new Indentation(0, ' ', 0);
 
     // All fields of Indentation class are final.
-    private final int width, level;
+    private final int width;
+    private final int level;
     private final char ch;
     private final transient String value;
 
     private Indentation(final int width, final char ch, final int level) {
-        this.width = width > 0 ? width : 0;
-        this.level = level > 0 ? level : 0;
+        this.width = max(width, 0);
+        this.level = max(level, 0);
         this.ch = ch;
         char[] buf = new char[this.width * this.level];
         Arrays.fill(buf, this.ch);
@@ -69,7 +72,7 @@ public final class Indentation implements CharSequence, Serializable {
      * @return The indentation of <code>level</code> tabs.
      */
     public static Indentation tabs(final int level) {
-        return level < TABS.length ? TABS[level > 0 ? level : 0] : new Indentation(1, '\t', level);
+        return level < TABS.length ? TABS[max(level, 0)] : new Indentation(1, '\t', level);
     }
 
     /**
@@ -82,10 +85,10 @@ public final class Indentation implements CharSequence, Serializable {
      * @return The indentation level as <code>level</code> multiples of <code>width</code> spaces.
      */
     public static Indentation spaces(int width, int level) {
-        if (width < 0) width = DEFAULT.ch == ' ' ? DEFAULT.width : 4;
-        return width == 0 ? NONE
-                : width == 2 && level < TWO_SPACES.length ? TWO_SPACES[level > 0 ? level : 0]
-                : width == 4 && level < FOUR_SPACES.length ? FOUR_SPACES[level > 0 ? level : 0]
+        return width < 0 ? spaces(DEFAULT.ch == ' ' ? DEFAULT.width : 4, level)
+                : width == 0 ? NONE
+                : width == 2 && level < TWO_SPACES.length ? TWO_SPACES[max(level, 0)]
+                : width == 4 && level < FOUR_SPACES.length ? FOUR_SPACES[max(level, 0)]
                 : new Indentation(width, ' ', level);
     }
 

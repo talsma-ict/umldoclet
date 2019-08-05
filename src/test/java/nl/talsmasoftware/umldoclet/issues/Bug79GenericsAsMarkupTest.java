@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.issues;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
-import nl.talsmasoftware.umldoclet.util.Testing;
+import nl.talsmasoftware.umldoclet.util.TestUtil;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -57,7 +57,7 @@ public class Bug79GenericsAsMarkupTest {
                 "-createPumlFiles",
                 "src/test/java/" + Bug79GenericsAsMarkupTest.class.getName().replace('.', '/') + ".java"
         ), is(0));
-        classUml = Testing.read(new File(outputdir, classAsPath + ".puml"));
+        classUml = TestUtil.read(new File(outputdir, classAsPath + ".puml"));
     }
 
     @Test

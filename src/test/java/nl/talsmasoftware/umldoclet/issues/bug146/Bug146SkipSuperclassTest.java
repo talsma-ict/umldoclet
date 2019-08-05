@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.issues.bug146;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
-import nl.talsmasoftware.umldoclet.util.Testing;
+import nl.talsmasoftware.umldoclet.util.TestUtil;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -45,8 +45,8 @@ public class Bug146SkipSuperclassTest {
                 "-createPumlFiles",
                 "src/test/java/" + classAsPath + ".java"
         );
-        classUml = Testing.read(new File(outputdir, classAsPath + ".puml"));
-        packageUml = Testing.read(new File(outputdir, packageAsPath + "/package.puml"));
+        classUml = TestUtil.read(new File(outputdir, classAsPath + ".puml"));
+        packageUml = TestUtil.read(new File(outputdir, packageAsPath + "/package.puml"));
     }
 
     @Test

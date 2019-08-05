@@ -15,7 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.testing;
 
-import nl.talsmasoftware.umldoclet.util.Testing;
+import nl.talsmasoftware.umldoclet.util.TestUtil;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -32,7 +32,7 @@ public class UmlCommandTest {
 
     @Test
     public void testUmlCommandSetting() {
-        String packageUml = Testing.readFile("testing/package.puml");
+        String packageUml = TestUtil.readFile("testing/package.puml");
         assertThat(packageUml, containsString("hide empty members"));
         assertThat(packageUml, containsString("hide <<Stereotype>> circle"));
     }

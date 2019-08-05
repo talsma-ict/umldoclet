@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.issues;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
-import nl.talsmasoftware.umldoclet.util.Testing;
+import nl.talsmasoftware.umldoclet.util.TestUtil;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -69,8 +69,8 @@ public class Issue71DeprecationTest {
                 "-createPumlFiles",
                 "src/test/java/" + classAsPath + ".java"
         );
-        classUml = Testing.read(new File(outputDir, classAsPath + ".puml"));
-        packageUml = Testing.read(new File(outputDir, packageAsPath + "/package.puml"));
+        classUml = TestUtil.read(new File(outputDir, classAsPath + ".puml"));
+        packageUml = TestUtil.read(new File(outputDir, packageAsPath + "/package.puml"));
     }
 
     @Test

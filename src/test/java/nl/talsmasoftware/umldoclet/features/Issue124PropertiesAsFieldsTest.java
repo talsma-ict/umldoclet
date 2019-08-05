@@ -17,7 +17,7 @@ package nl.talsmasoftware.umldoclet.features;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.features.beans.StandardJavaBean;
-import nl.talsmasoftware.umldoclet.util.Testing;
+import nl.talsmasoftware.umldoclet.util.TestUtil;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -51,7 +51,7 @@ public class Issue124PropertiesAsFieldsTest {
     @Test
     public void testPropertiesAsFieldsForPublicClass() {
         String umlFileName = StandardJavaBean.class.getName().replace('.', '/') + ".puml";
-        String uml = Testing.read(new File(outputdir, umlFileName));
+        String uml = TestUtil.read(new File(outputdir, umlFileName));
         assertThat(uml, containsString("+stringValue: String"));
         assertThat(uml, containsString("+intValue: int"));
         assertThat(uml, containsString("+booleanValue: boolean"));
@@ -70,7 +70,7 @@ public class Issue124PropertiesAsFieldsTest {
     @Test
     public void testPropertiesAsFieldsForPackageDiagram() {
         String umlFileName = StandardJavaBean.class.getPackageName().replace('.', '/') + "/package.puml";
-        String uml = Testing.read(new File(outputdir, umlFileName));
+        String uml = TestUtil.read(new File(outputdir, umlFileName));
         assertThat(uml, containsString("+stringValue: String"));
         assertThat(uml, containsString("+intValue: int"));
         assertThat(uml, containsString("+booleanValue: boolean"));
