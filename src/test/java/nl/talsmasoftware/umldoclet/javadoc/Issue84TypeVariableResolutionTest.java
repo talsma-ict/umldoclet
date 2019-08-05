@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.javadoc;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
-import nl.talsmasoftware.umldoclet.util.Testing;
+import nl.talsmasoftware.umldoclet.util.TestUtil;
 import org.junit.Test;
 
 import java.io.File;
@@ -32,7 +32,7 @@ public class Issue84TypeVariableResolutionTest {
 
     @Test
     public void testTypeMemberImplementsComparableTypeMember() throws FileNotFoundException {
-        Testing.createDirectory(new File("target/issues/84"));
+        TestUtil.createDirectory(new File("target/issues/84"));
         String testObjectPath = TestObject.class.getName().replace('.', '/');
         ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
@@ -42,7 +42,7 @@ public class Issue84TypeVariableResolutionTest {
                 "src/test/java/" + testObjectPath + ".java"
         );
 
-        assertThat(Testing.readUml(new FileInputStream("target/issues/84/" + testObjectPath + ".puml")),
+        assertThat(TestUtil.readUml(new FileInputStream("target/issues/84/" + testObjectPath + ".puml")),
                 stringContainsInOrder(asList(
                         "java.lang.Comparable<TestObject>",
                         "{abstract} +compareTo(TestObject): int")));

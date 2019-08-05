@@ -36,6 +36,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -81,7 +82,16 @@ public class DiagramTest {
     }
 
     @Test
-    public void testDiagramToString_multipleFormats() {
+    public void testWithoutImageDir() {
+        reset(imageconfig);
+        when(imageconfig.formats()).thenReturn(formats);
+        when(imageconfig.directory()).thenReturn(Optional.empty());
+        assertThat(new TestDiagram(config, new File("target/test-classes/foo/bar.puml")),
+                hasToString(equalTo("target/test-classes/foo/bar.svg")));
+    }
+
+    @Test
+    public void testDiagramToStringMultipleFormats() {
         formats.add(PNG);
         assertThat(new TestDiagram(config, new File("target/test-classes/foo/bar.puml")),
                 hasToString(equalTo("target/test-classes/images/foo.bar.[svg,png]")));

@@ -29,7 +29,7 @@ public class UriUtilsTest {
 
     @Test
     public void testUnsupportedConstructor() {
-        Testing.assertUnsupportedConstructor(UriUtils.class);
+        TestUtil.assertUnsupportedConstructor(UriUtils.class);
     }
 
     @Test
@@ -110,7 +110,7 @@ public class UriUtilsTest {
     }
 
     @Test
-    public void testAddParamSecondParameter_withFragment() {
+    public void testAddParamSecondParameterWithFragment() {
         final URI uri = URI.create("https://www.google.com?q=This%20is%20my%20query#fragment");
         assertThat(UriUtils.addHttpParam(uri, "q", "And this is my second"),
                 is(equalTo(URI.create("https://www.google.com?q=This%20is%20my%20query&q=And%20this%20is%20my%20second#fragment"))));

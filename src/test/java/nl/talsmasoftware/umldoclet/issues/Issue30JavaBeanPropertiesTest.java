@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.issues;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
-import nl.talsmasoftware.umldoclet.util.Testing;
+import nl.talsmasoftware.umldoclet.util.TestUtil;
 import org.junit.Test;
 
 import java.io.File;
@@ -60,7 +60,7 @@ public class Issue30JavaBeanPropertiesTest {
                 "-createPumlFiles",
                 "src/test/java/" + classAsPath + ".java"
         );
-        String uml = Testing.read(new File("target/issues/30/" + packageAsPath + "/package.puml"));
+        String uml = TestUtil.read(new File("target/issues/30/" + packageAsPath + "/package.puml"));
 
         String name = getClass().getName();
         String simpleName = getClass().getSimpleName();

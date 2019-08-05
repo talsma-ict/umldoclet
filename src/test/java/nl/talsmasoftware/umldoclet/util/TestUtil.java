@@ -41,7 +41,7 @@ import static org.junit.Assert.fail;
 /**
  * @author Sjoerd Talsma
  */
-public final class Testing {
+public final class TestUtil {
 
     /**
      * Determine the newline for this OS.

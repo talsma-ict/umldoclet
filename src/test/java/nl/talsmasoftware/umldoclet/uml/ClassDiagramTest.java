@@ -18,7 +18,7 @@ package nl.talsmasoftware.umldoclet.uml;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
 import nl.talsmasoftware.umldoclet.logging.TestLogger;
-import nl.talsmasoftware.umldoclet.util.Testing;
+import nl.talsmasoftware.umldoclet.util.TestUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,9 +62,9 @@ public class ClassDiagramTest {
     }
 
     @Test
-    public void testClassWithSuperClassInAnotherPackage_relativePath() {
-        Testing.touch(new File(testdir + "/foo/bar/Bar.html"));
-        Testing.touch(new File(testdir + "/foo/Foo.html"));
+    public void testClassWithSuperClassInAnotherPackageRelativePath() {
+        TestUtil.touch(new File(testdir + "/foo/bar/Bar.html"));
+        TestUtil.touch(new File(testdir + "/foo/Foo.html"));
         Type bar = new Type(new Namespace(null, "foo.bar"),
                 Type.Classification.CLASS,
                 new TypeName("Bar", "foo.bar.Bar"));
@@ -82,7 +82,7 @@ public class ClassDiagramTest {
                 Reference.Side.to("foo.bar.Bar", null)));
 
         classDiagram.render();
-        String uml = Testing.read(new File(testdir + "/foo/bar/Bar.puml"));
+        String uml = TestUtil.read(new File(testdir + "/foo/bar/Bar.puml"));
         assertThat(uml, containsString("foo.bar.Bar [[Bar.html]]"));
         assertThat(uml, containsString("foo.Foo [[../Foo.html]]"));
     }

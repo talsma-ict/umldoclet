@@ -18,7 +18,7 @@ package nl.talsmasoftware.umldoclet.javadoc;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.logging.Message;
 import nl.talsmasoftware.umldoclet.logging.TestLogger;
-import nl.talsmasoftware.umldoclet.util.Testing;
+import nl.talsmasoftware.umldoclet.util.TestUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,7 +59,7 @@ public class ExternalLinkTest {
 
     @After
     public void deleteTempdir() {
-        Testing.deleteRecursive(tempdir);
+        TestUtil.deleteRecursive(tempdir);
     }
 
     @Test(expected = NullPointerException.class)
@@ -97,7 +97,7 @@ public class ExternalLinkTest {
     @Test
     public void testLiveExternalLink_packageList_badUrl() {
         when(config.destinationDirectory()).thenReturn("");
-        Testing.write(new File(tempdir, "package-list"), "java.lang\n");
+        TestUtil.write(new File(tempdir, "package-list"), "java.lang\n");
         ExternalLink externalLink = new ExternalLink(config, "https://www.google.com/apidocs", tempdir.getPath());
 
         Optional<URI> resolved = externalLink.resolveType("java.lang", "Object");
@@ -108,7 +108,7 @@ public class ExternalLinkTest {
     @Test
     public void testLiveExternalLink_elementList_badUrl() {
         when(config.destinationDirectory()).thenReturn("");
-        Testing.write(new File(tempdir, "element-list"), "module:java.base\njava.lang\n");
+        TestUtil.write(new File(tempdir, "element-list"), "module:java.base\njava.lang\n");
         ExternalLink externalLink = new ExternalLink(config, "https://www.google.com/apidocs", tempdir.getPath());
 
         Optional<URI> resolved = externalLink.resolveType("java.lang", "Object");

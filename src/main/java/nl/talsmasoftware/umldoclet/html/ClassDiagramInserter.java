@@ -131,8 +131,7 @@ final class ClassDiagramInserter extends DiagramFile {
             int idx = line.indexOf(summaryDiv);
             if (idx < 0) return null;
             int ins = idx + summaryDiv.length();
-            line = line.substring(0, ins) + " style=\"clear:right;\"" + line.substring(ins);
-            return line;
+            return line.substring(0, ins) + " style=\"clear:right;\"" + line.substring(ins);
         }
 
         /**

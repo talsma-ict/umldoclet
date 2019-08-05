@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.issues;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
-import nl.talsmasoftware.umldoclet.util.Testing;
+import nl.talsmasoftware.umldoclet.util.TestUtil;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -62,7 +62,7 @@ public class Issue64ExtendsObjectTest {
                 "-createPumlFiles",
                 Issue64ExtendsObjectTest.class.getPackageName()
         );
-        emptySetUml = Testing.readUml(new FileInputStream(
+        emptySetUml = TestUtil.readUml(new FileInputStream(
                 "target/issues/64/nl/talsmasoftware/umldoclet/issues/Issue64ExtendsObjectTest.EmptySet.puml"));
     }
 

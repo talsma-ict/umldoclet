@@ -15,7 +15,11 @@
  */
 package nl.talsmasoftware.umldoclet.testing.generics;
 
-import java.util.*;
+import java.util.AbstractList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by sjoerd on 02-03-16.
