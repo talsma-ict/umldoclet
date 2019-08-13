@@ -7,7 +7,7 @@ declare -f is_maven_project > /dev/null || source "$(dirname $0)/maven-functions
 # Script containing pre-defined functions regarding versioning.
 #----------------------
 
-# Test whether the first argument is a valid 'sementic version', see https://semver.org
+# Test whether the first argument is a valid 'semantic version', see https://semver.org
 is_semantic_version() {
     [[ ${1:-} =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9\.]+)*(\+[A-Za-z0-9\.\-]+)?$ ]]
 }
