@@ -1,15 +1,15 @@
-# Shared ci-scripts for multiple projects
+# Continuous integration scripts for multiple projects
 
-Shared CI build and release scripts for several talsma-ict projects.  
+CI build and release scripts for several talsma-ict projects.\
 This module is intended to be used as a git `submodule`.
 
 ## CI build process
 
 ### Git branches
 
-Our build and release scripts are designed to be compatible with the 
-`git-flow` branching model
+Our build and release scripts are inspired by the `git-flow` branching model
 [as described by Vincent Driessen](https://nvie.com/posts/a-successful-git-branching-model/) in 2010.
+
 
 ### Continuous integration builds
 
@@ -23,7 +23,7 @@ and should only rarely -if ever- need to meddle with the `master` branch.
 
 To perform a release, a developer just needs to push the corresponding code from `develop` to a
 new `release/x.y.z` branch on `origin`.
-When picked up by the CI system, results in a new version `x.y.z` being released, tagged and deployed on `master`.
+When picked up by the CI system, this results in a new version `x.y.z` being released, tagged and deployed on `master`.
 Furthermore, the `develop` branch will be set to the _next snapshot_ version (e.g. `x.y.(z+1)-SNAPSHOT`).
 If all succeeds, the `release/x.y.z` branch will be automatically deleted as well.
 
@@ -71,4 +71,4 @@ git clone --recursive <project url>
 
 ## License
 
-Just like our main repositories, the CI scripts are published under the [Apache 2.0 license](../LICENSE)
+Just like our main repositories, the CI scripts are published under the [Apache 2.0 license](LICENSE)
