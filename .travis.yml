@@ -17,7 +17,6 @@ cache:
     - $HOME/.m2/repository
 
 before_install:
-  - export FORCE_COLOR=true
   # copy maven settings
   - cp .travis/mvn-settings.xml $HOME/.m2/settings.xml
   - cp .travis/mvn-toolchains.xml $HOME/.m2/toolchains.xml
@@ -36,8 +35,8 @@ install:
   - ./mvnw --version
 
 script:
-  - .travis/scripts/build.sh
-  - .travis/scripts/release.sh
+  - .travis/scripts/build.sh --color
+  - .travis/scripts/release.sh --color
 
 after_success:
   - if [ -f target/jacoco.exec ]; then ./mvnw --batch-mode -DTRAVIS_JOB_ID="${TRAVIS_JOB_ID}" jacoco:report coveralls:report; fi
