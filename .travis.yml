@@ -35,7 +35,7 @@ install:
   - ./mvnw --version
 
 script:
-  - DEBUG=true .travis/scripts/build.sh
+  - .travis/scripts/build.sh --debug --color
   - .travis/scripts/release.sh
 
 after_success:
