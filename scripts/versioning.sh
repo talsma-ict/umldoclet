@@ -64,7 +64,7 @@ set_file_version() {
 get_version() {
     if is_maven_project; then get_maven_version;
     elif [ -f VERSION.txt ]; then get_file_version;
-    else fatal "ERROR: No known project structure to determine version of.";
+    else fatal "No known project structure to determine version of.";
     fi
 }
 
@@ -76,6 +76,6 @@ set_version() {
 
     if is_maven_project; then set_maven_version "${project_version}";
     elif [ -f VERSION.txt ]; then set_file_version "${project_version}";
-    else fatal "ERROR: No known project structure to set version for.";
+    else fatal "No known project structure to set version for.";
     fi
 }
