@@ -7,7 +7,7 @@ This directory contains metadata specific to the maven build for this project.
 The license header is located at `.mvn/license/header.txt` and is used
 by the license plugin in the main `pom.xml` for this project.
 
-## Upgrading the Maven and wrapper version
+## Installing or upgrading the Maven and wrapper version
 
 ```
 mvn -N io.takari:maven:<version>:wrapper
