@@ -18,7 +18,9 @@ maven_command() {
 }
 
 get_maven_version() {
-    echo $(printf 'VERSION=${project.version}\n0\n' | $(maven_command) help:evaluate | grep '^VERSION=' | sed 's/VERSION=//')
+#    Task help:evaluate without expression won't work in --batch-mode unfortunately..
+#    echo $(printf 'VERSION=${project.version}\n0\n' | $(maven_command) help:evaluate | grep '^VERSION=' | sed 's/VERSION=//')
+    $(maven_command) help:evaluate -Dexpression=project.version | grep '^[0-9]'
 }
 
 set_maven_version() {
