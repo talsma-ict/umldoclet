@@ -33,6 +33,7 @@ find_remote_branch() {
     local remote_branches=$(find_remote_branches)
     if [[ -n "${local_branch:-}" && "${remote_branches}" = *"${local_branch}" ]]; then echo ${local_branch};
     elif [[ -n "${TRAVIS_BRANCH:-}" && "${remote_branches}" = *"${TRAVIS_BRANCH}" ]]; then echo ${TRAVIS_BRANCH};
+    elif [[ -n "${CI_COMMIT_REF_NAME:-}" && "${remote_branches}" = *"${CI_COMMIT_REF_NAME}" ]]; then echo ${CI_COMMIT_REF_NAME};
     else echo ${remote_branches} | awk '{print $1}';
     fi
 }
