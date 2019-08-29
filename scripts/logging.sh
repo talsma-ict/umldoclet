@@ -10,7 +10,7 @@ SCRIPTNAME=$(basename ${0%.*})
 # Set colors if supported by the terminal and output is not redirected somewhere else
 bold="";underline="";standout="";normal="";black="";red="";green="";yellow="";blue="";magenta="";cyan="";white=""
 if [[ "${USE_COLOR:-false}" =~ ^yes|true$ ]]; then
-    ncolors=$(tput colors)
+    ncolors=$(tput colors || echo 0)
     if [[ -n "$ncolors" && $ncolors -ge 8 ]]; then
         bold="$(tput bold)";underline="$(tput smul)";standout="$(tput smso)";normal="$(tput sgr0)"
         black="$(tput setaf 0)";red="$(tput setaf 1)";green="$(tput setaf 2)";yellow="$(tput setaf 3)"
