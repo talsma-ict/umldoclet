@@ -12,8 +12,8 @@ is_maven_project() {
 
 maven_command() {
 #    is_maven_project || fatal "No maven POM file found!"
-    if [ -x ./mvnw ]; then echo "./mvnw";
-    else echo "mvn";
+    if [ -x ./mvnw ]; then echo "./mvnw ${MAVEN_CLI_OPTS:-}";
+    else echo "mvn ${MAVEN_CLI_OPTS:-}";
     fi
 }
 
