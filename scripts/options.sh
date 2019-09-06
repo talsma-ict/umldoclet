@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Set default values
 [ -n "${DEBUG:-}" ] || DEBUG=false

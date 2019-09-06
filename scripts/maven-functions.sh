@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 declare -f debug > /dev/null || source "$(dirname $0)/logging.sh"
 

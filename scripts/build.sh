@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 set -eu -o pipefail
 source "$(dirname $0)/options.sh"
 [[ "${DEBUG:-false}" =~ ^yes|true$ ]] && set -x
