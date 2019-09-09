@@ -31,6 +31,12 @@ import java.util.Optional;
 public interface Configuration {
 
     /**
+     * @return The name of the doclet to delegate main documentation to
+     * or {@code Optional.empty()} if no delegation is wanted.
+     */
+    Optional<String> delegateDocletName();
+
+    /**
      * Custom logger implementation that only supports fixed messages.
      * <p>
      * This allows us to write unit tests that verify resource bundle availability of all loggable text.
