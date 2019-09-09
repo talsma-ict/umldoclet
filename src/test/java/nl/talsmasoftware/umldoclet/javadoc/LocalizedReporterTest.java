@@ -17,7 +17,6 @@ package nl.talsmasoftware.umldoclet.javadoc;
 
 import com.sun.source.util.DocTreePath;
 import jdk.javadoc.doclet.Reporter;
-import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.logging.Message;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -59,7 +58,7 @@ public class LocalizedReporterTest {
 
     @Before
     public void setup() {
-        config = new DocletConfig(new UMLDoclet());
+        config = new DocletConfig();
         mockReporter = mock(Reporter.class);
         init(null);
     }

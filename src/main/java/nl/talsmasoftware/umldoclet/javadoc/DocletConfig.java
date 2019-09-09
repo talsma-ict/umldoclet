@@ -42,7 +42,6 @@ import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
-import static java.util.Objects.requireNonNull;
 import static nl.talsmasoftware.umldoclet.configuration.ImageConfig.Format.SVG;
 import static nl.talsmasoftware.umldoclet.configuration.Visibility.PACKAGE_PRIVATE;
 import static nl.talsmasoftware.umldoclet.configuration.Visibility.PROTECTED;
@@ -50,7 +49,6 @@ import static nl.talsmasoftware.umldoclet.configuration.Visibility.PUBLIC;
 
 public class DocletConfig implements Configuration {
 
-    private final Doclet doclet;
     private final UMLOptions options;
     private volatile LocalizedReporter reporter;
 
@@ -119,8 +117,7 @@ public class DocletConfig implements Configuration {
 
     private Indentation indentation = Indentation.DEFAULT;
 
-    public DocletConfig(Doclet doclet) {
-        this.doclet = requireNonNull(doclet, "Doclet is <null>.");
+    public DocletConfig() {
         this.options = new UMLOptions(this);
         this.reporter = new LocalizedReporter(this, null, null);
     }

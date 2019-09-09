@@ -23,6 +23,8 @@ import java.util.spi.ToolProvider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.io.FileMatchers.anExistingFileOrDirectory;
 
 public class Issue194SkipStandardDocletTest {
     private static final File outputdir = new File("target/issues/194");
@@ -39,6 +41,6 @@ public class Issue194SkipStandardDocletTest {
                 Issue194SkipStandardDocletTest.class.getPackageName()
         ), is(0));
 
-
+//        assertThat(new File(outputdir, "index.html"), not(anExistingFileOrDirectory()));
     }
 }

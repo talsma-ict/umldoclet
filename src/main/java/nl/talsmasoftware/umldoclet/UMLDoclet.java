@@ -56,7 +56,7 @@ public class UMLDoclet extends StandardDoclet {
 
     public UMLDoclet() {
         super();
-        this.config = new DocletConfig(this);
+        this.config = new DocletConfig();
     }
 
     @Override

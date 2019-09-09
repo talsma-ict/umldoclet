@@ -42,7 +42,7 @@ public class DocletConfigTest {
 
     @Before
     public void createDocletConfig() {
-        config = new DocletConfig(new UMLDoclet());
+        config = new DocletConfig();
     }
 
     private String getDocletHelpOutput() {
