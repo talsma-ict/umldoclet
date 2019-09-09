@@ -147,6 +147,7 @@ public abstract class Diagram extends UMLNode {
         File pumlFile = getPlantUmlFile();
         config.logger().info(Message.INFO_GENERATING_FILE, pumlFile);
 
+        ensureParentDir(pumlFile);
         Link.linkFrom(pumlFile.getParent());
         try (StringBufferingWriter writer = createBufferingPlantumlFileWriter(pumlFile)) {
             writeTo(IndentingPrintWriter.wrap(writer, config.indentation()));
@@ -155,8 +156,6 @@ public abstract class Diagram extends UMLNode {
     }
 
     private StringBufferingWriter createBufferingPlantumlFileWriter(File pumlFile) throws IOException {
-        requireNonNull(pumlFile, "Plantuml File is <null>.");
-        ensureParentDir(pumlFile);
         return new StringBufferingWriter(
                 new OutputStreamWriter(
                         new FileOutputStream(pumlFile), config.umlCharset()));

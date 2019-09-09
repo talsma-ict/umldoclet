@@ -36,11 +36,12 @@ public class Issue194SkipStandardDocletTest {
                 "-d", outputdir.getPath(),
                 "-sourcepath", "src/test/java",
                 "-doclet", UMLDoclet.class.getName(),
-                "-quiet", "-createPumlFiles",
+                "-quiet",
                 "--delegate-doclet", "false",
+                "--uml-image-directory", ".",
                 Issue194SkipStandardDocletTest.class.getPackageName()
         ), is(0));
 
-//        assertThat(new File(outputdir, "index.html"), not(anExistingFileOrDirectory()));
+        assertThat(new File(outputdir, "index.html"), not(anExistingFileOrDirectory()));
     }
 }

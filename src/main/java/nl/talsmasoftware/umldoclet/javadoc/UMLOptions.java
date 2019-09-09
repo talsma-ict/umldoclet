@@ -77,12 +77,12 @@ final class UMLOptions {
         this.options.add(new Option("-d", 1, Kind.OTHER, (args) -> config.destDirName = args.get(0)));
 
         // Our own options
-        this.options.add(new Option("--delegate-doclet -delegate-doclet", 1, Kind.STANDARD, (args) -> {
-        }));
-        this.options.add(new Option("-createPumlFiles", 0, Kind.STANDARD, (args) -> config.renderPumlFile = true));
-        this.options.add(new Option("-umlImageDirectory", 1, Kind.STANDARD, (args) -> config.images.directory = args.get(0)));
-        this.options.add(new Option("-umlImageFormat", 1, Kind.STANDARD, (args) -> config.images.addImageFormat(args.get(0))));
-        this.options.add(new Option("-umlEncoding", 1, Kind.STANDARD, (args) -> config.umlencoding = args.get(0)));
+        this.options.add(new Option("--delegate-doclet -delegateDoclet", 1, Kind.STANDARD,
+                (args) -> config.delegateDoclet = args.get(0)));
+        this.options.add(new Option("--create-puml-files -createPumlFiles", 0, Kind.STANDARD, (args) -> config.renderPumlFile = true));
+        this.options.add(new Option("--uml-image-directory -umlImageDirectory", 1, Kind.STANDARD, (args) -> config.images.directory = args.get(0)));
+        this.options.add(new Option("--uml-image-format -umlImageFormat", 1, Kind.STANDARD, (args) -> config.images.addImageFormat(args.get(0))));
+        this.options.add(new Option("--uml-encoding -umlEncoding", 1, Kind.STANDARD, (args) -> config.umlencoding = args.get(0)));
         this.options.add(new Option("-umlExcludedPackageDependencies", 1, Kind.STANDARD,
                 (args) -> config.excludedPackageDependencies = splitToList(args.get(0))));
         this.options.add(new Option("-failOnCyclicPackageDependencies", 1, Kind.STANDARD,

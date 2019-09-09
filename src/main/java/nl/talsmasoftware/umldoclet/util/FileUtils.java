@@ -53,7 +53,7 @@ public final class FileUtils {
             return relativePath(from.getParentFile(), to);
         }
         try {
-            if (!from.isDirectory()) throw new IllegalArgumentException("Not a directory: " + from);
+            if (from.exists() && !from.isDirectory()) throw new IllegalArgumentException("Not a directory: " + from);
 
             final String[] fromParts = from.getCanonicalPath().split(Pattern.quote(File.separator));
             List<String> toParts = new ArrayList<>(asList(to.getCanonicalPath().split(Pattern.quote(File.separator))));

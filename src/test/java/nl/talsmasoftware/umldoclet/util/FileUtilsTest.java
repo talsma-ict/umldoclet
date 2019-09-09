@@ -41,7 +41,7 @@ public class FileUtilsTest {
             final File tempdir = tempfile.getParentFile();
             final char sep = File.separatorChar;
 
-            // relatief aan tempfile == relatief aan tempdir
+            // relitive to tempfile means relative to tempdir
             assertThat(relativePath(tempfile,
                     new File(tempdir, "testfile.adoc")),
                     is("testfile.adoc"));

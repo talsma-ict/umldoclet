@@ -53,6 +53,13 @@ public class DocletConfig implements Configuration {
     private volatile LocalizedReporter reporter;
 
     /**
+     * The name of the delegate doclet to use for the main documentation task.
+     * <p>
+     * Set to {@code StandardDoclet.class.getName()} by default.
+     */
+    String delegateDoclet = "jdk.javadoc.doclet.StandardDoclet";
+
+    /**
      * Destination directory where documentation is generated.
      * <p>
      * Set by (Standard) doclet option {@code -d}, default is {@code ""} meaning the current directory.
@@ -128,6 +135,11 @@ public class DocletConfig implements Configuration {
 
     public Set<Doclet.Option> mergeOptionsWith(Set<Doclet.Option> standardOptions) {
         return options.mergeWith(standardOptions);
+    }
+
+    @Override
+    public Optional<String> delegateDocletName() {
+        return Optional.ofNullable(delegateDoclet).filter(name -> !"false".equalsIgnoreCase(name));
     }
 
     @Override

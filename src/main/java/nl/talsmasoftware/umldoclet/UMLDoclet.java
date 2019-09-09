@@ -41,6 +41,7 @@ import static java.util.stream.Collectors.joining;
 import static nl.talsmasoftware.umldoclet.logging.Message.DOCLET_COPYRIGHT;
 import static nl.talsmasoftware.umldoclet.logging.Message.DOCLET_VERSION;
 import static nl.talsmasoftware.umldoclet.logging.Message.ERROR_UNANTICIPATED_ERROR_GENERATING_UML;
+import static nl.talsmasoftware.umldoclet.logging.Message.ERROR_UNSUPPORTED_DELEGATE_DOCLET;
 import static nl.talsmasoftware.umldoclet.logging.Message.PLANTUML_COPYRIGHT;
 
 /**
@@ -81,7 +82,14 @@ public class UMLDoclet extends StandardDoclet {
         config.logger().info(PLANTUML_COPYRIGHT, Version.versionString());
 
         // First generate Standard HTML documentation
-        if (!super.run(docEnv)) return false;
+
+        String delegateDocletName = config.delegateDocletName().orElse(null);
+        if (StandardDoclet.class.getName().equals(delegateDocletName)) {
+            if (!super.run(docEnv)) return false;
+        } else if (delegateDocletName != null) {
+            config.logger().error(ERROR_UNSUPPORTED_DELEGATE_DOCLET, delegateDocletName);
+            return false; // TODO for a later release (see e.g. issue #102)
+        }
 
         try {
 
