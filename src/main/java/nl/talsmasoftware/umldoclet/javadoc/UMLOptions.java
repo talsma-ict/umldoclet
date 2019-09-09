@@ -77,6 +77,8 @@ final class UMLOptions {
         this.options.add(new Option("-d", 1, Kind.OTHER, (args) -> config.destDirName = args.get(0)));
 
         // Our own options
+        this.options.add(new Option("--delegate-doclet -delegate-doclet", 1, Kind.STANDARD, (args) -> {
+        }));
         this.options.add(new Option("-createPumlFiles", 0, Kind.STANDARD, (args) -> config.renderPumlFile = true));
         this.options.add(new Option("-umlImageDirectory", 1, Kind.STANDARD, (args) -> config.images.directory = args.get(0)));
         this.options.add(new Option("-umlImageFormat", 1, Kind.STANDARD, (args) -> config.images.addImageFormat(args.get(0))));
