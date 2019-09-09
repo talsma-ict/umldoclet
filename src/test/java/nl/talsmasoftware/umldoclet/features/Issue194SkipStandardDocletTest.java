@@ -44,4 +44,17 @@ public class Issue194SkipStandardDocletTest {
 
         assertThat(new File(outputdir, "index.html"), not(anExistingFileOrDirectory()));
     }
+
+    @Test
+    public void testUsupportedDelegateDoclet() {
+        assertThat("Delegate doclets currently unsupported", ToolProvider.findFirst("javadoc").get().run(
+                System.out, System.err,
+                "-d", outputdir.getPath(),
+                "-sourcepath", "src/test/java",
+                "-doclet", UMLDoclet.class.getName(),
+                "-quiet",
+                "--delegate-doclet", "foo.bar.DummyDoclet",
+                Issue194SkipStandardDocletTest.class.getPackageName()
+        ), is(1));
+    }
 }
