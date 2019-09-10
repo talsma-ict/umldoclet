@@ -55,29 +55,63 @@ public class UMLDoclet extends StandardDoclet {
 
     private final DocletConfig config;
 
+    /**
+     * Default constructor, as required by {@linkplain jdk.javadoc.doclet.Doclet} specification.
+     */
     public UMLDoclet() {
         super();
         this.config = new DocletConfig();
     }
 
+    /**
+     * Initializes the {@linkplain Locale} and {@linkplain Reporter} to be used by
+     * this doclet.
+     *
+     * @param locale   The locale to be used by this doclet.
+     * @param reporter The reporter to be used by this doclet.
+     */
     @Override
     public void init(Locale locale, Reporter reporter) {
         config.init(locale, reporter);
         super.init(locale, reporter);
     }
 
+    /**
+     * @return The name of this doclet, minus the {@code "Doclet"} suffix
+     * since the {@linkplain StandardDoclet} also returns just {@code "Standard"} as its name.
+     */
     @Override
     public String getName() {
         return "UML";
     }
 
+    /**
+     * Returns all supported options. This includes the options from the {@linkplain StandardDoclet}.
+     *
+     * @return The set containing all supported options
+     */
     @Override
     public Set<Option> getSupportedOptions() {
         return config.mergeOptionsWith(super.getSupportedOptions());
     }
 
+    /**
+     * Perform the main doclet functionality, processing all included elements.
+     *
+     * <p>
+     * For each included class, a {@linkplain nl.talsmasoftware.umldoclet.uml.ClassDiagram} is generated.
+     * For each included package, a {@linkplain nl.talsmasoftware.umldoclet.uml.PackageDiagram} is genrated.
+     * Also, a {@linkplain DependencyDiagram} is generated, containing all dependencies that were detected.
+     *
+     * <p>
+     * Depending on the {@linkplain nl.talsmasoftware.umldoclet.configuration.Configuration},
+     * diagram images or {@code .puml} plantuml source files are generated.
+     *
+     * @param environment The doclet environment from which essential information can be extracted
+     * @return {@code true} if the doclet ran succesfully, {@code false} in case of errors.
+     */
     @Override
-    public boolean run(DocletEnvironment docEnv) {
+    public boolean run(DocletEnvironment environment) {
         config.logger().info(DOCLET_COPYRIGHT, DOCLET_VERSION);
         config.logger().info(PLANTUML_COPYRIGHT, Version.versionString());
 
@@ -85,7 +119,7 @@ public class UMLDoclet extends StandardDoclet {
 
         String delegateDocletName = config.delegateDocletName().orElse(null);
         if (StandardDoclet.class.getName().equals(delegateDocletName)) {
-            if (!super.run(docEnv)) return false;
+            if (!super.run(environment)) return false;
         } else if (delegateDocletName != null) {
             config.logger().error(ERROR_UNSUPPORTED_DELEGATE_DOCLET, delegateDocletName);
             return false; // TODO for a later release (see e.g. issue #102)
@@ -93,7 +127,7 @@ public class UMLDoclet extends StandardDoclet {
 
         try {
 
-            generateDiagrams(docEnv).forEach(Diagram::render);
+            generateDiagrams(environment).forEach(Diagram::render);
             return new HtmlPostprocessor(config).postProcessHtml();
 
         } catch (RuntimeException unanticipatedException) {
