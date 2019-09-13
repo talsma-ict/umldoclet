@@ -16,13 +16,13 @@ declare -f is_maven_project > /dev/null || source "$(dirname $0)/maven-functions
 
 build_and_test() {
     if is_maven_project; then build_and_test_maven;
-    else fatal "No known project structure to publish artifacts for.";
+    else fatal "No known project structure to build and test.";
     fi
 }
 
 build_and_publish_artifacts() {
     if is_maven_project; then build_and_publish_maven_artifacts;
-    else fatal "No known project structure to publish artifacts for.";
+    else fatal "No known project structure to build and publish artifacts for.";
     fi
 }
 
