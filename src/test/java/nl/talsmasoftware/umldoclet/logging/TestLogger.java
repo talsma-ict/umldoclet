@@ -29,10 +29,10 @@ public class TestLogger implements Logger {
 
     public static final class LogRecord {
         public final Level level;
-        public final Message message;
+        public final Object message;
         public final List<Object> arguments;
 
-        private LogRecord(Level level, Message key, Object... args) {
+        private LogRecord(Level level, Object key, Object... args) {
             this.level = level;
             this.message = key;
             this.arguments = asList(args);
@@ -48,11 +48,14 @@ public class TestLogger implements Logger {
     }
 
     public int countMessages(Predicate<Message> predicate) {
-        return (int) logged.stream().filter(record -> predicate.test(record.message)).count();
+        return (int) logged.stream()
+                .filter(record -> record.message instanceof Message
+                        && predicate.test((Message) record.message))
+                .count();
     }
 
     @Override
-    public void debug(Message key, Object... args) {
+    public void debug(Object key, Object... args) {
         logged.add(new LogRecord(Level.DEBUG, key, args));
     }
 

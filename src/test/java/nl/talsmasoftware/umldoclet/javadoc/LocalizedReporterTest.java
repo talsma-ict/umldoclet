@@ -92,6 +92,15 @@ public class LocalizedReporterTest {
     }
 
     @Test
+    public void testDebug_inlineNonResourceMessage() {
+        config.verbose = true;
+        localizedReporter.debug("The {1} jumps over the {0}", "lazy dog", "quick brown fox");
+
+        verify(mockReporter).print(eq(Diagnostic.Kind.OTHER),
+                eq("The quick brown fox jumps over the lazy dog"));
+    }
+
+    @Test
     public void testDebug_nonVerbose() {
         localizedReporter.debug(Message.DOCLET_COPYRIGHT, "1.2.3");
     }

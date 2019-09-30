@@ -24,7 +24,7 @@ public interface Logger {
 
     String localize(Message key, Object... args);
 
-    void debug(Message key, Object... args);
+    void debug(Object message, Object... args);
 
     void info(Message key, Object... args);
 
