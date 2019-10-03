@@ -22,7 +22,7 @@ to become `GPL` licensed as well.
 
 The doclet should remain open-source, but I feel the `GPL` to be too
 restrictive: it 'infects' everything that uses it as well.
-That is why the this project is published under the 
+That is why this project is published under the 
 [Apache License, version 2.0](https://www.apache.org/licenses/LICENSE-2.0.html).
 That this license is less restrictive is illustrated by the following quote:
 
