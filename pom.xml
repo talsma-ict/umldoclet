@@ -137,6 +137,24 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>truezip-maven-plugin</artifactId>
+                <version>1.2</version>
+                <executions>
+                    <execution>
+                        <id>copy-plantuml-sources</id>
+                        <goals>
+                            <goal>cp</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <from>lib/plantuml-asl-1.2019.11.tar.gz</from>
+                            <to>target/generated-sources</to>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
                 <version>${license-maven-plugin.version}</version>
