@@ -137,23 +137,46 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>truezip-maven-plugin</artifactId>
-                <version>1.2</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
                 <executions>
                     <execution>
-                        <id>copy-plantuml-sources</id>
+                        <id>extract-plantuml-sources</id>
                         <goals>
-                            <goal>cp</goal>
+                            <goal>run</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <from>lib/plantuml-asl-1.2019.11.tar.gz</from>
-                            <to>target/generated-sources</to>
+                            <target>
+                                <gunzip src="lib/plantuml-asl-1.2019.11.tar.gz" dest="target/plantuml-asl.tar"/>
+                                <untar src="target/plantuml-asl.tar" dest="target/generated-sources/plantuml-asl"/>
+                                <delete file="target/plantuml-asl.tar"/>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+<!--
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+-->
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
@@ -233,27 +256,29 @@
                     </dependency>
                 </dependencies>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>${maven-shade-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <minimizeJar>true</minimizeJar>
-                            <artifactSet>
-                                <includes>
-                                    <include>*:plantuml-asl</include>
-                                </includes>
-                            </artifactSet>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+            <!--
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-shade-plugin</artifactId>
+                            <version>${maven-shade-plugin.version}</version>
+                            <executions>
+                                <execution>
+                                    <phase>package</phase>
+                                    <goals>
+                                        <goal>shade</goal>
+                                    </goals>
+                                    <configuration>
+                                        <minimizeJar>true</minimizeJar>
+                                        <artifactSet>
+                                            <includes>
+                                                <include>*:plantuml-asl</include>
+                                            </includes>
+                                        </artifactSet>
+                                    </configuration>
+                                </execution>
+                            </executions>
+                        </plugin>
+            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -351,6 +376,14 @@
             <groupId>net.sourceforge.plantuml</groupId>
             <artifactId>plantuml-asl</artifactId>
             <version>${plantuml.version}</version>
+        </dependency>
+
+        <dependency> <!-- Required to compile 'net.sourceforge.plantuml.ant.*' -->
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.10.7</version>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
