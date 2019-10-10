@@ -181,13 +181,12 @@
                             <compileSourceRoots>
                                 <compileSourceRoot>target/generated-sources/plantuml-asl/src</compileSourceRoot>
                             </compileSourceRoots>
-<!--                            <outputDirectory>target/generated-sources/plantuml-asl/build</outputDirectory>-->
                         </configuration>
                     </execution>
                 </executions>
                 <configuration> <!-- defaults for compile and testCompile -->
                     <encoding>${project.build.sourceEncoding}</encoding>
-                    <showDeprecation>true</showDeprecation>
+<!--                    <showDeprecation>true</showDeprecation>-->
                 </configuration>
             </plugin>
 <!--
