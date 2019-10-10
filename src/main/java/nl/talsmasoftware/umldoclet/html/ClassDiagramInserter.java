@@ -36,7 +36,8 @@ import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
  */
 final class ClassDiagramInserter extends DiagramFile {
 
-    private final String extension, pathToCompare;
+    private final String extension;
+    private final String pathToCompare;
 
     ClassDiagramInserter(File basedir, File diagramFile, boolean hasImagesDirectory) {
         super(basedir, diagramFile);
@@ -130,8 +131,7 @@ final class ClassDiagramInserter extends DiagramFile {
             int idx = line.indexOf(summaryDiv);
             if (idx < 0) return null;
             int ins = idx + summaryDiv.length();
-            line = line.substring(0, ins) + " style=\"clear:right;\"" + line.substring(ins);
-            return line;
+            return line.substring(0, ins) + " style=\"clear:right;\"" + line.substring(ins);
         }
 
         /**

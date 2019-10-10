@@ -15,7 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.testing.deprecation;
 
-import nl.talsmasoftware.umldoclet.util.Testing;
+import nl.talsmasoftware.umldoclet.util.TestUtil;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -32,12 +32,12 @@ import static org.hamcrest.Matchers.nullValue;
 @SuppressWarnings("deprecation")
 public class DeprecationTest {
 
-//    private static final boolean QUALIFIED = new UMLDocletConfig(new String[0][], null).alwaysUseQualifiedClassnames();
+    //    private static final boolean QUALIFIED = new UMLDocletConfig(new String[0][], null).alwaysUseQualifiedClassnames();
     private static final boolean QUALIFIED = false;
 
     @Test
     public void testClassWithDeprecatedItems() {
-        String classUml = Testing.readFile("testing/deprecation/ClassWithDeprecatedItems.puml");
+        String classUml = TestUtil.readFile("testing/deprecation/ClassWithDeprecatedItems.puml");
         assertThat(classUml, is(not(nullValue())));
 
         // Check fields.
@@ -53,7 +53,7 @@ public class DeprecationTest {
     @Test
     public void testClassDeprecatedByAnnotation() {
         final String className = DeprecatedByAnnotationClass.class.getSimpleName();
-        String classUml = Testing.readFile("testing/deprecation/DeprecatedByAnnotationClass.puml");
+        String classUml = TestUtil.readFile("testing/deprecation/DeprecatedByAnnotationClass.puml");
         assertThat(classUml, is(not(nullValue())));
 
         // Type should have 'deprecated' stereotype.
@@ -67,7 +67,7 @@ public class DeprecationTest {
     @Test
     public void testClassDeprecatedByJavadocTag() {
         final String className = DeprecatedByJavadocTagAbstractClass.class.getSimpleName();
-        String classUml = Testing.readFile("testing/deprecation/DeprecatedByJavadocTagAbstractClass.puml");
+        String classUml = TestUtil.readFile("testing/deprecation/DeprecatedByJavadocTagAbstractClass.puml");
         assertThat(classUml, is(not(nullValue())));
 
         // Type should have 'deprecated' stereotype.
@@ -81,7 +81,7 @@ public class DeprecationTest {
     @Test
     public void testDeprecationBySuperclass() {
         final String className = DeprecatedBySuperclass.class.getSimpleName();
-        String classUml = Testing.readFile("testing/deprecation/DeprecatedBySuperclass.puml");
+        String classUml = TestUtil.readFile("testing/deprecation/DeprecatedBySuperclass.puml");
         assertThat(classUml, is(not(nullValue())));
 
         // Type should have 'deprecated' stereotype.
@@ -96,7 +96,7 @@ public class DeprecationTest {
 
     @Test
     public void testDeprecationInPackageDiagram() {
-        String packageUml = Testing.readFile("testing/deprecation/package.puml");
+        String packageUml = TestUtil.readFile("testing/deprecation/package.puml");
         assertThat(packageUml, is(not(nullValue())));
 
         // Deprecated classes should be omitted from the package diagram.

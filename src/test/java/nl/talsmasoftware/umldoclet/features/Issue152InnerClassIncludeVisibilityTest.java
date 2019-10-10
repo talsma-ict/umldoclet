@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.features;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
-import nl.talsmasoftware.umldoclet.util.Testing;
+import nl.talsmasoftware.umldoclet.util.TestUtil;
 import org.junit.Test;
 
 import java.io.File;
@@ -46,14 +46,14 @@ public class Issue152InnerClassIncludeVisibilityTest {
         ), is(0));
         File dir = new File(outputdir, packageName.replace('.', '/'));
 
-        String packageUml = Testing.read(new File(dir, "package.puml"));
+        String packageUml = TestUtil.read(new File(dir, "package.puml"));
         assertThat("Package uml", packageUml, allOf(
                 containsString("PublicClass.PublicInnerClass"),
                 not(containsString("PublicClass.ProtectedInnerClass")),
                 not(containsString("PublicClass.PackageProtectedInnerClass")),
                 not(containsString("PublicClass.PrivateInnerClass"))
         ));
-        String classUml = Testing.read(new File(dir, "PublicClass.puml"));
+        String classUml = TestUtil.read(new File(dir, "PublicClass.puml"));
         assertThat("Class uml", classUml, allOf(
                 containsString("PublicClass.PublicInnerClass"),
                 not(containsString("PublicClass.ProtectedInnerClass")),

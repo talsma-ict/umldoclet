@@ -22,14 +22,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
-import static java.util.Collections.singleton;
-import static java.util.Collections.unmodifiableCollection;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toCollection;
 
 /**
  * Reference between two types.
@@ -44,13 +41,13 @@ import static java.util.Objects.requireNonNull;
  * @author Sjoerd Talsma
  */
 public class Reference extends UMLNode {
-
-    public final Side from, to;
+    public final Side from;
+    public final Side to;
     public final String type;
     public final Collection<String> notes;
 
     public Reference(Side from, String type, Side to, String... notes) {
-        this(from, type, to, notes != null && notes.length > 0 ? asList(notes) : null);
+        this(from, type, to, notes == null ? emptySet() : asList(notes));
     }
 
     private Reference(Side from, String type, Side to, Collection<String> notes) {
@@ -59,13 +56,10 @@ public class Reference extends UMLNode {
         this.type = requireNonNull(type, "Reference type is <null>.").trim();
         if (this.type.isEmpty()) throw new IllegalArgumentException("Reference type is empty.");
         this.to = requireNonNull(to, "Reference \"to\" side is <null>.");
-
-        notes = (notes == null ? Stream.<String>empty() : notes.stream()).filter(Objects::nonNull)
+        this.notes = notes.stream()
+                .filter(Objects::nonNull)
                 .map(String::trim).filter(s -> !s.isEmpty())
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-        this.notes = notes.isEmpty() ? emptySet()
-                : notes.size() == 1 ? singleton(notes.iterator().next())
-                : unmodifiableCollection(notes);
+                .collect(toCollection(LinkedHashSet::new));
     }
 
     public boolean isSelfReference() {
@@ -161,7 +155,8 @@ public class Reference extends UMLNode {
 
     public static final class Side {
         private final boolean nameFirst;
-        private final String qualifiedName, cardinality;
+        private final String qualifiedName;
+        private final String cardinality;
 
         public static Side from(String qualifiedName, String cardinality) {
             return new Side(qualifiedName, cardinality, true);
@@ -173,9 +168,7 @@ public class Reference extends UMLNode {
 
         private Side(String qualifiedName, String cardinality, boolean nameFirst) {
             requireNonNull(qualifiedName, "Name of referred object is <null>.");
-            int genericIdx = qualifiedName.indexOf('<');
-            if (genericIdx > 0) qualifiedName = qualifiedName.substring(0, genericIdx);
-            this.qualifiedName = qualifiedName.trim();
+            this.qualifiedName = qualifiedName.substring(0, indexOrLengthOf(qualifiedName, '<')).trim();
             if (this.qualifiedName.isEmpty()) throw new IllegalArgumentException("Name of referred object is empty.");
             this.cardinality = cardinality == null ? "" : cardinality.trim();
             this.nameFirst = nameFirst;
@@ -211,6 +204,18 @@ public class Reference extends UMLNode {
         @Override
         public String toString() {
             return toString(null);
+        }
+
+        /**
+         * The index of the searched character or the length of the string if not found.
+         *
+         * @param value The string to search in
+         * @param ch    The character to search for
+         * @return The index of the character in the string or the length of the string if not found.
+         */
+        private static int indexOrLengthOf(String value, char ch) {
+            int idx = value.indexOf(ch);
+            return idx >= 0 ? idx : value.length();
         }
     }
 

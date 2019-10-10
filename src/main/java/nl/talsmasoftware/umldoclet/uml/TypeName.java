@@ -18,8 +18,10 @@ package nl.talsmasoftware.umldoclet.uml;
 import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
 
 import java.io.IOException;
+import java.util.Comparator;
 
-import static java.util.Comparator.comparing;
+import static java.lang.String.CASE_INSENSITIVE_ORDER;
+import static java.util.Comparator.naturalOrder;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -37,6 +39,9 @@ import static java.util.Objects.requireNonNull;
  * @author Sjoerd Talsma
  */
 public class TypeName implements Comparable<TypeName> {
+    private static final Comparator<TypeName> COMPARATOR =
+            Comparator.comparing((TypeName type) -> type.qualified, CASE_INSENSITIVE_ORDER.thenComparing(naturalOrder()));
+
     public final String simple;
     public final String qualified;
     private final TypeName[] generics;
@@ -105,9 +110,7 @@ public class TypeName implements Comparable<TypeName> {
     @Override
     public int compareTo(TypeName other) {
         requireNonNull(other, "Cannot compare with type name <null>.");
-        return comparing((TypeName type) -> type.qualified.toLowerCase())
-                .thenComparing(type -> type.qualified)
-                .compare(this, other);
+        return COMPARATOR.compare(this, other);
     }
 
     @Override

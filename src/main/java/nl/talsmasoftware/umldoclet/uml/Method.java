@@ -29,16 +29,26 @@ public class Method extends TypeMember {
         super(containingType, name, returnType);
     }
 
-    private Parameters getParameters() {
+    private Parameters getOrCreateParameters() {
         return getChildren().stream()
                 .filter(Parameters.class::isInstance).map(Parameters.class::cast)
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("No method parameters found!")); // TODO: 'no parameters'?
+                .orElseGet(this::createAndAddNewParameters);
+    }
+
+    /**
+     * Add a new parameter to this method.
+     *
+     * @param name The name of the parameter.
+     * @param type The type of the parameter.
+     */
+    public void addParameter(String name, TypeName type) {
+        getOrCreateParameters().add(name, type);
     }
 
     @Override
     protected <IPW extends IndentingPrintWriter> IPW writeParametersTo(IPW output) {
-        return getParameters().writeTo(output);
+        return getOrCreateParameters().writeTo(output);
     }
 
     @Override
@@ -59,18 +69,24 @@ public class Method extends TypeMember {
     @Override
     void replaceParameterizedType(TypeName from, TypeName to) {
         super.replaceParameterizedType(from, to);
-        getParameters().replaceParameterizedType(from, to);
+        getOrCreateParameters().replaceParameterizedType(from, to);
+    }
+
+    private Parameters createAndAddNewParameters() {
+        Parameters parameters = new Parameters(this);
+        this.addChild(parameters);
+        return parameters;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getParameters());
+        return Objects.hash(super.hashCode(), getOrCreateParameters());
     }
 
     @Override
     public boolean equals(Object other) {
         return super.equals(other)
-                && getParameters().equals(((Method) other).getParameters());
+                && getOrCreateParameters().equals(((Method) other).getOrCreateParameters());
     }
 
 }

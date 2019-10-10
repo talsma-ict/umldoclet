@@ -20,6 +20,7 @@ import nl.talsmasoftware.umldoclet.UMLDoclet;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import static java.util.Locale.ENGLISH;
 import static java.util.ResourceBundle.getBundle;
 
 /**
@@ -48,11 +49,12 @@ public enum Message {
     WARNING_CANNOT_READ_PACKAGE_LIST,
     WARNING_UNKNOWN_VISIBILITY,
     WARNING_PACKAGE_DEPENDENCY_CYCLES,
+    ERROR_UNSUPPORTED_DELEGATE_DOCLET,
     ERROR_UNANTICIPATED_ERROR_GENERATING_UML,
     ERROR_UNANTICIPATED_ERROR_GENERATING_DIAGRAMS,
     ERROR_UNANTICIPATED_ERROR_POSTPROCESSING_HTML;
 
-    private final String key = name().toLowerCase().replace('_', '.');
+    private final String key = name().toLowerCase(ENGLISH).replace('_', '.');
 
     public String toString() {
         return toString(null);

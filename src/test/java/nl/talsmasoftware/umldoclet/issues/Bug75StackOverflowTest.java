@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.issues;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
-import nl.talsmasoftware.umldoclet.util.Testing;
+import nl.talsmasoftware.umldoclet.util.TestUtil;
 import org.junit.Test;
 
 import java.io.File;
@@ -48,8 +48,8 @@ public class Bug75StackOverflowTest {
                 "-createPumlFiles",
                 "src/test/java/" + Bug75StackOverflowTest.class.getName().replace('.', '/') + ".java"
         ), is(0));
-        Testing.read(new File(outputDir, classAsPath + ".puml"));
-        String packageUml = Testing.read(new File(outputDir, packageAsPath + "/package.puml"));
+        TestUtil.read(new File(outputDir, classAsPath + ".puml"));
+        String packageUml = TestUtil.read(new File(outputDir, packageAsPath + "/package.puml"));
 
         assertThat(packageUml, not(containsString("? extends Comparable<? super Comparable<? super Comparable")));
     }

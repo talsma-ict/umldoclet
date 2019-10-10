@@ -35,8 +35,8 @@ install:
   - ./mvnw --version
 
 script:
-  - .travis/scripts/build.sh
-  - .travis/scripts/release.sh
+  - .travis/scripts/build.sh --color
+  - .travis/scripts/release.sh --color
 
 after_success:
   - if [ -f target/jacoco.exec ]; then ./mvnw --batch-mode -DTRAVIS_JOB_ID="${TRAVIS_JOB_ID}" jacoco:report coveralls:report; fi

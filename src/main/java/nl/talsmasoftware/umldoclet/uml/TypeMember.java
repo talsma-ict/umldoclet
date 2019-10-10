@@ -30,9 +30,11 @@ import static java.util.Objects.requireNonNull;
 public abstract class TypeMember extends UMLNode {
 
     public final String name;
-    protected TypeName type;
+    public TypeName type;
     private Visibility visibility;
-    public boolean isAbstract, isStatic, isDeprecated;
+    public boolean isAbstract;
+    public boolean isStatic;
+    public boolean isDeprecated;
 
     protected TypeMember(Type containingType, String name, TypeName type) {
         super(containingType);

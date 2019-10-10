@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.features;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
-import nl.talsmasoftware.umldoclet.util.Testing;
+import nl.talsmasoftware.umldoclet.util.TestUtil;
 import org.junit.Test;
 
 import java.io.File;
@@ -86,7 +86,7 @@ public class Issue148StandardIncludeOptionsTest {
     @Test
     public void testOptionPrivate() {
         File dir = createJavadoc("-private");
-        String packageUml = Testing.read(new File(dir, "package.puml"));
+        String packageUml = TestUtil.read(new File(dir, "package.puml"));
         assertThat(packageUml, allOf(
                 containsString("[[Access.PrivateClass.html]]"),
                 containsString("[[PackageProtectedClass.html]]"),
@@ -103,7 +103,7 @@ public class Issue148StandardIncludeOptionsTest {
         assertThat(packageUml, containsString("#getProtectedValue()"));
         assertThat(packageUml, containsString("+getPublicValue()"));
 
-        String privateClassUml = Testing.read(new File(dir, "Access.PrivateClass.puml"));
+        String privateClassUml = TestUtil.read(new File(dir, "Access.PrivateClass.puml"));
         assertThat(privateClassUml, containsString("-privateField"));
         assertThat(privateClassUml, containsString("~packageProtectedField"));
         assertThat(privateClassUml, containsString("#protectedField"));
@@ -113,13 +113,12 @@ public class Issue148StandardIncludeOptionsTest {
         assertThat(privateClassUml, containsString("~getPackageProtectedValue()"));
         assertThat(privateClassUml, containsString("#getProtectedValue()"));
         assertThat(privateClassUml, containsString("+getPublicValue()"));
-
     }
 
     @Test
     public void testOptionPackage() {
         File dir = createJavadoc("-package");
-        String packageUml = Testing.read(new File(dir, "package.puml"));
+        String packageUml = TestUtil.read(new File(dir, "package.puml"));
         assertThat(packageUml, allOf(
                 not(containsString("[[Access.PrivateClass.html]]")),
                 containsString("[[PackageProtectedClass.html]]"),
@@ -136,7 +135,7 @@ public class Issue148StandardIncludeOptionsTest {
         assertThat(packageUml, containsString("#getProtectedValue()"));
         assertThat(packageUml, containsString("+getPublicValue()"));
 
-        String packageProtectedClassUml = Testing.read(new File(dir, "PackageProtectedClass.puml"));
+        String packageProtectedClassUml = TestUtil.read(new File(dir, "PackageProtectedClass.puml"));
         assertThat(packageProtectedClassUml, not(containsString("-privateField")));
         assertThat(packageProtectedClassUml, containsString("~packageProtectedField"));
         assertThat(packageProtectedClassUml, containsString("#protectedField"));
@@ -151,7 +150,7 @@ public class Issue148StandardIncludeOptionsTest {
     @Test
     public void testOptionProtected() {
         File dir = createJavadoc("-protected");
-        String packageUml = Testing.read(new File(dir, "package.puml"));
+        String packageUml = TestUtil.read(new File(dir, "package.puml"));
         assertThat(packageUml, allOf(
                 not(containsString("[[Access.PrivateClass.html]]")),
                 not(containsString("[[PackageProtectedClass.html]]")),
@@ -168,7 +167,7 @@ public class Issue148StandardIncludeOptionsTest {
         assertThat(packageUml, containsString("#getProtectedValue()"));
         assertThat(packageUml, containsString("+getPublicValue()"));
 
-        String protectedClassUml = Testing.read(new File(dir, "Access.ProtectedClass.puml"));
+        String protectedClassUml = TestUtil.read(new File(dir, "Access.ProtectedClass.puml"));
         assertThat(protectedClassUml, not(containsString("-privateField")));
         assertThat(protectedClassUml, not(containsString("~packageProtectedField")));
         assertThat(protectedClassUml, containsString("#protectedField"));
@@ -183,7 +182,7 @@ public class Issue148StandardIncludeOptionsTest {
     @Test
     public void testOptionPublic() {
         File dir = createJavadoc("-public");
-        String packageUml = Testing.read(new File(dir, "package.puml"));
+        String packageUml = TestUtil.read(new File(dir, "package.puml"));
         assertThat(packageUml, allOf(
                 not(containsString("[[Access.PrivateClass.html]]")),
                 not(containsString("[[PackageProtectedClass.html]]")),
@@ -200,7 +199,7 @@ public class Issue148StandardIncludeOptionsTest {
         assertThat(packageUml, not(containsString("#getProtectedValue()")));
         assertThat(packageUml, containsString("+getPublicValue()"));
 
-        String publicClassUml = Testing.read(new File(dir, "PublicClass.puml"));
+        String publicClassUml = TestUtil.read(new File(dir, "PublicClass.puml"));
         assertThat(publicClassUml, not(containsString("-privateField")));
         assertThat(publicClassUml, not(containsString("~packageProtectedField")));
         assertThat(publicClassUml, not(containsString("#protectedField")));
@@ -215,7 +214,7 @@ public class Issue148StandardIncludeOptionsTest {
     @Test
     public void testOptionShowTypesPrivate() {
         File dir = createJavadoc("--show-types", "private");
-        String packageUml = Testing.read(new File(dir, "package.puml"));
+        String packageUml = TestUtil.read(new File(dir, "package.puml"));
         assertThat(packageUml, allOf(
                 containsString("[[Access.PrivateClass.html]]"),
                 containsString("[[PackageProtectedClass.html]]"),
@@ -232,7 +231,7 @@ public class Issue148StandardIncludeOptionsTest {
         assertThat(packageUml, containsString("#getProtectedValue()"));
         assertThat(packageUml, containsString("+getPublicValue()"));
 
-        String privateClassUml = Testing.read(new File(dir, "Access.PrivateClass.puml"));
+        String privateClassUml = TestUtil.read(new File(dir, "Access.PrivateClass.puml"));
         assertThat(privateClassUml, not(containsString("-privateField")));
         assertThat(privateClassUml, not(containsString("~packageProtectedField")));
         assertThat(privateClassUml, containsString("#protectedField"));
@@ -247,7 +246,7 @@ public class Issue148StandardIncludeOptionsTest {
     @Test
     public void testOptionShowTypesPackage() {
         File dir = createJavadoc("--show-types", "package");
-        String packageUml = Testing.read(new File(dir, "package.puml"));
+        String packageUml = TestUtil.read(new File(dir, "package.puml"));
         assertThat(packageUml, allOf(
                 not(containsString("[[Access.PrivateClass.html]]")),
                 containsString("[[PackageProtectedClass.html]]"),
@@ -264,7 +263,7 @@ public class Issue148StandardIncludeOptionsTest {
         assertThat(packageUml, containsString("#getProtectedValue()"));
         assertThat(packageUml, containsString("+getPublicValue()"));
 
-        String packageProtectedClassUml = Testing.read(new File(dir, "PackageProtectedClass.puml"));
+        String packageProtectedClassUml = TestUtil.read(new File(dir, "PackageProtectedClass.puml"));
         assertThat(packageProtectedClassUml, not(containsString("-privateField")));
         assertThat(packageProtectedClassUml, not(containsString("~packageProtectedField")));
         assertThat(packageProtectedClassUml, containsString("#protectedField"));
@@ -279,7 +278,7 @@ public class Issue148StandardIncludeOptionsTest {
     @Test
     public void testOptionShowTypesProtected() {
         File dir = createJavadoc("--show-types", "protected");
-        String packageUml = Testing.read(new File(dir, "package.puml"));
+        String packageUml = TestUtil.read(new File(dir, "package.puml"));
         assertThat(packageUml, allOf(
                 not(containsString("[[Access.PrivateClass.html]]")),
                 not(containsString("[[PackageProtectedClass.html]]")),
@@ -296,7 +295,7 @@ public class Issue148StandardIncludeOptionsTest {
         assertThat(packageUml, containsString("#getProtectedValue()"));
         assertThat(packageUml, containsString("+getPublicValue()"));
 
-        String protectedClassUml = Testing.read(new File(dir, "Access.ProtectedClass.puml"));
+        String protectedClassUml = TestUtil.read(new File(dir, "Access.ProtectedClass.puml"));
         assertThat(protectedClassUml, not(containsString("-privateField")));
         assertThat(protectedClassUml, not(containsString("~packageProtectedField")));
         assertThat(protectedClassUml, containsString("#protectedField"));
@@ -311,7 +310,7 @@ public class Issue148StandardIncludeOptionsTest {
     @Test
     public void testOptionShowTypesPublic() {
         File dir = createJavadoc("--show-types", "public");
-        String packageUml = Testing.read(new File(dir, "package.puml"));
+        String packageUml = TestUtil.read(new File(dir, "package.puml"));
         assertThat(packageUml, allOf(
                 not(containsString("[[Access.PrivateClass.html]]")),
                 not(containsString("[[PackageProtectedClass.html]]")),
@@ -328,7 +327,7 @@ public class Issue148StandardIncludeOptionsTest {
         assertThat(packageUml, containsString("#getProtectedValue()"));
         assertThat(packageUml, containsString("+getPublicValue()"));
 
-        String publicClassUml = Testing.read(new File(dir, "PublicClass.puml"));
+        String publicClassUml = TestUtil.read(new File(dir, "PublicClass.puml"));
         assertThat(publicClassUml, not(containsString("-privateField")));
         assertThat(publicClassUml, not(containsString("~packageProtectedField")));
         assertThat(publicClassUml, containsString("#protectedField"));
@@ -343,7 +342,7 @@ public class Issue148StandardIncludeOptionsTest {
     @Test
     public void testOptionShowMembersPrivate() {
         File dir = createJavadoc("--show-members", "private");
-        String packageUml = Testing.read(new File(dir, "package.puml"));
+        String packageUml = TestUtil.read(new File(dir, "package.puml"));
         assertThat(packageUml, allOf(
                 not(containsString("[[Access.PrivateClass.html]]")),
                 not(containsString("[[PackageProtectedClass.html]]")),
@@ -360,7 +359,7 @@ public class Issue148StandardIncludeOptionsTest {
         assertThat(packageUml, containsString("#getProtectedValue()"));
         assertThat(packageUml, containsString("+getPublicValue()"));
 
-        String publicClassUml = Testing.read(new File(dir, "PublicClass.puml"));
+        String publicClassUml = TestUtil.read(new File(dir, "PublicClass.puml"));
         assertThat(publicClassUml, containsString("-privateField"));
         assertThat(publicClassUml, containsString("~packageProtectedField"));
         assertThat(publicClassUml, containsString("#protectedField"));
@@ -375,7 +374,7 @@ public class Issue148StandardIncludeOptionsTest {
     @Test
     public void testOptionShowMembersPackage() {
         File dir = createJavadoc("--show-members", "package");
-        String packageUml = Testing.read(new File(dir, "package.puml"));
+        String packageUml = TestUtil.read(new File(dir, "package.puml"));
         assertThat(packageUml, allOf(
                 not(containsString("[[Access.PrivateClass.html]]")),
                 not(containsString("[[PackageProtectedClass.html]]")),
@@ -392,7 +391,7 @@ public class Issue148StandardIncludeOptionsTest {
         assertThat(packageUml, containsString("#getProtectedValue()"));
         assertThat(packageUml, containsString("+getPublicValue()"));
 
-        String publicClassUml = Testing.read(new File(dir, "PublicClass.puml"));
+        String publicClassUml = TestUtil.read(new File(dir, "PublicClass.puml"));
         assertThat(publicClassUml, not(containsString("-privateField")));
         assertThat(publicClassUml, containsString("~packageProtectedField"));
         assertThat(publicClassUml, containsString("#protectedField"));
@@ -407,7 +406,7 @@ public class Issue148StandardIncludeOptionsTest {
     @Test
     public void testOptionShowMembersProtected() {
         File dir = createJavadoc("--show-members", "protected");
-        String packageUml = Testing.read(new File(dir, "package.puml"));
+        String packageUml = TestUtil.read(new File(dir, "package.puml"));
         assertThat(packageUml, allOf(
                 not(containsString("[[Access.PrivateClass.html]]")),
                 not(containsString("[[PackageProtectedClass.html]]")),
@@ -424,7 +423,7 @@ public class Issue148StandardIncludeOptionsTest {
         assertThat(packageUml, containsString("#getProtectedValue()"));
         assertThat(packageUml, containsString("+getPublicValue()"));
 
-        String protectedClassUml = Testing.read(new File(dir, "Access.ProtectedClass.puml"));
+        String protectedClassUml = TestUtil.read(new File(dir, "Access.ProtectedClass.puml"));
         assertThat(protectedClassUml, not(containsString("-privateField")));
         assertThat(protectedClassUml, not(containsString("~packageProtectedField")));
         assertThat(protectedClassUml, containsString("#protectedField"));
@@ -439,7 +438,7 @@ public class Issue148StandardIncludeOptionsTest {
     @Test
     public void testOptionShowMembersPublic() {
         File dir = createJavadoc("--show-members", "public");
-        String packageUml = Testing.read(new File(dir, "package.puml"));
+        String packageUml = TestUtil.read(new File(dir, "package.puml"));
         assertThat(packageUml, allOf(
                 not(containsString("[[Access.PrivateClass.html]]")),
                 not(containsString("[[PackageProtectedClass.html]]")),
@@ -456,7 +455,7 @@ public class Issue148StandardIncludeOptionsTest {
         assertThat(packageUml, not(containsString("#getProtectedValue()")));
         assertThat(packageUml, containsString("+getPublicValue()"));
 
-        String publicClassUml = Testing.read(new File(dir, "PublicClass.puml"));
+        String publicClassUml = TestUtil.read(new File(dir, "PublicClass.puml"));
         assertThat(publicClassUml, not(containsString("-privateField")));
         assertThat(publicClassUml, not(containsString("~packageProtectedField")));
         assertThat(publicClassUml, not(containsString("#protectedField")));

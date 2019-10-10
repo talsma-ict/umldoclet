@@ -17,7 +17,6 @@ package nl.talsmasoftware.umldoclet.javadoc;
 
 import com.sun.source.util.DocTreePath;
 import jdk.javadoc.doclet.Reporter;
-import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.logging.Message;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -59,7 +58,7 @@ public class LocalizedReporterTest {
 
     @Before
     public void setup() {
-        config = new DocletConfig(new UMLDoclet());
+        config = new DocletConfig();
         mockReporter = mock(Reporter.class);
         init(null);
     }
@@ -90,6 +89,15 @@ public class LocalizedReporterTest {
 
         verify(mockReporter).print(eq(Diagnostic.Kind.OTHER),
                 eq("UML Doclet (C) Copyright Talsma ICT, versie: 1.2.3."));
+    }
+
+    @Test
+    public void testDebug_inlineNonResourceMessage() {
+        config.verbose = true;
+        localizedReporter.debug("The {1} jumps over the {0}", "lazy dog", "quick brown fox");
+
+        verify(mockReporter).print(eq(Diagnostic.Kind.OTHER),
+                eq("The quick brown fox jumps over the lazy dog"));
     }
 
     @Test

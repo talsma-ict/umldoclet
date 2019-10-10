@@ -34,10 +34,15 @@ public class DependencyDiagram extends Diagram {
 
     public void addPackageDependency(String fromPackage, String toPackage) {
         if (fromPackage != null && toPackage != null && !isExcludedPackage(toPackage)) {
-            if (fromPackage.isEmpty()) fromPackage = "unnamed";
-            if (toPackage.isEmpty()) toPackage = "unnamed";
-            addChild(new Reference(Side.from(fromPackage, null), "-->", Side.to(toPackage, null)));
+            this.addChild(new Reference(
+                    Side.from(unnamedIfEmpty(fromPackage), null),
+                    "-->",
+                    Side.to(unnamedIfEmpty(toPackage), null)));
         }
+    }
+
+    private static String unnamedIfEmpty(String packageName) {
+        return packageName.isEmpty() ? "unnamed" : packageName;
     }
 
     private boolean isExcludedPackage(String toPackage) {

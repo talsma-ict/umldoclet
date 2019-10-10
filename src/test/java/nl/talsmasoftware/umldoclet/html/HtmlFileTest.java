@@ -56,7 +56,9 @@ public class HtmlFileTest {
         assertThat(newTempFile.getName(), endsWith(".html"));
     }
 
-    /** In reality all HtmlFile instances should have the {@code .html} extension */
+    /**
+     * In reality all HtmlFile instances should have the {@code .html} extension
+     */
     @Test
     public void testTempfileForFileWithoutExtension() throws IOException {
         Configuration config = mock(Configuration.class);

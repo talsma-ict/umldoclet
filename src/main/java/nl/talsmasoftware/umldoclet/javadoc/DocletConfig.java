@@ -42,7 +42,6 @@ import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
-import static java.util.Objects.requireNonNull;
 import static nl.talsmasoftware.umldoclet.configuration.ImageConfig.Format.SVG;
 import static nl.talsmasoftware.umldoclet.configuration.Visibility.PACKAGE_PRIVATE;
 import static nl.talsmasoftware.umldoclet.configuration.Visibility.PROTECTED;
@@ -50,9 +49,15 @@ import static nl.talsmasoftware.umldoclet.configuration.Visibility.PUBLIC;
 
 public class DocletConfig implements Configuration {
 
-    private final Doclet doclet;
     private final UMLOptions options;
     private volatile LocalizedReporter reporter;
+
+    /**
+     * The name of the delegate doclet to use for the main documentation task.
+     * <p>
+     * Set to {@code StandardDoclet.class.getName()} by default.
+     */
+    String delegateDoclet = "jdk.javadoc.doclet.StandardDoclet";
 
     /**
      * Destination directory where documentation is generated.
@@ -119,8 +124,7 @@ public class DocletConfig implements Configuration {
 
     private Indentation indentation = Indentation.DEFAULT;
 
-    public DocletConfig(Doclet doclet) {
-        this.doclet = requireNonNull(doclet, "Doclet is <null>.");
+    public DocletConfig() {
         this.options = new UMLOptions(this);
         this.reporter = new LocalizedReporter(this, null, null);
     }
@@ -131,6 +135,11 @@ public class DocletConfig implements Configuration {
 
     public Set<Doclet.Option> mergeOptionsWith(Set<Doclet.Option> standardOptions) {
         return options.mergeWith(standardOptions);
+    }
+
+    @Override
+    public Optional<String> delegateDocletName() {
+        return Optional.ofNullable(delegateDoclet).filter(name -> !"false".equalsIgnoreCase(name));
     }
 
     @Override
@@ -284,6 +293,7 @@ public class DocletConfig implements Configuration {
         TypeDisplay paramTypes = TypeDisplay.SIMPLE;
         TypeDisplay returnType = TypeDisplay.SIMPLE;
         Set<Visibility> visibilities = EnumSet.of(PROTECTED, PUBLIC);
+        boolean javaBeanPropertiesAsFields = false;
 
         @Override
         public ParamNames paramNames() {
@@ -303,6 +313,11 @@ public class DocletConfig implements Configuration {
         @Override
         public boolean include(Visibility visibility) {
             return visibilities.contains(visibility);
+        }
+
+        @Override
+        public boolean javaBeanPropertiesAsFields() {
+            return javaBeanPropertiesAsFields;
         }
     }
 }

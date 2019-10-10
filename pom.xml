@@ -25,7 +25,7 @@
     <!-- Artifact identification -->
     <groupId>nl.talsmasoftware</groupId>
     <artifactId>umldoclet</artifactId>
-    <version>2.0.4-SNAPSHOT</version>
+    <version>2.0.6-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <!-- Project information -->
@@ -66,18 +66,15 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.source>9</maven.compiler.source>
-        <maven.compiler.target>9</maven.compiler.target>
-        <maven.compiler.release>9</maven.compiler.release>
 
         <!-- included -->
-        <plantuml.version>1.2019.6</plantuml.version>
+        <plantuml.sources>lib/plantuml-asl-1.2019.11.tar.gz</plantuml.sources>
 
         <!-- test -->
         <junit.version>4.12</junit.version>
         <hamcrest.version>2.1</hamcrest.version>
-        <mockito.version>2.28.2</mockito.version>
-        <slf4j.version>1.7.26</slf4j.version>
+        <mockito.version>3.1.0</mockito.version>
+        <slf4j.version>1.7.28</slf4j.version>
         <logback.version>1.2.3</logback.version>
         <maven-invoker.version>3.0.1</maven-invoker.version>
 
@@ -87,13 +84,11 @@
          -->
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-failsafe-plugin.version>2.20.1</maven-failsafe-plugin.version>
-        <maven-shade-plugin.version>3.2.1</maven-shade-plugin.version>
         <maven-source-plugin.version>3.1.0</maven-source-plugin.version>
-        <maven-javadoc-plugin.version>3.1.0</maven-javadoc-plugin.version>
+        <maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <maven-scm-plugin.version>1.11.2</maven-scm-plugin.version>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
-        <maven-toolchains-plugin.version>3.0.0</maven-toolchains-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
         <license-maven-plugin.version>3.0</license-maven-plugin.version>
         <buildnumber-maven-plugin.version>1.4</buildnumber-maven-plugin.version>
@@ -111,6 +106,23 @@
                 <directory>${project.basedir}</directory>
                 <includes>
                     <include>LICENSE</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>${build.directory}/generated-sources/plantuml-asl/src</directory>
+                <includes>
+                    <include>net/sourceforge/plantuml/**/*.png</include>
+                    <include>net/sourceforge/plantuml/openiconic/data/**/*.txt</include>
+                    <include>net/sourceforge/plantuml/openiconic/data/**/*.svg</include>
+                    <include>net/sourceforge/plantuml/math/**/*.js</include>
+                    <include>sprites/archimate/**/*.png</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>${build.directory}/generated-sources/plantuml-asl</directory>
+                <includes>
+                    <include>stdlib/**/*.repx</include>
+                    <include>skin/**/*.skin</include>
                 </includes>
             </resource>
         </resources>
@@ -135,6 +147,88 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>extract-plantuml-sources</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <target>
+                                <gunzip src="${plantuml.sources}" dest="target/plantuml-asl.tar"/>
+                                <untar src="target/plantuml-asl.tar" dest="target/generated-sources/plantuml-asl"/>
+                                <delete file="target/plantuml-asl.tar"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>default-compile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>compile-plantuml-sources</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <phase>compile</phase>
+                        <configuration>
+                            <jdkToolchain>
+                                <version>1.8</version>
+                            </jdkToolchain>
+                            <source>1.8</source>
+                            <target>1.8</target>
+                            <compileSourceRoots>
+                                <compileSourceRoot>target/generated-sources/plantuml-asl/src</compileSourceRoot>
+                            </compileSourceRoots>
+                            <showDeprecation>false</showDeprecation>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>compile-umldoclet</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <phase>compile</phase>
+                        <configuration>
+                            <jdkToolchain>
+                                <version>9</version>
+                            </jdkToolchain>
+                            <release>9</release>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <phase>test-compile</phase>
+                        <configuration>
+                            <jdkToolchain>
+                                <version>9</version>
+                            </jdkToolchain>
+                            <release>9</release>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration> <!-- defaults for compile and testCompile -->
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <showDeprecation>true</showDeprecation>
+                    <source>9</source>
+                    <target>9</target>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>com.mycila</groupId>
@@ -182,15 +276,6 @@
                 </dependencies>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
-                <configuration>
-                    <showDeprecation>true</showDeprecation>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco-maven-plugin.version}</version>
@@ -202,6 +287,14 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>gen/**/*</exclude>
+                        <exclude>h/**/*</exclude>
+                        <exclude>net/sourceforge/plantuml/**/*</exclude>
+                        <exclude>smetana/**/*</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.eluder.coveralls</groupId>
@@ -214,27 +307,6 @@
                         <version>2.3.1</version>
                     </dependency>
                 </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>${maven-shade-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <minimizeJar>true</minimizeJar>
-                            <artifactSet>
-                                <includes>
-                                    <include>*:plantuml-asl</include>
-                                </includes>
-                            </artifactSet>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -269,8 +341,11 @@
                             <jdkToolchain>
                                 <version>9</version>
                             </jdkToolchain>
+                            <sourcepath>${project.build.sourceDirectory}:${project.build.directory}/generated-sources/plantuml-asl/src</sourcepath>
+                            <excludePackageNames>gen.*:h:net.sourceforge.*:smetana.*</excludePackageNames>
                             <additionalOptions>
                                 <additionalOption>-createPumlFiles</additionalOption>
+                                <additionalOption>-failOnCyclicPackageDependencies true</additionalOption>
                             </additionalOptions>
                         </configuration>
                     </execution>
@@ -305,33 +380,16 @@
                     <tag>${project.version}</tag>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-toolchains-plugin</artifactId>
-                <version>${maven-toolchains-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>toolchain</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <toolchains>
-                        <jdk>
-                            <version>${maven.compiler.release}</version>
-                        </jdk>
-                    </toolchains>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
     <dependencies>
-        <dependency>
-            <groupId>net.sourceforge.plantuml</groupId>
-            <artifactId>plantuml-asl</artifactId>
-            <version>${plantuml.version}</version>
+        <dependency> <!-- Required to compile 'net.sourceforge.plantuml.ant.*' -->
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.10.7</version>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
@@ -377,13 +435,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <repositories>
-        <repository>
-            <id>local-lib</id>
-            <url>file://${basedir}/lib</url>
-        </repository>
-    </repositories>
 
     <distributionManagement>
         <snapshotRepository>

@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.issues;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
-import nl.talsmasoftware.umldoclet.util.Testing;
+import nl.talsmasoftware.umldoclet.util.TestUtil;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -51,8 +51,8 @@ public class Bug74DuplicateGenericsTest {
                 "-createPumlFiles",
                 "src/test/java/" + Bug74DuplicateGenericsTest.class.getName().replace('.', '/') + ".java"
         ), is(0));
-        classUml = Testing.read(new File(outputDir, classAsPath + ".MySupplier.puml"));
-        packageUml = Testing.read(new File(outputDir, packageAsPath + "/package.puml"));
+        classUml = TestUtil.read(new File(outputDir, classAsPath + ".MySupplier.puml"));
+        packageUml = TestUtil.read(new File(outputDir, packageAsPath + "/package.puml"));
     }
 
     @Test

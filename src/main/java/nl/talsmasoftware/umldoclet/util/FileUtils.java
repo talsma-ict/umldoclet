@@ -25,8 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static java.lang.Math.max;
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.joining;
 
 /**
  * Contains static utility methods for files.
@@ -47,10 +47,13 @@ public final class FileUtils {
      * @return The relative path from the source to the target file.
      */
     public static String relativePath(File from, File to) {
-        if (from == null || to == null) return null;
+        if (from == null || to == null) {
+            return null;
+        } else if (from.isFile()) {
+            return relativePath(from.getParentFile(), to);
+        }
         try {
-            if (from.isFile()) from = from.getParentFile();
-            if (!from.isDirectory()) throw new IllegalArgumentException("Not a directory: " + from);
+            if (from.exists() && !from.isDirectory()) throw new IllegalArgumentException("Not a directory: " + from);
 
             final String[] fromParts = from.getCanonicalPath().split(Pattern.quote(File.separator));
             List<String> toParts = new ArrayList<>(asList(to.getCanonicalPath().split(Pattern.quote(File.separator))));
@@ -64,8 +67,8 @@ public final class FileUtils {
             // Replace each remaining directory in 'from' by a preceding "../"
             for (int i = fromParts.length; i > skip; i--) toParts.add(0, "..");
 
-            // Return the resulting path, joined by seprators.
-            return toParts.stream().collect(joining("/"));
+            // Return the resulting path, joined by path separators.
+            return String.join("/", toParts);
         } catch (IOException ioe) {
             throw new IllegalStateException("I/O exception calculating relative path from \""
                     + from + "\" to \"" + to + "\": " + ioe.getMessage(), ioe);
@@ -96,14 +99,16 @@ public final class FileUtils {
      * @return The part of the specified part after the last slash or backslash.
      */
     public static String fileNameOf(String path) {
-        return path.substring(Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\')) + 1);
+        return path.substring(max(path.lastIndexOf('/'), path.lastIndexOf('\\')) + 1);
     }
 
     public static String withoutExtension(String path) {
         if (path != null) {
             int lastDot = path.lastIndexOf('.');
             int lastSlash = path.lastIndexOf('/');
-            if (lastDot > 0 && lastDot > lastSlash) path = path.substring(0, lastDot);
+            if (lastDot > 0 && lastDot > lastSlash) {
+                return path.substring(0, lastDot);
+            }
         }
         return path;
     }
@@ -138,7 +143,13 @@ public final class FileUtils {
 
     public static boolean hasExtension(Object file, String extension) {
         if (file == null || extension == null) return false;
-        if (!extension.startsWith(".")) extension = '.' + extension;
-        return file.toString().toLowerCase().endsWith(extension.toLowerCase());
+        return endsWithIgnoreCase(file.toString(), extension.startsWith(".") ? extension : '.' + extension);
+    }
+
+    private static boolean endsWithIgnoreCase(String subject, String extension) {
+        int subjectLength = subject.length();
+        int extensionLength = extension.length();
+        return subjectLength >= extensionLength
+                && subject.substring(subjectLength - extensionLength).equalsIgnoreCase(extension);
     }
 }

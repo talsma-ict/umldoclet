@@ -21,7 +21,9 @@ import java.io.File;
 import java.io.IOException;
 
 import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
+import static nl.talsmasoftware.umldoclet.util.TestUtil.assertUnsupportedConstructor;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
@@ -29,7 +31,7 @@ public class FileUtilsTest {
 
     @Test
     public void testUnsupportedConstructor() {
-        Testing.assertUnsupportedConstructor(FileUtils.class);
+        assertUnsupportedConstructor(FileUtils.class);
     }
 
     @Test
@@ -39,7 +41,7 @@ public class FileUtilsTest {
             final File tempdir = tempfile.getParentFile();
             final char sep = File.separatorChar;
 
-            // relatief aan tempfile == relatief aan tempdir
+            // relitive to tempfile means relative to tempdir
             assertThat(relativePath(tempfile,
                     new File(tempdir, "testfile.adoc")),
                     is("testfile.adoc"));
@@ -76,6 +78,17 @@ public class FileUtilsTest {
         } finally {
             tempFile.delete();
         }
+    }
+
+    @Test
+    public void testWithoutExtension() {
+        assertThat(FileUtils.withoutExtension(null), is(nullValue()));
+        assertThat(FileUtils.withoutExtension(""), equalTo(""));
+        assertThat(FileUtils.withoutExtension("foo.bar"), equalTo("foo"));
+        assertThat(FileUtils.withoutExtension("foo/bar.ext"), equalTo("foo/bar"));
+        assertThat(FileUtils.withoutExtension("foo.ext/bar.ext"), equalTo("foo.ext/bar"));
+        assertThat(FileUtils.withoutExtension("Outer.InnerClass.html"), equalTo("Outer.InnerClass"));
+        assertThat(FileUtils.withoutExtension("foo.bar/ext"), equalTo("foo.bar/ext"));
     }
 
 }

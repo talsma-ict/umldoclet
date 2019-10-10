@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.issues;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
-import nl.talsmasoftware.umldoclet.util.Testing;
+import nl.talsmasoftware.umldoclet.util.TestUtil;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -48,12 +48,14 @@ public class Issue71DeprecationTest {
 
     @Deprecated
     public void getDeprecatedByAnnotation() {
+        // Empty method to test UML generation.
     }
 
     /**
      * @deprecated Testing deprecation by JavaDoc tag with a comment.
      */
     public void getDeprecatedByJavadocTag() {
+        // Empty method to test UML generation.
     }
 
     @BeforeClass
@@ -67,8 +69,8 @@ public class Issue71DeprecationTest {
                 "-createPumlFiles",
                 "src/test/java/" + classAsPath + ".java"
         );
-        classUml = Testing.read(new File(outputDir, classAsPath + ".puml"));
-        packageUml = Testing.read(new File(outputDir, packageAsPath + "/package.puml"));
+        classUml = TestUtil.read(new File(outputDir, classAsPath + ".puml"));
+        packageUml = TestUtil.read(new File(outputDir, packageAsPath + "/package.puml"));
     }
 
     @Test
@@ -112,7 +114,7 @@ public class Issue71DeprecationTest {
     }
 
     @Test
-    public void testIssue73_innerClassImageName() {
+    public void testIssue73InnerClassImageName() {
         File innerClassFile = new File(outputDir, "nl/talsmasoftware/umldoclet/issues/Issue71DeprecationTest.MoreDeprecation.svg");
         assertThat(innerClassFile + " exists?", innerClassFile.exists(), is(true));
     }
@@ -128,8 +130,10 @@ public class Issue71DeprecationTest {
             this(null);
         }
 
+        @SuppressWarnings("unused")
         @Deprecated
         public MoreDeprecation(String ignored) {
+            // Empty method to test UML generation.
         }
     }
 }

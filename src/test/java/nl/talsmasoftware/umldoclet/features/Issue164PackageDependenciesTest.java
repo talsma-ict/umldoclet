@@ -26,7 +26,7 @@ import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 import nl.talsmasoftware.umldoclet.rendering.writers.DelegatingWriter;
 import nl.talsmasoftware.umldoclet.uml.UMLNode;
 import nl.talsmasoftware.umldoclet.util.FileUtils;
-import nl.talsmasoftware.umldoclet.util.Testing;
+import nl.talsmasoftware.umldoclet.util.TestUtil;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -70,7 +70,7 @@ public class Issue164PackageDependenciesTest {
 
     @Test
     public void testPackageDependencies() {
-        String packageDependencies = Testing.read(new File(outputdir, "package-dependencies.puml"));
+        String packageDependencies = TestUtil.read(new File(outputdir, "package-dependencies.puml"));
 
         assertThat("Doclet superclass dependency", packageDependencies,
                 containsString("nl.talsmasoftware.umldoclet --> jdk.javadoc.doclet"));

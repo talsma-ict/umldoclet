@@ -24,6 +24,7 @@ import javax.lang.model.element.Element;
 import javax.tools.Diagnostic;
 import java.text.MessageFormat;
 import java.util.Locale;
+import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
@@ -44,42 +45,40 @@ final class LocalizedReporter implements Reporter, Logger {
     }
 
     @Override
-    public void debug(Message key, Object... args) {
-        log(Diagnostic.Kind.OTHER, null, null, key, args);
+    public void debug(Object key, Object... args) {
+        log(Diagnostic.Kind.OTHER, key, args);
     }
 
     @Override
     public void info(Message key, Object... args) {
-        log(Diagnostic.Kind.NOTE, null, null, key, args);
+        log(Diagnostic.Kind.NOTE, key, args);
     }
 
     @Override
     public void warn(Message key, Object... args) {
-        log(Diagnostic.Kind.WARNING, null, null, key, args);
+        log(Diagnostic.Kind.WARNING, key, args);
     }
 
     @Override
     public void error(Message key, Object... args) {
-        log(Diagnostic.Kind.ERROR, null, null, key, args);
+        log(Diagnostic.Kind.ERROR, key, args);
     }
 
-    private void log(Diagnostic.Kind kind, DocTreePath path, Element elem, Message key, Object... args) {
+    private void log(Diagnostic.Kind kind, Object key, Object... args) {
         if (mustPrint(kind)) {
-            final String message = localize(key, args);
-            if (path != null) doPrint(kind, path, message);
-            else if (elem != null) doPrint(kind, elem, message);
-            else doPrint(kind, message);
+            doPrint(kind, key instanceof Message ? localize((Message) key, args)
+                    : MessageFormat.format(Objects.toString(key), localizeArgs(args)));
         }
     }
 
     @Override
     public String localize(Message key, Object... args) {
         String message = key.toString(locale);
-        if (args.length > 0) message = MessageFormat.format(message, localize(args));
+        if (args.length > 0) message = MessageFormat.format(message, localizeArgs(args));
         return message;
     }
 
-    private Object[] localize(Object... args) {
+    private Object[] localizeArgs(Object... args) {
         for (int i = 0; i < args.length; i++) {
             if (args[i] instanceof Message) args[i] = ((Message) args[i]).toString(locale);
         }
