@@ -66,9 +66,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.source>9</maven.compiler.source>
-        <maven.compiler.target>9</maven.compiler.target>
-        <maven.compiler.release>9</maven.compiler.release>
+<!--        <maven.compiler.source>9</maven.compiler.source>-->
+<!--        <maven.compiler.target>9</maven.compiler.target>-->
+<!--        <maven.compiler.release>9</maven.compiler.release>-->
 
         <!-- included -->
         <plantuml.version>1.2019.8</plantuml.version>
@@ -157,6 +157,39 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>default-compile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>compile-plantuml-sources</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <phase>compile</phase>
+                        <configuration>
+                            <jdkToolchain>
+                                <version>1.8</version>
+                            </jdkToolchain>
+                            <source>1.8</source>
+                            <target>1.8</target>
+                            <compileSourceRoots>
+                                <compileSourceRoot>target/generated-sources/plantuml-asl/src</compileSourceRoot>
+                            </compileSourceRoots>
+<!--                            <outputDirectory>target/generated-sources/plantuml-asl/build</outputDirectory>-->
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration> <!-- defaults for compile and testCompile -->
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <showDeprecation>true</showDeprecation>
+                </configuration>
+            </plugin>
 <!--
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -221,15 +254,6 @@
                         <version>${license-maven-plugin.version}</version>
                     </dependency>
                 </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
-                <configuration>
-                    <showDeprecation>true</showDeprecation>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -349,6 +373,7 @@
                     <tag>${project.version}</tag>
                 </configuration>
             </plugin>
+<!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-toolchains-plugin</artifactId>
@@ -368,6 +393,7 @@
                     </toolchains>
                 </configuration>
             </plugin>
+-->
         </plugins>
     </build>
 
