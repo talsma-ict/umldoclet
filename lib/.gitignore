@@ -1,5 +1,0 @@
-# Include maven repository files
-!*.jar
-!*.xml
-!*.pom
-!*.md
