@@ -436,13 +436,6 @@
         </dependency>
     </dependencies>
 
-    <repositories>
-        <repository>
-            <id>local-lib</id>
-            <url>file://${basedir}/lib</url>
-        </repository>
-    </repositories>
-
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
