@@ -19,8 +19,7 @@
  * <p>
  * This package is implemented as a standalone {@linkplain nl.talsmasoftware.umldoclet.html.HtmlPostprocessor} that
  * uses the {@code Configuration} to find the locations of both
- * the generated <abbr title="Hypertext Markup Language">HTML</abbr> and
- * the generated <abbr title="Unified Modeling Language">UML</abbr> diagrams.<br>
+ * the generated HTML and the generated UML diagrams.<br>
  * Using these locations and knowledge of the naming conventions results in relative paths to
  * the various diagrams from the HTML that documents them.
  * The HTML files are then modified by inserting these relative diagram references.
