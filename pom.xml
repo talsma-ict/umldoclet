@@ -153,10 +153,12 @@
                 <executions>
                     <execution>
                         <id>default-compile</id>
+<!--
                         <phase>none</phase>
                     </execution>
                     <execution>
-                        <id>compile-java8-sources</id>
+                        <id>compile-java8</id>
+-->
                         <goals>
                             <goal>compile</goal>
                         </goals>
@@ -166,10 +168,29 @@
                                 <version>1.8</version>
                             </jdkToolchain>
                             <compileSourceRoots>
-                                <compileSourceRoot>src/main/java</compileSourceRoot>
                                 <compileSourceRoot>target/generated-sources/plantuml-asl/src</compileSourceRoot>
+                                <compileSourceRoot>src/main/java</compileSourceRoot>
                             </compileSourceRoots>
                             <showDeprecation>false</showDeprecation>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>compile-java9</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <phase>compile</phase>
+                        <configuration>
+                            <jdkToolchain>
+                                <version>9</version>
+                            </jdkToolchain>
+                            <source>9</source>
+                            <target>9</target>
+                            <release>9</release>
+                            <compileSourceRoots>
+                                <compileSourceRoot>src/main/java-9</compileSourceRoot>
+                            </compileSourceRoots>
+                            <outputDirectory>${build.outputDirectory}/META-INF/versions/9</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
