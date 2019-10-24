@@ -153,20 +153,11 @@
                 <executions>
                     <execution>
                         <id>default-compile</id>
-<!--
-                        <phase>none</phase>
-                    </execution>
-                    <execution>
-                        <id>compile-java8</id>
--->
                         <goals>
                             <goal>compile</goal>
                         </goals>
                         <phase>compile</phase>
                         <configuration>
-                            <jdkToolchain>
-                                <version>1.8</version>
-                            </jdkToolchain>
                             <compileSourceRoots>
                                 <compileSourceRoot>target/generated-sources/plantuml-asl/src</compileSourceRoot>
                                 <compileSourceRoot>src/main/java</compileSourceRoot>
@@ -193,10 +184,59 @@
                             <outputDirectory>${build.outputDirectory}/META-INF/versions/9</outputDirectory>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>java9-testCompile</id>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <!-- java 9 test code cannot refer to other test classes yet.. -->
+                        <phase>none</phase>
+                        <configuration>
+                            <jdkToolchain>
+                                <version>9</version>
+                            </jdkToolchain>
+                            <release>9</release>
+                            <source>9</source>
+                            <target>9</target>
+                            <compileSourceRoots>
+                                <compileSourceRoot>${project.basedir}/src/test/java-9</compileSourceRoot>
+                            </compileSourceRoots>
+                        </configuration>
+                    </execution>
                 </executions>
                 <configuration>
+                    <jdkToolchain>
+                        <version>1.8</version>
+                    </jdkToolchain>
                     <source>1.8</source>
                     <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-jacoco-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>gen/**/*</exclude>
+                        <exclude>h/**/*</exclude>
+                        <exclude>net/sourceforge/plantuml/**/*</exclude>
+                        <exclude>smetana/**/*</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
@@ -208,7 +248,7 @@
                         <goals>
                             <goal>check</goal>
                         </goals>
-                        <phase>compile</phase>
+                        <phase>validate</phase>
                     </execution>
                 </executions>
                 <configuration>
@@ -243,27 +283,6 @@
                         <version>${license-maven-plugin.version}</version>
                     </dependency>
                 </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>prepare-jacoco-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <excludes>
-                        <exclude>gen/**/*</exclude>
-                        <exclude>h/**/*</exclude>
-                        <exclude>net/sourceforge/plantuml/**/*</exclude>
-                        <exclude>smetana/**/*</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.eluder.coveralls</groupId>
