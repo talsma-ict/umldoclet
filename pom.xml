@@ -87,11 +87,9 @@
         <maven-source-plugin.version>3.1.0</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
-        <maven-scm-plugin.version>1.11.2</maven-scm-plugin.version>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
         <license-maven-plugin.version>3.0</license-maven-plugin.version>
-        <buildnumber-maven-plugin.version>1.4</buildnumber-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
         <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
     </properties>
@@ -128,27 +126,6 @@
         </resources>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>buildnumber-maven-plugin</artifactId>
-                <version>${buildnumber-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>create</goal>
-                        </goals>
-                        <configuration>
-                            <revisionOnScmFailure>UNKNOWN</revisionOnScmFailure>
-                            <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
-                            <buildNumberPropertyName>git.revision</buildNumberPropertyName>
-                            <scmBranchPropertyName>git.branch</scmBranchPropertyName>
-                            <timestampFormat>{0,date,yyyy-MM-dd'T'HH:mm:ss.SSSZ}</timestampFormat>
-                            <timestampPropertyName>build.timestamp</timestampPropertyName>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>1.8</version>
@@ -179,7 +156,7 @@
                         <phase>none</phase>
                     </execution>
                     <execution>
-                        <id>compile-plantuml-sources</id>
+                        <id>compile-java8-sources</id>
                         <goals>
                             <goal>compile</goal>
                         </goals>
@@ -188,46 +165,17 @@
                             <jdkToolchain>
                                 <version>1.8</version>
                             </jdkToolchain>
-                            <source>1.8</source>
-                            <target>1.8</target>
                             <compileSourceRoots>
+                                <compileSourceRoot>src/main/java</compileSourceRoot>
                                 <compileSourceRoot>target/generated-sources/plantuml-asl/src</compileSourceRoot>
                             </compileSourceRoots>
                             <showDeprecation>false</showDeprecation>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>compile-umldoclet</id>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <phase>compile</phase>
-                        <configuration>
-                            <jdkToolchain>
-                                <version>9</version>
-                            </jdkToolchain>
-                            <release>9</release>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>default-testCompile</id>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                        <phase>test-compile</phase>
-                        <configuration>
-                            <jdkToolchain>
-                                <version>9</version>
-                            </jdkToolchain>
-                            <release>9</release>
-                        </configuration>
-                    </execution>
                 </executions>
-                <configuration> <!-- defaults for compile and testCompile -->
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                    <showDeprecation>true</showDeprecation>
-                    <source>9</source>
-                    <target>9</target>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -321,6 +269,7 @@
                     </execution>
                 </executions>
             </plugin>
+<!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -341,7 +290,9 @@
                             <jdkToolchain>
                                 <version>9</version>
                             </jdkToolchain>
-                            <sourcepath>${project.build.sourceDirectory}:${project.build.directory}/generated-sources/plantuml-asl/src</sourcepath>
+                            <sourcepath>
+                                ${project.build.sourceDirectory}:${project.build.directory}/generated-sources/plantuml-asl/src
+                            </sourcepath>
                             <excludePackageNames>gen.*:h:net.sourceforge.*:smetana.*</excludePackageNames>
                             <additionalOptions>
                                 <additionalOption>-createPumlFiles</additionalOption>
@@ -351,6 +302,7 @@
                     </execution>
                 </executions>
             </plugin>
+-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
@@ -371,13 +323,6 @@
                     <serverId>ossrh</serverId>
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-scm-plugin</artifactId>
-                <version>${maven-scm-plugin.version}</version>
-                <configuration>
-                    <tag>${project.version}</tag>
                 </configuration>
             </plugin>
         </plugins>

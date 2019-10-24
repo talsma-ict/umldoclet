@@ -15,8 +15,6 @@
  */
 package nl.talsmasoftware.umldoclet.logging;
 
-import nl.talsmasoftware.umldoclet.UMLDoclet;
-
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -61,7 +59,7 @@ public enum Message {
     }
 
     public String toString(Locale locale) {
-        final String bundleName = UMLDoclet.class.getName();
+        final String bundleName = "nl.talsmasoftware.umldoclet.UMLDoclet";
         final ResourceBundle bundle = getBundle(bundleName, locale == null ? Locale.getDefault() : locale);
         return bundle.getString(key);
     }

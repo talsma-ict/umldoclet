@@ -45,9 +45,11 @@ public class Link extends UMLNode {
         final String nameInPackage = type.getName().qualified.startsWith(packageName + ".")
                 ? type.getName().qualified.substring(packageName.length() + 1) : type.getName().simple;
 
-        Optional<URI> target = relativeHtmlFile(destinationDirectory, packageName, nameInPackage)
-                .or(() -> type.getConfiguration().resolveExternalLinkToType(packageName, nameInPackage));
-        return new Link(type, target.orElse(null));
+        URI target = relativeHtmlFile(destinationDirectory, packageName, nameInPackage);
+        if (target == null) {
+            target = type.getConfiguration().resolveExternalLinkToType(packageName, nameInPackage).orElse(null);
+        }
+        return new Link(type, target);
     }
 
     public static Link forPackage(Namespace namespace) {
@@ -55,14 +57,17 @@ public class Link extends UMLNode {
         final String packageName = namespace.name;
         final String nameInPackage = "package-summary";
 
-        Optional<URI> target = relativeHtmlFile(destinationDirectory, packageName, nameInPackage)
-                .or(() -> namespace.getConfiguration().resolveExternalLinkToType(packageName, nameInPackage));
-        return new Link(namespace, target.orElse(null));
+        URI target = relativeHtmlFile(destinationDirectory, packageName, nameInPackage);
+        if (target == null) {
+            target = namespace.getConfiguration().resolveExternalLinkToType(packageName, nameInPackage).orElse(null);
+        }
+        return new Link(namespace, target);
     }
 
-    private static Optional<URI> relativeHtmlFile(String destinationDirectory, String packageName, String nameInPackage) {
+    private static URI relativeHtmlFile(String destinationDirectory, String packageName, String nameInPackage) {
         final String directory = destinationDirectory + "/" + packageName.replace('.', '/');
-        return Optional.of(new File(directory, nameInPackage + ".html")).filter(File::isFile).map(File::toURI);
+        File relativeHtmlFile = new File(directory, nameInPackage + ".html");
+        return relativeHtmlFile.isFile() ? relativeHtmlFile.toURI() : null;
     }
 
     /**
