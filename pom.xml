@@ -87,7 +87,6 @@
         <maven-source-plugin.version>3.1.0</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
-<!--        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>-->
         <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
         <license-maven-plugin.version>3.0</license-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
@@ -107,7 +106,7 @@
                 </includes>
             </resource>
             <resource>
-                <directory>${build.directory}/generated-sources/plantuml-asl/src</directory>
+                <directory>${project.build.directory}/generated-sources/plantuml-asl/src</directory>
                 <includes>
                     <include>net/sourceforge/plantuml/**/*.png</include>
                     <include>net/sourceforge/plantuml/openiconic/data/**/*.txt</include>
@@ -117,7 +116,7 @@
                 </includes>
             </resource>
             <resource>
-                <directory>${build.directory}/generated-sources/plantuml-asl</directory>
+                <directory>${project.build.directory}/generated-sources/plantuml-asl</directory>
                 <includes>
                     <include>stdlib/**/*.repx</include>
                     <include>skin/**/*.skin</include>
@@ -153,24 +152,34 @@
                 <executions>
                     <execution>
                         <id>default-compile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>compile-plantuml</id>
+                        <phase>compile</phase>
                         <goals>
                             <goal>compile</goal>
                         </goals>
-                        <phase>compile</phase>
                         <configuration>
                             <compileSourceRoots>
                                 <compileSourceRoot>target/generated-sources/plantuml-asl/src</compileSourceRoot>
-                                <compileSourceRoot>src/main/java</compileSourceRoot>
                             </compileSourceRoots>
                             <showDeprecation>false</showDeprecation>
                         </configuration>
                     </execution>
                     <execution>
-                        <id>compile-java9</id>
+                        <id>compile-java8</id>
+                        <phase>compile</phase>
                         <goals>
                             <goal>compile</goal>
                         </goals>
+                    </execution>
+                    <execution>
+                        <id>compile-java9</id>
                         <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
                         <configuration>
                             <jdkToolchain>
                                 <version>9</version>
@@ -181,7 +190,7 @@
                             <compileSourceRoots>
                                 <compileSourceRoot>src/main/java-9</compileSourceRoot>
                             </compileSourceRoots>
-                            <outputDirectory>${build.outputDirectory}/META-INF/versions/9</outputDirectory>
+                            <outputDirectory>${project.build.outputDirectory}/META-INF/versions/9</outputDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -353,17 +362,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>${maven-release-plugin.version}</version>
-                <configuration>
-                    <useReleaseProfile>false</useReleaseProfile>
-                    <releaseProfiles>release</releaseProfiles>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <tagNameFormat>@{project.version}</tagNameFormat>
-                </configuration>
             </plugin>
 -->
             <plugin>
