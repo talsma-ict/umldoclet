@@ -195,17 +195,23 @@
                     </execution>
                     <execution>
                         <id>default-testCompile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>testCompile-java8</id>
+                        <phase>test-compile</phase>
                         <goals>
                             <goal>testCompile</goal>
                         </goals>
                     </execution>
                     <execution>
-                        <id>java9-testCompile</id>
+                        <id>testCompile-java9</id>
+<!--                        <phase>test-compile</phase>-->
+                        <!-- target/classes/META-INF/versions/9 not on classpath! -->
+                        <phase>none</phase>
                         <goals>
                             <goal>testCompile</goal>
                         </goals>
-                        <!-- java 9 test code cannot refer to other test classes yet.. -->
-                        <phase>none</phase>
                         <configuration>
                             <jdkToolchain>
                                 <version>9</version>
