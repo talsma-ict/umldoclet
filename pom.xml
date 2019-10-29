@@ -181,16 +181,16 @@
                             <goal>compile</goal>
                         </goals>
                         <configuration>
+                            <compileSourceRoots>
+                                <compileSourceRoot>src/main/java-9</compileSourceRoot>
+                            </compileSourceRoots>
                             <jdkToolchain>
                                 <version>9</version>
                             </jdkToolchain>
                             <source>9</source>
                             <target>9</target>
                             <release>9</release>
-                            <compileSourceRoots>
-                                <compileSourceRoot>src/main/java-9</compileSourceRoot>
-                            </compileSourceRoots>
-                            <outputDirectory>${project.build.outputDirectory}/META-INF/versions/9</outputDirectory>
+                            <multiReleaseOutput>true</multiReleaseOutput>
                         </configuration>
                     </execution>
                     <execution>
