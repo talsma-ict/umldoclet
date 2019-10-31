@@ -54,7 +54,7 @@ default settings provide for you:
   
 ## Contributing
 
-- See [Contributing](CONTRIBUTING.md)
+- See [the contribute page](https://github.com/talsma-ict/umldoclet/contribute) for this repository.
 
 ## Thanks!
 
