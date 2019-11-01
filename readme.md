@@ -80,8 +80,7 @@ default settings provide for you:
   [javadoc-img]: https://www.javadoc.io/badge/nl.talsmasoftware/umldoclet.svg
   [javadoc]: https://www.javadoc.io/doc/nl.talsmasoftware/umldoclet
   
-  [usage]: USAGE.md
-  [contributing]: Contributing.md
+  [usage]: usage.md
   [v1.x]: https://github.com/talsma-ict/umldoclet/tree/develop-v1
   [plantuml]: http://plantuml.com
   [doclet]: https://docs.oracle.com/javase/9/docs/api/jdk/javadoc/doclet/Doclet.html
