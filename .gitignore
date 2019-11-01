@@ -18,8 +18,3 @@ hs_err_pid*
 # IntelliJ project files
 .idea/
 *.iml
-
-# Local plantuml jars + sources
-/plantuml.jar
-/plantuml-jar-asl-*.zip
-/plantuml-asl-*.tar.gz
