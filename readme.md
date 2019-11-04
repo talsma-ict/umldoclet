@@ -1,11 +1,12 @@
 [![Build Status][ci-img]][ci]
-[![Coverage Status][coveralls-img]][coveralls]
-[![LGTM Status][lgtm-img]][lgtm]
-[![Codacy Badge][codacy-img]][codacy]
 [![Maven Version][maven-img]][maven]
 [![Javadoc][javadoc-img]][javadoc]
 
 # UMLDoclet
+
+[![Coverage Status][coveralls-img]][coveralls]
+[![LGTM Status][lgtm-img]][lgtm]
+[![Codacy Badge][codacy-img]][codacy]
 
 Doclet for the JavaDoc tool that generates UML diagrams from the code.  
 
