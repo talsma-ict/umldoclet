@@ -15,11 +15,11 @@
  */
 /**
  * Package containing an internal minimal logging abstraction that can be easily mapped to common logging frameworks
- * (such as {@code java.util.logging} or {@code Slf4J}) but also to Javadoc the {@code Reporter} implementation.
+ * (such as {@code java.util.logging} or {@code Slf4J}) but also to the Javadoc {@code Reporter}.
  *
  * <p>
- * The package further contains an enumeration of all logging
- * {@linkplain nl.talsmasoftware.umldoclet.logging.Message messages}, to ensure a resource was provided for each
- * of them, making potential internationalization of the doclet easier and safer.
+ * All formal logging {@linkplain nl.talsmasoftware.umldoclet.logging.Message messages}
+ * are included as enumeration to ensure a resource is provided for each of them.
+ * This makes internationalization of the doclet easier and safer.
  */
 package nl.talsmasoftware.umldoclet.logging;
