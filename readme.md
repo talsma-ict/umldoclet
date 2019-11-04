@@ -4,9 +4,9 @@
 
 # UMLDoclet
 
-[![Coverage Status][coveralls-img]][coveralls]
-[![LGTM Status][lgtm-img]][lgtm]
 [![Codacy Badge][codacy-img]][codacy]
+[![LGTM Status][lgtm-img]][lgtm]
+[![Coverage Status][coveralls-img]][coveralls]
 
 Doclet for the JavaDoc tool that generates UML diagrams from the code.  
 
