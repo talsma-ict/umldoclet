@@ -21,21 +21,69 @@ package nl.talsmasoftware.umldoclet.configuration;
  * @author Sjoerd Talsma
  */
 public interface MethodConfig {
+    /**
+     * How parameter names must be rendered.
+     *
+     * <p>
+     * {@code NONE} will omit the name for the parameter names,
+     * {@code BEFORE_TYPE} will render the name first, followed by the type, while
+     * {@code AFTER_TYPE} renders the type first followed by the parameter name (java-style).
+     */
     enum ParamNames {
-        NONE, BEFORE_TYPE, AFTER_TYPE
+        /**
+         * Omit names of method parameters.
+         */
+        NONE,
+
+        /**
+         * Render the method parameter name first, followed by its type.
+         */
+        BEFORE_TYPE,
+
+        /**
+         * Render the method parameter type first, followed by its name.
+         */
+        AFTER_TYPE
     }
 
+    /**
+     * How method parameter names must be rendered.
+     *
+     * @return How method parameter names must be rendered.
+     */
     ParamNames paramNames();
 
+    /**
+     * How parameter types must be rendered.
+     *
+     * @return How parameter types must be rendered.
+     */
     TypeDisplay paramTypes();
 
+    /**
+     * How method return types must be rendered.
+     *
+     * @return How method return types must be rendered.
+     */
     TypeDisplay returnType();
 
+    /**
+     * Return whether the method with specified visibility should be included
+     * in the UML diagram.
+     *
+     * @param methodVisibility The method visibility.
+     * @return {@code true} if the method should be included in the UML diagram
+     * based on its visibility, or {@code false} if it should be omitted.
+     */
     boolean include(Visibility methodVisibility);
 
     /**
-     * @return Whether JavaBean properties ({@code getXyz(), isXyz(), setXyz(Xyz xyz)}) methods
-     * should be rendered as Fields in UML
+     * Whether JavaBean property accessor methods
+     * such as {@code getXyz()}, {@code isXyz()}, {@code setXyz(Xyz xyz)}
+     * should be rendered as Fields in UML.
+     *
+     * @return {@code true} if JavaBean accessor methods should be rendered as Fields
+     * in the UML diagram, {@code false} to render them as normal methods.
      */
     boolean javaBeanPropertiesAsFields();
 }
