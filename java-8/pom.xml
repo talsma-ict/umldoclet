@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2016-2019 Talsma ICT
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+           http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>nl.talsmasoftware</groupId>
+        <artifactId>umldoclet-root</artifactId>
+        <version>2.0.7-SNAPSHOT</version>
+    </parent>
+
+    <!-- Artifact identification -->
+    <artifactId>umldoclet-java8</artifactId>
+    <packaging>jar</packaging>
+
+    <!-- Project information -->
+    <name>UML doclet (java 8)</name>
+
+    <properties>
+        <plantuml.version>1.2019.12</plantuml.version>
+        <plantuml.sources>${project.basedir}/src/main/plantuml-asl-${plantuml.version}.tar.gz</plantuml.sources>
+    </properties>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>${project.parent.basedir}</directory>
+                <includes><include>LICENSE</include></includes>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>${build.build.directory}/generated-sources/plantuml-asl</directory>
+                <includes>
+                    <include>stdlib/**/*.repx</include>
+                    <include>skin/**/*.skin</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>${project.build.directory}/generated-sources/plantuml-asl/src</directory>
+                <includes>
+                    <include>net/sourceforge/plantuml/**/*.png</include>
+                    <include>net/sourceforge/plantuml/openiconic/data/**/*.txt</include>
+                    <include>net/sourceforge/plantuml/openiconic/data/**/*.svg</include>
+                    <include>net/sourceforge/plantuml/math/**/*.js</include>
+                    <include>sprites/archimate/**/*.png</include>
+                </includes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>extract-plantuml-sources</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <target>
+                                <gunzip src="${plantuml.sources}" dest="target/plantuml-asl.tar"/>
+                                <untar src="target/plantuml-asl.tar" dest="target/generated-sources/plantuml-asl"/>
+                                <delete file="target/plantuml-asl.tar"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-compile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>compile-plantuml-sources</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <phase>compile</phase>
+                        <configuration>
+                            <compileSourceRoots>
+                                <compileSourceRoot>${project.build.directory}/generated-sources/plantuml-asl/src</compileSourceRoot>
+                            </compileSourceRoots>
+                            <showDeprecation>false</showDeprecation>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>compile-umldoclet</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <phase>compile</phase>
+                        <configuration>
+                            <jdkToolchain>
+                                <version>9</version>
+                            </jdkToolchain>
+                            <release>9</release>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <jdkToolchain>
+                        <version>1.8</version>
+                    </jdkToolchain>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency> <!-- Required to compile 'net.sourceforge.plantuml.ant.*' -->
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.10.7</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
+</project>
