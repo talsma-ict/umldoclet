@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.rendering.indent;
 
 import nl.talsmasoftware.umldoclet.rendering.writers.ThrowingWriter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -24,12 +24,15 @@ import java.io.Writer;
 
 import static nl.talsmasoftware.umldoclet.util.TestUtil.NEWLINE;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasToString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests for the intenting print writer.
@@ -113,21 +116,21 @@ public class IndentingPrintWriterTest {
         clear(output);
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testWhitespaceIoeByUnderlyingWriter() {
         SettableIndentingPrintWriter writer = new SettableIndentingPrintWriter(new StringWriter(), Indentation.DEFAULT);
         writer.setOut(ThrowingWriter.throwing(new IOException("Buffer is full!")));
-        writer.whitespace();
-        fail("Exception expected.");
+        RuntimeException rte = assertThrows(RuntimeException.class, writer::whitespace);
+        assertThat(rte.getMessage(), containsString("Buffer is full!"));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testIndentModifiedUnderlyingWriter() {
         final StringWriter output = new StringWriter();
         SettableIndentingPrintWriter writer = new SettableIndentingPrintWriter(output, Indentation.DEFAULT);
         writer.setOut(output);
-        writer.indent();
-        fail("Exception expected");
+        NullPointerException npe = assertThrows(NullPointerException.class, writer::indent);
+        assertThat(npe.getMessage(), notNullValue());
     }
 
     /**

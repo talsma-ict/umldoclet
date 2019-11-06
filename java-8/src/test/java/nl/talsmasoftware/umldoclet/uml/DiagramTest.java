@@ -17,9 +17,9 @@ package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasToString;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -46,7 +46,7 @@ public class DiagramTest {
     private ImageConfig imageconfig;
     private Collection<ImageConfig.Format> formats = new ArrayList<>(singleton(SVG));
 
-    @Before
+    @BeforeEach
     public void setUp() {
         config = mock(Configuration.class);
         imageconfig = mock(ImageConfig.class);
@@ -56,7 +56,7 @@ public class DiagramTest {
         when(imageconfig.directory()).thenReturn(Optional.of("images"));
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         verify(config, atLeast(0)).images();
         verify(config, atLeast(0)).destinationDirectory();

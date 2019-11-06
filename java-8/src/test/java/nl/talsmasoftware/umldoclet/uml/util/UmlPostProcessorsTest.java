@@ -21,33 +21,28 @@ import nl.talsmasoftware.umldoclet.uml.Namespace;
 import nl.talsmasoftware.umldoclet.uml.Type;
 import nl.talsmasoftware.umldoclet.uml.Type.Classification;
 import nl.talsmasoftware.umldoclet.uml.TypeName;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.fail;
 
 public class UmlPostProcessorsTest {
     private static final Namespace UNNAMED = new Namespace(null, "");
 
     private UmlPostProcessors postProcessors;
 
-    @Before
+    @BeforeEach
     public void initializePostprocessors() {
         postProcessors = new UmlPostProcessors();
     }
 
     @Test
     public void testJavaBeanPropertiesAsFieldsPostProcessorAcceptsNull() {
-        try {
-            postProcessors.javaBeanPropertiesAsFieldsPostProcessor().accept(null);
-        } catch (NullPointerException npe) {
-            fail("postprocessor should just accept null.");
-        }
+        postProcessors.javaBeanPropertiesAsFieldsPostProcessor().accept(null);
     }
 
     @Test

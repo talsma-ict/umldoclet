@@ -15,7 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.logging;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
 

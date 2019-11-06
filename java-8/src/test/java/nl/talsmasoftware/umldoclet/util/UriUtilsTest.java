@@ -15,15 +15,17 @@
  */
 package nl.talsmasoftware.umldoclet.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.net.URI;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class UriUtilsTest {
 
@@ -77,9 +79,11 @@ public class UriUtilsTest {
         assertThat(uri, is(URI.create(expectedPath + query)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testAddPathComponentRelativePathInAbsoluteUri() {
-        UriUtils.addPathComponent(URI.create("http://www.google.com?q=query"), "relative");
+        IllegalArgumentException iae = assertThrows(IllegalArgumentException.class, () ->
+                UriUtils.addPathComponent(URI.create("http://www.google.com?q=query"), "relative"));
+        assertThat(iae.getMessage(), notNullValue());
     }
 
     @Test

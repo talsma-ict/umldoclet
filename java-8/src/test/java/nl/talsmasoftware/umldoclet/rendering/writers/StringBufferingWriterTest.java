@@ -15,23 +15,25 @@
  */
 package nl.talsmasoftware.umldoclet.rendering.writers;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasToString;
-import static org.junit.Assert.fail;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Sjoerd Talsma
  */
 public class StringBufferingWriterTest {
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void createWithNullDelegate() {
-        new StringBufferingWriter(null);
-        fail("Null pointer exception expected.");
+        NullPointerException npe = assertThrows(NullPointerException.class, () ->
+                new StringBufferingWriter(null));
+        assertThat(npe.getMessage(), notNullValue());
     }
 
     @Test

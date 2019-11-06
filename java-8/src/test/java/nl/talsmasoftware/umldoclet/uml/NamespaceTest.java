@@ -17,9 +17,9 @@ package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static java.util.Collections.singleton;
 import static nl.talsmasoftware.umldoclet.configuration.ImageConfig.Format.SVG;
@@ -38,7 +38,7 @@ public class NamespaceTest {
     private Configuration config;
     private ImageConfig images;
 
-    @Before
+    @BeforeEach
     public void initializeMocks() {
         config = mock(Configuration.class);
         images = mock(ImageConfig.class);
@@ -46,7 +46,7 @@ public class NamespaceTest {
         when(images.formats()).thenReturn(singleton(SVG));
     }
 
-    @After
+    @AfterEach
     public void verifyMocks() {
         verify(config, atLeast(0)).images();
         verify(images, atLeast(0)).formats();

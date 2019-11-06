@@ -16,9 +16,9 @@
 package nl.talsmasoftware.umldoclet.html;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,15 +34,15 @@ public class HtmlFileTest {
 
     private static File tempdir;
 
-    @BeforeClass
+    @BeforeAll
     public static void createTempdir() throws IOException {
         tempdir = File.createTempFile("HtmlFile", "-test");
         assertThat("Delete tempfile", tempdir.delete(), is(true));
         assertThat("Create temporary directory", tempdir.mkdirs(), is(true));
     }
 
-    @AfterClass
-    public static void deleteTempdir() throws IOException {
+    @AfterAll
+    public static void deleteTempdir() {
         for (File f : tempdir.listFiles()) f.delete();
         assertThat("Delete temporary directory", tempdir.delete(), is(true));
     }

@@ -17,9 +17,9 @@ package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ public class DependencyDiagramTest {
     private DependencyDiagram diagram;
     private List<String> excluded;
 
-    @Before
+    @BeforeEach
     public void prepareMocksDiagramAndExclusions() {
         excluded = new ArrayList<>(asList("java", "javax"));
         mockImages = mock(ImageConfig.class);
@@ -55,7 +55,7 @@ public class DependencyDiagramTest {
         diagram = new DependencyDiagram(mockConfig, "package-dependencies.puml");
     }
 
-    @After
+    @AfterEach
     public void verifyMocks() {
         verify(mockConfig, atLeastOnce()).images();
         verify(mockImages, atLeastOnce()).formats();
