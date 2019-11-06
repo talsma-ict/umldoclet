@@ -30,11 +30,10 @@
     <!-- Artifact identification -->
     <artifactId>umldoclet-java8</artifactId>
     <packaging>jar</packaging>
-
-    <!-- Project information -->
     <name>UML doclet (java 8)</name>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <plantuml.version>1.2019.12</plantuml.version>
         <plantuml.sources>${project.basedir}/src/main/plantuml-asl-${plantuml.version}.tar.gz</plantuml.sources>
     </properties>
