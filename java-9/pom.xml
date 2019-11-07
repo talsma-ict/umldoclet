@@ -34,6 +34,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.release>9</maven.compiler.release>
     </properties>
 
     <build>
@@ -49,7 +50,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <target>
-                                <copy todir="${project.build.outputDirectory}">
+                                <copy todir="${project.build.outputDirectory}" preservelastmodified="true">
                                     <fileset dir="${project.basedir}/../java-8/target/classes">
                                         <include name="**/*"/>
                                     </fileset>
@@ -60,12 +61,18 @@
                 </executions>
             </plugin>
             <plugin>
+                <artifactId>maven-toolchains-plugin</artifactId>
+                <configuration>
+                    <toolchains>
+                        <jdk>
+                            <version>[9,)</version>
+                        </jdk>
+                    </toolchains>
+                </configuration>
+            </plugin>
+            <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <jdkToolchain>
-                        <version>9</version>
-                    </jdkToolchain>
-                    <release>9</release>
                     <multiReleaseOutput>true</multiReleaseOutput>
                 </configuration>
             </plugin>
