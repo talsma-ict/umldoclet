@@ -34,6 +34,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <plantuml.version>1.2019.12</plantuml.version>
         <plantuml.sources>${project.basedir}/src/main/plantuml-asl-${plantuml.version}.tar.gz</plantuml.sources>
     </properties>
@@ -93,6 +95,16 @@
                 </executions>
             </plugin>
             <plugin>
+                <artifactId>maven-toolchains-plugin</artifactId>
+                <configuration>
+                    <toolchains>
+                        <jdk>
+                            <version>[1.8,9)</version>
+                        </jdk>
+                    </toolchains>
+                </configuration>
+            </plugin>
+            <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <executions>
                     <execution>
@@ -121,13 +133,6 @@
                         <phase>compile</phase>
                     </execution>
                 </executions>
-                <configuration>
-                    <jdkToolchain>
-                        <version>1.8</version>
-                    </jdkToolchain>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
             </plugin>
         </plugins>
     </build>
