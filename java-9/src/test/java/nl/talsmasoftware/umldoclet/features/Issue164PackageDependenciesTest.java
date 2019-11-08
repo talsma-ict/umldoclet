@@ -43,16 +43,8 @@ import static org.hamcrest.Matchers.is;
 public class Issue164PackageDependenciesTest {
     private static List<String> packageNames = asList(
             UMLDoclet.class.getPackageName(),
-            Configuration.class.getPackageName(),
-            HtmlPostprocessor.class.getPackageName(),
             DocletConfig.class.getPackageName(),
-            DependenciesElementScanner.class.getPackageName(),
-            Logger.class.getPackageName(),
-            Renderer.class.getPackageName(),
-            Indentation.class.getPackageName(),
-            DelegatingWriter.class.getPackageName(),
-            UMLNode.class.getPackageName(),
-            FileUtils.class.getPackageName()
+            DependenciesElementScanner.class.getPackageName()
     );
     private static final File outputdir = new File("target/issues/164");
 
