@@ -53,14 +53,14 @@
                 <filtering>true</filtering>
             </resource>
             <resource>
-                <directory>${project.build.directory}/generated-sources/plantuml-asl</directory>
+                <directory>${project.build.directory}/plantuml-asl</directory>
                 <includes>
                     <include>stdlib/**/*.repx</include>
                     <include>skin/**/*.skin</include>
                 </includes>
             </resource>
             <resource>
-                <directory>${project.build.directory}/generated-sources/plantuml-asl/src</directory>
+                <directory>${project.build.directory}/plantuml-asl/src</directory>
                 <includes>
                     <include>net/sourceforge/plantuml/**/*.png</include>
                     <include>net/sourceforge/plantuml/openiconic/data/**/*.txt</include>
@@ -87,7 +87,7 @@
                             -->
                             <target>
                                 <gunzip src="${plantuml.sources}" dest="target/plantuml-asl.tar"/>
-                                <untar src="target/plantuml-asl.tar" dest="target/generated-sources/plantuml-asl"/>
+                                <untar src="target/plantuml-asl.tar" dest="target/plantuml-asl"/>
                                 <delete file="target/plantuml-asl.tar"/>
                             </target>
                         </configuration>
@@ -119,8 +119,7 @@
                         <phase>compile</phase>
                         <configuration>
                             <compileSourceRoots>
-                                <compileSourceRoot>${project.build.directory}/generated-sources/plantuml-asl/src
-                                </compileSourceRoot>
+                                <compileSourceRoot>${project.build.directory}/plantuml-asl/src</compileSourceRoot>
                             </compileSourceRoots>
                             <showDeprecation>false</showDeprecation>
                         </configuration>
@@ -143,10 +142,6 @@
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
-                        <configuration>
-                            <append>true</append>
-                            <destFile>${project.basedir}/../target/jacoco.exec</destFile>
-                        </configuration>
                     </execution>
                 </executions>
                 <configuration>

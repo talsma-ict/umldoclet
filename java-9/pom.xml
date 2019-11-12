@@ -39,29 +39,6 @@
 
     <build>
         <plugins>
-<!--
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-java8-classes</id>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <phase>process-resources</phase>
-                        <configuration>
-                            <target>
-                                <copy todir="${project.build.outputDirectory}" preservelastmodified="true">
-                                    <fileset dir="${project.basedir}/../java-8/target/classes">
-                                        <include name="**/*"/>
-                                    </fileset>
-                                </copy>
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
--->
             <plugin>
                 <artifactId>maven-toolchains-plugin</artifactId>
                 <configuration>
@@ -72,22 +49,6 @@
                     </toolchains>
                 </configuration>
             </plugin>
-<!--
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <multiReleaseOutput>true</multiReleaseOutput>
-                </configuration>
-            </plugin>
--->
-<!--
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-&lt;!&ndash;                    <additionalClasspathElements>${project.build.outputDirectory}/META-INF/versions/9</additionalClasspathElements>&ndash;&gt;
-                </configuration>
-            </plugin>
--->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -97,10 +58,6 @@
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
-                        <configuration>
-                            <append>true</append>
-                            <destFile>${project.basedir}/../target/jacoco.exec</destFile>
-                        </configuration>
                     </execution>
                 </executions>
                 <configuration>
@@ -113,9 +70,39 @@
                 </configuration>
             </plugin>
             <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>multirelease-classes</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <target>
+                                <copy todir="${project.build.directory}/classes-mr" preservelastmodified="true">
+                                    <fileset dir="${project.basedir}/../java-8/target/classes">
+                                        <include name="**/*"/>
+                                    </fileset>
+                                </copy>
+                                <copy todir="${project.build.directory}/classes-mr/META-INF/versions/9" preservelastmodified="true">
+                                    <fileset dir="${project.build.outputDirectory}">
+                                        <include name="**/*"/>
+                                    </fileset>
+                                </copy>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
+                    <classesDirectory>${project.build.directory}/classes-mr</classesDirectory>
                     <archive>
+                        <manifest>
+                            <mainClass>net.sourceforge.plantuml.Run</mainClass>
+                        </manifest>
                         <manifestEntries>
                             <Multi-Release>true</Multi-Release>
                         </manifestEntries>
@@ -126,7 +113,7 @@
     </build>
 
     <dependencies>
-        <dependency>
+        <dependency> <!-- force the java-8 module to be built first -->
             <groupId>${project.groupId}</groupId>
             <artifactId>umldoclet-java8</artifactId>
             <version>${project.version}</version>
