@@ -33,7 +33,7 @@
  *
  * <h2>Usage</h2>
  * <p>
- * Please see the separate <a href="https://github.com/talsma-ict/umldoclet/blob/develop/docs/USAGE.md">Usage page</a>
+ * Please see the separate <a href="https://github.com/talsma-ict/umldoclet/blob/develop/usage.md">Usage page</a>
  * on how to use the UML doclet in your own Java projects.
  *
  * <h2>Examples</h2>
