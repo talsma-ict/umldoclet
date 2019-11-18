@@ -30,23 +30,24 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
-public class UmlPostProcessorsTest {
+class UmlPostProcessorsTest {
     private static final Namespace UNNAMED = new Namespace(null, "");
 
     private UmlPostProcessors postProcessors;
 
     @BeforeEach
-    public void initializePostprocessors() {
+    void initializePostprocessors() {
         postProcessors = new UmlPostProcessors();
     }
 
     @Test
-    public void testJavaBeanPropertiesAsFieldsPostProcessorAcceptsNull() {
-        postProcessors.javaBeanPropertiesAsFieldsPostProcessor().accept(null);
+    void testJavaBeanPropertiesAsFieldsPostProcessorAcceptsNull() {
+        Type type = null;
+        postProcessors.javaBeanPropertiesAsFieldsPostProcessor().accept(type);
     }
 
     @Test
-    public void testJavaBeanPropertiesAsFieldsPostProcessorAcceptsEmptyType() {
+    void testJavaBeanPropertiesAsFieldsPostProcessorAcceptsEmptyType() {
         Type emptyType = new Type(UNNAMED, Classification.CLASS, typeName("EmptyType"));
         postProcessors.javaBeanPropertiesAsFieldsPostProcessor().accept(emptyType);
         assertThat(emptyType.getPackagename(), equalTo(""));
@@ -56,7 +57,7 @@ public class UmlPostProcessorsTest {
     }
 
     @Test
-    public void testJavaBeanPropertiesAsFielsPostProcessorSimpleAccessors() {
+    void testJavaBeanPropertiesAsFielsPostProcessorSimpleAccessors() {
         Type simpleBean = new Type(UNNAMED, Classification.CLASS, typeName("SimpleBean"));
         Method businessMethod = new Method(simpleBean, "someBusinessMethod", null);
         Method getter = new Method(simpleBean, "getStringValue", typeName("java.lang.String"));

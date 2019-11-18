@@ -23,10 +23,10 @@ import static org.hamcrest.Matchers.hasToString;
 /**
  * @author Sjoerd Talsma
  */
-public class IndentingRendererTest {
+class IndentingRendererTest {
 
     @Test
-    public void testWriteToAppendable_defaultIndentation() {
+    void testWriteToAppendableWithDefaultIndentation() {
         StringBuilder stringBuilder = new StringBuilder();
         new StringIndentingRenderer("The quick brown fox jumps over the lazy dog").writeTo(stringBuilder);
 
@@ -34,7 +34,7 @@ public class IndentingRendererTest {
     }
 
     @Test
-    public void testWriteToAppendableIPW() {
+    void testWriteToAppendableIPW() {
         StringBuilder stringBuilder = new StringBuilder();
         IndentingPrintWriter ipw = IndentingPrintWriter.wrap(stringBuilder, Indentation.tabs(0));
         new StringIndentingRenderer("The quick brown fox jumps over the lazy dog").writeTo((Appendable) ipw);

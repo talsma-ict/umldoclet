@@ -16,16 +16,8 @@
 package nl.talsmasoftware.umldoclet.features;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
-import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.html.HtmlPostprocessor;
 import nl.talsmasoftware.umldoclet.javadoc.DocletConfig;
 import nl.talsmasoftware.umldoclet.javadoc.dependencies.DependenciesElementScanner;
-import nl.talsmasoftware.umldoclet.logging.Logger;
-import nl.talsmasoftware.umldoclet.rendering.Renderer;
-import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
-import nl.talsmasoftware.umldoclet.rendering.writers.DelegatingWriter;
-import nl.talsmasoftware.umldoclet.uml.UMLNode;
-import nl.talsmasoftware.umldoclet.util.FileUtils;
 import nl.talsmasoftware.umldoclet.util.TestUtil;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -40,7 +32,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
-public class Issue164PackageDependenciesTest {
+class Issue164PackageDependenciesTest {
     private static List<String> packageNames = asList(
             UMLDoclet.class.getPackageName(),
             DocletConfig.class.getPackageName(),
@@ -49,7 +41,7 @@ public class Issue164PackageDependenciesTest {
     private static final File outputdir = new File("target/issues/164");
 
     @BeforeAll
-    public static void createJavaDoc() {
+    static void createJavaDoc() {
         List<String> args = new ArrayList<>(asList(
                 "-d", outputdir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
@@ -61,7 +53,7 @@ public class Issue164PackageDependenciesTest {
     }
 
     @Test
-    public void testPackageDependencies() {
+    void testPackageDependencies() {
         String packageDependencies = TestUtil.read(new File(outputdir, "package-dependencies.puml"));
 
         assertThat("Doclet superclass dependency", packageDependencies,
