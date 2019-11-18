@@ -22,12 +22,13 @@
 
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>nl.talsmasoftware</groupId>
+        <groupId>nl.talsmasoftware.umldoclet</groupId>
         <artifactId>umldoclet-root</artifactId>
         <version>2.0.7-SNAPSHOT</version>
     </parent>
 
     <!-- Artifact identification -->
+    <groupId>nl.talsmasoftware</groupId>
     <artifactId>umldoclet</artifactId>
     <packaging>jar</packaging>
     <name>UML doclet (multi-release)</name>
@@ -114,7 +115,7 @@
 
     <dependencies>
         <dependency> <!-- force the java-8 module to be built first -->
-            <groupId>${project.groupId}</groupId>
+            <groupId>nl.talsmasoftware.umldoclet</groupId>
             <artifactId>umldoclet-java8</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>

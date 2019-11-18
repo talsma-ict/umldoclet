@@ -22,7 +22,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>nl.talsmasoftware</groupId>
+        <groupId>nl.talsmasoftware.umldoclet</groupId>
         <artifactId>umldoclet-root</artifactId>
         <version>2.0.7-SNAPSHOT</version>
     </parent>
