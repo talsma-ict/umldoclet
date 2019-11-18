@@ -52,7 +52,7 @@ public class Issue64ExtendsObjectTest {
     }
 
     @BeforeAll
-    public static void produceUml() throws IOException {
+    static void produceUml() throws IOException {
         ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
                 "-sourcepath", "src/test/java",
@@ -67,13 +67,13 @@ public class Issue64ExtendsObjectTest {
     }
 
     @Test
-    public void testIssue64_TextendsObject() {
+    void testIssue64GenericTypeTExtendsObject() {
         assertThat(emptySetUml, not(containsString("EmptySet<T extends Object>")));
         assertThat(emptySetUml, containsString("EmptySet<T>"));
     }
 
     @Test
-    public void testIssue82_ContainingClassReference() {
+    void testIssue82ContainingClassReference() {
         assertThat(emptySetUml, containsString(
                 Issue64ExtendsObjectTest.class.getName()
                         + " +-- "

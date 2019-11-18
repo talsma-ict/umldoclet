@@ -29,6 +29,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class UmlPostProcessorsTest {
     private static final Namespace UNNAMED = new Namespace(null, "");
@@ -42,8 +43,11 @@ class UmlPostProcessorsTest {
 
     @Test
     void testJavaBeanPropertiesAsFieldsPostProcessorAcceptsNull() {
-        Type type = null;
-        postProcessors.javaBeanPropertiesAsFieldsPostProcessor().accept(type);
+        try {
+            postProcessors.javaBeanPropertiesAsFieldsPostProcessor().accept(null);
+        } catch (NullPointerException npe) {
+            fail("Null type should be ignored by the postprocessor but threw: " + npe);
+        }
     }
 
     @Test

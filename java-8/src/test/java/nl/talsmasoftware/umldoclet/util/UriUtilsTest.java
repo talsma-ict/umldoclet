@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import java.net.URI;
 
+import static nl.talsmasoftware.umldoclet.util.TestUtil.assertUnsupportedConstructor;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -27,22 +28,22 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class UriUtilsTest {
+class UriUtilsTest {
 
     @Test
-    public void testUnsupportedConstructor() {
-        TestUtil.assertUnsupportedConstructor(UriUtils.class);
+    void testUnsupportedConstructor() {
+        assertUnsupportedConstructor(UriUtils.class);
     }
 
     @Test
-    public void testAddPathComponentNulls() {
+    void testAddPathComponentNulls() {
         final URI uri = URI.create("http://www.google.com");
         assertThat(UriUtils.addPathComponent(null, "component"), is(nullValue()));
         assertThat(UriUtils.addPathComponent(uri, null), is(sameInstance(uri)));
     }
 
     @Test
-    public void testAddPathComponent() {
+    void testAddPathComponent() {
         URI uri = URI.create("http://www.google.com?q=query#fragment");
         String expected = "http://www.google.com";
         String query = "?q=query#fragment";
@@ -61,7 +62,7 @@ public class UriUtilsTest {
     }
 
     @Test
-    public void testAddPathComponentSpecialCharacters() {
+    void testAddPathComponentSpecialCharacters() {
         URI uri = URI.create("http://www.google.com?q=query#fragment");
         String expectedPath = "http://www.google.com";
         String query = "?q=query#fragment";
@@ -80,14 +81,14 @@ public class UriUtilsTest {
     }
 
     @Test
-    public void testAddPathComponentRelativePathInAbsoluteUri() {
+    void testAddPathComponentRelativePathInAbsoluteUri() {
         IllegalArgumentException iae = assertThrows(IllegalArgumentException.class, () ->
                 UriUtils.addPathComponent(URI.create("http://www.google.com?q=query"), "relative"));
         assertThat(iae.getMessage(), notNullValue());
     }
 
     @Test
-    public void testAddParamNulls() {
+    void testAddParamNulls() {
         final URI uri = URI.create("http://www.google.com");
         assertThat(UriUtils.addHttpParam(null, "name", "value"), is(nullValue()));
         assertThat(UriUtils.addHttpParam(uri, null, "value"), is(equalTo(URI.create("http://www.google.com"))));
@@ -95,33 +96,33 @@ public class UriUtilsTest {
     }
 
     @Test
-    public void testAddParamRelativeLink() {
+    void testAddParamRelativeLink() {
         final URI uri = URI.create("../relativepath");
         assertThat(UriUtils.addHttpParam(uri, "name", "value"), is(equalTo(uri)));
     }
 
     @Test
-    public void testAddParamFileLink() {
+    void testAddParamFileLink() {
         final URI uri = URI.create("file:/absolutepath");
         assertThat(UriUtils.addHttpParam(uri, "name", "value"), is(equalTo(uri)));
     }
 
     @Test
-    public void testAddParamHttpLink() {
+    void testAddParamHttpLink() {
         final URI uri = URI.create("http://www.google.com");
         assertThat(UriUtils.addHttpParam(uri, "q", "This is my query"),
                 is(equalTo(URI.create("http://www.google.com?q=This%20is%20my%20query"))));
     }
 
     @Test
-    public void testAddParamSecondParameterWithFragment() {
+    void testAddParamSecondParameterWithFragment() {
         final URI uri = URI.create("https://www.google.com?q=This%20is%20my%20query#fragment");
         assertThat(UriUtils.addHttpParam(uri, "q", "And this is my second"),
                 is(equalTo(URI.create("https://www.google.com?q=This%20is%20my%20query&q=And%20this%20is%20my%20second#fragment"))));
     }
 
     @Test
-    public void testAddParamSpecialQueryCharacters() {
+    void testAddParamSpecialQueryCharacters() {
         URI uri = URI.create("http://www.google.com#fragment");
         uri = UriUtils.addHttpParam(uri, "query parameter#", "left = right");
         String expected = "http://www.google.com?query%20parameter%23=left%20%3D%20right";

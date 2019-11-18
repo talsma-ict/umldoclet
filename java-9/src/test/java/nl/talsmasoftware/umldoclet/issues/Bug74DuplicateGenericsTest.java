@@ -41,7 +41,7 @@ public class Bug74DuplicateGenericsTest {
     }
 
     @BeforeAll
-    public static void createJavadoc() {
+    static void createJavadoc() {
         String classAsPath = packageAsPath + '/' + Bug74DuplicateGenericsTest.class.getSimpleName();
         assertThat("Javadoc result", ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
@@ -56,9 +56,15 @@ public class Bug74DuplicateGenericsTest {
     }
 
     @Test
-    public void testGenericsNotDuplicated() {
+    void testGenericsNotDuplicatedInClassDiagram() {
         assertThat(classUml, containsString("as java.util.function.Supplier<T>"));
         assertThat(classUml, containsString("<size:14>Supplier\\n"));
+    }
+
+    @Test
+    void testGenericsNotDuplicatedInPackageDiagram() {
+        assertThat(packageUml, containsString("interface Supplier<T>"));
+        assertThat(packageUml, containsString("MySupplier<T>"));
     }
 
 }
