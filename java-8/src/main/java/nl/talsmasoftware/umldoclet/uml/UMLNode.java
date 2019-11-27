@@ -81,7 +81,7 @@ public abstract class UMLNode implements IndentingRenderer {
      * @return The filtered list of children of this uml node (unmodifiable).
      */
     public <T extends UMLNode> List<T> getChildren(Class<T> type) {
-        return unmodifiableList(children.stream().filter(type::isInstance).map(type::cast).collect(toList()));
+        return unmodifiableList(getChildren().stream().filter(type::isInstance).map(type::cast).collect(toList()));
     }
 
     public void addChild(UMLNode child) {

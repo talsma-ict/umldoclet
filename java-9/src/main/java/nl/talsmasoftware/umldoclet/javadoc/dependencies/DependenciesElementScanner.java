@@ -44,47 +44,48 @@ public class DependenciesElementScanner extends ElementScanner9<Set<PackageDepen
     }
 
     @Override
-    public Set<PackageDependency> visitPackage(PackageElement e, String fromPackage) {
-        boolean included = docEnv.isIncluded(e);
-        String visitedPackage = e.getQualifiedName().toString();
+    public Set<PackageDependency> visitPackage(PackageElement packageElement, String fromPackage) {
+        boolean included = docEnv.isIncluded(packageElement);
+        String visitedPackage = packageElement.getQualifiedName().toString();
         if (!included) {
             config.logger().debug(Message.DEBUG_PACKAGE_VISITED_BUT_UNDOCUMENTED, visitedPackage);
             return DEFAULT_VALUE;
         }
-        return super.visitPackage(e, visitedPackage);
+        return super.visitPackage(packageElement, visitedPackage);
     }
 
     @Override
-    public Set<PackageDependency> visitType(TypeElement e, String fromPackage) {
-        String pkg = fromPackage == null && docEnv.isIncluded(e) ? PackageElementVisitor.INSTANCE.visit(e) : fromPackage;
-        addDependency(pkg, e.getSuperclass());
-        e.getInterfaces().forEach(implemented -> addDependency(pkg, implemented));
+    public Set<PackageDependency> visitType(TypeElement typeElement, String fromPackage) {
+        String pkg = fromPackage == null && docEnv.isIncluded(typeElement)
+                ? PackageElementVisitor.INSTANCE.visit(typeElement) : fromPackage;
+        addDependency(pkg, typeElement.getSuperclass());
+        typeElement.getInterfaces().forEach(implemented -> addDependency(pkg, implemented));
         // TODO: figure out if there is a way to add the class' imports dependencies!
-        return super.visitType(e, pkg);
+        return super.visitType(typeElement, pkg);
     }
 
     @Override
-    public Set<PackageDependency> visitVariable(VariableElement e, String fromPackage) {
-        addDependency(fromPackage, e.asType());
-        return super.visitVariable(e, fromPackage);
+    public Set<PackageDependency> visitVariable(VariableElement variableElement, String fromPackage) {
+        addDependency(fromPackage, variableElement.asType());
+        return super.visitVariable(variableElement, fromPackage);
     }
 
     @Override
-    public Set<PackageDependency> visitExecutable(ExecutableElement e, String fromPackage) {
-        addDependency(fromPackage, e.getReturnType());
-        return super.visitExecutable(e, fromPackage); // will add the argument dependencies
+    public Set<PackageDependency> visitExecutable(ExecutableElement executableElement, String fromPackage) {
+        addDependency(fromPackage, executableElement.getReturnType());
+        return super.visitExecutable(executableElement, fromPackage); // will add the argument dependencies
     }
 
     @Override
-    public Set<PackageDependency> visitTypeParameter(TypeParameterElement e, String fromPackage) {
-        addDependency(fromPackage, e.getGenericElement());
-        e.getBounds().forEach(bound -> addDependency(fromPackage, bound));
-        return super.visitTypeParameter(e, fromPackage);
+    public Set<PackageDependency> visitTypeParameter(TypeParameterElement typeParameterElement, String fromPackage) {
+        addDependency(fromPackage, typeParameterElement.getGenericElement());
+        typeParameterElement.getBounds().forEach(bound -> addDependency(fromPackage, bound));
+        return super.visitTypeParameter(typeParameterElement, fromPackage);
     }
 
     @Override
-    public Set<PackageDependency> visitUnknown(Element e, String fromPackage) {
-        return DEFAULT_VALUE;
+    public Set<PackageDependency> visitUnknown(Element element, String fromPackage) {
+        return scan(element.getEnclosedElements(), fromPackage);
     }
 
     private void addDependency(String fromPackage, TypeMirror toType) {

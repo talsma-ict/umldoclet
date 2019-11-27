@@ -27,9 +27,11 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.hasToString;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.atLeastOnce;
@@ -69,7 +71,18 @@ public class DependencyDiagramTest {
         diagram.addPackageDependency("foo.bar", "java.lang");
         diagram.addPackageDependency("foo.bar", "javax");
         diagram.addPackageDependency("foo.bar", "javax.activation");
-        assertThat(diagram.getChildren(), is(empty()));
+        diagram.addPackageDependency("foo.bar", "foo.bar.baz");
+        assertThat(diagram.getChildren(), hasSize(1));
+        assertThat(diagram.getChildren(), contains(hasToString(containsString("foo.bar --> foo.bar.baz"))));
+    }
+
+    @Test
+    public void testOnlyDefaultExcludedPackageDependencies() {
+        diagram.addPackageDependency("foo.bar", "java");
+        diagram.addPackageDependency("foo.bar", "java.lang");
+        diagram.addPackageDependency("foo.bar", "javax");
+        diagram.addPackageDependency("foo.bar", "javax.activation");
+        assertThat(diagram.getChildren(), hasSize(4));
     }
 
     @Test
@@ -93,6 +106,9 @@ public class DependencyDiagramTest {
     public void testExcludedPackageDependenciesUnnamed() {
         excluded.add("unnamed");
         diagram.addPackageDependency("foo.bar", "");
-        assertThat(diagram.getChildren(), is(empty()));
+        diagram.addPackageDependency("foo.bar", "java.lang");
+        diagram.addPackageDependency("foo.bar", "foo.bar.baz");
+        assertThat(diagram.getChildren(), hasSize(1));
+        assertThat(diagram.getChildren(), contains(hasToString(containsString("foo.bar --> foo.bar.baz"))));
     }
 }
