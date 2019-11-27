@@ -20,7 +20,10 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.uml.Reference.Side;
 
 import java.io.File;
+import java.util.List;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 public class DependencyDiagram extends Diagram {
 
@@ -32,17 +35,20 @@ public class DependencyDiagram extends Diagram {
         this.pumlFileName = pumlFileName;
     }
 
+    @Override
+    public List<UMLNode> getChildren() {
+        List<UMLNode> children = super.getChildren();
+        List<UMLNode> exclusionFiltered = children.stream().filter(this::isIncludedChild).collect(toList());
+        return exclusionFiltered.isEmpty() ? children : exclusionFiltered;
+    }
+
     public void addPackageDependency(String fromPackage, String toPackage) {
-        if (fromPackage != null && toPackage != null && !isExcludedPackage(toPackage)) {
+        if (fromPackage != null && toPackage != null) {
             this.addChild(new Reference(
                     Side.from(unnamedIfEmpty(fromPackage), null),
                     "-->",
                     Side.to(unnamedIfEmpty(toPackage), null)));
         }
-    }
-
-    private static String unnamedIfEmpty(String packageName) {
-        return packageName.isEmpty() ? "unnamed" : packageName;
     }
 
     private boolean isExcludedPackage(String toPackage) {
@@ -52,8 +58,8 @@ public class DependencyDiagram extends Diagram {
                         || ("unnamed".equals(excluded) && toPackage.isEmpty()));
     }
 
-    private static String dotSuffixed(String packageName) {
-        return packageName.endsWith(".") ? packageName : packageName + '.';
+    private boolean isIncludedChild(UMLNode child) {
+        return child instanceof Reference && !isExcludedPackage(((Reference) child).to.toString());
     }
 
     @Override
@@ -77,8 +83,7 @@ public class DependencyDiagram extends Diagram {
 
     private <IPW extends IndentingPrintWriter> IPW writePackageLinksTo(IPW output) {
         output.println("' Package links");
-        getChildren().stream()
-                .filter(Reference.class::isInstance).map(Reference.class::cast)
+        getChildren(Reference.class).stream()
                 .flatMap(reference -> Stream.of(reference.from.toString(), reference.to.toString()))
                 .distinct().map(packageName -> new Namespace(this, packageName))
                 .forEach(namespace -> writePackageLinkTo(output, namespace));
@@ -91,5 +96,13 @@ public class DependencyDiagram extends Diagram {
             output.append("class \"").append(namespace.name).append("\" ").append(link).append(" {\n}\n");
         }
         return output;
+    }
+
+    private static String unnamedIfEmpty(String packageName) {
+        return packageName.isEmpty() ? "unnamed" : packageName;
+    }
+
+    private static String dotSuffixed(String packageName) {
+        return packageName.endsWith(".") ? packageName : packageName + '.';
     }
 }
