@@ -21,7 +21,7 @@ the following [UML diagrams][plantuml] and add them to your documentation:
 
 The doclet will warn about (and optionally fail on) cyclic package dependencies.
 
-## Requirements:
+## Requirements
 
 To use the doclet together with the JavaDoc tool, the following is required.
 
@@ -56,7 +56,7 @@ default settings provide for you:
 
 - See [the contribute page](https://github.com/talsma-ict/umldoclet/contribute) for this repository.
 
-## Thanks!
+## Thanks
 
 - First of all, thank _you_ for using this doclet, I hope it may be of benefit to your project.
 - And of course most importantly a big thanks to the developers of the excellent [PlantUML project][plantuml]
@@ -66,13 +66,11 @@ default settings provide for you:
 
 - [Apache 2.0 license](../LICENSE)
 
-
+  <!-- Definitions -->
   [ci-img]: https://travis-ci.org/talsma-ict/umldoclet.svg?branch=develop
   [ci]: https://travis-ci.org/talsma-ict/umldoclet
   [coveralls-img]: https://coveralls.io/repos/github/talsma-ict/umldoclet/badge.svg
   [coveralls]: https://coveralls.io/github/talsma-ict/umldoclet
-  [lgtm]: https://lgtm.com/projects/g/talsma-ict/umldoclet
-  [lgtm-img]: https://img.shields.io/lgtm/grade/java/github/talsma-ict/umldoclet.svg?label=java&logo=lgtm
   [codacy]: https://www.codacy.com/app/talsma-ict/umldoclet?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=talsma-ict/umldoclet&amp;utm_campaign=Badge_Grade
   [codacy-img]: https://api.codacy.com/project/badge/Grade/b191c058492e466cb7044c1d53123d9a
   [maven-img]: https://img.shields.io/maven-metadata/v/http/central.maven.org/maven2/nl/talsmasoftware/umldoclet/maven-metadata.xml.svg

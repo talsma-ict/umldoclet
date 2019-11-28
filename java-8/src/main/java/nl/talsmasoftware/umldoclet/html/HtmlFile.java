@@ -84,7 +84,8 @@ final class HtmlFile {
     File createNewTempFile() throws IOException {
         final String fileName = path.getFileName().toString();
         final int lastDot = fileName.lastIndexOf('.');
-        String prefix = fileName, suffix = null;
+        String prefix = fileName;
+        String suffix = null;
         if (lastDot > 0) {
             prefix = fileName.substring(0, lastDot);
             suffix = fileName.substring(lastDot);

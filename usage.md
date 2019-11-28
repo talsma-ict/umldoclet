@@ -136,6 +136,8 @@ To display all options, please run:
 javadoc --help -docletpath umldoclet-2.x.jar -doclet nl.talsmasoftware.umldoclet.UMLDoclet
 ```
 
+### UML doclet options
+
 The rest of this section lists various options that are specific to the UML doclet.
 
 #### -umlImageDirectory &lt;image-dir&gt;
@@ -163,7 +165,7 @@ If any are found, javadoc will print a warning, listing the dependency cycles fo
 This option makes the javadoc task fail by turning this warning into an error.
 The default for this setting is `false`.
 
-
+  <!-- Definitions -->
   [maven-img]: https://img.shields.io/maven-central/v/nl.talsmasoftware/umldoclet.svg
   [maven]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22nl.talsmasoftware%22%20AND%20a%3A%22umldoclet%22
   [javadoc-wiki]: https://en.wikipedia.org/wiki/Javadoc
