@@ -126,6 +126,14 @@ public final class TestUtil {
         return dir;
     }
 
+    public static File createTempDirectory() {
+        try {
+            return createDirectory(deleteRecursive(File.createTempFile("umldoclet", "-test")));
+        } catch (IOException ioe) {
+            throw new AssertionError("Could not create new temporary directory");
+        }
+    }
+
     /**
      * Creates a new, empty file (if it doesn't already exist).
      *

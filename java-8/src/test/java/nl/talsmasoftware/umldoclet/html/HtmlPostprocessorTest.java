@@ -16,15 +16,24 @@
 package nl.talsmasoftware.umldoclet.html;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
+import nl.talsmasoftware.umldoclet.util.TestUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.util.Optional;
+
+import static java.util.Collections.singletonList;
+import static nl.talsmasoftware.umldoclet.configuration.ImageConfig.Format.SVG;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -32,18 +41,33 @@ import static org.mockito.Mockito.when;
 
 class HtmlPostprocessorTest {
 
+    private File tempdir;
     private Configuration mockConfiguration;
+    private ImageConfig mockImageConfig;
     private HtmlPostprocessor postprocessor;
 
     @BeforeEach
     void setUp() {
+        tempdir = TestUtil.createTempDirectory();
         mockConfiguration = mock(Configuration.class);
+        mockImageConfig = mock(ImageConfig.class);
+
+        when(mockConfiguration.destinationDirectory()).thenReturn(tempdir.getAbsolutePath());
+        when(mockConfiguration.images()).thenReturn(mockImageConfig);
+        when(mockImageConfig.formats()).thenReturn(singletonList(SVG));
+        when(mockImageConfig.directory()).thenReturn(Optional.empty());
+
         postprocessor = new HtmlPostprocessor(mockConfiguration);
     }
 
     @AfterEach
     void verifyMocks() {
-        verifyNoMoreInteractions(mockConfiguration);
+        verifyNoMoreInteractions(mockConfiguration, mockImageConfig);
+    }
+
+    @AfterEach
+    void cleanupTemporaryDirectory() {
+        TestUtil.deleteRecursive(tempdir);
     }
 
     @Test
@@ -61,6 +85,17 @@ class HtmlPostprocessorTest {
         assertThat(rte.getMessage(), containsStringIgnoringCase("destination directory"));
 
         verify(mockConfiguration).destinationDirectory();
+    }
+
+    @Test
+    void testHtmlPostprocessorOnEmptyDestinationDirectory() {
+
+        assertThat(postprocessor.postProcessHtml(), is(true));
+
+        verify(mockConfiguration, atLeastOnce()).destinationDirectory();
+        verify(mockConfiguration, atLeastOnce()).images();
+        verify(mockImageConfig, atLeastOnce()).formats();
+        verify(mockImageConfig, atLeastOnce()).directory();
     }
 
 }
