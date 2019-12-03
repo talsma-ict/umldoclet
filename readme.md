@@ -26,9 +26,11 @@ The doclet will warn about (and optionally fail on) cyclic package dependencies.
 To use the doclet together with the JavaDoc tool, the following is required.
 
 - [Javadoc version 9][doclet] or higher.  
-  For earlier versions of javadoc, please use the [latest `1.x` version][v1.x] of this doclet.
+  For versions of javadoc from earlier JDKs, please use the [latest `1.x` version][v1.x] of this doclet.
+  If you compile your java 8 javadocs with a more recent JDK (Javadoc version 9 or higher), please use the 2.x version.
 - This doclet jar. An apache-licensed version of plantuml is already included in the jar.
 - An installed version of [graphviz](http://plantuml.com/graphviz-dot), at least until [pure java visualization](https://github.com/talsma-ict/umldoclet/issues/51) works.
+  Graphviz needs to be compiled with [libexpat] support.
 
 ## Usage
 
@@ -82,3 +84,4 @@ default settings provide for you:
   [v1.x]: https://github.com/talsma-ict/umldoclet/tree/develop-v1
   [plantuml]: http://plantuml.com
   [doclet]: https://docs.oracle.com/javase/9/docs/api/jdk/javadoc/doclet/Doclet.html
+  [libexpat]: https://github.com/libexpat/libexpat/releases
