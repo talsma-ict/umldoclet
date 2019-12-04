@@ -51,7 +51,7 @@ as part of the rest of your build:
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <version>3.0.1</version>
+            <version>3.1.1</version>
             <executions>
                 <execution>
                     <id>attach-javadocs</id>
