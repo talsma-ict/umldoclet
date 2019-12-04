@@ -42,16 +42,6 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-toolchains-plugin</artifactId>
-                <configuration>
-                    <toolchains>
-                        <jdk>
-                            <version>[9,)</version>
-                        </jdk>
-                    </toolchains>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <executions>
@@ -76,10 +66,10 @@
                 <executions>
                     <execution>
                         <id>multirelease-classes</id>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>
-                        <phase>prepare-package</phase>
                         <configuration>
                             <target>
                                 <copy todir="${project.build.directory}/classes-mr" preservelastmodified="true">

@@ -77,10 +77,10 @@
                 <executions>
                     <execution>
                         <id>extract-plantuml-sources</id>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>
-                        <phase>generate-resources</phase>
                         <configuration>
                             <!--
                             Quick local builds;
@@ -96,16 +96,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <artifactId>maven-toolchains-plugin</artifactId>
-                <configuration>
-                    <toolchains>
-                        <jdk>
-                            <version>[1.8,9)</version>
-                        </jdk>
-                    </toolchains>
-                </configuration>
-            </plugin>
-            <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <executions>
                     <execution>
@@ -114,10 +104,10 @@
                     </execution>
                     <execution>
                         <id>compile-plantuml-sources</id>
+                        <phase>compile</phase>
                         <goals>
                             <goal>compile</goal>
                         </goals>
-                        <phase>compile</phase>
                         <configuration>
                             <compileSourceRoots>
                                 <compileSourceRoot>${project.build.directory}/plantuml-asl/src</compileSourceRoot>
@@ -127,12 +117,17 @@
                     </execution>
                     <execution>
                         <id>compile-umldoclet</id>
+                        <phase>compile</phase>
                         <goals>
                             <goal>compile</goal>
                         </goals>
-                        <phase>compile</phase>
                     </execution>
                 </executions>
+                <configuration>
+                    <jdkToolchain>
+                        <version>[1.8,9)</version>
+                    </jdkToolchain>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -197,5 +192,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
 </project>
