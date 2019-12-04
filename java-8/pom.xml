@@ -30,7 +30,7 @@
     <!-- Artifact identification -->
     <artifactId>umldoclet-java8</artifactId>
     <packaging>jar</packaging>
-    <name>UML doclet (java 8)</name>
+    <name>UML Doclet (java 8)</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

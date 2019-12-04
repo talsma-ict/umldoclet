@@ -31,7 +31,7 @@
     <groupId>nl.talsmasoftware</groupId>
     <artifactId>umldoclet</artifactId>
     <packaging>jar</packaging>
-    <name>UML doclet (multi-release)</name>
+    <name>UML Doclet</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -145,4 +145,32 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <jdkToolchain>
+                                        <version>9</version>
+                                    </jdkToolchain>
+                                    <includeDependencySources>true</includeDependencySources>
+                                    <docletPath>${build.outputDirectory}:${project.basedir}/../java-8/target/classes</docletPath>
+                                    <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
