@@ -29,8 +29,8 @@
     <packaging>pom</packaging>
 
     <!-- Project information -->
-    <name>Root - UML doclet</name>
-    <description>Javadoc StandardDoclet extension to include generated UML diagrams in the documentation.</description>
+    <name>Root - UML Doclet</name>
+    <description>Javadoc extension to generate and include UML diagrams in the standard documentation.</description>
     <url>https://github.com/talsma-ict/umldoclet</url>
     <inceptionYear>2016</inceptionYear>
 
