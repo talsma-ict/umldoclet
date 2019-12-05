@@ -31,12 +31,13 @@
     <groupId>nl.talsmasoftware</groupId>
     <artifactId>umldoclet</artifactId>
     <packaging>jar</packaging>
-    <name>UML doclet (multi-release)</name>
+    <name>UML Doclet</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>9</maven.compiler.release>
         <root.basedir>${project.parent.basedir}</root.basedir>
+        <java8.classes>${project.basedir}/../java-8/target/classes</java8.classes>
     </properties>
 
     <build>
@@ -73,7 +74,7 @@
                         <configuration>
                             <target>
                                 <copy todir="${project.build.directory}/classes-mr" preservelastmodified="true">
-                                    <fileset dir="${project.basedir}/../java-8/target/classes">
+                                    <fileset dir="${java8.classes}">
                                         <include name="**/*"/>
                                     </fileset>
                                 </copy>
@@ -83,6 +84,25 @@
                                     </fileset>
                                 </copy>
                             </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <jdkToolchain>
+                                <version>9</version>
+                            </jdkToolchain>
+                            <includeDependencySources>true</includeDependencySources>
+                            <docletPath>${build.outputDirectory}:${java8.classes}</docletPath>
+                            <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
                         </configuration>
                     </execution>
                 </executions>
@@ -144,5 +164,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
 </project>
