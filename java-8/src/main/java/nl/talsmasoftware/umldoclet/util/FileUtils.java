@@ -127,18 +127,12 @@ public final class FileUtils {
      * @throws IOException in case the call to {@code uri.toURL().openStream()} threw an I/O Exception.
      */
     public static Reader openReaderTo(String basedir, URI uri, String charsetName) throws IOException {
-        try {
-            return new InputStreamReader(uri.toURL().openStream(), charsetName);
-        } catch (IOException | RuntimeException ex) {
-            try {
-                File uriAsFile = uri.isAbsolute() && "file".equals(uri.getScheme()) ? new File(uri) : new File(uri.toASCIIString());
-                if (!uriAsFile.isFile()) uriAsFile = new File(basedir, uri.toASCIIString());
-                if (uriAsFile.isFile()) return new InputStreamReader(new FileInputStream(uriAsFile), charsetName);
-            } catch (IOException | RuntimeException secondaryEx) {
-                ex.addSuppressed(secondaryEx);
-            }
-            throw ex;
+        if ("file".equals(uri.getScheme()) || uri.getScheme() == null) {
+            File f = uri.isAbsolute() ? new File(uri) : new File(uri.toASCIIString());
+            if (!f.exists()) f = new File(basedir, uri.toASCIIString());
+            return new InputStreamReader(new FileInputStream(f), charsetName);
         }
+        return new InputStreamReader(uri.toURL().openStream(), charsetName);
     }
 
     public static boolean hasExtension(Object file, String extension) {
