@@ -21,15 +21,18 @@ import nl.talsmasoftware.umldoclet.logging.TestLogger;
 import nl.talsmasoftware.umldoclet.util.TestUtil;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -95,6 +98,7 @@ public class ExternalLinkTest {
     }
 
     @Test
+    @Ignore // No live package validation at the moment (see issue #227)
     public void testLiveExternalLink_packageList_badUrl() {
         when(config.destinationDirectory()).thenReturn("");
         TestUtil.write(new File(tempdir, "package-list"), "java.lang\n");
@@ -106,6 +110,7 @@ public class ExternalLinkTest {
     }
 
     @Test
+    @Ignore // No live package validation at the moment (see issue #227)
     public void testLiveExternalLink_elementList_badUrl() {
         when(config.destinationDirectory()).thenReturn("");
         TestUtil.write(new File(tempdir, "element-list"), "module:java.base\njava.lang\n");
@@ -114,6 +119,22 @@ public class ExternalLinkTest {
         Optional<URI> resolved = externalLink.resolveType("java.lang", "Object");
         assertThat(resolved, is(Optional.empty()));
         verify(config, atLeast(1)).destinationDirectory();
+    }
+
+    @Test
+    public void testFileURIs() throws IOException {
+        File file = new File(tempdir, "dummy.xyz");
+        new FileOutputStream(file).close();
+        URI toUri = file.toURI();
+        URI uriFromPath = URI.create(file.getPath());
+
+        assertThat(toUri.isAbsolute(), is(true));
+        assertThat(toUri.getScheme(), is("file"));
+        assertThat(new File(toUri).isFile(), is(true));
+
+        assertThat(uriFromPath.isAbsolute(), is(false));
+        assertThat(uriFromPath.getScheme(), is(nullValue()));
+        assertThat(new File(uriFromPath.toString()).isFile(), is(true));
     }
 
 }
