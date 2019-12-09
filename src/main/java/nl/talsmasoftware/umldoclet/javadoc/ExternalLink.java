@@ -85,9 +85,8 @@ final class ExternalLink {
 
     private URI findPackageUri(String modulename, String packagename) {
         String packagePath = packagename.replace('.', '/');
-        return modulename.isEmpty()
-                ? addPathComponent(makeAbsolute(docUri), modulename + '/' + packagePath)
-                : addPathComponent(makeAbsolute(docUri), packagePath);
+        if (!modulename.isEmpty()) packagePath = modulename + '/' + packagePath;
+        return addPathComponent(makeAbsolute(docUri), packagePath);
     }
 
     private Map<String, Set<String>> tryReadModules() {
