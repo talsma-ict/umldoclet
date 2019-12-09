@@ -101,7 +101,7 @@
                                 <version>9</version>
                             </jdkToolchain>
                             <includeDependencySources>true</includeDependencySources>
-                            <docletPath>${build.outputDirectory}:${java8.classes}</docletPath>
+                            <docletPath>${project.build.outputDirectory}:${java8.classes}</docletPath>
                             <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
                         </configuration>
                     </execution>
