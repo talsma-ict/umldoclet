@@ -39,8 +39,8 @@ script:
   - .travis/scripts/release.sh --color
 
 after_success:
-  - if [ -f java-9/target/jacoco.exec ]; then cd java-9; ../mvnw --batch-mode -DTRAVIS_JOB_ID="${TRAVIS_JOB_ID}" jacoco:report coveralls:report; fi
-  - if [ -f java-9/target/site/jacoco/jacoco.xml ]; then cd java-9; ../mvnw --batch-mode -DcoverageReportFile="java-9/target/site/jacoco/jacoco.xml" -DprojectToken="${CODACY_PROJECT_TOKEN}" -DapiToken="${CODACY_API_TOKEN:-}" com.gavinmogan:codacy-maven-plugin:coverage; fi
+  - if [ -f java-9/target/jacoco.exec ]; then cd java-9; ../mvnw --batch-mode -DTRAVIS_JOB_ID="${TRAVIS_JOB_ID}" jacoco:report coveralls:report; cd ..; fi
+  - if [ -f java-9/target/site/jacoco/jacoco.xml ]; then cd java-9; ../mvnw --batch-mode -DcoverageReportFile="java-9/target/site/jacoco/jacoco.xml" -DprojectToken="${CODACY_PROJECT_TOKEN}" -DapiToken="${CODACY_API_TOKEN:-}" com.gavinmogan:codacy-maven-plugin:coverage; cd ..; fi
 
 deploy:
   provider: releases
