@@ -82,10 +82,6 @@
                             <goal>run</goal>
                         </goals>
                         <configuration>
-                            <!--
-                            Quick local builds;
-                            Only run if directory ${project.build.directory}/generated-sources/plantuml-asl doesn't exist
-                            -->
                             <target>
                                 <gunzip src="${plantuml.sources}" dest="target/plantuml-asl.tar"/>
                                 <untar src="target/plantuml-asl.tar" dest="target/plantuml-asl"/>
