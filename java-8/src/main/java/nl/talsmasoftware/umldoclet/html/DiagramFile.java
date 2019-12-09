@@ -22,7 +22,8 @@ import java.io.File;
  */
 abstract class DiagramFile {
 
-    final File basedir, diagramFile;
+    final File basedir;
+    final File diagramFile;
 
     DiagramFile(File basedir, File diagramFile) {
         this.basedir = basedir;

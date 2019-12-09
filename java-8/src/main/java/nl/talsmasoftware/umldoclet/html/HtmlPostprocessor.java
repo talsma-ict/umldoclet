@@ -44,11 +44,11 @@ public class HtmlPostprocessor {
             }
             final Collection<DiagramFile> diagrams = new DiagramCollector(config).collectDiagrams();
 
-            long count = Files.walk(destinationDir.toPath())
+            Files.walk(destinationDir.toPath())
                     .filter(HtmlFile::isHtmlFile)
                     .map(path -> new HtmlFile(config, path))
                     .map(htmlFile -> htmlFile.process(diagrams))
-                    .filter(Boolean::booleanValue).count();
+                    .filter(Boolean::booleanValue).count(); // count triggers stream evaluation.
             // TODO debug the number of postprocessed HTML files?
             return true;
         } catch (IOException ioe) {
