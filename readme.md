@@ -5,7 +5,7 @@
 # UMLDoclet
 
 [![Codacy Badge][codacy-img]][codacy]
-<!-- [![Coverage Status][coveralls-img]][coveralls] -->
+[![Coverage Status][coveralls-img]][coveralls]
 
 Doclet for the JavaDoc tool that generates UML diagrams from the code.  
 
