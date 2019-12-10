@@ -17,6 +17,7 @@ package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
+import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,6 +55,7 @@ public class DependencyDiagramTest {
         when(mockConfig.images()).thenReturn(mockImages);
         when(mockImages.formats()).thenReturn(singleton(ImageConfig.Format.SVG));
         when(mockConfig.excludedPackageDependencies()).thenReturn(excluded);
+        when(mockConfig.indentation()).thenReturn(Indentation.DEFAULT);
         diagram = new DependencyDiagram(mockConfig, "package-dependencies.puml");
     }
 
@@ -62,6 +64,7 @@ public class DependencyDiagramTest {
         verify(mockConfig, atLeastOnce()).images();
         verify(mockImages, atLeastOnce()).formats();
         verify(mockConfig, atLeast(0)).excludedPackageDependencies();
+        verify(mockConfig, atLeast(0)).indentation();
         verifyNoMoreInteractions(mockConfig, mockImages);
     }
 

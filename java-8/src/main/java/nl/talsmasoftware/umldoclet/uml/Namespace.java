@@ -50,7 +50,7 @@ public class Namespace extends UMLNode {
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+    public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         writeNameTo(output.append("namespace").whitespace()).append('{').newline();
         writeChildrenTo(output.indent());
         output.append('}').newline();

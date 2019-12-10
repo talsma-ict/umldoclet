@@ -46,12 +46,12 @@ public class Parameters extends UMLNode {
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+    public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         return writeChildrenTo(output);
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
+    public IndentingPrintWriter writeChildrenTo(IndentingPrintWriter output) {
         output.append('(');
         String sep = "";
         for (UMLNode param : getChildren()) {
@@ -82,7 +82,7 @@ public class Parameters extends UMLNode {
         }
 
         @Override
-        public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+        public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
             String sep = "";
             MethodConfig methodConfig = getConfiguration().methods();
             if (name != null && MethodConfig.ParamNames.BEFORE_TYPE.equals(methodConfig.paramNames())) {

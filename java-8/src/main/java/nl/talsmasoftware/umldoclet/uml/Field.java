@@ -43,7 +43,7 @@ public class Field extends TypeMember {
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+    public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         if (!getConfiguration().fields().include(getVisibility())) return output;
         return super.writeTo(output);
     }

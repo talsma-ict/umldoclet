@@ -42,7 +42,7 @@ public class ClassDiagram extends Diagram {
     }
 
     @Override
-    protected <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
+    protected IndentingPrintWriter writeChildrenTo(IndentingPrintWriter output) {
         output.append("set namespaceSeparator none").newline()
                 .append("hide empty fields").newline()
                 .append("hide empty methods").newline()

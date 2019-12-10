@@ -53,7 +53,7 @@ public abstract class Diagram extends UMLNode {
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+    public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         output.append("@startuml").newline();
         IndentingPrintWriter indented = output.indent();
         writeChildrenTo(indented);
