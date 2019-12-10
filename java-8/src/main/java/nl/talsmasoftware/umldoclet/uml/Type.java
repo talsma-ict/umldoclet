@@ -101,7 +101,7 @@ public class Type extends UMLNode {
         return classfication;
     }
 
-    private <IPW extends IndentingPrintWriter> IPW writeNameTo(IPW output) {
+    private IndentingPrintWriter writeNameTo(IndentingPrintWriter output) {
         if (includePackagename && name.qualified.startsWith(this.packageNamespace.name + '.')) {
             String nameInPackage = name.qualified.substring(this.packageNamespace.name.length() + 1);
             output.append("\"<size:14>").append(nameInPackage)

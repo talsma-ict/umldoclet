@@ -81,7 +81,7 @@ public class DependencyDiagram extends Diagram {
         return output;
     }
 
-    private <IPW extends IndentingPrintWriter> IPW writePackageLinksTo(IPW output) {
+    private IndentingPrintWriter writePackageLinksTo(IndentingPrintWriter output) {
         output.println("' Package links");
         getChildren(Reference.class).stream()
                 .flatMap(reference -> Stream.of(reference.from.toString(), reference.to.toString()))
@@ -90,7 +90,7 @@ public class DependencyDiagram extends Diagram {
         return output;
     }
 
-    private <IPW extends IndentingPrintWriter> IPW writePackageLinkTo(IPW output, Namespace namespace) {
+    private IndentingPrintWriter writePackageLinkTo(IndentingPrintWriter output, Namespace namespace) {
         String link = Link.forPackage(namespace).toString().trim();
         if (!link.isEmpty()) {
             output.append("class \"").append(namespace.name).append("\" ").append(link).append(" {\n}\n");

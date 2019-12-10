@@ -58,7 +58,7 @@ public class Method extends TypeMember {
     }
 
     @Override
-    protected <IPW extends IndentingPrintWriter> IPW writeTypeTo(IPW output) {
+    protected IndentingPrintWriter writeTypeTo(IndentingPrintWriter output) {
         TypeDisplay returnTypeDisplay = getConfiguration().methods().returnType();
         if (type != null && !TypeDisplay.NONE.equals(returnTypeDisplay)) {
             output.append(": ").append(type.toUml(returnTypeDisplay, null));
