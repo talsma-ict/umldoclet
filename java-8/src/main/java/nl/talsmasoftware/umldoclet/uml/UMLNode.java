@@ -18,7 +18,6 @@ package nl.talsmasoftware.umldoclet.uml;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingRenderer;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -42,7 +41,7 @@ import static java.util.stream.Collectors.toList;
  *
  * @author Sjoerd Talsma
  */
-public abstract class UMLNode implements IndentingRenderer {
+public abstract class UMLNode {
 
     private UMLNode parent;
     private final List<UMLNode> children = new ArrayList<>();
@@ -105,14 +104,15 @@ public abstract class UMLNode implements IndentingRenderer {
      * By default children will be {@link #writeTo(IndentingPrintWriter) written}
      * with increased indentation for legibility.
      *
-     * @param <IPW>  The subclass of indenting print writer being written to.
      * @param output The output to write the children to.
      * @return A reference to the output for method chaining purposes.
      */
-    protected <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
+    protected IndentingPrintWriter writeChildrenTo(IndentingPrintWriter output) {
         getChildren().forEach(child -> child.writeTo(output));
         return output;
     }
+
+    protected abstract IndentingPrintWriter writeTo(IndentingPrintWriter output);
 
     /**
      * Renders the entire content of this renderer and returns it as a String value.

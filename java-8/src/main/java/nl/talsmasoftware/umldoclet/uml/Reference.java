@@ -17,7 +17,6 @@ package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -94,7 +93,7 @@ public class Reference extends UMLNode {
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+    public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         // Namespace aware compensation
         final Namespace namespace = findParent(Namespace.class).orElse(null);
 
@@ -129,11 +128,6 @@ public class Reference extends UMLNode {
         final Reference t_c = this.canonical();
         final Reference o_c = ((Reference) other).canonical();
         return t_c.from.equals(o_c.from) && t_c.type.equals(o_c.type) && t_c.to.equals(o_c.to);
-    }
-
-    @Override
-    public String toString() {
-        return writeTo(new StringWriter()).toString();
     }
 
     private String reverseType() {

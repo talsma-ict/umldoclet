@@ -69,7 +69,7 @@ public abstract class TypeMember extends UMLNode {
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+    public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         if (isAbstract) output.append("{abstract}").whitespace();
         if (isStatic) output.append("{static}").whitespace();
         output.append(umlVisibility());

@@ -116,7 +116,7 @@ public class Type extends UMLNode {
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+    public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         output.append(classfication.toUml()).whitespace();
         writeNameTo(output).whitespace();
         if (isDeprecated) output.append("<<deprecated>>").whitespace();
@@ -127,7 +127,7 @@ public class Type extends UMLNode {
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
+    public IndentingPrintWriter writeChildrenTo(IndentingPrintWriter output) {
         if (!getChildren().isEmpty()) {
             output.append('{').newline();
             super.writeChildrenTo(output.indent());

@@ -35,7 +35,7 @@ class UmlCharacters extends UMLNode {
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+    public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         output.append(content);
         return output;
     }
@@ -46,7 +46,7 @@ class UmlCharacters extends UMLNode {
         }
 
         @Override
-        public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+        public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
             super.writeTo(output).newline();
             return output;
         }
