@@ -4,7 +4,7 @@
 # Script containing basic logging and debugging features
 #
 
-SCRIPTNAME=$(basename ${0%.*})
+SCRIPTNAME="$(basename "${0%.*}")"
 [ -n "${USE_COLOR:-}" ] || if [[ -t 1 ]]; then USE_COLOR=true; else USE_COLOR=false; fi
 
 # Set colors if supported by the terminal and output is not redirected somewhere else

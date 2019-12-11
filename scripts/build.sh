@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
 set -eu -o pipefail
-source "$(dirname $0)/options.sh"
+source "$(dirname "$0")/options.sh"
 [[ "${DEBUG:-false}" =~ ^yes|true$ ]] && set -x
 
 # Import functions if not already imported
-declare -f debug > /dev/null || source "$(dirname $0)/logging.sh"
-declare -f is_semantic_version > /dev/null || source "$(dirname $0)/versioning.sh"
-declare -f is_pull_request > /dev/null || source "$(dirname $0)/git-functions.sh"
-declare -f is_maven_project > /dev/null || source "$(dirname $0)/maven-functions.sh"
+declare -f debug > /dev/null || source "$(dirname "$0")/logging.sh"
+declare -f is_semantic_version > /dev/null || source "$(dirname "$0")/versioning.sh"
+declare -f is_pull_request > /dev/null || source "$(dirname "$0")/git-functions.sh"
+declare -f is_maven_project > /dev/null || source "$(dirname "$0")/maven-functions.sh"
 
 #
 # Delegation
@@ -30,8 +30,8 @@ build_and_publish_artifacts() {
 # MAIN
 #----------------------
 
-[ -n "${VERSION:-}" ] || VERSION=$(get_version)
-[ -n "${GIT_BRANCH:-}" ] || GIT_BRANCH=$(find_remote_branch)
+[ -n "${VERSION:-}" ] || VERSION="$(get_version)"
+[ -n "${GIT_BRANCH:-}" ] || GIT_BRANCH="$(find_remote_branch)"
 
 if is_pull_request; then
     log "Pull request detected: Running a 'build and test' job without publishing artifacts..."

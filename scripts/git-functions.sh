@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-declare -f debug > /dev/null || source "$(dirname $0)/logging.sh"
+declare -f debug > /dev/null || source "$(dirname "$0")/logging.sh"
 
 #
 # Script containing some handy git functions because CI (travis) runs on a detached HEAD
@@ -12,29 +12,29 @@ fix_travis_fetch() {
 }
 
 is_pull_request() {
-    git ls-remote origin | grep $(git rev-parse HEAD) | grep "refs/pull/" >/dev/null
+    git ls-remote origin | grep "$(git rev-parse HEAD)" | grep "refs/pull/" >/dev/null
     return $?
 }
 
 find_release_tag() {
-    echo $(git tag -l --points-at HEAD | grep '^release-')
+    git tag -l --points-at HEAD | grep '^release-'
 }
 
 get_local_branch() {
-    echo "$(git branch | grep '*' | sed 's/[* ]*//')"
+    git branch | grep '\*' | sed 's/[* ]*//'
 }
 
 find_remote_branches() {
-    echo $(git ls-remote --heads origin | grep `git rev-parse HEAD` | sed "s/.*refs\/heads\///g")
+    git ls-remote --heads origin | grep "$(git rev-parse HEAD)" | sed "s/.*refs\/heads\///g"
 }
 
 find_remote_branch() {
     local local_branch="$(get_local_branch)"
     local remote_branches=$(find_remote_branches)
-    if [[ -n "${local_branch:-}" && "${remote_branches}" = *"${local_branch}" ]]; then echo ${local_branch};
-    elif [[ -n "${TRAVIS_BRANCH:-}" && "${remote_branches}" = *"${TRAVIS_BRANCH}" ]]; then echo ${TRAVIS_BRANCH};
-    elif [[ -n "${CI_COMMIT_REF_NAME:-}" && "${remote_branches}" = *"${CI_COMMIT_REF_NAME}" ]]; then echo ${CI_COMMIT_REF_NAME};
-    else echo ${remote_branches} | awk '{print $1}';
+    if [[ -n "${local_branch:-}" && "${remote_branches}" = *"${local_branch}" ]]; then echo "${local_branch}";
+    elif [[ -n "${TRAVIS_BRANCH:-}" && "${remote_branches}" = *"${TRAVIS_BRANCH}" ]]; then echo "${TRAVIS_BRANCH}";
+    elif [[ -n "${CI_COMMIT_REF_NAME:-}" && "${remote_branches}" = *"${CI_COMMIT_REF_NAME}" ]]; then echo "${CI_COMMIT_REF_NAME}";
+    else echo "${remote_branches}" | awk '{print $1}';
     fi
 }
 

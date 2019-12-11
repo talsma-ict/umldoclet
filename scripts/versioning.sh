@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-declare -f debug > /dev/null || source "$(dirname $0)/logging.sh"
-declare -f is_maven_project > /dev/null || source "$(dirname $0)/maven-functions.sh"
+declare -f debug > /dev/null || source "$(dirname "$0")/logging.sh"
+declare -f is_maven_project > /dev/null || source "$(dirname "$0")/maven-functions.sh"
 
 #----------------------
 # Script containing pre-defined functions regarding versioning.
@@ -26,7 +26,7 @@ is_snapshot_version() {
 # Test whether the first argument starts with either 'release-' or 'release/' followed by a valid semantic version
 is_release_version() {
     if [[ ${1:-} =~ ^release[/\-].*$ ]]; then
-        local version=$(echo ${1} | sed 's/^release[/-]//')
+        local version="$(echo "${1}" | sed 's/^release[/-]//')"
         is_semantic_version "${version}" && ! is_snapshot_version "${version}";
     else return 1;
     fi
@@ -53,7 +53,7 @@ next_snapshot_version() {
 }
 
 get_file_version() {
-    echo $(cat VERSION.txt)
+    cat VERSION.txt
 }
 
 set_file_version() {
@@ -71,7 +71,7 @@ get_version() {
 # Sets the current version for the project
 set_version() {
     local project_version="${1:-}"
-    validate_version ${project_version}
+    validate_version "${project_version}"
     log "Setting project version to '${project_version}'."
 
     if is_maven_project; then set_maven_version "${project_version}";

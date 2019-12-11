@@ -41,7 +41,7 @@ create_release() {
     [[ "$(get_local_branch)" = "master" ]] || fatal "Could not switch to master branch."
     local master_version="$(get_version)"
     local merge_to_master="true"
-    if [[ ${major_version} -ge $(major_version_of ${master_version}) ]]; then
+    if [[ ${major_version} -ge $(major_version_of "${master_version}") ]]; then
         log "Merging ${release_version} to master (v${master_version})."
         git merge --no-edit --ff-only "${branch}"
     else
