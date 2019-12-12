@@ -34,7 +34,7 @@ _The doclet will warn about (and optionally fail on) cyclic package dependencies
 
 ### Class diagram
 
-<p align="center"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/indent/Indentation.svg" height="200"/></p>
+<p align="center"><a href="https://www.javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/indent/Indentation.html"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/indent/Indentation.svg" height="200"/></a></p>
 
 (These example diagrams are all taken from the [latest UML Doclet javadoc][javadoc] page. Please feel free to take a look to get an idea of the result.)
 
