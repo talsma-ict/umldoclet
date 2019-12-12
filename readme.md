@@ -15,7 +15,7 @@
 Released versions can be found in the [maven central repository][maven]
 or on [github](https://github.com/talsma-ict/umldoclet/releases).  
 
-## Generated UML diagrams
+## Generate UML diagrams
 
 The UML Doclet uses available javadoc metadata to automatically generate
 the following [UML diagrams][plantuml] and embeds them in your HTML documentation.
