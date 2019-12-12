@@ -19,6 +19,7 @@ the following [UML diagrams][plantuml] and add them to your documentation:
 - Class diagrams
 - Package diagrams
 - A package dependency diagram
+  ![Example package dependency diagram][example-package-deps-img]{:width="40"}
 
 The doclet will warn about (and optionally fail on) cyclic package dependencies.
 
@@ -81,6 +82,7 @@ default settings provide for you:
   [maven]: <http://mvnrepository.com/artifact/nl.talsmasoftware/umldoclet>
   [javadoc-img]: <https://www.javadoc.io/badge/nl.talsmasoftware/umldoclet.svg>
   [javadoc]: <https://www.javadoc.io/doc/nl.talsmasoftware/umldoclet>
+  [example-package-deps-img]: <https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/package-dependencies.svg>
   
   [usage]: <usage.md>
   [v1.x]: <https://github.com/talsma-ict/umldoclet/tree/develop-v1>
