@@ -24,13 +24,13 @@ and link to package and class documentation where available.
 
 ### Package dependency diagram
 
-<p align="center"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/package-dependencies.svg" width="60%" /></p>
+<p align="center"><a href="https://www.javadoc.io/doc/nl.talsmasoftware/umldoclet"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/package-dependencies.svg" width="60%" /></a></p>
 
 _The doclet will warn about (and optionally fail on) cyclic package dependencies._
 
 ### Package diagram
 
-<p align="center"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/uml/package.svg" width="60%"/></p>
+<p align="center"><a href="https://www.javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/uml/package-summary.html"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/uml/package.svg" width="60%"/></a></p>
 
 ### Class diagram
 
