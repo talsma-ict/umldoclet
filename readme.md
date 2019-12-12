@@ -21,7 +21,7 @@ and link to package and class documentation where available.
 
 <p align="center"><a href="https://www.javadoc.io/doc/nl.talsmasoftware/umldoclet"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/package-dependencies.svg" width="60%" /></a></p>
 
-_The doclet will warn about (and optionally fail on) cyclic package dependencies._
+_The UML Doclet will warn about (and optionally fail on) cyclic package dependencies._
 
 The dependency diagram links to package documentation containing:
 
@@ -59,13 +59,13 @@ or on [github](https://github.com/talsma-ict/umldoclet/releases).
 ## Usage
 
 - Please see the separate [usage page][Usage]
-  on how to use the UML doclet in your own Java projects.
+  on how to use the UML Doclet in your own Java projects.
 
 ## Feedback
 
 - We welcome [new issues](https://github.com/talsma-ict/umldoclet/issues/new) :+1:,
-  however please search the [open issues](https://github.com/talsma-ict/umldoclet/issues)
-  otherwise you may [file](https://github.com/talsma-ict/umldoclet/issues/new) a duplicate.
+  however please search the [open issues](https://github.com/talsma-ict/umldoclet/issues).
+  Otherwise you might [file](https://github.com/talsma-ict/umldoclet/issues/new) a duplicate.
 - If possible, please provide an example when sending in bugs.
   This will make fixing them that much easier!
   
@@ -75,9 +75,11 @@ or on [github](https://github.com/talsma-ict/umldoclet/releases).
 
 ## Thanks
 
-- First of all, thank _you_ for using this doclet, I hope it may be of benefit to your project.
-- And of course most importantly a big thanks to the developers of the excellent [PlantUML project][plantuml]
-  withouth whom this doclet wouldn't exist!
+- First of all a big thanks to [Arnaud Roques](https://github.com/plantuml/plantuml-mit/commits?author=arnaudroques),
+  the developer of the excellent [PlantUML project](https://github.com/plantuml/plantuml) 
+  without whom this project wouldn't exist!
+- And of course thank _you_ for using UML Doclet :clap:.
+  I hope it may be of benefit to your project!
 
 ## License
 
