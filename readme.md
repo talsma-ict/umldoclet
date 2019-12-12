@@ -8,23 +8,39 @@
 [![Codebeat badge][codebeat-img]][codebeat]
 [![Coverage Status][coveralls-img]][coveralls]
 
-Doclet for the JavaDoc tool that generates UML diagrams from the code.  
+[Doclet for the javadoc tool][doclet] that generates UML diagrams from the code.  
+
+## Releases
 
 Released versions can be found in the [maven central repository][maven]
 or on [github](https://github.com/talsma-ict/umldoclet/releases).  
 
-This doclet uses JavaDoc metadata available to automatically generate
-the following [UML diagrams][plantuml] and add them to your documentation:
+## Generate UML diagrams
 
-- Class diagrams
-- Package diagrams
-- A package dependency diagram
+The UML Doclet uses available javadoc metadata to automatically generate
+the following [UML diagrams][plantuml] and embeds them in your HTML documentation.
+The diagrams are embedded as clickable SVG objects by default 
+and link to package and class documentation where available.
 
-The doclet will warn about (and optionally fail on) cyclic package dependencies.
+### Package dependency diagram
+
+<p align="center"><a href="https://www.javadoc.io/doc/nl.talsmasoftware/umldoclet"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/package-dependencies.svg" width="60%" /></a></p>
+
+_The doclet will warn about (and optionally fail on) cyclic package dependencies._
+
+### Package diagram
+
+<p align="center"><a href="https://www.javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/uml/package-summary.html"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/uml/package.svg" width="60%"/></a></p>
+
+### Class diagram
+
+<p align="center"><a href="https://www.javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/indent/Indentation.html"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/indent/Indentation.svg" height="200"/></a></p>
+
+(These examples are from the [latest UML Doclet javadoc][javadoc] page. Please feel free to take a look to get an idea of the final result)
 
 ## Requirements
 
-To use the doclet together with the JavaDoc tool, the following is required.
+To use the doclet together with the javadoc tool, the following is required.
 
 - [Javadoc version 9][doclet] or higher.  
   For versions of javadoc from earlier JDKs, please use the [latest `1.x` version][v1.x] of this doclet.
@@ -37,16 +53,6 @@ To use the doclet together with the JavaDoc tool, the following is required.
 
 - Please see the separate [Usage page][Usage]
   on how to use the UML doclet in your own Java projects.
-
-## Examples
-
-The javadoc of the UMLDoclet itself is probably a decent example of what the
-default settings provide for you:
-
-- [Main javadoc page](https://javadoc.io/doc/nl.talsmasoftware/umldoclet)
-- [Simple package example: _nl.talsmasoftware.umldoclet.rendering.writers_](https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/writers/package-summary.html)
-- [Complex package example: _nl.talsmasoftware.umldoclet.uml_](https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/uml/package-summary.html)
-- [Class example: _nl.talsmasoftware.umldoclet.rendering.indent.Indentation_](https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/indent/Indentation.html)
 
 ## Feedback
 
