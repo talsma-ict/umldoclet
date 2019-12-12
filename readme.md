@@ -27,7 +27,7 @@ The dependency diagram links to:
 
 ### Package diagram
 
-<p align="center"><a href="https://www.javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/uml/package-summary.html"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/uml/package.svg" width="60%"/></a></p>
+<p align="center"><a href="https://www.javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/indent/package-summary.html"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/indent/package.svg" width="60%"/></a></p>
 
 The package diagram links to:
 
