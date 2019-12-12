@@ -8,17 +8,12 @@
 [![Codebeat badge][codebeat-img]][codebeat]
 [![Coverage Status][coveralls-img]][coveralls]
 
-[Doclet for the javadoc tool][doclet] that generates UML diagrams from the code.  
-
-## Releases
-
-Released versions can be found in the [maven central repository][maven]
-or on [github](https://github.com/talsma-ict/umldoclet/releases).  
+[Doclet for the javadoc tool][doclet] that generates [UML diagrams][plantuml] from the code.  
 
 ## Generate UML diagrams
 
 The UML Doclet uses available javadoc metadata to automatically generate
-the following [UML diagrams][plantuml] and embeds them in your HTML documentation.
+the following UML diagrams and embeds them in your HTML documentation.
 The diagrams are embedded as clickable SVG objects by default 
 and link to package and class documentation where available.
 
@@ -26,11 +21,15 @@ and link to package and class documentation where available.
 
 <p align="center"><a href="https://www.javadoc.io/doc/nl.talsmasoftware/umldoclet"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/package-dependencies.svg" width="60%" /></a></p>
 
-_The doclet will warn about (and optionally fail on) cyclic package dependencies._
+_The UML Doclet will warn about (and optionally fail on) cyclic package dependencies._
+
+The dependency diagram links to package documentation containing:
 
 ### Package diagram
 
-<p align="center"><a href="https://www.javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/uml/package-summary.html"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/uml/package.svg" width="60%"/></a></p>
+<p align="center"><a href="https://www.javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/indent/package-summary.html"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/indent/package.svg" width="60%"/></a></p>
+
+The package diagram links to class documentation containing:
 
 ### Class diagram
 
@@ -40,25 +39,34 @@ _The doclet will warn about (and optionally fail on) cyclic package dependencies
 
 ## Requirements
 
-To use the doclet together with the javadoc tool, the following is required.
+To use the UML Doclet, the following is required.
 
 - [Javadoc version 9][doclet] or higher.  
-  For versions of javadoc from earlier JDKs, please use the [latest `1.x` version][v1.x] of this doclet.
-  If you compile your java 8 javadocs with a more recent JDK (Javadoc version 9 or higher), please use the 2.x version.
-- This doclet jar. An apache-licensed version of plantuml is already included in the jar.
-- An installed version of [graphviz](http://plantuml.com/graphviz-dot), at least until [pure java visualization](https://github.com/talsma-ict/umldoclet/issues/51) works.
+  For versions of javadoc from earlier JDKs, please use the [latest `1.x` UML Doclet version][v1.x].
+  If you compile your java 8 or older javadocs with a more recent JDK (Javadoc version 9 or higher),
+  you need to use the 2.x version.
+- An installed version of [graphviz](http://plantuml.com/graphviz-dot),
+  at least until [pure java visualization](https://github.com/talsma-ict/umldoclet/issues/51) works.
   Graphviz needs to be compiled with [libexpat][libexpat] support.
+- The UML Doclet, the [usage page][usage] shows how.
+  An apache-licensed version of [PlantUML][plantuml] is already included in the umldoclet jar.
+
+## Releases
+
+Released versions can be found in the [maven central repository][maven]
+or on [github](https://github.com/talsma-ict/umldoclet/releases).  
 
 ## Usage
 
-- Please see the separate [Usage page][Usage]
-  on how to use the UML doclet in your own Java projects.
+- Please see the separate [usage page][Usage]
+  on how to use the UML Doclet in your own Java projects.
 
 ## Feedback
 
-- Please search the [open issues](https://github.com/talsma-ict/umldoclet/issues)
-  before you [file a new issue](https://github.com/talsma-ict/umldoclet/issues/new).
-- If possible, please provide a working example when sending in bugs.
+- We welcome [new issues](https://github.com/talsma-ict/umldoclet/issues/new) :+1:,
+  however please search the [open issues](https://github.com/talsma-ict/umldoclet/issues).
+  Otherwise you might [file](https://github.com/talsma-ict/umldoclet/issues/new) a duplicate.
+- If possible, please provide an example when sending in bugs.
   This will make fixing them that much easier!
   
 ## Contributing
@@ -67,9 +75,11 @@ To use the doclet together with the javadoc tool, the following is required.
 
 ## Thanks
 
-- First of all, thank _you_ for using this doclet, I hope it may be of benefit to your project.
-- And of course most importantly a big thanks to the developers of the excellent [PlantUML project][plantuml]
-  withouth whom this doclet wouldn't exist!
+- First of all a big thanks to [Arnaud Roques](https://github.com/plantuml/plantuml-mit/commits?author=arnaudroques),
+  the developer of the excellent [PlantUML project](https://github.com/plantuml/plantuml) 
+  without whom this project wouldn't exist!
+- And of course thank _you_ for using UML Doclet :clap:.
+  I hope it may be of benefit to your project!
 
 ## License
 

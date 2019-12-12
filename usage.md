@@ -143,9 +143,7 @@ The rest of this section lists various options that are specific to the UML docl
 By default, UML images are generated in the same directory as the corresponding 
 HTML documentation for the class or package.
 Specifying an _image directory_ will place all generated images in this single directory,
-which makes directly linking to them from javadoc comments easier in some cases.  
-_This option was introduced as a resolution for 
-[issue 25 - Send images to a single directory](https://github.com/talsma-ict/umldoclet/issues/25)_
+which makes directly linking to them from javadoc comments easier in some cases.
 
 #### -umlImageFormat (_svg_|png|eps|none)
 
