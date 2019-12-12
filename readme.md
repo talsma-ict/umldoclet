@@ -8,12 +8,12 @@
 [![Codebeat badge][codebeat-img]][codebeat]
 [![Coverage Status][coveralls-img]][coveralls]
 
-[Doclet for the javadoc tool][doclet] that generates UML diagrams from the code.  
+[Doclet for the javadoc tool][doclet] that generates [UML diagrams][plantuml] from the code.  
 
 ## Generate UML diagrams
 
 The UML Doclet uses available javadoc metadata to automatically generate
-the following [UML diagrams][plantuml] and embeds them in your HTML documentation.
+the following UML diagrams and embeds them in your HTML documentation.
 The diagrams are embedded as clickable SVG objects by default 
 and link to package and class documentation where available.
 
