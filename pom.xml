@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright 2016-2019 Talsma ICT
+    Copyright 2016-2020 Talsma ICT
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- Plant UML apache-licensed sources: https://sourceforge.net/projects/plantuml/files/ -->
-        <plantuml.sources>plantuml-asl-1.2019.12.tar.gz</plantuml.sources>
+        <plantuml.sources>plantuml-asl-1.2019.13.tar.gz</plantuml.sources>
 
         <!-- test -->
         <junit.version>4.12</junit.version>
