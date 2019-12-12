@@ -19,7 +19,7 @@ or on [github](https://github.com/talsma-ict/umldoclet/releases).
 
 The UML Doclet uses available javadoc metadata to automatically generate
 the following [UML diagrams][plantuml] and embeds them in your HTML documentation.
-Using the default settings, the diagrams are embedded as clickable SVG objects.
+The diagrams are embedded as clickable SVG objects by default.
 
 ### Package dependency diagram
 
