@@ -10,11 +10,6 @@
 
 [Doclet for the javadoc tool][doclet] that generates UML diagrams from the code.  
 
-## Releases
-
-Released versions can be found in the [maven central repository][maven]
-or on [github](https://github.com/talsma-ict/umldoclet/releases).  
-
 ## Generate UML diagrams
 
 The UML Doclet uses available javadoc metadata to automatically generate
@@ -48,6 +43,11 @@ To use the doclet together with the javadoc tool, the following is required.
 - This doclet jar. An apache-licensed version of plantuml is already included in the jar.
 - An installed version of [graphviz](http://plantuml.com/graphviz-dot), at least until [pure java visualization](https://github.com/talsma-ict/umldoclet/issues/51) works.
   Graphviz needs to be compiled with [libexpat][libexpat] support.
+
+## Releases
+
+Released versions can be found in the [maven central repository][maven]
+or on [github](https://github.com/talsma-ict/umldoclet/releases).  
 
 ## Usage
 
