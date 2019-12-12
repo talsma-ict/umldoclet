@@ -10,19 +10,32 @@
 
 Doclet for the JavaDoc tool that generates UML diagrams from the code.  
 
+## Releases
+
 Released versions can be found in the [maven central repository][maven]
 or on [github](https://github.com/talsma-ict/umldoclet/releases).  
 
-This doclet uses JavaDoc metadata available to automatically generate
-the following [UML diagrams][plantuml] and add them to your documentation:
+## Generated UML diagrams
 
-- A package dependency diagram:\
-  <img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/package-dependencies.svg" width="400" />\
-  _The doclet will warn about (and optionally fail on) cyclic package dependencies._
-- Package diagrams:\
-  <img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/uml/package.svg" width="400"/>
-- Class diagrams:\
-  <img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/indent/Indentation.svg" height="200"/>
+The UML Doclet uses available JavaDoc metadata to automatically generate
+the following [UML diagrams][plantuml] and embeds them in your HTML documentation.
+Using the default settings, the diagrams are embedded as clickable SVG objects.
+
+### Package dependency diagram
+
+<p align="center"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/package-dependencies.svg" width="60%" /></p>
+
+_The doclet will warn about (and optionally fail on) cyclic package dependencies._
+
+### Package diagram
+
+<p align="center"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/uml/package.svg" width="60%"/></p>
+
+### Class diagram
+
+<p align="center"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/indent/Indentation.svg" height="200"/></p>
+
+(These example diagrams are all taken from the [latest UML Doclet javadoc][javadoc] page. Please feel free to take a look to get an idea of the result.)
 
 ## Requirements
 
