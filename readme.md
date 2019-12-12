@@ -22,7 +22,7 @@ the following [UML diagrams][plantuml] and add them to your documentation:
 - Package diagrams:\
   <img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/uml/package.svg" width="400"/>
 - Class diagrams:\
-  <img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/indent/Indentation.svg" height="250"/>
+  <img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/indent/Indentation.svg" height="200"/>
 
 ## Requirements
 
