@@ -23,9 +23,13 @@ and link to package and class documentation where available.
 
 _The doclet will warn about (and optionally fail on) cyclic package dependencies._
 
+The dependency diagram links to:
+
 ### Package diagram
 
 <p align="center"><a href="https://www.javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/uml/package-summary.html"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/uml/package.svg" width="60%"/></a></p>
+
+The package diagram links to:
 
 ### Class diagram
 
