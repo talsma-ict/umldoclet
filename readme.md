@@ -16,12 +16,13 @@ or on [github](https://github.com/talsma-ict/umldoclet/releases).
 This doclet uses JavaDoc metadata available to automatically generate
 the following [UML diagrams][plantuml] and add them to your documentation:
 
-- Class diagrams
-- Package diagrams
-- A package dependency diagram
-  ![Example package dependency diagram][example-package-deps-img]{:width="40"}
-
-The doclet will warn about (and optionally fail on) cyclic package dependencies.
+- A package dependency diagram:\
+  <img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/package-dependencies.svg" width="400" />\
+  _The doclet will warn about (and optionally fail on) cyclic package dependencies._
+- Package diagrams:\
+  <img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/uml/package.svg" width="400"/>
+- Class diagrams:\
+  <img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/indent/Indentation.svg" height="250"/>
 
 ## Requirements
 
@@ -82,7 +83,6 @@ default settings provide for you:
   [maven]: <http://mvnrepository.com/artifact/nl.talsmasoftware/umldoclet>
   [javadoc-img]: <https://www.javadoc.io/badge/nl.talsmasoftware/umldoclet.svg>
   [javadoc]: <https://www.javadoc.io/doc/nl.talsmasoftware/umldoclet>
-  [example-package-deps-img]: <https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/package-dependencies.svg>
   
   [usage]: <usage.md>
   [v1.x]: <https://github.com/talsma-ict/umldoclet/tree/develop-v1>
