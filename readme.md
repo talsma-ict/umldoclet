@@ -23,13 +23,13 @@ and link to package and class documentation where available.
 
 _The doclet will warn about (and optionally fail on) cyclic package dependencies._
 
-The dependency diagram links to:
+The dependency diagram links to package documentation containing:
 
 ### Package diagram
 
 <p align="center"><a href="https://www.javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/indent/package-summary.html"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/indent/package.svg" width="60%"/></a></p>
 
-The package diagram links to:
+The package diagram links to class documentation containing:
 
 ### Class diagram
 
@@ -39,14 +39,17 @@ The package diagram links to:
 
 ## Requirements
 
-To use the doclet together with the javadoc tool, the following is required.
+To use the UML Doclet, the following is required.
 
 - [Javadoc version 9][doclet] or higher.  
-  For versions of javadoc from earlier JDKs, please use the [latest `1.x` version][v1.x] of this doclet.
-  If you compile your java 8 javadocs with a more recent JDK (Javadoc version 9 or higher), please use the 2.x version.
-- This doclet jar. An apache-licensed version of plantuml is already included in the jar.
-- An installed version of [graphviz](http://plantuml.com/graphviz-dot), at least until [pure java visualization](https://github.com/talsma-ict/umldoclet/issues/51) works.
+  For versions of javadoc from earlier JDKs, please use the [latest `1.x` UML Doclet version][v1.x].
+  If you compile your java 8 or older javadocs with a more recent JDK (Javadoc version 9 or higher),
+  you need to use the 2.x version.
+- An installed version of [graphviz](http://plantuml.com/graphviz-dot),
+  at least until [pure java visualization](https://github.com/talsma-ict/umldoclet/issues/51) works.
   Graphviz needs to be compiled with [libexpat][libexpat] support.
+- The UML Doclet, the [usage page][usage] shows how.
+  An apache-licensed version of [PlantUML][plantuml] is already included in the umldoclet jar.
 
 ## Releases
 
@@ -55,14 +58,15 @@ or on [github](https://github.com/talsma-ict/umldoclet/releases).
 
 ## Usage
 
-- Please see the separate [Usage page][Usage]
+- Please see the separate [usage page][Usage]
   on how to use the UML doclet in your own Java projects.
 
 ## Feedback
 
-- Please search the [open issues](https://github.com/talsma-ict/umldoclet/issues)
-  before you [file a new issue](https://github.com/talsma-ict/umldoclet/issues/new).
-- If possible, please provide a working example when sending in bugs.
+- We welcome [new issues](https://github.com/talsma-ict/umldoclet/issues/new) :+1:,
+  however please search the [open issues](https://github.com/talsma-ict/umldoclet/issues)
+  otherwise you may [file](https://github.com/talsma-ict/umldoclet/issues/new) a duplicate.
+- If possible, please provide an example when sending in bugs.
   This will make fixing them that much easier!
   
 ## Contributing
