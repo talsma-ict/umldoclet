@@ -8,7 +8,7 @@
 [![Codebeat badge][codebeat-img]][codebeat]
 [![Coverage Status][coveralls-img]][coveralls]
 
-Doclet for the JavaDoc tool that generates UML diagrams from the code.  
+[Doclet for the javadoc tool][doclet] that generates UML diagrams from the code.  
 
 ## Releases
 
@@ -17,7 +17,7 @@ or on [github](https://github.com/talsma-ict/umldoclet/releases).
 
 ## Generated UML diagrams
 
-The UML Doclet uses available JavaDoc metadata to automatically generate
+The UML Doclet uses available javadoc metadata to automatically generate
 the following [UML diagrams][plantuml] and embeds them in your HTML documentation.
 Using the default settings, the diagrams are embedded as clickable SVG objects.
 
@@ -39,7 +39,7 @@ _The doclet will warn about (and optionally fail on) cyclic package dependencies
 
 ## Requirements
 
-To use the doclet together with the JavaDoc tool, the following is required.
+To use the doclet together with the javadoc tool, the following is required.
 
 - [Javadoc version 9][doclet] or higher.  
   For versions of javadoc from earlier JDKs, please use the [latest `1.x` version][v1.x] of this doclet.
@@ -52,16 +52,6 @@ To use the doclet together with the JavaDoc tool, the following is required.
 
 - Please see the separate [Usage page][Usage]
   on how to use the UML doclet in your own Java projects.
-
-## Examples
-
-The javadoc of the UMLDoclet itself is probably a decent example of what the
-default settings provide for you:
-
-- [Main javadoc page](https://javadoc.io/doc/nl.talsmasoftware/umldoclet)
-- [Simple package example: _nl.talsmasoftware.umldoclet.rendering.writers_](https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/writers/package-summary.html)
-- [Complex package example: _nl.talsmasoftware.umldoclet.uml_](https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/uml/package-summary.html)
-- [Class example: _nl.talsmasoftware.umldoclet.rendering.indent.Indentation_](https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/indent/Indentation.html)
 
 ## Feedback
 
