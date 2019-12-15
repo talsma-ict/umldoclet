@@ -17,10 +17,9 @@
  * Package containing the model to generate {@code PlantUML} diagrams with.
  *
  * <p>
- * The model for generated UML has changed several times. The abstractions are
- * very similar to the Object Oriented paradigm and the Java syntax; therefore closely
- * resemble the model behind the JavaDoc tool itself. Despite this, it helps to separate
- * the actual Java syntax model (as provided by the Javadoc tool) from the one containing
- * just the necessary UML model.
+ * The UML model abstractions are very similar to the Object Oriented paradigm
+ * and the Java syntax; therefore closely resemble the model behind the JavaDoc tool itself.
+ * Despite this, it helps to separate the actual Java syntax model (as provided by the Javadoc tool)
+ * from the one containing just the necessary UML model.
  */
 package nl.talsmasoftware.umldoclet.uml;
