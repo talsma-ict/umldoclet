@@ -20,8 +20,14 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.uml.Reference.Side;
 
 import java.io.File;
+import java.util.List;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toList;
+
+/**
+ * UML diagram representing the dependencies between the documented Java packages.
+ */
 public class DependencyDiagram extends Diagram {
 
     private String pumlFileName;
@@ -32,17 +38,20 @@ public class DependencyDiagram extends Diagram {
         this.pumlFileName = pumlFileName;
     }
 
+    @Override
+    public List<UMLNode> getChildren() {
+        List<UMLNode> children = super.getChildren();
+        List<UMLNode> exclusionFiltered = children.stream().filter(this::isIncludedChild).collect(toList());
+        return exclusionFiltered.isEmpty() ? children : exclusionFiltered;
+    }
+
     public void addPackageDependency(String fromPackage, String toPackage) {
-        if (fromPackage != null && toPackage != null && !isExcludedPackage(toPackage)) {
+        if (fromPackage != null && toPackage != null) {
             this.addChild(new Reference(
                     Side.from(unnamedIfEmpty(fromPackage), null),
                     "-->",
                     Side.to(unnamedIfEmpty(toPackage), null)));
         }
-    }
-
-    private static String unnamedIfEmpty(String packageName) {
-        return packageName.isEmpty() ? "unnamed" : packageName;
     }
 
     private boolean isExcludedPackage(String toPackage) {
@@ -52,8 +61,8 @@ public class DependencyDiagram extends Diagram {
                         || ("unnamed".equals(excluded) && toPackage.isEmpty()));
     }
 
-    private static String dotSuffixed(String packageName) {
-        return packageName.endsWith(".") ? packageName : packageName + '.';
+    private boolean isIncludedChild(UMLNode child) {
+        return child instanceof Reference && !isExcludedPackage(((Reference) child).to.toString());
     }
 
     @Override
@@ -65,7 +74,7 @@ public class DependencyDiagram extends Diagram {
     }
 
     @Override
-    protected <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
+    protected IndentingPrintWriter writeChildrenTo(IndentingPrintWriter output) {
         output.append("set namespaceSeparator none").newline()
                 .append("hide circle").newline()
                 .append("hide empty fields").newline()
@@ -75,21 +84,28 @@ public class DependencyDiagram extends Diagram {
         return output;
     }
 
-    private <IPW extends IndentingPrintWriter> IPW writePackageLinksTo(IPW output) {
+    private IndentingPrintWriter writePackageLinksTo(IndentingPrintWriter output) {
         output.println("' Package links");
-        getChildren().stream()
-                .filter(Reference.class::isInstance).map(Reference.class::cast)
+        getChildren(Reference.class).stream()
                 .flatMap(reference -> Stream.of(reference.from.toString(), reference.to.toString()))
                 .distinct().map(packageName -> new Namespace(this, packageName))
                 .forEach(namespace -> writePackageLinkTo(output, namespace));
         return output;
     }
 
-    private <IPW extends IndentingPrintWriter> IPW writePackageLinkTo(IPW output, Namespace namespace) {
+    private IndentingPrintWriter writePackageLinkTo(IndentingPrintWriter output, Namespace namespace) {
         String link = Link.forPackage(namespace).toString().trim();
         if (!link.isEmpty()) {
             output.append("class \"").append(namespace.name).append("\" ").append(link).append(" {\n}\n");
         }
         return output;
+    }
+
+    private static String unnamedIfEmpty(String packageName) {
+        return packageName.isEmpty() ? "unnamed" : packageName;
+    }
+
+    private static String dotSuffixed(String packageName) {
+        return packageName.endsWith(".") ? packageName : packageName + '.';
     }
 }

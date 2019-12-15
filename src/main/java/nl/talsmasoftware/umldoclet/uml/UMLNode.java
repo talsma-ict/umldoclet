@@ -34,11 +34,12 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
 /**
- * Smallest 'independent' part of an UML diagram that can be rendered,
- * serves as a reusable base-class for all other UML parts.
+ * Part of an UML diagram that can render itself to the diagram by
+ * {@linkplain #writeTo(IndentingPrintWriter) writing to} an indenting writer.
+ * It serves as a reusable base-class for all specific UML nodes.
+ *
  * <p>
- * UML parts are capable of rendering themselves to {@link IndentingPrintWriter} instances and have
- * chaining methods returning these writers for easier appending.
+ * UML nodes are capable of rendering themselves to {@link IndentingPrintWriter}.
  *
  * @author Sjoerd Talsma
  */

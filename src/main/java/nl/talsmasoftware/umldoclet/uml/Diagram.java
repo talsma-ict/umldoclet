@@ -38,6 +38,9 @@ import static nl.talsmasoftware.umldoclet.util.FileUtils.ensureParentDir;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.withoutExtension;
 
+/**
+ * Abstract class corresponding to a single UML diagram.
+ */
 public abstract class Diagram extends UMLNode {
 
     private final Configuration config;
