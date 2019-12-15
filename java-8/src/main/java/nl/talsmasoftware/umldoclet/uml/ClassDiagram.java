@@ -20,6 +20,9 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.io.File;
 
+/**
+ * UML diagram for a single class.
+ */
 public class ClassDiagram extends Diagram {
 
     private File pumlFile = null;

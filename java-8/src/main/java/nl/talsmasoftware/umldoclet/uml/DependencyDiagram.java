@@ -25,6 +25,9 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
+/**
+ * UML diagram representing the dependencies between the documented Java packages.
+ */
 public class DependencyDiagram extends Diagram {
 
     private String pumlFileName;
