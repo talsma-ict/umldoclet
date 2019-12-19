@@ -83,11 +83,13 @@ final class UMLOptions {
         this.options.add(new Option("--uml-image-directory -umlImageDirectory", 1, Kind.STANDARD, (args) -> config.images.directory = args.get(0)));
         this.options.add(new Option("--uml-image-format -umlImageFormat", 1, Kind.STANDARD, (args) -> config.images.addImageFormat(args.get(0))));
         this.options.add(new Option("--uml-encoding -umlEncoding", 1, Kind.STANDARD, (args) -> config.umlencoding = args.get(0)));
-        this.options.add(new Option("-umlExcludedPackageDependencies", 1, Kind.STANDARD,
+        this.options.add(new Option("--uml-excluded-type-references -umlExcludedTypeReferences", 1, Kind.STANDARD,
+                (args) -> config.excludedReferences = splitToList(args.get(0))));
+        this.options.add(new Option("--uml-excluded-package-dependencies -umlExcludedPackageDependencies", 1, Kind.STANDARD,
                 (args) -> config.excludedPackageDependencies = splitToList(args.get(0))));
-        this.options.add(new Option("-failOnCyclicPackageDependencies", 1, Kind.STANDARD,
+        this.options.add(new Option("--fail-on-cyclic-package-dependencies -failOnCyclicPackageDependencies", 1, Kind.STANDARD,
                 (args) -> config.failOnCyclicPackageDependencies = asBoolean(args.get(0))));
-        this.options.add(new Option("-umlJavaBeanPropertiesAsFields", 0, Kind.STANDARD,
+        this.options.add(new Option("--uml-java-bean-properties-as-fields -umlJavaBeanPropertiesAsFields", 0, Kind.STANDARD,
                 (args) -> config.methodConfig.javaBeanPropertiesAsFields = true));
     }
 
