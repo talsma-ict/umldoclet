@@ -38,6 +38,9 @@ import static nl.talsmasoftware.umldoclet.util.FileUtils.ensureParentDir;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.withoutExtension;
 
+/**
+ * Abstract class corresponding to a single UML diagram.
+ */
 public abstract class Diagram extends UMLNode {
 
     private final Configuration config;
@@ -53,7 +56,7 @@ public abstract class Diagram extends UMLNode {
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+    public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         output.append("@startuml").newline();
         IndentingPrintWriter indented = output.indent();
         writeChildrenTo(indented);
@@ -63,7 +66,7 @@ public abstract class Diagram extends UMLNode {
         return output;
     }
 
-    private <IPW extends IndentingPrintWriter> IPW writeFooterTo(IPW output) {
+    private IndentingPrintWriter writeFooterTo(IndentingPrintWriter output) {
         output.append("center footer").whitespace()
                 .append(config.logger().localize(
                         Message.DOCLET_UML_FOOTER,

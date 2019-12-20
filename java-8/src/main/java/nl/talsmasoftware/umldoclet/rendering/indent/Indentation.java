@@ -15,7 +15,6 @@
  */
 package nl.talsmasoftware.umldoclet.rendering.indent;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -26,7 +25,7 @@ import static java.lang.Math.max;
  *
  * @author Sjoerd Talsma
  */
-public final class Indentation implements CharSequence, Serializable {
+public final class Indentation implements CharSequence {
 
     // Cache of the first 5 instances of: 2, 4 spaces + tabs indentations.
     private static final Indentation[] TWO_SPACES = new Indentation[5];
@@ -119,15 +118,6 @@ public final class Indentation implements CharSequence, Serializable {
      */
     public Indentation decrease() {
         return level == 0 ? this : resolve(width, ch, level - 1);
-    }
-
-    /**
-     * Makes sure that after deserialization, the constant instances are resolved where possible.
-     *
-     * @return The deserialized object from the cache if possible or a new instance otherwise.
-     */
-    private Object readResolve() {
-        return resolve(width, ch, level);
     }
 
     /**

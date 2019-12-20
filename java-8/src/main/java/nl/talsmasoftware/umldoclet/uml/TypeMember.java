@@ -51,7 +51,7 @@ public abstract class TypeMember extends UMLNode {
         this.visibility = visibility;
     }
 
-    protected <IPW extends IndentingPrintWriter> IPW writeTypeTo(IPW output) {
+    protected IndentingPrintWriter writeTypeTo(IndentingPrintWriter output) {
         if (type != null) {
             output.append(": ").append(type.toString());
         }
@@ -64,12 +64,12 @@ public abstract class TypeMember extends UMLNode {
         }
     }
 
-    protected <IPW extends IndentingPrintWriter> IPW writeParametersTo(IPW output) {
+    protected IndentingPrintWriter writeParametersTo(IndentingPrintWriter output) {
         return output;
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+    public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         if (isAbstract) output.append("{abstract}").whitespace();
         if (isStatic) output.append("{static}").whitespace();
         output.append(umlVisibility());

@@ -17,13 +17,6 @@ package nl.talsmasoftware.umldoclet.rendering.indent;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasToString;
@@ -120,21 +113,6 @@ public class IndentationTest {
     }
 
     @Test
-    public void testDeserialization() {
-        Indentation deserialized = deserialize(serialize(Indentation.DEFAULT));
-        assertThat(deserialized, is(sameInstance(Indentation.DEFAULT)));
-
-        deserialized = deserialize(serialize(Indentation.spaces(4, 3)));
-        assertThat(deserialized, is(sameInstance(Indentation.spaces(4, 3))));
-
-        deserialized = deserialize(serialize(Indentation.tabs(4)));
-        assertThat(deserialized, is(sameInstance(Indentation.tabs(4))));
-
-        deserialized = deserialize(serialize(Indentation.spaces(1, 0)));
-        assertThat(deserialized, is(equalTo(Indentation.spaces(1, 0)))); // Not a constant; other instance
-    }
-
-    @Test
     public void testHashcode() {
         assertThat(Indentation.DEFAULT.hashCode(), is(Indentation.DEFAULT.hashCode()));
         assertThat(Indentation.spaces(1, 15).hashCode(), is(Indentation.spaces(1, 15).hashCode()));
@@ -152,26 +130,5 @@ public class IndentationTest {
     @Test
     public void testSubsequence() {
         assertThat(Indentation.DEFAULT.increase().increase().subSequence(3, 6), hasToString("   "));
-    }
-
-    private static byte[] serialize(Serializable object) {
-        try {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            try (ObjectOutputStream oos = new ObjectOutputStream(bos)) {
-                oos.writeObject(object);
-            }
-            return bos.toByteArray();
-        } catch (IOException ioe) {
-            throw new IllegalStateException("Couldn't serialize object: " + ioe.getMessage(), ioe);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <S extends Serializable> S deserialize(byte[] bytes) {
-        try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
-            return (S) in.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            throw new IllegalStateException("Couldn't deserialize object: " + e.getMessage(), e);
-        }
     }
 }

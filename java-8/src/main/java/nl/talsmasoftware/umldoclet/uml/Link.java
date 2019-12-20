@@ -99,7 +99,7 @@ public class Link extends UMLNode {
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+    public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         if (target != null) {
             output.append("[[").append(relativeTarget().orElseGet(target::toASCIIString)).append("]]");
         }

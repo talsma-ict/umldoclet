@@ -25,6 +25,9 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
+/**
+ * UML diagram representing the dependencies between the documented Java packages.
+ */
 public class DependencyDiagram extends Diagram {
 
     private String pumlFileName;
@@ -71,7 +74,7 @@ public class DependencyDiagram extends Diagram {
     }
 
     @Override
-    protected <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
+    protected IndentingPrintWriter writeChildrenTo(IndentingPrintWriter output) {
         output.append("set namespaceSeparator none").newline()
                 .append("hide circle").newline()
                 .append("hide empty fields").newline()
@@ -81,7 +84,7 @@ public class DependencyDiagram extends Diagram {
         return output;
     }
 
-    private <IPW extends IndentingPrintWriter> IPW writePackageLinksTo(IPW output) {
+    private IndentingPrintWriter writePackageLinksTo(IndentingPrintWriter output) {
         output.println("' Package links");
         getChildren(Reference.class).stream()
                 .flatMap(reference -> Stream.of(reference.from.toString(), reference.to.toString()))
@@ -90,7 +93,7 @@ public class DependencyDiagram extends Diagram {
         return output;
     }
 
-    private <IPW extends IndentingPrintWriter> IPW writePackageLinkTo(IPW output, Namespace namespace) {
+    private IndentingPrintWriter writePackageLinkTo(IndentingPrintWriter output, Namespace namespace) {
         String link = Link.forPackage(namespace).toString().trim();
         if (!link.isEmpty()) {
             output.append("class \"").append(namespace.name).append("\" ").append(link).append(" {\n}\n");

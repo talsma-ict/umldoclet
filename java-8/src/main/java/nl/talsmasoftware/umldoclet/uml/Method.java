@@ -47,18 +47,18 @@ public class Method extends TypeMember {
     }
 
     @Override
-    protected <IPW extends IndentingPrintWriter> IPW writeParametersTo(IPW output) {
+    protected IndentingPrintWriter writeParametersTo(IndentingPrintWriter output) {
         return getOrCreateParameters().writeTo(output);
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+    public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         if (!getConfiguration().methods().include(getVisibility())) return output;
         return super.writeTo(output);
     }
 
     @Override
-    protected <IPW extends IndentingPrintWriter> IPW writeTypeTo(IPW output) {
+    protected IndentingPrintWriter writeTypeTo(IndentingPrintWriter output) {
         TypeDisplay returnTypeDisplay = getConfiguration().methods().returnType();
         if (type != null && !TypeDisplay.NONE.equals(returnTypeDisplay)) {
             output.append(": ").append(type.toUml(returnTypeDisplay, null));

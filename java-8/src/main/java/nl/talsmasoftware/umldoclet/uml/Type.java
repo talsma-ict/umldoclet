@@ -101,7 +101,7 @@ public class Type extends UMLNode {
         return classfication;
     }
 
-    private <IPW extends IndentingPrintWriter> IPW writeNameTo(IPW output) {
+    private IndentingPrintWriter writeNameTo(IndentingPrintWriter output) {
         if (includePackagename && name.qualified.startsWith(this.packageNamespace.name + '.')) {
             String nameInPackage = name.qualified.substring(this.packageNamespace.name.length() + 1);
             output.append("\"<size:14>").append(nameInPackage)
@@ -116,7 +116,7 @@ public class Type extends UMLNode {
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+    public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         output.append(classfication.toUml()).whitespace();
         writeNameTo(output).whitespace();
         if (isDeprecated) output.append("<<deprecated>>").whitespace();
@@ -127,7 +127,7 @@ public class Type extends UMLNode {
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
+    public IndentingPrintWriter writeChildrenTo(IndentingPrintWriter output) {
         if (!getChildren().isEmpty()) {
             output.append('{').newline();
             super.writeChildrenTo(output.indent());

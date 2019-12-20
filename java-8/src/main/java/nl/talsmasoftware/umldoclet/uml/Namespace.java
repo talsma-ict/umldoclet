@@ -41,16 +41,15 @@ public class Namespace extends UMLNode {
      * render {@code "unnamed"} because an empty name is not valid in PlantUML.
      *
      * @param output The output to append the package name to.
-     * @param <IPW>  The type of the output object.
      * @return The same output instance for method chaining.
      */
-    private <IPW extends IndentingPrintWriter> IPW writeNameTo(IPW output) {
+    private IndentingPrintWriter writeNameTo(IndentingPrintWriter output) {
         output.append(name.isEmpty() ? "unnamed" : name).whitespace();
         return output;
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+    public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         writeNameTo(output.append("namespace").whitespace()).append('{').newline();
         writeChildrenTo(output.indent());
         output.append('}').newline();

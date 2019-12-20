@@ -18,7 +18,6 @@ package nl.talsmasoftware.umldoclet.uml;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingRenderer;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -34,15 +33,16 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
 /**
- * Smallest 'independent' part of an UML diagram that can be rendered,
- * serves as a reusable base-class for all other UML parts.
+ * Part of an UML diagram that can render itself to the diagram by
+ * {@linkplain #writeTo(IndentingPrintWriter) writing to} an indenting writer.
+ * It serves as a reusable base-class for all specific UML nodes.
+ *
  * <p>
- * UML parts are capable of rendering themselves to {@link IndentingPrintWriter} instances and have
- * chaining methods returning these writers for easier appending.
+ * UML nodes are capable of rendering themselves to {@link IndentingPrintWriter}.
  *
  * @author Sjoerd Talsma
  */
-public abstract class UMLNode implements IndentingRenderer {
+public abstract class UMLNode {
 
     private UMLNode parent;
     private final List<UMLNode> children = new ArrayList<>();
@@ -105,14 +105,15 @@ public abstract class UMLNode implements IndentingRenderer {
      * By default children will be {@link #writeTo(IndentingPrintWriter) written}
      * with increased indentation for legibility.
      *
-     * @param <IPW>  The subclass of indenting print writer being written to.
      * @param output The output to write the children to.
      * @return A reference to the output for method chaining purposes.
      */
-    protected <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
+    protected IndentingPrintWriter writeChildrenTo(IndentingPrintWriter output) {
         getChildren().forEach(child -> child.writeTo(output));
         return output;
     }
+
+    protected abstract IndentingPrintWriter writeTo(IndentingPrintWriter output);
 
     /**
      * Renders the entire content of this renderer and returns it as a String value.

@@ -38,12 +38,12 @@ public class Field extends TypeMember {
     }
 
     @Override
-    protected <IPW extends IndentingPrintWriter> IPW writeTypeTo(IPW output) {
+    protected IndentingPrintWriter writeTypeTo(IndentingPrintWriter output) {
         return isEnumType() ? output : super.writeTypeTo(output);
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+    public IndentingPrintWriter writeTo(IndentingPrintWriter output) {
         if (!getConfiguration().fields().include(getVisibility())) return output;
         return super.writeTo(output);
     }

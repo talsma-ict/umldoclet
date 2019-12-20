@@ -54,6 +54,10 @@ public class IndentingPrintWriter extends PrintWriter {
                 : new IndentingPrintWriter(delegate, indentation);
     }
 
+    protected IndentingWriter getDelegate() {
+        return (IndentingWriter) super.out;
+    }
+
     /**
      * The indentation; must be non-<code>null</code> in all practical instances of this object.
      *
