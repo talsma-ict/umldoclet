@@ -33,13 +33,14 @@
     <name>UML Doclet (java 8)</name>
 
     <properties>
+        <root.basedir>${project.parent.basedir}</root.basedir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <root.basedir>${project.parent.basedir}</root.basedir>
+        <tools.jar.location>${env.JAVA_8_HOME}/lib/tools.jar</tools.jar.location>
+
         <plantuml.version>1.2019.13</plantuml.version>
         <plantuml.sources>${project.basedir}/src/main/plantuml-asl-${plantuml.version}.tar.gz</plantuml.sources>
-        <tools.jar.location>${env.JAVA_8_HOME}/lib/tools.jar</tools.jar.location>
     </properties>
 
     <build>
@@ -144,6 +145,30 @@
                         <exclude>net/sourceforge/plantuml/**/*</exclude>
                         <exclude>smetana/**/*</exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
+                            <docletArtifact>
+                                <groupId>${project.groupId}</groupId>
+                                <artifactId>${project.artifactId}</artifactId>
+                                <version>${project.version}</version>
+                            </docletArtifact>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <jdkToolchain>
+                        <version>1.8</version>
+                    </jdkToolchain>
                 </configuration>
             </plugin>
         </plugins>

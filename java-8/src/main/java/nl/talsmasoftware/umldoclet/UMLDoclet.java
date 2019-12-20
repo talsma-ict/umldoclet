@@ -15,13 +15,28 @@
  */
 package nl.talsmasoftware.umldoclet;
 
+import com.sun.javadoc.DocErrorReporter;
 import com.sun.javadoc.LanguageVersion;
-import com.sun.tools.doclets.standard.Standard;
+import com.sun.javadoc.RootDoc;
+import com.sun.tools.doclets.formats.html.HtmlDoclet;
 
-public class UMLDoclet extends Standard {
+public class UMLDoclet extends HtmlDoclet {
 
     public static LanguageVersion languageVersion() {
-        return Standard.languageVersion();
+        return HtmlDoclet.languageVersion();
+    }
+
+    public static int optionLength(String var0) {
+        return HtmlDoclet.optionLength(var0);
+    }
+
+    public static boolean validOptions(String[][] var0, DocErrorReporter var1) {
+        return HtmlDoclet.validOptions(var0, var1);
+    }
+
+    public static boolean start(RootDoc var0) {
+        System.out.println(">>> UMLDoclet started!");
+        return HtmlDoclet.start(var0);
     }
 
 }
