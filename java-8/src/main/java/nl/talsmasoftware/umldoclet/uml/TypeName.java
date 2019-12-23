@@ -18,10 +18,7 @@ package nl.talsmasoftware.umldoclet.uml;
 import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
 
 import java.io.IOException;
-import java.util.Comparator;
 
-import static java.lang.String.CASE_INSENSITIVE_ORDER;
-import static java.util.Comparator.naturalOrder;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -38,17 +35,14 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Sjoerd Talsma
  */
-public class TypeName implements Comparable<TypeName> {
-    private static final Comparator<TypeName> COMPARATOR =
-            Comparator.comparing((TypeName type) -> type.qualified, CASE_INSENSITIVE_ORDER.thenComparing(naturalOrder()));
-
+public class TypeName {
     public final String simple;
     public final String qualified;
     private final TypeName[] generics;
 
     public TypeName(String simpleName, String qualifiedName, TypeName... generics) {
         this.simple = simpleName;
-        this.qualified = qualifiedName;
+        this.qualified = requireNonNull(qualifiedName, "Type has no qualified name");
         this.generics = generics.clone();
     }
 
@@ -108,19 +102,15 @@ public class TypeName implements Comparable<TypeName> {
     }
 
     @Override
-    public int compareTo(TypeName other) {
-        requireNonNull(other, "Cannot compare with type name <null>.");
-        return COMPARATOR.compare(this, other);
-    }
-
-    @Override
     public int hashCode() {
         return qualified.hashCode();
     }
 
     @Override
     public boolean equals(Object other) {
-        return this == other || (other instanceof TypeName && this.compareTo((TypeName) other) == 0);
+        return this == other || (other != null && getClass().equals(other.getClass())
+                && this.qualified.equals(((TypeName) other).qualified)
+        );
     }
 
     @Override
@@ -167,11 +157,8 @@ public class TypeName implements Comparable<TypeName> {
         }
 
         @Override
-        public int compareTo(TypeName other) {
-            int delta = other instanceof Variable ? 0 : (isExtends ? 1 : -1);
-            if (delta == 0) delta = super.compareTo(other);
-            if (delta == 0) delta = Boolean.compare(this.isExtends, ((Variable) other).isExtends);
-            return delta;
+        public boolean equals(Object other) {
+            return super.equals(other) && this.isExtends == ((Variable) other).isExtends;
         }
     }
 }
