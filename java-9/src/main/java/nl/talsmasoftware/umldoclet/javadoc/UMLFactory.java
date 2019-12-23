@@ -42,7 +42,6 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -181,20 +180,10 @@ public class UMLFactory {
             references.forEach(classDiagram::addChild);
         }
 
-        if (!foundTypeVariables.isEmpty()) {
-            Collections.sort(foundTypeVariables);
-            for (int i = foundTypeVariables.size() - 1; i >= 0; i--) {
-                TypeName foundTypeVariable = foundTypeVariables.get(i);
-                if (i > 0 && foundTypeVariable.equals(foundTypeVariables.get(i - 1))) {
-                    i--; // duplicate, skip these.
-                } else {
-                    classDiagram.getChildren().stream()
-                            .filter(Type.class::isInstance).map(Type.class::cast)
-                            .filter(tp -> foundTypeVariable.equals(tp.getName()))
-                            .forEach(tp -> tp.updateGenericTypeVariables(foundTypeVariable));
-                }
-            }
-        }
+        foundTypeVariables.forEach(foundTypeVariable -> classDiagram.getChildren().stream()
+                .filter(Type.class::isInstance).map(Type.class::cast)
+                .filter(tp -> foundTypeVariable.equals(tp.getName()))
+                .forEach(tp -> tp.updateGenericTypeVariables(foundTypeVariable)));
 
         if (config.methods().javaBeanPropertiesAsFields()) {
             POST_PROCESSORS.javaBeanPropertiesAsFieldsPostProcessor().accept(type);
