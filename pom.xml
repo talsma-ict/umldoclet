@@ -68,7 +68,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- Plant UML apache-licensed sources: https://sourceforge.net/projects/plantuml/files/ -->
-        <plantuml.sources>plantuml-asl-1.2019.13.tar.gz</plantuml.sources>
+        <plantuml.sources>plantuml-asl-1.2020.0.tar.gz</plantuml.sources>
 
         <!-- test -->
         <junit.version>4.12</junit.version>
