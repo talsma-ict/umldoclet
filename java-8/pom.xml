@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright 2016-2019 Talsma ICT
+    Copyright 2016-2020 Talsma ICT
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <root.basedir>${project.parent.basedir}</root.basedir>
-        <plantuml.version>1.2019.13</plantuml.version>
+        <plantuml.version>1.2020.0</plantuml.version>
         <plantuml.sources>${project.basedir}/src/main/plantuml-asl-${plantuml.version}.tar.gz</plantuml.sources>
     </properties>
 
