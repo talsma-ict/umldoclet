@@ -93,7 +93,7 @@ or on [github](https://github.com/talsma-ict/umldoclet/releases).
   [codacy]: <https://www.codacy.com/app/talsma-ict/umldoclet?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=talsma-ict/umldoclet&amp;utm_campaign=Badge_Grade>
   [codebeat-img]: <https://codebeat.co/badges/527487b4-62c8-40a2-8229-8341fec95c7b>
   [codebeat]: <https://codebeat.co/projects/github-com-talsma-ict-umldoclet-develop>
-  [maven-img]: <https://img.shields.io/maven-metadata/v/http/central.maven.org/maven2/nl/talsmasoftware/umldoclet/maven-metadata.xml.svg>
+  [maven-img]: <https://img.shields.io/maven-central/v/nl.talsmasoftware/umldoclet>
   [maven]: <http://mvnrepository.com/artifact/nl.talsmasoftware/umldoclet>
   [javadoc-img]: <https://www.javadoc.io/badge/nl.talsmasoftware/umldoclet.svg>
   [javadoc]: <https://www.javadoc.io/doc/nl.talsmasoftware/umldoclet>
