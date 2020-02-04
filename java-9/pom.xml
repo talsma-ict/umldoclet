@@ -103,6 +103,12 @@
                             <includeDependencySources>true</includeDependencySources>
                             <docletPath>${project.build.directory}/${project.build.finalName}.jar</docletPath>
                             <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
+                            <sourceFileExcludes>
+                                <sourceFileExclude>gen/**/*</sourceFileExclude>
+                                <sourceFileExclude>h/**/*</sourceFileExclude>
+                                <sourceFileExclude>net/sourceforge/plantuml/**/*</sourceFileExclude>
+                                <sourceFileExclude>smetana/core/**/*</sourceFileExclude>
+                            </sourceFileExcludes>
                         </configuration>
                     </execution>
                 </executions>
