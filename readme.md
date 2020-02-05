@@ -63,10 +63,10 @@ or on [github](https://github.com/talsma-ict/umldoclet/releases).
 
 ## Feedback
 
-- We welcome [new issues](https://github.com/talsma-ict/umldoclet/issues/new) :+1:,
-  however please search the [open issues](https://github.com/talsma-ict/umldoclet/issues).
-  Otherwise you might [file](https://github.com/talsma-ict/umldoclet/issues/new) a duplicate.
-- If possible, please provide an example when sending in bugs.
+- We welcome [new issues](https://github.com/talsma-ict/umldoclet/issues/new) :+1:.
+  Please search the [current issues](https://github.com/talsma-ict/umldoclet/issues) however,
+  otherwise you might file a duplicate.
+- Please provide an example when sending in bugs if at all possible.
   This will make fixing them that much easier!
   
 ## Contributing
