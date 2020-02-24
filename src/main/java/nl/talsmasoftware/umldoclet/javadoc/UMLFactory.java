@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Talsma ICT
+ * Copyright 2016-2020 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -132,7 +132,7 @@ public class UMLFactory {
                 }
                 references.add(new Reference(
                         from(type.getName().qualified, null),
-                        "..|>",
+                        interfaceRefTypeFrom(type),
                         to(ifName.qualified, null))
                         .canonical());
             }
@@ -477,7 +477,10 @@ public class UMLFactory {
         typeElement.getInterfaces().forEach(interfaceType -> {
             TypeName interfaceName = TypeNameVisitor.INSTANCE.visit(interfaceType);
             if (!config.excludedTypeReferences().contains(interfaceName.qualified)) {
-                references.add(new Reference(from(type.getName().qualified, null), "..|>", to(interfaceName.qualified, null)));
+                references.add(new Reference(
+                        from(type.getName().qualified, null),
+                        interfaceRefTypeFrom(type),
+                        to(interfaceName.qualified, null)));
                 // TODO Figure out what to do IF the interface is found BUT has a different typename
                 if (!namespace.contains(interfaceName)) {
                     addForeignType(foreignTypes, env.getTypeUtils().asElement(interfaceType));
@@ -567,6 +570,11 @@ public class UMLFactory {
 
     private static boolean isBooleanPrimitive(TypeMirror type) {
         return "boolean".equals(TypeNameVisitor.INSTANCE.visit(type).qualified);
+    }
+
+    private static String interfaceRefTypeFrom(Type type) {
+        final boolean isExtendedBySubInterface = Type.Classification.INTERFACE.equals(type.getClassfication());
+        return isExtendedBySubInterface ? "--|>" : "..|>";
     }
 
     private static void addReference(Collection<Reference> collection, Reference reference) {
