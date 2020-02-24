@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Talsma ICT
+ * Copyright 2016-2020 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,7 +82,7 @@ public abstract class UMLNode implements IndentingRenderer {
      * @return The filtered list of children of this uml node (unmodifiable).
      */
     public <T extends UMLNode> List<T> getChildren(Class<T> type) {
-        return unmodifiableList(children.stream().filter(type::isInstance).map(type::cast).collect(toList()));
+        return unmodifiableList(getChildren().stream().filter(type::isInstance).map(type::cast).collect(toList()));
     }
 
     public void addChild(UMLNode child) {
