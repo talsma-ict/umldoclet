@@ -109,7 +109,7 @@
                 </includes>
             </resource>
             <resource>
-                <directory>${build.directory}/plantuml-asl/src</directory>
+                <directory>${project.build.directory}/plantuml-asl/src</directory>
                 <includes>
                     <include>net/sourceforge/plantuml/**/*.png</include>
                     <include>net/sourceforge/plantuml/openiconic/data/**/*.txt</include>
@@ -119,7 +119,7 @@
                 </includes>
             </resource>
             <resource>
-                <directory>${build.directory}/plantuml-asl</directory>
+                <directory>${project.build.directory}/plantuml-asl</directory>
                 <includes>
                     <include>stdlib/**/*.repx</include>
                     <include>skin/**/*.skin</include>
