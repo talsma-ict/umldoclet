@@ -83,7 +83,8 @@
             https://issues.apache.org/jira/browse/MCOMPILER-294
          -->
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-        <maven-failsafe-plugin.version>2.20.1</maven-failsafe-plugin.version>
+        <maven-surefire-plugin.version>3.0.0-M4</maven-surefire-plugin.version>
+        <maven-failsafe-plugin.version>3.0.0-M4</maven-failsafe-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
@@ -91,7 +92,6 @@
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
         <license-maven-plugin.version>3.0</license-maven-plugin.version>
-        <buildnumber-maven-plugin.version>1.4</buildnumber-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
         <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
     </properties>
@@ -109,7 +109,7 @@
                 </includes>
             </resource>
             <resource>
-                <directory>${build.directory}/plantuml-asl/src</directory>
+                <directory>${project.build.directory}/plantuml-asl/src</directory>
                 <includes>
                     <include>net/sourceforge/plantuml/**/*.png</include>
                     <include>net/sourceforge/plantuml/openiconic/data/**/*.txt</include>
@@ -119,7 +119,7 @@
                 </includes>
             </resource>
             <resource>
-                <directory>${build.directory}/plantuml-asl</directory>
+                <directory>${project.build.directory}/plantuml-asl</directory>
                 <includes>
                     <include>stdlib/**/*.repx</include>
                     <include>skin/**/*.skin</include>
@@ -128,25 +128,49 @@
         </resources>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>buildnumber-maven-plugin</artifactId>
-                <version>${buildnumber-maven-plugin.version}</version>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>${license-maven-plugin.version}</version>
                 <executions>
                     <execution>
-                        <phase>validate</phase>
                         <goals>
-                            <goal>create</goal>
+                            <goal>check</goal>
                         </goals>
-                        <configuration>
-                            <revisionOnScmFailure>UNKNOWN</revisionOnScmFailure>
-                            <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
-                            <buildNumberPropertyName>git.revision</buildNumberPropertyName>
-                            <scmBranchPropertyName>git.branch</scmBranchPropertyName>
-                            <timestampFormat>{0,date,yyyy-MM-dd'T'HH:mm:ss.SSSZ}</timestampFormat>
-                            <timestampPropertyName>build.timestamp</timestampPropertyName>
-                        </configuration>
+                        <phase>compile</phase>
                     </execution>
                 </executions>
+                <configuration>
+                    <header>${project.basedir}/.mvn/license/header.txt</header>
+                    <properties>
+                        <owner>${project.organization.name}</owner>
+                    </properties>
+                    <mapping>
+                        <java>SLASHSTAR_STYLE</java>
+                    </mapping>
+                    <excludes>
+                        <exclude>.gitignore</exclude>
+                        <exclude>.travis/**</exclude>
+                        <exclude>.travis.yml</exclude>
+                        <exclude>.mvn/**</exclude>
+                        <exclude>mvnw*</exclude>
+                        <exclude>lib/**</exclude>
+                        <exclude>**/.idea/**</exclude>
+                        <exclude>LICENSE</exclude>
+                        <exclude>**/*.md</exclude>
+                        <exclude>**/*.puml</exclude>
+                        <exclude>**/*.svg</exclude>
+                        <exclude>src/main/resources/**</exclude>
+                        <exclude>src/test/resources/**</exclude>
+                    </excludes>
+                    <strictCheck>true</strictCheck>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.mycila</groupId>
+                        <artifactId>license-maven-plugin-git</artifactId>
+                        <version>${license-maven-plugin.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -231,49 +255,14 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>com.mycila</groupId>
-                <artifactId>license-maven-plugin</artifactId>
-                <version>${license-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <phase>compile</phase>
-                    </execution>
-                </executions>
-                <configuration>
-                    <header>${project.basedir}/.mvn/license/header.txt</header>
-                    <properties>
-                        <owner>${project.organization.name}</owner>
-                    </properties>
-                    <mapping>
-                        <java>SLASHSTAR_STYLE</java>
-                    </mapping>
-                    <excludes>
-                        <exclude>.gitignore</exclude>
-                        <exclude>.travis/**</exclude>
-                        <exclude>.travis.yml</exclude>
-                        <exclude>.mvn/**</exclude>
-                        <exclude>mvnw*</exclude>
-                        <exclude>lib/**</exclude>
-                        <exclude>**/.idea/**</exclude>
-                        <exclude>LICENSE</exclude>
-                        <exclude>**/*.md</exclude>
-                        <exclude>**/*.puml</exclude>
-                        <exclude>**/*.svg</exclude>
-                        <exclude>src/main/resources/**</exclude>
-                        <exclude>src/test/resources/**</exclude>
-                    </excludes>
-                    <strictCheck>true</strictCheck>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.mycila</groupId>
-                        <artifactId>license-maven-plugin-git</artifactId>
-                        <version>${license-maven-plugin.version}</version>
-                    </dependency>
-                </dependencies>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven-failsafe-plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
