@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Talsma ICT
+ * Copyright 2016-2020 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.rendering.indent;
 
 import nl.talsmasoftware.umldoclet.rendering.writers.ThrowingWriter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -26,10 +26,8 @@ import static nl.talsmasoftware.umldoclet.util.TestUtil.NEWLINE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasToString;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.fail;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests for the intenting print writer.
@@ -42,12 +40,9 @@ public class IndentingPrintWriterTest {
 
     @Test
     public void testIndentingPrintWriterNullWriter() {
-        try {
-            new IndentingPrintWriter(null, Indentation.DEFAULT);
-            fail("Exception expected.");
-        } catch (NullPointerException expected) {
-            assertThat("Exception message", expected.getMessage(), is(not(nullValue())));
-        }
+        NullPointerException expected = assertThrows(NullPointerException.class, () ->
+                new IndentingPrintWriter(null, Indentation.DEFAULT));
+        assertThat("Exception message", expected.getMessage(), notNullValue());
     }
 
     @Test
@@ -113,21 +108,19 @@ public class IndentingPrintWriterTest {
         clear(output);
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testWhitespaceIoeByUnderlyingWriter() {
         SettableIndentingPrintWriter writer = new SettableIndentingPrintWriter(new StringWriter(), Indentation.DEFAULT);
         writer.setOut(ThrowingWriter.throwing(new IOException("Buffer is full!")));
-        writer.whitespace();
-        fail("Exception expected.");
+        assertThrows(RuntimeException.class, writer::whitespace);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testIndentModifiedUnderlyingWriter() {
         final StringWriter output = new StringWriter();
         SettableIndentingPrintWriter writer = new SettableIndentingPrintWriter(output, Indentation.DEFAULT);
         writer.setOut(output);
-        writer.indent();
-        fail("Exception expected");
+        assertThrows(NullPointerException.class, writer::indent);
     }
 
     /**

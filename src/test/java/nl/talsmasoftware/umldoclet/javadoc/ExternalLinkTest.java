@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Talsma ICT
+ * Copyright 2016-2020 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,10 @@ import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.logging.Message;
 import nl.talsmasoftware.umldoclet.logging.TestLogger;
 import nl.talsmasoftware.umldoclet.util.TestUtil;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,7 +32,9 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -44,7 +46,7 @@ public class ExternalLinkTest {
     private TestLogger logger;
     private File tempdir;
 
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         logger = new TestLogger();
         config = mock(Configuration.class);
@@ -54,30 +56,36 @@ public class ExternalLinkTest {
         when(config.logger()).thenReturn(logger);
     }
 
-    @After
+    @AfterEach
     public void verifyMocks() {
         verify(config, atLeast(0)).logger();
         verifyNoMoreInteractions(config);
     }
 
-    @After
+    @AfterEach
     public void deleteTempdir() {
         TestUtil.deleteRecursive(tempdir);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testExternalLinkWithoutConfig() {
-        new ExternalLink(null, "apidoc", "packageList");
+        NullPointerException expected = assertThrows(NullPointerException.class, () ->
+                new ExternalLink(null, "apidoc", "packageList"));
+        assertThat(expected.getMessage(), notNullValue());
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testExternalLinkWithoutApidoc() {
-        new ExternalLink(config, null, "packageList");
+        NullPointerException expected = assertThrows(NullPointerException.class, () ->
+                new ExternalLink(config, null, "packageList"));
+        assertThat(expected.getMessage(), notNullValue());
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testExternalLinkWithoutPackageListLocation() {
-        new ExternalLink(config, "apidoc", null);
+        NullPointerException expected = assertThrows(NullPointerException.class, () ->
+                new ExternalLink(config, "apidoc", null));
+        assertThat(expected.getMessage(), notNullValue());
     }
 
     @Test
@@ -92,13 +100,15 @@ public class ExternalLinkTest {
         verify(config, atLeast(1)).destinationDirectory();
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testIllegalUrls() {
-        new ExternalLink(config, "https://www.google.com?\nq=query", "");
+        IllegalArgumentException expected = assertThrows(IllegalArgumentException.class, () ->
+                new ExternalLink(config, "https://www.google.com?\nq=query", ""));
+        assertThat(expected.getMessage(), notNullValue());
     }
 
     @Test
-    @Ignore // No live package validation at the moment (see issue #227)
+    @Disabled // No live package validation at the moment (see issue #227)
     public void testLiveExternalLink_packageList_badUrl() {
         when(config.destinationDirectory()).thenReturn("");
         TestUtil.write(new File(tempdir, "package-list"), "java.lang\n");
@@ -110,7 +120,7 @@ public class ExternalLinkTest {
     }
 
     @Test
-    @Ignore // No live package validation at the moment (see issue #227)
+    @Disabled // No live package validation at the moment (see issue #227)
     public void testLiveExternalLink_elementList_badUrl() {
         when(config.destinationDirectory()).thenReturn("");
         TestUtil.write(new File(tempdir, "element-list"), "module:java.base\njava.lang\n");

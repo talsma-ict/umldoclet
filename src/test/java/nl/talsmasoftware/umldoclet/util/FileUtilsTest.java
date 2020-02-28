@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Talsma ICT
+ * Copyright 2016-2020 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +26,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FileUtilsTest {
 
@@ -70,14 +71,11 @@ public class FileUtilsTest {
         assertThat(relativePath(new File("."), null), is(nullValue()));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testCreateParentDirWhenParentIsFile() throws IOException {
         File tempFile = File.createTempFile("umldoclet-", "-test.tmp");
-        try {
-            FileUtils.ensureParentDir(new File(tempFile, "sub-file"));
-        } finally {
-            tempFile.delete();
-        }
+        assertThrows(IllegalStateException.class, () -> FileUtils.ensureParentDir(new File(tempFile, "sub-file")));
+        tempFile.delete();
     }
 
     @Test

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Talsma ICT
+ * Copyright 2016-2020 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
 import nl.talsmasoftware.umldoclet.logging.TestLogger;
 import nl.talsmasoftware.umldoclet.util.TestUtil;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -42,7 +42,7 @@ public class ClassDiagramTest {
     private ImageConfig images;
     private Configuration config;
 
-    @Before
+    @BeforeEach
     public void initializeMocks() {
         images = mock(ImageConfig.class);
         config = mock(Configuration.class);
@@ -55,7 +55,7 @@ public class ClassDiagramTest {
         when(images.directory()).thenReturn(Optional.empty());
     }
 
-    @After
+    @AfterEach
     public void verifyMocks() {
         verify(config, atLeast(1)).images();
         verify(images, atLeast(1)).formats();
