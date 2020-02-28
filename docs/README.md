@@ -14,7 +14,7 @@ It automatically generates UML diagrams from your code as separate
 To use the doclet together with the JavaDoc tool, the following is required.
 
 - JDK version 1.7 or 1.8  
-  **Note:** _This version will not work from Javadoc version 9!  
+  **Note:** _This version will not work from Javadoc version 9!_  
   If you compile your java 8 or older javadocs with a more recent JDK (Javadoc version 9 or higher), you need to use the [2.x version](https://github.com/talsma-ict/umldoclet).
 - Availability of tools.jar containing the Sun JavaDoc API.
 - The doclet jar or a build system that knows how to get it (see [usage](USAGE.md)).
