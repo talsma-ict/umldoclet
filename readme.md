@@ -75,7 +75,7 @@ or on [github](https://github.com/talsma-ict/umldoclet/releases).
 
 ## Thanks
 
-- First of all a big thanks to [Arnaud Roques](https://github.com/plantuml/plantuml-mit/commits?author=arnaudroques),
+- First of all a big thanks to [Arnaud Roques](https://github.com/arnaudroques),
   the developer of the excellent [PlantUML project](https://github.com/plantuml/plantuml) 
   without whom this project wouldn't exist!
 - And of course thank _you_ for using UML Doclet :clap:.
