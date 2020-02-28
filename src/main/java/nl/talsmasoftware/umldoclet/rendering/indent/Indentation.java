@@ -103,7 +103,7 @@ public final class Indentation implements CharSequence, Serializable {
     private static Indentation resolve(final int width, final char ch, final int level) {
         return width == 0 ? NONE
                 : ch == ' ' ? spaces(width, level)
-                : width == 1 && ch == '\t' ? tabs(level)
+                : ch == '\t' && width == 1 ? tabs(level)
                 : new Indentation(width, ch, level);
     }
 
