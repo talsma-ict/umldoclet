@@ -4,7 +4,7 @@
 
 # UMLDoclet
 
-[Doclet for javadoc][doclet] that automatically adds [UML diagrams][plantuml] to your Java documentation.  
+[Doclet for javadoc][doclet] to automatically add [UML diagrams][plantuml] to Java documentation.  
 
 [![Codacy Badge][codacy-img]][codacy]
 [![Codebeat badge][codebeat-img]][codebeat]
