@@ -4,11 +4,11 @@
 
 # UMLDoclet
 
+[Doclet for javadoc][doclet] that automatically adds [UML diagrams][plantuml] to your Java documentation.  
+
 [![Codacy Badge][codacy-img]][codacy]
 [![Codebeat badge][codebeat-img]][codebeat]
 [![Coverage Status][coveralls-img]][coveralls]
-
-[Doclet for the javadoc tool][doclet] that generates [UML diagrams][plantuml] from the code.  
 
 ## Generate UML diagrams
 
