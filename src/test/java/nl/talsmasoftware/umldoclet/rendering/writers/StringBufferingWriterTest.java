@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Talsma ICT
+ * Copyright 2016-2020 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,23 +15,25 @@
  */
 package nl.talsmasoftware.umldoclet.rendering.writers;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasToString;
-import static org.junit.Assert.fail;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Sjoerd Talsma
  */
 public class StringBufferingWriterTest {
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void createWithNullDelegate() {
-        new StringBufferingWriter(null);
-        fail("Null pointer exception expected.");
+        NullPointerException expected = assertThrows(NullPointerException.class, () ->
+                new StringBufferingWriter(null));
+        assertThat(expected.getMessage(), notNullValue());
     }
 
     @Test

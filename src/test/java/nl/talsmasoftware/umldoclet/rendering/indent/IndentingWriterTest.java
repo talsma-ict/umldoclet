@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Talsma ICT
+ * Copyright 2016-2020 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.rendering.indent;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -26,7 +26,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasToString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class IndentingWriterTest {
 
@@ -75,13 +76,11 @@ public class IndentingWriterTest {
 
     @Test
     public void testCloseRethrowingRuntimeExceptions() throws IOException {
-        RuntimeException runtimeException = new RuntimeException("Runtime exception!");
-        try {
-            new IndentingWriter(throwing(runtimeException), Indentation.DEFAULT).close();
-            fail("Runtime exception expected.");
-        } catch (RuntimeException expected) {
-            assertThat(expected, is(sameInstance(runtimeException)));
-        }
+        final RuntimeException runtimeException = new RuntimeException("Runtime exception!");
+        assertThat(
+                assertThrows(RuntimeException.class, () ->
+                        new IndentingWriter(throwing(runtimeException), Indentation.DEFAULT).close()),
+                is(sameInstance(runtimeException)));
     }
 
     @Test

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Talsma ICT
+ * Copyright 2016-2020 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 package nl.talsmasoftware.umldoclet.issues;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.spi.ToolProvider;
@@ -36,7 +36,7 @@ import static org.hamcrest.Matchers.is;
  */
 public class Issue25ImagedirTest {
 
-    @BeforeClass
+    @BeforeAll
     public static void createJavadoc() {
         ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,

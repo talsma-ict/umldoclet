@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Talsma ICT
+ * Copyright 2016-2020 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 package nl.talsmasoftware.umldoclet.html;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,14 +34,14 @@ public class HtmlFileTest {
 
     private static File tempdir;
 
-    @BeforeClass
+    @BeforeAll
     public static void createTempdir() throws IOException {
         tempdir = File.createTempFile("HtmlFile", "-test");
         assertThat("Delete tempfile", tempdir.delete(), is(true));
         assertThat("Create temporary directory", tempdir.mkdirs(), is(true));
     }
 
-    @AfterClass
+    @AfterAll
     public static void deleteTempdir() throws IOException {
         for (File f : tempdir.listFiles()) f.delete();
         assertThat("Delete temporary directory", tempdir.delete(), is(true));

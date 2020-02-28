@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Talsma ICT
+ * Copyright 2016-2020 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@ package nl.talsmasoftware.umldoclet.javadoc;
 import com.sun.source.util.DocTreePath;
 import jdk.javadoc.doclet.Reporter;
 import nl.talsmasoftware.umldoclet.logging.Message;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import javax.lang.model.element.Element;
@@ -45,18 +45,18 @@ public class LocalizedReporterTest {
     private Reporter mockReporter;
     private LocalizedReporter localizedReporter;
 
-    @BeforeClass
+    @BeforeAll
     public static void presetDefaultLocale() {
         defaultLocale = Locale.getDefault();
         Locale.setDefault(Locale.ENGLISH);
     }
 
-    @AfterClass
+    @AfterAll
     public static void restoreDefaultLocale() {
         Locale.setDefault(defaultLocale);
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         config = new DocletConfig();
         mockReporter = mock(Reporter.class);
@@ -67,7 +67,7 @@ public class LocalizedReporterTest {
         localizedReporter = new LocalizedReporter(config, mockReporter, locale);
     }
 
-    @After
+    @AfterEach
     public void verifyMockReporter() {
         verifyNoMoreInteractions(mockReporter);
     }

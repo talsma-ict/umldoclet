@@ -18,8 +18,8 @@ package nl.talsmasoftware.umldoclet.features;
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.features.beans.StandardJavaBean;
 import nl.talsmasoftware.umldoclet.util.TestUtil;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.spi.ToolProvider;
@@ -31,7 +31,7 @@ import static org.hamcrest.Matchers.is;
 public class Feature236ExcludedTypeReferencesTest {
     private static final File outputdir = new File("target/issues/236");
 
-    @BeforeClass
+    @BeforeAll
     public static void generateBeansPackageJavadoc() {
         assertThat("Javadoc result", ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,

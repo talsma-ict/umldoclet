@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Talsma ICT
+ * Copyright 2016-2020 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,8 @@ import nl.talsmasoftware.umldoclet.rendering.writers.DelegatingWriter;
 import nl.talsmasoftware.umldoclet.uml.UMLNode;
 import nl.talsmasoftware.umldoclet.util.FileUtils;
 import nl.talsmasoftware.umldoclet.util.TestUtil;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -56,7 +56,7 @@ public class Issue164PackageDependenciesTest {
     );
     private static final File outputdir = new File("target/issues/164");
 
-    @BeforeClass
+    @BeforeAll
     public static void createJavaDoc() {
         List<String> args = new ArrayList<>(asList(
                 "-d", outputdir.getPath(),

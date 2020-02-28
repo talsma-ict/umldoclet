@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Talsma ICT
+ * Copyright 2016-2020 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.javadoc.dependencies;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,24 +24,30 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasToString;
-import static org.junit.Assert.fail;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PackageDependencyCycleTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testEmptyDependencyCycle() {
-        new PackageDependencyCycle();
-        fail("Exception expected");
+        IllegalArgumentException expected = assertThrows(IllegalArgumentException.class, PackageDependencyCycle::new);
+        assertThat(expected.getMessage(), notNullValue());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testIncompleteCycle() {
-        new PackageDependencyCycle(new PackageDependency("a", "b"), new PackageDependency("b", "c"));
+        IllegalArgumentException expected = assertThrows(IllegalArgumentException.class, () ->
+                new PackageDependencyCycle(new PackageDependency("a", "b"), new PackageDependency("b", "c")));
+        assertThat(expected.getMessage(), notNullValue());
     }
 
     @Test
     public void testDependencyCycleToString() {
-        assertThat(new PackageDependencyCycle(new PackageDependency("a", "b"), new PackageDependency("b", "c"), new PackageDependency("c", "a")),
+        assertThat(new PackageDependencyCycle(
+                        new PackageDependency("a", "b"),
+                        new PackageDependency("b", "c"),
+                        new PackageDependency("c", "a")),
                 hasToString("a > b > c > a"));
     }
 

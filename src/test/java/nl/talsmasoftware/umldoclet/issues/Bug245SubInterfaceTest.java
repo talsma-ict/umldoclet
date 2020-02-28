@@ -17,8 +17,8 @@ package nl.talsmasoftware.umldoclet.issues;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 import nl.talsmasoftware.umldoclet.util.TestUtil;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.spi.ToolProvider;
@@ -47,7 +47,7 @@ public class Bug245SubInterfaceTest {
 
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void generateUmlForIssue245() {
         String pathToTest = Bug245SubInterfaceTest.class.getName().replace('.', '/');
         assertThat(ToolProvider.findFirst("javadoc").get().run(
