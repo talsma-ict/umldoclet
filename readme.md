@@ -77,8 +77,8 @@ or on [github](https://github.com/talsma-ict/umldoclet/releases).
 
 - First of all a big thanks to [Arnaud Roques](https://github.com/arnaudroques),
   the developer of the excellent [PlantUML project](https://github.com/plantuml/plantuml) 
-  without whom this project wouldn't exist!
-- And of course thank _you_ for using UML Doclet :clap:.
+  without whom this project wouldn't exist! :clap:
+- And of course thank _you_ for using UML Doclet.
   I hope it may be of benefit to your project!
 
 ## License
