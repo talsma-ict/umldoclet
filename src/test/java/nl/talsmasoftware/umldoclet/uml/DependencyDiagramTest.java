@@ -62,6 +62,7 @@ public class DependencyDiagramTest {
         verify(mockConfig, atLeastOnce()).images();
         verify(mockImages, atLeastOnce()).formats();
         verify(mockConfig, atLeast(0)).excludedPackageDependencies();
+        verify(mockConfig, atLeast(0)).indentation();
         verifyNoMoreInteractions(mockConfig, mockImages);
     }
 
