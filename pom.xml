@@ -68,7 +68,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- Plant UML apache-licensed sources: https://sourceforge.net/projects/plantuml/files/ -->
-        <plantuml.version>1.2020.7</plantuml.version>
+        <plantuml-asl.directory>${project.basedir}/src/plantuml-asl</plantuml-asl.directory>
 
         <!-- test -->
         <junit.version>5.6.2</junit.version>
@@ -109,7 +109,7 @@
                 </includes>
             </resource>
             <resource>
-                <directory>${project.build.directory}/plantuml-asl/src</directory>
+                <directory>${plantuml-asl.directory}/src</directory>
                 <includes>
                     <include>net/sourceforge/plantuml/**/*.png</include>
                     <include>net/sourceforge/plantuml/openiconic/data/**/*.txt</include>
@@ -119,7 +119,7 @@
                 </includes>
             </resource>
             <resource>
-                <directory>${project.build.directory}/plantuml-asl</directory>
+                <directory>${plantuml-asl.directory}</directory>
                 <includes>
                     <include>stdlib/**/*.repx</include>
                     <include>skin/**/*.skin</include>
@@ -161,6 +161,7 @@
                         <exclude>**/*.svg</exclude>
                         <exclude>src/main/resources/**</exclude>
                         <exclude>src/test/resources/**</exclude>
+                        <exclude>src/plantuml-asl/**</exclude>
                     </excludes>
                     <strictCheck>true</strictCheck>
                 </configuration>
@@ -171,27 +172,6 @@
                         <version>${license-maven-plugin.version}</version>
                     </dependency>
                 </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <id>extract-plantuml-sources</id>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                        <configuration>
-                            <target>
-                                <gunzip src="src/main/plantuml-asl-${plantuml.version}.tar.gz" dest="target/plantuml-asl.tar"/>
-                                <untar src="target/plantuml-asl.tar" dest="target/plantuml-asl"/>
-                                <delete file="target/plantuml-asl.tar"/>
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -215,7 +195,7 @@
                             <source>1.8</source>
                             <target>1.8</target>
                             <compileSourceRoots>
-                                <compileSourceRoot>target/plantuml-asl/src</compileSourceRoot>
+                                <compileSourceRoot>${plantuml-asl.directory}/src</compileSourceRoot>
                             </compileSourceRoots>
                             <showDeprecation>false</showDeprecation>
                         </configuration>
@@ -330,7 +310,7 @@
                             <jdkToolchain>
                                 <version>9</version>
                             </jdkToolchain>
-                            <sourcepath>${project.build.sourceDirectory}:${project.build.directory}/plantuml-asl/src</sourcepath>
+                            <sourcepath>${project.build.sourceDirectory}:${plantuml-asl.directory}/src</sourcepath>
                             <excludePackageNames>gen.*:h:net.sourceforge.*:smetana.*</excludePackageNames>
                             <additionalOptions>
                                 <additionalOption>-createPumlFiles</additionalOption>
