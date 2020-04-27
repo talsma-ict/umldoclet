@@ -149,6 +149,8 @@
                     </mapping>
                     <excludes>
                         <exclude>.gitignore</exclude>
+                        <exclude>.codebeatignore</exclude>
+                        <exclude>.codacy.yml</exclude>
                         <exclude>.travis/**</exclude>
                         <exclude>.travis.yml</exclude>
                         <exclude>.mvn/**</exclude>
