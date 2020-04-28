@@ -48,6 +48,10 @@ public class CommandClock extends SingleLineCommand2<TimingDiagram> {
 
 	private static IRegex getRegexConcat() {
 		return RegexConcat.build(CommandClock.class.getName(), RegexLeaf.start(), //
+				new RegexOptional( //
+						new RegexConcat( //
+								new RegexLeaf("COMPACT", "(compact)"), //
+								RegexLeaf.spaceOneOrMore())), //
 				new RegexLeaf("TYPE", "clock"), //
 				RegexLeaf.spaceOneOrMore(), //
 				new RegexLeaf("CODE", "([\\p{L}0-9_.@]+)"), //
@@ -58,15 +62,16 @@ public class CommandClock extends SingleLineCommand2<TimingDiagram> {
 				RegexLeaf.spaceOneOrMore(), //
 				new RegexLeaf("PERIOD", "([0-9]+)"), //
 				new RegexOptional(new RegexConcat( //
-						RegexLeaf.spaceOneOrMore(),//
+						RegexLeaf.spaceOneOrMore(), //
 						new RegexLeaf("pulse"), //
-						RegexLeaf.spaceOneOrMore(),//
+						RegexLeaf.spaceOneOrMore(), //
 						new RegexLeaf("PULSE", "([0-9]+)") //
-						)), RegexLeaf.end());
+				)), RegexLeaf.end());
 	}
 
 	@Override
 	final protected CommandExecutionResult executeArg(TimingDiagram diagram, LineLocation location, RegexResult arg) {
+		final String compact = arg.get("COMPACT", 0);
 		final String code = arg.get("CODE", 0);
 		final int period = Integer.parseInt(arg.get("PERIOD", 0));
 		final String pulseString = arg.get("PULSE", 0);
@@ -74,7 +79,7 @@ public class CommandClock extends SingleLineCommand2<TimingDiagram> {
 		if (pulseString != null) {
 			pulse = Integer.parseInt(pulseString);
 		}
-		return diagram.createClock(code, code, period, pulse);
+		return diagram.createClock(code, code, period, pulse, compact != null);
 	}
 
 }

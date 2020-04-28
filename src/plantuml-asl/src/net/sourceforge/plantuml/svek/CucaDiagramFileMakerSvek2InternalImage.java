@@ -134,7 +134,7 @@ public final class CucaDiagramFileMakerSvek2InternalImage extends AbstractTextBl
 	}
 
 	public HColor getBackcolor() {
-		return skinParam.getBackgroundColor();
+		return skinParam.getBackgroundColor(false);
 	}
 	
 	public double getOverscanX(StringBounder stringBounder) {

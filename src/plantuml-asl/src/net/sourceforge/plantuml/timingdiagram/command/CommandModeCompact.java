@@ -28,25 +28,35 @@
  *
  * Original Author:  Arnaud Roques
  */
-package net.sourceforge.plantuml.ugraphic.color;
+package net.sourceforge.plantuml.timingdiagram.command;
 
-public class HColorBackground extends HColorAbstract implements HColor {
+import net.sourceforge.plantuml.LineLocation;
+import net.sourceforge.plantuml.command.CommandExecutionResult;
+import net.sourceforge.plantuml.command.SingleLineCommand2;
+import net.sourceforge.plantuml.command.regex.IRegex;
+import net.sourceforge.plantuml.command.regex.RegexConcat;
+import net.sourceforge.plantuml.command.regex.RegexLeaf;
+import net.sourceforge.plantuml.command.regex.RegexResult;
+import net.sourceforge.plantuml.timingdiagram.TimingDiagram;
 
-	private final HColor back;
+public class CommandModeCompact extends SingleLineCommand2<TimingDiagram> {
 
-	public HColorBackground(HColor back) {
-		if (back == null) {
-			throw new IllegalArgumentException();
-		}
-		this.back = back;
+	public CommandModeCompact() {
+		super(getRegexConcat());
 	}
 
-	public HColor getNull() {
-		return null;
+	private static IRegex getRegexConcat() {
+		return RegexConcat.build(CommandModeCompact.class.getName(), RegexLeaf.start(), //
+				new RegexLeaf("mode"), //
+				RegexLeaf.spaceOneOrMore(), //
+				new RegexLeaf("compact"), //
+				RegexLeaf.end());
 	}
 
-	final HColor getBack() {
-		return back;
+	@Override
+	final protected CommandExecutionResult executeArg(TimingDiagram diagram, LineLocation location, RegexResult arg) {
+		diagram.goCompactMode();
+		return CommandExecutionResult.ok();
 	}
 
 }
