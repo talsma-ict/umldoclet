@@ -137,4 +137,15 @@ public class DocletConfigTest {
         assertThat(help, containsString("-umlExcludedPackageDependencies <package>(,<package>)*"));
         assertThat(help, containsString("Defaults to 'java,javax'"));
     }
+
+    @Test
+    public void testRenderPumlFileWhenVerbose() {
+        assertThat("No puml files by default", config.renderPumlFile(), is(false));
+        config.verbose = true;
+        assertThat("Puml files when verbose", config.renderPumlFile(), is(true));
+        config.quiet = true;
+        assertThat("No puml files when both verbose and quiet", config.renderPumlFile(), is(false));
+        config.renderPumlFile = true;
+        assertThat("Puml files when explicitly set even when quiet", config.renderPumlFile(), is(true));
+    }
 }
