@@ -43,9 +43,11 @@ public abstract class AbstractEntityImage extends AbstractTextBlock implements I
 	private final ISkinParam skinParam;
 
 	public AbstractEntityImage(IEntity entity, ISkinParam skinParam) {
-		// System.err.println("Creating abstractEntityImage "+getClass());
 		if (entity == null) {
 			throw new IllegalArgumentException("entity null");
+		}
+		if (skinParam == null) {
+			throw new IllegalArgumentException("skinParam null");
 		}
 		this.entity = entity;
 		this.skinParam = skinParam;
@@ -64,7 +66,7 @@ public abstract class AbstractEntityImage extends AbstractTextBlock implements I
 	}
 
 	public final HColor getBackcolor() {
-		return null;
+		return skinParam.getBackgroundColor(false);
 	}
 
 	protected final Stereotype getStereo() {

@@ -33,6 +33,7 @@ package net.sourceforge.plantuml;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -53,7 +54,8 @@ import net.sourceforge.plantuml.ugraphic.UFont;
  * 
  */
 public enum FileFormat {
-	PNG, SVG, EPS, EPS_TEXT, ATXT, UTXT, XMI_STANDARD, XMI_STAR, XMI_ARGO, SCXML, PDF, MJPEG, ANIMATED_GIF, HTML, HTML5, VDX, LATEX, LATEX_NO_PREAMBLE, BASE64, BRAILLE_PNG, PREPROC;
+	PNG, SVG, EPS, EPS_TEXT, ATXT, UTXT, XMI_STANDARD, XMI_STAR, XMI_ARGO, SCXML, PDF, MJPEG, ANIMATED_GIF, HTML, HTML5,
+	VDX, LATEX, LATEX_NO_PREAMBLE, BASE64, BRAILLE_PNG, PREPROC;
 
 	/**
 	 * Returns the file format to be used for that format.
@@ -84,6 +86,10 @@ public enum FileFormat {
 
 	final static private BufferedImage imDummy = new BufferedImage(800, 100, BufferedImage.TYPE_INT_RGB);
 	final static private Graphics2D gg = imDummy.createGraphics();
+	static {
+		// KEY_FRACTIONALMETRICS
+		gg.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+	}
 
 	public StringBounder getDefaultStringBounder(TikzFontDistortion tikzFontDistortion) {
 		if (this == LATEX || this == LATEX_NO_PREAMBLE) {
@@ -173,8 +179,8 @@ public enum FileFormat {
 		if (cpt == 0) {
 			return changeName(fileName, getFileSuffix());
 		}
-		return changeName(fileName, OptionFlags.getInstance().getFileSeparator() + String.format("%03d", cpt)
-				+ getFileSuffix());
+		return changeName(fileName,
+				OptionFlags.getInstance().getFileSeparator() + String.format("%03d", cpt) + getFileSuffix());
 	}
 
 	private File computeFilename(File pngFile, int i) {
@@ -228,4 +234,5 @@ public enum FileFormat {
 		}
 		return false;
 	}
+
 }

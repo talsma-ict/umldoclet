@@ -151,6 +151,14 @@ public class SkinParam implements ISkinParam {
 		return result;
 	}
 
+	static public void setBetaStyle(boolean betastyle) {
+		USE_STYLE2.set(betastyle);
+	}
+
+	public static int zeroMargin(int defaultValue) {
+		return defaultValue;
+	}
+
 	private static final String stereoPatternString = "\\<\\<(.*?)\\>\\>";
 	private static final Pattern2 stereoPattern = MyPattern.cmpile(stereoPatternString);
 
@@ -171,7 +179,8 @@ public class SkinParam implements ISkinParam {
 		for (String key2 : cleanForKey(key)) {
 			params.put(key2, StringUtils.trin(value));
 			if (key2.startsWith("usebetastyle")) {
-				USE_STYLE2.set("true".equalsIgnoreCase(value));
+				final boolean betastyle = "true".equalsIgnoreCase(value);
+				setBetaStyle(betastyle);
 			}
 			if (USE_STYLES()) {
 				final FromSkinparamToStyle convertor = new FromSkinparamToStyle(key2, value, getCurrentStyleBuilder());

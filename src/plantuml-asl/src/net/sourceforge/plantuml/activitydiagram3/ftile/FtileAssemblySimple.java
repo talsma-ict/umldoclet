@@ -120,8 +120,8 @@ public class FtileAssemblySimple extends AbstractTextBlock implements Ftile {
 
 	public FtileGeometry calculateDimension(StringBounder stringBounder) {
 		if (calculateDimension == null) {
-			calculateDimension = tile1.calculateDimension(stringBounder).appendBottom(
-					tile2.calculateDimension(stringBounder));
+			calculateDimension = tile1.calculateDimension(stringBounder)
+					.appendBottom(tile2.calculateDimension(stringBounder));
 		}
 		return calculateDimension;
 	}

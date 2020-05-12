@@ -74,7 +74,7 @@ public class SkinLoader {
 		}
 
 		lines = lines.subExtract(1, 1);
-		lines = lines.trim(true);
+		lines = lines.trim().removeEmptyLines();
 
 		for (StringLocated s : lines) {
 			assert s.getString().length() > 0;
