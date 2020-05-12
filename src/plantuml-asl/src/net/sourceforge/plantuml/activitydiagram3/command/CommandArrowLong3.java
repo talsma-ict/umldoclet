@@ -69,7 +69,7 @@ public class CommandArrowLong3 extends CommandMultilines2<ActivityDiagram3> {
 	@Override
 	protected CommandExecutionResult executeNow(ActivityDiagram3 diagram, BlocLines lines) {
 		lines = lines.removeEmptyColumns();
-		final RegexResult line0 = getStartingPattern().matcher(lines.getFirst499().getTrimmed().getString());
+		final RegexResult line0 = getStartingPattern().matcher(lines.getFirst().getTrimmed().getString());
 		// final HtmlColor color = diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(line0.get("COLOR", 0));
 		// diagram.setColorNextArrow(Rainbow.fromColor(color));
 		final String colorString = line0.get("COLOR", 0);
@@ -78,7 +78,7 @@ public class CommandArrowLong3 extends CommandMultilines2<ActivityDiagram3> {
 					.colorArrowSeparationSpace());
 			diagram.setColorNextArrow(rainbow);
 		}
-		lines = lines.removeStartingAndEnding2(line0.get("LABEL", 0));
+		lines = lines.removeStartingAndEnding(line0.get("LABEL", 0), 1);
 		diagram.setLabelNextArrow(lines.toDisplay());
 		return CommandExecutionResult.ok();
 	}

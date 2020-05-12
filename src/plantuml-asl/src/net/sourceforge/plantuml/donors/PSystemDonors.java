@@ -43,6 +43,7 @@ import net.sourceforge.plantuml.BackSlash;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.code.AsciiEncoder;
 import net.sourceforge.plantuml.code.CompressionBrotli;
+import net.sourceforge.plantuml.code.NoPlantumlCompressionException;
 import net.sourceforge.plantuml.code.StringCompressorNone;
 import net.sourceforge.plantuml.code.Transcoder;
 import net.sourceforge.plantuml.code.TranscoderImpl;
@@ -66,25 +67,25 @@ public class PSystemDonors extends AbstractPSystem {
 	private static final int COLS = 6;
 	private static final int FREE_LINES = 6;
 
-	public static final String DONORS = "6nmB0AmFkBcp0hHmgCOwx9qzUsNuYPYXIV3upfH_WeHti04o13LNIRGeSf_iNWC41T0rTFIOstTwt6-a"
-			+ "luYkTE-RPaHR_fhZvnb3CH3qUFww6hRvtnuyvfxff-Ixcz4JPiBaVmA4fYcNj0L8bI6ba87tDyDvlcaC"
-			+ "lVGCM1vLFqNtjV-xT9LrzwfEcBReReNpfn6gCqUZc6Ew_wF0XIZO2QfeKCWndSgv3eUg3dAs4trL54X2"
-			+ "nJk_dTzsJLR5P2wH4gkDRSICpe3kdFH-IGvajFwZVe0F7TCr9RWd59TU8kZyizhXPG73hv7uDHGEiU38"
-			+ "m1nAEoesA6Lk91J22L3eNCLiRFt1aITUM5H12_lmZqPou9wIh65eKOXu00Knp-02IM_KhKdEJXq6LEUP"
-			+ "BOOrITUjyH3fcuU95AsBXll18iA2Ma0DGzw4RlXqd_MIeNk_A1huos-JNBlbG1so9K3RhEXRU3H9LF-d"
-			+ "csUUkCkKpLEQZdhj_J5sXzmrPURqFteVXLp0SsuMKcJnyWBvCUYvcgWbFvVpO24DuJfANqZtkUtYCOjm"
-			+ "oOOCDUlopIoZHb_iIdGsBSPsif0Vy-TM4n9iuQkKHw0djUfeqVb28JKrhX_oUcg_3d9DdGNUCLeV5NEL"
-			+ "_r-4LPYXE46douoYhb-e6BDvDLGiKGHdZ2uFkGaa5-1SJMx7QlKXVkqJH6yb8n3Bng07ulMlbIwNGbWT"
-			+ "wxezpGfW-R1IDuMeBGAQj1jw4bVoaR88lHqcZMKpnj9pqWOVfut6A4xejCOcShCGfCkmJbNDT8dsEQrX"
-			+ "U3M_b_dql1_9UHNNwIRlUH_IwoSPg3Cjw9XK6l5ObhANHBe6gipYB7NL4DyLjlFmq7t1UHQBDZ1pjhaE"
-			+ "MHOQ5vBKr3yn-Q59npj9sQnzjHLx1_4lWtc8P4OHND-UF5AJonJ2bZET09j0LAh59_PRqhWpg8VbP7Eu"
-			+ "3c7beTMBa2I_Ipv1hAfOE5rO6-v-UOOW2lR9UI_CsXgNBYNN0chE7eAyj51LJocEj3b91kQQzAot3hRV"
-			+ "rRd0jtwhZcr0yPqGdTRSO7CAZ3HHVb6WHDAGbV9BJn8J-5y_Jxb7vZha-2ul6na7oIb93Ac2TCSlN3sD"
-			+ "rSlG2jPR_FsprZOhvy__lIOhEVN4irvD41qWed-J0hYSqnZ1sy1VjuyaRqxCi57GsEJAWrel0ea8zk6T"
-			+ "NTIJoupy8aQMMvIBLd5zgBgluXwvM0snOUiYd-BeFiMLrZODKILZt_T5kCZ1EFyjginAuQgMriA8JR7T"
-			+ "ipYviLilnTFMRY23whX3uEoft-wckKgVwmjBJSFJH7uwa4EskaiBQthQD3O3syJOtrlR3acw_oOT_v9U"
-			+ "q_sk7ePsTlucJuF6RtSO_OQHO41axPXWjymvYS2JRoJaZNauoUrYwPEBxYcxKB32VjClayM4LrQqoaIq"
-			+ "vkRMS-vj8Svk6tFO5hPFLwFu5qKr4O5CBZRhdiH2AU21L9A2EMVBL86qdIPDymc9Inq0";
+	public static final String DONORS = "6rWB02mFUBXRGOc9nbfsvvsjZ9-86KqYM9ud58U1HJpT3OW_mBtJutuZ_KLqfNlVD2FQiZN5USOGiI3e"
+			+ "yJIvPjZctXu8Sw9y2FxT21uW0qH9r4QrBFUas6sRAaDAyEyxN_abw1tUiK6YkKgZnP5xPFSBxs-6ytpJ"
+			+ "67hf6R0ygdwAxcl_T-agw_AgAipItGgCmAZJ2DLvIp77TFz7WJjEmKvGHOybntGgvpeSggY0LoSy1XPf"
+			+ "1ZUFyshKP5HCQXCfaTOe8s9q9hJcfFPPiY63n2_r0xpPN66fu4meZb4IT7qzjtVRGFFB95v4mH0B3WlC"
+			+ "ePJ3kq3nSoD18YX0eNaMlR6L1qkUk61H2YtimnyQoO57AfdJqI8HyW0A8fx11P9Ug5KJpaui1bGHoHQz"
+			+ "bgJgqdY8T5o7vIczDXhk0OiG2yu2QWZoF-Y2JuzL7qsTusfe9FKqoLkrTQXVYVVGDYFwfXvD4jLdVzFC"
+			+ "4NU1iaMgQwlFCLxp2CZTKYkl-3BgoEO0pxvxLvFrZnR8Zq2trKGj-RFi2mi9Y6ih-o1TvuQBHo_2CHio"
+			+ "JQpZTxFjDVs5hbXbep9MW4L-EhykDI715heoUGHwGgk2PfrFDDBI-lsYnvUD-uHhAYpk7Q3tKJRd-V_T"
+			+ "xcLcA0xGqJApeEiHAihLjEefjY22Cq8NXjm4oHKuRwxRSVEwoA_wWE3DPGJYi26qGRm-Gkcw569rhEh6"
+			+ "D2E0sTFAkKY4BH5GertGlQYIYPJrRe_JrPc-RCpS9trmtMymHd5C9pGMaRjt8JqCArIZMT-iVKXp2gxo"
+			+ "EiwhxZNUhsBRty9xqeVq_2C3VgPt1YBbHposhVoZIBUEYbcifMxMvRkw7nmyTCU2CrYqX1bjjaEcGU5i"
+			+ "CixKhqn-MZBy7OUivlU6PgyWUYTiX0Wpci7jhSarDRbC8cWwo_6n2uWYjNZ5hhXm1qBTB2l55ZR5oZDM"
+			+ "Zq92ViTyWaZbNJYjM6lk9ZmZUnJKuRmxLYthrw6MRG7LvZ11HbgeQgIQ8tqja85hTNeMMmVRdnPOCBRn"
+			+ "g8eLX-8x9jgltA1W2imKuNvH48boGLfABp59JE1__lnAFRclWutlZFB9E4ZsaCH05N9rnechfe7p65R6"
+			+ "Ues_Nszjzmh-_7iTRN9gYsT-YY1w3fBZtqbnp8LIrl4qobzdmsB08LPmqKR1bLkMtWmaBDY1TsPHZmyp"
+			+ "6ZSnMMvQBdh5zg4gVZkv0HVp8JRikCYaEKOikTBRRZseuhRlU6Dna8FYxwBAk4okSlKQ654WjhuN9prs"
+			+ "6sLuoYe5M50Tjmci_Ugtqonl6dFUeLGtN0RopO6SAlK8BQofQSrO26mGOtvlOJ-LzFXF1lh5jTQFlNhe"
+			+ "EQYyXtU3Xczxa7x6I31S9EsOeBVqEPc1XsyOv8svEV7fOicLYsuOTe5WXVr6NoOB2I_iQ9LBDDSUNdFw"
+			+ "vLtEQZjow1QoZrQZ-OMYYfY1N5YirTM9XLAE1r8a1NFsbl42QGUzmIKz0JX5mV7-xaCulT3yY6RjuncD" + "OgwA2G00";
 
 	/*
 	 * Special thanks to our sponsors and donors:
@@ -96,8 +97,8 @@ public class PSystemDonors extends AbstractPSystem {
 	final protected ImageData exportDiagramNow(OutputStream os, int num, FileFormatOption fileFormat, long seed)
 			throws IOException {
 		final UDrawable result = getGraphicStrings();
-		final ImageBuilder imageBuilder = new ImageBuilder(new ColorMapperIdentity(), 1.0, HColorUtils.WHITE,
-				getMetadata(), null, 0, 0, null, false);
+		final ImageBuilder imageBuilder = ImageBuilder.buildA(new ColorMapperIdentity(), false, null, getMetadata(),
+				null, 1.0, HColorUtils.WHITE);
 		imageBuilder.setUDrawable(result);
 		return imageBuilder.writeImageTOBEMOVED(fileFormat, seed, os);
 	}
@@ -139,12 +140,16 @@ public class PSystemDonors extends AbstractPSystem {
 
 	private List<String> getDonors() throws IOException {
 		final List<String> lines = new ArrayList<String>();
-		final Transcoder t = new TranscoderImpl(new AsciiEncoder(), new StringCompressorNone(),
+		final Transcoder t = TranscoderImpl.utf8(new AsciiEncoder(), new StringCompressorNone(),
 				new CompressionBrotli());
-		final String s = t.decode(DONORS).replace('*', '.');
-		final StringTokenizer st = new StringTokenizer(s, BackSlash.NEWLINE);
-		while (st.hasMoreTokens()) {
-			lines.add(st.nextToken());
+		try {
+			final String s = t.decode(DONORS).replace('*', '.');
+			final StringTokenizer st = new StringTokenizer(s, BackSlash.NEWLINE);
+			while (st.hasMoreTokens()) {
+				lines.add(st.nextToken());
+			}
+		} catch (NoPlantumlCompressionException e) {
+			e.printStackTrace();
 		}
 		return lines;
 	}

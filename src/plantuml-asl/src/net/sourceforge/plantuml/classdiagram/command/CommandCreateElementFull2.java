@@ -27,6 +27,7 @@
  *
  *
  * Original Author:  Arnaud Roques
+ * Contribution :  Hisashi Miyashita
  */
 package net.sourceforge.plantuml.classdiagram.command;
 
@@ -173,6 +174,9 @@ public class CommandCreateElementFull2 extends SingleLineCommand2<ClassDiagram> 
 		if (symbol == null) {
 			type = LeafType.DESCRIPTION;
 			usymbol = diagram.getSkinParam().getActorStyle().getUSymbol();
+		} else if (symbol.equalsIgnoreCase("port")) {
+			type = LeafType.PORT;
+			usymbol = null;
 		} else if (symbol.equalsIgnoreCase("usecase")) {
 			type = LeafType.USECASE;
 			usymbol = null;

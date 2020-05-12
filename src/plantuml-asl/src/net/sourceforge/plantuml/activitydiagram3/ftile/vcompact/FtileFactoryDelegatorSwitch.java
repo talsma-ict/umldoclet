@@ -40,7 +40,7 @@ import net.sourceforge.plantuml.activitydiagram3.LinkRendering;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactory;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactoryDelegator;
-import net.sourceforge.plantuml.activitydiagram3.ftile.FtileMinWidth;
+import net.sourceforge.plantuml.activitydiagram3.ftile.FtileMinWidthCentered;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.cond.FtileSwitchNude;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.cond.FtileSwitchWithDiamonds;
@@ -72,7 +72,7 @@ public class FtileFactoryDelegatorSwitch extends FtileFactoryDelegator {
 	private Ftile createNude(Swimlane swimlane, List<Branch> branches) {
 		final List<Ftile> ftiles = new ArrayList<Ftile>();
 		for (Branch branch : branches) {
-			ftiles.add(new FtileMinWidth(branch.getFtile(), 30));
+			ftiles.add(new FtileMinWidthCentered(branch.getFtile(), 30));
 		}
 		return new FtileSwitchNude(ftiles, swimlane);
 	}
@@ -80,7 +80,7 @@ public class FtileFactoryDelegatorSwitch extends FtileFactoryDelegator {
 	private Ftile createWithDiamonds(Swimlane swimlane, List<Branch> branches, Display labelTest) {
 		final List<Ftile> ftiles = new ArrayList<Ftile>();
 		for (Branch branch : branches) {
-			ftiles.add(new FtileMinWidth(branch.getFtile(), 30));
+			ftiles.add(new FtileMinWidthCentered(branch.getFtile(), 30));
 		}
 		final Ftile diamond1 = getDiamond1(swimlane, branches.get(0), labelTest);
 		final Ftile diamond2 = getDiamond2(swimlane, branches.get(0));
@@ -93,7 +93,7 @@ public class FtileFactoryDelegatorSwitch extends FtileFactoryDelegator {
 		final Ftile diamond1 = getDiamond1(swimlane, branches.get(0), labelTest);
 		final Ftile diamond2 = getDiamond2(swimlane, branches.get(0));
 		for (Branch branch : branches) {
-			ftiles.add(new FtileMinWidth(branch.getFtile(), 30));
+			ftiles.add(new FtileMinWidthCentered(branch.getFtile(), 30));
 		}
 		final Rainbow arrowColor = Rainbow.build(skinParam());
 		if (ftiles.size() == 1) {

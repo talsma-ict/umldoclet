@@ -27,6 +27,7 @@
  *
  *
  * Original Author:  Arnaud Roques
+ * Contribution :  Hisashi Miyashita
  */
 package net.sourceforge.plantuml.cucadiagram;
 
@@ -199,8 +200,13 @@ public class LinkType {
 		return decor2;
 	}
 
-	public boolean isExtendsOrAggregationOrCompositionOrPlus() {
-		return isExtends() || isAggregationOrComposition() || isPlus();
+	private boolean isExtendsOrAggregationOrCompositionOrPlus() {
+		return isExtends() || isAggregationOrComposition() || isPlus() || isOf(LinkDecor.DEFINEDBY)
+				|| isOf(LinkDecor.REDEFINES);
+	}
+
+	private boolean isOf(LinkDecor ld) {
+		return decor1 == ld || decor2 == ld;
 	}
 
 	private boolean isExtends() {

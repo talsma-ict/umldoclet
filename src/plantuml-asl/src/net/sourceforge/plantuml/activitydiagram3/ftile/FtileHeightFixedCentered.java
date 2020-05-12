@@ -38,12 +38,12 @@ import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 
-public class FtileHeightFixed extends AbstractFtile {
+public class FtileHeightFixedCentered extends AbstractFtile {
 
 	private final Ftile tile;
 	private final double fixedHeight;
 
-	public FtileHeightFixed(Ftile tile, double fixedHeight) {
+	public FtileHeightFixedCentered(Ftile tile, double fixedHeight) {
 		super(tile.skinParam());
 		this.tile = tile;
 		this.fixedHeight = fixedHeight;

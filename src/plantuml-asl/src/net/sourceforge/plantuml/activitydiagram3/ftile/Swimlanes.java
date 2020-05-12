@@ -32,10 +32,15 @@ package net.sourceforge.plantuml.activitydiagram3.ftile;
 
 import java.awt.geom.Dimension2D;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import net.sourceforge.plantuml.ColorParam;
+import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
+import net.sourceforge.plantuml.LineBreakStrategy;
 import net.sourceforge.plantuml.Pragma;
+import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.activitydiagram3.Instruction;
 import net.sourceforge.plantuml.activitydiagram3.InstructionList;
 import net.sourceforge.plantuml.activitydiagram3.LinkRendering;
@@ -52,11 +57,14 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.UGraphicIntercep
 import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.VCompactFactory;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
+import net.sourceforge.plantuml.graphic.FontConfiguration;
+import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.UGraphicDelegator;
 import net.sourceforge.plantuml.graphic.color.ColorType;
+import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleSignature;
@@ -72,15 +80,16 @@ import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.comp.CompressionMode;
 import net.sourceforge.plantuml.ugraphic.comp.SlotFinder;
-import net.sourceforge.plantuml.ugraphic.comp.SlotSet;
 import net.sourceforge.plantuml.utils.MathUtils;
 
-public class SwimlanesA extends AbstractTextBlock implements ISwimlanesA, TextBlock, Styleable {
+public class Swimlanes extends AbstractTextBlock implements TextBlock, Styleable {
 
-	protected final ISkinParam skinParam;;
+	private final ISkinParam skinParam;;
 	private final Pragma pragma;
 
-	protected final List<Swimlane> swimlanes = new ArrayList<Swimlane>();
+	private final List<Swimlane> swimlanesRaw = new ArrayList<Swimlane>();
+	private final List<Swimlane> swimlanesSpecial = new ArrayList<Swimlane>();
+	private final List<LaneDivider> dividers = new ArrayList<LaneDivider>();
 	private Swimlane currentSwimlane = null;
 
 	private final Instruction root = new InstructionList();
@@ -89,11 +98,25 @@ public class SwimlanesA extends AbstractTextBlock implements ISwimlanesA, TextBl
 	private LinkRendering nextLinkRenderer = LinkRendering.none();
 	private Style style;
 
+	private List<Swimlane> swimlanes() {
+		return Collections.unmodifiableList(swimlanesRaw);
+	}
+
+	private List<Swimlane> swimlanesSpecial() {
+		if (swimlanesSpecial.size() == 0) {
+			swimlanesSpecial.addAll(swimlanesRaw);
+			final Swimlane last = new Swimlane("");
+			last.setMinMax(MinMax.getEmpty(true));
+			swimlanesSpecial.add(last);
+		}
+		return Collections.unmodifiableList(swimlanesSpecial);
+	}
+
 	public StyleSignature getDefaultStyleDefinition() {
 		return StyleSignature.of(SName.root, SName.element, SName.classDiagram, SName.swimlane);
 	}
 
-	public SwimlanesA(ISkinParam skinParam, Pragma pragma) {
+	public Swimlanes(ISkinParam skinParam, Pragma pragma) {
 		this.skinParam = skinParam;
 		this.pragma = pragma;
 	}
@@ -132,13 +155,13 @@ public class SwimlanesA extends AbstractTextBlock implements ISwimlanesA, TextBl
 	}
 
 	private Swimlane getOrCreate(String name) {
-		for (Swimlane s : swimlanes) {
+		for (Swimlane s : swimlanes()) {
 			if (s.getName().equals(name)) {
 				return s;
 			}
 		}
 		final Swimlane result = new Swimlane(name);
-		swimlanes.add(result);
+		swimlanesRaw.add(result);
 		return result;
 	}
 
@@ -174,15 +197,9 @@ public class SwimlanesA extends AbstractTextBlock implements ISwimlanesA, TextBl
 
 	}
 
-	protected double separationMargin() {
-		return 10;
-	}
-
-	// private TextBlock full;
-
 	public final void computeSize(StringBounder stringBounder) {
 		final SlotFinder ug = new SlotFinder(CompressionMode.ON_Y, stringBounder);
-		if (swimlanes.size() > 1) {
+		if (swimlanes().size() > 1) {
 			TextBlock full = root.createFtile(getFtileFactory(stringBounder));
 			computeSizeInternal(ug, full);
 		}
@@ -193,7 +210,7 @@ public class SwimlanesA extends AbstractTextBlock implements ISwimlanesA, TextBl
 		TextBlock full = root.createFtile(getFtileFactory(ug.getStringBounder()));
 
 		ug = new UGraphicForSnake(ug);
-		if (swimlanes.size() > 1) {
+		if (swimlanes().size() > 1) {
 			drawWhenSwimlanes(ug, full);
 		} else {
 			// BUG42
@@ -203,52 +220,110 @@ public class SwimlanesA extends AbstractTextBlock implements ISwimlanesA, TextBl
 		}
 	}
 
-	static private void printDebug(UGraphic ug, SlotSet slot, HColor col, TextBlock full) {
-		slot.drawDebugX(ug.apply(col).apply(col.bg()), full.calculateDimension(ug.getStringBounder()).getHeight());
+	private TextBlock getTitle(Swimlane swimlane) {
+		final HorizontalAlignment horizontalAlignment = HorizontalAlignment.LEFT;
+		FontConfiguration fontConfiguration = new FontConfiguration(skinParam, FontParam.SWIMLANE_TITLE, null);
+		if (SkinParam.USE_STYLES()) {
+			fontConfiguration = getStyle().getFontConfiguration(skinParam.getIHtmlColorSet());
+		}
+		LineBreakStrategy wrap = getWrap();
+		if (wrap.isAuto()) {
+			wrap = new LineBreakStrategy("" + ((int) swimlane.getActualWidth()));
+		}
 
+		return swimlane.getDisplay().create9(fontConfiguration, horizontalAlignment, skinParam, wrap);
 	}
 
-	protected void drawWhenSwimlanes(final UGraphic ug, TextBlock full) {
-		final StringBounder stringBounder = ug.getStringBounder();
-		final Dimension2D dimensionFull = full.calculateDimension(stringBounder);
+	private LineBreakStrategy getWrap() {
+		LineBreakStrategy wrap = skinParam.swimlaneWrapTitleWidth();
+		if (wrap == LineBreakStrategy.NONE) {
+			wrap = skinParam.wrapWidth();
+		}
+		return wrap;
+	}
 
-		double x2 = 0;
-		for (Swimlane swimlane : swimlanes) {
+	private UTranslate getTitleHeightTranslate(final StringBounder stringBounder) {
+		double titlesHeight = getTitlesHeight(stringBounder);
+		return UTranslate.dy(titlesHeight > 0 ? titlesHeight + 5 : 0);
+	}
+
+	private double getTitlesHeight(StringBounder stringBounder) {
+		double titlesHeight = 0;
+		for (Swimlane swimlane : swimlanes()) {
+			final TextBlock swTitle = getTitle(swimlane);
+			titlesHeight = Math.max(titlesHeight, swTitle.calculateDimension(stringBounder).getHeight());
+		}
+		return titlesHeight;
+	}
+
+	private void drawWhenSwimlanes(UGraphic ug, TextBlock full) {
+		final StringBounder stringBounder = ug.getStringBounder();
+		final UTranslate titleHeightTranslate = getTitleHeightTranslate(stringBounder);
+
+		drawTitlesBackground(ug);
+
+		final Dimension2D dimensionFull = full.calculateDimension(stringBounder);
+		int i = 0;
+		assert dividers.size() == swimlanes().size() + 1;
+		for (Swimlane swimlane : swimlanesSpecial()) {
+			final LaneDivider divider1 = dividers.get(i);
+
+			final double xpos = swimlane.getTranslate().getDx() + swimlane.getMinMax().getMinX();
 			final HColor back = swimlane.getColors(skinParam).getColor(ColorType.BACK);
 			if (back != null) {
-				UGraphic background = ug.apply(back.bg()).apply(back);
-				background = background.apply(UTranslate.dx(x2));
-				drawBackColor(background, swimlane, dimensionFull);
+				final LaneDivider divider2 = dividers.get(i + 1);
+				final UGraphic background = ug.apply(back.bg()).apply(back)
+						.apply(UTranslate.dx(xpos - divider1.getX2()));
+				final double width = swimlane.getActualWidth() + divider1.getX2() + divider2.getX1();
+				final double height = dimensionFull.getHeight() + titleHeightTranslate.getDy();
+				background.draw(new URectangle(width, height).ignoreForCompressionOnX().ignoreForCompressionOnY());
 			}
 
-			full.drawU(new UGraphicInterceptorOneSwimlane(ug, swimlane, swimlanes).apply(swimlane.getTranslate())
+			full.drawU(new UGraphicInterceptorOneSwimlane(ug, swimlane, swimlanes()).apply(swimlane.getTranslate())
 					.apply(getTitleHeightTranslate(stringBounder)));
-			x2 += swimlane.getActualWidth();
 
+			final double dividerWith = divider1.calculateDimension(stringBounder).getWidth();
+			divider1.drawU(ug.apply(UTranslate.dx(xpos - dividerWith)));
+			i++;
 		}
+
 		final Cross cross = new Cross(ug.apply(getTitleHeightTranslate(stringBounder)));
 		full.drawU(cross);
 		cross.flushUg();
+
+		drawTitles(ug);
+
 	}
 
-	protected void drawBackColor(UGraphic ug, Swimlane swimlane, Dimension2D dimensionFull) {
-		final StringBounder stringBounder = ug.getStringBounder();
-		final double height = dimensionFull.getHeight() + getTitleHeightTranslate(stringBounder).getDy();
-		final URectangle rectangle = new URectangle(swimlane.getActualWidth(), height).ignoreForCompressionOnX()
-				.ignoreForCompressionOnY();
-		ug.draw(rectangle);
+	private void drawTitlesBackground(UGraphic ug) {
+		HColor color = skinParam.getHtmlColor(ColorParam.swimlaneTitleBackground, null, false);
+		if (SkinParam.USE_STYLES()) {
+			color = getStyle().value(PName.BackGroundColor).asColor(skinParam.getIHtmlColorSet());
+		}
+		if (color != null) {
+			final double titleHeight = getTitlesHeight(ug.getStringBounder());
+			double fullWidth = swimlanesSpecial().get(swimlanesSpecial().size() - 1).getTranslate().getDx() - 2 * 5 - 1;
+			final URectangle back = new URectangle(fullWidth, titleHeight).ignoreForCompressionOnX()
+					.ignoreForCompressionOnY();
+			ug.apply(UTranslate.dx(5)).apply(color.bg()).apply(color).draw(back);
+		}
 	}
 
-	protected UTranslate getTitleHeightTranslate(final StringBounder stringBounder) {
-		return new UTranslate();
+	private void drawTitles(UGraphic ug) {
+		for (Swimlane swimlane : swimlanes()) {
+			final TextBlock swTitle = getTitle(swimlane);
+			final double x2 = swimlane.getTranslate().getDx() + swimlane.getMinMax().getMinX();
+			final CenteredText centeredText = new CenteredText(swTitle, getWidthWithoutTitle(swimlane));
+			ug.apply(UTranslate.dx(x2)).draw(centeredText);
+		}
 	}
 
 	private void computeDrawingWidths(UGraphic ug, TextBlock full) {
 		final StringBounder stringBounder = ug.getStringBounder();
-		for (Swimlane swimlane : swimlanes) {
+		for (Swimlane swimlane : swimlanes()) {
 			final LimitFinder limitFinder = new LimitFinder(stringBounder, false);
 			final UGraphicInterceptorOneSwimlane interceptor = new UGraphicInterceptorOneSwimlane(
-					new UGraphicForSnake(limitFinder), swimlane, swimlanes);
+					new UGraphicForSnake(limitFinder), swimlane, swimlanes());
 			full.drawU(interceptor);
 			interceptor.flushUg();
 			final MinMax minMax = limitFinder.getMinMax();
@@ -258,34 +333,60 @@ public class SwimlanesA extends AbstractTextBlock implements ISwimlanesA, TextBl
 
 	private void computeSizeInternal(UGraphic ug, TextBlock full) {
 		computeDrawingWidths(ug, full);
-		double x1 = 0;
 
-		double swimlaneWidth = skinParam.swimlaneWidth();
+		double min = skinParam.swimlaneWidth();
 
-		if (swimlaneWidth == ISkinParam.SWIMLANE_WIDTH_SAME) {
-			for (Swimlane swimlane : swimlanes) {
-				swimlaneWidth = Math.max(swimlaneWidth, rawDrawingWidth(swimlane));
+		if (min == ISkinParam.SWIMLANE_WIDTH_SAME) {
+			for (Swimlane swimlane : swimlanes()) {
+				min = Math.max(min, getWidthWithoutTitle(swimlane));
 			}
-
 		}
-		for (Swimlane swimlane : swimlanes) {
-			final double swimlaneActualWidth = swimlaneActualWidth(ug.getStringBounder(), swimlaneWidth, swimlane);
+		final StringBounder stringBounder = ug.getStringBounder();
 
-			final UTranslate translate = UTranslate.dx(x1 - swimlane.getMinMax().getMinX() + separationMargin()
-					+ (swimlaneActualWidth - rawDrawingWidth(swimlane)) / 2.0);
-			swimlane.setTranslate(translate);
+		for (int i = 0; i < swimlanesSpecial().size(); i++) {
+			final Swimlane swimlane = swimlanesSpecial().get(i);
+			final double swimlaneActualWidth = MathUtils.max(min, getWidthWithoutTitle(swimlane));
 			swimlane.setWidth(swimlaneActualWidth);
-
-			x1 += swimlaneActualWidth;
 		}
+
+		final UTranslate titleHeightTranslate = getTitleHeightTranslate(stringBounder);
+		final Dimension2D dimensionFull = full.calculateDimension(stringBounder);
+
+		dividers.clear();
+		double xpos = 0;
+		for (int i = 0; i < swimlanesSpecial().size(); i++) {
+			final Swimlane swimlane = swimlanesSpecial().get(i);
+			double x1 = getHalfMissingSpace(stringBounder, i, min);
+			double x2 = getHalfMissingSpace(stringBounder, i + 1, min);
+			final LaneDivider laneDivider = new LaneDivider(skinParam, x1, x2,
+					dimensionFull.getHeight() + titleHeightTranslate.getDy());
+			dividers.add(laneDivider);
+
+			final double xx = xpos + laneDivider.getWidth() - swimlane.getMinMax().getMinX()
+					+ (swimlane.getActualWidth() - getWidthWithoutTitle(swimlane)) / 2.0;
+			swimlane.setTranslate(UTranslate.dx(xx));
+
+			xpos += swimlane.getActualWidth() + laneDivider.getWidth();
+		}
+		assert dividers.size() == swimlanes().size() + 1;
 	}
 
-	protected double swimlaneActualWidth(StringBounder stringBounder, double swimlaneWidth, Swimlane swimlane) {
-		return MathUtils.max(swimlaneWidth, rawDrawingWidth(swimlane));
+	public double getHalfMissingSpace(StringBounder stringBounder, int i, double min) {
+		if (i == 0 || i > swimlanesSpecial().size()) {
+			return 5;
+		}
+		final Swimlane swimlane = swimlanesSpecial().get(i - 1);
+		final double swimlaneActualWidth = Math.max(min, getWidthWithoutTitle(swimlane));
+		final double titleWidth = getTitle(swimlane).calculateDimension(stringBounder).getWidth();
+		if (titleWidth <= swimlaneActualWidth) {
+			return 5;
+		}
+		assert titleWidth > swimlaneActualWidth;
+		return Math.max(5, 5 + (titleWidth - swimlaneActualWidth) / 2);
 	}
 
-	private double rawDrawingWidth(Swimlane swimlane) {
-		return swimlane.getMinMax().getWidth() + 2 * separationMargin();
+	private double getWidthWithoutTitle(Swimlane swimlane) {
+		return swimlane.getMinMax().getWidth();
 	}
 
 	public Dimension2D calculateDimension(StringBounder stringBounder) {

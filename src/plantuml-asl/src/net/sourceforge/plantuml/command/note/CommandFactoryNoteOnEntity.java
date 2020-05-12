@@ -30,6 +30,8 @@
  */
 package net.sourceforge.plantuml.command.note;
 
+import net.sourceforge.plantuml.ColorParam;
+import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.Url;
@@ -58,6 +60,7 @@ import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.cucadiagram.Stereotag;
+import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.color.ColorParser;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.graphic.color.Colors;
@@ -84,6 +87,8 @@ public final class CommandFactoryNoteOnEntity implements SingleMultiFactoryComma
 								RegexLeaf.spaceOneOrMore(), partialPattern), //
 						new RegexLeaf("")), //
 				RegexLeaf.spaceZeroOrMore(), //
+				new RegexLeaf("STEREO", "(\\<{2}.*\\>{2})?"), //
+				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("TAGS", Stereotag.pattern() + "?"), //
 				RegexLeaf.spaceZeroOrMore(), //
 				color().getRegex(), //
@@ -94,7 +99,7 @@ public final class CommandFactoryNoteOnEntity implements SingleMultiFactoryComma
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("NOTE", "(.*)"), //
 				RegexLeaf.end() //
-				);
+		);
 	}
 
 	private static ColorParser color() {
@@ -115,6 +120,8 @@ public final class CommandFactoryNoteOnEntity implements SingleMultiFactoryComma
 									partialPattern), //
 							new RegexLeaf("")), //
 					RegexLeaf.spaceZeroOrMore(), //
+					new RegexLeaf("STEREO", "(\\<{2}.*\\>{2})?"), //
+					RegexLeaf.spaceZeroOrMore(), //
 					new RegexLeaf("TAGS", Stereotag.pattern() + "?"), //
 					RegexLeaf.spaceZeroOrMore(), //
 					color().getRegex(), //
@@ -123,7 +130,7 @@ public final class CommandFactoryNoteOnEntity implements SingleMultiFactoryComma
 					RegexLeaf.spaceZeroOrMore(), //
 					new RegexLeaf("\\{"), //
 					RegexLeaf.end() //
-					);
+			);
 		}
 		return RegexConcat.build(CommandFactoryNoteOnEntity.class.getName() + key + "multi" + withBracket,
 				RegexLeaf.start(), //
@@ -137,13 +144,15 @@ public final class CommandFactoryNoteOnEntity implements SingleMultiFactoryComma
 								partialPattern), //
 						new RegexLeaf("")), //
 				RegexLeaf.spaceZeroOrMore(), //
+				new RegexLeaf("STEREO", "(\\<{2}.*\\>{2})?"), //
+				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("TAGS", Stereotag.pattern() + "?"), //
 				RegexLeaf.spaceZeroOrMore(), //
 				color().getRegex(), //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("URL", "(" + UrlBuilder.getRegexp() + ")?"), //
 				RegexLeaf.end() //
-				);
+		);
 	}
 
 	public Command<AbstractEntityDiagram> createSingleLine() {
@@ -172,7 +181,7 @@ public final class CommandFactoryNoteOnEntity implements SingleMultiFactoryComma
 
 			protected CommandExecutionResult executeNow(final AbstractEntityDiagram system, BlocLines lines) {
 				// StringUtils.trim(lines, false);
-				final RegexResult line0 = getStartingPattern().matcher(lines.getFirst499().getTrimmed().getString());
+				final RegexResult line0 = getStartingPattern().matcher(lines.getFirst().getTrimmed().getString());
 				lines = lines.subExtract(1, 1);
 				lines = lines.removeEmptyColumns();
 
@@ -221,15 +230,24 @@ public final class CommandFactoryNoteOnEntity implements SingleMultiFactoryComma
 		else
 			note = diagram.createLeaf(idNewLong, diagram.buildCode(tmp), strings.toDisplay(), LeafType.NOTE, null);
 
-		final Colors colors = color().getColor(line0, diagram.getSkinParam().getIHtmlColorSet());
+		Colors colors = color().getColor(line0, diagram.getSkinParam().getIHtmlColorSet());
+
+		final String stereotypeString = line0.get("STEREO", 0);
+		if (stereotypeString != null) {
+			final Stereotype stereotype = new Stereotype(stereotypeString);
+			colors = colors.applyStereotypeForNote(stereotype, diagram.getSkinParam(), FontParam.NOTE,
+					ColorParam.noteBackground, ColorParam.noteBorder);
+			note.setStereotype(stereotype);
+		}
+
 		note.setColors(colors);
 		if (url != null) {
 			note.addUrl(url);
 		}
 		CommandCreateClassMultilines.addTags(note, line0.get("TAGS", 0));
 
-		final Position position = Position.valueOf(StringUtils.goUpperCase(pos)).withRankdir(
-				diagram.getSkinParam().getRankdir());
+		final Position position = Position.valueOf(StringUtils.goUpperCase(pos))
+				.withRankdir(diagram.getSkinParam().getRankdir());
 		final Link link;
 
 		final LinkType type = new LinkType(LinkDecor.NONE, LinkDecor.NONE).goDashed();
