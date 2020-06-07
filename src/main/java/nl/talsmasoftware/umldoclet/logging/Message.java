@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Talsma ICT
+ * Copyright 2016-2020 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,8 +38,7 @@ public enum Message {
     PLANTUML_COPYRIGHT,
     DEBUG_CONFIGURED_IMAGE_FORMATS,
     DEBUG_SKIPPING_FILE,
-    DEBUG_RENAMED_FILE_FROM,
-    DEBUG_COPIED_FILE_FROM,
+    DEBUG_REPLACING_BY,
     DEBUG_CANNOT_READ_ELEMENT_LIST,
     DEBUG_LIVE_PACKAGE_URL_NOT_FOUND,
     DEBUG_PACKAGE_VISITED_BUT_UNDOCUMENTED,

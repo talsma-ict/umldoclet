@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Talsma ICT
+ * Copyright 2016-2020 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,19 +15,18 @@
  */
 package nl.talsmasoftware.umldoclet.html;
 
-import net.sourceforge.plantuml.FileUtils;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
-import static nl.talsmasoftware.umldoclet.logging.Message.DEBUG_COPIED_FILE_FROM;
-import static nl.talsmasoftware.umldoclet.logging.Message.DEBUG_RENAMED_FILE_FROM;
+import static nl.talsmasoftware.umldoclet.logging.Message.DEBUG_REPLACING_BY;
 import static nl.talsmasoftware.umldoclet.logging.Message.DEBUG_SKIPPING_FILE;
 import static nl.talsmasoftware.umldoclet.logging.Message.INFO_ADD_DIAGRAM_TO_FILE;
 
@@ -94,16 +93,9 @@ final class HtmlFile {
     }
 
     public void replaceBy(File tempFile) throws IOException {
-        File original = path.toFile();
-        if (!original.delete()) throw new IllegalStateException("Cannot delete " + original);
-        if (tempFile.renameTo(original)) {
-            config.logger().debug(DEBUG_RENAMED_FILE_FROM, original, tempFile);
-        } else {
-            FileUtils.copyToFile(tempFile, original);
-            config.logger().debug(DEBUG_COPIED_FILE_FROM, original, tempFile);
-            if (!tempFile.delete()) {
-                throw new IllegalStateException("Cannot delete " + tempFile + " after postprocessing!");
-            }
+        if (tempFile != null && tempFile.isFile()) {
+            Files.move(tempFile.toPath(), path, StandardCopyOption.REPLACE_EXISTING);
+            config.logger().debug(DEBUG_REPLACING_BY, path, tempFile);
         }
     }
 }
