@@ -205,7 +205,7 @@ public class FontConfiguration {
 				FontPosition.NORMAL, new SvgAttributes(), hyperlink, hyperlinkColor, useUnderlineForHyperlink, tabSize);
 	}
 
-	FontConfiguration add(FontStyle style) {
+	public FontConfiguration add(FontStyle style) {
 		final EnumSet<FontStyle> r = styles.clone();
 		if (style == FontStyle.PLAIN) {
 			r.clear();
@@ -223,6 +223,14 @@ public class FontConfiguration {
 		return add(FontStyle.BOLD);
 	}
 
+	public FontConfiguration unbold() {
+		return remove(FontStyle.BOLD);
+	}
+
+	public FontConfiguration unitalic() {
+		return remove(FontStyle.ITALIC);
+	}
+
 	public FontConfiguration underline() {
 		return add(FontStyle.UNDERLINE);
 	}
@@ -238,7 +246,7 @@ public class FontConfiguration {
 		return withHyperlink();
 	}
 
-	FontConfiguration remove(FontStyle style) {
+	public FontConfiguration remove(FontStyle style) {
 		final EnumSet<FontStyle> r = styles.clone();
 		r.remove(style);
 		return new FontConfiguration(r, motherFont, motherColor, currentFont, currentColor, extendedColor, fontPosition,

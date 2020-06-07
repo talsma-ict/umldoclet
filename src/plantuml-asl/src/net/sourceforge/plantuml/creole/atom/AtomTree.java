@@ -49,7 +49,7 @@ public class AtomTree extends AbstractAtom implements Atom {
 	private final List<Atom> cells = new ArrayList<Atom>();
 	private final Map<Atom, Integer> levels = new HashMap<Atom, Integer>();
 	private final double margin = 2;
-	
+
 	public AtomTree(HColor lineColor) {
 		this.lineColor = lineColor;
 	}
@@ -94,5 +94,5 @@ public class AtomTree extends AbstractAtom implements Atom {
 		this.cells.add(cell);
 		this.levels.put(cell, level);
 	}
-	
+
 }

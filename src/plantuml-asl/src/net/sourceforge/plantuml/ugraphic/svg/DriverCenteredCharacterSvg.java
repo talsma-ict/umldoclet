@@ -32,7 +32,6 @@ package net.sourceforge.plantuml.ugraphic.svg;
 
 import java.awt.font.TextLayout;
 
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.UnusedSpace;
 import net.sourceforge.plantuml.svg.SvgGraphics;
@@ -55,7 +54,7 @@ public class DriverCenteredCharacterSvg implements UDriver<SvgGraphics> {
 		final double ypos = y - unusedSpace.getCenterY() - 0.5;
 
 		final TextLayout t = new TextLayout("" + c, font.getFont(), TextBlockUtils.getFontRenderContext());
-		svg.setStrokeColor(mapper.toHtml(param.getColor()));
+		svg.setStrokeColor(mapper.toRGB(param.getColor()));
 		DriverTextAsPathSvg.drawPathIterator(svg, xpos, ypos, t.getOutline(null).getPathIterator(null));
 
 	}

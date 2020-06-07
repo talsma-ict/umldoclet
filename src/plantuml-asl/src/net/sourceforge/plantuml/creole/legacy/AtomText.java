@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  */
-package net.sourceforge.plantuml.creole.atom;
+package net.sourceforge.plantuml.creole.legacy;
 
 import java.awt.font.LineMetrics;
 import java.awt.geom.Dimension2D;
@@ -48,7 +48,14 @@ import net.sourceforge.plantuml.LineBreakStrategy;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.creole.command.CommandCreoleImg;
+import net.sourceforge.plantuml.creole.Parser;
+import net.sourceforge.plantuml.creole.atom.AbstractAtom;
+import net.sourceforge.plantuml.creole.atom.Atom;
+import net.sourceforge.plantuml.creole.atom.AtomHorizontalTexts;
+import net.sourceforge.plantuml.creole.atom.AtomImg;
+import net.sourceforge.plantuml.creole.atom.AtomOpenIcon;
+import net.sourceforge.plantuml.creole.atom.AtomSprite;
+import net.sourceforge.plantuml.creole.atom.AtomVerticalTexts;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.ImgValign;
@@ -119,17 +126,17 @@ public class AtomText extends AbstractAtom implements Atom {
 			if (valOpenicon != null) {
 				final OpenIcon openIcon = OpenIcon.retrieve(valOpenicon);
 				if (openIcon != null) {
-					final double scale = CommandCreoleImg.getScale(m.group(2), 1);
+					final double scale = Parser.getScale(m.group(2), 1);
 					result.add(new AtomOpenIcon(null, scale, openIcon, fontConfiguration, url));
 				}
 			} else if (valSprite != null) {
 				final Sprite sprite = skinSimple.getSprite(valSprite);
 				if (sprite != null) {
-					final double scale = CommandCreoleImg.getScale(m.group(4), 1);
+					final double scale = Parser.getScale(m.group(4), 1);
 					result.add(new AtomSprite(null, scale, fontConfiguration, sprite, url));
 				}
 			} else if (valImg != null) {
-				final double scale = CommandCreoleImg.getScale(m.group(6), 1);
+				final double scale = Parser.getScale(m.group(6), 1);
 				result.add(AtomImg.create(valImg, ImgValign.TOP, 0, scale, url));
 
 			}
@@ -266,7 +273,7 @@ public class AtomText extends AbstractAtom implements Atom {
 			}
 		}
 		if (url != null) {
-			ug.closeAction();
+			ug.closeUrl();
 		}
 	}
 

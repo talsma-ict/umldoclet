@@ -131,7 +131,7 @@ public class UnusedSpace {
 
 		// int cpt = 1;
 		// try {
-		// ImageIO.write(im, "png", new File("c:/img" + cpt + ".png"));
+		// ImageIO.write(im, "png", SecurityUtils.File("c:/img" + cpt + ".png"));
 		// cpt++;
 		// } catch (IOException e) {
 		// e.printStackTrace();

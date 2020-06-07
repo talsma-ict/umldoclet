@@ -37,8 +37,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.creole.atom.Atom;
 import net.sourceforge.plantuml.cucadiagram.Display;
@@ -47,6 +45,9 @@ import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.Line;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.preproc.Defines;
+import net.sourceforge.plantuml.security.ImageIO;
+import net.sourceforge.plantuml.ugraphic.AffineTransformType;
+import net.sourceforge.plantuml.ugraphic.PixelImage;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UImage;
 import net.sourceforge.plantuml.ugraphic.UImageSvg;
@@ -83,7 +84,7 @@ public class EmbeddedDiagram implements CharSequence {
 		public List<Atom> splitInTwo(StringBounder stringBounder, double width) {
 			throw new UnsupportedOperationException(getClass().toString());
 		}
-		
+
 		private Draw(ISkinSimple skinParam) {
 			this.skinParam = skinParam;
 		}
@@ -114,7 +115,7 @@ public class EmbeddedDiagram implements CharSequence {
 					return;
 				}
 				final BufferedImage im = getImage();
-				final UShape image = new UImage(im);
+				final UShape image = new UImage(new PixelImage(im, AffineTransformType.TYPE_BILINEAR));
 				ug.draw(image);
 			} catch (IOException e) {
 				e.printStackTrace();

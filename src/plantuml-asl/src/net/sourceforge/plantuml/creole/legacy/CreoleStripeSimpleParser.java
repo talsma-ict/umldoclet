@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  */
-package net.sourceforge.plantuml.creole;
+package net.sourceforge.plantuml.creole.legacy;
 
 import net.sourceforge.plantuml.BackSlash;
 import net.sourceforge.plantuml.ISkinSimple;
@@ -36,6 +36,11 @@ import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.command.regex.Matcher2;
 import net.sourceforge.plantuml.command.regex.MyPattern;
 import net.sourceforge.plantuml.command.regex.Pattern2;
+import net.sourceforge.plantuml.creole.CreoleContext;
+import net.sourceforge.plantuml.creole.CreoleMode;
+import net.sourceforge.plantuml.creole.Stripe;
+import net.sourceforge.plantuml.creole.StripeStyle;
+import net.sourceforge.plantuml.creole.StripeStyleType;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.utils.CharHidder;
 

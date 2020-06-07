@@ -33,7 +33,6 @@ package net.sourceforge.plantuml.preproc2;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,6 +44,7 @@ import net.sourceforge.plantuml.preproc.ReadLineReader;
 import net.sourceforge.plantuml.preproc.ReadLineSimple;
 import net.sourceforge.plantuml.preproc.StartDiagramExtractReader;
 import net.sourceforge.plantuml.preproc.Stdlib;
+import net.sourceforge.plantuml.security.SURL;
 import net.sourceforge.plantuml.tim.EaterException;
 
 public class PreprocessorUtils {
@@ -107,13 +107,16 @@ public class PreprocessorUtils {
 		}
 	}
 
-	public static ReadLine getReaderIncludeUrl2(final URL url, StringLocated s, String suf, String charset)
+	public static ReadLine getReaderIncludeUrl2(final SURL url, StringLocated s, String suf, String charset)
 			throws EaterException {
 		try {
 			if (StartDiagramExtractReader.containsStartDiagram(url, s, charset)) {
 				return StartDiagramExtractReader.build(url, s, suf, charset);
 			}
 			final InputStream is = url.openStream();
+			if (is == null) {
+				throw EaterException.located("Cannot open URL");
+			}
 			if (charset == null) {
 				Log.info("Using default charset");
 				return ReadLineReader.create(new InputStreamReader(is), url.toString(), s.getLocation());
@@ -122,7 +125,7 @@ public class PreprocessorUtils {
 			return ReadLineReader.create(new InputStreamReader(is, charset), url.toString(), s.getLocation());
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw EaterException.located("Cannot open URL " + e.getMessage(), s);
+			throw EaterException.located("Cannot open URL " + e.getMessage());
 		}
 
 	}

@@ -31,8 +31,6 @@
 package net.sourceforge.plantuml.command;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -45,6 +43,7 @@ import net.sourceforge.plantuml.BackSlash;
 import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.StringLocated;
 import net.sourceforge.plantuml.cucadiagram.Display;
+import net.sourceforge.plantuml.security.SFile;
 
 public class BlocLines implements Iterable<StringLocated> {
 
@@ -61,8 +60,11 @@ public class BlocLines implements Iterable<StringLocated> {
 		return sb.toString();
 	}
 
-	public static BlocLines load(File f, LineLocation location) throws IOException {
-		final BufferedReader br = new BufferedReader(new FileReader(f));
+	public static BlocLines load(SFile f, LineLocation location) throws IOException {
+		final BufferedReader br = f.openBufferedReader();
+		if (br == null) {
+			return null;
+		}
 		return loadInternal(br, location);
 	}
 

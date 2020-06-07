@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.html;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -47,13 +46,14 @@ import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.Member;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
+import net.sourceforge.plantuml.security.SFile;
 
 public final class CucaDiagramHtmlMaker {
 
 	private final CucaDiagram diagram;
-	private final File dir;
+	private final SFile dir;
 
-	public CucaDiagramHtmlMaker(CucaDiagram diagram, File dir) {
+	public CucaDiagramHtmlMaker(CucaDiagram diagram, SFile dir) {
 		this.diagram = diagram;
 		this.dir = dir;
 	}
@@ -63,8 +63,8 @@ public final class CucaDiagramHtmlMaker {
 		if (dir.exists() == false) {
 			throw new IOException("Cannot create " + dir);
 		}
-		final File f = new File(dir, "index.html");
-		final PrintWriter pw = new PrintWriter(f);
+		final SFile f = dir.file("index.html");
+		final PrintWriter pw = f.createPrintWriter();
 		pw.println("<html>");
 		printAllType(pw, LeafType.ENUM);
 		printAllType(pw, LeafType.INTERFACE);
@@ -87,7 +87,8 @@ public final class CucaDiagramHtmlMaker {
 				pw.println(LinkHtmlPrinter.htmlLink(ent));
 				pw.println("</li>");
 			}
-			// for (Map.Entry<Code, IEntity> ent : new TreeMap<Code, IEntity>(diagram.getLeafs()).entrySet()) {
+			// for (Map.Entry<Code, IEntity> ent : new TreeMap<Code,
+			// IEntity>(diagram.getLeafs()).entrySet()) {
 			// if (ent.getValue().getEntityType() != type) {
 			// continue;
 			// }
@@ -109,8 +110,8 @@ public final class CucaDiagramHtmlMaker {
 	}
 
 	private void export(IEntity entity) throws IOException {
-		final File f = new File(dir, LinkHtmlPrinter.urlOf(entity));
-		final PrintWriter pw = new PrintWriter(f);
+		final SFile f = dir.file(LinkHtmlPrinter.urlOf(entity));
+		final PrintWriter pw = f.createPrintWriter();
 		pw.println("<html>");
 		pw.println("<title>" + StringUtils.unicodeForHtml(entity.getCodeGetName()) + "</title>");
 		pw.println("<h2>" + entity.getLeafType().toHtml() + "</h2>");
@@ -204,8 +205,7 @@ public final class CucaDiagramHtmlMaker {
 			if (link.contains(ent) == false) {
 				continue;
 			}
-			if (link.getEntity1().getLeafType() == LeafType.NOTE
-					|| link.getEntity2().getLeafType() == LeafType.NOTE) {
+			if (link.getEntity1().getLeafType() == LeafType.NOTE || link.getEntity2().getLeafType() == LeafType.NOTE) {
 				result.add(link.getOther(ent));
 			}
 		}
@@ -218,8 +218,7 @@ public final class CucaDiagramHtmlMaker {
 			if (link.contains(ent) == false) {
 				continue;
 			}
-			if (link.getEntity1().getLeafType() == LeafType.NOTE
-					|| link.getEntity2().getLeafType() == LeafType.NOTE) {
+			if (link.getEntity1().getLeafType() == LeafType.NOTE || link.getEntity2().getLeafType() == LeafType.NOTE) {
 				continue;
 			}
 			result.add(link);

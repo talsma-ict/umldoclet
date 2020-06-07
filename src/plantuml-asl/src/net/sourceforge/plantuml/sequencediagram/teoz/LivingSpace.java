@@ -184,7 +184,7 @@ public class LivingSpace {
 		}
 		comp.drawU(ug, area, context);
 		if (url != null) {
-			ug.closeAction();
+			ug.closeUrl();
 		}
 	}
 

@@ -28,29 +28,9 @@
  *
  * Original Author:  Arnaud Roques
  */
-package net.sourceforge.plantuml.creole;
+package net.sourceforge.plantuml.creole.rosetta;
 
-import net.sourceforge.plantuml.command.PSystemBasicFactory;
-import net.sourceforge.plantuml.core.DiagramType;
+import net.sourceforge.plantuml.ugraphic.UShape;
 
-public class PSystemCreoleFactory extends PSystemBasicFactory<PSystemCreole> {
-
-	public PSystemCreoleFactory() {
-		super(DiagramType.CREOLE);
-	}
-
-	public PSystemCreole init(String startLine) {
-		if (getDiagramType() == DiagramType.CREOLE) {
-			return new PSystemCreole();
-		}
-
-		return null;
-	}
-
-	@Override
-	public PSystemCreole executeLine(PSystemCreole system, String line) {
-		system.doCommandLine(line);
-		return system;
-	}
-
+public interface URosetta extends UShape {
 }

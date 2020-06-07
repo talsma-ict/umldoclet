@@ -133,7 +133,7 @@ public class EntityImageEmptyPackage extends AbstractEntityImage {
 				getSkinParam().getStereotypeAlignment());
 
 		if (url != null) {
-			ug.closeAction();
+			ug.closeUrl();
 		}
 
 	}

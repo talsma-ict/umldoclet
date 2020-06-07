@@ -55,7 +55,7 @@ class GraphvizWindows extends AbstractGraphviz {
 
 	private File specificDotExeSlow() {
 		for (File tmp : new File("c:/").listFiles(new FileFilter() {
-			public boolean accept(File pathname) {
+			public boolean accept(java.io.File pathname) {
 				return pathname.isDirectory() && pathname.canRead();
 			}
 		})) {
@@ -73,7 +73,7 @@ class GraphvizWindows extends AbstractGraphviz {
 		}
 		final List<File> dots = new ArrayList<File>();
 		final File[] files = dir.listFiles(new FileFilter() {
-			public boolean accept(File pathname) {
+			public boolean accept(java.io.File pathname) {
 				return pathname.isDirectory() && StringUtils.goLowerCase(pathname.getName()).startsWith("graphviz");
 			}
 		});

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  */
-package net.sourceforge.plantuml.creole;
+package net.sourceforge.plantuml.creole.legacy;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,13 +37,18 @@ import java.util.List;
 import net.sourceforge.plantuml.BackSlash;
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.Url;
+import net.sourceforge.plantuml.creole.CreoleContext;
+import net.sourceforge.plantuml.creole.CreoleHorizontalLine;
+import net.sourceforge.plantuml.creole.CreoleMode;
+import net.sourceforge.plantuml.creole.Stripe;
+import net.sourceforge.plantuml.creole.StripeStyle;
+import net.sourceforge.plantuml.creole.StripeStyleType;
 import net.sourceforge.plantuml.creole.atom.Atom;
 import net.sourceforge.plantuml.creole.atom.AtomImg;
 import net.sourceforge.plantuml.creole.atom.AtomMath;
 import net.sourceforge.plantuml.creole.atom.AtomOpenIcon;
 import net.sourceforge.plantuml.creole.atom.AtomSpace;
 import net.sourceforge.plantuml.creole.atom.AtomSprite;
-import net.sourceforge.plantuml.creole.atom.AtomText;
 import net.sourceforge.plantuml.creole.command.Command;
 import net.sourceforge.plantuml.creole.command.CommandCreoleColorAndSizeChange;
 import net.sourceforge.plantuml.creole.command.CommandCreoleColorChange;
@@ -68,6 +73,7 @@ import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.ImgValign;
 import net.sourceforge.plantuml.math.ScientificEquationSafe;
 import net.sourceforge.plantuml.openiconic.OpenIcon;
+import net.sourceforge.plantuml.security.SecurityUtils;
 import net.sourceforge.plantuml.sprite.Sprite;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.utils.CharHidder;
@@ -98,7 +104,7 @@ public class StripeSimple implements Stripe {
 		return super.toString() + " " + atoms.toString();
 	}
 
-	public Atom getHeader() {
+	public Atom getLHeader() {
 		return header;
 	}
 
@@ -141,16 +147,17 @@ public class StripeSimple implements Stripe {
 		this.commands.add(CommandCreoleImg.create());
 		this.commands.add(CommandCreoleQrcode.create());
 		this.commands.add(CommandCreoleOpenIcon.create(skinParam.getIHtmlColorSet()));
-		final double scale = skinParam.getDpi() / 96.0;
-		this.commands.add(CommandCreoleMath.create(scale));
-		this.commands.add(CommandCreoleLatex.create(scale));
+		this.commands.add(CommandCreoleMath.create());
+		this.commands.add(CommandCreoleLatex.create());
 		this.commands.add(CommandCreoleSprite.create(skinParam.getIHtmlColorSet()));
 		this.commands.add(CommandCreoleSpace.create());
 		this.commands.add(CommandCreoleFontFamilyChange.create());
 		this.commands.add(CommandCreoleFontFamilyChange.createEol());
 		this.commands.add(CommandCreoleMonospaced.create(skinParam.getMonospacedFamily()));
 		this.commands.add(CommandCreoleUrl.create(skinParam));
-		this.commands.add(CommandCreoleSvgAttributeChange.create());
+		if (SecurityUtils.allowSvgText()) {
+			this.commands.add(CommandCreoleSvgAttributeChange.create());
+		}
 
 		this.header = style.getHeader(fontConfiguration, context);
 
@@ -235,8 +242,8 @@ public class StripeSimple implements Stripe {
 		}
 	}
 
-	public void addMath(ScientificEquationSafe math, double scale) {
-		atoms.add(new AtomMath(math, fontConfiguration.getColor(), fontConfiguration.getExtendedColor(), scale,
+	public void addMath(ScientificEquationSafe math) {
+		atoms.add(new AtomMath(math, fontConfiguration.getColor(), fontConfiguration.getExtendedColor(),
 				skinParam.getColorMapper()));
 	}
 

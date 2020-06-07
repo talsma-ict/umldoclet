@@ -49,7 +49,7 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.FtileIfDown;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileDiamond;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileDiamondInside;
 import net.sourceforge.plantuml.creole.CreoleMode;
-import net.sourceforge.plantuml.creole.CreoleParser;
+import net.sourceforge.plantuml.creole.Parser;
 import net.sourceforge.plantuml.creole.Sheet;
 import net.sourceforge.plantuml.creole.SheetBlock1;
 import net.sourceforge.plantuml.creole.SheetBlock2;
@@ -102,12 +102,12 @@ public class ConditionalBuilder {
 		if (SkinParam.USE_STYLES()) {
 			final Style styleArrow = getDefaultStyleDefinitionArrow()
 					.getMergedStyle(skinParam.getCurrentStyleBuilder());
-			final Style styleDiamond = getDefaultStyleDefinitionDiamond().getMergedStyle(
-					skinParam.getCurrentStyleBuilder());
+			final Style styleDiamond = getDefaultStyleDefinitionDiamond()
+					.getMergedStyle(skinParam.getCurrentStyleBuilder());
 			this.borderColor = styleDiamond.value(PName.LineColor).asColor(skinParam.getIHtmlColorSet());
 			this.backColor = styleDiamond.value(PName.BackGroundColor).asColor(skinParam.getIHtmlColorSet());
-			this.arrowColor = Rainbow
-					.fromColor(styleArrow.value(PName.LineColor).asColor(skinParam.getIHtmlColorSet()), null);
+			this.arrowColor = Rainbow.fromColor(styleArrow.value(PName.LineColor).asColor(skinParam.getIHtmlColorSet()),
+					null);
 			this.fontTest = styleDiamond.getFontConfiguration(skinParam.getIHtmlColorSet());
 			this.fontArrow = styleArrow.getFontConfiguration(skinParam.getIHtmlColorSet());
 		} else {
@@ -233,7 +233,7 @@ public class ConditionalBuilder {
 	private Ftile getDiamond1(boolean eastWest, TextBlock tb1, TextBlock tb2) {
 		final Display labelTest = branch1.getLabelTest();
 
-		final Sheet sheet = new CreoleParser(fontTest, skinParam.getDefaultTextAlignment(HorizontalAlignment.LEFT),
+		final Sheet sheet = Parser.build(fontTest, skinParam.getDefaultTextAlignment(HorizontalAlignment.LEFT),
 				skinParam, CreoleMode.FULL).createSheet(labelTest);
 		final SheetBlock1 sheetBlock1 = new SheetBlock1(sheet, LineBreakStrategy.NONE, skinParam.getPadding());
 		final TextBlock tbTest = new SheetBlock2(sheetBlock1, Diamond.asStencil(sheetBlock1), tile1.getThickness());
@@ -274,11 +274,13 @@ public class ConditionalBuilder {
 		// else use default ConditionEndStyle.DIAMOND
 		if (hasTwoBranches()) {
 			final Display out1 = branch1.getFtile().getOutLinkRendering().getDisplay();
-			final TextBlock tbout1 = out1 == null ? null : out1.create7(fontArrow, HorizontalAlignment.LEFT,
-					ftileFactory.skinParam(), CreoleMode.SIMPLE_LINE);
+			final TextBlock tbout1 = out1 == null ? null
+					: out1.create7(fontArrow, HorizontalAlignment.LEFT, ftileFactory.skinParam(),
+							CreoleMode.SIMPLE_LINE);
 			final Display out2 = branch2.getFtile().getOutLinkRendering().getDisplay();
-			final TextBlock tbout2 = out2 == null ? null : out2.create7(fontArrow, HorizontalAlignment.LEFT,
-					ftileFactory.skinParam(), CreoleMode.SIMPLE_LINE);
+			final TextBlock tbout2 = out2 == null ? null
+					: out2.create7(fontArrow, HorizontalAlignment.LEFT, ftileFactory.skinParam(),
+							CreoleMode.SIMPLE_LINE);
 			FtileDiamond tmp = new FtileDiamond(tile1.skinParam(), backColor, borderColor, swimlane);
 			tmp = useNorth ? tmp.withNorth(tbout1) : tmp.withWest(tbout1);
 			tmp = tmp.withEast(tbout2);

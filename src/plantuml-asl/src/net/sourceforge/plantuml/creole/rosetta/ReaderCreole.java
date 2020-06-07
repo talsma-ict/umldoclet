@@ -28,56 +28,43 @@
  *
  * Original Author:  Arnaud Roques
  */
-package net.sourceforge.plantuml.classdiagram.command;
+package net.sourceforge.plantuml.creole.rosetta;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.StringTokenizer;
 
-import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.cucadiagram.LeafType;
+public class ReaderCreole extends ReaderAbstractWiki implements ReaderWiki {
 
-class JavaClass {
+	@Override
+	protected String singleLineFormat(String wiki) {
 
-	private final String name;
-	private final String javaPackage;
-	private final List<String> parents = new ArrayList<String>();
-	private final LeafType type;
-	private final LeafType parentType;
+		// Legacy HTML
+		wiki = wiki.replace("<b>", WikiLanguage.UNICODE.tag("strong"));
+		wiki = wiki.replace("</b>", WikiLanguage.UNICODE.slashTag("strong"));
+		wiki = wiki.replace("<i>", WikiLanguage.UNICODE.tag("em"));
+		wiki = wiki.replace("</i>", WikiLanguage.UNICODE.slashTag("em"));
 
-	public JavaClass(String javaPackage, String name, String p, LeafType type, LeafType parentType) {
-		this.name = name;
-		this.javaPackage = javaPackage;
-		if (p == null) {
-			p = "";
+		// Em & Strong
+		wiki = wiki.replaceAll("\\*\\*(.+?)\\*\\*",
+				WikiLanguage.UNICODE.tag("strong") + "$1" + WikiLanguage.UNICODE.slashTag("strong"));
+		wiki = wiki.replaceAll("//(.+?)//",
+				WikiLanguage.UNICODE.tag("em") + "$1" + WikiLanguage.UNICODE.slashTag("em"));
+
+		// Strike
+		wiki = wiki.replaceAll("--([^-]+?)--",
+				WikiLanguage.UNICODE.tag("strike") + "$1" + WikiLanguage.UNICODE.slashTag("strike"));
+
+		return wiki;
+	}
+
+	public List<String> transform(List<String> raw) {
+		final List<String> uhtml = new ArrayList<String>();
+		for (int i = 0; i < raw.size(); i++) {
+			String current = raw.get(i);
+			uhtml.add(singleLineFormat(current));
 		}
-		final StringTokenizer st = new StringTokenizer(StringUtils.trin(p), ",");
-		while (st.hasMoreTokens()) {
-			this.parents.add(StringUtils.trin(st.nextToken()).replaceAll("\\<.*", ""));
-		}
-		this.type = type;
-		this.parentType = parentType;
-	}
-
-	public final String getName() {
-		return name;
-	}
-
-	public final LeafType getType() {
-		return type;
-	}
-
-	public final List<String> getParents() {
-		return Collections.unmodifiableList(parents);
-	}
-
-	public final LeafType getParentType() {
-		return parentType;
-	}
-
-	public final String getJavaPackage() {
-		return javaPackage;
+		return Collections.unmodifiableList(uhtml);
 	}
 
 }

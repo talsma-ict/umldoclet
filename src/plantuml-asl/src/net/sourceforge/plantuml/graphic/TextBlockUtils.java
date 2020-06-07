@@ -32,17 +32,16 @@ package net.sourceforge.plantuml.graphic;
 
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.Graphics2D;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.CornerParam;
 import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.LineParam;
 import net.sourceforge.plantuml.SkinParam;
@@ -62,6 +61,8 @@ import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class TextBlockUtils {
+
+	public static final TextBlock EMPTY_TEXT_BLOCK = TextBlockUtils.empty(0, 0);
 
 	public static TextBlock bordered(TextBlock textBlock, UStroke stroke, HColor borderColor, HColor backgroundColor,
 			double cornersize) {
@@ -138,10 +139,22 @@ public class TextBlockUtils {
 	}
 
 	public static TextBlock mergeLR(TextBlock b1, TextBlock b2, VerticalAlignment verticallAlignment) {
+		if (b1 == EMPTY_TEXT_BLOCK) {
+			return b2;
+		}
+		if (b2 == EMPTY_TEXT_BLOCK) {
+			return b1;
+		}
 		return new TextBlockHorizontal(b1, b2, verticallAlignment);
 	}
 
 	public static TextBlock mergeTB(TextBlock b1, TextBlock b2, HorizontalAlignment horizontalAlignment) {
+		if (b1 == EMPTY_TEXT_BLOCK) {
+			return b2;
+		}
+		if (b2 == EMPTY_TEXT_BLOCK) {
+			return b1;
+		}
 		return new TextBlockVertical2(b1, b2, horizontalAlignment);
 	}
 
@@ -157,13 +170,6 @@ public class TextBlockUtils {
 		return limitFinder.getMinMax();
 	}
 
-	private static final Graphics2D gg;
-
-	static {
-		final BufferedImage imDummy = new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB);
-		gg = imDummy.createGraphics();
-	}
-
 	public static boolean isEmpty(TextBlock text, StringBounder dummyStringBounder) {
 		if (text == null) {
 			return true;
@@ -173,15 +179,15 @@ public class TextBlockUtils {
 	}
 
 	public static FontRenderContext getFontRenderContext() {
-		return gg.getFontRenderContext();
+		return FileFormat.gg.getFontRenderContext();
 	}
 
 	public static LineMetrics getLineMetrics(UFont font, String text) {
-		return font.getLineMetrics(gg, text);
+		return font.getLineMetrics(FileFormat.gg, text);
 	}
 
 	public static FontMetrics getFontMetrics(Font font) {
-		return gg.getFontMetrics(font);
+		return FileFormat.gg.getFontMetrics(font);
 	}
 
 	public static TextBlock fullInnerPosition(final TextBlock bloc, final String display) {

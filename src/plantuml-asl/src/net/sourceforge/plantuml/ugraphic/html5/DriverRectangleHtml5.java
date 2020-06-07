@@ -32,7 +32,6 @@ package net.sourceforge.plantuml.ugraphic.html5;
 
 import java.awt.geom.Rectangle2D;
 
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.ugraphic.ClipContainer;
 import net.sourceforge.plantuml.ugraphic.UClip;
 import net.sourceforge.plantuml.ugraphic.UDriver;
@@ -79,8 +78,8 @@ public class DriverRectangleHtml5 implements UDriver<Html5Drawer> {
 //			eps.setStrokeColor(mapper.getMappedColor(param.getColor()));
 //			eps.epsRectangle(x, y, width, height, rx / 2, ry / 2, (HtmlColorGradient) back, mapper);
 		} else {
-			final String color = param.getColor() == null ? null : mapper.toHtml(param.getColor());
-			final String backcolor = param.getColor() == null ? null : mapper.toHtml(param.getBackcolor());
+			final String color = param.getColor() == null ? null : mapper.toRGB(param.getColor());
+			final String backcolor = param.getColor() == null ? null : mapper.toRGB(param.getBackcolor());
 
 			html.setStrokeColor(color);
 			html.setFillColor(backcolor);

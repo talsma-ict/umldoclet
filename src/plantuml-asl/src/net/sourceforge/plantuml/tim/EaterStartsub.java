@@ -47,7 +47,7 @@ public class EaterStartsub extends Eater {
 		skipSpaces();
 		this.subname = eatAllToEnd();
 		if (this.subname.matches("\\w+") == false) {
-			throw EaterException.located("Bad sub name", getStringLocated());
+			throw EaterException.located("Bad sub name");
 		}
 	}
 

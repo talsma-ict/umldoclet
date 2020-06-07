@@ -98,7 +98,7 @@ public final class InnerStateAutonom extends AbstractTextBlock implements IEntit
 		}
 
 		if (url != null) {
-			ug.closeAction();
+			ug.closeUrl();
 		}
 	}
 

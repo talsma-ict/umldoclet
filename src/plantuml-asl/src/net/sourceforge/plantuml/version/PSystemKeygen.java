@@ -32,7 +32,6 @@ package net.sourceforge.plantuml.version;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -41,7 +40,6 @@ import java.util.prefs.BackingStoreException;
 
 import net.sourceforge.plantuml.AbstractPSystem;
 import net.sourceforge.plantuml.FileFormatOption;
-import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.SignatureUtils;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
@@ -50,6 +48,9 @@ import net.sourceforge.plantuml.flashcode.FlashCodeUtils;
 import net.sourceforge.plantuml.graphic.GraphicStrings;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.UDrawable;
+import net.sourceforge.plantuml.security.SFile;
+import net.sourceforge.plantuml.ugraphic.AffineTransformType;
+import net.sourceforge.plantuml.ugraphic.PixelImage;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UImage;
@@ -68,8 +69,8 @@ public class PSystemKeygen extends AbstractPSystem {
 	@Override
 	final protected ImageData exportDiagramNow(OutputStream os, int num, FileFormatOption fileFormat, long seed)
 			throws IOException {
-		final ImageBuilder imageBuilder = ImageBuilder.buildA(new ColorMapperIdentity(),
-				false, null, getMetadata(), null, 1.0, HColorUtils.WHITE);
+		final ImageBuilder imageBuilder = ImageBuilder.buildA(new ColorMapperIdentity(), false, null, getMetadata(),
+				null, 1.0, HColorUtils.WHITE);
 
 		imageBuilder.setUDrawable(new UDrawable() {
 			public void drawU(UGraphic ug) {
@@ -113,7 +114,7 @@ public class PSystemKeygen extends AbstractPSystem {
 			strings.add("No license currently installed.");
 			strings.add(" ");
 			strings.add("<b>Please copy license.txt to one of those files</b>:");
-			for (File f : LicenseInfo.fileCandidates()) {
+			for (SFile f : LicenseInfo.fileCandidates()) {
 				strings.add(f.getAbsolutePath());
 			}
 			strings.add(" ");
@@ -131,9 +132,9 @@ public class PSystemKeygen extends AbstractPSystem {
 		final ArrayList<String> strings = new ArrayList<String>();
 		strings.add("<b>PlantUML version " + Version.versionString() + "</b> (" + Version.compileTimeString() + ")");
 		strings.add("(" + License.getCurrent() + " source distribution)");
-		if (OptionFlags.ALLOW_INCLUDE) {
-			strings.add("Loaded from " + Version.getJarPath());
-		}
+//		if (OptionFlags.ALLOW_INCLUDE) {
+//			strings.add("Loaded from " + Version.getJarPath());
+//		}
 		strings.add(" ");
 		return strings;
 	}
@@ -149,9 +150,11 @@ public class PSystemKeygen extends AbstractPSystem {
 		ug = ug.apply(UTranslate.dy(disp.calculateDimension(ug.getStringBounder()).getHeight()));
 		final FlashCodeUtils utils = FlashCodeFactory.getFlashCodeUtils();
 		final BufferedImage im = utils.exportFlashcode(
-				Version.versionString() + "\n" + SignatureUtils.toHexString(PLSSignature.signature()), Color.BLACK, Color.WHITE);
+				Version.versionString() + "\n" + SignatureUtils.toHexString(PLSSignature.signature()), Color.BLACK,
+				Color.WHITE);
 		if (im != null) {
-			final UImage flash = new UImage(im).scaleNearestNeighbor(4);
+			final UImage flash = new UImage(new PixelImage(im, AffineTransformType.TYPE_NEAREST_NEIGHBOR))
+					.scale(4);
 			ug.draw(flash);
 			ug = ug.apply(UTranslate.dy(flash.getHeight()));
 		}
