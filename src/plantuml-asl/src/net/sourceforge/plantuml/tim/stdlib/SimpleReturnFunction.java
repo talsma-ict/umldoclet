@@ -31,6 +31,7 @@
 package net.sourceforge.plantuml.tim.stdlib;
 
 import java.util.List;
+import java.util.Map;
 
 import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.tim.EaterException;
@@ -46,18 +47,18 @@ public abstract class SimpleReturnFunction implements TFunction {
 		return TFunctionType.RETURN_FUNCTION;
 	}
 
-	final public void executeProcedure(TContext context, TMemory memory, LineLocation location, String s) throws EaterException {
+	final public void executeProcedure(TContext context, TMemory memory, LineLocation location, String s)
+			throws EaterException {
 		throw new UnsupportedOperationException();
 	}
 
-	final public void executeProcedureInternal(TContext context, TMemory memory, List<TValue> args) throws EaterException {
+	final public void executeProcedureInternal(TContext context, TMemory memory, List<TValue> args,
+			Map<String, TValue> named) throws EaterException {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	final public boolean isUnquoted() {
 		return false;
 	}
-
-
 
 }

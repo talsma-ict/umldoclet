@@ -32,7 +32,7 @@ package net.sourceforge.plantuml;
 
 import java.util.Map;
 
-import net.sourceforge.plantuml.creole.command.CommandCreoleMonospaced;
+import net.sourceforge.plantuml.creole.Parser;
 import net.sourceforge.plantuml.sprite.Sprite;
 import net.sourceforge.plantuml.sprite.SpriteImage;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
@@ -58,7 +58,7 @@ public class SpriteContainerEmpty implements SpriteContainer, ISkinSimple {
 	}
 
 	public String getMonospacedFamily() {
-		return CommandCreoleMonospaced.MONOSPACED;
+		return Parser.MONOSPACED;
 	}
 
 	public int getTabSize() {
@@ -80,15 +80,13 @@ public class SpriteContainerEmpty implements SpriteContainer, ISkinSimple {
 	public ColorMapper getColorMapper() {
 		return new ColorMapperIdentity();
 	}
-	
+
 	public void copyAllFrom(ISkinSimple other) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	public Map<String, String> values() {
 		throw new UnsupportedOperationException();
 	}
-
-
 
 }

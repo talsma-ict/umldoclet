@@ -50,7 +50,7 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileGeometry;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
 import net.sourceforge.plantuml.creole.CreoleMode;
-import net.sourceforge.plantuml.creole.CreoleParser;
+import net.sourceforge.plantuml.creole.Parser;
 import net.sourceforge.plantuml.creole.Sheet;
 import net.sourceforge.plantuml.creole.SheetBlock1;
 import net.sourceforge.plantuml.creole.SheetBlock2;
@@ -211,8 +211,9 @@ public class FtileBox extends AbstractFtile {
 			wrapWidth = skinParam.wrapWidth();
 
 		}
-		final Sheet sheet = new CreoleParser(fc, skinParam.getDefaultTextAlignment(horizontalAlignment), skinParam,
-				CreoleMode.FULL).createSheet(label);
+		final Sheet sheet = Parser
+				.build(fc, skinParam.getDefaultTextAlignment(horizontalAlignment), skinParam, CreoleMode.FULL)
+				.createSheet(label);
 		this.tb = new SheetBlock2(new SheetBlock1(sheet, wrapWidth, skinParam.getPadding()), new MyStencil(),
 				new UStroke(1));
 		this.print = label.toString();
@@ -244,7 +245,13 @@ public class FtileBox extends AbstractFtile {
 		} else {
 			ug = ug.apply(borderColor);
 		}
-		ug = ug.apply(backColor.bg()).apply(thickness);
+		if (backColor == null) {
+			ug = ug.apply(new HColorNone().bg());
+		} else {
+			ug = ug.apply(backColor.bg());
+		}
+
+		ug = ug.apply(thickness);
 		rect.drawU(ug);
 
 		if (horizontalAlignment == HorizontalAlignment.LEFT) {

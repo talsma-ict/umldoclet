@@ -51,9 +51,9 @@ public class EaterAssert extends Eater {
 			if (ch == ':') {
 				checkAndEatChar(':');
 				final TValue message = eatExpression(context, memory);
-				throw EaterException.located("Assertion error : " + message.toString(), getStringLocated());
+				throw EaterException.located("Assertion error : " + message.toString());
 			}
-			throw EaterException.located("Assertion error", getStringLocated());
+			throw EaterException.located("Assertion error");
 		}
 	}
 

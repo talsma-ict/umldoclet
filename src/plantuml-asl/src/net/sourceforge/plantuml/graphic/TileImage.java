@@ -34,6 +34,8 @@ import java.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.ugraphic.AffineTransformType;
+import net.sourceforge.plantuml.ugraphic.PixelImage;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UImage;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
@@ -56,7 +58,8 @@ public class TileImage extends AbstractTextBlock implements TextBlock {
 	}
 
 	public void drawU(UGraphic ug) {
-		ug.apply(UTranslate.dy(vspace)).draw(new UImage(image));
+		ug.apply(UTranslate.dy(vspace))
+				.draw(new UImage(new PixelImage(image, AffineTransformType.TYPE_BILINEAR)));
 	}
 
 }

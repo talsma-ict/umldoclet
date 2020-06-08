@@ -105,7 +105,7 @@ public class TileText extends AbstractTextBlock implements TextBlock {
 			}
 		}
 		if (url != null) {
-			ug.closeAction();
+			ug.closeUrl();
 		}
 	}
 

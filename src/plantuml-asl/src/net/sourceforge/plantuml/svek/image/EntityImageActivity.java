@@ -110,7 +110,7 @@ public class EntityImageActivity extends AbstractEntityImage {
 			throw new UnsupportedOperationException();
 		}
 		if (url != null) {
-			ug.closeAction();
+			ug.closeUrl();
 		}
 	}
 

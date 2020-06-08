@@ -59,6 +59,7 @@ import net.sourceforge.plantuml.cucadiagram.entity.EntityFactory;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.posimo.Moveable;
+import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.vizjs.GraphvizJs;
 import net.sourceforge.plantuml.vizjs.GraphvizJsRuntimeException;
 
@@ -290,7 +291,7 @@ public class DotStringFactory implements Moveable {
 		String dotString = createDotString(dotOptions);
 
 		if (basefile != null) {
-			final File f = basefile.getTraceFile("svek.dot");
+			final SFile f = basefile.getTraceFile("svek.dot");
 			SvekUtils.traceString(f, dotString);
 		}
 
@@ -318,7 +319,7 @@ public class DotStringFactory implements Moveable {
 		final String s = new String(result, "UTF-8");
 
 		if (basefile != null) {
-			final File f = basefile.getTraceFile("svek.svg");
+			final SFile f = basefile.getTraceFile("svek.svg");
 			SvekUtils.traceString(f, s);
 		}
 
@@ -339,7 +340,7 @@ public class DotStringFactory implements Moveable {
 		return graphviz.getDotExe();
 	}
 
-	public ClusterPosition solve(boolean mergeIntricated, EntityFactory entityFactory, final String svg)
+	public void solve(boolean mergeIntricated, EntityFactory entityFactory, final String svg)
 			throws IOException, InterruptedException {
 		if (svg.length() == 0) {
 			throw new EmptySvgException();
@@ -350,10 +351,10 @@ public class DotStringFactory implements Moveable {
 		if (mGraph.find() == false) {
 			throw new IllegalStateException();
 		}
-		final int fullWidth = Integer.parseInt(mGraph.group(1));
+//		final int fullWidth = Integer.parseInt(mGraph.group(1));
 		final int fullHeight = Integer.parseInt(mGraph.group(2));
 
-		final MinFinder corner1 = new MinFinder();
+//		final MinFinder corner1 = new MinFinder();
 
 		final Point2DFunction move = new YDelta(fullHeight);
 		final SvgResult svgResult = new SvgResult(svg, move);
@@ -366,7 +367,7 @@ public class DotStringFactory implements Moveable {
 				final double minY = SvekUtils.getMinY(points);
 				final double overscanX = node.getOverscanX(stringBounder);
 				final double minX = SvekUtils.getMinX(points);
-				corner1.manage(minX - overscanX, minY);
+//				corner1.manage(minX - overscanX, minY);
 				node.moveSvek(minX, minY);
 			} else if (node.getType() == ShapeType.ROUND_RECTANGLE) {
 				final int idx2 = svg.indexOf("d=\"", idx + 1);
@@ -384,7 +385,7 @@ public class DotStringFactory implements Moveable {
 				}
 				final double minX = SvekUtils.getMinX(points);
 				final double minY = SvekUtils.getMinY(points);
-				corner1.manage(minX, minY);
+//				corner1.manage(minX, minY);
 				node.moveSvek(minX, minY);
 			} else if (node.getType() == ShapeType.OCTAGON) {
 				idx = svg.indexOf("points=\"", idx + 1);
@@ -392,7 +393,7 @@ public class DotStringFactory implements Moveable {
 				final List<Point2D.Double> points = svgResult.substring(starting).extractList(SvgResult.POINTS_EQUALS);
 				final double minX = SvekUtils.getMinX(points);
 				final double minY = SvekUtils.getMinY(points);
-				corner1.manage(minX, minY);
+				// corner1.manage(minX, minY);
 				node.moveSvek(minX, minY);
 				node.setOctagon(minX, minY, points);
 			} else if (node.getType() == ShapeType.CIRCLE || node.getType() == ShapeType.CIRCLE_IN_RECT
@@ -422,7 +423,7 @@ public class DotStringFactory implements Moveable {
 			final double maxX = SvekUtils.getMaxX(points);
 			final double maxY = SvekUtils.getMaxY(points);
 			cluster.setPosition(minX, minY, maxX, maxY);
-			corner1.manage(minX, minY);
+			// corner1.manage(minX, minY);
 
 			if (cluster.getTitleAndAttributeWidth() == 0 || cluster.getTitleAndAttributeHeight() == 0) {
 				continue;
@@ -437,15 +438,15 @@ public class DotStringFactory implements Moveable {
 		}
 
 		for (Line line : bibliotekon.allLines()) {
-			line.solveLine(svgResult, corner1);
+			line.solveLine(svgResult);
 		}
 
 		for (Line line : bibliotekon.allLines()) {
 			line.manageCollision(bibliotekon.allNodes());
 		}
-		corner1.manage(0, 0);
-		return new ClusterPosition(corner1.getMinX(), corner1.getMinY(), fullWidth, fullHeight);
-		// return new ClusterPosition(0, 0, fullWidth, fullHeight);
+		// corner1.manage(0, 0);
+//		return new ClusterPosition(corner1.getMinX(), corner1.getMinY(), fullWidth, fullHeight);
+//		// return new ClusterPosition(0, 0, fullWidth, fullHeight);
 	}
 
 	private int getClusterIndex(final String svg, int colorInt) {
@@ -466,13 +467,6 @@ public class DotStringFactory implements Moveable {
 		final int v = 0xFFFFFF & color;
 		String s = "000000" + Integer.toHexString(v).toUpperCase();
 		s = s.substring(s.length() - 6);
-		return "#" + s;
-	}
-
-	public static String sharpAlpha(int color) {
-		final int v = color;
-		String s = "00000000" + Integer.toHexString(v).toUpperCase();
-		s = s.substring(s.length() - 8);
 		return "#" + s;
 	}
 

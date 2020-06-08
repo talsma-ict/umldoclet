@@ -54,6 +54,7 @@ import net.sourceforge.plantuml.version.Version;
 
 public class BlockUml {
 
+	private final List<StringLocated> rawSource;
 	private final List<StringLocated> data;
 	private List<StringLocated> debug;
 	private Diagram system;
@@ -103,6 +104,7 @@ public class BlockUml {
 	private boolean preprocessorError;
 
 	public BlockUml(List<StringLocated> strings, Defines defines, ISkinSimple skinParam, PreprocessorModeSet mode) {
+		this.rawSource = new ArrayList<StringLocated>(strings);
 		this.localDefines = defines;
 		this.skinParam = skinParam;
 		final String s0 = strings.get(0).getTrimmed().getString();
@@ -153,7 +155,7 @@ public class BlockUml {
 			if (preprocessorError) {
 				system = new PSystemErrorPreprocessor(data, debug);
 			} else {
-				system = new PSystemBuilder().createPSystem(skinParam, data);
+				system = new PSystemBuilder().createPSystem(skinParam, data, rawSource);
 			}
 		}
 		return system;

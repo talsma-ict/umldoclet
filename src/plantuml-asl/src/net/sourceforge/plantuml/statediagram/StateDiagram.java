@@ -27,6 +27,7 @@
  *
  *
  * Original Author:  Arnaud Roques
+ * Contribution   :  Serge Wenger 
  */
 package net.sourceforge.plantuml.statediagram;
 
@@ -61,7 +62,8 @@ public class StateDiagram extends AbstractEntityDiagram {
 			return checkConcurrentStateOkInternal1972(ident);
 		}
 		final boolean result = checkConcurrentStateOkInternal(code);
-		// System.err.println("checkConcurrentStateOk " + code + " " + ident + " " + result);
+		// System.err.println("checkConcurrentStateOk " + code + " " + ident + " " +
+		// result);
 		return result;
 	}
 
@@ -180,6 +182,34 @@ public class StateDiagram extends AbstractEntityDiagram {
 		final Ident ident = buildLeafIdent(tmp);
 		final Code code = this.V1972() ? ident : buildCode(tmp);
 		final IEntity result = getOrCreateLeaf(ident, code, LeafType.PSEUDO_STATE, null);
+		endGroup();
+		return result;
+	}
+
+	public IEntity getDeepHistory() {
+		final IGroup g = getCurrentGroup();
+		if (EntityUtils.groupRoot(g)) {
+			final Ident ident = buildLeafIdent("*deephistory");
+			final Code code = buildCode("*deephistory");
+			return getOrCreateLeaf(ident, code, LeafType.DEEP_HISTORY, null);
+		}
+
+		final String idShort = "*deephistory*" + g.getCodeGetName();
+		final Ident ident = buildLeafIdent(idShort);
+		final Code code = this.V1972() ? ident : buildCode(idShort);
+		return getOrCreateLeaf(ident, code, LeafType.DEEP_HISTORY, null);
+	}
+
+	public IEntity getDeepHistory(String idShort) {
+		final Ident idNewLong = buildLeafIdent(idShort);
+		final Code codeGroup = this.V1972() ? idNewLong : buildCode(idShort);
+		gotoGroup(idNewLong, codeGroup, Display.getWithNewlines(codeGroup), GroupType.STATE, getRootGroup(),
+				NamespaceStrategy.SINGLE);
+		final IEntity g = getCurrentGroup();
+		final String tmp = "*deephistory*" + g.getCodeGetName();
+		final Ident ident = buildLeafIdent(tmp);
+		final Code code = this.V1972() ? ident : buildCode(tmp);
+		final IEntity result = getOrCreateLeaf(ident, code, LeafType.DEEP_HISTORY, null);
 		endGroup();
 		return result;
 	}

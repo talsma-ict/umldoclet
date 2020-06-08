@@ -38,5 +38,5 @@ public interface ColorMapper {
 
 	public String toSvg(HColor color);
 
-	public String toHtml(HColor color);
+	public String toRGB(HColor color);
 }

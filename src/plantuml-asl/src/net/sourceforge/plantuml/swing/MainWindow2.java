@@ -152,6 +152,7 @@ public class MainWindow2 extends JFrame {
 
 	public MainWindow2(Option option, File arg) {
 		super(getDirectory(arg).getAbsolutePath());
+		System.setProperty("PLANTUML_SECURITY_PROFILE", "UNSECURE");
 		final File dir = getDirectory(arg);
 		setIconImage(PSystemVersion.getPlantumlSmallIcon2());
 		this.option = option;

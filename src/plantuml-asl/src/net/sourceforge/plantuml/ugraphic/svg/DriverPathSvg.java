@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.ugraphic.svg;
 
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.svg.SvgGraphics;
 import net.sourceforge.plantuml.ugraphic.ClipContainer;
 import net.sourceforge.plantuml.ugraphic.UClip;
@@ -68,8 +67,8 @@ public class DriverPathSvg extends DriverShadowedG2d implements UDriver<SvgGraph
 			final HColor back = param.getBackcolor();
 			if (back instanceof HColorGradient) {
 				final HColorGradient gr = (HColorGradient) back;
-				final String id = svg.createSvgGradient(mapper.toHtml(gr.getColor1()),
-						mapper.toHtml(gr.getColor2()), gr.getPolicy());
+				final String id = svg.createSvgGradient(mapper.toRGB(gr.getColor1()),
+						mapper.toRGB(gr.getColor2()), gr.getPolicy());
 				svg.setFillColor("url(#" + id + ")");
 			} else {
 				final String backcolor = mapper.toSvg(back);

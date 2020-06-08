@@ -30,10 +30,8 @@
  */
 package net.sourceforge.plantuml.tim;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -61,6 +59,8 @@ import net.sourceforge.plantuml.preproc.Sub;
 import net.sourceforge.plantuml.preproc.UncommentReadLine;
 import net.sourceforge.plantuml.preproc2.PreprocessorIncludeStrategy;
 import net.sourceforge.plantuml.preproc2.PreprocessorUtils;
+import net.sourceforge.plantuml.security.SFile;
+import net.sourceforge.plantuml.security.SURL;
 import net.sourceforge.plantuml.tim.expression.Knowledge;
 import net.sourceforge.plantuml.tim.expression.TValue;
 import net.sourceforge.plantuml.tim.iterator.CodeIterator;
@@ -263,7 +263,7 @@ public class TContext {
 			if (e instanceof EaterExceptionLocated)
 				throw (EaterExceptionLocated) e;
 			e.printStackTrace();
-			throw EaterException.located("Fatal parsing error", s);
+			throw EaterException.located("Fatal parsing error");
 		}
 	}
 
@@ -320,7 +320,7 @@ public class TContext {
 		} else if (s.getString().matches("^\\s+$")) {
 			return null;
 		} else {
-			throw EaterException.located("Compile Error " + ftype + " " + type, s);
+			throw EaterException.located("Compile Error " + ftype + " " + type);
 		}
 	}
 
@@ -392,11 +392,11 @@ public class TContext {
 				final EaterFunctionCall call = new EaterFunctionCall(new StringLocated(sub, location),
 						isLegacyDefine(presentFunction), isUnquoted(presentFunction));
 				call.analyze(this, memory);
-				final TFunction function = functionsSet
-						.getFunctionSmart(new TFunctionSignature(presentFunction, call.getValues().size()));
+				final TFunctionSignature signature = new TFunctionSignature(presentFunction, call.getValues().size(),
+						call.getNamedArguments().keySet());
+				final TFunction function = functionsSet.getFunctionSmart(signature);
 				if (function == null) {
-					throw EaterException.located("Function not found " + presentFunction,
-							new StringLocated(str, location));
+					throw EaterException.located("Function not found " + presentFunction);
 				}
 				if (function.getFunctionType() == TFunctionType.PROCEDURE) {
 					this.pendingAdd = result.toString();
@@ -410,7 +410,8 @@ public class TContext {
 				}
 				assert function.getFunctionType() == TFunctionType.RETURN_FUNCTION
 						|| function.getFunctionType() == TFunctionType.LEGACY_DEFINE;
-				final TValue functionReturn = function.executeReturnFunction(this, memory, location, call.getValues());
+				final TValue functionReturn = function.executeReturnFunction(this, memory, location, call.getValues(),
+						call.getNamedArguments());
 				result.append(functionReturn.toString());
 				i += call.getCurrentPosition() - 1;
 			} else if (new VariableManager(this, memory, location).getVarnameAt(str, i) != null) {
@@ -432,7 +433,7 @@ public class TContext {
 		_import.analyze(this, memory);
 
 		try {
-			final File file = FileSystem.getInstance()
+			final SFile file = FileSystem.getInstance()
 					.getFile(applyFunctionsAndVariables(memory, s.getLocation(), _import.getLocation()));
 			if (file.exists() && file.isDirectory() == false) {
 				importedFiles.add(file);
@@ -440,10 +441,10 @@ public class TContext {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw EaterException.located("Cannot import " + e.getMessage(), s);
+			throw EaterException.located("Cannot import " + e.getMessage());
 		}
 
-		throw EaterException.located("Cannot import", s);
+		throw EaterException.located("Cannot import");
 	}
 
 	private void executeLog(TMemory memory, StringLocated s) throws EaterException, EaterExceptionLocated {
@@ -468,20 +469,23 @@ public class TContext {
 						saveImportedFiles = this.importedFiles;
 						this.importedFiles = this.importedFiles.withCurrentDir(f2.getParentFile());
 						final Reader reader = f2.getReader(charset);
+						if (reader == null) {
+							throw EaterException.located("cannot include " + location);
+						}
 						ReadLine readerline = ReadLineReader.create(reader, location, s.getLocation());
 						readerline = new UncommentReadLine(readerline);
 						sub = Sub.fromFile(readerline, blocname, this, memory);
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
-					throw EaterException.located("cannot include " + e, s);
+					throw EaterException.located("cannot include " + location);
 				}
 			}
 			if (sub == null) {
 				sub = subs.get(location);
 			}
 			if (sub == null) {
-				throw EaterException.located("cannot include " + location, s);
+				throw EaterException.located("cannot include " + location);
 			}
 			executeLinesInternal(memory, sub.lines(), null);
 		} finally {
@@ -510,7 +514,7 @@ public class TContext {
 			} while (true);
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw EaterException.located("" + e, s);
+			throw EaterException.located("" + e);
 		}
 	}
 
@@ -530,7 +534,10 @@ public class TContext {
 		ImportedFiles saveImportedFiles = null;
 		try {
 			if (location.startsWith("http://") || location.startsWith("https://")) {
-				final URL url = new URL(location);
+				final SURL url = SURL.create(location);
+				if (url == null) {
+					throw EaterException.located("Cannot open URL");
+				}
 				reader2 = PreprocessorUtils.getReaderIncludeUrl2(url, s, suf, charset);
 
 			}
@@ -543,7 +550,7 @@ public class TContext {
 						return;
 					}
 					if (strategy == PreprocessorIncludeStrategy.ONCE && filesUsedCurrent.contains(f2)) {
-						throw EaterException.located("This file has already been included", s);
+						throw EaterException.located("This file has already been included");
 					}
 
 					if (StartDiagramExtractReader.containsStartDiagram(f2, s, charset)) {
@@ -551,7 +558,7 @@ public class TContext {
 					} else {
 						final Reader reader = f2.getReader(charset);
 						if (reader == null) {
-							throw EaterException.located("Cannot include file", s);
+							throw EaterException.located("Cannot include file");
 						}
 						reader2 = ReadLineReader.create(reader, location, s.getLocation());
 					}
@@ -580,10 +587,10 @@ public class TContext {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw EaterException.located("cannot include " + e, s);
+			throw EaterException.located("cannot include " + e);
 		}
 
-		throw EaterException.located("cannot include " + location, s);
+		throw EaterException.located("cannot include " + location);
 	}
 
 	public boolean isLegacyDefine(String functionName) {

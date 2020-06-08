@@ -16,19 +16,27 @@
 package nl.talsmasoftware.umldoclet.html;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.logging.Message;
+import nl.talsmasoftware.umldoclet.logging.TestLogger;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class HtmlFileTest {
 
@@ -42,7 +50,7 @@ public class HtmlFileTest {
     }
 
     @AfterAll
-    public static void deleteTempdir() throws IOException {
+    public static void deleteTempdir() {
         for (File f : tempdir.listFiles()) f.delete();
         assertThat("Delete temporary directory", tempdir.delete(), is(true));
     }
@@ -66,5 +74,55 @@ public class HtmlFileTest {
         File newTempFile = new HtmlFile(config, path).createNewTempFile();
         assertThat(newTempFile.getName(), startsWith("X--")); // Padding for length < 3
         assertThat(newTempFile.getName(), endsWith(".tmp")); // Java's default extension for temp files
+    }
+
+    @Test
+    public void testReplaceBy() throws IOException {
+        // prepare
+        TestLogger testLogger = new TestLogger();
+        Configuration config = mock(Configuration.class);
+        Path path = tempdir.toPath().resolve("test.html");
+        Path fox = tempdir.toPath().resolve("fox.tmp");
+        Files.write(fox, "The quick brown fox jumps over the lazy dog".getBytes(UTF_8));
+        when(config.logger()).thenReturn(testLogger);
+
+        // execute
+        new HtmlFile(config, path).replaceBy(fox.toFile());
+
+        // verify
+        assertThat(Files.readAllLines(path, UTF_8), contains("The quick brown fox jumps over the lazy dog"));
+        assertThat(fox.toFile().exists(), is(false));
+        verify(config).logger();
+        assertThat(testLogger.countMessages(Message.DEBUG_REPLACING_BY::equals), is(1));
+        Files.delete(path);
+        verifyNoMoreInteractions(config);
+    }
+
+    @Test
+    public void testReplaceByNull() throws IOException {
+        // prepare
+        Configuration config = mock(Configuration.class);
+        Path path = tempdir.toPath().resolve("test.html");
+
+        // execute
+        new HtmlFile(config, path).replaceBy(null);
+
+        // verify
+        // should be no-op
+        verifyNoMoreInteractions(config);
+    }
+
+    @Test
+    public void testReplaceByNonFile() throws IOException {
+        // prepare
+        Configuration config = mock(Configuration.class);
+        Path path = tempdir.toPath().resolve("test.html");
+
+        // execute
+        new HtmlFile(config, path).replaceBy(new File(tempdir, "does-not-exist"));
+
+        // verify
+        // should be no-op
+        verifyNoMoreInteractions(config);
     }
 }

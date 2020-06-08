@@ -35,6 +35,7 @@ import java.awt.Font;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorSet;
+import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class ValueImpl implements Value {
 
@@ -56,8 +57,11 @@ public class ValueImpl implements Value {
 	}
 
 	public HColor asColor(HColorSet set) {
-		if ("none".equalsIgnoreCase(value) || "transparent".equalsIgnoreCase(value)) {
+		if ("none".equalsIgnoreCase(value)) {
 			return null;
+		}
+		if ("transparent".equalsIgnoreCase(value)) {
+			return HColorUtils.transparent();
 		}
 		return set.getColorIfValid(value);
 	}

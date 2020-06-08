@@ -81,7 +81,7 @@ abstract class Arrow extends GraphicalElement implements InGroupable {
 
 	protected final void endUrl(UGraphic ug) {
 		if (url != null) {
-			ug.closeAction();
+			ug.closeUrl();
 		}
 	}
 

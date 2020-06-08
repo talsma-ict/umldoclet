@@ -28,6 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * Contribution :  Hisashi Miyashita
+ * Contribution :  Serge Wenger
  */
 package net.sourceforge.plantuml.svek;
 
@@ -95,6 +96,7 @@ import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.TextBlockWidth;
 import net.sourceforge.plantuml.graphic.USymbol;
 import net.sourceforge.plantuml.graphic.USymbolInterface;
+import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleSignature;
@@ -106,6 +108,7 @@ import net.sourceforge.plantuml.svek.image.EntityImageBranch;
 import net.sourceforge.plantuml.svek.image.EntityImageCircleEnd;
 import net.sourceforge.plantuml.svek.image.EntityImageCircleStart;
 import net.sourceforge.plantuml.svek.image.EntityImageClass;
+import net.sourceforge.plantuml.svek.image.EntityImageDeepHistory;
 import net.sourceforge.plantuml.svek.image.EntityImageDescription;
 import net.sourceforge.plantuml.svek.image.EntityImageEmptyPackage;
 import net.sourceforge.plantuml.svek.image.EntityImageGroup;
@@ -244,6 +247,10 @@ public final class GeneralImageBuilder {
 		if (leaf.getLeafType() == LeafType.PSEUDO_STATE) {
 			return new EntityImagePseudoState(leaf, skinParam);
 		}
+		if (leaf.getLeafType() == LeafType.DEEP_HISTORY) {
+			return new EntityImageDeepHistory(leaf, skinParam);
+		}
+
 		if (leaf.getLeafType() == LeafType.TIPS) {
 			return new EntityImageTips(leaf, skinParam, bibliotekon);
 		}
@@ -350,6 +357,16 @@ public final class GeneralImageBuilder {
 
 	}
 
+	// Duplicate SvekResult / GeneralImageBuilder
+	private HColor getBackcolor() {
+		if (SkinParam.USE_STYLES()) {
+			final Style style = StyleSignature.of(SName.root, SName.document)
+					.getMergedStyle(dotData.getSkinParam().getCurrentStyleBuilder());
+			return style.value(PName.BackGroundColor).asColor(dotData.getSkinParam().getIHtmlColorSet());
+		}
+		return dotData.getSkinParam().getBackgroundColor(false);
+	}
+	
 	public IEntityImage buildImage(BaseFile basefile, String dotStrings[]) {
 		if (dotData.isDegeneratedWithFewEntities(0)) {
 			return new EntityImageSimpleEmpty(dotData.getSkinParam().getBackgroundColor(false));
@@ -358,9 +375,10 @@ public final class GeneralImageBuilder {
 			final ILeaf single = dotData.getLeafs().iterator().next();
 			final IGroup group = single.getParentContainer();
 			if (group instanceof GroupRoot) {
-				return new IEntityImageMoved(GeneralImageBuilder.createEntityImageBlock(single, dotData.getSkinParam(),
+				final IEntityImage tmp = GeneralImageBuilder.createEntityImageBlock(single, dotData.getSkinParam(),
 						dotData.isHideEmptyDescriptionForState(), dotData, null, null, dotData.getUmlDiagramType(),
-						dotData.getLinks()));
+						dotData.getLinks());
+				return new EntityImageDegenerated(tmp, getBackcolor());
 			}
 		}
 		dotData.removeIrrelevantSametail();
@@ -428,15 +446,8 @@ public final class GeneralImageBuilder {
 		}
 		final String graphvizVersion = extractGraphvizVersion(svg);
 		try {
-			final ClusterPosition position = dotStringFactory.solve(mergeIntricated, dotData.getEntityFactory(), svg)
-					.delta(10, 10);
-			final double minY = position.getMinY();
-			final double minX = position.getMinX();
-			if (minX > 0 || minY > 0) {
-				throw new IllegalStateException();
-			}
-			final SvekResult result = new SvekResult(position, dotData, dotStringFactory);
-			result.moveSvek(6 - minX, -minY);
+			dotStringFactory.solve(mergeIntricated, dotData.getEntityFactory(), svg);
+			final SvekResult result = new SvekResult(dotData, dotStringFactory);
 			this.maxX = dotStringFactory.getBibliotekon().getMaxX();
 			return result;
 		} catch (Exception e) {

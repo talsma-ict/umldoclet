@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -46,6 +45,7 @@ import net.sourceforge.plantuml.preproc.ReadLineNumbered;
 import net.sourceforge.plantuml.preproc.ReadLineReader;
 import net.sourceforge.plantuml.preproc.UncommentReadLine;
 import net.sourceforge.plantuml.preproc2.Preprocessor;
+import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.utils.StartUtils;
 
 public final class BlockUmlBuilder implements DefinitionsContainer {
@@ -57,7 +57,7 @@ public final class BlockUmlBuilder implements DefinitionsContainer {
 	private final ImportedFiles importedFiles;
 	private final String charset;
 
-	public BlockUmlBuilder(List<String> config, String charset, Defines defines, Reader readerInit, File newCurrentDir,
+	public BlockUmlBuilder(List<String> config, String charset, Defines defines, Reader readerInit, SFile newCurrentDir,
 			String desc) throws IOException {
 		ReadLineNumbered includer = null;
 		this.defines = defines;
@@ -82,12 +82,12 @@ public final class BlockUmlBuilder implements DefinitionsContainer {
 
 	private void init(ReadLineNumbered includer) throws IOException {
 		StringLocated s = null;
-		List<StringLocated> current2 = null;
+		List<StringLocated> current = null;
 		boolean paused = false;
 
 		while ((s = includer.readLine()) != null) {
 			if (StartUtils.isArobaseStartDiagram(s.getString())) {
-				current2 = new ArrayList<StringLocated>();
+				current = new ArrayList<StringLocated>();
 				paused = false;
 			}
 			if (StartUtils.isArobasePauseDiagram(s.getString())) {
@@ -98,12 +98,12 @@ public final class BlockUmlBuilder implements DefinitionsContainer {
 				paused = true;
 				reader.setPaused(true);
 			}
-			if (current2 != null && paused == false) {
-				current2.add(s);
+			if (current != null && paused == false) {
+				current.add(s);
 			} else if (paused) {
 				final StringLocated append = StartUtils.getPossibleAppend(s);
 				if (append != null) {
-					current2.add(append);
+					current.add(append);
 				}
 			}
 
@@ -111,14 +111,14 @@ public final class BlockUmlBuilder implements DefinitionsContainer {
 				paused = false;
 				reader.setPaused(false);
 			}
-			if (StartUtils.isArobaseEndDiagram(s.getString()) && current2 != null) {
+			if (StartUtils.isArobaseEndDiagram(s.getString()) && current != null) {
 				if (paused) {
-					current2.add(s);
+					current.add(s);
 				}
-				final BlockUml uml = new BlockUml(current2, defines.cloneMe(), null, this);
+				final BlockUml uml = new BlockUml(current, defines.cloneMe(), null, this);
 				usedFiles.addAll(uml.getIncluded());
 				blocks.add(uml);
-				current2 = null;
+				current = null;
 				reader.setPaused(false);
 			}
 		}

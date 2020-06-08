@@ -79,7 +79,7 @@ class GraphicalReference extends GraphicalElement implements InGroupable {
 		}
 		comp.drawU(ug, new Area(dim), context);
 		if (url != null) {
-			ug.closeAction();
+			ug.closeUrl();
 		}
 	}
 

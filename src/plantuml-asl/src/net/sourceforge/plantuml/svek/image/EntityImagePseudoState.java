@@ -57,11 +57,15 @@ public class EntityImagePseudoState extends AbstractEntityImage {
 	private final TextBlock desc;
 
 	public EntityImagePseudoState(ILeaf entity, ISkinParam skinParam) {
+		this(entity, skinParam, "H");
+	}
+
+	public EntityImagePseudoState(ILeaf entity, ISkinParam skinParam, String historyText) {
 		super(entity, skinParam);
 		final Stereotype stereotype = entity.getStereotype();
-		this.desc = Display.create("H").create(new FontConfiguration(getSkinParam(), FontParam.STATE, stereotype),
-				HorizontalAlignment.CENTER, skinParam);
-
+		this.desc = Display.create(historyText).create(
+				new FontConfiguration(getSkinParam(), FontParam.STATE, stereotype), HorizontalAlignment.CENTER,
+				skinParam);
 	}
 
 	public Dimension2D calculateDimension(StringBounder stringBounder) {
@@ -74,8 +78,7 @@ public class EntityImagePseudoState extends AbstractEntityImage {
 			circle.setDeltaShadow(4);
 		}
 		ug = ug.apply(new UStroke(1.5));
-		ug = ug.apply(
-				SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.stateBackground).bg())
+		ug = ug.apply(SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.stateBackground).bg())
 				.apply(SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.stateBorder));
 		ug.draw(circle);
 		ug = ug.apply(new UStroke());
