@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Talsma ICT
+ * Copyright 2016-2020 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package nl.talsmasoftware.umldoclet.javadoc;
 
 import jdk.javadoc.doclet.Doclet;
 import jdk.javadoc.doclet.Doclet.Option.Kind;
+import net.sourceforge.plantuml.OptionFlags;
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 
 import java.util.Arrays;
@@ -91,6 +92,7 @@ final class UMLOptions {
                 (args) -> config.failOnCyclicPackageDependencies = asBoolean(args.get(0))));
         this.options.add(new Option("--uml-java-bean-properties-as-fields -umlJavaBeanPropertiesAsFields", 0, Kind.STANDARD,
                 (args) -> config.methodConfig.javaBeanPropertiesAsFields = true));
+        this.options.add(new Option("--uml-timeout -umlTimeout", 1, Kind.STANDARD, this::setTimeout));
     }
 
     Set<Doclet.Option> mergeWith(final Set<Doclet.Option> standardOptions) {
@@ -114,6 +116,15 @@ final class UMLOptions {
 
     private static boolean asBoolean(String value) {
         return "true".equalsIgnoreCase(value);
+    }
+
+    private void setTimeout(List<String> timeout) {
+        try {
+            int timeoutSeconds = Integer.parseInt(timeout.get(0));
+            OptionFlags.getInstance().setTimeoutMs(1000L * timeoutSeconds);
+        } catch (RuntimeException rte) {
+            throw new IllegalArgumentException("Unrecognized timeout value: seconds expected, received: " + timeout, rte);
+        }
     }
 
     private class Option implements Doclet.Option {
