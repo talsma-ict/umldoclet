@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -40,12 +40,13 @@ import java.util.Map;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
+import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class TilesField extends AbstractTextBlock implements TextBlock {
 
@@ -247,7 +248,7 @@ public class TilesField extends AbstractTextBlock implements TextBlock {
 			final double yt = p.getYmin() * dimSingle.getHeight() / 2;
 			t.drawU(ug.apply(new UTranslate((x + xt), (y + yt))));
 		}
-		ug = ug.apply(HColorUtils.RED);
+		ug = ug.apply(new UChangeColor(HtmlColorUtils.RED));
 		for (Path p : paths) {
 			final TileArea start = p.getStart();
 			final TileArea dest = p.getDest();

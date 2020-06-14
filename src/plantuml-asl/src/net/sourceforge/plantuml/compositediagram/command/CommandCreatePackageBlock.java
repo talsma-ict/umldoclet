@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -43,7 +43,6 @@ import net.sourceforge.plantuml.cucadiagram.Code;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.GroupType;
 import net.sourceforge.plantuml.cucadiagram.IGroup;
-import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.NamespaceStrategy;
 
 public class CommandCreatePackageBlock extends SingleLineCommand2<CompositeDiagram> {
@@ -71,13 +70,11 @@ public class CommandCreatePackageBlock extends SingleLineCommand2<CompositeDiagr
 	protected CommandExecutionResult executeArg(CompositeDiagram diagram, LineLocation location, RegexResult arg) {
 		final IGroup currentPackage = diagram.getCurrentGroup();
 		String display = arg.get("DISPLAY", 0);
-		final String idShort = arg.get("CODE", 0);
-		final Code code = diagram.buildCode(idShort);
+		final Code code = Code.of(arg.get("CODE", 0));
 		if (display == null) {
-			display = code.getName();
+			display = code.getFullName();
 		}
-		final Ident idNewLong = diagram.buildLeafIdent(idShort);
-		diagram.gotoGroup(idNewLong, code, Display.getWithNewlines(display), GroupType.PACKAGE, currentPackage,
+		diagram.gotoGroup2(code, Display.getWithNewlines(display), GroupType.PACKAGE, currentPackage,
 				NamespaceStrategy.SINGLE);
 		return CommandExecutionResult.ok();
 	}

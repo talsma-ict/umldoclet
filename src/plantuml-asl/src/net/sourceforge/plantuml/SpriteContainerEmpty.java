@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,12 +32,13 @@ package net.sourceforge.plantuml;
 
 import java.util.Map;
 
-import net.sourceforge.plantuml.creole.Parser;
-import net.sourceforge.plantuml.sprite.Sprite;
-import net.sourceforge.plantuml.sprite.SpriteImage;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
+import net.sourceforge.plantuml.creole.CommandCreoleMonospaced;
+import net.sourceforge.plantuml.graphic.HtmlColorSetSimple;
+import net.sourceforge.plantuml.graphic.IHtmlColorSet;
+import net.sourceforge.plantuml.ugraphic.ColorMapper;
+import net.sourceforge.plantuml.ugraphic.ColorMapperIdentity;
+import net.sourceforge.plantuml.ugraphic.sprite.Sprite;
+import net.sourceforge.plantuml.ugraphic.sprite.SpriteImage;
 
 public class SpriteContainerEmpty implements SpriteContainer, ISkinSimple {
 
@@ -58,15 +59,15 @@ public class SpriteContainerEmpty implements SpriteContainer, ISkinSimple {
 	}
 
 	public String getMonospacedFamily() {
-		return Parser.MONOSPACED;
+		return CommandCreoleMonospaced.MONOSPACED;
 	}
 
 	public int getTabSize() {
 		return 8;
 	}
 
-	public HColorSet getIHtmlColorSet() {
-		return HColorSet.instance();
+	public IHtmlColorSet getIHtmlColorSet() {
+		return new HtmlColorSetSimple();
 	}
 
 	public int getDpi() {
@@ -80,13 +81,15 @@ public class SpriteContainerEmpty implements SpriteContainer, ISkinSimple {
 	public ColorMapper getColorMapper() {
 		return new ColorMapperIdentity();
 	}
-
+	
 	public void copyAllFrom(ISkinSimple other) {
 		throw new UnsupportedOperationException();
 	}
-
+	
 	public Map<String, String> values() {
 		throw new UnsupportedOperationException();
 	}
+
+
 
 }

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -35,11 +35,11 @@ import java.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.creole.Stencil;
 import net.sourceforge.plantuml.ugraphic.AbstractUGraphicHorizontalLine;
+import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UHorizontalLine;
 import net.sourceforge.plantuml.ugraphic.UPath;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColorNone;
 
 class USymbolQueue extends USymbol {
 
@@ -67,7 +67,7 @@ class USymbolQueue extends USymbol {
 		ug.draw(shape);
 
 		final UPath closing = getClosingPath(width, height);
-		ug.apply(new HColorNone().bg()).draw(closing);
+		ug.apply(new UChangeBackColor(null)).draw(closing);
 
 	}
 

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,14 +30,14 @@
  */
 package net.sourceforge.plantuml;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.cucadiagram.dot.GraphvizUtils;
-import net.sourceforge.plantuml.security.SFile;
-import net.sourceforge.plantuml.security.SecurityUtils;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
 
 public class OptionFlags {
@@ -49,10 +49,6 @@ public class OptionFlags {
 	// static public final boolean TRACE_DOT = false;
 
 	static public boolean ALLOW_INCLUDE = true;
-
-	static public void setAllowIncludeFalse() {
-		ALLOW_INCLUDE = false;
-	}
 
 	static public void setMaxPixel(int max) {
 		ImageBuilder.setMaxPixel(max);
@@ -124,7 +120,7 @@ public class OptionFlags {
 	private boolean clipboard;
 	private String fileSeparator = "_";
 	private long timeoutMs = 15 * 60 * 1000L; // 15 minutes
-	private SFile logData;
+	private File logData;
 
 	public static OptionFlags getInstance() {
 		return singleton;
@@ -188,7 +184,7 @@ public class OptionFlags {
 
 	private final AtomicBoolean logDataInitized = new AtomicBoolean(false);
 
-	public void logData(final SFile file, Diagram system) {
+	public void logData(File file, Diagram system) {
 		final String warnOrError = system.getWarningOrError();
 		if (warnOrError == null) {
 			return;
@@ -197,7 +193,7 @@ public class OptionFlags {
 			if (logData == null && logDataInitized.get() == false) {
 				final String s = GraphvizUtils.getenvLogData();
 				if (s != null) {
-					setLogData(new SFile(s));
+					setLogData(new File(s));
 				}
 				logDataInitized.set(true);
 			}
@@ -208,7 +204,7 @@ public class OptionFlags {
 			// final PSystemError systemError = (PSystemError) system;
 			PrintStream ps = null;
 			try {
-				ps = SecurityUtils.createPrintStream(logData.createFileOutputStream(true));
+				ps = new PrintStream(new FileOutputStream(logData, true));
 				ps.println("Start of " + file.getName());
 				ps.println(warnOrError);
 				ps.println("End of " + file.getName());
@@ -224,12 +220,12 @@ public class OptionFlags {
 		}
 	}
 
-	public final void setLogData(SFile logData) {
+	public final void setLogData(File logData) {
 		this.logData = logData;
 		logData.delete();
 		PrintStream ps = null;
 		try {
-			ps = SecurityUtils.createPrintStream(logData.createFileOutputStream());
+			ps = new PrintStream(new FileOutputStream(logData));
 			ps.println();
 		} catch (FileNotFoundException e) {
 			Log.error("Cannot open " + logData);

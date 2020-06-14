@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,10 +30,9 @@
  */
 package net.sourceforge.plantuml.cucadiagram;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-
-import net.sourceforge.plantuml.security.SFile;
 
 public class GroupPrinter {
 
@@ -47,7 +46,7 @@ public class GroupPrinter {
 		pw.println("<table border=1 cellpadding=8 cellspacing=0>");
 		pw.println("<tr>");
 		pw.println("<td bgcolor=#DDDDDD>");
-		pw.println(group.getCodeGetName());
+		pw.println(group.getCode());
 		pw.println("<tr>");
 		pw.println("<td>");
 		if (group.getLeafsDirect().size() == 0) {
@@ -76,12 +75,12 @@ public class GroupPrinter {
 	}
 
 	private void printLeaf(ILeaf leaf) {
-		pw.println("<li>" + leaf.getCodeGetName());
+		pw.println("<li>" + leaf.getCode());
 	}
 
-	public static void print(SFile f, IGroup rootGroup) {
+	public static void print(File f, IGroup rootGroup) {
 		try {
-			final PrintWriter pw = f.createPrintWriter();
+			final PrintWriter pw = new PrintWriter(f);
 			pw.println("<html>");
 			new GroupPrinter(pw).printGroup(rootGroup);
 			pw.println("</html>");

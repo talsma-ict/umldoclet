@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,7 +32,6 @@ package net.sourceforge.plantuml.activitydiagram3.command;
 
 import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.activitydiagram3.ActivityDiagram3;
-import net.sourceforge.plantuml.activitydiagram3.ftile.BoxStyle;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand2;
 import net.sourceforge.plantuml.command.regex.IRegex;
@@ -53,22 +52,14 @@ public class CommandBackward3 extends SingleLineCommand2<ActivityDiagram3> {
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf(":"), //
 				new RegexLeaf("LABEL", "(.*)"), //
-				new RegexLeaf("STYLE", CommandActivity3.endingGroup()), //
+				new RegexLeaf(";"), //
 				RegexLeaf.end());
 	}
 
 	@Override
 	protected CommandExecutionResult executeArg(ActivityDiagram3 diagram, LineLocation location, RegexResult arg) {
-		final BoxStyle boxStyle;
-		final String styleString = arg.get("STYLE", 0);
-		if (styleString == null) {
-			boxStyle = BoxStyle.PLAIN;
-		} else {
-			boxStyle = BoxStyle.fromChar(styleString.charAt(0));
-		}
-
 		final Display label = Display.getWithNewlines(arg.get("LABEL", 0));
-		return diagram.backwardWhile(label, boxStyle);
+		return diagram.backwardWhile(label);
 	}
 
 }

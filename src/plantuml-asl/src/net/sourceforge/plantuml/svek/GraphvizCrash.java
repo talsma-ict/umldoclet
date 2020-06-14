@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -47,15 +47,13 @@ import net.sourceforge.plantuml.fun.IconLoader;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
 import net.sourceforge.plantuml.graphic.GraphicPosition;
 import net.sourceforge.plantuml.graphic.GraphicStrings;
+import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.graphic.QuoteUtils;
 import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.ugraphic.AffineTransformType;
-import net.sourceforge.plantuml.ugraphic.PixelImage;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UImage;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 import net.sourceforge.plantuml.version.Version;
 
 public class GraphvizCrash extends AbstractTextBlock implements IEntityImage {
@@ -156,8 +154,7 @@ public class GraphvizCrash extends AbstractTextBlock implements IEntityImage {
 		strings.addAll(OptionPrint.interestingValues());
 	}
 
-	// private static void addTextProperty(final List<String> strings, String prop)
-	// {
+	// private static void addTextProperty(final List<String> strings, String prop) {
 	// strings.add(prop + ": " + System.getProperty(prop));
 	// }
 
@@ -165,8 +162,8 @@ public class GraphvizCrash extends AbstractTextBlock implements IEntityImage {
 		return false;
 	}
 
-	public HColor getBackcolor() {
-		return HColorUtils.WHITE;
+	public HtmlColor getBackcolor() {
+		return HtmlColorUtils.WHITE;
 	}
 
 	public Dimension2D calculateDimension(StringBounder stringBounder) {
@@ -182,9 +179,8 @@ public class GraphvizCrash extends AbstractTextBlock implements IEntityImage {
 		graphicStrings.drawU(ug);
 		if (flashCode != null) {
 			final double h = graphicStrings.calculateDimension(ug.getStringBounder()).getHeight();
-			ug = ug.apply(UTranslate.dy(h));
-			ug.draw(new UImage(new PixelImage(flashCode, AffineTransformType.TYPE_NEAREST_NEIGHBOR))
-					.scale(3));
+			ug = ug.apply(new UTranslate(0, h));
+			ug.draw(new UImage(flashCode).scaleNearestNeighbor(3));
 		}
 	}
 
@@ -195,9 +191,10 @@ public class GraphvizCrash extends AbstractTextBlock implements IEntityImage {
 	public Margins getShield(StringBounder stringBounder) {
 		return Margins.NONE;
 	}
-
+	
 	public double getOverscanX(StringBounder stringBounder) {
 		return 0;
 	}
+
 
 }

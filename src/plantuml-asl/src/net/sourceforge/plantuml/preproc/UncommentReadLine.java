@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -38,7 +38,7 @@ import net.sourceforge.plantuml.command.regex.MyPattern;
 import net.sourceforge.plantuml.command.regex.Pattern2;
 import net.sourceforge.plantuml.utils.StartUtils;
 
-public class UncommentReadLine implements ReadLine {
+public class UncommentReadLine extends ReadLineInstrumented implements ReadLine {
 
 	private static final Pattern2 unpause = MyPattern.cmpile(StartUtils.PAUSE_PATTERN);
 
@@ -50,7 +50,13 @@ public class UncommentReadLine implements ReadLine {
 		this.raw = source;
 	}
 
-	public StringLocated readLine() throws IOException {
+	@Override
+	public String toString() {
+		return "UncommentReadLine of " + raw;
+	}
+
+	@Override
+	StringLocated readLineInst() throws IOException {
 		final StringLocated result = raw.readLine();
 
 		if (result == null) {
@@ -71,12 +77,13 @@ public class UncommentReadLine implements ReadLine {
 			return new StringLocated("", result.getLocation());
 		}
 		if (headerToRemove != null && result.getString().startsWith(headerToRemove)) {
-			return result.substring(headerToRemove.length(), result.getString().length());
+			return result.sub(headerToRemove.length(), result.getString().length());
 		}
 		return result;
 	}
 
-	public void close() throws IOException {
+	@Override
+	void closeInst() throws IOException {
 		this.raw.close();
 	}
 

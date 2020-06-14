@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,23 +34,24 @@ import java.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ugraphic.UCenteredCharacter;
+import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
+import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class CircledCharacter extends AbstractTextBlock implements TextBlock {
 
 	private final String c;
 	private final UFont font;
-	private final HColor innerCircle;
-	private final HColor circle;
-	private final HColor fontColor;
+	private final HtmlColor innerCircle;
+	private final HtmlColor circle;
+	private final HtmlColor fontColor;
 	private final double radius;
 
-	public CircledCharacter(char c, double radius, UFont font, HColor innerCircle, HColor circle,
-			HColor fontColor) {
+	public CircledCharacter(char c, double radius, UFont font, HtmlColor innerCircle, HtmlColor circle,
+			HtmlColor fontColor) {
 		this.c = "" + c;
 		this.radius = radius;
 		this.font = font;
@@ -65,12 +66,12 @@ public class CircledCharacter extends AbstractTextBlock implements TextBlock {
 
 	public void drawU(UGraphic ug) {
 		if (circle != null) {
-			ug = ug.apply(circle);
+			ug = ug.apply(new UChangeColor(circle));
 		}
 		// final HtmlColor back = ug.getParam().getBackcolor();
-		ug = ug.apply(innerCircle.bg());
+		ug = ug.apply(new UChangeBackColor(innerCircle));
 		ug.draw(new UEllipse(radius * 2, radius * 2));
-		ug = ug.apply(fontColor);
+		ug = ug.apply(new UChangeColor(fontColor));
 		ug = ug.apply(new UTranslate(radius, radius));
 		ug.draw(new UCenteredCharacter(c.charAt(0), font));
 	}

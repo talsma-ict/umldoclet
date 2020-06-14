@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -56,11 +56,11 @@ public abstract class CommandMultilines3<S extends Diagram> implements Command<S
 	}
 
 	final public CommandControl isValid(BlocLines lines) {
-		lines = lines.cleanList(strategy);
+		lines = lines.cleanList2(strategy);
 		if (isCommandForbidden()) {
 			return CommandControl.NOT_OK;
 		}
-		final StringLocated first = lines.getFirst();
+		final StringLocated first = lines.getFirst499();
 		if (first == null) {
 			return CommandControl.NOT_OK;
 		}
@@ -72,7 +72,7 @@ public abstract class CommandMultilines3<S extends Diagram> implements Command<S
 			return CommandControl.OK_PARTIAL;
 		}
 
-		final StringLocated potentialLast = lines.getLast().getTrimmed();
+		final StringLocated potentialLast = lines.getLast499().getTrimmed();
 		final boolean m1 = getPatternEnd2().match(potentialLast);
 		if (m1 == false) {
 			return CommandControl.OK_PARTIAL;
@@ -83,7 +83,7 @@ public abstract class CommandMultilines3<S extends Diagram> implements Command<S
 	}
 
 	public final CommandExecutionResult execute(S system, BlocLines lines) {
-		lines = lines.cleanList(strategy);
+		lines = lines.cleanList2(strategy);
 		return executeNow(system, lines);
 	}
 

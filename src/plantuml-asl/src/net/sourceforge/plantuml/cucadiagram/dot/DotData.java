@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -46,10 +46,11 @@ import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.IGroup;
 import net.sourceforge.plantuml.cucadiagram.ILeaf;
 import net.sourceforge.plantuml.cucadiagram.Link;
+import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.PortionShower;
 import net.sourceforge.plantuml.cucadiagram.entity.EntityFactory;
 import net.sourceforge.plantuml.svek.DotMode;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
+import net.sourceforge.plantuml.ugraphic.ColorMapper;
 
 final public class DotData implements PortionShower {
 
@@ -68,10 +69,6 @@ final public class DotData implements PortionShower {
 
 	private final ColorMapper colorMapper;
 	private final EntityFactory entityFactory;
-
-	public EntityFactory getEntityFactory() {
-		return entityFactory;
-	}
 
 	public DotData(IGroup topParent, List<Link> links, Collection<ILeaf> leafs, UmlDiagramType umlDiagramType,
 			ISkinParam skinParam, GroupHierarchy groupHierarchy, PortionShower portionShower, ColorMapper colorMapper,
@@ -146,10 +143,6 @@ final public class DotData implements PortionShower {
 		return entityFactory.getRootGroup();
 	}
 
-	public boolean isDegeneratedWithFewEntities(int nb) {
-		return entityFactory.groups().size() == 0 && getLinks().size() == 0 && getLeafs().size() == nb;
-	}
-
 	public final boolean isHideEmptyDescriptionForState() {
 		return isHideEmptyDescriptionForState;
 	}
@@ -169,7 +162,7 @@ final public class DotData implements PortionShower {
 	public void removeIrrelevantSametail() {
 		final Map<String, Integer> sametails = new HashMap<String, Integer>();
 		for (Link link : links) {
-			if (link.getType().getDecor2().isExtendsLike()) {
+			if (link.getType().getDecor2() == LinkDecor.EXTENDS) {
 				link.setSametail(link.getEntity1().getUid());
 			}
 			final String sametail = link.getSametail();

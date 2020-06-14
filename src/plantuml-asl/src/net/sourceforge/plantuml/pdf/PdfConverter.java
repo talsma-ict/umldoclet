@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,13 +30,12 @@
  */
 package net.sourceforge.plantuml.pdf;
 
+import java.io.File;
 import java.lang.reflect.Method;
-
-import net.sourceforge.plantuml.security.SFile;
 
 public class PdfConverter {
 
-	public static void convert(SFile svgFile, SFile pdfFile) {
+	public static void convert(File svgFile, File pdfFile) {
 
 		if (svgFile.exists() == false) {
 			throw new IllegalArgumentException();

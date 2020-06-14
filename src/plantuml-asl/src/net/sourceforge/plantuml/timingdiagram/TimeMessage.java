@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,7 +34,7 @@ import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.cucadiagram.WithLinkType;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
+import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 
 public class TimeMessage extends WithLinkType {
 
@@ -46,7 +46,7 @@ public class TimeMessage extends WithLinkType {
 		this.tickInPlayer1 = tickInPlayer1;
 		this.tickInPlayer2 = tickInPlayer2;
 		this.label = Display.getWithNewlines(label);
-		this.setSpecificColor(HColorUtils.BLUE);
+		this.setSpecificColor(HtmlColorUtils.BLUE);
 		this.type = new LinkType(LinkDecor.NONE, LinkDecor.NONE);
 	}
 

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -70,12 +70,7 @@ public abstract class AbstractPSystem implements Diagram {
 		if (source == null) {
 			return getVersion();
 		}
-		final String rawString = source.getRawString();
-		final String plainString = source.getPlainString();
-		if (rawString != null && rawString.equals(plainString)) {
-			return rawString + BackSlash.NEWLINE + getVersion();
-		}
-		return rawString + BackSlash.NEWLINE + plainString + BackSlash.NEWLINE + getVersion();
+		return source.getPlainString() + BackSlash.NEWLINE + getVersion();
 	}
 
 	final public UmlSource getSource() {

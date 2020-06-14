@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -31,7 +31,6 @@
 package net.sourceforge.plantuml.skin.rose;
 
 import net.sourceforge.plantuml.ISkinSimple;
-import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
@@ -39,7 +38,6 @@ import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.SymbolContext;
 import net.sourceforge.plantuml.skin.AbstractTextualComponent;
 import net.sourceforge.plantuml.skin.Area;
-import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.URectangle;
@@ -54,13 +52,8 @@ final public class ComponentRoseNoteBox extends AbstractTextualComponent {
 	public ComponentRoseNoteBox(Style style, SymbolContext symbolContext, FontConfiguration font, Display strings,
 			ISkinSimple spriteContainer, double roundCorner, HorizontalAlignment alignment) {
 		super(style, spriteContainer.wrapWidth(), strings, font, alignment, 4, 4, 4, spriteContainer, false, null, null);
-		if (SkinParam.USE_STYLES()) {
-			this.symbolContext = style.getSymbolContext(getIHtmlColorSet());
-			this.roundCorner = style.value(PName.RoundCorner).asInt();
-		} else {
-			this.symbolContext = symbolContext;
-			this.roundCorner = roundCorner;
-		}
+		this.roundCorner = roundCorner;
+		this.symbolContext = symbolContext;
 	}
 
 	@Override
@@ -99,7 +92,7 @@ final public class ComponentRoseNoteBox extends AbstractTextualComponent {
 		}
 
 		ug = symbolContext.apply(ug);
-		final URectangle rect = new URectangle(x2, textHeight).rounded(roundCorner);
+		final URectangle rect = new URectangle(x2, textHeight, roundCorner, roundCorner);
 		rect.setDeltaShadow(symbolContext.getDeltaShadow());
 		ug.draw(rect);
 		ug = ug.apply(new UStroke());

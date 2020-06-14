@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -44,7 +44,6 @@ import net.sourceforge.plantuml.asciiart.UmlCharArea;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.security.SecurityUtils;
 import net.sourceforge.plantuml.sequencediagram.Event;
 import net.sourceforge.plantuml.sequencediagram.Participant;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
@@ -99,8 +98,7 @@ public class SequenceDiagramTxtMaker implements FileMaker {
 		final double tailHeight = drawableSet.getTailHeight(dummyStringBounder, diagram.isShowFootbox());
 		final double newpage2 = fullDimension.getHeight() - (diagram.isShowFootbox() ? tailHeight : 0) - headerHeight;
 		final Page page = new Page(headerHeight, 0, newpage2, tailHeight, 0, null);
-		// drawableSet.drawU_REMOVEDME_4243(ug, 0, fullDimension.getWidth(), page,
-		// diagram.isShowFootbox());
+		// drawableSet.drawU_REMOVEDME_4243(ug, 0, fullDimension.getWidth(), page, diagram.isShowFootbox());
 
 		final Display title = diagram.getTitle().getDisplay();
 
@@ -108,7 +106,7 @@ public class SequenceDiagramTxtMaker implements FileMaker {
 		if (title.isWhite()) {
 			ug2 = ug;
 		} else {
-			ug2 = (UGraphicTxt) ug.apply(UTranslate.dy(title.as().size() + 1));
+			ug2 = (UGraphicTxt) ug.apply(new UTranslate(0, title.as().size() + 1));
 		}
 		drawableSet.drawU22(ug2, 0, fullDimension.getWidth(), page, diagram.isShowFootbox());
 		if (title.isWhite() == false) {
@@ -121,10 +119,10 @@ public class SequenceDiagramTxtMaker implements FileMaker {
 
 	public ImageData createOne(OutputStream os, int index, boolean isWithMetadata) throws IOException {
 		if (fileFormat == FileFormat.UTXT) {
-			final PrintStream ps = SecurityUtils.createPrintStream(os, true, "UTF-8");
+			final PrintStream ps = new PrintStream(os, true, "UTF-8");
 			ug.getCharArea().print(ps);
 		} else {
-			final PrintStream ps = SecurityUtils.createPrintStream(os);
+			final PrintStream ps = new PrintStream(os);
 			ug.getCharArea().print(ps);
 		}
 		return new ImageDataSimple(1, 1);

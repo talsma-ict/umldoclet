@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -39,11 +39,11 @@ import java.io.OutputStream;
 import net.sourceforge.plantuml.EmptyImageBuilder;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
+import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.eps.EpsStrategy;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.png.PngIO;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.eps.UGraphicEps;
 import net.sourceforge.plantuml.ugraphic.g2d.UGraphicG2d;
 import net.sourceforge.plantuml.ugraphic.svg.UGraphicSvg;
@@ -51,16 +51,16 @@ import net.sourceforge.plantuml.ugraphic.svg.UGraphicSvg;
 public abstract class UGraphicUtils {
 
 	public static void writeImage(OutputStream os, String metadata, FileFormatOption fileFormatOption, long seed,
-			ColorMapper colorMapper, HColor background, TextBlock image) throws IOException {
+			ColorMapper colorMapper, HtmlColor background, TextBlock image) throws IOException {
 		final FileFormat fileFormat = fileFormatOption.getFileFormat();
 		if (fileFormat == FileFormat.PNG) {
-			final BufferedImage im = createImage(fileFormatOption.getWatermark(), colorMapper, background, image);
+			final BufferedImage im = createImage(colorMapper, background, image);
 			PngIO.write(im, os, fileFormatOption.isWithMetadata() ? metadata : null, 96);
 		} else if (fileFormat == FileFormat.SVG) {
 			final Dimension2D size = computeSize(colorMapper, background, image);
-			final UGraphicSvg svg = new UGraphicSvg(true, size, colorMapper,
-					colorMapper.toRGB(background), false, 1.0, fileFormatOption.getSvgLinkTarget(),
-					fileFormatOption.getHoverColor(), seed, fileFormatOption.getPreserveAspectRatio());
+			final UGraphicSvg svg = new UGraphicSvg(true, size, colorMapper, StringUtils.getAsHtml(colorMapper
+					.getMappedColor(background)), false, 1.0, fileFormatOption.getSvgLinkTarget(),
+					fileFormatOption.getHoverColor(), seed);
 			image.drawU(svg);
 			svg.createXml(os, fileFormatOption.isWithMetadata() ? metadata : null);
 		} else if (fileFormat == FileFormat.EPS) {
@@ -76,12 +76,11 @@ public abstract class UGraphicUtils {
 		}
 	}
 
-	private static BufferedImage createImage(String watermark, ColorMapper colorMapper, HColor background,
-			TextBlock image) {
+	private static BufferedImage createImage(ColorMapper colorMapper, HtmlColor background, TextBlock image) {
 		final Dimension2D size = computeSize(colorMapper, background, image);
 
-		final EmptyImageBuilder builder = new EmptyImageBuilder(watermark, size.getWidth(), size.getHeight(),
-				colorMapper.toColor(background));
+		final EmptyImageBuilder builder = new EmptyImageBuilder(size.getWidth(), size.getHeight(),
+				colorMapper.getMappedColor(background));
 		final BufferedImage im = builder.getBufferedImage();
 		final Graphics2D g2d = builder.getGraphics2D();
 
@@ -91,8 +90,8 @@ public abstract class UGraphicUtils {
 		return im;
 	}
 
-	private static Dimension2D computeSize(ColorMapper colorMapper, HColor background, TextBlock image) {
-		final EmptyImageBuilder builder = new EmptyImageBuilder(null, 10, 10, colorMapper.toColor(background));
+	private static Dimension2D computeSize(ColorMapper colorMapper, HtmlColor background, TextBlock image) {
+		final EmptyImageBuilder builder = new EmptyImageBuilder(10, 10, colorMapper.getMappedColor(background));
 		final Graphics2D g2d = builder.getGraphics2D();
 
 		final UGraphicG2d tmp = new UGraphicG2d(colorMapper, g2d, 1.0);

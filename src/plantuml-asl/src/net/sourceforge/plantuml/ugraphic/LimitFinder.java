@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,21 +32,17 @@ package net.sourceforge.plantuml.ugraphic;
 
 import java.awt.geom.Dimension2D;
 
-import net.sourceforge.plantuml.activitydiagram3.ftile.CenteredText;
-import net.sourceforge.plantuml.graphic.SpecialText;
+import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.posimo.DotPath;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
-public class LimitFinder extends UGraphicNo implements UGraphic {
+public class LimitFinder implements UGraphic {
 
 	public boolean matchesProperty(String propertyName) {
 		return false;
 	}
-
+	
 	public double dpiFactor() {
 		return 1;
 	}
@@ -56,9 +52,9 @@ public class LimitFinder extends UGraphicNo implements UGraphic {
 			return new LimitFinder(stringBounder, minmax, translate.compose((UTranslate) change), clip);
 		} else if (change instanceof UStroke) {
 			return new LimitFinder(this);
-		} else if (change instanceof UBackground) {
+		} else if (change instanceof UChangeBackColor) {
 			return new LimitFinder(this);
-		} else if (change instanceof HColor) {
+		} else if (change instanceof UChangeColor) {
 			return new LimitFinder(this);
 		} else if (change instanceof UHidden) {
 			return new LimitFinder(this);
@@ -138,10 +134,6 @@ public class LimitFinder extends UGraphicNo implements UGraphic {
 			tb.drawU(this);
 		} else if (shape instanceof UCenteredCharacter) {
 			// To be done
-		} else if (shape instanceof CenteredText) {
-			// Ignored
-		} else if (shape instanceof SpecialText) {
-			// Ignored
 		} else if (shape instanceof UPixel) {
 			addPoint(x, y);
 		} else {
@@ -211,6 +203,12 @@ public class LimitFinder extends UGraphicNo implements UGraphic {
 
 	public ColorMapper getColorMapper() {
 		return new ColorMapperIdentity();
+	}
+
+	public void startUrl(Url url) {
+	}
+
+	public void closeAction() {
 	}
 
 	public double getMaxX() {

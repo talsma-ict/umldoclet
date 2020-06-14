@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,7 +34,7 @@ import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.skin.ComponentType;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleBuilder;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleDefinition;
 import net.sourceforge.plantuml.style.WithStyle;
 
 public class Divider extends AbstractEvent implements Event, WithStyle {
@@ -43,7 +43,7 @@ public class Divider extends AbstractEvent implements Event, WithStyle {
 
 	final private Style style;
 
-	public StyleSignature getDefaultStyleDefinition() {
+	public StyleDefinition getDefaultStyleDefinition() {
 		return ComponentType.DIVIDER.getDefaultStyleDefinition();
 	}
 

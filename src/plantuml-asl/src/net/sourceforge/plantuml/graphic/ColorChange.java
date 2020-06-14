@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -33,24 +33,22 @@ package net.sourceforge.plantuml.graphic;
 import net.sourceforge.plantuml.command.regex.Matcher2;
 import net.sourceforge.plantuml.command.regex.MyPattern;
 import net.sourceforge.plantuml.command.regex.Pattern2;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 class ColorChange implements FontChange {
 
 	static private final Pattern2 colorPattern = MyPattern.cmpile("(?i)" + Splitter.fontColorPattern2);
 
-	private final HColor color;
+	private final HtmlColor color;
 
 	ColorChange(String s) {
 		final Matcher2 matcherColor = colorPattern.matcher(s);
 		if (matcherColor.find() == false) {
 			throw new IllegalArgumentException();
 		}
-		this.color = HColorSet.instance().getColorIfValid(matcherColor.group(1));
+		this.color = HtmlColorSet.getInstance().getColorIfValid(matcherColor.group(1));
 	}
 
-	HColor getColor() {
+	HtmlColor getColor() {
 		return color;
 	}
 

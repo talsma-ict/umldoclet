@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -38,13 +38,15 @@ import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.activitydiagram3.ftile.AbstractFtile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileGeometry;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
+import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
+import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class FtileBlackBlock extends AbstractFtile {
 
@@ -53,10 +55,10 @@ public class FtileBlackBlock extends AbstractFtile {
 	private double width;
 	private double height;
 	private TextBlock label = TextBlockUtils.empty(0, 0);
-	private final HColor colorBar;
+	private final HtmlColor colorBar;
 	private final Swimlane swimlane;
 
-	public FtileBlackBlock(ISkinParam skinParam, HColor colorBar, Swimlane swimlane) {
+	public FtileBlackBlock(ISkinParam skinParam, HtmlColor colorBar, Swimlane swimlane) {
 		super(skinParam);
 		this.colorBar = colorBar;
 		this.swimlane = swimlane;
@@ -84,11 +86,12 @@ public class FtileBlackBlock extends AbstractFtile {
 	}
 
 	public void drawU(UGraphic ug) {
-		final URectangle rect = new URectangle(width, height).rounded(5).ignoreForCompressionOnX();
+		final URectangle rect = new URectangle(width, height, 5, 5);
+		rect.setIgnoreForCompression(true);
 		if (skinParam().shadowing(null)) {
 			rect.setDeltaShadow(3);
 		}
-		ug.apply(colorBar).apply(colorBar.bg()).draw(rect);
+		ug.apply(new UChangeColor(colorBar)).apply(new UChangeBackColor(colorBar)).draw(rect);
 		final Dimension2D dimLabel = label.calculateDimension(ug.getStringBounder());
 		label.drawU(ug.apply(new UTranslate(width + labelMargin, -dimLabel.getHeight() / 2)));
 	}

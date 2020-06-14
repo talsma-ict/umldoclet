@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,19 +30,19 @@
  */
 package net.sourceforge.plantuml;
 
-import net.sourceforge.plantuml.security.SFile;
+import java.io.File;
 
 public class BaseFile {
 
 	private final String basename;
-	private final SFile basedir;
+	private final File basedir;
 
 	public BaseFile() {
 		this.basedir = null;
 		this.basename = null;
 	}
 
-	public BaseFile(SFile file) {
+	public BaseFile(File file) {
 		this.basedir = file.getParentFile();
 		this.basename = extractBasename(file.getName());
 	}
@@ -67,15 +67,15 @@ public class BaseFile {
 		return basename;
 	}
 
-	public SFile getBasedir() {
+	public File getBasedir() {
 		return basedir;
 	}
 
-	public SFile getTraceFile(String tail) {
+	public File getTraceFile(String tail) {
 		if (basedir == null || basename == null) {
-			return new SFile(tail);
+			return new File(tail);
 		}
-		return basedir.file(basename + "_" + tail);
+		return new File(basedir, basename + "_" + tail);
 	}
 
 }

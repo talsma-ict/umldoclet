@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.sequencediagram.command;
 
-import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand2;
@@ -41,7 +40,6 @@ import net.sourceforge.plantuml.command.regex.RegexOptional;
 import net.sourceforge.plantuml.command.regex.RegexOr;
 import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.color.ColorParser;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.graphic.color.Colors;
@@ -64,9 +62,7 @@ public class CommandBoxStart extends SingleLineCommand2<SequenceDiagram> {
 								RegexLeaf.spaceOneOrMore(), //
 								new RegexLeaf("NAME2", "([^#]+)")))), //
 				RegexLeaf.spaceZeroOrMore(), //
-				new RegexLeaf("STEREO", "(\\<\\<.*\\>\\>)?"), //
-				color().getRegex(), //
-				RegexLeaf.end());
+				color().getRegex(), RegexLeaf.end());
 	}
 
 	private static ColorParser color() {
@@ -74,24 +70,16 @@ public class CommandBoxStart extends SingleLineCommand2<SequenceDiagram> {
 	}
 
 	@Override
-	protected CommandExecutionResult executeArg(SequenceDiagram diagram, LineLocation location, RegexResult arg) {
+	protected CommandExecutionResult executeArg(SequenceDiagram diagram, LineLocation location, RegexResult arg2) {
 		if (diagram.isBoxPending()) {
 			return CommandExecutionResult.error("Box cannot be nested");
 		}
-		final String argTitle = arg.getLazzy("NAME", 0);
-		final String argColor = arg.get("COLOR", 0);
-
-		final String stereo = arg.get("STEREO", 0);
-		Stereotype stereotype = null;
-		if (stereo != null) {
-			final ISkinParam skinParam = diagram.getSkinParam();
-			stereotype = new Stereotype(stereo);
-		}
-
+		final String argTitle = arg2.getLazzy("NAME", 0);
+		final String argColor = arg2.get("COLOR", 0);
 		// final HtmlColor color = diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(argColor);
-		Colors colors = color().getColor(arg, diagram.getSkinParam().getIHtmlColorSet());
+		Colors colors = color().getColor(arg2, diagram.getSkinParam().getIHtmlColorSet());
 		final String title = argTitle == null ? "" : argTitle;
-		diagram.boxStart(Display.getWithNewlines(title), colors.getColor(ColorType.BACK), stereotype);
+		diagram.boxStart(Display.getWithNewlines(title), colors.getColor(ColorType.BACK));
 		return CommandExecutionResult.ok();
 	}
 

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -53,10 +53,6 @@ public class ShapePseudoImpl implements IShapePseudo {
 		sb.append(",width=" + SvekUtils.pixelToInches(width));
 		sb.append(",height=" + SvekUtils.pixelToInches(height));
 		sb.append("];");
-	}
-
-	public double getMaxWidthFromLabelForEntryExit(StringBounder stringBounder) {
-		throw new UnsupportedOperationException();
 	}
 
 }

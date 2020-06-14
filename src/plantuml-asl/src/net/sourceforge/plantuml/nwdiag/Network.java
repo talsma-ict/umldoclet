@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -33,13 +33,13 @@ package net.sourceforge.plantuml.nwdiag;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 
 public class Network {
 
 	private final String name;
 	private final Map<DiagElement, String> localElements = new LinkedHashMap<DiagElement, String>();
-	private HColor color;
+	private HtmlColor color;
 
 	private String ownAdress;
 
@@ -88,11 +88,11 @@ public class Network {
 		return name;
 	}
 
-	public final HColor getColor() {
+	public final HtmlColor getColor() {
 		return color;
 	}
 
-	public final void setColor(HColor color) {
+	public final void setColor(HtmlColor color) {
 		this.color = color;
 	}
 

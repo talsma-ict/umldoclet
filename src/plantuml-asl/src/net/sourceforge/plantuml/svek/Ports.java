@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -33,29 +33,23 @@ package net.sourceforge.plantuml.svek;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import net.sourceforge.plantuml.SignatureUtils;
-
 public class Ports {
 
-	private final Map<String, PortGeometry> ids = new LinkedHashMap<String, PortGeometry>();
+	private final Map<String, PortGeometry> all = new LinkedHashMap<String, PortGeometry>();
 
 	public void addThis(Ports other) {
-		ids.putAll(other.ids);
-	}
-
-	public static String encodePortNameToId(String portName) {
-		return "p" + SignatureUtils.getMD5Hex(portName);
+		all.putAll(other.all);
 	}
 
 	@Override
 	public String toString() {
-		return ids.toString();
+		return all.toString();
 	}
 
 	public Ports translateY(double deltaY) {
 		final Ports result = new Ports();
-		for (Map.Entry<String, PortGeometry> ent : ids.entrySet()) {
-			result.ids.put(ent.getKey(), ent.getValue().translateY(deltaY));
+		for (Map.Entry<String, PortGeometry> ent : all.entrySet()) {
+			result.all.put(ent.getKey(), ent.getValue().translateY(deltaY));
 		}
 		return result;
 	}
@@ -64,12 +58,11 @@ public class Ports {
 		if (portName == null) {
 			throw new IllegalArgumentException();
 		}
-		final String id = encodePortNameToId(portName);
-		ids.put(id, new PortGeometry(position, height));
+		all.put(portName, new PortGeometry(position, height));
 	}
 
-	public Map<String, PortGeometry> getAllWithEncodedPortId() {
-		return ids;
+	public Map<String, PortGeometry> getAll() {
+		return all;
 	}
 
 }

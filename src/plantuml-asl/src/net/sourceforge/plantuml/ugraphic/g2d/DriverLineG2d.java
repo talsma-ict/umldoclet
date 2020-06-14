@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -35,13 +35,13 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Line2D;
 
+import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UDriver;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class DriverLineG2d extends DriverShadowedG2d implements UDriver<Graphics2D> {
 
@@ -60,7 +60,7 @@ public class DriverLineG2d extends DriverShadowedG2d implements UDriver<Graphics
 		if (shape.getDeltaShadow() != 0) {
 			drawShadow(g2d, line, shape.getDeltaShadow(), dpiFactor);
 		}
-		final HColor color = param.getColor();
+		final HtmlColor color = param.getColor();
 		DriverRectangleG2d.drawBorder(param, color, mapper, shape, line, g2d, x, y);
 //		g2d.setColor(mapper.getMappedColor(color));
 //		g2d.draw(line);

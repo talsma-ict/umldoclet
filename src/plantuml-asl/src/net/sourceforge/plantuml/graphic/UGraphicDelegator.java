@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -31,19 +31,20 @@
 package net.sourceforge.plantuml.graphic;
 
 import net.sourceforge.plantuml.Url;
+import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UShape;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 
 public abstract class UGraphicDelegator implements UGraphic {
 
 	final private UGraphic ug;
-
+	
 	@Override
 	public String toString() {
 		return super.toString() + " " + getUg().toString();
 	}
+
 
 	public final boolean matchesProperty(String propertyName) {
 		return ug.matchesProperty(propertyName);
@@ -73,22 +74,14 @@ public abstract class UGraphicDelegator implements UGraphic {
 		ug.startUrl(url);
 	}
 
-	public void closeUrl() {
-		ug.closeUrl();
-	}
-
-	public void startGroup(String groupId) {
-		ug.startGroup(groupId);
-	}
-
-	public void closeGroup() {
-		ug.closeGroup();
+	public void closeAction() {
+		ug.closeAction();
 	}
 
 	protected UGraphic getUg() {
 		return ug;
 	}
-
+	
 	public void flushUg() {
 		ug.flushUg();
 	}

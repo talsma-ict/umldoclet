@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -33,11 +33,11 @@ package net.sourceforge.plantuml.activitydiagram3.ftile;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.SpecificBackcolorable;
 import net.sourceforge.plantuml.cucadiagram.Display;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.ugraphic.MinMax;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class Swimlane implements SpecificBackcolorable {
 
@@ -74,11 +74,8 @@ public class Swimlane implements SpecificBackcolorable {
 		return translate;
 	}
 
-	public final void setTranslate(UTranslate translate) {
+	public final void setTranslateAndWidth(UTranslate translate, double actualWidth) {
 		this.translate = translate;
-	}
-
-	public final void setWidth(double actualWidth) {
 		this.actualWidth = actualWidth;
 	}
 
@@ -86,7 +83,7 @@ public class Swimlane implements SpecificBackcolorable {
 		return colors;
 	}
 
-	public void setSpecificColorTOBEREMOVED(ColorType type, HColor color) {
+	public void setSpecificColorTOBEREMOVED(ColorType type, HtmlColor color) {
 		if (color != null) {
 			this.colors = colors.add(type, color);
 		}

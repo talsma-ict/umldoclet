@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -36,49 +36,39 @@ import java.util.List;
 
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.style.PName;
-import net.sourceforge.plantuml.style.SName;
+import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.skin.ComponentType;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleBuilder;
-import net.sourceforge.plantuml.style.StyleSignature;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.style.StyleDefinition;
 
 public class Reference extends AbstractEvent implements Event {
 
 	private final List<Participant> participants;
 	private final Url url;
-	private final HColor backColorGeneral;
-	private final HColor backColorElement;
+	private final HtmlColor backColorGeneral;
+	private final HtmlColor backColorElement;
 
 	private final Display strings;
 
 	final private Style style;
-	final private Style styleHeader;
 
-	public StyleSignature getDefaultStyleDefinition() {
-		return StyleSignature.of(SName.root, SName.element, SName.sequenceDiagram, SName.reference);
-	}
-
-	private StyleSignature getHeaderStyleDefinition() {
-		return StyleSignature.of(SName.root, SName.element, SName.sequenceDiagram, SName.referenceHeader);
+	public StyleDefinition getDefaultStyleDefinition() {
+		return ComponentType.REFERENCE.getDefaultStyleDefinition();
 	}
 
 	public Style[] getUsedStyles() {
-		return new Style[] {
-				style,
-				styleHeader == null ? styleHeader : styleHeader.eventuallyOverride(PName.BackGroundColor,
-						backColorElement) };
+		return new Style[] { style };
 	}
 
-	public Reference(List<Participant> participants, Url url, Display strings, HColor backColorGeneral,
-			HColor backColorElement, StyleBuilder styleBuilder) {
+	public Reference(List<Participant> participants, Url url, Display strings, HtmlColor backColorGeneral,
+			HtmlColor backColorElement, StyleBuilder styleBuilder) {
 		this.participants = participants;
 		this.url = url;
 		this.strings = strings;
 		this.backColorGeneral = backColorGeneral;
 		this.backColorElement = backColorElement;
 		this.style = getDefaultStyleDefinition().getMergedStyle(styleBuilder);
-		this.styleHeader = getHeaderStyleDefinition().getMergedStyle(styleBuilder);
 	}
 
 	public List<Participant> getParticipant() {
@@ -114,11 +104,11 @@ public class Reference extends AbstractEvent implements Event {
 		return sb.toString();
 	}
 
-	public final HColor getBackColorGeneral() {
+	public final HtmlColor getBackColorGeneral() {
 		return backColorGeneral;
 	}
 
-	public final HColor getBackColorElement() {
+	public final HtmlColor getBackColorElement() {
 		return backColorElement;
 	}
 }

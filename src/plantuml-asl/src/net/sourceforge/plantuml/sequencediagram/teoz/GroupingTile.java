@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -86,8 +86,8 @@ public class GroupingTile extends AbstractTile implements TileWithCallbackY {
 			TileArguments tileArgumentsOriginal) {
 		final StringBounder stringBounder = tileArgumentsOriginal.getStringBounder();
 		this.start = start;
-		this.display = start.getTitle().equals("group") ? Display.create(start.getComment())
-				: Display.create(start.getTitle(), start.getComment());
+		this.display = start.getTitle().equals("group") ? Display.create(start.getComment()) : Display.create(
+				start.getTitle(), start.getComment());
 		this.skin = tileArgumentsOriginal.getSkin();
 		// this.skinParam = tileArgumentsOriginal.getSkinParam();
 		this.skinParam = tileArgumentsBachColorChanged.getSkinParam();
@@ -150,15 +150,14 @@ public class GroupingTile extends AbstractTile implements TileWithCallbackY {
 		final Area area = new Area(max.getCurrentValue() - min.getCurrentValue(), getTotalHeight(stringBounder));
 
 		if (ug instanceof LiveBoxFinder == false) {
-			comp.drawU(ug.apply(UTranslate.dx(min.getCurrentValue())), area, (Context2D) ug);
+			comp.drawU(ug.apply(new UTranslate(min.getCurrentValue(), 0)), area, (Context2D) ug);
 			drawAllElses(ug);
 		}
-		// ug.apply(UChangeBackColor.nnn(HtmlColorUtils.LIGHT_GRAY)).draw(new
-		// URectangle(area.getDimensionToUse()));
+		// ug.apply(new UChangeBackColor(HtmlColorUtils.LIGHT_GRAY)).draw(new URectangle(area.getDimensionToUse()));
 
 		double h = dim1.getHeight() + MARGINY / 2;
 		for (Tile tile : tiles) {
-			ug.apply(UTranslate.dy(h)).draw(tile);
+			ug.apply(new UTranslate(0, h)).draw(tile);
 			final double preferredHeight = tile.getPreferredHeight(stringBounder);
 			h += preferredHeight;
 		}
@@ -172,8 +171,7 @@ public class GroupingTile extends AbstractTile implements TileWithCallbackY {
 	private void drawAllElses(UGraphic ug) {
 		final StringBounder stringBounder = ug.getStringBounder();
 		final double totalHeight = getTotalHeight(stringBounder);
-		// final double suppHeight =
-		// getPreferredDimensionIfEmpty(stringBounder).getHeight() + MARGINY / 2;
+		// final double suppHeight = getPreferredDimensionIfEmpty(stringBounder).getHeight() + MARGINY / 2;
 		final List<Double> ys = new ArrayList<Double>();
 		for (Tile tile : tiles) {
 			if (tile instanceof ElseTile) {
@@ -220,16 +218,14 @@ public class GroupingTile extends AbstractTile implements TileWithCallbackY {
 	}
 
 	public static double fillPositionelTiles(StringBounder stringBounder, double y, List<Tile> tiles,
-			final List<YPositionedTile> local, List<YPositionedTile> full) {
+			final List<YPositionedTile> positionedTiles) {
 		for (Tile tile : mergeParallel(tiles)) {
-			final YPositionedTile ytile = new YPositionedTile(tile, y);
-			local.add(ytile);
-			full.add(ytile);
+			positionedTiles.add(new YPositionedTile(tile, y));
 			if (tile instanceof GroupingTile) {
 				final GroupingTile groupingTile = (GroupingTile) tile;
 				final double headerHeight = groupingTile.getHeaderHeight(stringBounder);
-				final ArrayList<YPositionedTile> local2 = new ArrayList<YPositionedTile>();
-				fillPositionelTiles(stringBounder, y + headerHeight, groupingTile.tiles, local2, full);
+				fillPositionelTiles(stringBounder, y + headerHeight, groupingTile.tiles,
+						new ArrayList<YPositionedTile>());
 			}
 			y += tile.getPreferredHeight(stringBounder);
 		}

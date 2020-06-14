@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -41,11 +41,10 @@ import net.sourceforge.plantuml.Direction;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 
-class ITFComposed extends WBSTextBlock implements ITF {
+public class ITFComposed extends WBSTextBlock implements ITF {
 
 	private final List<ITF> left;
 	private final List<ITF> right;
@@ -53,20 +52,18 @@ class ITFComposed extends WBSTextBlock implements ITF {
 	private final TextBlock main;
 
 	final private double delta1x = 10;
-	final private double marginBottom;// = 15;
+	final private double deltay = 15;
 
 	private ITFComposed(ISkinParam skinParam, WElement idea, List<ITF> left, List<ITF> right) {
-		super(skinParam, idea.getStyleBuilder(), idea.getLevel());
+		super(skinParam);
 		this.left = left;
 		this.right = right;
 		this.main = buildMain(idea);
-		final Style style = idea.getStyle();
-		this.marginBottom = style.getMargin().getBottom();
 	}
 
 	public static ITF build2(ISkinParam skinParam, WElement idea) {
 		if (idea.isLeaf()) {
-			return new ITFLeaf(idea.getStyle(), skinParam, idea.getLabel(), idea.getShape());
+			return new ITFLeaf(skinParam, idea.getLabel(), idea.getShape());
 		}
 		final List<ITF> left = new ArrayList<ITF>();
 		final List<ITF> right = new ArrayList<ITF>();
@@ -116,7 +113,7 @@ class ITFComposed extends WBSTextBlock implements ITF {
 		final Dimension2D mainDim = main.calculateDimension(stringBounder);
 		final double mainWidth = mainDim.getWidth();
 		final double height = mainDim.getHeight()
-				+ Math.max(getCollHeight(stringBounder, left, marginBottom), getCollHeight(stringBounder, right, marginBottom));
+				+ Math.max(getCollHeight(stringBounder, left, deltay), getCollHeight(stringBounder, right, deltay));
 		final double width = Math.max(mainWidth / 2, delta1x + getCollWidth(stringBounder, left))
 				+ Math.max(mainWidth / 2, delta1x + getCollWidth(stringBounder, right));
 		return new Dimension2DDouble(width, height);
@@ -126,12 +123,12 @@ class ITFComposed extends WBSTextBlock implements ITF {
 		final StringBounder stringBounder = ug.getStringBounder();
 		final Dimension2D mainDim = main.calculateDimension(stringBounder);
 		final double wx = getw1(stringBounder) - mainDim.getWidth() / 2;
-		main.drawU(ug.apply(UTranslate.dx(wx)));
+		main.drawU(ug.apply(new UTranslate(wx, 0)));
 		final double x = getw1(stringBounder);
 		double y = mainDim.getHeight();
 		double lastY1 = y;
 		for (ITF child : left) {
-			y += marginBottom;
+			y += deltay;
 			final Dimension2D childDim = child.calculateDimension(stringBounder);
 			lastY1 = y + child.getF2(stringBounder).getY();
 			drawLine(ug, x - childDim.getWidth() - delta1x + child.getF2(stringBounder).getX(), lastY1, x, lastY1);
@@ -142,7 +139,7 @@ class ITFComposed extends WBSTextBlock implements ITF {
 		y = mainDim.getHeight();
 		double lastY2 = y;
 		for (ITF child : right) {
-			y += marginBottom;
+			y += deltay;
 			final Dimension2D childDim = child.calculateDimension(stringBounder);
 			lastY2 = y + child.getF1(stringBounder).getY();
 			drawLine(ug, x, lastY2, x + delta1x + child.getF1(stringBounder).getX(), lastY2);
@@ -152,6 +149,7 @@ class ITFComposed extends WBSTextBlock implements ITF {
 		}
 		drawLine(ug, x, mainDim.getHeight(), x, Math.max(lastY1, lastY2));
 	}
+
 
 	final private double getCollWidth(StringBounder stringBounder, Collection<? extends TextBlock> all) {
 		double result = 0;

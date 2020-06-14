@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -47,6 +47,8 @@ import net.sourceforge.plantuml.command.regex.RegexOr;
 import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.descdiagram.command.CommandLinkElement;
+import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.graphic.HtmlColorSet;
 import net.sourceforge.plantuml.sequencediagram.LifeEventType;
 import net.sourceforge.plantuml.sequencediagram.Message;
 import net.sourceforge.plantuml.sequencediagram.Participant;
@@ -56,8 +58,6 @@ import net.sourceforge.plantuml.skin.ArrowConfiguration;
 import net.sourceforge.plantuml.skin.ArrowDecoration;
 import net.sourceforge.plantuml.skin.ArrowHead;
 import net.sourceforge.plantuml.skin.ArrowPart;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 
@@ -258,7 +258,7 @@ public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 			return CommandExecutionResult.error(error);
 		}
 
-		final HColor activationColor = diagram.getSkinParam().getIHtmlColorSet()
+		final HtmlColor activationColor = diagram.getSkinParam().getIHtmlColorSet()
 				.getColorIfValid(arg.get("LIFECOLOR", 0));
 
 		if (activationSpec != null) {
@@ -318,7 +318,7 @@ public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 				config = config.withBody(ArrowBody.HIDDEN);
 				// link.goHidden();
 			} else {
-				config = config.withColor(HColorSet.instance().getColorIfValid(s));
+				config = config.withColor(HtmlColorSet.getInstance().getColorIfValid(s));
 			}
 		}
 		return config;

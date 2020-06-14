@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -44,7 +44,6 @@ import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.Code;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
-import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.color.ColorParser;
@@ -73,16 +72,13 @@ public class CommandCreateEntityObject extends SingleLineCommand2<AbstractClassO
 	@Override
 	protected CommandExecutionResult executeArg(AbstractClassOrObjectDiagram diagram, LineLocation location,
 			RegexResult arg) {
-		final String idShort = arg.get("NAME", 1);
-		final Ident ident = diagram.buildLeafIdent(idShort);
-		final Code code = diagram.V1972() ? ident : diagram.buildCode(idShort);
+		final Code code = Code.of(arg.get("NAME", 1));
 		final String display = arg.get("NAME", 0);
 		final String stereotype = arg.get("STEREO", 0);
-		final boolean leafExist = diagram.V1972() ? diagram.leafExistSmart(ident) : diagram.leafExist(code);
-		if (leafExist) {
+		if (diagram.leafExist(code)) {
 			return CommandExecutionResult.error("Object already exists : " + code);
 		}
-		final IEntity entity = diagram.createLeaf(ident, code, Display.getWithNewlines(display), LeafType.OBJECT, null);
+		final IEntity entity = diagram.createLeaf(code, Display.getWithNewlines(display), LeafType.OBJECT, null);
 		if (stereotype != null) {
 			entity.setStereotype(new Stereotype(stereotype, diagram.getSkinParam().getCircledCharacterRadius(), diagram
 					.getSkinParam().getFont(null, false, FontParam.CIRCLED_CHARACTER), diagram.getSkinParam()
@@ -98,4 +94,5 @@ public class CommandCreateEntityObject extends SingleLineCommand2<AbstractClassO
 				diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("COLOR", 0)));
 		return CommandExecutionResult.ok();
 	}
+
 }

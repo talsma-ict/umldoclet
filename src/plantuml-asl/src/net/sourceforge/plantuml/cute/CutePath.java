@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -35,10 +35,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import net.sourceforge.plantuml.graphic.HtmlColorUtils;
+import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
+import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UPath;
-import net.sourceforge.plantuml.ugraphic.color.HColorNone;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class CutePath {
 
@@ -135,7 +136,7 @@ public class CutePath {
 		for (int i = 0; i < arcs.size(); i++) {
 			final BetweenCorners betweenCorners = new BetweenCorners(getCorner(i), getCorner(i + 1), arcs.get(i)
 					.getTension());
-			betweenCorners.debugMe(ug.apply(HColorUtils.BLACK).apply(new HColorNone().bg()));
+			betweenCorners.debugMe(ug.apply(new UChangeColor(HtmlColorUtils.BLACK)).apply(new UChangeBackColor(null)));
 		}
 	}
 

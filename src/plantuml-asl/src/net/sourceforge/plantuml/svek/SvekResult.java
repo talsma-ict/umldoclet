@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -35,34 +35,30 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.sourceforge.plantuml.ColorParam;
-import net.sourceforge.plantuml.Dimension2DDouble;
-import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.cucadiagram.dot.DotData;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
+import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.TextBlockUtils;
+import net.sourceforge.plantuml.posimo.Moveable;
 import net.sourceforge.plantuml.skin.rose.Rose;
-import net.sourceforge.plantuml.style.PName;
-import net.sourceforge.plantuml.style.SName;
-import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.style.StyleSignature;
-import net.sourceforge.plantuml.ugraphic.MinMax;
+import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UHidden;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
-public final class SvekResult extends AbstractTextBlock implements IEntityImage {
+public final class SvekResult extends AbstractTextBlock implements IEntityImage, Moveable {
 
 	private final Rose rose = new Rose();
 
+	private ClusterPosition dim;
 	private final DotData dotData;
 	private final DotStringFactory dotStringFactory;
 
-	public SvekResult(DotData dotData, DotStringFactory dotStringFactory) {
+	public SvekResult(ClusterPosition dim, DotData dotData, DotStringFactory dotStringFactory) {
+		this.dim = dim;
 		this.dotData = dotData;
 		this.dotStringFactory = dotStringFactory;
 	}
@@ -73,22 +69,17 @@ public final class SvekResult extends AbstractTextBlock implements IEntityImage 
 			cluster.drawU(ug, new UStroke(1.5), dotData.getUmlDiagramType(), dotData.getSkinParam());
 		}
 
-		HColor color = rose.getHtmlColor(dotData.getSkinParam(), null, getArrowColorParam());
-		if (SkinParam.USE_STYLES()) {
-			final Style style = getDefaultStyleDefinition()
-					.getMergedStyle(dotData.getSkinParam().getCurrentStyleBuilder());
-			color = style.value(PName.LineColor).asColor(dotData.getSkinParam().getIHtmlColorSet());
-		}
-		color = HColorUtils.noGradient(color);
+		final HtmlColor color = HtmlColorUtils.noGradient(rose.getHtmlColor(dotData.getSkinParam(), null,
+				getArrowColorParam()));
 
-		for (Node node : dotStringFactory.getBibliotekon().allNodes()) {
-			final double minX = node.getMinX();
-			final double minY = node.getMinY();
-			final UGraphic ug2 = node.isHidden() ? ug.apply(UHidden.HIDDEN) : ug;
-			final IEntityImage image = node.getImage();
+		for (Shape shape : dotStringFactory.getBibliotekon().allShapes()) {
+			final double minX = shape.getMinX();
+			final double minY = shape.getMinY();
+			final UGraphic ug2 = shape.isHidden() ? ug.apply(UHidden.HIDDEN) : ug;
+			final IEntityImage image = shape.getImage();
 			image.drawU(ug2.apply(new UTranslate(minX, minY)));
 			if (image instanceof Untranslated) {
-				((Untranslated) image).drawUntranslated(ug.apply(color), minX, minY);
+				((Untranslated) image).drawUntranslated(ug.apply(new UChangeColor(color)), minX, minY);
 			}
 			// shape.getImage().drawNeighborhood(ug2, minX, minY);
 		}
@@ -117,28 +108,12 @@ public final class SvekResult extends AbstractTextBlock implements IEntityImage 
 		throw new IllegalStateException();
 	}
 
-	private StyleSignature getDefaultStyleDefinition() {
-		return StyleSignature.of(SName.root, SName.element, dotData.getUmlDiagramType().getStyleName(), SName.arrow);
+	public HtmlColor getBackcolor() {
+		return dotData.getSkinParam().getBackgroundColor();
 	}
-
-	// Duplicate SvekResult / GeneralImageBuilder
-	public HColor getBackcolor() {
-		if (SkinParam.USE_STYLES()) {
-			final Style style = StyleSignature.of(SName.root, SName.document)
-					.getMergedStyle(dotData.getSkinParam().getCurrentStyleBuilder());
-			return style.value(PName.BackGroundColor).asColor(dotData.getSkinParam().getIHtmlColorSet());
-		}
-		return dotData.getSkinParam().getBackgroundColor(false);
-	}
-
-	private MinMax minMax;
 
 	public Dimension2D calculateDimension(StringBounder stringBounder) {
-		if (minMax == null) {
-			minMax = TextBlockUtils.getMinMax(this, stringBounder, false);
-			dotStringFactory.moveSvek(6 - minMax.getMinX(), 6 - minMax.getMinY());
-		}
-		return Dimension2DDouble.delta(minMax.getDimension(), 0, 12);
+		return dim.getDimension();
 	}
 
 	public ShapeType getShapeType() {
@@ -147,6 +122,11 @@ public final class SvekResult extends AbstractTextBlock implements IEntityImage 
 
 	public Margins getShield(StringBounder stringBounder) {
 		return Margins.NONE;
+	}
+
+	public void moveSvek(double deltaX, double deltaY) {
+		dotStringFactory.moveSvek(deltaX, deltaY);
+		dim = dim.delta(deltaX > 0 ? deltaX : 0, deltaY > 0 ? deltaY : 0);
 	}
 
 	public boolean isHidden() {

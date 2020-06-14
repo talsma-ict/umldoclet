@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -68,17 +68,17 @@ public class SvgResult {
 	}
 
 	public int getIndexFromColor(int color) {
-		String s = "stroke=\"" + StringUtils.goLowerCase(DotStringFactory.sharp000000(color)) + "\"";
+		String s = "stroke=\"" + StringUtils.goLowerCase(StringUtils.getAsHtml(color)) + "\"";
 		int idx = svg.indexOf(s);
 		if (idx != -1) {
 			return idx;
 		}
-		s = ";stroke:" + StringUtils.goLowerCase(DotStringFactory.sharp000000(color)) + ";";
+		s = ";stroke:" + StringUtils.goLowerCase(StringUtils.getAsHtml(color)) + ";";
 		idx = svg.indexOf(s);
 		if (idx != -1) {
 			return idx;
 		}
-		s = "fill=\"" + StringUtils.goLowerCase(DotStringFactory.sharp000000(color)) + "\"";
+		s = "fill=\"" + StringUtils.goLowerCase(StringUtils.getAsHtml(color)) + "\"";
 		idx = svg.indexOf(s);
 		if (idx != -1) {
 			return idx;

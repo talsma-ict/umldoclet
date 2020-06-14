@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,6 +32,8 @@ package net.sourceforge.plantuml.version;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -42,11 +44,11 @@ import java.util.TreeSet;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+import javax.imageio.ImageIO;
+
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.SignatureUtils;
-import net.sourceforge.plantuml.security.ImageIO;
-import net.sourceforge.plantuml.security.SFile;
 
 public class LicenseInfo {
 
@@ -103,13 +105,10 @@ public class LicenseInfo {
 				return cache;
 			}
 		}
-		for (SFile f : fileCandidates()) {
+		for (File f : fileCandidates()) {
 			try {
 				if (f.exists() && f.canRead()) {
 					final LicenseInfo result = retrieve(f);
-					if (result == null) {
-						return null;
-					}
 					cache = setIfValid(result, cache);
 					if (cache.isValid()) {
 						return cache;
@@ -185,17 +184,17 @@ public class LicenseInfo {
 		}
 	}
 
-	public static Collection<SFile> fileCandidates() {
-		final Set<SFile> result = new TreeSet<SFile>();
+	public static Collection<File> fileCandidates() {
+		final Set<File> result = new TreeSet<File>();
 		final String classpath = System.getProperty("java.class.path");
-		String[] classpathEntries = classpath.split(SFile.pathSeparator);
+		String[] classpathEntries = classpath.split(File.pathSeparator);
 		for (String s : classpathEntries) {
-			SFile dir = new SFile(s);
+			File dir = new File(s);
 			if (dir.isFile()) {
 				dir = dir.getParentFile();
 			}
 			if (dir != null && dir.isDirectory()) {
-				result.add(dir.file("license.txt"));
+				result.add(new File(dir, "license.txt"));
 			}
 		}
 		return result;
@@ -208,11 +207,8 @@ public class LicenseInfo {
 		return def;
 	}
 
-	private static LicenseInfo retrieve(SFile f) throws IOException {
-		final BufferedReader br = f.openBufferedReader();
-		if (br == null) {
-			return null;
-		}
+	private static LicenseInfo retrieve(File f) throws IOException {
+		final BufferedReader br = new BufferedReader(new FileReader(f));
 		final String s = br.readLine();
 		br.close();
 		final LicenseInfo result = retrieveNamed(s);

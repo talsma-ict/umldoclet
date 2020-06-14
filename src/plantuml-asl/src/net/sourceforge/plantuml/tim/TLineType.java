@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,23 +32,9 @@ package net.sourceforge.plantuml.tim;
 
 public enum TLineType {
 
-	PLAIN, AFFECTATION_DEFINE, AFFECTATION, ASSERT, IF, IFDEF, UNDEF, IFNDEF, ELSE, ELSEIF, ENDIF, WHILE, ENDWHILE,
-	FOREACH, ENDFOREACH, DECLARE_RETURN_FUNCTION, DECLARE_PROCEDURE, END_FUNCTION, RETURN, LEGACY_DEFINE, LEGACY_DEFINELONG, INCLUDE, INCLUDE_DEF,
-	IMPORT, STARTSUB, ENDSUB, INCLUDESUB, LOG, DUMP_MEMORY, COMMENT_SIMPLE, COMMENT_LONG_START;
+	PLAIN, AFFECTATION_DEFINE, AFFECTATION, ASSERT, IF, IFDEF, UNDEF, IFNDEF, ELSE, ELSEIF, ENDIF, DECLARE_FUNCTION, END_FUNCTION, RETURN, LEGACY_DEFINE, LEGACY_DEFINELONG, INCLUDE, INCLUDE_DEF, IMPORT, STARTSUB, ENDSUB, INCLUDESUB, LOG, DUMP_MEMORY, COMMENT_SIMPLE, COMMENT_LONG_START;
 
-//	private boolean elseLike() {
-//		return this == ELSE || this == ELSEIF;
-//	}
-//
-//	public boolean incIndentAfter() {
-//		return this == IF || this == IFDEF || this == IFNDEF || elseLike();
-//	}
-//
-//	public boolean decIndentBefore() {
-//		return this == ENDIF || elseLike();
-//	}
-
-	public static TLineType getFromLineInternal(String s) {
+	public static TLineType getFromLine(String s) {
 		if (s.matches("^\\s*!define\\s+[\\p{L}_][\\p{L}_0-9]*\\(.*")) {
 			return LEGACY_DEFINE;
 		}
@@ -85,11 +71,8 @@ public enum TLineType {
 		if (s.matches("^\\s*!if\\s+.*")) {
 			return IF;
 		}
-		if (s.matches("^\\s*!(unquoted\\s|final\\s)*(function)\\s+\\$?[\\p{L}_][\\p{L}_0-9]*.*")) {
-			return DECLARE_RETURN_FUNCTION;
-		}
-		if (s.matches("^\\s*!(unquoted\\s|final\\s)*(procedure)\\s+\\$?[\\p{L}_][\\p{L}_0-9]*.*")) {
-			return DECLARE_PROCEDURE;
+		if (s.matches("^\\s*!(unquoted\\s|final\\s)*function\\s+\\$?[\\p{L}_][\\p{L}_0-9]*.*")) {
+			return DECLARE_FUNCTION;
 		}
 		if (s.matches("^\\s*!else\\b.*")) {
 			return ELSE;
@@ -100,19 +83,7 @@ public enum TLineType {
 		if (s.matches("^\\s*!endif\\b.*")) {
 			return ENDIF;
 		}
-		if (s.matches("^\\s*!while\\s+.*")) {
-			return WHILE;
-		}
-		if (s.matches("^\\s*!endwhile\\b.*")) {
-			return ENDWHILE;
-		}
-		if (s.matches("^\\s*!foreach\\s+.*")) {
-			return FOREACH;
-		}
-		if (s.matches("^\\s*!endfor\\b.*")) {
-			return ENDFOREACH;
-		}
-		if (s.matches("^\\s*!(end\\s*function|end\\s*definelong|end\\s*procedure)\\b.*")) {
+		if (s.matches("^\\s*!(endfunction|enddefinelong)\\b.*")) {
 			return END_FUNCTION;
 		}
 		if (s.matches("^\\s*!return\\b.*")) {

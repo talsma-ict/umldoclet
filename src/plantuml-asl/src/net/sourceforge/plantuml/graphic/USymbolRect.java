@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -36,6 +36,7 @@ import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ugraphic.Shadowable;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UGraphicStencil;
+import net.sourceforge.plantuml.ugraphic.UPath;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
@@ -43,10 +44,17 @@ import net.sourceforge.plantuml.ugraphic.UTranslate;
 class USymbolRect extends USymbol {
 
 	private final SkinParameter skinParameter;
+	// private final HorizontalAlignment stereotypeAlignement;
 
 	public USymbolRect(SkinParameter skinParameter) {
 		this.skinParameter = skinParameter;
+//		this.stereotypeAlignement = stereotypeAlignement;
 	}
+
+//	@Override
+//	public USymbol withStereoAlignment(HorizontalAlignment alignment) {
+//		return new USymbolRect(skinParameter, alignment);
+//	}
 
 	@Override
 	public SkinParameter getSkinParameter() {
@@ -55,13 +63,26 @@ class USymbolRect extends USymbol {
 
 	private void drawRect(UGraphic ug, double width, double height, boolean shadowing, double roundCorner,
 			double diagonalCorner) {
-		final URectangle rect = new URectangle(width, height);
-		final Shadowable shape = diagonalCorner > 0 ? rect.diagonalCorner(diagonalCorner)
-				: rect.rounded(roundCorner);
+		final Shadowable shape = diagonalCorner > 0 ? getDiagonalShape(width, height, diagonalCorner) : new URectangle(
+				width, height, roundCorner, roundCorner);
 		if (shadowing) {
 			shape.setDeltaShadow(3.0);
 		}
 		ug.draw(shape);
+	}
+
+	private Shadowable getDiagonalShape(double width, double height, double diagonalCorner) {
+		final UPath result = new UPath();
+		result.moveTo(diagonalCorner, 0);
+		result.lineTo(width - diagonalCorner, 0);
+		result.lineTo(width, diagonalCorner);
+		result.lineTo(width, height - diagonalCorner);
+		result.lineTo(width - diagonalCorner, height);
+		result.lineTo(diagonalCorner, height);
+		result.lineTo(0, height - diagonalCorner);
+		result.lineTo(0, diagonalCorner);
+		result.lineTo(diagonalCorner, 0);
+		return result;
 	}
 
 	private Margin getMargin() {
@@ -94,8 +115,7 @@ class USymbolRect extends USymbol {
 
 	@Override
 	public TextBlock asBig(final TextBlock title, final HorizontalAlignment labelAlignment, final TextBlock stereotype,
-			final double width, final double height, final SymbolContext symbolContext,
-			final HorizontalAlignment stereoAlignment) {
+			final double width, final double height, final SymbolContext symbolContext, final HorizontalAlignment stereoAlignment) {
 		return new AbstractTextBlock() {
 			public void drawU(UGraphic ug) {
 				final Dimension2D dim = calculateDimension(ug.getStringBounder());

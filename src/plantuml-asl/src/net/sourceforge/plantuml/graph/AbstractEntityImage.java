@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,27 +34,27 @@ import java.awt.Graphics2D;
 import java.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.cucadiagram.IEntity;
+import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UFont;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 abstract class AbstractEntityImage {
 
 	private final IEntity entity;
 
-	final private HColor red = HColorUtils.MY_RED;
+	final private HtmlColor red = HtmlColorUtils.MY_RED;
 
-	final private HColor yellow = HColorUtils.MY_YELLOW;
-	private final HColor yellowNote = HColorUtils.COL_FBFB77;
+	final private HtmlColor yellow = HtmlColorUtils.MY_YELLOW;
+	private final HtmlColor yellowNote = HtmlColorUtils.COL_FBFB77;
 
 	final private UFont font14 = UFont.sansSerif(14);
 	final private UFont font17 = UFont.courier(17).bold();
-	final private HColor green = HColorUtils.COL_ADD1B2;
-	final private HColor violet = HColorUtils.COL_B4A7E5;
-	final private HColor blue = HColorUtils.COL_A9DCDF;
-	final private HColor rose = HColorUtils.COL_EB937F;
+	final private HtmlColor green = HtmlColorUtils.COL_ADD1B2;
+	final private HtmlColor violet = HtmlColorUtils.COL_B4A7E5;
+	final private HtmlColor blue = HtmlColorUtils.COL_A9DCDF;
+	final private HtmlColor rose = HtmlColorUtils.COL_EB937F;
 
 	public AbstractEntityImage(IEntity entity) {
 		if (entity == null) {
@@ -71,11 +71,11 @@ abstract class AbstractEntityImage {
 		return entity;
 	}
 
-	protected final HColor getRed() {
+	protected final HtmlColor getRed() {
 		return red;
 	}
 
-	protected final HColor getYellow() {
+	protected final HtmlColor getYellow() {
 		return yellow;
 	}
 
@@ -87,23 +87,23 @@ abstract class AbstractEntityImage {
 		return font14;
 	}
 
-	protected final HColor getGreen() {
+	protected final HtmlColor getGreen() {
 		return green;
 	}
 
-	protected final HColor getViolet() {
+	protected final HtmlColor getViolet() {
 		return violet;
 	}
 
-	protected final HColor getBlue() {
+	protected final HtmlColor getBlue() {
 		return blue;
 	}
 
-	protected final HColor getRose() {
+	protected final HtmlColor getRose() {
 		return rose;
 	}
 
-	protected final HColor getYellowNote() {
+	protected final HtmlColor getYellowNote() {
 		return yellowNote;
 	}
 }

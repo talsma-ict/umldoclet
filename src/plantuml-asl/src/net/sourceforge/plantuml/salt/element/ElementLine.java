@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -33,12 +33,13 @@ package net.sourceforge.plantuml.salt.element;
 import java.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.graphic.HtmlColorSet;
 import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public class ElementLine extends AbstractElement {
 
@@ -56,7 +57,7 @@ public class ElementLine extends AbstractElement {
 		if (zIndex != 0) {
 			return;
 		}
-		ug = ug.apply(HColorSet.instance().getColorIfValid("#AAAAAA"));
+		ug = ug.apply(new UChangeColor(HtmlColorSet.getInstance().getColorIfValid("#AAAAAA")));
 		double y2 = dimToUse.getHeight() / 2;
 		if (separator == '=') {
 			y2 = y2 - 1;
@@ -66,14 +67,14 @@ public class ElementLine extends AbstractElement {
 
 	private static void drawLine(UGraphic ug, double x, double y, double widthToUse, char separator) {
 		if (separator == '=') {
-			ug.apply(new UStroke()).apply(new UTranslate(x, y)).draw(ULine.hline(widthToUse));
-			ug.apply(new UStroke()).apply(new UTranslate(x, y + 2)).draw(ULine.hline(widthToUse));
+			ug.apply(new UStroke()).apply(new UTranslate(x, y)).draw(new ULine(widthToUse, 0));
+			ug.apply(new UStroke()).apply(new UTranslate(x, y + 2)).draw(new ULine(widthToUse, 0));
 		} else if (separator == '.') {
-			ug.apply(new UStroke(1, 2, 1)).apply(new UTranslate(x, y)).draw(ULine.hline(widthToUse));
+			ug.apply(new UStroke(1, 2, 1)).apply(new UTranslate(x, y)).draw(new ULine(widthToUse, 0));
 		} else if (separator == '-') {
-			ug.apply(new UStroke()).apply(new UTranslate(x, y)).draw(ULine.hline(widthToUse));
+			ug.apply(new UStroke()).apply(new UTranslate(x, y)).draw(new ULine(widthToUse, 0));
 		} else {
-			ug.apply(new UStroke(1.5)).apply(new UTranslate(x, y)).draw(ULine.hline(widthToUse));
+			ug.apply(new UStroke(1.5)).apply(new UTranslate(x, y)).draw(new ULine(widthToUse, 0));
 		}
 	}
 

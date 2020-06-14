@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -82,7 +82,7 @@ class FtileForkInnerOverlapped extends AbstractFtile {
 
 		final double xpos = 0;
 		for (Ftile ftile : forks) {
-			ug.apply(UTranslate.dx(xpos)).draw(ftile);
+			ug.apply(new UTranslate(xpos, 0)).draw(ftile);
 			// final Dimension2D dim = ftile.calculateDimension(stringBounder);
 			// xpos += dim.getWidth();
 		}
@@ -108,7 +108,7 @@ class FtileForkInnerOverlapped extends AbstractFtile {
 		final double xpos = 0;
 		for (Ftile ftile : forks) {
 			if (ftile == searched) {
-				return UTranslate.dx(xpos);
+				return new UTranslate(xpos, 0);
 			}
 			// final Dimension2D dim = ftile.calculateDimension(stringBounder);
 			// xpos += dim.getWidth();

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,21 +30,22 @@
  */
 package net.sourceforge.plantuml.skin.rose;
 
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.skin.AbstractComponent;
 import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class ComponentRoseDestroy extends AbstractComponent {
 
-	private final HColor foregroundColor;
+	private final HtmlColor foregroundColor;
 
-	public ComponentRoseDestroy(Style style, HColor foregroundColor) {
+	public ComponentRoseDestroy(Style style, HtmlColor foregroundColor) {
 		super(style);
 		this.foregroundColor = foregroundColor;
 	}
@@ -53,10 +54,10 @@ public class ComponentRoseDestroy extends AbstractComponent {
 
 	@Override
 	protected void drawInternalU(UGraphic ug, Area area) {
-		ug = ug.apply(new UStroke(2)).apply(foregroundColor);
+		ug = ug.apply(new UStroke(2)).apply(new UChangeColor(foregroundColor));
 
 		ug.draw(new ULine(2 * crossSize, 2 * crossSize));
-		ug.apply(UTranslate.dy(2 * crossSize)).draw(new ULine(2 * crossSize, -2 * crossSize));
+		ug.apply(new UTranslate(0, 2 * crossSize)).draw(new ULine(2 * crossSize, -2 * crossSize));
 	}
 
 	@Override

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -33,39 +33,26 @@ package net.sourceforge.plantuml.fun;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import net.sourceforge.plantuml.security.ImageIO;
+import javax.imageio.ImageIO;
 
 public class IconLoader {
 
-	private static final int NUMBER_OF_ICONS = 30;
-
+	private static final int NUMBER_OF_ICONS = 29;
+	
 	private final static Map<String, BufferedImage> all = new ConcurrentHashMap<String, BufferedImage>();
-	static private final List<String> tmp = new ArrayList<String>();
 
 	public static BufferedImage getRandom() {
-		// return addTransparent(getIcon("sprite029.png"));
+		// return addTransparent(getIcon("sprite028.png"));
 		return addTransparent(getIcon(getSomeQuote()));
 	}
 
 	private static String getSomeQuote() {
-		synchronized (tmp) {
-			if (tmp.size() == 0) {
-				for (int i = 0; i < NUMBER_OF_ICONS; i++) {
-					tmp.add("sprite" + String.format("%03d", i) + ".png");
-				}
-				Collections.shuffle(tmp);
-			}
-			final int size = tmp.size();
-			final String result = tmp.get(size - 1);
-			tmp.remove(size - 1);
-			return result;
-		}
+		final int v = (int) (System.currentTimeMillis() / 1000L);
+		final int n = v % NUMBER_OF_ICONS;
+		return "sprite" + String.format("%03d", n) + ".png";
 	}
 
 	private static BufferedImage getIcon(String name) {

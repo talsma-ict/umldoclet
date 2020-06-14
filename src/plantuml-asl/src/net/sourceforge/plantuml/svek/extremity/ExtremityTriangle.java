@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,20 +32,21 @@ package net.sourceforge.plantuml.svek.extremity;
 
 import java.awt.geom.Point2D;
 
+import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 class ExtremityTriangle extends Extremity {
 
 	private UPolygon polygon = new UPolygon();
 	private final boolean fill;
 	private final Point2D contact;
-
+	
 	@Override
 	public Point2D somePoint() {
 		return contact;
 	}
+
 
 	public ExtremityTriangle(Point2D p1, double angle, boolean fill) {
 		this.fill = fill;
@@ -63,7 +64,7 @@ class ExtremityTriangle extends Extremity {
 
 	public void drawU(UGraphic ug) {
 		if (fill) {
-			ug = ug.apply(HColorUtils.changeBack(ug));
+			ug = ug.apply(new UChangeBackColor(ug.getParam().getColor()));
 		}
 		ug.draw(polygon);
 	}

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -33,6 +33,8 @@ package net.sourceforge.plantuml.cucadiagram.dot;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,9 +42,6 @@ import java.util.regex.Pattern;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.security.SFile;
-import net.sourceforge.plantuml.security.SecurityProfile;
-import net.sourceforge.plantuml.security.SecurityUtils;
 import net.sourceforge.plantuml.vizjs.GraphvizJs;
 import net.sourceforge.plantuml.vizjs.VizJsEngine;
 
@@ -52,7 +51,7 @@ public class GraphvizUtils {
 	private static int DOT_VERSION_LIMIT = 226;
 
 	private static boolean isWindows() {
-		return SFile.separatorChar == '\\';
+		return File.separatorChar == '\\';
 	}
 
 	private static String dotExecutable;
@@ -128,7 +127,7 @@ public class GraphvizUtils {
 		if (local != null) {
 			return local;
 		}
-		final String env = SecurityUtils.getenv("PLANTUML_LIMIT_SIZE");
+		final String env = getenv("PLANTUML_LIMIT_SIZE");
 		if (StringUtils.isNotEmpty(env) && env.matches("\\d+")) {
 			return Integer.parseInt(env);
 		}
@@ -136,11 +135,19 @@ public class GraphvizUtils {
 	}
 
 	public static String getenvDefaultConfigFilename() {
-		return SecurityUtils.getenv("PLANTUML_DEFAULT_CONFIG_FILENAME");
+		return getenv("PLANTUML_DEFAULT_CONFIG_FILENAME");
 	}
 
 	public static String getenvLogData() {
-		return SecurityUtils.getenv("PLANTUML_LOGDATA");
+		return getenv("PLANTUML_LOGDATA");
+	}
+
+	public static String getenv(String name) {
+		final String env = System.getProperty(name);
+		if (StringUtils.isNotEmpty(env)) {
+			return env;
+		}
+		return System.getenv(name);
 	}
 
 	private static String dotVersion = null;
@@ -201,16 +208,15 @@ public class GraphvizUtils {
 			return error;
 		}
 
-		final File dotExe = GraphvizUtils.getDotExe();
-		if (SecurityUtils.getSecurityProfile() == SecurityProfile.UNSECURE) {
-			final String ent = GraphvizUtils.getenvGraphvizDot();
-			if (ent == null) {
-				result.add("The environment variable GRAPHVIZ_DOT has not been set");
-			} else {
-				result.add("The environment variable GRAPHVIZ_DOT has been set to " + ent);
-			}
-			result.add("Dot executable is " + dotExe);
+		final String ent = GraphvizUtils.getenvGraphvizDot();
+		if (ent == null) {
+			result.add("The environment variable GRAPHVIZ_DOT has not been set");
+		} else {
+			result.add("The environment variable GRAPHVIZ_DOT has been set to " + ent);
 		}
+		final File dotExe = GraphvizUtils.getDotExe();
+		result.add("Dot executable is " + dotExe);
+
 		final ExeState exeState = ExeState.checkFile(dotExe);
 
 		if (exeState == ExeState.OK) {

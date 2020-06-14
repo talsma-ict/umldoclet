@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,21 +30,20 @@
  */
 package net.sourceforge.plantuml;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.sourceforge.plantuml.security.SFile;
-
 public interface AFile {
 
-	public InputStream openFile();
+	public InputStream open() throws IOException;
 
 	public boolean isOk();
 
 	public AParentFolder getParentFile();
 
-	public SFile getUnderlyingFile();
+	public String getAbsolutePath();
 
-	public SFile getSystemFolder() throws IOException;
+	public File getUnderlyingFile();
 
 }

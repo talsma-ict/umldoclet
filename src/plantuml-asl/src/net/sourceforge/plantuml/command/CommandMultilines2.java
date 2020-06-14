@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -61,13 +61,13 @@ public abstract class CommandMultilines2<S extends Diagram> implements Command<S
 	}
 
 	final public CommandControl isValid(BlocLines lines) {
-		lines = lines.cleanList(strategy);
+		lines = lines.cleanList2(strategy);
 		if (isCommandForbidden()) {
 			return CommandControl.NOT_OK;
 		}
 		if (syntaxWithFinalBracket()) {
-			if (lines.size() == 1 && lines.getFirst().getTrimmed().getString().endsWith("{") == false) {
-				final String vline = ((StringLocated) lines.getAt(0)).getString() + " {";
+			if (lines.size() == 1 && lines.getFirst499().getTrimmed().getString().endsWith("{") == false) {
+				final String vline = ((StringLocated) lines.get499(0)).getString() + " {";
 				if (isValid(BlocLines.singleString(vline)) == CommandControl.OK_PARTIAL) {
 					return CommandControl.OK_PARTIAL;
 				}
@@ -75,7 +75,7 @@ public abstract class CommandMultilines2<S extends Diagram> implements Command<S
 			}
 			lines = lines.eventuallyMoveBracket();
 		}
-		final StringLocated first = lines.getFirst();
+		final StringLocated first = lines.getFirst499();
 		if (first == null) {
 			return CommandControl.NOT_OK;
 		}
@@ -87,7 +87,7 @@ public abstract class CommandMultilines2<S extends Diagram> implements Command<S
 			return CommandControl.OK_PARTIAL;
 		}
 
-		final Matcher2 m1 = MyPattern.cmpile(getPatternEnd()).matcher(lines.getLast().getTrimmed().getString());
+		final Matcher2 m1 = MyPattern.cmpile(getPatternEnd()).matcher(lines.getLast499().getTrimmed().getString());
 		if (m1.matches() == false) {
 			return CommandControl.OK_PARTIAL;
 		}
@@ -97,7 +97,7 @@ public abstract class CommandMultilines2<S extends Diagram> implements Command<S
 	}
 
 	public final CommandExecutionResult execute(S system, BlocLines lines) {
-		lines = lines.cleanList(strategy);
+		lines = lines.cleanList2(strategy);
 		if (syntaxWithFinalBracket()) {
 			lines = lines.eventuallyMoveBracket();
 		}

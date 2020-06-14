@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -35,7 +35,7 @@ import net.sourceforge.plantuml.tim.EaterException;
 import net.sourceforge.plantuml.tim.TLineType;
 
 public enum TokenType {
-	QUOTED_STRING, JSON_DATA, OPERATOR, OPEN_PAREN_MATH, COMMA, CLOSE_PAREN_MATH, NUMBER, PLAIN_TEXT, SPACES, FUNCTION_NAME, OPEN_PAREN_FUNC, CLOSE_PAREN_FUNC;
+	QUOTED_STRING, OPERATOR, OPEN_PAREN_MATH, COMMA, CLOSE_PAREN_MATH, NUMBER, PLAIN_TEXT, SPACES, FUNCTION_NAME, OPEN_PAREN_FUNC, CLOSE_PAREN_FUNC;
 
 	private boolean isSingleChar1() {
 		return this == OPEN_PAREN_MATH || this == COMMA || this == CLOSE_PAREN_MATH;
@@ -79,24 +79,24 @@ public enum TokenType {
 		}
 		final TokenOperator tokenOperator = TokenOperator.getTokenOperator(ch, eater.peekCharN2());
 		if (TLineType.isQuote(ch)) {
-			return new Token(eater.eatAndGetQuotedString(), TokenType.QUOTED_STRING, null);
+			return new Token(eater.eatAndGetQuotedString(), TokenType.QUOTED_STRING);
 		} else if (tokenOperator != null) {
 			if (tokenOperator.getDisplay().length() == 1) {
-				return new Token(eater.eatOneChar(), TokenType.OPERATOR, null);
+				return new Token(eater.eatOneChar(), TokenType.OPERATOR);
 			}
-			return new Token("" + eater.eatOneChar() + eater.eatOneChar(), TokenType.OPERATOR, null);
+			return new Token("" + eater.eatOneChar() + eater.eatOneChar(), TokenType.OPERATOR);
 		} else if (ch == '(') {
-			return new Token(eater.eatOneChar(), TokenType.OPEN_PAREN_MATH, null);
+			return new Token(eater.eatOneChar(), TokenType.OPEN_PAREN_MATH);
 		} else if (ch == ')') {
-			return new Token(eater.eatOneChar(), TokenType.CLOSE_PAREN_MATH, null);
+			return new Token(eater.eatOneChar(), TokenType.CLOSE_PAREN_MATH);
 		} else if (ch == ',') {
-			return new Token(eater.eatOneChar(), TokenType.COMMA, null);
+			return new Token(eater.eatOneChar(), TokenType.COMMA);
 		} else if (TLineType.isLatinDigit(ch)) {
-			return new Token(eater.eatAndGetNumber(), TokenType.NUMBER, null);
+			return new Token(eater.eatAndGetNumber(), TokenType.NUMBER);
 		} else if (TLineType.isSpaceChar(ch)) {
-			return new Token(eater.eatAndGetSpaces(), TokenType.SPACES, null);
+			return new Token(eater.eatAndGetSpaces(), TokenType.SPACES);
 		}
-		return new Token(eatAndGetTokenPlainText(eater), TokenType.PLAIN_TEXT, null);
+		return new Token(eatAndGetTokenPlainText(eater), TokenType.PLAIN_TEXT);
 	}
 
 	static private String eatAndGetTokenPlainText(Eater eater) throws EaterException {

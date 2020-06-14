@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -36,20 +36,22 @@ import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.LineBreakStrategy;
+import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.creole.CreoleMode;
 import net.sourceforge.plantuml.cucadiagram.BodyEnhanced2;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.graphic.IHtmlColorSet;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockEmpty;
-import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.style.PName;
+import net.sourceforge.plantuml.style.StyleKind;
 import net.sourceforge.plantuml.ugraphic.UFont;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public abstract class AbstractTextualComponent extends AbstractComponent {
 
@@ -63,11 +65,11 @@ public abstract class AbstractTextualComponent extends AbstractComponent {
 	private final ISkinSimple spriteContainer;
 
 	private final UFont font;
-	private final HColor fontColor;
+	private final HtmlColor fontColor;
 
 	public AbstractTextualComponent(Style style, LineBreakStrategy maxMessageSize, CharSequence label,
 			FontConfiguration font, HorizontalAlignment horizontalAlignment, int marginX1, int marginX2, int marginY,
-			ISkinSimple spriteContainer, UFont fontForStereotype, HColor htmlColorForStereotype) {
+			ISkinSimple spriteContainer, UFont fontForStereotype, HtmlColor htmlColorForStereotype) {
 		this(style, style, maxMessageSize, Display.getWithNewlines(label == null ? "" : label.toString()), font,
 				horizontalAlignment, marginX1, marginX2, marginY, spriteContainer, false, fontForStereotype,
 				htmlColorForStereotype);
@@ -75,33 +77,33 @@ public abstract class AbstractTextualComponent extends AbstractComponent {
 
 	public AbstractTextualComponent(Style style, LineBreakStrategy maxMessageSize, Display display,
 			FontConfiguration fc, HorizontalAlignment horizontalAlignment, int marginX1, int marginX2, int marginY,
-			ISkinSimple spriteContainer, boolean enhanced, UFont fontForStereotype, HColor htmlColorForStereotype) {
+			ISkinSimple spriteContainer, boolean enhanced, UFont fontForStereotype, HtmlColor htmlColorForStereotype) {
 		this(style, style, maxMessageSize, display, fc, horizontalAlignment, marginX1, marginX2, marginY,
 				spriteContainer, enhanced, fontForStereotype, htmlColorForStereotype);
 	}
 
 	public AbstractTextualComponent(Style style, Style stereo, LineBreakStrategy maxMessageSize, Display display,
 			FontConfiguration fc, HorizontalAlignment horizontalAlignment, int marginX1, int marginX2, int marginY,
-			ISkinSimple spriteContainer, boolean enhanced, UFont fontForStereotype, HColor htmlColorForStereotype) {
+			ISkinSimple spriteContainer, boolean enhanced, UFont fontForStereotype, HtmlColor htmlColorForStereotype) {
 		super(style);
 		this.spriteContainer = spriteContainer;
+		boolean keepStereotype = true;
 		if (SkinParam.USE_STYLES()) {
 			fc = style.getFontConfiguration(getIHtmlColorSet());
 			this.font = style.getUFont();
 			this.fontColor = style.value(PName.FontColor).asColor(getIHtmlColorSet());
-			horizontalAlignment = style.getHorizontalAlignment();
+			horizontalAlignment = style.value(PName.HorizontalAlignment).asHorizontalAlignment();
 			fontForStereotype = stereo.getUFont();
 			htmlColorForStereotype = stereo.value(PName.FontColor).asColor(getIHtmlColorSet());
-			this.display = display.withoutStereotypeIfNeeded(style);
+			keepStereotype = style.getKind() == StyleKind.STEREOTYPE;
 		} else {
 			this.font = fc.getFont();
 			this.fontColor = fc.getColor();
-			this.display = display;
 		}
 		this.marginX1 = marginX1;
 		this.marginX2 = marginX2;
 		this.marginY = marginY;
-		// this.display = keepStereotype ? display : display.withoutStereotype();
+		this.display = keepStereotype ? display : display.withoutStereotype();
 
 		if (this.display.size() == 1 && this.display.get(0).length() == 0) {
 			textBlock = new TextBlockEmpty();
@@ -109,12 +111,12 @@ public abstract class AbstractTextualComponent extends AbstractComponent {
 			textBlock = new BodyEnhanced2(this.display, FontParam.NOTE, spriteContainer, horizontalAlignment, fc,
 					maxMessageSize);
 		} else {
-			textBlock = this.display.create0(fc, horizontalAlignment, spriteContainer, maxMessageSize, CreoleMode.FULL,
+			textBlock = this.display.create(fc, horizontalAlignment, spriteContainer, maxMessageSize, CreoleMode.FULL,
 					fontForStereotype, htmlColorForStereotype);
 		}
 	}
 
-	protected HColorSet getIHtmlColorSet() {
+	protected IHtmlColorSet getIHtmlColorSet() {
 		return ((ISkinParam) spriteContainer).getIHtmlColorSet();
 	}
 
@@ -154,7 +156,7 @@ public abstract class AbstractTextualComponent extends AbstractComponent {
 		return font;
 	}
 
-	protected HColor getFontColor() {
+	protected HtmlColor getFontColor() {
 		return fontColor;
 	}
 

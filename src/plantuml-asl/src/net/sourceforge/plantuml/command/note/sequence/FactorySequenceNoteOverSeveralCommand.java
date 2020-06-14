@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -62,7 +62,6 @@ public final class FactorySequenceNoteOverSeveralCommand implements SingleMultiF
 
 	private IRegex getRegexConcatMultiLine() {
 		return RegexConcat.build(FactorySequenceNoteOverSeveralCommand.class.getName() + "multi", RegexLeaf.start(), //
-				new RegexLeaf("PARALLEL", "(&[%s]*)?"), //
 				new RegexLeaf("VMERGE", "(/)?"), //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("STYLE", "(note|hnote|rnote)"), //
@@ -85,7 +84,6 @@ public final class FactorySequenceNoteOverSeveralCommand implements SingleMultiF
 
 	private IRegex getRegexConcatSingleLine() {
 		return RegexConcat.build(FactorySequenceNoteOverSeveralCommand.class.getName() + "single", RegexLeaf.start(), //
-				new RegexLeaf("PARALLEL", "(&[%s]*)?"), //
 				new RegexLeaf("VMERGE", "(/)?"), //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("STYLE", "(note|hnote|rnote)"), //
@@ -137,7 +135,7 @@ public final class FactorySequenceNoteOverSeveralCommand implements SingleMultiF
 			}
 
 			protected CommandExecutionResult executeNow(final SequenceDiagram system, BlocLines lines) {
-				final RegexResult line0 = getStartingPattern().matcher(lines.getFirst().getTrimmed().getString());
+				final RegexResult line0 = getStartingPattern().matcher(lines.getFirst499().getTrimmed().getString());
 				lines = lines.subExtract(1, 1);
 				lines = lines.removeEmptyColumns();
 				return executeInternal(system, line0, lines);
@@ -154,7 +152,6 @@ public final class FactorySequenceNoteOverSeveralCommand implements SingleMultiF
 
 		if (lines.size() > 0) {
 			final boolean tryMerge = line0.get("VMERGE", 0) != null;
-			final boolean parallel = line0.get("PARALLEL", 0) != null;
 			final Display display = diagram.manageVariable(lines.toDisplay());
 			final Note note = new Note(p1, p2, display, diagram.getSkinParam().getCurrentStyleBuilder());
 			Colors colors = color().getColor(line0, diagram.getSkinParam().getIHtmlColorSet());
@@ -173,9 +170,6 @@ public final class FactorySequenceNoteOverSeveralCommand implements SingleMultiF
 				final UrlBuilder urlBuilder = new UrlBuilder(diagram.getSkinParam().getValue("topurl"), ModeUrl.STRICT);
 				final Url urlLink = urlBuilder.getUrl(line0.get("URL", 0));
 				note.setUrl(urlLink);
-			}
-			if (parallel) {
-				note.goParallel();
 			}
 			diagram.addNote(note, tryMerge);
 		}

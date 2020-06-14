@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -43,18 +43,13 @@ public class CompressionBrotli implements Compression {
 		throw new UnsupportedOperationException();
 	}
 
-	public ByteArray decompress(byte[] in) throws NoPlantumlCompressionException {
-		try {
-			final BrotliInputStream brotli = new BrotliInputStream(new ByteArrayInputStream(in));
-			final ByteArrayOutputStream result = new ByteArrayOutputStream();
-			FileUtils.copyToStream(brotli, result);
-			brotli.close();
-			result.close();
-			return ByteArray.from(result.toByteArray());
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new NoPlantumlCompressionException(e);
-		}
+	public byte[] decompress(byte[] in) throws IOException {
+		final BrotliInputStream brotli = new BrotliInputStream(new ByteArrayInputStream(in));
+		final ByteArrayOutputStream result = new ByteArrayOutputStream();
+		FileUtils.copyToStream(brotli, result);
+		brotli.close();
+		result.close();
+		return result.toByteArray();
 	}
 
 }

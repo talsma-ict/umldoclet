@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -33,22 +33,16 @@ package net.sourceforge.plantuml.activitydiagram3;
 import java.util.Collection;
 
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactory;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
 import net.sourceforge.plantuml.activitydiagram3.ftile.WeldingPoint;
 import net.sourceforge.plantuml.cucadiagram.Display;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.Rainbow;
 import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
 import net.sourceforge.plantuml.sequencediagram.NoteType;
-import net.sourceforge.plantuml.style.PName;
-import net.sourceforge.plantuml.style.SName;
-import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.style.StyleBuilder;
-import net.sourceforge.plantuml.style.StyleSignature;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class Branch {
 
@@ -56,25 +50,16 @@ public class Branch {
 	private final Display labelTest;
 	private final Display labelPositive;
 	private final Display inlabel;
-	private final HColor color;
+	private final HtmlColor color;
 	private LinkRendering inlinkRendering = LinkRendering.none();
 
 	private Ftile ftile;
-
-	public StyleSignature getDefaultStyleDefinitionArrow() {
-		return StyleSignature.of(SName.root, SName.element, SName.activityDiagram, SName.arrow);
-	}
-
-	public StyleSignature getDefaultStyleDefinitionDiamond() {
-		return StyleSignature.of(SName.root, SName.element, SName.activityDiagram, SName.activity, SName.diamond);
-	}
 
 	public boolean containsBreak() {
 		return list.containsBreak();
 	}
 
-	public Branch(StyleBuilder styleBuilder, Swimlane swimlane, Display labelPositive, Display labelTest,
-			HColor color, Display inlabel) {
+	public Branch(Swimlane swimlane, Display labelPositive, Display labelTest, HtmlColor color, Display inlabel) {
 		if (labelPositive == null) {
 			throw new IllegalArgumentException();
 		}
@@ -84,18 +69,11 @@ public class Branch {
 		if (inlabel == null) {
 			throw new IllegalArgumentException();
 		}
-		if (SkinParam.USE_STYLES()) {
-			final Style style = getDefaultStyleDefinitionDiamond().getMergedStyle(styleBuilder);
-			this.color = color == null ? style.value(PName.BackGroundColor).asColor(
-					styleBuilder.getSkinParam().getIHtmlColorSet()) : color;
-		} else {
-			this.color = color;
-		}
-
 		this.inlabel = inlabel;
 		this.list = new InstructionList(swimlane);
 		this.labelTest = labelTest;
 		this.labelPositive = labelPositive;
+		this.color = color;
 	}
 
 	public Collection<WeldingPoint> getWeldingPoints() {
@@ -157,7 +135,7 @@ public class Branch {
 		return ftile.skinParam();
 	}
 
-	public final HColor getColor() {
+	public final HtmlColor getColor() {
 		return color;
 	}
 
@@ -182,5 +160,6 @@ public class Branch {
 	public final LinkRendering getSpecial() {
 		return special;
 	}
+
 
 }

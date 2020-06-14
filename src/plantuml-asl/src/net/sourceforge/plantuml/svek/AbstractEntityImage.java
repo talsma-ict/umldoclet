@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,8 +34,8 @@ import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public abstract class AbstractEntityImage extends AbstractTextBlock implements IEntityImage {
 
@@ -43,11 +43,9 @@ public abstract class AbstractEntityImage extends AbstractTextBlock implements I
 	private final ISkinParam skinParam;
 
 	public AbstractEntityImage(IEntity entity, ISkinParam skinParam) {
+		// System.err.println("Creating abstractEntityImage "+getClass());
 		if (entity == null) {
 			throw new IllegalArgumentException("entity null");
-		}
-		if (skinParam == null) {
-			throw new IllegalArgumentException("skinParam null");
 		}
 		this.entity = entity;
 		this.skinParam = skinParam;
@@ -65,8 +63,8 @@ public abstract class AbstractEntityImage extends AbstractTextBlock implements I
 		return skinParam;
 	}
 
-	public final HColor getBackcolor() {
-		return skinParam.getBackgroundColor(false);
+	public final HtmlColor getBackcolor() {
+		return null;
 	}
 
 	protected final Stereotype getStereo() {

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -33,40 +33,38 @@ package net.sourceforge.plantuml.skin.rose;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.LineBreakStrategy;
+import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.skin.AbstractTextualComponent;
 import net.sourceforge.plantuml.skin.ArrowComponent;
 import net.sourceforge.plantuml.skin.ArrowConfiguration;
 import net.sourceforge.plantuml.skin.Padder;
-import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.style.PName;
 
 public abstract class AbstractComponentRoseArrow extends AbstractTextualComponent implements ArrowComponent {
 
 	private final int arrowDeltaX = 10;
 	private final int arrowDeltaY = 4;
-	private final HColor foregroundColor;
+	private final HtmlColor foregroundColor;
 	private final ArrowConfiguration arrowConfiguration;
 
-	public AbstractComponentRoseArrow(Style style, HColor foregroundColor, FontConfiguration font,
+	public AbstractComponentRoseArrow(Style style, HtmlColor foregroundColor, FontConfiguration font,
 			Display stringsToDisplay, ArrowConfiguration arrowConfiguration, ISkinSimple spriteContainer,
 			HorizontalAlignment textHorizontalAlignment, LineBreakStrategy maxMessageSize) {
 		super(style, maxMessageSize, stringsToDisplay, font, textHorizontalAlignment, 7, 7, 1, spriteContainer, false,
 				null, null);
+		this.arrowConfiguration = arrowConfiguration;
 		if (SkinParam.USE_STYLES()) {
 			this.foregroundColor = style.value(PName.LineColor).asColor(getIHtmlColorSet());
-			final UStroke stroke = style.getStroke();
-			this.arrowConfiguration = arrowConfiguration.withThickness(stroke.getThickness());
 		} else {
 			this.foregroundColor = foregroundColor;
-			this.arrowConfiguration = arrowConfiguration;
 		}
 	}
 
@@ -80,7 +78,7 @@ public abstract class AbstractComponentRoseArrow extends AbstractTextualComponen
 
 	abstract public double getYPoint(StringBounder stringBounder);
 
-	protected final HColor getForegroundColor() {
+	protected final HtmlColor getForegroundColor() {
 		return foregroundColor;
 	}
 

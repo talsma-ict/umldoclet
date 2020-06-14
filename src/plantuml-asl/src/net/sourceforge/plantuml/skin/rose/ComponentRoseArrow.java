@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -35,9 +35,11 @@ import java.awt.geom.Point2D;
 
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.LineBreakStrategy;
+import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.ArrowConfiguration;
@@ -46,14 +48,16 @@ import net.sourceforge.plantuml.skin.ArrowDirection;
 import net.sourceforge.plantuml.skin.ArrowDressing;
 import net.sourceforge.plantuml.skin.ArrowHead;
 import net.sourceforge.plantuml.skin.ArrowPart;
+import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
+import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class ComponentRoseArrow extends AbstractComponentRoseArrow {
 
@@ -61,16 +65,15 @@ public class ComponentRoseArrow extends AbstractComponentRoseArrow {
 	private final boolean niceArrow;
 	private final boolean belowForResponse;
 
-	public ComponentRoseArrow(Style style, HColor foregroundColor, FontConfiguration font, Display stringsToDisplay,
+	public ComponentRoseArrow(Style style, HtmlColor foregroundColor, FontConfiguration font, Display stringsToDisplay,
 			ArrowConfiguration arrowConfiguration, HorizontalAlignment messagePosition, ISkinSimple spriteContainer,
 			HorizontalAlignment textHorizontalAlignment, LineBreakStrategy maxMessageSize, boolean niceArrow,
 			boolean belowForResponse) {
 		super(style, foregroundColor, font, stringsToDisplay, arrowConfiguration, spriteContainer,
 				textHorizontalAlignment, maxMessageSize);
-		// Done in Rose::createComponentArrow
-		// if (SkinParam.USE_STYLES()) {
-		// messagePosition = style.getHorizontalAlignment();
-		// }
+		if (SkinParam.USE_STYLES()) {
+			messagePosition = style.value(PName.HorizontalAlignment).asHorizontalAlignment();
+		}
 		this.messagePosition = messagePosition;
 		this.niceArrow = niceArrow;
 		this.belowForResponse = belowForResponse;
@@ -87,7 +90,7 @@ public class ComponentRoseArrow extends AbstractComponentRoseArrow {
 		}
 		final Dimension2D dimensionToUse = area.getDimensionToUse();
 		final StringBounder stringBounder = ug.getStringBounder();
-		ug = ug.apply(getForegroundColor());
+		ug = ug.apply(new UChangeColor(getForegroundColor()));
 
 		final ArrowDressing dressing1 = getArrowConfiguration().getDressing1();
 		final ArrowDressing dressing2 = getArrowConfiguration().getDressing2();
@@ -141,9 +144,9 @@ public class ComponentRoseArrow extends AbstractComponentRoseArrow {
 			yText = 0;
 		}
 
-		drawDressing1(ug.apply(UTranslate.dy(posArrow)), pos1, dressing1, getArrowConfiguration().getDecoration1());
-		drawDressing2(ug.apply(UTranslate.dy(posArrow)), pos2, dressing2, getArrowConfiguration().getDecoration2());
-		getArrowConfiguration().applyStroke(ug).apply(new UTranslate(start, posArrow)).draw(ULine.hline(len));
+		drawDressing1(ug.apply(new UTranslate(0, posArrow)), pos1, dressing1, getArrowConfiguration().getDecoration1());
+		drawDressing2(ug.apply(new UTranslate(0, posArrow)), pos2, dressing2, getArrowConfiguration().getDecoration2());
+		getArrowConfiguration().applyStroke(ug).apply(new UTranslate(start, posArrow)).draw(new ULine(len, 0));
 
 		final ArrowDirection direction2 = getDirection2();
 		final double textPos;
@@ -170,7 +173,7 @@ public class ComponentRoseArrow extends AbstractComponentRoseArrow {
 
 		if (decoration == ArrowDecoration.CIRCLE) {
 			final UEllipse circle = new UEllipse(diamCircle, diamCircle);
-			ug.apply(new UStroke(thinCircle)).apply(getForegroundColor())
+			ug.apply(new UStroke(thinCircle)).apply(new UChangeColor(getForegroundColor()))
 					.apply(new UTranslate(x - diamCircle / 2 - thinCircle, -diamCircle / 2 - thinCircle / 2))
 					.draw(circle);
 			x += diamCircle / 2 + thinCircle;
@@ -178,11 +181,11 @@ public class ComponentRoseArrow extends AbstractComponentRoseArrow {
 
 		if (dressing.getHead() == ArrowHead.ASYNC) {
 			if (dressing.getPart() != ArrowPart.BOTTOM_PART) {
-				getArrowConfiguration().applyThicknessOnly(ug).apply(UTranslate.dx(x - 1))
+				getArrowConfiguration().applyThicknessOnly(ug).apply(new UTranslate(x - 1, 0))
 						.draw(new ULine(getArrowDeltaX(), -getArrowDeltaY()));
 			}
 			if (dressing.getPart() != ArrowPart.TOP_PART) {
-				getArrowConfiguration().applyThicknessOnly(ug).apply(UTranslate.dx(x - 1))
+				getArrowConfiguration().applyThicknessOnly(ug).apply(new UTranslate(x - 1, 0))
 						.draw(new ULine(getArrowDeltaX(), getArrowDeltaY()));
 			}
 		} else if (dressing.getHead() == ArrowHead.CROSSX) {
@@ -193,7 +196,7 @@ public class ComponentRoseArrow extends AbstractComponentRoseArrow {
 					new ULine(getArrowDeltaX(), -getArrowDeltaX()));
 		} else if (dressing.getHead() == ArrowHead.NORMAL) {
 			final UPolygon polygon = getPolygonReverse(dressing.getPart());
-			ug.apply(getForegroundColor().bg()).apply(UTranslate.dx(x)).draw(polygon);
+			ug.apply(new UChangeBackColor(getForegroundColor())).apply(new UTranslate(x, 0)).draw(polygon);
 		}
 
 	}
@@ -201,7 +204,7 @@ public class ComponentRoseArrow extends AbstractComponentRoseArrow {
 	private void drawDressing2(UGraphic ug, double x, ArrowDressing dressing, ArrowDecoration decoration) {
 
 		if (decoration == ArrowDecoration.CIRCLE) {
-			ug = ug.apply(new UStroke(thinCircle)).apply(getForegroundColor());
+			ug = ug.apply(new UStroke(thinCircle)).apply(new UChangeColor(getForegroundColor()));
 			final UEllipse circle = new UEllipse(diamCircle, diamCircle);
 			ug.apply(new UTranslate(x - diamCircle / 2 + thinCircle, -diamCircle / 2 - thinCircle / 2)).draw(circle);
 			ug = ug.apply(new UStroke());
@@ -210,11 +213,11 @@ public class ComponentRoseArrow extends AbstractComponentRoseArrow {
 
 		if (dressing.getHead() == ArrowHead.ASYNC) {
 			if (dressing.getPart() != ArrowPart.BOTTOM_PART) {
-				getArrowConfiguration().applyThicknessOnly(ug).apply(UTranslate.dx(x))
+				getArrowConfiguration().applyThicknessOnly(ug).apply(new UTranslate(x, 0))
 						.draw(new ULine(-getArrowDeltaX(), -getArrowDeltaY()));
 			}
 			if (dressing.getPart() != ArrowPart.TOP_PART) {
-				getArrowConfiguration().applyThicknessOnly(ug).apply(UTranslate.dx(x))
+				getArrowConfiguration().applyThicknessOnly(ug).apply(new UTranslate(x, 0))
 						.draw(new ULine(-getArrowDeltaX(), getArrowDeltaY()));
 			}
 		} else if (dressing.getHead() == ArrowHead.CROSSX) {
@@ -226,7 +229,7 @@ public class ComponentRoseArrow extends AbstractComponentRoseArrow {
 			ug = ug.apply(new UStroke());
 		} else if (dressing.getHead() == ArrowHead.NORMAL) {
 			final UPolygon polygon = getPolygonNormal(dressing.getPart(), x);
-			ug.apply(getForegroundColor().bg()).draw(polygon);
+			ug.apply(new UChangeBackColor(getForegroundColor())).draw(polygon);
 		}
 
 	}

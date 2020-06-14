@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -41,7 +41,7 @@ public class Diamond {
 
 	final static public double diamondHalfSize = 12;
 
-	public static UPolygon asPolygon(double shadowing) {
+	public static UPolygon asPolygon(boolean shadowing) {
 		final UPolygon diams = new UPolygon();
 
 		diams.addPoint(diamondHalfSize, 0);
@@ -50,15 +50,14 @@ public class Diamond {
 		diams.addPoint(0, diamondHalfSize);
 		diams.addPoint(diamondHalfSize, 0);
 
-		// if (shadowing) {
-		// diams.setDeltaShadow(3);
-		// }
-		diams.setDeltaShadow(shadowing);
+		if (shadowing) {
+			diams.setDeltaShadow(3);
+		}
 
 		return diams;
 	}
 
-	public static UPolygon asPolygon(double shadowing, double width, double height) {
+	public static UPolygon asPolygon(boolean shadowing, double width, double height) {
 		final UPolygon diams = new UPolygon();
 
 		diams.addPoint(diamondHalfSize, 0);
@@ -69,10 +68,9 @@ public class Diamond {
 		diams.addPoint(0, height / 2);
 		diams.addPoint(diamondHalfSize, 0);
 
-		// if (shadowing) {
-		// diams.setDeltaShadow(3);
-		// }
-		diams.setDeltaShadow(shadowing);
+		if (shadowing) {
+			diams.setDeltaShadow(3);
+		}
 
 		return diams;
 	}

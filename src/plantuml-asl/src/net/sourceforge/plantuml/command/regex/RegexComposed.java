@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -31,13 +31,11 @@
 package net.sourceforge.plantuml.command.regex;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
 import net.sourceforge.plantuml.StringLocated;
@@ -45,32 +43,26 @@ import net.sourceforge.plantuml.StringLocated;
 public abstract class RegexComposed implements IRegex {
 
 	protected static final AtomicInteger nbCreateMatches = new AtomicInteger();
-	private final List<IRegex> partials;
-
-	protected final List<IRegex> partials() {
-		return partials;
-	}
+	protected final List<IRegex> partials;
 
 	abstract protected String getFullSlow();
 
-	private final AtomicReference<Pattern2> fullCached = new AtomicReference<Pattern2>();
+	private Pattern2 fullCached;
 
-	private Pattern2 getPattern2() {
-		Pattern2 result = fullCached.get();
-		if (result == null) {
+	private synchronized Pattern2 getPattern2() {
+		if (fullCached == null) {
 			final String fullSlow = getFullSlow();
-			result = MyPattern.cmpile(fullSlow, Pattern.CASE_INSENSITIVE);
-			fullCached.set(result);
+			fullCached = MyPattern.cmpile(fullSlow, Pattern.CASE_INSENSITIVE);
 		}
-		return result;
+		return fullCached;
 	}
-
-	final protected boolean isCompiled() {
-		return fullCached.get() != null;
+	
+	protected boolean isCompiled() {
+		return fullCached != null;
 	}
 
 	public RegexComposed(IRegex... partial) {
-		this.partials = Collections.unmodifiableList(Arrays.asList(partial));
+		this.partials = Arrays.asList(partial);
 	}
 
 	public Map<String, RegexPartialMatch> createPartialMatch(Iterator<String> it) {

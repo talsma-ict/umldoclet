@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -58,12 +58,11 @@ public class YPositionedTile {
 
 	public void drawInArea(UGraphic ug) {
 		// System.err.println("YPositionedTile::drawU y=" + y + " " + tile);
-		ug.apply(UTranslate.dy(y)).draw(tile);
+		ug.apply(new UTranslate(0, y)).draw(tile);
 	}
 
-	public boolean matchAnchorV2(String anchor) {
-		final boolean result = tile.matchAnchorV1(anchor);
-		return result;
+	public boolean matchAnchor(String anchor) {
+		return tile.matchAnchor(anchor);
 	}
 
 	public final double getY(StringBounder stringBounder) {

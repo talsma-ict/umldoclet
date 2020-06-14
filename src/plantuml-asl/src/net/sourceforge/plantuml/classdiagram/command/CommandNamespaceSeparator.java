@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -36,7 +36,6 @@ import net.sourceforge.plantuml.command.SingleLineCommand2;
 import net.sourceforge.plantuml.command.regex.IRegex;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
-import net.sourceforge.plantuml.command.regex.RegexOr;
 import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
 
@@ -51,9 +50,7 @@ public class CommandNamespaceSeparator extends SingleLineCommand2<CucaDiagram> {
 				RegexLeaf.start(), //
 				new RegexLeaf("set"), //
 				RegexLeaf.spaceOneOrMore(), //
-				new RegexOr( //
-						new RegexLeaf("separator"), //
-						new RegexLeaf("namespaceseparator")), //
+				new RegexLeaf("namespaceseparator"), //
 				RegexLeaf.spaceOneOrMore(), //
 				new RegexLeaf("SEPARATOR", "(\\S+)"), RegexLeaf.end()); //
 	}

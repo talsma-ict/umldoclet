@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -40,6 +40,7 @@ import net.sourceforge.plantuml.command.SingleLineCommand2;
 import net.sourceforge.plantuml.command.regex.IRegex;
 import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.Display;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.sequencediagram.LifeEventType;
 import net.sourceforge.plantuml.sequencediagram.MessageExo;
 import net.sourceforge.plantuml.sequencediagram.MessageExoType;
@@ -50,7 +51,6 @@ import net.sourceforge.plantuml.skin.ArrowConfiguration;
 import net.sourceforge.plantuml.skin.ArrowDecoration;
 import net.sourceforge.plantuml.skin.ArrowHead;
 import net.sourceforge.plantuml.skin.ArrowPart;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 abstract class CommandExoArrowAny extends SingleLineCommand2<SequenceDiagram> {
 
@@ -62,8 +62,8 @@ abstract class CommandExoArrowAny extends SingleLineCommand2<SequenceDiagram> {
 	final protected CommandExecutionResult executeArg(SequenceDiagram diagram, LineLocation location, RegexResult arg) {
 		final String body = arg.getLazzy("ARROW_BODYA", 0) + arg.getLazzy("ARROW_BODYB", 0);
 		final String dressing = arg.getLazzy("ARROW_DRESSING", 0);
-		final Participant p = diagram.getOrCreateParticipant(
-				StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("PARTICIPANT", 0)));
+		final Participant p = diagram.getOrCreateParticipant(StringUtils
+				.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("PARTICIPANT", 0)));
 
 		final boolean sync = dressing.length() == 2;
 		final boolean dotted = body.contains("--");
@@ -77,24 +77,17 @@ abstract class CommandExoArrowAny extends SingleLineCommand2<SequenceDiagram> {
 
 		final boolean bothDirection = arg.get("ARROW_BOTHDRESSING", 0) != null;
 
-		ArrowConfiguration config = bothDirection ? ArrowConfiguration.withDirectionBoth()
-				: ArrowConfiguration.withDirectionNormal();
+		ArrowConfiguration config = bothDirection ? ArrowConfiguration.withDirectionBoth() : ArrowConfiguration
+				.withDirectionNormal();
 		if (dotted) {
 			config = config.withBody(ArrowBody.DOTTED);
 		}
 		if (sync) {
 			config = config.withHead(ArrowHead.ASYNC);
 		}
-		final MessageExoType messageExoType = getMessageExoType(arg);
-
-		config = config.withPart(getArrowPart(dressing, messageExoType));
+		config = config.withPart(getArrowPart(dressing));
 		config = CommandArrow.applyStyle(arg.getLazzy("ARROW_STYLE", 0), config);
-
-		final String activationSpec = arg.get("ACTIVATION", 0);
-
-		if (activationSpec != null && activationSpec.charAt(0) == '*') {
-			diagram.activate(p, LifeEventType.CREATE, null);
-		}
+		final MessageExoType messageExoType = getMessageExoType(arg);
 
 		if (messageExoType == MessageExoType.TO_RIGHT || messageExoType == MessageExoType.TO_LEFT) {
 			if (containsSymbolExterior(arg, "o")) {
@@ -143,25 +136,10 @@ abstract class CommandExoArrowAny extends SingleLineCommand2<SequenceDiagram> {
 			return CommandExecutionResult.error(error);
 		}
 
-		final HColor activationColor = diagram.getSkinParam().getIHtmlColorSet()
+		final HtmlColor activationColor = diagram.getSkinParam().getIHtmlColorSet()
 				.getColorIfValid(arg.get("LIFECOLOR", 0));
 
-		if (activationSpec != null) {
-			switch (activationSpec.charAt(0)) {
-			case '+':
-				diagram.activate(p, LifeEventType.ACTIVATE, activationColor);
-				break;
-			case '-':
-				diagram.activate(p, LifeEventType.DEACTIVATE, null);
-				break;
-			case '!':
-				diagram.activate(p, LifeEventType.DESTROY, null);
-				break;
-			default:
-				break;
-			}
-		} else if (diagram.isAutoactivate()
-				&& (config.getHead() == ArrowHead.NORMAL || config.getHead() == ArrowHead.ASYNC)) {
+		if (diagram.isAutoactivate() && (config.getHead() == ArrowHead.NORMAL || config.getHead() == ArrowHead.ASYNC)) {
 			if (config.isDotted()) {
 				diagram.activate(p, LifeEventType.DEACTIVATE, null);
 			} else {
@@ -173,18 +151,12 @@ abstract class CommandExoArrowAny extends SingleLineCommand2<SequenceDiagram> {
 		return CommandExecutionResult.ok();
 	}
 
-	private ArrowPart getArrowPart(String dressing, MessageExoType messageExoType) {
+	private ArrowPart getArrowPart(String dressing) {
 		if (dressing.contains("/")) {
-			if (messageExoType.getDirection() == 1) {
-				return ArrowPart.BOTTOM_PART;
-			}
-			return ArrowPart.TOP_PART;
+			return ArrowPart.BOTTOM_PART;
 		}
 		if (dressing.contains("\\")) {
-			if (messageExoType.getDirection() == 1) {
-				return ArrowPart.TOP_PART;
-			}
-			return ArrowPart.BOTTOM_PART;
+			return ArrowPart.TOP_PART;
 		}
 		return ArrowPart.FULL;
 	}

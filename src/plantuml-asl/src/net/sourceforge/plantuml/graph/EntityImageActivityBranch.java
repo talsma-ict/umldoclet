@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -37,7 +37,7 @@ import java.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
+import net.sourceforge.plantuml.ugraphic.ColorMapper;
 
 class EntityImageActivityBranch extends AbstractEntityImage {
 
@@ -60,9 +60,9 @@ class EntityImageActivityBranch extends AbstractEntityImage {
 		p.addPoint(size, size * 2);
 		p.addPoint(0, size);
 
-		g2d.setColor(colorMapper.toColor(getYellow()));
+		g2d.setColor(colorMapper.getMappedColor(getYellow()));
 		g2d.fill(p);
-		g2d.setColor(colorMapper.toColor(getRed()));
+		g2d.setColor(colorMapper.getMappedColor(getRed()));
 		g2d.draw(p);
 	}
 }

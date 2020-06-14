@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -38,13 +38,14 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.Snake;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.graphic.HtmlColorAndStyle;
 import net.sourceforge.plantuml.graphic.Rainbow;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.sequencediagram.teoz.YPositionedTile;
 import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class LinkAnchor {
 
@@ -86,8 +87,8 @@ public class LinkAnchor {
 		final double ymin = Math.min(y1, y2);
 		final double ymax = Math.max(y1, y2);
 
-		final HColor color = new Rose().getHtmlColor(param, ColorParam.arrow);
-		final Rainbow rainbow = Rainbow.fromColor(color, null);
+		final HtmlColor color = new Rose().getHtmlColor(param, ColorParam.arrow);
+		final Rainbow rainbow = HtmlColorAndStyle.fromColor(color);
 		final Snake snake = new Snake(Arrows.asToUp(), HorizontalAlignment.CENTER, rainbow, Arrows.asToDown());
 
 		final Display display = Display.getWithNewlines(message);

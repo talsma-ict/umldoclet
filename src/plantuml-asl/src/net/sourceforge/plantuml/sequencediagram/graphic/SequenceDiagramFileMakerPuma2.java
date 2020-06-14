@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -42,6 +42,7 @@ import net.sourceforge.plantuml.AnnotatedWorker;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
+import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.activitydiagram3.ftile.EntityImageLegend;
 import net.sourceforge.plantuml.core.ImageData;
@@ -50,6 +51,7 @@ import net.sourceforge.plantuml.cucadiagram.DisplayPositionned;
 import net.sourceforge.plantuml.cucadiagram.DisplaySection;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
@@ -60,15 +62,14 @@ import net.sourceforge.plantuml.sequencediagram.Event;
 import net.sourceforge.plantuml.sequencediagram.Newpage;
 import net.sourceforge.plantuml.sequencediagram.Participant;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
+import net.sourceforge.plantuml.skin.ComponentType;
 import net.sourceforge.plantuml.skin.rose.Rose;
-import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleDefinition;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class SequenceDiagramFileMakerPuma2 implements FileMaker {
 
@@ -81,8 +82,7 @@ public class SequenceDiagramFileMakerPuma2 implements FileMaker {
 
 	private double scale;
 
-	public SequenceDiagramFileMakerPuma2(SequenceDiagram sequenceDiagram, Rose skin,
-			FileFormatOption fileFormatOption) {
+	public SequenceDiagramFileMakerPuma2(SequenceDiagram sequenceDiagram, Rose skin, FileFormatOption fileFormatOption) {
 		this.diagram = sequenceDiagram;
 		this.stringBounder = fileFormatOption.getDefaultStringBounder();
 		this.fileFormatOption = fileFormatOption;
@@ -155,15 +155,14 @@ public class SequenceDiagramFileMakerPuma2 implements FileMaker {
 			compTitle = null;
 		} else {
 			if (SkinParam.USE_STYLES()) {
-				final Style style = StyleSignature.of(SName.root, SName.title)
-						.getMergedStyle(diagram.getSkinParam().getCurrentStyleBuilder());
+				final Style style = StyleDefinition.of(SName.root, SName.title).getMergedStyle(
+						diagram.getSkinParam().getCurrentStyleBuilder());
 				compTitle = style.createTextBlockBordered(page.getTitle(), diagram.getSkinParam().getIHtmlColorSet(),
 						diagram.getSkinParam());
 			} else {
-				compTitle = TextBlockUtils.withMargin(
-						TextBlockUtils.title(new FontConfiguration(drawableSet.getSkinParam(), FontParam.TITLE, null),
-								page.getTitle(), drawableSet.getSkinParam()),
-						7, 7);
+				compTitle = TextBlockUtils.withMargin(TextBlockUtils.title(
+						new FontConfiguration(drawableSet.getSkinParam(), FontParam.SEQUENCE_TITLE, null),
+						page.getTitle(), drawableSet.getSkinParam()), 7, 7);
 			}
 			final Dimension2D dimTitle = compTitle.calculateDimension(stringBounder);
 			area.setTitleArea(dimTitle.getWidth(), dimTitle.getHeight());
@@ -177,10 +176,10 @@ public class SequenceDiagramFileMakerPuma2 implements FileMaker {
 			legendBlock = TextBlockUtils.empty(0, 0);
 		} else {
 			if (SkinParam.USE_STYLES()) {
-				final Style style = StyleSignature.of(SName.root, SName.legend)
-						.getMergedStyle(diagram.getSkinParam().getCurrentStyleBuilder());
-				legendBlock = style.createTextBlockBordered(legend.getDisplay(),
-						diagram.getSkinParam().getIHtmlColorSet(), diagram.getSkinParam());
+				final Style style = StyleDefinition.of(SName.root, SName.legend).getMergedStyle(
+						diagram.getSkinParam().getCurrentStyleBuilder());
+				legendBlock = style.createTextBlockBordered(legend.getDisplay(), diagram.getSkinParam()
+						.getIHtmlColorSet(), diagram.getSkinParam());
 			} else {
 				legendBlock = EntityImageLegend.create(legend.getDisplay(), diagram.getSkinParam());
 			}
@@ -195,18 +194,8 @@ public class SequenceDiagramFileMakerPuma2 implements FileMaker {
 
 		final String metadata = fileFormatOption.isWithMetadata() ? diagram.getMetadata() : null;
 
-		final int margin1;
-		final int margin2;
-		if (SkinParam.USE_STYLES()) {
-			margin1 = SkinParam.zeroMargin(3);
-			margin2 = SkinParam.zeroMargin(10);
-		} else {
-			margin1 = 3;
-			margin2 = 10;
-		}
-		final ImageBuilder imageBuilder = ImageBuilder.buildD(diagram.getSkinParam(),
-				ClockwiseTopRightBottomLeft.margin1margin2(margin1, margin2), diagram.getAnimation(), metadata, null,
-				oneOf(scale, dpiFactor));
+		final ImageBuilder imageBuilder = new ImageBuilder(diagram.getSkinParam(), oneOf(scale, dpiFactor), metadata,
+				null, 3, 10, diagram.getAnimation());
 
 		imageBuilder.setUDrawable(new UDrawable() {
 			public void drawU(UGraphic ug) {
@@ -239,8 +228,7 @@ public class SequenceDiagramFileMakerPuma2 implements FileMaker {
 					sequenceAreaY += legendBlock.calculateDimension(ug.getStringBounder()).getHeight();
 				}
 				final UTranslate forCore = new UTranslate(area.getSequenceAreaX() + delta1 / 2, sequenceAreaY);
-				TextBlock core = drawableSet.asTextBlock(delta, fullDimension.getWidth(), page,
-						diagram.isShowFootbox());
+				TextBlock core = drawableSet.asTextBlock(delta, fullDimension.getWidth(), page, diagram.isShowFootbox());
 				core = annotatedWorker.addFrame(core);
 				core.drawU(ug.apply(forCore));
 				// drawableSet.drawU22(ug.apply(forCore), delta, fullDimension.getWidth(), page,
@@ -272,8 +260,8 @@ public class SequenceDiagramFileMakerPuma2 implements FileMaker {
 		if (text == null) {
 			return;
 		}
-		text.drawU(ug.apply(new UTranslate(area.getFooterX(diagram.getFooter().getHorizontalAlignment()),
-				area.getFooterY() + legendHeight)));
+		text.drawU(ug.apply(new UTranslate(area.getFooterX(diagram.getFooter().getHorizontalAlignment()), area
+				.getFooterY() + legendHeight)));
 	}
 
 	private void drawHeader(SequenceDiagramArea area, UGraphic ug, int page) {
@@ -282,8 +270,8 @@ public class SequenceDiagramFileMakerPuma2 implements FileMaker {
 		if (text == null) {
 			return;
 		}
-		text.drawU(ug.apply(
-				new UTranslate(area.getHeaderX(diagram.getHeader().getHorizontalAlignment()), area.getHeaderY())));
+		text.drawU(ug.apply(new UTranslate(area.getHeaderX(diagram.getHeader().getHorizontalAlignment()), area
+				.getHeaderY())));
 	}
 
 	private double oneOf(double a, double b) {
@@ -315,14 +303,14 @@ public class SequenceDiagramFileMakerPuma2 implements FileMaker {
 
 	private PngTitler getPngTitler(final FontParam fontParam, int page) {
 		final ISkinParam skinParam = diagram.getSkinParam();
-		final HColor hyperlinkColor = skinParam.getHyperlinkColor();
-		final HColor titleColor = skinParam.getFontHtmlColor(null, fontParam);
+		final HtmlColor hyperlinkColor = skinParam.getHyperlinkColor();
+		final HtmlColor titleColor = skinParam.getFontHtmlColor(null, fontParam);
 		final String fontFamily = skinParam.getFont(null, false, fontParam).getFamily(null);
 		final int fontSize = skinParam.getFont(null, false, fontParam).getSize();
 		final DisplaySection display = diagram.getFooterOrHeaderTeoz(fontParam).withPage(page + 1, pages.size());
 		Style style = null;
 		if (SkinParam.USE_STYLES()) {
-			final StyleSignature def = fontParam.getStyleDefinition();
+			final StyleDefinition def = fontParam.getStyleDefinition();
 			style = def.getMergedStyle(skinParam.getCurrentStyleBuilder());
 		}
 		return new PngTitler(titleColor, display, fontSize, fontFamily, hyperlinkColor,

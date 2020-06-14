@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,17 +32,17 @@ package net.sourceforge.plantuml.ugraphic.tikz;
 
 import net.sourceforge.plantuml.posimo.DotPath;
 import net.sourceforge.plantuml.tikz.TikzGraphics;
+import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UDriver;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UShape;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 
 public class DriverDotPathTikz implements UDriver<TikzGraphics> {
 
 	public void draw(UShape shape, double x, double y, ColorMapper mapper, UParam param, TikzGraphics tikz) {
 		final DotPath path = (DotPath) shape;
 		tikz.setFillColor(null);
-		tikz.setStrokeColor(mapper.toColor(param.getColor()));
+		tikz.setStrokeColor(mapper.getMappedColor(param.getColor()));
 		tikz.setStrokeWidth(param.getStroke().getThickness(), param.getStroke().getDashTikz());
 		tikz.upath(x, y, path.toUPath());
 	}

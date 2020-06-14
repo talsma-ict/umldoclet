@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,10 +34,13 @@ import java.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.LineBreakStrategy;
+import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.graphic.HtmlColorTransparent;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.SymbolContext;
 import net.sourceforge.plantuml.graphic.TextBlock;
@@ -45,13 +48,13 @@ import net.sourceforge.plantuml.skin.AbstractTextualComponent;
 import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
+import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UPath;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorBackground;
 
 public class ComponentRoseGroupingHeader extends AbstractTextualComponent {
 
@@ -60,12 +63,12 @@ public class ComponentRoseGroupingHeader extends AbstractTextualComponent {
 
 	private final TextBlock commentTextBlock;
 
-	private final HColor background;
+	private final HtmlColor background;
 	private final SymbolContext symbolContext;
 	private final SymbolContext symbolContextCorner;
 	private final double roundCorner;
 
-	public ComponentRoseGroupingHeader(Style style, Style styleHeader, HColor background,
+	public ComponentRoseGroupingHeader(Style style, Style styleHeader, HtmlColor background,
 			SymbolContext symbolContext, FontConfiguration bigFont, FontConfiguration smallFont2, Display strings,
 			ISkinSimple spriteContainer, double roundCorner) {
 		super(styleHeader, LineBreakStrategy.NONE, strings.get(0), bigFont, HorizontalAlignment.LEFT, 15, 30, 1,
@@ -96,8 +99,7 @@ public class ComponentRoseGroupingHeader extends AbstractTextualComponent {
 		}
 	}
 
-	// new FontConfiguration(smallFont, bigFont.getColor(),
-	// bigFont.getHyperlinkColor(),
+	// new FontConfiguration(smallFont, bigFont.getColor(), bigFont.getHyperlinkColor(),
 	// bigFont.useUnderlineForHyperlink());
 
 	private double getSuppHeightForComment(StringBounder stringBounder) {
@@ -132,15 +134,15 @@ public class ComponentRoseGroupingHeader extends AbstractTextualComponent {
 
 	@Override
 	protected void drawBackgroundInternalU(UGraphic ug, Area area) {
-		if (background instanceof HColorBackground) {
+		if (background instanceof HtmlColorTransparent) {
 			return;
 		}
 		final Dimension2D dimensionToUse = area.getDimensionToUse();
-		ug = symbolContext.applyStroke(ug).apply(symbolContext.getForeColor());
-		final URectangle rect = new URectangle(dimensionToUse.getWidth(), dimensionToUse.getHeight())
-				.rounded(roundCorner);
+		ug = symbolContext.applyStroke(ug).apply(new UChangeColor(symbolContext.getForeColor()));
+		final URectangle rect = new URectangle(dimensionToUse.getWidth(), dimensionToUse.getHeight(), roundCorner,
+				roundCorner);
 		rect.setDeltaShadow(symbolContext.getDeltaShadow());
-		ug.apply(background.bg()).draw(rect);
+		ug.apply(new UChangeBackColor(background)).draw(rect);
 	}
 
 	@Override
@@ -156,9 +158,9 @@ public class ComponentRoseGroupingHeader extends AbstractTextualComponent {
 			symbolContextCorner.applyColors(ug).draw(getCorner(textWidth, textHeight));
 		}
 
-		ug = symbolContext.applyStroke(ug).apply(symbolContext.getForeColor());
-		final URectangle rect = new URectangle(dimensionToUse.getWidth(), dimensionToUse.getHeight())
-				.rounded(roundCorner);
+		ug = symbolContext.applyStroke(ug).apply(new UChangeColor(symbolContext.getForeColor()));
+		final URectangle rect = new URectangle(dimensionToUse.getWidth(), dimensionToUse.getHeight(), roundCorner,
+				roundCorner);
 		ug.draw(rect);
 
 		ug = ug.apply(new UStroke());

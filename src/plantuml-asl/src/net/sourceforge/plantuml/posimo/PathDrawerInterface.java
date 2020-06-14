@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -40,6 +40,8 @@ import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkStyle;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.skin.rose.Rose;
+import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
+import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.URectangle;
@@ -126,14 +128,14 @@ public class PathDrawerInterface implements PathDrawer {
 //			final Map<Point2D, Double> all = dotPath.somePoints();
 //			final Point2D p = getFarest(outPoint, inPoint, all.keySet());
 //
-//			ug = ug.apply(UChangeBackColor.nnn(rose.getHtmlColor(param, ColorParam.background)));
-//			ug = ug.apply(UChangeColor.nnn(rose.getHtmlColor(param, ColorParam.classBorder)));
+//			ug = ug.apply(new UChangeBackColor(rose.getHtmlColor(param, ColorParam.background)));
+//			ug = ug.apply(new UChangeColor(rose.getHtmlColor(param, ColorParam.classBorder)));
 //
 //			decor.drawDecor(ug, p, all.get(p));
 //		}
 
 		throw new UnsupportedOperationException();
-//		ug = ug.apply(UChangeColor.nnn(rose.getHtmlColor(param, ColorParam.classBorder)));
+//		ug = ug.apply(new UChangeColor(rose.getHtmlColor(param, ColorParam.classBorder)));
 //		if (linkType.isDashed()) {
 //			goDash(ug);
 //		}
@@ -209,8 +211,8 @@ public class PathDrawerInterface implements PathDrawer {
 	}
 
 	private Point2D drawSquare(UGraphic ug, double centerX, double centerY) {
-		ug = ug.apply(rose.getHtmlColor(param, ColorParam.classBackground).bg());
-		ug = ug.apply(rose.getHtmlColor(param, ColorParam.classBorder));
+		ug = ug.apply(new UChangeBackColor(rose.getHtmlColor(param, ColorParam.classBackground)));
+		ug = ug.apply(new UChangeColor(rose.getHtmlColor(param, ColorParam.classBorder)));
 		final double width = 10;
 		final double height = 10;
 		ug.apply(new UTranslate(centerX - width / 2, centerY - height / 2)).draw(new URectangle(width, height));
@@ -218,8 +220,8 @@ public class PathDrawerInterface implements PathDrawer {
 	}
 
 	Point2D drawExtends(UGraphic ug, double x, double y, double theta) {
-		ug = ug.apply(rose.getHtmlColor(param, ColorParam.background).bg());
-		ug = ug.apply(rose.getHtmlColor(param, ColorParam.classBorder));
+		ug = ug.apply(new UChangeBackColor(rose.getHtmlColor(param, ColorParam.background)));
+		ug = ug.apply(new UChangeColor(rose.getHtmlColor(param, ColorParam.classBorder)));
 
 		// final double theta = Math.atan2(-pathPoint.getX() + x,
 		// pathPoint.getY() - y);

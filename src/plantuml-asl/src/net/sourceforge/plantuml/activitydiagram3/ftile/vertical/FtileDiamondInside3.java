@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -41,18 +41,20 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.Diamond;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileGeometry;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileOverpassing;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
+import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
+import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.utils.MathUtils;
 
 public class FtileDiamondInside3 extends AbstractFtile implements FtileOverpassing {
 
-	private final HColor backColor;
-	private final HColor borderColor;
+	private final HtmlColor backColor;
+	private final HtmlColor borderColor;
 	private final Swimlane swimlane;
 	private final TextBlock label;
 	private final TextBlock west;
@@ -60,7 +62,7 @@ public class FtileDiamondInside3 extends AbstractFtile implements FtileOverpassi
 	private final TextBlock north;
 	private final TextBlock south;
 
-	public FtileDiamondInside3(ISkinParam skinParam, HColor backColor, HColor borderColor, Swimlane swimlane,
+	public FtileDiamondInside3(ISkinParam skinParam, HtmlColor backColor, HtmlColor borderColor, Swimlane swimlane,
 			TextBlock label) {
 		this(skinParam, backColor, borderColor, swimlane, label, TextBlockUtils.empty(0, 0),
 				TextBlockUtils.empty(0, 0), TextBlockUtils.empty(0, 0), TextBlockUtils.empty(0, 0));
@@ -82,7 +84,7 @@ public class FtileDiamondInside3 extends AbstractFtile implements FtileOverpassi
 		return new FtileDiamondInside3(skinParam(), backColor, borderColor, swimlane, label, north, south, west, east);
 	}
 
-	private FtileDiamondInside3(ISkinParam skinParam, HColor backColor, HColor borderColor, Swimlane swimlane,
+	private FtileDiamondInside3(ISkinParam skinParam, HtmlColor backColor, HtmlColor borderColor, Swimlane swimlane,
 			TextBlock label, TextBlock north, TextBlock south, TextBlock west, TextBlock east) {
 		super(skinParam);
 		this.backColor = backColor;
@@ -114,19 +116,18 @@ public class FtileDiamondInside3 extends AbstractFtile implements FtileOverpassi
 		final StringBounder stringBounder = ug.getStringBounder();
 		final Dimension2D dimLabel = label.calculateDimension(stringBounder);
 		final Dimension2D dimTotal = calculateDimensionAlone(stringBounder);
-		ug = ug.apply(borderColor).apply(getThickness()).apply(backColor.bg());
-		final double shadowing = skinParam().shadowing(null) ? 3 : 0;
-		ug.draw(Diamond.asPolygon(shadowing, dimTotal.getWidth(), dimTotal.getHeight()));
+		ug = ug.apply(new UChangeColor(borderColor)).apply(getThickness()).apply(new UChangeBackColor(backColor));
+		ug.draw(Diamond.asPolygon(skinParam().shadowing(null), dimTotal.getWidth(), dimTotal.getHeight()));
 
-		north.drawU(ug.apply(new UTranslate(4 + dimTotal.getWidth() / 2, dimTotal.getHeight())));
-		south.drawU(ug.apply(new UTranslate(4 + dimTotal.getWidth() / 2, dimTotal.getHeight())));
+		 north.drawU(ug.apply(new UTranslate(4 + dimTotal.getWidth() / 2, dimTotal.getHeight())));
+		 south.drawU(ug.apply(new UTranslate(4 + dimTotal.getWidth() / 2, dimTotal.getHeight())));
 
 		final double lx = (dimTotal.getWidth() - dimLabel.getWidth()) / 2;
 		final double ly = (dimTotal.getHeight() - dimLabel.getHeight()) / 2;
 		label.drawU(ug.apply(new UTranslate(lx, ly)));
 
 		final Dimension2D dimWeat = west.calculateDimension(stringBounder);
-		west.drawU(ug.apply(new UTranslate(-dimWeat.getWidth(), -dimWeat.getHeight() + dimTotal.getHeight() / 2)));
+		 west.drawU(ug.apply(new UTranslate(-dimWeat.getWidth(), -dimWeat.getHeight() + dimTotal.getHeight() / 2)));
 
 		final Dimension2D dimEast = east.calculateDimension(stringBounder);
 		east.drawU(ug.apply(new UTranslate(dimTotal.getWidth(), -dimEast.getHeight() + dimTotal.getHeight() / 2)));
@@ -162,7 +163,7 @@ public class FtileDiamondInside3 extends AbstractFtile implements FtileOverpassi
 		final Dimension2D north = this.north.calculateDimension(stringBounder);
 		final Dimension2D east = this.east.calculateDimension(stringBounder);
 		final Dimension2D west = this.west.calculateDimension(stringBounder);
-		final double height = total.getHeight(); // + north.getHeight();
+		final double height = total.getHeight(); //  + north.getHeight();
 		final double left = total.getWidth() / 2;
 		final double supp = MathUtils.max(north.getWidth(), east.getWidth(), west.getWidth());
 		// final double width = supp > left ? left + supp : diamond.getWidth();

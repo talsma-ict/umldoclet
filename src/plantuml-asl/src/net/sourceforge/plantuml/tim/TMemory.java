@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -33,13 +33,11 @@ package net.sourceforge.plantuml.tim;
 import java.util.Map;
 import java.util.Set;
 
-import net.sourceforge.plantuml.tim.expression.TValue;
-
 public interface TMemory {
 
-	public TValue getVariable(String varname);
+	public TVariable getVariable(String varname);
 
-	public void putVariable(String varname, TValue value, TVariableScope scope) throws EaterException;
+	public void putVariable(String varname, TVariable value, TVariableScope scope) throws EaterException;
 
 	public void removeVariable(String varname);
 
@@ -49,28 +47,15 @@ public interface TMemory {
 
 	public Trie variablesNames3();
 
-	public TMemory forkFromGlobal(Map<String, TValue> input);
+	public TMemory forkFromGlobal(Map<String, TVariable> input);
 
-	public ExecutionContextIf peekIf();
+	public ConditionalContext peekConditionalContext();
 
-	public boolean areAllIfOk(TContext context, TMemory memory) throws EaterException;
+	public boolean areAllIfOk();
 
-	public void addIf(ExecutionContextIf context);
+	public void addConditionalContext(ConditionalContext context);
 
-	public void addWhile(ExecutionContextWhile value);
-
-	public void addForeach(ExecutionContextForeach value);
-
-	public ExecutionContextIf pollIf();
-
-	public ExecutionContextWhile pollWhile();
-
-	public ExecutionContextWhile peekWhile();
-
-	public ExecutionContextForeach pollForeach();
-
-	public ExecutionContextForeach peekForeach();
+	public ConditionalContext pollConditionalContext();
 
 	public void dumpDebug(String message);
-
 }

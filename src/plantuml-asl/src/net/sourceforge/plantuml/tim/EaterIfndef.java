@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,19 +30,16 @@
  */
 package net.sourceforge.plantuml.tim;
 
-import net.sourceforge.plantuml.StringLocated;
-import net.sourceforge.plantuml.tim.expression.TValue;
-
 public class EaterIfndef extends Eater {
 
 	private String varname;
 
-	public EaterIfndef(StringLocated s) {
+	public EaterIfndef(String s) {
 		super(s);
 	}
 
 	@Override
-	public void analyze(TContext context, TMemory memory) throws EaterException {
+	public void execute(TContext context, TMemory memory) throws EaterException {
 		skipSpaces();
 		checkAndEatChar("!ifndef");
 		skipSpaces();
@@ -50,7 +47,7 @@ public class EaterIfndef extends Eater {
 	}
 
 	public boolean isTrue(TContext context, TMemory memory) {
-		final TValue currentValue = memory.getVariable(varname);
+		final TVariable currentValue = memory.getVariable(varname);
 		return currentValue == null && context.doesFunctionExist(varname) == false;
 	}
 

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -56,7 +56,6 @@ import net.sourceforge.plantuml.cucadiagram.Code;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.GroupType;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
-import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
@@ -108,10 +107,9 @@ public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram>
 				RegexLeaf.end());
 	}
 
-	@Override
 	protected CommandExecutionResult executeNow(final ActivityDiagram diagram, BlocLines lines) {
-		lines = lines.trim();
-		final RegexResult line0 = getStartingPattern().matcher(lines.getFirst().getTrimmed().getString());
+		lines = lines.trim(false);
+		final RegexResult line0 = getStartingPattern().matcher(lines.getFirst499().getTrimmed().getString());
 
 		final IEntity entity1 = CommandLinkActivity.getEntity(diagram, line0, true);
 		if (entity1 == null) {
@@ -152,7 +150,7 @@ public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram>
 			}
 		}
 
-		final List<String> lineLast = StringUtils.getSplit(MyPattern.cmpile(getPatternEnd()), lines.getLast()
+		final List<String> lineLast = StringUtils.getSplit(MyPattern.cmpile(getPatternEnd()), lines.getLast499()
 				.getString());
 		if (StringUtils.isNotEmpty(lineLast.get(0))) {
 			if (sb.length() > 0 && sb.toString().endsWith(BackSlash.BS_BS_N) == false) {
@@ -162,7 +160,7 @@ public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram>
 		}
 
 		final String display = sb.toString();
-		final String idShort = lineLast.get(1) == null ? display : lineLast.get(1);
+		final Code code = Code.of(lineLast.get(1) == null ? display : lineLast.get(1));
 
 		String partition = null;
 		if (lineLast.get(3) != null) {
@@ -170,13 +168,10 @@ public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram>
 			partition = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(partition);
 		}
 		if (partition != null) {
-			final Ident idNewLong = diagram.buildLeafIdent(partition);
-			diagram.gotoGroup(idNewLong, diagram.buildCode(partition), Display.getWithNewlines(partition),
-					GroupType.PACKAGE, null, NamespaceStrategy.SINGLE);
+			diagram.gotoGroup2(Code.of(partition), Display.getWithNewlines(partition), GroupType.PACKAGE, null,
+					NamespaceStrategy.SINGLE);
 		}
-		final Ident ident = diagram.buildLeafIdent(idShort);
-		final Code code = diagram.V1972() ? ident : diagram.buildCode(idShort);
-		final IEntity entity2 = diagram.getOrCreate(ident, code, Display.getWithNewlines(display), LeafType.ACTIVITY);
+		final IEntity entity2 = diagram.getOrCreate(code, Display.getWithNewlines(display), LeafType.ACTIVITY);
 		if (entity2 == null) {
 			return CommandExecutionResult.error("No such entity");
 		}

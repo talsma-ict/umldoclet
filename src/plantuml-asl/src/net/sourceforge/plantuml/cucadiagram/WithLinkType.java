@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -35,10 +35,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.graphic.HtmlColorSet;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.graphic.color.Colors;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public abstract class WithLinkType {
 
@@ -50,15 +50,15 @@ public abstract class WithLinkType {
 
 	private List<Colors> supplementary = new ArrayList<Colors>();
 
-	public final HColor getSpecificColor() {
+	public final HtmlColor getSpecificColor() {
 		return colors.getColor(ColorType.LINE);
 	}
 
-	public final void setSpecificColor(HColor specificColor) {
+	public final void setSpecificColor(HtmlColor specificColor) {
 		setSpecificColor(specificColor, 0);
 	}
 
-	public final void setSpecificColor(HColor specificColor, int i) {
+	public final void setSpecificColor(HtmlColor specificColor, int i) {
 		if (i == 0) {
 			colors = colors.add(ColorType.LINE, specificColor);
 		} else {
@@ -142,7 +142,7 @@ public abstract class WithLinkType {
 			} else if (s.startsWith("thickness=")) {
 				this.goThickness(Double.parseDouble(s.substring("thickness=".length())));
 			} else {
-				final HColor tmp = HColorSet.instance().getColorIfValid(s);
+				final HtmlColor tmp = HtmlColorSet.getInstance().getColorIfValid(s);
 				setSpecificColor(tmp, i);
 			}
 		}

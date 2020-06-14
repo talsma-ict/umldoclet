@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -43,25 +43,22 @@ import net.sourceforge.plantuml.BackSlash;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.code.AsciiEncoder;
 import net.sourceforge.plantuml.code.CompressionBrotli;
-import net.sourceforge.plantuml.code.NoPlantumlCompressionException;
 import net.sourceforge.plantuml.code.StringCompressorNone;
 import net.sourceforge.plantuml.code.Transcoder;
 import net.sourceforge.plantuml.code.TranscoderImpl;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.graphic.GraphicStrings;
+import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.UDrawable;
 import net.sourceforge.plantuml.svek.TextBlockBackcolored;
-import net.sourceforge.plantuml.ugraphic.AffineTransformType;
+import net.sourceforge.plantuml.ugraphic.ColorMapperIdentity;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
-import net.sourceforge.plantuml.ugraphic.PixelImage;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UImage;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 import net.sourceforge.plantuml.version.PSystemVersion;
 
 public class PSystemDonors extends AbstractPSystem {
@@ -69,39 +66,30 @@ public class PSystemDonors extends AbstractPSystem {
 	private static final int COLS = 6;
 	private static final int FREE_LINES = 6;
 
-	public static final String DONORS = "6vaB02mFUBXRGOc9nbfsvvsjZ9-86KqYM9ud58U1HJpT3OW_mBtJutuZ_KLqfNlVD2FQiZN5USOGiI3e"
-			+ "yJIvPjZctXu8Sw9y2FxT21uW0qH9r4QrBFUas6sRAaDAyEyxN_abw1tUiK6YkKgZnP5xPFSBxs-6ytpJ"
-			+ "-EYbPy0IgdwAxcl_Tqqhw_AcAWpfifenC-hqX2hcrgWHaIB-_rJhRgSsJgOw3IG1dSgvWflgLC2h4nu3"
-			+ "YpI3MyPvDMaoAYQ-YPHWQvGGD3epjEMazZco8OF4B_K3jDbSOQd8cL0SeoJHzVNSlcq3pI-NU15y8HPi"
-			+ "7fX3AOThWHBdHeo4JmGDBRFeZQqwikI97OPIQ64V_j18ZdYaCdCwMYJy7e62eATnGD8BjMd2sT75W2eZ"
-			+ "sQBFabHT6G_XpkkmFCLge-5EiF2pu2oWXY3_Woxuz5ZrqUGSLqCjgQT9tggjH_rAl9Us6T4t_MYIA9_j"
-			+ "JREYk0kKBLAThJx7UCqZ87TBhRpYowWZcoEuzzsx6jO_MY0_0jrM4vNapx8lB2GXhgtiWtIT6wyyUX6E"
-			+ "sP1fOXs_YosliHUwmfMDoR82BFHf-xhIX0osq9NBmz0JMfLfrlb4IrfQlr_qwB9ndt1DfTczW_G-okOY"
-			+ "_x_RlSmCnG4wLc8MT9sWQ5nDgzvY0n6S5hemv2OWLw2ykMx5pUiYl-e3WhUG4OZ2XgGTulMHSjT5YEbO"
-			+ "rKqfHW3pfvHpaGXO4A5Mkw1RKIKJAUlT7gUhP_goCNUVzC5rky4OnJ6Tr5Y4xzu5zp2iL8rcjbaxXJa5"
-			+ "B-Drd5VTQwHVnRAzXVUK3wdvHmRYJE-CY9GVqTYsye_2tJeAivXBRjRbkxeV73nqvu8pMBIC6MssGvQ0"
-			+ "mjbadAbV6NvQClmTWMp2xurDNa7eJbWFOMOqWjjRasjgSec4ptIMusONW6ArUCMkY719eMgMcSeMDiNa"
-			+ "6Qj78KD-ntm2I-LQUDgmrjoLUKRrAAZ3UNUiMjQlGytR0ghBOOACj51gf9eYVIsGWMjrUfPQ1zkV5bZG"
-			+ "j_6eYbM7ujicsgxSe68AJ1SHVj4W4cb1hKGlEKaCy3z_VgKUxUlWupkZV38EaZqaCL05hKu_SMeQF8zX"
-			+ "PQpNwFlrrdQluC-_rz4cf_PuvgS8ekSW6lys2k0e9p62fu6_BXybxoHODJgrKPGhroYz4KXOi1FlpA8U"
-			+ "6MRKxyHakHcvw1NRXwhyxUGAN2o6sB3Y8fEc6B7afBVTUb15RD_vnk8WXuQ_YoeJChdAPJKmGY6sGYzE"
-			+ "Ukmsod2NLGlme3ek4vZxrM-dMTuqvhnZgMvu3CWtH-HKqIEqiAQcjMCXi56C-Rsb_LIcntyoebz4QtRi"
-			+ "rKFlGVaziWiqV5k3z3D6Wk4YPST0kxdFoGZSVCCXRqpDYKmNYwrSTCMmymOhx3Vs4bb8U65Rgrp2N7ju"
-			+ "pUcNTtbMsv6ZRI7xM3MQNYYgY178XSKwNPrOAELu84LIC6TlcIWYxQ0tkAHd04vHSBo_sn2E5PeVqQnz"
-			+ "FADHp6MTUt4FOYgSt4zxKhQRdfK7";
-
-	/*
-	 * Special thanks to our sponsors and donors:
-	 * 
-	 * - Noam Tamim
-	 */
+	public static final String DONORS = "6rW902mFR3hSmrTODcikzuop9yl7Q5RohVaQVmG9QrfMG8eAo04YsxAZMAlDIBlv0O82w3Lqz9ZRTthS"
+			+ "RwI_YAvqzqqpecqsfpJFA8e5GUFvDksmpP-zgJAa53AGwKICX-1fynfBhQmb_o3XTFytdKBoK166eTaA"
+			+ "vwCHQlz096FjZgt6TFUZgBjMNTob2jyADQPJn35S5HhbrGDVMoWP5IxzEdyBcfWL4pb4YgUis68UlQ67"
+			+ "AxdGEYCBPDR-exu0BLB392Xo2L1iFKcYuwsbdNq7ki-HG8SJboYmcJ479Gxh7MZjt12pn2a23PTcOJGs"
+			+ "aRFbYGaC-w05U_WVzKIEMz3AB8Ks9oxNW88zReR3I5gbYYPYTcWpeBX5jEX8O54NnuLmVHmCJSbvq70B"
+			+ "KEnYWL9CQW1v4-iTV9gDV57dqZU12bxr3ecZsHbMLzaXPZutPlJjpqC2ol_-oSmOdotbQa6L9LzdVzHf"
+			+ "87S96ZdiZTR6AblWNY_gb31_iK1-0BrK2og9xrat5bg0k9UK5-Jcd3-vZY8mDgK45di8KrgJ7zOLQ6n2"
+			+ "bhiP2to4dujDi88jk7BvQj3DjE8vfVE5b9GGlttHgo7zLeWrSRDw-wXtJvbh-V-wQugP53VGIGczJTS2"
+			+ "58KnMBKB4nF1ow2tGsu4P0EKXzAjE3I_o5_x0fct9lU0o6tEiLygtb0tEWGn3TPq8OKPmFmkHRbpudO7"
+			+ "4Kvh0tgNgImZRUuocrBDr25ZxhfG9p_kcnchue0SyhpmeKvmSyEugZVBkxGVC0jubByiFlsSH_1O1JWF"
+			+ "zzxpmj9SWe5sXZfQ86r6rFSzzKNX9WubikXRxEBakrnFN3nqFVZioQ9TpF_C-4yW7uFAonPAwfiCRn9e"
+			+ "-WwPR4nV-IHlmFyoCCqSZenFCUzV9i_Kn14dJjCnd6ri0B1N5JwnE0Xk1gfkwTbPJ8gORBxwc3aJ_1XV"
+			+ "W55P2vuAszdTI-8CQ9JO9-QzCkekldLAFXPG9he8bjA2KZqeAKB7C39YrA3dh3LW-rtC5kYrpsnOKYY-"
+			+ "BQ9x6Xi0hLNHJUXxk06U21ML4bwBIS9W_A_nD3qOw-3ZDosr8WwIrIKnSwY0vkW9fwL-sRgaiDwYzrlN"
+			+ "zQ9f-FF_oT4CJjMuvgiAeYi8_5-W81nozHvuBIhzz-2J4hSDZ62rdjY9bLT6JpDBI13SibwdRjECz4nK"
+			+ "b3kGXTfnVAZuJog6mzInmVABPPAYso0dTRs8ErLGzlKlmaaEXSyxHPKTHLoNoZqn8fdO-L6S-TXdJu6R"
+			+ "c-1cwePB1FgU_cwOn45jpHSfDGm7GvwAIAETpri3";
 
 	@Override
 	final protected ImageData exportDiagramNow(OutputStream os, int num, FileFormatOption fileFormat, long seed)
 			throws IOException {
 		final UDrawable result = getGraphicStrings();
-		final ImageBuilder imageBuilder = ImageBuilder.buildA(new ColorMapperIdentity(), false, null, getMetadata(),
-				null, 1.0, HColorUtils.WHITE);
+		final ImageBuilder imageBuilder = new ImageBuilder(new ColorMapperIdentity(), 1.0, HtmlColorUtils.WHITE,
+				getMetadata(), null, 0, 0, null, false);
 		imageBuilder.setUDrawable(result);
 		return imageBuilder.writeImageTOBEMOVED(fileFormat, seed, os);
 	}
@@ -110,23 +98,22 @@ public class PSystemDonors extends AbstractPSystem {
 		final List<TextBlock> cols = getCols(getDonors(), COLS, FREE_LINES);
 		return new UDrawable() {
 			public void drawU(UGraphic ug) {
-				final TextBlockBackcolored header = GraphicStrings
-						.createBlackOnWhite(Arrays.asList("<b>Special thanks to our sponsors and donors !"));
+				final TextBlockBackcolored header = GraphicStrings.createBlackOnWhite(Arrays
+						.asList("<b>Special thanks to our sponsors and donors !"));
 				header.drawU(ug);
 				final StringBounder stringBounder = ug.getStringBounder();
-				ug = ug.apply(UTranslate.dy(header.calculateDimension(stringBounder).getHeight()));
+				ug = ug.apply(new UTranslate(0, header.calculateDimension(stringBounder).getHeight()));
 				double x = 0;
 				double lastX = 0;
 				double y = 0;
 				for (TextBlock tb : cols) {
 					final Dimension2D dim = tb.calculateDimension(stringBounder);
-					tb.drawU(ug.apply(UTranslate.dx(x)));
+					tb.drawU(ug.apply(new UTranslate(x, 0)));
 					lastX = x;
 					x += dim.getWidth() + 10;
 					y = Math.max(y, dim.getHeight());
 				}
-				final UImage logo = new UImage(
-						new PixelImage(PSystemVersion.getPlantumlImage(), AffineTransformType.TYPE_BILINEAR));
+				final UImage logo = new UImage(PSystemVersion.getPlantumlImage());
 				ug.apply(new UTranslate(lastX, y - logo.getHeight())).draw(logo);
 			}
 		};
@@ -144,16 +131,11 @@ public class PSystemDonors extends AbstractPSystem {
 
 	private List<String> getDonors() throws IOException {
 		final List<String> lines = new ArrayList<String>();
-		final Transcoder t = TranscoderImpl.utf8(new AsciiEncoder(), new StringCompressorNone(),
-				new CompressionBrotli());
-		try {
-			final String s = t.decode(DONORS).replace('*', '.');
-			final StringTokenizer st = new StringTokenizer(s, BackSlash.NEWLINE);
-			while (st.hasMoreTokens()) {
-				lines.add(st.nextToken());
-			}
-		} catch (NoPlantumlCompressionException e) {
-			e.printStackTrace();
+		final Transcoder t = new TranscoderImpl(new AsciiEncoder(), new StringCompressorNone(), new CompressionBrotli());
+		final String s = t.decode(DONORS).replace('*', '.');
+		final StringTokenizer st = new StringTokenizer(s, BackSlash.NEWLINE);
+		while (st.hasMoreTokens()) {
+			lines.add(st.nextToken());
 		}
 		return lines;
 	}

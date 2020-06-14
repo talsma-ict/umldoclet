@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -120,15 +120,15 @@ public class FtileAssemblySimple extends AbstractTextBlock implements Ftile {
 
 	public FtileGeometry calculateDimension(StringBounder stringBounder) {
 		if (calculateDimension == null) {
-			calculateDimension = tile1.calculateDimension(stringBounder)
-					.appendBottom(tile2.calculateDimension(stringBounder));
+			calculateDimension = tile1.calculateDimension(stringBounder).appendBottom(
+					tile2.calculateDimension(stringBounder));
 		}
 		return calculateDimension;
 	}
 
 	private UTranslate getTranslated1(StringBounder stringBounder) {
 		final double left = calculateDimension(stringBounder).getLeft();
-		return UTranslate.dx(left - tile1.calculateDimension(stringBounder).getLeft());
+		return new UTranslate(left - tile1.calculateDimension(stringBounder).getLeft(), 0);
 	}
 
 	private UTranslate getTranslated2(StringBounder stringBounder) {

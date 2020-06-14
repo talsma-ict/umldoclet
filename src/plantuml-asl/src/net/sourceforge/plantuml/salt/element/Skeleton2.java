@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -56,13 +56,13 @@ public class Skeleton2 {
 		void drawHline(UGraphic ug) {
 			final double xpos = getXStartForLevel(level);
 			ug.apply(new UTranslate(xpos + sizeX - 1, ypos - 1)).draw(new URectangle(2, 2));
-			ug.apply(new UTranslate(xpos, ypos)).draw(ULine.hline(sizeX));
+			ug.apply(new UTranslate(xpos, ypos)).draw(new ULine(sizeX, 0));
 		}
 
 		public void drawVline(UGraphic ug, double lastY) {
 			// System.err.println("ypos=" + ypos);
 			final double xpos = getXStartForLevel(level);
-			ug.apply(new UTranslate(xpos, lastY)).draw(ULine.vline(ypos - lastY));
+			ug.apply(new UTranslate(xpos, lastY)).draw(new ULine(0, ypos - lastY));
 		}
 	}
 
@@ -119,7 +119,7 @@ public class Skeleton2 {
 	//
 	// private void drawChild(UGraphic ug, Entry parent, Entry child) {
 	// final double dy = child.ypos - parent.ypos - 2;
-	// ug.apply(new UTranslate(parent.xpos + 1, parent.ypos + 3)).draw(ULine.dy(dy));
+	// ug.apply(new UTranslate(parent.xpos + 1, parent.ypos + 3)).draw(new ULine(0, dy));
 	//
 	// final double dx = child.xpos - parent.xpos - 2;
 	// ug.apply(new UTranslate(parent.xpos + 1, child.ypos + 1)).draw(new ULine(dx, 0));

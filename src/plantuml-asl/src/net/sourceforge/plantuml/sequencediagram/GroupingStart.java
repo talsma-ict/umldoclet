@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -35,20 +35,20 @@ import java.util.Collections;
 import java.util.List;
 
 import net.sourceforge.plantuml.Url;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleBuilder;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class GroupingStart extends Grouping {
 
 	private final List<GroupingLeaf> children = new ArrayList<GroupingLeaf>();
-	private final HColor backColorGeneral;
+	private final HtmlColor backColorGeneral;
 
 	final private GroupingStart parent;
 	private boolean parallel = false;
 
-	public GroupingStart(String title, String comment, HColor backColorGeneral, HColor backColorElement,
+	public GroupingStart(String title, String comment, HtmlColor backColorGeneral, HtmlColor backColorElement,
 			GroupingStart parent, StyleBuilder styleBuilder) {
 		super(title, comment, GroupingType.START, backColorElement, styleBuilder);
 		this.backColorGeneral = backColorGeneral;
@@ -79,7 +79,7 @@ public class GroupingStart extends Grouping {
 	}
 
 	@Override
-	public HColor getBackColorGeneral() {
+	public HtmlColor getBackColorGeneral() {
 		return backColorGeneral;
 	}
 

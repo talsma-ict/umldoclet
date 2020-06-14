@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -122,7 +122,7 @@ public final class FactorySequenceNoteAcrossCommand implements SingleMultiFactor
 			}
 
 			protected CommandExecutionResult executeNow(final SequenceDiagram system, BlocLines lines) {
-				final RegexResult line0 = getStartingPattern().matcher(lines.getFirst().getTrimmed().getString());
+				final RegexResult line0 = getStartingPattern().matcher(lines.getFirst499().getTrimmed().getString());
 				lines = lines.subExtract(1, 1);
 				lines = lines.removeEmptyColumns();
 				return executeInternal(system, line0, lines);

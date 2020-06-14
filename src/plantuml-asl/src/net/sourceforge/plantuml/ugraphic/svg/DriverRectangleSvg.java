@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,16 +32,17 @@ package net.sourceforge.plantuml.ugraphic.svg;
 
 import java.awt.geom.Rectangle2D;
 
+import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.graphic.HtmlColorGradient;
 import net.sourceforge.plantuml.svg.SvgGraphics;
 import net.sourceforge.plantuml.ugraphic.ClipContainer;
+import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UClip;
 import net.sourceforge.plantuml.ugraphic.UDriver;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UShape;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorGradient;
 
 public class DriverRectangleSvg implements UDriver<SvgGraphics> {
 
@@ -59,15 +60,15 @@ public class DriverRectangleSvg implements UDriver<SvgGraphics> {
 		double width = rect.getWidth();
 		double height = rect.getHeight();
 
-		final HColor back = param.getBackcolor();
-		if (back instanceof HColorGradient) {
-			final HColorGradient gr = (HColorGradient) back;
-			final String id = svg.createSvgGradient(mapper.toRGB(gr.getColor1()),
-					mapper.toRGB(gr.getColor2()), gr.getPolicy());
+		final HtmlColor back = param.getBackcolor();
+		if (back instanceof HtmlColorGradient) {
+			final HtmlColorGradient gr = (HtmlColorGradient) back;
+			final String id = svg.createSvgGradient(StringUtils.getAsHtml(mapper.getMappedColor(gr.getColor1())),
+					StringUtils.getAsHtml(mapper.getMappedColor(gr.getColor2())), gr.getPolicy());
 			svg.setFillColor("url(#" + id + ")");
 			applyColor(svg, mapper, param);
 		} else {
-			final String backcolor = mapper.toSvg(back);
+			final String backcolor = StringUtils.getAsSvg(mapper, back);
 			svg.setFillColor(backcolor);
 			applyColor(svg, mapper, param);
 		}
@@ -89,14 +90,14 @@ public class DriverRectangleSvg implements UDriver<SvgGraphics> {
 	}
 
 	public static void applyColor(SvgGraphics svg, ColorMapper mapper, UParam param) {
-		final HColor color = param.getColor();
-		if (color instanceof HColorGradient) {
-			final HColorGradient gr = (HColorGradient) color;
-			final String id = svg.createSvgGradient(mapper.toRGB(gr.getColor1()),
-					mapper.toRGB(gr.getColor2()), gr.getPolicy());
+		final HtmlColor color = param.getColor();
+		if (color instanceof HtmlColorGradient) {
+			final HtmlColorGradient gr = (HtmlColorGradient) color;
+			final String id = svg.createSvgGradient(StringUtils.getAsHtml(mapper.getMappedColor(gr.getColor1())),
+					StringUtils.getAsHtml(mapper.getMappedColor(gr.getColor2())), gr.getPolicy());
 			svg.setStrokeColor("url(#" + id + ")");
 		} else {
-			svg.setStrokeColor(mapper.toSvg(color));
+			svg.setStrokeColor(StringUtils.getAsSvg(mapper, color));
 		}
 	}
 }

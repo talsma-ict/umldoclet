@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -43,37 +43,31 @@ import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.Direction;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.activitydiagram3.PositionedNote;
 import net.sourceforge.plantuml.activitydiagram3.ftile.AbstractFtile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileGeometry;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
 import net.sourceforge.plantuml.creole.CreoleMode;
-import net.sourceforge.plantuml.creole.Parser;
+import net.sourceforge.plantuml.creole.CreoleParser;
 import net.sourceforge.plantuml.creole.Sheet;
 import net.sourceforge.plantuml.creole.SheetBlock1;
 import net.sourceforge.plantuml.creole.SheetBlock2;
 import net.sourceforge.plantuml.creole.Stencil;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
 import net.sourceforge.plantuml.sequencediagram.NoteType;
 import net.sourceforge.plantuml.skin.rose.Rose;
-import net.sourceforge.plantuml.style.PName;
-import net.sourceforge.plantuml.style.SName;
-import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.style.StyleSignature;
-import net.sourceforge.plantuml.style.Styleable;
 import net.sourceforge.plantuml.svek.image.Opale;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
-public class FtileWithNoteOpale extends AbstractFtile implements Stencil, Styleable {
+public class FtileWithNoteOpale extends AbstractFtile implements Stencil {
 
 	private final Ftile tile;
 	private final Opale opale;
@@ -82,10 +76,6 @@ public class FtileWithNoteOpale extends AbstractFtile implements Stencil, Stylea
 	private final NotePosition notePosition;
 	private final double suppSpace = 20;
 	private final Swimlane swimlaneNote;
-
-	public StyleSignature getDefaultStyleDefinition() {
-		return StyleSignature.of(SName.root, SName.element, SName.activityDiagram, SName.note);
-	}
 
 	public Set<Swimlane> getSwimlanes() {
 		if (swimlaneNote != null) {
@@ -133,31 +123,16 @@ public class FtileWithNoteOpale extends AbstractFtile implements Stencil, Stylea
 
 		final Rose rose = new Rose();
 
-		final HColor noteBackgroundColor;
-		final HColor borderColor;
-		final FontConfiguration fc;
+		final HtmlColor noteBackgroundColor = rose.getHtmlColor(skinParam, ColorParam.noteBackground);
+		final HtmlColor borderColor = rose.getHtmlColor(skinParam, ColorParam.noteBorder);
 
-		final double shadowing;
-		if (SkinParam.USE_STYLES()) {
-			final Style style = getDefaultStyleDefinition().getMergedStyle(skinParam.getCurrentStyleBuilder())
-					.eventuallyOverride(note.getColors());
-			noteBackgroundColor = style.value(PName.BackGroundColor).asColor(getIHtmlColorSet());
-			borderColor = style.value(PName.LineColor).asColor(getIHtmlColorSet());
-			fc = style.getFontConfiguration(getIHtmlColorSet());
-			shadowing = style.value(PName.Shadowing).asDouble();
-		} else {
-			noteBackgroundColor = rose.getHtmlColor(skinParam, ColorParam.noteBackground);
-			borderColor = rose.getHtmlColor(skinParam, ColorParam.noteBorder);
-			fc = new FontConfiguration(skinParam, FontParam.NOTE, null);
-			shadowing = skinParam.shadowing(null) ? 4 : 0;
-		}
+		final FontConfiguration fc = new FontConfiguration(skinParam, FontParam.NOTE, null);
 
-		final HorizontalAlignment align = skinParam.getHorizontalAlignment(AlignmentParam.noteTextAlignment, null,
-				false);
-		final Sheet sheet = Parser.build(fc, align, skinParam, CreoleMode.FULL).createSheet(note.getDisplay());
+		final HorizontalAlignment align = skinParam.getHorizontalAlignment(AlignmentParam.noteTextAlignment, null, false);
+		final Sheet sheet = new CreoleParser(fc, align, skinParam, CreoleMode.FULL).createSheet(note.getDisplay());
 		final TextBlock text = new SheetBlock2(new SheetBlock1(sheet, skinParam.wrapWidth(), skinParam.getPadding()),
 				this, new UStroke(1));
-		opale = new Opale(shadowing, borderColor, noteBackgroundColor, text, withLink);
+		opale = new Opale(borderColor, noteBackgroundColor, text, skinParam.shadowing(null), withLink);
 
 	}
 
@@ -185,7 +160,7 @@ public class FtileWithNoteOpale extends AbstractFtile implements Stencil, Stylea
 		final double yForNote = (dimTotal.getHeight() - dimNote.getHeight()) / 2;
 
 		if (notePosition == NotePosition.LEFT) {
-			return UTranslate.dy(yForNote);
+			return new UTranslate(0, yForNote);
 		}
 		final double dx = dimTotal.getWidth() - dimNote.getWidth();
 		return new UTranslate(dx, yForNote);

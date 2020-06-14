@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -39,7 +39,6 @@ import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.security.SFile;
 
 abstract class AbstractGraphviz implements Graphviz {
 
@@ -54,8 +53,8 @@ abstract class AbstractGraphviz implements Graphviz {
 	private static String findExecutableOnPath(String name) {
 		final String path = System.getenv("PATH");
 		if (path != null) {
-			for (String dirname : path.split(SFile.pathSeparator)) {
-				final File file = new File(dirname, name);
+			for (String dirname : path.split(File.pathSeparator)) {
+				File file = new File(dirname, name);
 				if (file.isFile() && file.canExecute()) {
 					return file.getAbsolutePath();
 				}
@@ -94,8 +93,7 @@ abstract class AbstractGraphviz implements Graphviz {
 		}
 
 		if (getExeState() != ExeState.OK) {
-			// createPngNoGraphviz(os, new
-			// FileFormatOption(FileFormat.valueOf(type[0].goUpperCase())));
+			// createPngNoGraphviz(os, new FileFormatOption(FileFormat.valueOf(type[0].goUpperCase())));
 			throw new IllegalStateException();
 		}
 		final String cmd[] = getCommandLine();

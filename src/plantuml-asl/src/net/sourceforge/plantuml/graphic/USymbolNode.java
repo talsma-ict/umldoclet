@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -33,15 +33,13 @@ package net.sourceforge.plantuml.graphic;
 import java.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
-import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.ugraphic.AbstractUGraphicHorizontalLine;
-import net.sourceforge.plantuml.ugraphic.UEmpty;
+import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UHorizontalLine;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColorNone;
 
 class USymbolNode extends USymbol {
 
@@ -76,11 +74,8 @@ class USymbolNode extends USymbol {
 		ug.draw(shape);
 
 		ug.apply(new UTranslate(width - 10, 10)).draw(new ULine(9, -9));
-		ug.apply(UTranslate.dy(10)).draw(ULine.hline(width - 10));
-		ug.apply(new UTranslate(width - 10, 10)).draw(ULine.vline(height - 10));
-		if (SkinParam.USE_STYLES()) {
-			ug.apply(new UTranslate(0, height)).draw(new UEmpty(10, 10));
-		}
+		ug.apply(new UTranslate(0, 10)).draw(new ULine(width - 10, 0));
+		ug.apply(new UTranslate(width - 10, 10)).draw(new ULine(0, height - 10));
 
 	}
 
@@ -104,15 +99,15 @@ class USymbolNode extends USymbol {
 
 			drawHlineInternal(ug, line);
 			if (line.isDouble()) {
-				drawHlineInternal(ug.apply(UTranslate.dy(2)), line);
+				drawHlineInternal(ug.apply(new UTranslate(0, 2)), line);
 			}
 			line.drawTitleInternal(ug, 0, endingX - 10, 0, true);
 		}
 
 		private void drawHlineInternal(UGraphic ug, UHorizontalLine line) {
-			ug = ug.apply(line.getStroke()).apply(new HColorNone().bg());
-			ug.draw(ULine.hline(endingX - 10));
-			ug.apply(UTranslate.dx(endingX - 10)).draw(new ULine(10, -10));
+			ug = ug.apply(line.getStroke()).apply(new UChangeBackColor(null));
+			ug.draw(new ULine(endingX - 10, 0));
+			ug.apply(new UTranslate(endingX - 10, 0)).draw(new ULine(10, -10));
 		}
 	}
 

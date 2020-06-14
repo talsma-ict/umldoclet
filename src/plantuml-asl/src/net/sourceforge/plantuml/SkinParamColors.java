@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -31,15 +31,11 @@
 package net.sourceforge.plantuml;
 
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.graphic.color.Colors;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class SkinParamColors extends SkinParamDelegator {
-
-	public final Colors getColors() {
-		return colors;
-	}
 
 	final private Colors colors;
 
@@ -62,8 +58,8 @@ public class SkinParamColors extends SkinParamDelegator {
 	}
 
 	@Override
-	public HColor getFontHtmlColor(Stereotype stereotype, FontParam... param) {
-		final HColor value = colors.getColor(ColorType.TEXT);
+	public HtmlColor getFontHtmlColor(Stereotype stereotype, FontParam... param) {
+		final HtmlColor value = colors.getColor(ColorType.TEXT);
 		if (value == null) {
 			return super.getFontHtmlColor(stereotype, param);
 		}
@@ -71,12 +67,12 @@ public class SkinParamColors extends SkinParamDelegator {
 	}
 
 	@Override
-	public HColor getHtmlColor(ColorParam param, Stereotype stereotype, boolean clickable) {
+	public HtmlColor getHtmlColor(ColorParam param, Stereotype stereotype, boolean clickable) {
 		final ColorType type = param.getColorType();
 		if (type == null) {
 			return super.getHtmlColor(param, stereotype, clickable);
 		}
-		final HColor value = colors.getColor(type);
+		final HtmlColor value = colors.getColor(type);
 		if (value != null) {
 			return value;
 		}

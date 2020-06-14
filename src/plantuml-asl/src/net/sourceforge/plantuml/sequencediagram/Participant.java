@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -41,14 +41,15 @@ import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.EntityPortion;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.SymbolContext;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.graphic.color.Colors;
+import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleBuilder;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleDefinition;
 import net.sourceforge.plantuml.style.WithStyle;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class Participant implements SpecificBackcolorable, WithStyle {
 
@@ -64,20 +65,18 @@ public class Participant implements SpecificBackcolorable, WithStyle {
 	private final int order;
 	private final StyleBuilder styleBuilder;
 
-	// private Style style;
+	private Style style;
 
-	public StyleSignature getDefaultStyleDefinition() {
-		return type.getDefaultStyleDefinition().addClickable(getUrl());
+	public StyleDefinition getDefaultStyleDefinition() {
+		return type.getDefaultStyleDefinition();
 	}
 
 	public Style[] getUsedStyles() {
-		if (SkinParam.USE_STYLES() == false) {
-			return null;
+		Style tmp = style;
+		if (tmp != null) {
+			tmp = tmp.eventuallyOverride(getColors(null));
 		}
-		final StyleSignature signature = getDefaultStyleDefinition().with(stereotype);
-		Style tmp = signature.getMergedStyle(styleBuilder);
-		tmp = tmp.eventuallyOverride(getColors(null));
-		Style stereo = getDefaultStyleDefinition().withStereotype(stereotype).getMergedStyle(styleBuilder);
+		Style stereo = getDefaultStyleDefinition().with(stereotype).getMergedStyle(styleBuilder);
 		if (tmp != null) {
 			stereo = tmp.mergeWith(stereo);
 		}
@@ -101,9 +100,9 @@ public class Participant implements SpecificBackcolorable, WithStyle {
 		this.code = code;
 		this.type = type;
 		this.display = display;
-		// if (SkinParam.USE_STYLES()) {
-		// this.style = getDefaultStyleDefinition().getMergedStyle(styleBuilder);
-		// }
+		if (SkinParam.USE_STYLES()) {
+			this.style = getDefaultStyleDefinition().getMergedStyle(styleBuilder);
+		}
 	}
 
 	public String getCode() {
@@ -141,11 +140,11 @@ public class Participant implements SpecificBackcolorable, WithStyle {
 		this.stereotype = stereotype;
 		this.stereotypePositionTop = stereotypePositionTop;
 
-		// if (SkinParam.USE_STYLES()) {
-		// for (Style style : stereotype.getStyles(styleBuilder)) {
-		// this.style = this.style.mergeWith(style);
-		// }
-		// }
+		if (SkinParam.USE_STYLES()) {
+			for (Style style : stereotype.getStyles(styleBuilder)) {
+				this.style = this.style.mergeWith(style);
+			}
+		}
 	}
 
 	public final int getInitialLife() {
@@ -167,7 +166,7 @@ public class Participant implements SpecificBackcolorable, WithStyle {
 		return colors;
 	}
 
-	public void setSpecificColorTOBEREMOVED(ColorType type, HColor color) {
+	public void setSpecificColorTOBEREMOVED(ColorType type, HtmlColor color) {
 		if (color != null) {
 			this.colors = colors.add(type, color);
 		}
@@ -198,14 +197,14 @@ public class Participant implements SpecificBackcolorable, WithStyle {
 	}
 
 	public SkinParamBackcolored getSkinParamBackcolored(ISkinParam skinParam) {
-		HColor specificBackColor = getColors(skinParam).getColor(ColorType.BACK);
+		HtmlColor specificBackColor = getColors(skinParam).getColor(ColorType.BACK);
 		final boolean clickable = getUrl() != null;
-		final HColor stereoBackColor = skinParam.getHtmlColor(getBackgroundColorParam(), getStereotype(), clickable);
+		final HtmlColor stereoBackColor = skinParam.getHtmlColor(getBackgroundColorParam(), getStereotype(), clickable);
 		if (stereoBackColor != null && specificBackColor == null) {
 			specificBackColor = stereoBackColor;
 		}
 		final SkinParamBackcolored result = new SkinParamBackcolored(skinParam, specificBackColor, clickable);
-		final HColor stereoBorderColor = skinParam.getHtmlColor(ColorParam.participantBorder, getStereotype(),
+		final HtmlColor stereoBorderColor = skinParam.getHtmlColor(ColorParam.participantBorder, getStereotype(),
 				clickable);
 		if (stereoBorderColor != null) {
 			result.forceColor(ColorParam.participantBorder, stereoBorderColor);

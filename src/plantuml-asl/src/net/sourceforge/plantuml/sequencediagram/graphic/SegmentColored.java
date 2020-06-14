@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -36,6 +36,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.SymbolContext;
 import net.sourceforge.plantuml.skin.Area;
@@ -43,7 +44,6 @@ import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.SimpleContext2D;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 class SegmentColored {
 
@@ -63,14 +63,14 @@ class SegmentColored {
 		this.pos1Initial = pos1Initial;
 	}
 
-	public HColor getSpecificBackColor() {
+	public HtmlColor getSpecificBackColor() {
 		if (colors == null) {
 			return null;
 		}
 		return colors.getBackColor();
 	}
 
-	public HColor getSpecificLineColor() {
+	public HtmlColor getSpecificLineColor() {
 		if (colors == null) {
 			return null;
 		}

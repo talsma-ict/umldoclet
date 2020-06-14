@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -130,7 +130,8 @@ public class TikzGraphics {
 			out(os, "                \\p2=(sourcenode.south east),");
 			out(os, "                \\n1={\\x2-\\x1},");
 			out(os, "                \\n2={\\y2-\\y1} in");
-			out(os, "            node [inner sep=0pt, outer sep=0pt,anchor=north west,at=(\\p1)] {\\href{#1}{\\XeTeXLinkBox{\\phantom{\\rule{\\n1}{\\n2}}}}}");
+			out(os,
+					"            node [inner sep=0pt, outer sep=0pt,anchor=north west,at=(\\p1)] {\\href{#1}{\\XeTeXLinkBox{\\phantom{\\rule{\\n1}{\\n2}}}}}");
 			out(os, "                    %xelatex needs \\XeTeXLinkBox, won't create a link unless it");
 			out(os, "                    %finds text --- rules don't work without \\XeTeXLinkBox.");
 			out(os, "                    %Still builds correctly with pdflatex and lualatex");
@@ -145,7 +146,8 @@ public class TikzGraphics {
 			out(os, "                \\p2=(sourcenode.south east),");
 			out(os, "                \\n1={\\x2-\\x1},");
 			out(os, "                \\n2={\\y2-\\y1} in");
-			out(os, "            node [inner sep=0pt, outer sep=0pt,anchor=north west,at=(\\p1)] {\\hyperref [#1]{\\XeTeXLinkBox{\\phantom{\\rule{\\n1}{\\n2}}}}}");
+			out(os,
+					"            node [inner sep=0pt, outer sep=0pt,anchor=north west,at=(\\p1)] {\\hyperref [#1]{\\XeTeXLinkBox{\\phantom{\\rule{\\n1}{\\n2}}}}}");
 			out(os, "                    %xelatex needs \\XeTeXLinkBox, won't create a link unless it");
 			out(os, "                    %finds text --- rules don't work without \\XeTeXLinkBox.");
 			out(os, "                    %Still builds correctly with pdflatex and lualatex");
@@ -311,9 +313,6 @@ public class TikzGraphics {
 	}
 
 	public void appendRaw(double x, double y, String formula) {
-		if (formula == null) {
-			throw new IllegalArgumentException();
-		}
 		final StringBuilder sb = new StringBuilder("\\node at " + couple(x, y));
 		sb.append("[below right");
 		sb.append("]{");
@@ -353,10 +352,7 @@ public class TikzGraphics {
 		text = text.replaceAll("&", "\\\\&");
 		text = text.replaceAll("%", "\\\\%");
 		text = text.replace("$", "\\$");
-		// text = text.replaceAll("~", "\\\\~{}");
-		text = text.replace("~", "{\\raise.35ex\\hbox{$\\scriptstyle\\mathtt{\\sim}$}}");
-		// {\raise.35ex\hbox{$\scriptstyle\mathtt{\sim}$}}
-		// {\\raise.35ex\\hbox{$\\scriptstyle\\mathtt{\\sim}$}}
+		text = text.replaceAll("~", "\\\\~{}");
 		return text;
 	}
 
@@ -483,8 +479,7 @@ public class TikzGraphics {
 			} else if (type == USegmentType.SEG_QUADTO) {
 				throw new UnsupportedOperationException();
 			} else if (type == USegmentType.SEG_CUBICTO) {
-				// curvetoNoMacro(coord[0] + x, coord[1] + y, coord[2] + x, coord[3] + y,
-				// coord[4] + x, coord[5] + y);
+				// curvetoNoMacro(coord[0] + x, coord[1] + y, coord[2] + x, coord[3] + y, coord[4] + x, coord[5] + y);
 				sb.append(" ..controls ");
 				sb.append(couple(coord[0] + x, coord[1] + y));
 				sb.append(" and ");
@@ -492,8 +487,6 @@ public class TikzGraphics {
 				sb.append(" .. ");
 				sb.append(couple(coord[4] + x, coord[5] + y));
 			} else if (type == USegmentType.SEG_CLOSE) {
-				// Nothing
-			} else if (type == USegmentType.SEG_ARCTO) {
 				// Nothing
 			} else {
 				Log.println("unknown4 " + seg);
@@ -540,8 +533,8 @@ public class TikzGraphics {
 	}
 
 	public void drawPathIterator(double x, double y, PathIterator path) {
-		final StringBuilder sb = new StringBuilder(
-				"\\draw[color=" + getColorName(color) + ",fill=" + getColorName(color) + "] ");
+		final StringBuilder sb = new StringBuilder("\\draw[color=" + getColorName(color) + ",fill="
+				+ getColorName(color) + "] ");
 		final double coord[] = new double[6];
 		while (path.isDone() == false) {
 			final int code = path.currentSegment(coord);

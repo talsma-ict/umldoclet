@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,29 +32,29 @@ package net.sourceforge.plantuml.ugraphic.tikz;
 
 import java.awt.Color;
 
+import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.graphic.HtmlColorGradient;
 import net.sourceforge.plantuml.tikz.TikzGraphics;
+import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UDriver;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UPath;
 import net.sourceforge.plantuml.ugraphic.UShape;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorGradient;
 
 public class DriverUPathTikz implements UDriver<TikzGraphics> {
 
 	public void draw(UShape shape, double x, double y, ColorMapper mapper, UParam param, TikzGraphics tikz) {
 		final UPath path = (UPath) shape;
-		final HColor back = param.getBackcolor();
-		if (back instanceof HColorGradient) {
-			final HColorGradient gr = (HColorGradient) back;
-			final Color color1 = mapper.toColor(gr.getColor1());
-			final Color color2 = mapper.toColor(gr.getColor2());
+		final HtmlColor back = param.getBackcolor();
+		if (back instanceof HtmlColorGradient) {
+			final HtmlColorGradient gr = (HtmlColorGradient) back;
+			final Color color1 = mapper.getMappedColor(gr.getColor1());
+			final Color color2 = mapper.getMappedColor(gr.getColor2());
 			tikz.setGradientColor(color1, color2, gr.getPolicy());
 		} else {
-			tikz.setFillColor(mapper.toColor(back));
+			tikz.setFillColor(mapper.getMappedColor(back));
 		}
-		tikz.setStrokeColor(mapper.toColor(param.getColor()));
+		tikz.setStrokeColor(mapper.getMappedColor(param.getColor()));
 		tikz.setStrokeWidth(param.getStroke().getThickness(), param.getStroke().getDashTikz());
 		tikz.upath(x, y, path);
 	}

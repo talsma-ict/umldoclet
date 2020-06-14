@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,10 +32,10 @@ package net.sourceforge.plantuml.xmi;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.w3c.dom.Element;
-
 import net.sourceforge.plantuml.classdiagram.ClassDiagram;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
+
+import org.w3c.dom.Element;
 
 public class XmiClassDiagramStandard extends XmiClassDiagramAbstract implements IXmiClassDiagram {
 

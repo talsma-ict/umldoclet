@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,35 +30,55 @@
  */
 package net.sourceforge.plantuml.activitydiagram3.ftile.vcompact;
 
+import java.awt.geom.Dimension2D;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.plantuml.activitydiagram3.ForkStyle;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactory;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactoryDelegator;
+import net.sourceforge.plantuml.activitydiagram3.ftile.FtileHeightFixed;
+import net.sourceforge.plantuml.activitydiagram3.ftile.FtileUtils;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
 
-public final class FtileFactoryDelegatorCreateParallel extends FtileFactoryDelegator {
+public class FtileFactoryDelegatorCreateParallel extends FtileFactoryDelegator {
+
+	private final double spaceArroundBlackBar = 20;
+	private final double xMargin = 14;
 
 	public FtileFactoryDelegatorCreateParallel(FtileFactory factory) {
 		super(factory);
 	}
 
-	@Override
-	public Ftile createParallel(List<Ftile> all, ForkStyle style, String label, Swimlane in, Swimlane out) {
+	private Ftile allOverlapped(Swimlane swimlane, List<Ftile> all, ForkStyle style, String label) {
+		return new FtileForkInnerOverlapped(all);
+	}
 
-		AbstractParallelFtilesBuilder builder;
+	@Override
+	public Ftile createParallel(Swimlane swimlane, List<Ftile> all, ForkStyle style, String label) {
+
+		final Dimension2D dimSuper = super.createParallel(swimlane, all, style, label).calculateDimension(getStringBounder());
+		final double height1 = dimSuper.getHeight() + 2 * spaceArroundBlackBar;
+
+		final List<Ftile> list = new ArrayList<Ftile>();
+		for (Ftile tmp : all) {
+			list.add(new FtileHeightFixed(FtileUtils.addHorizontalMargin(tmp, xMargin), height1));
+		}
+		final Ftile inner = super.createParallel(swimlane, list, style, label);
+
+		ParallelFtilesBuilder builder;
+
 		if (style == ForkStyle.SPLIT) {
-			builder = new ParallelBuilderSplit(skinParam(), getStringBounder(), all);
+			builder = new ParallelBuilderSplit2(skinParam(), getStringBounder(), list, inner, swimlane);
 		} else if (style == ForkStyle.MERGE) {
-			builder = new ParallelBuilderMerge(skinParam(), getStringBounder(), all);
+			builder = new ParallelBuilderMerge(skinParam(), getStringBounder(), list, inner, swimlane);
 		} else if (style == ForkStyle.FORK) {
-			builder = new ParallelBuilderFork(skinParam(), getStringBounder(), label, in, out, all);
+			builder = new ParallelBuilderFork(skinParam(), getStringBounder(), list, inner, swimlane, label);
 		} else {
 			throw new IllegalStateException();
 		}
-		final Ftile inner = super.createParallel(builder.list99, style, label, in, out);
-		return builder.build(inner);
+		return builder.build();
 	}
 
 }

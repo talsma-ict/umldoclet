@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -33,9 +33,11 @@ package net.sourceforge.plantuml.activitydiagram3.ftile;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.ugraphic.MinMax;
+import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
+import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class Zad {
 
@@ -48,7 +50,7 @@ public class Zad {
 	}
 
 	public void drawDebug(UGraphic ug) {
-		ug = ug.apply(HColorUtils.BLUE.bg()).apply(HColorUtils.RED_LIGHT);
+		ug = ug.apply(new UChangeBackColor(HtmlColorUtils.BLUE)).apply(new UChangeColor(HtmlColorUtils.RED_LIGHT));
 		for (MinMax minMax : rectangles) {
 			System.err.println("minmax=" + minMax);
 			minMax.drawGrey(ug);

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -35,9 +35,12 @@ import java.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.FontStyle;
+import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.graphic.HtmlColorGradient;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.svg.SvgGraphics;
 import net.sourceforge.plantuml.ugraphic.ClipContainer;
+import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UClip;
 import net.sourceforge.plantuml.ugraphic.UDriver;
 import net.sourceforge.plantuml.ugraphic.UFont;
@@ -45,9 +48,6 @@ import net.sourceforge.plantuml.ugraphic.UFontContext;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.UText;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorGradient;
 
 public class DriverTextSvg implements UDriver<SvgGraphics> {
 
@@ -99,22 +99,22 @@ public class DriverTextSvg implements UDriver<SvgGraphics> {
 		final double width = dim.getWidth();
 		final double height = dim.getHeight();
 		if (fontConfiguration.containsStyle(FontStyle.BACKCOLOR)) {
-			final HColor back = fontConfiguration.getExtendedColor();
-			if (back instanceof HColorGradient) {
-				final HColorGradient gr = (HColorGradient) back;
-				final String id = svg.createSvgGradient(mapper.toRGB(gr.getColor1()),
-						mapper.toRGB(gr.getColor2()), gr.getPolicy());
+			final HtmlColor back = fontConfiguration.getExtendedColor();
+			if (back instanceof HtmlColorGradient) {
+				final HtmlColorGradient gr = (HtmlColorGradient) back;
+				final String id = svg.createSvgGradient(StringUtils.getAsHtml(mapper.getMappedColor(gr.getColor1())),
+						StringUtils.getAsHtml(mapper.getMappedColor(gr.getColor2())), gr.getPolicy());
 				svg.setFillColor("url(#" + id + ")");
 				svg.setStrokeColor(null);
 				final double deltaPatch = 2;
 				svg.svgRectangle(x, y - height + deltaPatch, width, height, 0, 0, 0, null);
 
 			} else {
-				backColor = mapper.toRGB(back);
+				backColor = StringUtils.getAsHtml(mapper.getMappedColor(back));
 			}
 		}
 
-		svg.setFillColor(mapper.toRGB(fontConfiguration.getColor()));
+		svg.setFillColor(StringUtils.getAsHtml(mapper.getMappedColor(fontConfiguration.getColor())));
 		svg.text(text, x, y, font.getFamily(UFontContext.SVG), font.getSize(), fontWeight, fontStyle, textDecoration,
 				width, fontConfiguration.getAttributes(), backColor);
 	}

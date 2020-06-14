@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -33,6 +33,7 @@ package net.sourceforge.plantuml.preproc;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -52,7 +53,6 @@ import java.util.regex.Pattern;
 
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.brotli.BrotliInputStream;
-import net.sourceforge.plantuml.security.SFile;
 
 public class Stdlib {
 
@@ -86,7 +86,7 @@ public class Stdlib {
 		}
 	}
 
-	public static Stdlib retrieve(final String name) throws IOException {
+	private static Stdlib retrieve(final String name) throws IOException {
 		Stdlib result = all.get(name);
 		if (result == null) {
 			final DataInputStream dataStream = getDataStream(name);
@@ -252,7 +252,7 @@ public class Stdlib {
 	public static void extractStdLib() throws IOException {
 		for (String name : getAll()) {
 			final Stdlib folder = Stdlib.retrieve(name);
-			folder.extractMeFull();
+			folder.extractMeFull(new File("stdlib", name));
 		}
 	}
 
@@ -267,7 +267,7 @@ public class Stdlib {
 		return Collections.unmodifiableCollection(result);
 	}
 
-	private void extractMeFull() throws IOException {
+	private void extractMeFull(File dir) throws IOException {
 		final DataInputStream dataStream = getDataStream();
 		if (dataStream == null) {
 			return;
@@ -280,9 +280,9 @@ public class Stdlib {
 				if (filename.equals(SEPARATOR)) {
 					return;
 				}
-				final SFile f = new SFile("stdlib/" + name + "/" + filename + ".puml");
+				final File f = new File("stdlib/" + name + "/" + filename + ".puml");
 				f.getParentFile().mkdirs();
-				final PrintWriter fos = f.createPrintWriter();
+				final PrintWriter fos = new PrintWriter(f);
 				while (true) {
 					final String s = dataStream.readUTF();
 					if (s.equals(SEPARATOR)) {
@@ -303,46 +303,6 @@ public class Stdlib {
 					}
 				}
 				fos.close();
-			}
-		} finally {
-			dataStream.close();
-			spriteStream.close();
-		}
-	}
-
-	public List<String> extractAllSprites() throws IOException {
-		final List<String> result = new ArrayList<String>();
-		final DataInputStream dataStream = getDataStream();
-		if (dataStream == null) {
-			return Collections.unmodifiableList(result);
-		}
-		dataStream.readUTF();
-		final InputStream spriteStream = getSpriteStream();
-		try {
-			while (true) {
-				final String filename = dataStream.readUTF();
-				if (filename.equals(SEPARATOR)) {
-					return Collections.unmodifiableList(result);
-				}
-				while (true) {
-					final String s = dataStream.readUTF();
-					if (s.equals(SEPARATOR)) {
-						break;
-					}
-					if (isSpriteLine(s)) {
-						final Matcher m = sizePattern.matcher(s);
-						final boolean ok = m.find();
-						if (ok == false) {
-							throw new IOException(s);
-						}
-						final int width = Integer.parseInt(m.group(1));
-						final int height = Integer.parseInt(m.group(2));
-						final String sprite = readSprite(width, height, spriteStream);
-						if (s.contains("_LARGE") == false) {
-							result.add(s + "\n" + sprite + "}");
-						}
-					}
-				}
 			}
 		} finally {
 			dataStream.close();

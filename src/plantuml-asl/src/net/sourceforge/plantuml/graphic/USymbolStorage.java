@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -47,7 +47,7 @@ class USymbolStorage extends USymbol {
 	}
 
 	private void drawStorage(UGraphic ug, double width, double height, boolean shadowing) {
-		final URectangle shape = new URectangle(width, height).rounded(70);
+		final URectangle shape = new URectangle(width, height, 70, 70);
 		if (shadowing) {
 			shape.setDeltaShadow(3.0);
 		}
@@ -83,8 +83,7 @@ class USymbolStorage extends USymbol {
 
 	@Override
 	public TextBlock asBig(final TextBlock title, HorizontalAlignment labelAlignment, final TextBlock stereotype,
-			final double width, final double height, final SymbolContext symbolContext,
-			final HorizontalAlignment stereoAlignment) {
+			final double width, final double height, final SymbolContext symbolContext, final HorizontalAlignment stereoAlignment) {
 		return new AbstractTextBlock() {
 
 			public void drawU(UGraphic ug) {

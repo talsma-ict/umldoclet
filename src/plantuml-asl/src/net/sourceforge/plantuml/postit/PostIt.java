@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -39,6 +39,9 @@ import net.sourceforge.plantuml.SpriteContainerEmpty;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.graphic.HtmlColorSetSimple;
+import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.SymbolContext;
 import net.sourceforge.plantuml.skin.Area;
@@ -48,9 +51,6 @@ import net.sourceforge.plantuml.skin.rose.ComponentRoseNote;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class PostIt {
 
@@ -105,12 +105,12 @@ public class PostIt {
 	}
 
 	private Component getComponent() {
-		final HColor noteBackgroundColor = HColorSet.instance().getColorIfValid("#FBFB77");
-		final HColor borderColor = HColorUtils.MY_RED;
+		final HtmlColor noteBackgroundColor = new HtmlColorSetSimple().getColorIfValid("#FBFB77");
+		final HtmlColor borderColor = HtmlColorUtils.MY_RED;
 
 		final SkinParam param = SkinParam.noShadowing(null);
 		final UFont fontNote = param.getFont(null, false, FontParam.NOTE);
-		final FontConfiguration font2 = fontNote.toFont2(HColorUtils.BLACK, true, HColorUtils.BLUE, 8);
+		final FontConfiguration font2 = fontNote.toFont2(HtmlColorUtils.BLACK, true, HtmlColorUtils.BLUE, 8);
 		final ComponentRoseNote note = new ComponentRoseNote(
 				null, new SymbolContext(noteBackgroundColor, borderColor).withStroke(new UStroke()), font2, text, 0,
 				0, new SpriteContainerEmpty(), 0, HorizontalAlignment.LEFT);

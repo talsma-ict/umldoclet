@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -105,28 +105,24 @@ public class PlayingSpace implements Bordered {
 
 	private double drawUInternal(UGraphic ug, boolean trace) {
 		final StringBounder stringBounder = ug.getStringBounder();
-		final List<YPositionedTile> local = new ArrayList<YPositionedTile>();
-		final List<YPositionedTile> full = new ArrayList<YPositionedTile>();
-		final double y = GroupingTile.fillPositionelTiles(stringBounder, startingY, tiles, local, full);
-		for (YPositionedTile tile : local) {
+		final List<YPositionedTile> positionedTiles = new ArrayList<YPositionedTile>();
+		final double y = GroupingTile.fillPositionelTiles(stringBounder, startingY, tiles, positionedTiles);
+		for (YPositionedTile tile : positionedTiles) {
 			tile.drawInArea(ug);
 		}
 		for (LinkAnchor linkAnchor : linkAnchors) {
-			final YPositionedTile ytile1 = getFromAnchor(full, linkAnchor.getAnchor1());
-			final YPositionedTile ytile2 = getFromAnchor(full, linkAnchor.getAnchor2());
-			if (ytile1 != null && ytile2 != null) {
-				linkAnchor.drawAnchor(ug, ytile1, ytile2, skinParam);
-			}
+			final YPositionedTile tile1 = getFromAnchor(positionedTiles, linkAnchor.getAnchor1());
+			final YPositionedTile tile2 = getFromAnchor(positionedTiles, linkAnchor.getAnchor2());
+			linkAnchor.drawAnchor(ug, tile1, tile2, skinParam);
 		}
 		// System.err.println("MainTile::drawUInternal finalY=" + y);
 		return y;
 	}
 
 	private YPositionedTile getFromAnchor(List<YPositionedTile> positionedTiles, String anchor) {
-		for (YPositionedTile ytile : positionedTiles) {
-			final boolean matchAnchorV2 = ytile.matchAnchorV2(anchor);
-			if (matchAnchorV2) {
-				return ytile;
+		for (YPositionedTile tile : positionedTiles) {
+			if (tile.matchAnchor(anchor)) {
+				return tile;
 			}
 		}
 		return null;

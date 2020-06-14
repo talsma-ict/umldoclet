@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -69,9 +69,9 @@ public class ComponentRoseEnglober extends AbstractTextualComponent {
 	protected void drawBackgroundInternalU(UGraphic ug, Area area) {
 		final Dimension2D dimensionToUse = area.getDimensionToUse();
 		ug = symbolContext.transparentBackColorToNull().apply(ug);
-		ug.draw(new URectangle(dimensionToUse.getWidth(), dimensionToUse.getHeight()).rounded(roundCorner));
+		ug.draw(new URectangle(dimensionToUse.getWidth(), dimensionToUse.getHeight(), roundCorner, roundCorner));
 		final double xpos = (dimensionToUse.getWidth() - getPureTextWidth(ug.getStringBounder())) / 2;
-		getTextBlock().drawU(ug.apply(UTranslate.dx(xpos)));
+		getTextBlock().drawU(ug.apply(new UTranslate(xpos, 0)));
 	}
 
 	@Override

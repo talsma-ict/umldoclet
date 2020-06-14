@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -106,7 +106,7 @@ class FtileSplit1 extends AbstractFtile {
 	public UTranslate getTranslateFor(Ftile searched, StringBounder stringBounder) {
 		final Dimension2D dim = searched.calculateDimension(stringBounder);
 		final double xpos = calculateDimension(stringBounder).getWidth() - dim.getWidth();
-		return UTranslate.dx(xpos / 2);
+		return new UTranslate(xpos / 2, 0);
 	}
 
 }

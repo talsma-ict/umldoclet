@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -92,7 +92,7 @@ class ArrowAndParticipant extends Arrow implements InGroupable {
 			arrow.drawInternalU(ug, maxX, context);
 		} else {
 			final double boxWidth = participantBox.getPreferredWidth(ug.getStringBounder());
-			arrow.drawInternalU(ug.apply(UTranslate.dx(boxWidth / 2 - paddingParticipant)), maxX, context);
+			arrow.drawInternalU(ug.apply(new UTranslate(boxWidth / 2 - paddingParticipant, 0)), maxX, context);
 		}
 
 		final double arrowHeight = arrow.getPreferredHeight(ug.getStringBounder());
@@ -102,10 +102,7 @@ class ArrowAndParticipant extends Arrow implements InGroupable {
 		if (arrowHeight > boxHeight) {
 			diff = arrowHeight - boxHeight;
 		}
-		if (context.isBackground() == false) {
-			participantBox
-					.drawParticipantHead(ug.apply(new UTranslate(participantBoxStartingX, getStartingY() + diff)));
-		}
+		participantBox.drawParticipantHead(ug.apply(new UTranslate(participantBoxStartingX, getStartingY() + diff)));
 	}
 
 	private double getDiff(UGraphic ug) {

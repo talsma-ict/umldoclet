@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -31,12 +31,10 @@
 package net.sourceforge.plantuml.tim;
 
 import java.util.List;
-import java.util.Set;
 
 import net.sourceforge.plantuml.DefinitionsContainer;
 import net.sourceforge.plantuml.StringLocated;
 import net.sourceforge.plantuml.preproc.Defines;
-import net.sourceforge.plantuml.preproc.FileWithSuffix;
 import net.sourceforge.plantuml.preproc.ImportedFiles;
 
 public class TimLoader {
@@ -44,29 +42,26 @@ public class TimLoader {
 	private final TContext context;
 	private final TMemory global = new TMemoryGlobal();
 	private boolean preprocessorError;
-	private List<StringLocated> resultList;
+	private List<StringLocated> result;
 
-	public TimLoader(ImportedFiles importedFiles, Defines defines, String charset,
-			DefinitionsContainer definitionsContainer) {
+	public TimLoader(ImportedFiles importedFiles, Defines defines, String charset, DefinitionsContainer definitionsContainer) {
 		this.context = new TContext(importedFiles, defines, charset, definitionsContainer);
-		try {
-			defines.copyTo(global);
-		} catch (EaterException e) {
-			e.printStackTrace();
-		}
 	}
 
-	public Set<FileWithSuffix> load(List<StringLocated> list) {
-//		CodeIteratorImpl.indentNow(list);
-		try {
-			context.executeLines(global, list, null, false);
-		} catch (EaterExceptionLocated e) {
-			context.getResultList().add(e.getLocation().withErrorPreprocessor(e.getMessage()));
-			changeLastLine(context.getDebug(), e.getMessage());
-			this.preprocessorError = true;
+	public void load(List<StringLocated> input) {
+		for (StringLocated s : input) {
+			final TLineType type = TLineType.getFromLine(s.getTrimmed().getString());
+			try {
+				context.executeOneLine(global, type, s, null);
+			} catch (EaterException e) {
+				context.getResult().add(s.withErrorPreprocessor(e.getMessage()));
+				this.result = context.getResult();
+				changeLastLine(context.getDebug(), e.getMessage());
+				this.preprocessorError = true;
+				return;
+			}
 		}
-		this.resultList = context.getResultList();
-		return context.getFilesUsedCurrent();
+		this.result = context.getResult();
 	}
 
 	private void changeLastLine(List<StringLocated> list, String message) {
@@ -75,8 +70,8 @@ public class TimLoader {
 		list.set(num, last.withErrorPreprocessor(message));
 	}
 
-	public final List<StringLocated> getResultList() {
-		return resultList;
+	public final List<StringLocated> getResult() {
+		return result;
 	}
 
 	public final List<StringLocated> getDebug() {

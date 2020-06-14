@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -27,7 +27,6 @@
  *
  *
  * Original Author:  Arnaud Roques
- * Contribution :  Hisashi Miyashita
  */
 package net.sourceforge.plantuml.classdiagram.command;
 
@@ -48,7 +47,6 @@ import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.Code;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
-import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.Stereotag;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
@@ -173,10 +171,7 @@ public class CommandCreateElementFull2 extends SingleLineCommand2<ClassDiagram> 
 
 		if (symbol == null) {
 			type = LeafType.DESCRIPTION;
-			usymbol = diagram.getSkinParam().getActorStyle().getUSymbol();
-		} else if (symbol.equalsIgnoreCase("port")) {
-			type = LeafType.PORT;
-			usymbol = null;
+			usymbol = USymbol.ACTOR;
 		} else if (symbol.equalsIgnoreCase("usecase")) {
 			type = LeafType.USECASE;
 			usymbol = null;
@@ -185,22 +180,20 @@ public class CommandCreateElementFull2 extends SingleLineCommand2<ClassDiagram> 
 			usymbol = null;
 		} else {
 			type = LeafType.DESCRIPTION;
-			usymbol = USymbol.getFromString(symbol, diagram.getSkinParam());
+			usymbol = USymbol.getFromString(symbol, diagram.getSkinParam().useUml2ForComponent());
 			if (usymbol == null) {
 				throw new IllegalStateException();
 			}
 		}
 
-		final String idShort = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(codeRaw);
-		final Ident ident = diagram.buildLeafIdent(idShort);
-		final Code code = diagram.V1972() ? ident : diagram.buildCode(idShort);
+		final Code code = Code.of(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(codeRaw));
 		String display = displayRaw;
 		if (display == null) {
-			display = code.getName();
+			display = code.getFullName();
 		}
 		display = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(display);
 		final String stereotype = arg.getLazzy("STEREOTYPE", 0);
-		final IEntity entity = diagram.getOrCreateLeaf(ident, code, type, usymbol);
+		final IEntity entity = diagram.getOrCreateLeaf(code, type, usymbol);
 		entity.setDisplay(Display.getWithNewlines(display));
 		entity.setUSymbol(usymbol);
 		if (stereotype != null) {

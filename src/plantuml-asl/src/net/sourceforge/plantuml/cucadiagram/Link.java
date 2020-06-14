@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -41,6 +41,7 @@ import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.command.Position;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.USymbolInterface;
@@ -48,9 +49,7 @@ import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
 import net.sourceforge.plantuml.style.StyleBuilder;
 import net.sourceforge.plantuml.svek.Bibliotekon;
-import net.sourceforge.plantuml.ugraphic.UComment;
 import net.sourceforge.plantuml.ugraphic.UFont;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.utils.UniqueSequence;
 
 public class Link extends WithLinkType implements Hideable, Removeable {
@@ -85,7 +84,7 @@ public class Link extends WithLinkType implements Hideable, Removeable {
 
 	private boolean constraint = true;
 	private boolean inverted = false;
-	private LinkArrow linkArrow = LinkArrow.NONE_OR_SEVERAL;
+	private LinkArrow linkArrow = LinkArrow.NONE;
 
 	private boolean opale;
 	private boolean horizontalSolitary;
@@ -94,27 +93,6 @@ public class Link extends WithLinkType implements Hideable, Removeable {
 	private final StyleBuilder styleBuilder;
 
 	private Url url;
-
-	public String idCommentForSvg() {
-		if (type.looksLikeRevertedForSvg()) {
-			final String comment = getEntity1().getCodeGetName() + "<-" + getEntity2().getCodeGetName();
-			return comment;
-		}
-		if (type.looksLikeNoDecorAtAllSvg()) {
-			final String comment = getEntity1().getCodeGetName() + "-" + getEntity2().getCodeGetName();
-			return comment;
-		}
-		final String comment = getEntity1().getCodeGetName() + "->" + getEntity2().getCodeGetName();
-		return comment;
-	}
-
-	public UComment commentForSvg() {
-		if (type.looksLikeRevertedForSvg()) {
-			return new UComment(
-					"reverse link " + getEntity1().getCodeGetName() + " to " + getEntity2().getCodeGetName());
-		}
-		return new UComment("link " + getEntity1().getCodeGetName() + " to " + getEntity2().getCodeGetName());
-	}
 
 	public Link(IEntity cl1, IEntity cl2, LinkType type, Display label, int length, StyleBuilder styleBuilder) {
 		this(cl1, cl2, type, label, length, null, null, null, null, null, styleBuilder);
@@ -126,7 +104,7 @@ public class Link extends WithLinkType implements Hideable, Removeable {
 	}
 
 	public Link(IEntity cl1, IEntity cl2, LinkType type, Display label, int length, String qualifier1,
-			String qualifier2, String labeldistance, String labelangle, HColor specificColor,
+			String qualifier2, String labeldistance, String labelangle, HtmlColor specificColor,
 			StyleBuilder styleBuilder) {
 		if (length < 1) {
 			throw new IllegalArgumentException();
@@ -190,7 +168,6 @@ public class Link extends WithLinkType implements Hideable, Removeable {
 		result.port1 = this.port2;
 		result.port2 = this.port1;
 		result.url = this.url;
-		result.linkConstraint = this.linkConstraint;
 		return result;
 	}
 
@@ -248,11 +225,11 @@ public class Link extends WithLinkType implements Hideable, Removeable {
 	}
 
 	public EntityPort getEntityPort1(Bibliotekon bibliotekon) {
-		return new EntityPort(bibliotekon.getNodeUid((ILeaf) cl1), port1);
+		return new EntityPort(bibliotekon.getShapeUid((ILeaf) cl1), port1);
 	}
 
 	public EntityPort getEntityPort2(Bibliotekon bibliotekon) {
-		return new EntityPort(bibliotekon.getNodeUid((ILeaf) cl2), port2);
+		return new EntityPort(bibliotekon.getShapeUid((ILeaf) cl2), port2);
 	}
 
 	@Override
@@ -469,8 +446,7 @@ public class Link extends WithLinkType implements Hideable, Removeable {
 
 	public boolean hasEntryPoint() {
 		return (getEntity1().isGroup() == false && ((ILeaf) getEntity1()).getEntityPosition() != EntityPosition.NORMAL)
-				|| (getEntity2().isGroup() == false
-						&& ((ILeaf) getEntity2()).getEntityPosition() != EntityPosition.NORMAL);
+				|| (getEntity2().isGroup() == false && ((ILeaf) getEntity2()).getEntityPosition() != EntityPosition.NORMAL);
 	}
 
 	public boolean hasTwoEntryPointsSameContainer() {
@@ -564,16 +540,6 @@ public class Link extends WithLinkType implements Hideable, Removeable {
 
 	public UmlDiagramType getUmlDiagramType() {
 		return umlType;
-	}
-
-	private LinkConstraint linkConstraint;
-
-	public void setLinkConstraint(LinkConstraint linkConstraint) {
-		this.linkConstraint = linkConstraint;
-	}
-
-	public final LinkConstraint getLinkConstraint() {
-		return linkConstraint;
 	}
 
 }

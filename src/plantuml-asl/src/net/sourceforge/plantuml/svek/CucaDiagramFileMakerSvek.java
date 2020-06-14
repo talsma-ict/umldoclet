@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -41,7 +41,6 @@ import net.sourceforge.plantuml.BaseFile;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.NamedOutputStream;
 import net.sourceforge.plantuml.Scale;
-import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.api.ImageDataAbstract;
 import net.sourceforge.plantuml.core.ImageData;
@@ -51,12 +50,7 @@ import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramSimplifierActivity;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramSimplifierState;
 import net.sourceforge.plantuml.cucadiagram.dot.DotData;
 import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
-import net.sourceforge.plantuml.style.SName;
-import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public final class CucaDiagramFileMakerSvek implements CucaDiagramFileMaker {
 
@@ -79,11 +73,10 @@ public final class CucaDiagramFileMakerSvek implements CucaDiagramFileMaker {
 	private GeneralImageBuilder createDotDataImageBuilder(DotMode dotMode, StringBounder stringBounder) {
 		final DotData dotData = new DotData(diagram.getEntityFactory().getRootGroup(), getOrderedLinks(),
 				diagram.getLeafsvalues(), diagram.getUmlDiagramType(), diagram.getSkinParam(), diagram, diagram,
-				diagram.getColorMapper(), diagram.getEntityFactory(), diagram.isHideEmptyDescriptionForState(), dotMode,
-				diagram.getNamespaceSeparator(), diagram.getPragma());
-		final boolean intricated = diagram.mergeIntricated();
-		return new GeneralImageBuilder(intricated, dotData, diagram.getEntityFactory(), diagram.getSource(),
-				diagram.getPragma(), stringBounder, diagram.getUmlDiagramType().getStyleName());
+				diagram.getColorMapper(), diagram.getEntityFactory(), diagram.isHideEmptyDescriptionForState(),
+				dotMode, diagram.getNamespaceSeparator(), diagram.getPragma());
+		return new GeneralImageBuilder(dotData, diagram.getEntityFactory(), diagram.getSource(), diagram.getPragma(),
+				stringBounder);
 
 	}
 
@@ -122,17 +115,9 @@ public final class CucaDiagramFileMakerSvek implements CucaDiagramFileMaker {
 		final Dimension2D dim = result.calculateDimension(fileFormatOption.getDefaultStringBounder());
 		final double scale = getScale(fileFormatOption, dim);
 
-		final HColor backcolor = result.getBackcolor();
-		final ClockwiseTopRightBottomLeft margins;
-		if (SkinParam.USE_STYLES()) {
-			final Style style = StyleSignature.of(SName.root, SName.document)
-					.getMergedStyle(diagram.getSkinParam().getCurrentStyleBuilder());
-			margins = style.getMargin();
-		} else {
-			margins = ClockwiseTopRightBottomLeft.margin1margin2(0, 10);
-		}
-		final ImageBuilder imageBuilder = ImageBuilder.buildC(diagram.getSkinParam(), margins, diagram.getAnimation(),
-				fileFormatOption.isWithMetadata() ? diagram.getMetadata() : null, warningOrError, scale, backcolor);
+		final ImageBuilder imageBuilder = new ImageBuilder(diagram.getSkinParam(), scale,
+				fileFormatOption.isWithMetadata() ? diagram.getMetadata() : null, warningOrError, 0, 10,
+				diagram.getAnimation(), result.getBackcolor());
 		imageBuilder.setUDrawable(result);
 		final ImageData imageData = imageBuilder.writeImageTOBEMOVED(fileFormatOption, diagram.seed(), os);
 		if (isGraphvizCrash) {

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -33,14 +33,14 @@ package net.sourceforge.plantuml.nwdiag;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 
 public class DiagGroup {
 
 	private final String name;
 	private final Network network;
 	private final Set<String> elements = new HashSet<String>();
-	private HColor color;
+	private HtmlColor color;
 
 	@Override
 	public String toString() {
@@ -67,11 +67,11 @@ public class DiagGroup {
 		return elements.contains(tested.getElement().getName());
 	}
 
-	public final HColor getColor() {
+	public final HtmlColor getColor() {
 		return color;
 	}
 
-	public final void setColor(HColor color) {
+	public final void setColor(HtmlColor color) {
 		this.color = color;
 	}
 

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -44,7 +44,6 @@ import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.GroupType;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.IGroup;
-import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.NamespaceStrategy;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.color.ColorParser;
@@ -60,7 +59,7 @@ public class CommandNamespace extends SingleLineCommand2<ClassDiagram> {
 		return RegexConcat.build(CommandNamespace.class.getName(), RegexLeaf.start(), //
 				new RegexLeaf("namespace"), //
 				RegexLeaf.spaceOneOrMore(), //
-				new RegexLeaf("NAME", "([\\p{L}0-9_][-\\p{L}0-9_.:\\\\]*)"), //
+				new RegexLeaf("NAME", "([\\p{L}0-9_][\\p{L}0-9_.:\\\\]*)"), //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("STEREOTYPE", "(\\<\\<.*\\>\\>)?"), //
 				RegexLeaf.spaceZeroOrMore(), //
@@ -73,21 +72,10 @@ public class CommandNamespace extends SingleLineCommand2<ClassDiagram> {
 
 	@Override
 	protected CommandExecutionResult executeArg(ClassDiagram diagram, LineLocation location, RegexResult arg) {
-		final String idShort = arg.get("NAME", 0);
-		final Code code;
-		final IGroup currentPackage;
-		final Display display;
-		final Ident idNewLong = diagram.buildLeafIdent(idShort);
-		if (diagram.V1972()) {
-			code = null;
-			currentPackage = null;
-			display = Display.getWithNewlines(idNewLong.getName());
-		} else {
-			code = diagram.buildCode(idShort);
-			currentPackage = diagram.getCurrentGroup();
-			display = Display.getWithNewlines(code);
-		}
-		diagram.gotoGroup(idNewLong, code, display, GroupType.PACKAGE, currentPackage, NamespaceStrategy.MULTIPLE);
+		final Code code = Code.of(arg.get("NAME", 0));
+		final IGroup currentPackage = diagram.getCurrentGroup();
+		diagram.gotoGroup2(code, Display.getWithNewlines(code), GroupType.PACKAGE, currentPackage,
+				NamespaceStrategy.MULTIPLE);
 		final IEntity p = diagram.getCurrentGroup();
 		final String stereotype = arg.get("STEREOTYPE", 0);
 		if (stereotype != null) {

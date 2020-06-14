@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,26 +30,26 @@
  */
 package net.sourceforge.plantuml;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.sourceforge.plantuml.security.SFile;
-
 public class AFileRegular implements AFile {
 
-	private final SFile file;
+	private final File file;
 
 	@Override
 	public String toString() {
-		return "AFileRegular::" + file.getAbsolutePath();
+		return "AFileRegular::" + file;
 	}
 
-	public AFileRegular(SFile file) {
+	public AFileRegular(File file) {
 		this.file = file;
 	}
 
-	public InputStream openFile() {
-		return file.openFile();
+	public InputStream open() throws IOException {
+		return new FileInputStream(file);
 	}
 
 	public boolean isOk() {
@@ -73,12 +73,12 @@ public class AFileRegular implements AFile {
 		return new AParentFolderRegular(file.getParentFile());
 	}
 
-	public SFile getUnderlyingFile() {
-		return file;
+	public String getAbsolutePath() {
+		return file.getAbsolutePath();
 	}
 
-	public SFile getSystemFolder() throws IOException {
-		return file.getParentFile().getCanonicalFile();
+	public File getUnderlyingFile() {
+		return file;
 	}
 
 }

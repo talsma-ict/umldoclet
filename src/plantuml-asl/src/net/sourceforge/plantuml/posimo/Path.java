@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -37,20 +37,18 @@ public class Path {
 	private final Block end;
 	private final int length;
 	private DotPath dotPath;
-	private final boolean invis;
 
 	public Path(Block start, Block end, Label label) {
-		this(start, end, label, 2, false);
+		this(start, end, label, 2);
 	}
 
-	public Path(Block start, Block end, Label label, int length, boolean invis) {
+	public Path(Block start, Block end, Label label, int length) {
 		if (start == null || end == null) {
 			throw new IllegalArgumentException();
 		}
 		if (length < 1) {
 			throw new IllegalArgumentException("length=" + length);
 		}
-		this.invis = invis;
 		this.start = start;
 		this.end = end;
 		this.label = label;
@@ -90,10 +88,6 @@ public class Path {
 
 	public int getLength() {
 		return length;
-	}
-
-	public final boolean isInvis() {
-		return invis;
 	}
 
 }

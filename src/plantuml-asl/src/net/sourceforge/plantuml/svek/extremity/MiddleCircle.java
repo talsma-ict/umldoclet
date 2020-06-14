@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,19 +32,20 @@ package net.sourceforge.plantuml.svek.extremity;
 
 import java.awt.geom.Point2D;
 
+import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 class MiddleCircle extends Extremity {
 
 	private final double radius = 6;
 	private final UEllipse circle = new UEllipse(2 * radius, 2 * radius);
-	private final HColor backColor;
+	private final HtmlColor backColor;
 	
-	public MiddleCircle(HColor backColor) {
+	public MiddleCircle(HtmlColor backColor) {
 		this.backColor = backColor;
 	}
 
@@ -56,7 +57,7 @@ class MiddleCircle extends Extremity {
 
 
 	public void drawU(UGraphic ug) {
-		ug.apply(backColor.bg()).apply(new UStroke(1.5)).apply(new UTranslate(-radius, -radius)).draw(circle);
+		ug.apply(new UChangeBackColor(backColor)).apply(new UStroke(1.5)).apply(new UTranslate(-radius, -radius)).draw(circle);
 	}
 
 }

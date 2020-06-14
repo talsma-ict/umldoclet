@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -38,25 +38,24 @@ import java.awt.geom.PathIterator;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
 import javax.xml.transform.TransformerException;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
+import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.UDrawable;
-import net.sourceforge.plantuml.security.ImageIO;
-import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.svg.SvgGraphics;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class FontChecker {
 
@@ -153,7 +152,7 @@ public class FontChecker {
 	}
 
 	private String getSvgImage(char c) throws IOException, TransformerException {
-		final SvgGraphics svg = new SvgGraphics(true, new Dimension2DDouble(0, 0), 1.0, null, 42, "none");
+		final SvgGraphics svg = new SvgGraphics(true, new Dimension2DDouble(0, 0), 1.0, null, 42);
 		svg.setStrokeColor("black");
 		svg.svgImage(getBufferedImage(c), 0, 0);
 		final ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -164,12 +163,12 @@ public class FontChecker {
 
 	public BufferedImage getBufferedImage(final char c) throws IOException {
 		assert c != '\t';
-		final ImageBuilder imageBuilder = ImageBuilder.buildA(new ColorMapperIdentity(), false, null, null, null, 1,
-				null);
+		final ImageBuilder imageBuilder = new ImageBuilder(new ColorMapperIdentity(), 1, null, null, null, 0, 0, null,
+				false);
 		final double dim = 20;
 		imageBuilder.setUDrawable(new UDrawable() {
 			public void drawU(UGraphic ug) {
-				ug = ug.apply(HColorUtils.BLACK);
+				ug = ug.apply(new UChangeColor(HtmlColorUtils.BLACK));
 				ug.draw(new URectangle(dim - 1, dim - 1));
 				if (ug instanceof UGraphic2) {
 					ug = (UGraphic2) ug.apply(new UTranslate(dim / 3, 2 * dim / 3));
@@ -187,7 +186,7 @@ public class FontChecker {
 	// public BufferedImage getBufferedImageOld(char c) throws IOException {
 	// final double dim = 20;
 	// UGraphic2 ug = new FileFormatOption(FileFormat.PNG).createUGraphic(new Dimension2DDouble(dim, dim));
-	// ug = (UGraphic2) ug.apply(UChangeColor.nnn(HtmlColorUtils.BLACK));
+	// ug = (UGraphic2) ug.apply(new UChangeColor(HtmlColorUtils.BLACK));
 	// ug.draw(new URectangle(dim - 1, dim - 1));
 	// ug = (UGraphic2) ug.apply(new UTranslate(dim / 3, 2 * dim / 3));
 	// final UText text = new UText("" + c, new FontConfiguration(font, HtmlColorUtils.BLACK));
@@ -204,10 +203,10 @@ public class FontChecker {
 		final int size = Integer.parseInt(args[1]);
 		final int v1 = Integer.parseInt(args[2]);
 		final int v2 = Integer.parseInt(args[3]);
-		final SFile f = new SFile("fontchecker-" + name + "-" + v1 + "-" + v2 + ".html");
+		final File f = new File("fontchecker-" + name + "-" + v1 + "-" + v2 + ".html");
 
 		final FontChecker fc = new FontChecker(new UFont(name, Font.PLAIN, size));
-		final PrintWriter pw = f.createPrintWriter();
+		final PrintWriter pw = new PrintWriter(f);
 		pw.println("<html>");
 		pw.println("<h1>PROBLEM</h1>");
 		for (int i = v1; i <= v2; i++) {
