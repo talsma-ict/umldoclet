@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,12 +30,9 @@
  */
 package net.sourceforge.plantuml.tim.expression;
 
-import net.sourceforge.plantuml.json.JsonValue;
-
 public class Token {
 
 	private final String surface;
-	private final JsonValue json;
 	private final TokenType tokenType;
 
 	@Override
@@ -43,14 +40,13 @@ public class Token {
 		return tokenType + "{" + surface + "}";
 	}
 
-	public Token(char surface, TokenType tokenType, JsonValue json) {
-		this("" + surface, tokenType, json);
+	public Token(char surface, TokenType tokenType) {
+		this("" + surface, tokenType);
 	}
 
-	public Token(String surface, TokenType tokenType, JsonValue json) {
+	public Token(String surface, TokenType tokenType) {
 		this.surface = surface;
 		this.tokenType = tokenType;
-		this.json = json;
 	}
 
 	public TokenOperator getTokenOperator() {
@@ -73,14 +69,7 @@ public class Token {
 		if (this.tokenType != TokenType.PLAIN_TEXT) {
 			throw new IllegalStateException();
 		}
-		return new Token(surface, TokenType.FUNCTION_NAME, null);
-	}
-
-	public JsonValue getJson() {
-		if (this.tokenType != TokenType.JSON_DATA) {
-			throw new IllegalStateException();
-		}
-		return json;
+		return new Token(surface, TokenType.FUNCTION_NAME);
 	}
 
 }

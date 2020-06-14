@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,7 +34,7 @@ package net.sourceforge.plantuml.bpm;
 public class CleanerMoveBlock implements GridCleaner {
 
 	public boolean clean(Grid grid) {
-		// System.err.println("CleanerMoveBlock");
+		System.err.println("CleanerMoveBlock");
 		for (Line line : grid.lines().toList()) {
 			tryGrid(grid, line);
 		}
@@ -84,6 +84,6 @@ public class CleanerMoveBlock implements GridCleaner {
 	}
 
 	private void tryBridge(Line line, Col col1, final Col col2) {
-		// System.err.println("LINE=" + line + " " + col1 + " " + col2 + " ");
+		System.err.println("LINE=" + line + " " + col1 + " " + col2 + " ");
 	}
 }

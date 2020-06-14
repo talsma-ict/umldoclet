@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -101,10 +101,10 @@ public class ElementTabBar extends AbstractElement {
 			elt.drawU(ug.apply(new UTranslate(x1 + margin1, y)), zIndex, dimToUse);
 			final Dimension2D dimText = elt.getPreferredDimension(ug.getStringBounder(), x1, y);
 			final double w = dimText.getWidth();
-			ug.apply(new UTranslate(x1, y)).draw(ULine.vline(dimText.getHeight()));
-			ug.apply(new UTranslate(x1, y)).draw(ULine.hline(w + margin1 + margin2));
-			ug.apply(new UTranslate(x1 + w + margin1 + margin2, y)).draw(ULine.vline(dimText.getHeight()));
-			ug.apply(new UTranslate(x1 + w + margin1 + margin2, y + dimText.getHeight())).draw(ULine.hline(margin3));
+			ug.apply(new UTranslate(x1, y)).draw(new ULine(0, dimText.getHeight()));
+			ug.apply(new UTranslate(x1, y)).draw(new ULine(w + margin1 + margin2, 0));
+			ug.apply(new UTranslate(x1 + w + margin1 + margin2, y)).draw(new ULine(0, dimText.getHeight()));
+			ug.apply(new UTranslate(x1 + w + margin1 + margin2, y + dimText.getHeight())).draw(new ULine(margin3, 0));
 			x1 += w + margin1 + margin2 + margin3;
 		}
 	}
@@ -125,13 +125,13 @@ public class ElementTabBar extends AbstractElement {
 		ug = ug.apply(new UTranslate(x, y));
 		double y1 = x;
 		for (Element elt : tabs) {
-			elt.drawU(ug.apply(UTranslate.dy(y1 + margin1)), zIndex, dimToUse);
+			elt.drawU(ug.apply(new UTranslate(0, y1 + margin1)), zIndex, dimToUse);
 			final Dimension2D dimText = elt.getPreferredDimension(ug.getStringBounder(), x, y1);
 			final double h = dimText.getHeight();
-			ug.apply(UTranslate.dy(y1)).draw(ULine.hline(preferred.getWidth()));
-			ug.apply(UTranslate.dy(y1)).draw(ULine.vline(h + margin1 + margin2));
-			ug.apply(UTranslate.dy(y1 + h + margin1 + margin2)).draw(ULine.hline(preferred.getWidth()));
-			ug.apply(new UTranslate(preferred.getWidth(), y1 + h + margin1 + margin2)).draw(ULine.vline(margin3));
+			ug.apply(new UTranslate(0, y1)).draw(new ULine(preferred.getWidth(), 0));
+			ug.apply(new UTranslate(0, y1)).draw(new ULine(0, h + margin1 + margin2));
+			ug.apply(new UTranslate(0, y1 + h + margin1 + margin2)).draw(new ULine(preferred.getWidth(), 0));
+			ug.apply(new UTranslate(preferred.getWidth(), y1 + h + margin1 + margin2)).draw(new ULine(0, margin3));
 			y1 += h + margin1 + margin2 + margin3;
 		}
 	}

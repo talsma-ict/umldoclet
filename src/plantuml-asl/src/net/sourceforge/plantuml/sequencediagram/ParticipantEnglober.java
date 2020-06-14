@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -31,31 +31,25 @@
 package net.sourceforge.plantuml.sequencediagram;
 
 import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 
 public class ParticipantEnglober {
 
 	final private Display title;
-	final private HColor boxColor;
-	final private Stereotype stereotype;
+	final private HtmlColor boxColor;
 
-	public ParticipantEnglober(Display title, HColor boxColor, Stereotype stereotype) {
+	public ParticipantEnglober(Display title, HtmlColor boxColor) {
 		this.title = title;
 		this.boxColor = boxColor;
-		this.stereotype = stereotype;
 	}
 
 	public final Display getTitle() {
 		return title;
 	}
 
-	public final HColor getBoxColor() {
+	public final HtmlColor getBoxColor() {
 		return boxColor;
 	}
 
-	public final Stereotype getStereotype() {
-		return stereotype;
-	}
 
 }

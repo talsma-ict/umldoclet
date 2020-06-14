@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,12 +34,16 @@ import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sourceforge.plantuml.Url;
+import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.MinMax;
-import net.sourceforge.plantuml.ugraphic.UBackground;
 import net.sourceforge.plantuml.ugraphic.UChange;
+import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
+import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UGraphicNo;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UParamNull;
@@ -48,20 +52,17 @@ import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
-public class CollisionDetector extends UGraphicNo implements UGraphic {
+public class CollisionDetector implements UGraphic {
 
 	public UGraphic apply(UChange change) {
 		if (change instanceof UTranslate) {
 			return new CollisionDetector(stringBounder, translate.compose((UTranslate) change), this.context);
 		} else if (change instanceof UStroke) {
 			return new CollisionDetector(this);
-		} else if (change instanceof UBackground) {
+		} else if (change instanceof UChangeBackColor) {
 			return new CollisionDetector(this);
-		} else if (change instanceof HColor) {
+		} else if (change instanceof UChangeColor) {
 			return new CollisionDetector(this);
 		}
 		throw new UnsupportedOperationException();
@@ -82,8 +83,8 @@ public class CollisionDetector extends UGraphicNo implements UGraphic {
 					minmax.drawGrey(ug);
 				}
 			}
-			final HColor color = HColorUtils.BLACK;
-			ug = ug.apply(color).apply(new UStroke(5));
+			final HtmlColor color = HtmlColorUtils.BLACK;
+			ug = ug.apply(new UChangeColor(color)).apply(new UStroke(5));
 			for (Snake snake : snakes) {
 				for (Line2D line : snake.getHorizontalLines()) {
 					if (collision(line)) {
@@ -192,6 +193,12 @@ public class CollisionDetector extends UGraphicNo implements UGraphic {
 
 	public ColorMapper getColorMapper() {
 		throw new UnsupportedOperationException();
+	}
+
+	public void startUrl(Url url) {
+	}
+
+	public void closeAction() {
 	}
 
 	public void flushUg() {

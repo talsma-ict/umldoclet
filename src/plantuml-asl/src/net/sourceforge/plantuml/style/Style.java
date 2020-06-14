@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -33,38 +33,40 @@ package net.sourceforge.plantuml.style;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.StringTokenizer;
 
 import net.sourceforge.plantuml.ISkinSimple;
-import net.sourceforge.plantuml.LineBreakStrategy;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.graphic.IHtmlColorSet;
 import net.sourceforge.plantuml.graphic.SymbolContext;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.ugraphic.UFont;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorNone;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public class Style {
 
 	private final Map<PName, Value> map;
-	private final StyleSignature signature;
+	private final String name;
+	private final StyleKind kind;
 
-	public Style(StyleSignature signature, Map<PName, Value> map) {
+	public Style(StyleKind kind, String name, Map<PName, Value> map) {
 		this.map = map;
-		this.signature = signature;
+		this.name = name;
+		this.kind = kind;
+	}
+
+	public final StyleKind getKind() {
+		return kind;
 	}
 
 	@Override
 	public String toString() {
-		return signature + " " + map;
+		return name + " " + map;
 	}
 
 	public Value value(PName name) {
@@ -77,7 +79,9 @@ public class Style {
 
 	public Style mergeWith(Style other) {
 		if (other == null) {
-			return this;
+//			System.err.println("other="+other);
+//			return this;
+			throw new IllegalArgumentException();
 		}
 		final EnumMap<PName, Value> both = new EnumMap<PName, Value>(this.map);
 		for (Entry<PName, Value> ent : other.map.entrySet()) {
@@ -86,53 +90,40 @@ public class Style {
 				both.put(ent.getKey(), ent.getValue());
 			}
 		}
-		return new Style(this.signature.mergeWith(other.getSignature()), both);
-		// if (this.name.equals(other.name)) {
-		// return new Style(this.kind.add(other.kind), this.name, both);
-		// }
-		// return new Style(this.kind.add(other.kind), this.name + "," + other.name,
-		// both);
+		if (this.name.equals(other.name)) {
+			return new Style(this.kind.add(other.kind), this.name, both);
+		}
+		return new Style(this.kind.add(other.kind), this.name + "," + other.name, both);
 	}
 
-	public Style eventuallyOverride(PName param, HColor color) {
+	// public Style mergeWith(List<Style> others) {
+	// Style result = this;
+	// for (Style other : others) {
+	// result = result.mergeWith(other);
+	// }
+	// return result;
+	// }
+
+	public Style eventuallyOverride(PName param, HtmlColor color) {
 		if (color == null) {
 			return this;
 		}
 		final EnumMap<PName, Value> result = new EnumMap<PName, Value>(this.map);
-		final Value old = result.get(param);
-		result.put(param, new ValueColor(color, old.getPriority()));
-		// return new Style(kind, name + "-" + color, result);
-		return new Style(this.signature, result);
+		result.put(param, new ValueColor(color));
+		return new Style(kind, name + "-" + color, result);
 	}
 
 	public Style eventuallyOverride(Colors colors) {
 		Style result = this;
-		if (colors != null) {
-			final HColor back = colors.getColor(ColorType.BACK);
-			if (back != null) {
-				result = result.eventuallyOverride(PName.BackGroundColor, back);
-			}
-			final HColor line = colors.getColor(ColorType.LINE);
-			if (line != null) {
-				result = result.eventuallyOverride(PName.LineColor, line);
-			}
+		final HtmlColor back = colors.getColor(ColorType.BACK);
+		if (back != null) {
+			result = this.eventuallyOverride(PName.BackGroundColor, back);
 		}
 		return result;
 	}
 
-	public Style eventuallyOverride(SymbolContext symbolContext) {
-		Style result = this;
-		if (symbolContext != null) {
-			final HColor back = symbolContext.getBackColor();
-			if (back != null) {
-				result = result.eventuallyOverride(PName.BackGroundColor, back);
-			}
-		}
-		return result;
-	}
-
-	public StyleSignature getSignature() {
-		return signature;
+	public String getStyleName() {
+		return name;
 	}
 
 	public UFont getUFont() {
@@ -142,89 +133,43 @@ public class Style {
 		return new UFont(family, fontStyle, size);
 	}
 
-	public FontConfiguration getFontConfiguration(HColorSet set) {
+	public FontConfiguration getFontConfiguration(IHtmlColorSet set) {
 		final UFont font = getUFont();
-		final HColor color = value(PName.FontColor).asColor(set);
-		final HColor hyperlinkColor = value(PName.HyperLinkColor).asColor(set);
+		final HtmlColor color = value(PName.FontColor).asColor(set);
+		final HtmlColor hyperlinkColor = value(PName.HyperLinkColor).asColor(set);
 		return new FontConfiguration(font, color, hyperlinkColor, true);
 	}
 
-	public SymbolContext getSymbolContext(HColorSet set) {
-		final HColor backColor = value(PName.BackGroundColor).asColor(set);
-		final HColor foreColor = value(PName.LineColor).asColor(set);
+	public SymbolContext getSymbolContext(IHtmlColorSet set) {
+		final HtmlColor backColor = value(PName.BackGroundColor).asColor(set);
+		final HtmlColor foreColor = value(PName.LineColor).asColor(set);
 		final double deltaShadowing = value(PName.Shadowing).asDouble();
 		return new SymbolContext(backColor, foreColor).withStroke(getStroke()).withDeltaShadow(deltaShadowing);
 	}
 
 	public UStroke getStroke() {
 		final double thickness = value(PName.LineThickness).asDouble();
-		final String dash = value(PName.LineStyle).asString();
-		if (dash.length() == 0) {
-			return new UStroke(thickness);
-		}
-		try {
-			final StringTokenizer st = new StringTokenizer(dash, "-;,");
-			final double dashVisible = Double.parseDouble(st.nextToken().trim());
-			double dashSpace = dashVisible;
-			if (st.hasMoreTokens()) {
-				dashSpace = Double.parseDouble(st.nextToken().trim());
-			}
-			return new UStroke(dashVisible, dashSpace, thickness);
-		} catch (Exception e) {
-			return new UStroke(thickness);
-		}
+		return new UStroke(thickness);
 	}
 
-	public LineBreakStrategy wrapWidth() {
-		final String value = value(PName.MaximumWidth).asString();
-		return new LineBreakStrategy(value);
-	}
-
-	public ClockwiseTopRightBottomLeft getPadding() {
-		final String padding = value(PName.Padding).asString();
-		return ClockwiseTopRightBottomLeft.read(padding);
-	}
-
-	public ClockwiseTopRightBottomLeft getMargin() {
-		final String margin = value(PName.Margin).asString();
-		return ClockwiseTopRightBottomLeft.read(margin);
-	}
-
-	public HorizontalAlignment getHorizontalAlignment() {
-		return value(PName.HorizontalAlignment).asHorizontalAlignment();
-	}
-
-	private TextBlock createTextBlockInternal(Display display, HColorSet set, ISkinSimple spriteContainer,
-			HorizontalAlignment alignment) {
+	private TextBlock createTextBlockInternal(Display display, IHtmlColorSet set, ISkinSimple spriteContainer) {
 		final FontConfiguration fc = getFontConfiguration(set);
-		return display.create(fc, alignment, spriteContainer);
+		return display.create(fc, HorizontalAlignment.LEFT, spriteContainer);
 	}
 
-	public TextBlock createTextBlockBordered(Display note, HColorSet set, ISkinSimple spriteContainer) {
-		// final HorizontalAlignment alignment = HorizontalAlignment.LEFT;
-		final HorizontalAlignment alignment = this.getHorizontalAlignment();
-		final TextBlock textBlock = this.createTextBlockInternal(note, set, spriteContainer, alignment);
+	public TextBlock createTextBlockBordered(Display note, IHtmlColorSet set, ISkinSimple spriteContainer) {
+		final TextBlock textBlock = this.createTextBlockInternal(note, set, spriteContainer);
 
-		final HColor legendBackgroundColor = this.value(PName.BackGroundColor).asColor(set);
-		final HColor legendColor = this.value(PName.LineColor).asColor(set);
+		final HtmlColor legendBackgroundColor = this.value(PName.BackGroundColor).asColor(set);
+		final HtmlColor legendColor = this.value(PName.LineColor).asColor(set);
 		final UStroke stroke = this.getStroke();
 		final int cornersize = this.value(PName.RoundCorner).asInt();
-		final ClockwiseTopRightBottomLeft margin = this.getMargin();
-		final ClockwiseTopRightBottomLeft padding = this.getPadding();
-		final TextBlock result = TextBlockUtils.bordered(textBlock, stroke, legendColor, legendBackgroundColor,
-				cornersize, padding);
-		return TextBlockUtils.withMargin(result, margin);
-	}
+		final double margin = this.value(PName.Margin).asDouble();
+		final double padding = this.value(PName.Padding).asDouble();
 
-	public UGraphic applyStrokeAndLineColor(UGraphic ug, HColorSet colorSet) {
-		final HColor color = value(PName.LineColor).asColor(colorSet);
-		if (color == null) {
-			ug = ug.apply(new HColorNone());
-		} else {
-			ug = ug.apply(color);
-		}
-		ug = ug.apply(getStroke());
-		return ug;
+		final TextBlock result = TextBlockUtils.bordered(textBlock, stroke, legendColor, legendBackgroundColor,
+				cornersize, padding, padding);
+		return TextBlockUtils.withMargin(result, margin, margin);
 	}
 
 }

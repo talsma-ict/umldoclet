@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -36,26 +36,27 @@ import java.awt.geom.Rectangle2D;
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.InnerStrategy;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.UDrawable;
+import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
+import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorNone;
 
 public enum VisibilityModifier {
-	PRIVATE_FIELD(ColorParam.iconPrivate, null), PROTECTED_FIELD(ColorParam.iconProtected, null),
-	PACKAGE_PRIVATE_FIELD(ColorParam.iconPackage, null), PUBLIC_FIELD(ColorParam.iconPublic, null),
+	PRIVATE_FIELD(ColorParam.iconPrivate, null), PROTECTED_FIELD(ColorParam.iconProtected, null), PACKAGE_PRIVATE_FIELD(
+			ColorParam.iconPackage, null), PUBLIC_FIELD(ColorParam.iconPublic, null),
 
-	PRIVATE_METHOD(ColorParam.iconPrivate, ColorParam.iconPrivateBackground),
-	PROTECTED_METHOD(ColorParam.iconProtected, ColorParam.iconProtectedBackground),
-	PACKAGE_PRIVATE_METHOD(ColorParam.iconPackage, ColorParam.iconPackageBackground),
-	PUBLIC_METHOD(ColorParam.iconPublic, ColorParam.iconPublicBackground),
+	PRIVATE_METHOD(ColorParam.iconPrivate, ColorParam.iconPrivateBackground), PROTECTED_METHOD(
+			ColorParam.iconProtected, ColorParam.iconProtectedBackground), PACKAGE_PRIVATE_METHOD(
+			ColorParam.iconPackage, ColorParam.iconPackageBackground), PUBLIC_METHOD(ColorParam.iconPublic,
+			ColorParam.iconPublicBackground),
 
 	IE_MANDATORY(ColorParam.iconIEMandatory, ColorParam.iconIEMandatory);
 
@@ -71,7 +72,7 @@ public enum VisibilityModifier {
 		this.backgroundParam = background;
 	}
 
-	public UDrawable getUDrawable(final int size, final HColor foregroundColor, final HColor backgoundColor) {
+	public UDrawable getUDrawable(final int size, final HtmlColor foregroundColor, final HtmlColor backgoundColor) {
 		return new UDrawable() {
 			public void drawU(UGraphic ug) {
 				drawInternal(ug, size, foregroundColor, backgoundColor, 0, 0);
@@ -80,7 +81,7 @@ public enum VisibilityModifier {
 		};
 	}
 
-	public TextBlock getUBlock(final int size, final HColor foregroundColor, final HColor backgoundColor,
+	public TextBlock getUBlock(final int size, final HtmlColor foregroundColor, final HtmlColor backgoundColor,
 			final boolean withInvisibleRectanble) {
 		return new AbstractTextBlock() {
 
@@ -95,21 +96,16 @@ public enum VisibilityModifier {
 
 			public void drawU(UGraphic ug) {
 				if (withInvisibleRectanble) {
-					ug.apply(new HColorNone()).draw(new URectangle(size * 2, size));
+					ug.apply(new UChangeColor(null)).draw(new URectangle(size * 2, size));
 				}
 				drawInternal(ug, size, foregroundColor, backgoundColor, 0, 0);
 			}
 		};
 	}
 
-	private void drawInternal(UGraphic ug, int size, final HColor foregroundColor, final HColor backgoundColor,
+	private void drawInternal(UGraphic ug, int size, final HtmlColor foregroundColor, final HtmlColor backgoundColor,
 			double x, double y) {
-		if (backgoundColor == null) {
-			ug = ug.apply(new HColorNone().bg());
-		} else {
-			ug = ug.apply(backgoundColor.bg());
-		}
-		ug = ug.apply(foregroundColor);
+		ug = ug.apply(new UChangeBackColor(backgoundColor)).apply(new UChangeColor(foregroundColor));
 		size = ensureEven(size);
 		switch (this) {
 		case PACKAGE_PRIVATE_FIELD:

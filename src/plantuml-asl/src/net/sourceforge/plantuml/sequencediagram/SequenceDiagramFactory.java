@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -70,6 +70,7 @@ import net.sourceforge.plantuml.sequencediagram.command.CommandParticipantA4;
 import net.sourceforge.plantuml.sequencediagram.command.CommandReferenceMultilinesOverSeveral;
 import net.sourceforge.plantuml.sequencediagram.command.CommandReferenceOverSeveral;
 import net.sourceforge.plantuml.sequencediagram.command.CommandReturn;
+import net.sourceforge.plantuml.sequencediagram.command.CommandSkin;
 import net.sourceforge.plantuml.sequencediagram.command.CommandUrl;
 
 public class SequenceDiagramFactory extends UmlDiagramFactory {
@@ -109,8 +110,8 @@ public class SequenceDiagramFactory extends UmlDiagramFactory {
 
 		final FactorySequenceNoteOverSeveralCommand factorySequenceNoteOverSeveralCommand = new FactorySequenceNoteOverSeveralCommand();
 		cmds.add(factorySequenceNoteOverSeveralCommand.createSingleLine());
-		final FactorySequenceNoteAcrossCommand factorySequenceNoteAcrossCommand = new FactorySequenceNoteAcrossCommand();
-		cmds.add(factorySequenceNoteAcrossCommand.createSingleLine());
+		final FactorySequenceNoteAcrossCommand factorySequenceNoteAccrossCommand = new FactorySequenceNoteAcrossCommand();
+		cmds.add(factorySequenceNoteAccrossCommand.createSingleLine());
 
 		cmds.add(new CommandBoxStart());
 		cmds.add(new CommandBoxEnd());
@@ -125,7 +126,7 @@ public class SequenceDiagramFactory extends UmlDiagramFactory {
 		cmds.add(factorySequenceNoteCommand.createMultiLine(false));
 		cmds.add(factorySequenceNoteOverSeveralCommand.createMultiLine(false));
 		cmds.add(factorySequenceNoteOnArrowCommand.createMultiLine(false));
-		cmds.add(factorySequenceNoteAcrossCommand.createMultiLine(false));
+		cmds.add(factorySequenceNoteAccrossCommand.createMultiLine(false));
 
 		cmds.add(new CommandNewpage());
 		cmds.add(new CommandIgnoreNewpage());

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -46,7 +46,6 @@ import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.Code;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
-import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
@@ -109,8 +108,8 @@ final public class CommandLinkLollipop extends SingleLineCommand2<AbstractClassO
 	protected CommandExecutionResult executeArg(AbstractClassOrObjectDiagram diagram, LineLocation location,
 			RegexResult arg) {
 
-		final String ent1 = arg.get("ENT1", 1);
-		final String ent2 = arg.get("ENT2", 1);
+		final Code ent1 = Code.of(arg.get("ENT1", 1));
+		final Code ent2 = Code.of(arg.get("ENT2", 1));
 
 		final IEntity cl1;
 		final IEntity cl2;
@@ -119,19 +118,13 @@ final public class CommandLinkLollipop extends SingleLineCommand2<AbstractClassO
 		final String suffix = "lol" + UniqueSequence.getValue();
 		if (arg.get("LOL_THEN_ENT", 1) == null) {
 			assert arg.get("ENT_THEN_LOL", 0) != null;
-			final Ident ident1 = diagram.buildLeafIdent(ent1);
-			final Code ent1code = diagram.V1972() ? ident1 : diagram.buildCode(ent1);
-			cl1 = getFoo1(diagram, ent1code, ident1);
-			final Ident idNewLong = diagram.buildLeafIdent(ent1 + suffix);
-			cl2 = diagram.createLeaf(idNewLong, idNewLong.toCode(diagram), Display.getWithNewlines(ent2),
+			cl1 = diagram.getOrCreateLeaf(ent1, null, null);
+			cl2 = diagram.createLeaf(cl1.getCode().addSuffix(suffix), Display.getWithNewlines(ent2),
 					getType(arg.get("ENT_THEN_LOL", 1)), null);
 			normalEntity = cl1;
 		} else {
-			final Ident ident2 = diagram.buildLeafIdent(ent2);
-			final Code ent2code = diagram.V1972() ? ident2 : diagram.buildCode(ent2);
-			cl2 = getFoo1(diagram, ent2code, ident2);
-			final Ident idNewLong = diagram.buildLeafIdent(ent2 + suffix);
-			cl1 = diagram.createLeaf(idNewLong, idNewLong.toCode(diagram), Display.getWithNewlines(ent1),
+			cl2 = diagram.getOrCreateLeaf(ent2, null, null);
+			cl1 = diagram.createLeaf(cl2.getCode().addSuffix(suffix), Display.getWithNewlines(ent1),
 					getType(arg.get("LOL_THEN_ENT", 0)), null);
 			normalEntity = cl2;
 		}
@@ -194,16 +187,6 @@ final public class CommandLinkLollipop extends SingleLineCommand2<AbstractClassO
 		addLink(diagram, link, arg.get("HEADER", 0));
 
 		return CommandExecutionResult.ok();
-	}
-
-	private IEntity getFoo1(AbstractClassOrObjectDiagram diagram, final Code code, final Ident ident) {
-		if (diagram.V1972()) {
-			final IEntity result = ident.size() == 1 ? diagram.getLeafVerySmart(ident) : diagram.getLeafStrict(ident);
-			if (result != null) {
-				return result;
-			}
-		}
-		return diagram.getOrCreateLeaf(ident, code, null, null);
 	}
 
 	// private String merge(String a, String b) {

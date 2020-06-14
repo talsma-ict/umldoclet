@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -48,6 +48,7 @@ import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.ILeaf;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.InnerStrategy;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
@@ -55,19 +56,18 @@ import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.svek.AbstractEntityImage;
 import net.sourceforge.plantuml.svek.Bibliotekon;
-import net.sourceforge.plantuml.svek.Node;
+import net.sourceforge.plantuml.svek.Shape;
 import net.sourceforge.plantuml.svek.ShapeType;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class EntityImageTips extends AbstractEntityImage {
 
 	final private Rose rose = new Rose();
 	private final ISkinParam skinParam;
 
-	private final HColor noteBackgroundColor;
-	private final HColor borderColor;
+	private final HtmlColor noteBackgroundColor;
+	private final HtmlColor borderColor;
 
 	private final Bibliotekon bibliotekon;
 
@@ -87,7 +87,7 @@ public class EntityImageTips extends AbstractEntityImage {
 	}
 
 	private Position getPosition() {
-		if (getEntity().getCodeGetName().endsWith(Position.RIGHT.name())) {
+		if (getEntity().getCode().getFullName().endsWith(Position.RIGHT.name())) {
 			return Position.RIGHT;
 		}
 		return Position.LEFT;
@@ -115,17 +115,17 @@ public class EntityImageTips extends AbstractEntityImage {
 
 		final IEntity other = bibliotekon.getOnlyOther(getEntity());
 
-		final Node nodeMe = bibliotekon.getNode(getEntity());
-		final Node nodeOther = bibliotekon.getNode(other);
-		final Point2D positionMe = nodeMe.getPosition();
-		final Point2D positionOther = nodeOther.getPosition();
-		bibliotekon.getNode(getEntity());
+		final Shape shapeMe = bibliotekon.getShape(getEntity());
+		final Shape shapeOther = bibliotekon.getShape(other);
+		final Point2D positionMe = shapeMe.getPosition();
+		final Point2D positionOther = shapeOther.getPosition();
+		bibliotekon.getShape(getEntity());
 		final Position position = getPosition();
 		Direction direction = position.reverseDirection();
 		double height = 0;
 		for (Map.Entry<String, Display> ent : getEntity().getTips().entrySet()) {
 			final Display display = ent.getValue();
-			final Rectangle2D memberPosition = nodeOther.getImage().getInnerPosition(ent.getKey(), stringBounder,
+			final Rectangle2D memberPosition = shapeOther.getImage().getInnerPosition(ent.getKey(), stringBounder,
 					InnerStrategy.STRICT);
 			if (memberPosition == null) {
 				return;
@@ -146,7 +146,7 @@ public class EntityImageTips extends AbstractEntityImage {
 			final Point2D pp2 = new Point2D.Double(x, y);
 			opale.setOpale(direction, pp1, pp2);
 			opale.drawU(ug);
-			ug = ug.apply(UTranslate.dy(dim.getHeight() + ySpacing));
+			ug = ug.apply(new UTranslate(0, dim.getHeight() + ySpacing));
 			height += dim.getHeight();
 			height += ySpacing;
 		}
@@ -158,8 +158,7 @@ public class EntityImageTips extends AbstractEntityImage {
 		// final UFont fontNote = skinParam.getFont(FontParam.NOTE, null, false);
 		final TextBlock textBlock = new BodyEnhanced2(display, FontParam.NOTE, skinParam, HorizontalAlignment.LEFT,
 				new FontConfiguration(skinParam, FontParam.NOTE, null), LineBreakStrategy.NONE);
-		final double shadowing = skinParam.shadowing(getEntity().getStereotype())?4:0;
-		final Opale opale = new Opale(shadowing, borderColor, noteBackgroundColor, textBlock, true);
+		final Opale opale = new Opale(borderColor, noteBackgroundColor, textBlock, skinParam.shadowing(getEntity().getStereotype()), true);
 		return opale;
 	}
 

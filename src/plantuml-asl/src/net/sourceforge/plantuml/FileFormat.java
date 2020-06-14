@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -33,18 +33,14 @@ package net.sourceforge.plantuml;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
+import java.io.File;
 
 import net.sourceforge.plantuml.braille.BrailleCharFactory;
 import net.sourceforge.plantuml.braille.UGraphicBraille;
 import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.png.MetadataTag;
-import net.sourceforge.plantuml.security.SFile;
-import net.sourceforge.plantuml.svg.SvgGraphics;
 import net.sourceforge.plantuml.ugraphic.UFont;
 
 /**
@@ -54,8 +50,7 @@ import net.sourceforge.plantuml.ugraphic.UFont;
  * 
  */
 public enum FileFormat {
-	PNG, SVG, EPS, EPS_TEXT, ATXT, UTXT, XMI_STANDARD, XMI_STAR, XMI_ARGO, SCXML, PDF, MJPEG, ANIMATED_GIF, HTML, HTML5,
-	VDX, LATEX, LATEX_NO_PREAMBLE, BASE64, BRAILLE_PNG, PREPROC;
+	PNG, SVG, EPS, EPS_TEXT, ATXT, UTXT, XMI_STANDARD, XMI_STAR, XMI_ARGO, SCXML, PDF, MJPEG, ANIMATED_GIF, HTML, HTML5, VDX, LATEX, LATEX_NO_PREAMBLE, BASE64, BRAILLE_PNG, PREPROC;
 
 	/**
 	 * Returns the file format to be used for that format.
@@ -85,11 +80,7 @@ public enum FileFormat {
 	}
 
 	final static private BufferedImage imDummy = new BufferedImage(800, 100, BufferedImage.TYPE_INT_RGB);
-	final static public Graphics2D gg = imDummy.createGraphics();
-	static {
-		// KEY_FRACTIONALMETRICS
-		gg.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-	}
+	final static private Graphics2D gg = imDummy.createGraphics();
 
 	public StringBounder getDefaultStringBounder(TikzFontDistortion tikzFontDistortion) {
 		if (this == LATEX || this == LATEX_NO_PREAMBLE) {
@@ -179,16 +170,16 @@ public enum FileFormat {
 		if (cpt == 0) {
 			return changeName(fileName, getFileSuffix());
 		}
-		return changeName(fileName,
-				OptionFlags.getInstance().getFileSeparator() + String.format("%03d", cpt) + getFileSuffix());
+		return changeName(fileName, OptionFlags.getInstance().getFileSeparator() + String.format("%03d", cpt)
+				+ getFileSuffix());
 	}
 
-	private SFile computeFilename(SFile pngFile, int i) {
+	private File computeFilename(File pngFile, int i) {
 		if (i == 0) {
 			return pngFile;
 		}
-		final SFile dir = pngFile.getParentFile();
-		return dir.file(computeFilenameInternal(pngFile.getName(), i));
+		final File dir = pngFile.getParentFile();
+		return new File(dir, computeFilenameInternal(pngFile.getName(), i));
 	}
 
 	private String changeName(String fileName, String replacement) {
@@ -206,36 +197,4 @@ public enum FileFormat {
 		return name.replaceAll("\\" + getFileSuffix() + "$",
 				OptionFlags.getInstance().getFileSeparator() + String.format("%03d", i) + getFileSuffix());
 	}
-
-	public boolean doesSupportMetadata() {
-		return this == PNG || this == SVG;
-	}
-
-	public boolean equalsMetadata(String currentMetadata, SFile existingFile) {
-		try {
-			if (this == PNG) {
-				final MetadataTag tag = new MetadataTag(existingFile, "plantuml");
-				final String previousMetadata = tag.getData();
-				final boolean sameMetadata = currentMetadata.equals(previousMetadata);
-				return sameMetadata;
-			}
-			if (this == SVG) {
-				final String svg = FileUtils.readSvg(existingFile);
-				if (svg == null) {
-					return false;
-				}
-				final String currentSignature = SvgGraphics.getMD5Hex(currentMetadata);
-				final int idx = svg.lastIndexOf(SvgGraphics.MD5_HEADER);
-				if (idx != -1) {
-					final String part = svg.substring(idx + SvgGraphics.MD5_HEADER.length());
-					return part.startsWith(currentSignature);
-				}
-
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
-
 }

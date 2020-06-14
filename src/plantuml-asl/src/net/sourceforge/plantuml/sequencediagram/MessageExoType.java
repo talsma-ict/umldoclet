@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,14 +34,16 @@ public enum MessageExoType {
 	FROM_LEFT, TO_LEFT, FROM_RIGHT, TO_RIGHT;
 
 	public int getDirection() {
-		switch (this) {
-		case FROM_LEFT:
+		if (this == MessageExoType.FROM_LEFT) {
 			return 1;
-		case TO_LEFT:
+		}
+		if (this == MessageExoType.TO_LEFT) {
 			return -1;
-		case TO_RIGHT:
+		}
+		if (this == MessageExoType.TO_RIGHT) {
 			return 1;
-		case FROM_RIGHT:
+		}
+		if (this == MessageExoType.FROM_RIGHT) {
 			return -1;
 		}
 		throw new IllegalStateException();
@@ -53,20 +55,6 @@ public enum MessageExoType {
 
 	public boolean isRightBorder() {
 		return this == MessageExoType.FROM_RIGHT || this == MessageExoType.TO_RIGHT;
-	}
-
-	public MessageExoType reverse() {
-		switch (this) {
-		case FROM_LEFT:
-			return TO_LEFT;
-		case TO_RIGHT:
-			return FROM_RIGHT;
-		case FROM_RIGHT:
-			return TO_RIGHT;
-		case TO_LEFT:
-			return FROM_LEFT;
-		}
-		throw new IllegalStateException();
 	}
 
 }

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -38,44 +38,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.tim.Eater;
 import net.sourceforge.plantuml.tim.EaterException;
-import net.sourceforge.plantuml.tim.EaterExceptionLocated;
 import net.sourceforge.plantuml.tim.TContext;
-import net.sourceforge.plantuml.tim.TLineType;
 import net.sourceforge.plantuml.tim.TMemory;
 
 public class TokenStack {
 
 	final private List<Token> tokens;
-
-	public boolean isSpecialAffectationWhenFunctionCall() {
-		if (tokens.size() != 1) {
-			return false;
-		}
-		final Token single = tokens.get(0);
-		if (single.getTokenType() != TokenType.PLAIN_TEXT) {
-			return false;
-		}
-		return isSpecialAffectationWhenFunctionCall(single.getSurface());
-	}
-
-	public static boolean isSpecialAffectationWhenFunctionCall(String surface) {
-		final int idx = surface.indexOf('=');
-		if (idx <= 0) {
-			return false;
-		}
-		if (TLineType.isLetterOrUnderscoreOrDollar(surface.charAt(0)) == false) {
-			return false;
-		}
-		for (int i = 1; i < idx; i++) {
-			if (TLineType.isLetterOrUnderscoreOrDigit(surface.charAt(i)) == false) {
-				return false;
-			}
-		}
-		return true;
-	}
 
 	public TokenStack() {
 		this(new ArrayList<Token>());
@@ -83,10 +53,6 @@ public class TokenStack {
 
 	private TokenStack(List<Token> list) {
 		this.tokens = list;
-	}
-
-	public int size() {
-		return tokens.size();
 	}
 
 	public TokenStack subTokenStack(int i) {
@@ -119,7 +85,7 @@ public class TokenStack {
 			eater.skipSpaces();
 			final char ch = eater.peekChar();
 			if (ch == 0) {
-				throw EaterException.unlocated("until001");
+				throw new EaterException("until001");
 			}
 			if (level == 0 && (ch == ',' || ch == ')')) {
 				return result;
@@ -140,7 +106,7 @@ public class TokenStack {
 		while (true) {
 			final Token ch = it.peekToken();
 			if (ch == null) {
-				throw EaterException.unlocated("until002");
+				throw new EaterException("until002");
 			}
 			final TokenType typech = ch.getTokenType();
 			if (level == 0 && (typech == TokenType.COMMA || typech == TokenType.CLOSE_PAREN_MATH)
@@ -173,10 +139,10 @@ public class TokenStack {
 			} else if (type == TokenType.COMMA) {
 				result++;
 			} else {
-				throw EaterException.unlocated("count13");
+				throw new EaterException("count13");
 			}
 		}
-		throw EaterException.unlocated("count12");
+		throw new EaterException("count12");
 	}
 
 	public void guessFunctions() throws EaterException {
@@ -198,10 +164,10 @@ public class TokenStack {
 			assert tokens.get(iopen).getTokenType() == TokenType.OPEN_PAREN_MATH;
 			assert tokens.get(iclose).getTokenType() == TokenType.CLOSE_PAREN_MATH;
 			if (iopen > 0 && tokens.get(iopen - 1).getTokenType() == TokenType.PLAIN_TEXT) {
-				tokens.set(iopen - 1, new Token(tokens.get(iopen - 1).getSurface(), TokenType.FUNCTION_NAME, null));
+				tokens.set(iopen - 1, new Token(tokens.get(iopen - 1).getSurface(), TokenType.FUNCTION_NAME));
 				final int nbArg = countFunctionArg(subTokenStack(iopen + 1).tokenIterator());
-				tokens.set(iopen, new Token("" + nbArg, TokenType.OPEN_PAREN_FUNC, null));
-				tokens.set(iclose, new Token(")", TokenType.CLOSE_PAREN_FUNC, null));
+				tokens.set(iopen, new Token("" + nbArg, TokenType.OPEN_PAREN_FUNC));
+				tokens.set(iclose, new Token(")", TokenType.CLOSE_PAREN_FUNC));
 			}
 		}
 		// System.err.println("after=" + toString());
@@ -232,15 +198,14 @@ public class TokenStack {
 		return new InternalIterator();
 	}
 
-	public TValue getResult(LineLocation location, TContext context, TMemory memory)
-			throws EaterException, EaterExceptionLocated {
-		final Knowledge knowledge = context.asKnowledge(memory, location);
+	public TValue getResult(TContext context, TMemory memory) throws EaterException {
+		final Knowledge knowledge = context.asKnowledge(memory);
 		final TokenStack tmp = withoutSpace();
 		tmp.guessFunctions();
 		final TokenIterator it = tmp.tokenIterator();
 		final ShuntingYard shuntingYard = new ShuntingYard(it, knowledge);
-		final ReversePolishInterpretor rpn = new ReversePolishInterpretor(location, shuntingYard.getQueue(), knowledge,
-				memory, context);
+		final ReversePolishInterpretor rpn = new ReversePolishInterpretor(shuntingYard.getQueue(), knowledge, memory,
+				context);
 		return rpn.getResult();
 
 	}

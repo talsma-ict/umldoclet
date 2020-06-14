@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -35,13 +35,12 @@ import net.sourceforge.plantuml.SpriteContainerEmpty;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.graphic.SymbolContext;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.USymbol;
-import net.sourceforge.plantuml.skin.ActorStyle;
 import net.sourceforge.plantuml.ugraphic.UFont;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class DiagElement {
 
@@ -75,17 +74,17 @@ public class DiagElement {
 
 	private FontConfiguration getFontConfiguration() {
 		final UFont font = UFont.serif(11);
-		return new FontConfiguration(font, HColorUtils.BLACK, HColorUtils.BLACK, false);
+		return new FontConfiguration(font, HtmlColorUtils.BLACK, HtmlColorUtils.BLACK, false);
 	}
 
 	public LinkedElement asTextBlock(final String adress1, final String adress2) {
 		final TextBlock ad1 = toTextBlock(adress1);
 		final TextBlock ad2 = toTextBlock(adress2);
 		final SymbolContext symbolContext = new SymbolContext(ColorParam.activityBackground.getDefaultValue(),
-				ColorParam.activityBorder.getDefaultValue()).withShadow(3);
+				ColorParam.activityBorder.getDefaultValue()).withShadow(true);
 		final TextBlock desc = toTextBlock(description);
-		final TextBlock box = shape.asSmall(TextBlockUtils.empty(0, 0), desc, TextBlockUtils.empty(0, 0),
-				symbolContext, HorizontalAlignment.CENTER);
+		final TextBlock box = shape
+				.asSmall(TextBlockUtils.empty(0, 0), desc, TextBlockUtils.empty(0, 0), symbolContext, HorizontalAlignment.CENTER);
 		return new LinkedElement(ad1, box, ad2, mainNetwork, this);
 	}
 
@@ -106,7 +105,7 @@ public class DiagElement {
 	}
 
 	public final void setShape(String shapeName) {
-		final USymbol shapeFromString = USymbol.getFromString(shapeName, ActorStyle.STICKMAN);
+		final USymbol shapeFromString = USymbol.getFromString(shapeName);
 		if (shapeFromString != null) {
 			this.shape = shapeFromString;
 		}

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,16 +34,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.plantuml.Url;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.style.StyleBuilder;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 final public class GroupingLeaf extends Grouping implements EventWithDeactivate {
 
 	private final GroupingStart start;
-	private final HColor backColorGeneral;
+	private final HtmlColor backColorGeneral;
 
-	public GroupingLeaf(String title, String comment, GroupingType type, HColor backColorGeneral,
-			HColor backColorElement, GroupingStart start, StyleBuilder styleBuilder) {
+	public GroupingLeaf(String title, String comment, GroupingType type, HtmlColor backColorGeneral,
+			HtmlColor backColorElement, GroupingStart start, StyleBuilder styleBuilder) {
 		super(title, comment, type, backColorElement, styleBuilder);
 		if (start == null) {
 			throw new IllegalArgumentException();
@@ -74,7 +74,7 @@ final public class GroupingLeaf extends Grouping implements EventWithDeactivate 
 	}
 
 	@Override
-	public final HColor getBackColorGeneral() {
+	public final HtmlColor getBackColorGeneral() {
 		if (backColorGeneral == null) {
 			return start.getBackColorGeneral();
 		}

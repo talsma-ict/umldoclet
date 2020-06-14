@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,8 +32,8 @@ package net.sourceforge.plantuml.sequencediagram;
 
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.style.SName;
-import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.style.Styleable;
+import net.sourceforge.plantuml.style.StyleDefinition;
 
 public enum ParticipantType implements Styleable {
 	PARTICIPANT(ColorParam.participantBackground), //
@@ -55,37 +55,37 @@ public enum ParticipantType implements Styleable {
 		return background;
 	}
 
-	public StyleSignature getDefaultStyleDefinition() {
+	public StyleDefinition getDefaultStyleDefinition() {
 		if (this == PARTICIPANT) {
-			return StyleSignature.of(SName.root, SName.element,
+			return StyleDefinition.of(SName.root, SName.element,
 					SName.sequenceDiagram, SName.participant);
 		}
 		if (this == ACTOR) {
-			return StyleSignature.of(SName.root, SName.element,
+			return StyleDefinition.of(SName.root, SName.element,
 					SName.sequenceDiagram, SName.actor);
 		}
 		if (this == BOUNDARY) {
-			return StyleSignature.of(SName.root, SName.element,
+			return StyleDefinition.of(SName.root, SName.element,
 					SName.sequenceDiagram, SName.boundary);
 		}
 		if (this == CONTROL) {
-			return StyleSignature.of(SName.root, SName.element,
+			return StyleDefinition.of(SName.root, SName.element,
 					SName.sequenceDiagram, SName.control);
 		}
 		if (this == ENTITY) {
-			return StyleSignature.of(SName.root, SName.element,
+			return StyleDefinition.of(SName.root, SName.element,
 					SName.sequenceDiagram, SName.entity);
 		}
 		if (this == QUEUE) {
-			return StyleSignature.of(SName.root, SName.element,
+			return StyleDefinition.of(SName.root, SName.element,
 					SName.sequenceDiagram, SName.queue);
 		}
 		if (this == DATABASE) {
-			return StyleSignature.of(SName.root, SName.element,
+			return StyleDefinition.of(SName.root, SName.element,
 					SName.sequenceDiagram, SName.database);
 		}
 		if (this == COLLECTIONS) {
-			return StyleSignature.of(SName.root, SName.element,
+			return StyleDefinition.of(SName.root, SName.element,
 					SName.sequenceDiagram, SName.collections);
 		}
 		return null;

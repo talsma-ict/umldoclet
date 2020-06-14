@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,13 +34,15 @@ import java.awt.geom.Dimension2D;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.salt.Cell;
+import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
+import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class Grid {
 
@@ -83,21 +85,21 @@ public class Grid {
 			final int row1 = seg.getRow();
 			final int col1 = seg.getCol();
 			final double width = colsStart[col1 + 1] - colsStart[col1];
-			ug.apply(new UTranslate(x + colsStart[col1], y + rowsStart[row1])).draw(ULine.hline(width));
+			ug.apply(new UTranslate(x + colsStart[col1], y + rowsStart[row1])).draw(new ULine(width, 0));
 		}
 		// Vlines
 		for (Segment seg : verticals) {
 			final int row1 = seg.getRow();
 			final int col1 = seg.getCol();
 			final double height = rowsStart[row1 + 1] - rowsStart[row1];
-			ug.apply(new UTranslate(x + colsStart[col1], y + rowsStart[row1])).draw(ULine.vline(height));
+			ug.apply(new UTranslate(x + colsStart[col1], y + rowsStart[row1])).draw(new ULine(0, height));
 		}
 
 		final Dimension2D dim = title.calculateDimension(ug.getStringBounder());
 
 		if (dim.getWidth() > 0 && dim.getHeight() > 0) {
 			final UGraphic ug2 = ug.apply(new UTranslate(x + 6, y - dim.getHeight() * 0));
-			ug2.apply(HColorUtils.WHITE.bg()).apply(HColorUtils.WHITE)
+			ug2.apply(new UChangeBackColor(HtmlColorUtils.WHITE)).apply(new UChangeColor(HtmlColorUtils.WHITE))
 					.draw(new URectangle(dim));
 			title.drawU(ug2);
 		}

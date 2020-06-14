@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -92,16 +92,16 @@ public abstract class Log {
 	}
 
 	public static void println(Object s) {
-		// if (header2.get() == null) {
-		// System.err.println("L = " + s);
-		// } else {
-		// System.err.println(header2.get() + " " + s);
-		// }
+		if (header2.get() == null) {
+			System.err.println("L = " + s);
+		} else {
+			System.err.println(header2.get() + " " + s);
+		}
 	}
 
-	// private static final ThreadLocal<String> header2 = new ThreadLocal<String>();
-	//
+	private static final ThreadLocal<String> header2 = new ThreadLocal<String>();
+
 	public static void header(String s) {
-		// header2.set(s);
+		header2.set(s);
 	}
 }

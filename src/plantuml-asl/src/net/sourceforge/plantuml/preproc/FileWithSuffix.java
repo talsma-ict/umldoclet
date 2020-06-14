@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -31,7 +31,6 @@
 package net.sourceforge.plantuml.preproc;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -45,7 +44,6 @@ import net.sourceforge.plantuml.AFile;
 import net.sourceforge.plantuml.AFileRegular;
 import net.sourceforge.plantuml.AParentFolder;
 import net.sourceforge.plantuml.Log;
-import net.sourceforge.plantuml.security.SFile;
 
 public class FileWithSuffix {
 
@@ -54,31 +52,16 @@ public class FileWithSuffix {
 	private final String entry;
 	private final String description;
 
-	@Override
-	public String toString() {
-		if (file == null) {
-			return super.toString();
-		}
-		return file.toString();
-	}
-
 	public Reader getReader(String charset) throws IOException {
-		if (file == null) {
-			return null;
-		}
-		final InputStream tmp = file.openFile();
-		if (tmp == null) {
-			return null;
-		}
 		if (entry == null) {
 			if (charset == null) {
 				Log.info("Using default charset");
-				return new InputStreamReader(tmp);
+				return new InputStreamReader(file.open());
 			}
 			Log.info("Using charset " + charset);
-			return new InputStreamReader(tmp, charset);
+			return new InputStreamReader(file.open(), charset);
 		}
-		final InputStream is = getDataFromZip(tmp, entry);
+		final InputStream is = getDataFromZip(file.open(), entry);
 		if (is == null) {
 			return null;
 		}
@@ -111,37 +94,49 @@ public class FileWithSuffix {
 		return file != null && file.isOk();
 	}
 
-	FileWithSuffix(SFile file, String suffix) {
+	FileWithSuffix(File file, String suffix) {
 		this.file = new AFileRegular(file);
 		this.suffix = suffix;
 		this.entry = null;
-		this.description = file.getName();
+		// this.description = file.getAbsolutePath();
+		this.description = getFileName(file);
 	}
 
-	FileWithSuffix(String description, String suffix, AFile file, String entry) {
-		this.description = description;
+	public static String getFileName(File file) {
+		return file.getName();
+	}
+
+	public static String getAbsolutePath(File file) {
+		return file.getAbsolutePath();
+	}
+
+	public FileWithSuffix(ImportedFiles importedFiles, String fileName, String suffix) throws IOException {
+		final int idx = fileName.indexOf('~');
 		this.suffix = suffix;
-		this.file = file;
-		this.entry = entry;
-	}
+		if (idx == -1) {
+			this.file = importedFiles.getAFile(fileName);
+			this.entry = null;
+		} else {
+			this.file = importedFiles.getAFile(fileName.substring(0, idx));
+			this.entry = fileName.substring(idx + 1);
+		}
 
-	static FileWithSuffix none() {
-		return new FileWithSuffix("NONE", null, null, null);
+		if (file == null) {
+			this.description = fileName;
+		} else if (entry == null) {
+			// this.description = file.getAbsolutePath();
+			this.description = fileName;
+		} else {
+			// this.description = file.getAbsolutePath() + "~" + entry;
+			this.description = fileName;
+		}
+
 	}
 
 	@Override
 	public int hashCode() {
-		int v = 0;
-		if (file != null) {
-			v += file.hashCode();
-		}
-		if (suffix != null) {
-			v += suffix.hashCode() * 43;
-		}
-		if (entry != null) {
-			v += entry.hashCode();
-		}
-		return v;
+		return (file == null ? 0 : file.hashCode()) + (suffix == null ? 0 : suffix.hashCode() * 43)
+				+ (entry == null ? 0 : entry.hashCode());
 	}
 
 	@Override
@@ -160,10 +155,26 @@ public class FileWithSuffix {
 		return false;
 	}
 
-	public AParentFolder getParentFile() {
-		if (file == null) {
-			return null;
+	private static boolean equals(String s1, String s2) {
+		if (s1 == null && s2 == null) {
+			return true;
 		}
+		if (s1 != null && s2 != null) {
+			return s1.equals(s2);
+		}
+		assert (s1 == null && s2 != null) || (s1 != null && s2 == null);
+		return false;
+	}
+
+	public static Set<File> convert(Set<FileWithSuffix> all) {
+		final Set<File> result = new HashSet<File>();
+		for (FileWithSuffix f : all) {
+			result.add(f.file.getUnderlyingFile());
+		}
+		return result;
+	}
+
+	public AParentFolder getParentFile() {
 		Log.info("Getting parent of " + file);
 		Log.info("-->The parent is " + file.getParentFile());
 		return file.getParentFile();
@@ -176,28 +187,9 @@ public class FileWithSuffix {
 	public final String getSuffix() {
 		return suffix;
 	}
-
-	private static boolean equals(String s1, String s2) {
-		if (s1 == null && s2 == null) {
-			return true;
-		}
-		if (s1 != null && s2 != null) {
-			return s1.equals(s2);
-		}
-		assert (s1 == null && s2 != null) || (s1 != null && s2 == null);
-		return false;
-	}
-
-	public static Set<File> convert(Set<FileWithSuffix> all) throws FileNotFoundException {
-		final Set<File> result = new HashSet<File>();
-		for (FileWithSuffix f : all) {
-			result.add(f.file.getUnderlyingFile().conv());
-		}
-		return result;
-	}
-
-	public static String getFileName(File file) {
-		return file.getName();
+	
+	public String toStringDebug() {
+		return file.getAbsolutePath();
 	}
 
 }

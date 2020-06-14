@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,10 +34,12 @@ import java.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.LineBreakStrategy;
+import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.SymbolContext;
 import net.sourceforge.plantuml.graphic.TextBlock;
@@ -49,7 +51,6 @@ import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class ComponentRoseQueue extends AbstractTextualComponent {
 
@@ -58,7 +59,7 @@ public class ComponentRoseQueue extends AbstractTextualComponent {
 
 	public ComponentRoseQueue(Style style, Style stereo, SymbolContext biColor, FontConfiguration font,
 			Display stringsToDisplay, boolean head, ISkinSimple spriteContainer, UFont fontForStereotype,
-			HColor htmlColorForStereotype) {
+			HtmlColor htmlColorForStereotype) {
 		super(style, stereo, LineBreakStrategy.NONE, stringsToDisplay, font, HorizontalAlignment.CENTER, 3, 3, 0,
 				spriteContainer, false, fontForStereotype, htmlColorForStereotype);
 		if (SkinParam.USE_STYLES()) {
@@ -75,7 +76,7 @@ public class ComponentRoseQueue extends AbstractTextualComponent {
 		final Dimension2D dimStickman = stickman.calculateDimension(stringBounder);
 		final double delta = (getPreferredWidth(stringBounder) - dimStickman.getWidth()) / 2;
 
-		ug = ug.apply(UTranslate.dx(delta));
+		ug = ug.apply(new UTranslate(delta, 0));
 		stickman.drawU(ug);
 	}
 

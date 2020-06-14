@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -31,7 +31,6 @@
 package net.sourceforge.plantuml.nwdiag;
 
 import java.awt.geom.Dimension2D;
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -42,12 +41,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.sourceforge.plantuml.AnnotatedWorker;
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.FileFormatOption;
-import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.Scale;
-import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.SpriteContainerEmpty;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
@@ -57,22 +53,19 @@ import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.InnerStrategy;
+import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.UDrawable;
-import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
-import net.sourceforge.plantuml.svek.TextBlockBackcolored;
+import net.sourceforge.plantuml.ugraphic.ColorMapperIdentity;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
-import net.sourceforge.plantuml.ugraphic.MinMax;
+import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
+import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UEmpty;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class NwDiagram extends UmlDiagram {
 
@@ -181,47 +174,19 @@ public class NwDiagram extends UmlDiagram {
 		final Scale scale = getScale();
 
 		final double dpiFactor = scale == null ? 1 : scale.getScale(100, 100);
-		final ISkinParam skinParam = getSkinParam();
-		final int margin1;
-		final int margin2;
-		if (SkinParam.USE_STYLES()) {
-			margin1 = SkinParam.zeroMargin(0);
-			margin2 = SkinParam.zeroMargin(0);
-		} else {
-			margin1 = 0;
-			margin2 = 0;
-		}
-		final ImageBuilder imageBuilder = ImageBuilder.buildB(new ColorMapperIdentity(), false,
-				ClockwiseTopRightBottomLeft.margin1margin2(margin1, margin2), null, "", "", dpiFactor, null);
-		TextBlock result = getTextBlock();
-		result = new AnnotatedWorker(this, skinParam, fileFormatOption.getDefaultStringBounder()).addAdd(result);
+		final ImageBuilder imageBuilder = new ImageBuilder(new ColorMapperIdentity(), dpiFactor, null, "", "", 0, 0,
+				null, false);
+		final UDrawable result = getUDrawable();
 		imageBuilder.setUDrawable(result);
 
 		return imageBuilder.writeImageTOBEMOVED(fileFormatOption, 0, os);
 	}
 
-	private TextBlockBackcolored getTextBlock() {
-		return new TextBlockBackcolored() {
+	private UDrawable getUDrawable() {
+		return new UDrawable() {
 			public void drawU(UGraphic ug) {
 				drawMe(ug);
 			}
-
-			public Rectangle2D getInnerPosition(String member, StringBounder stringBounder, InnerStrategy strategy) {
-				return null;
-			}
-
-			public Dimension2D calculateDimension(StringBounder stringBounder) {
-				return getTotalDimension(stringBounder);
-			}
-
-			public MinMax getMinMax(StringBounder stringBounder) {
-				throw new UnsupportedOperationException();
-			}
-
-			public HColor getBackcolor() {
-				return null;
-			}
-
 		};
 	}
 
@@ -235,20 +200,11 @@ public class NwDiagram extends UmlDiagram {
 
 	private FontConfiguration getFontConfiguration() {
 		final UFont font = UFont.serif(11);
-		return new FontConfiguration(font, HColorUtils.BLACK, HColorUtils.BLACK, false);
+		return new FontConfiguration(font, HtmlColorUtils.BLACK, HtmlColorUtils.BLACK, false);
 	}
-
-	private Dimension2D getTotalDimension(StringBounder stringBounder) {
-		return TextBlockUtils.getMinMax(new UDrawable() {
-			public void drawU(UGraphic ug) {
-				drawMe(ug);
-			}
-		}, stringBounder, true).getDimension();
-	}
-
-	private final double margin = 5;
 
 	private void drawMe(UGraphic ug) {
+		final double margin = 5;
 		ug = ug.apply(new UTranslate(margin, margin));
 
 		final StringBounder stringBounder = ug.getStringBounder();
@@ -293,12 +249,13 @@ public class NwDiagram extends UmlDiagram {
 		}
 		deltaX += 5;
 
-		grid.drawU(ug.apply(ColorParam.activityBorder.getDefaultValue())
-				.apply(ColorParam.activityBackground.getDefaultValue().bg()).apply(new UTranslate(deltaX, deltaY)));
+		grid.drawU(ug.apply(new UChangeColor(ColorParam.activityBorder.getDefaultValue()))
+				.apply(new UChangeBackColor(ColorParam.activityBackground.getDefaultValue()))
+				.apply(new UTranslate(deltaX, deltaY)));
 		final Dimension2D dimGrid = grid.calculateDimension(stringBounder);
 
-		ug.apply(new UTranslate(dimGrid.getWidth() + deltaX + margin, dimGrid.getHeight() + deltaY + margin))
-				.draw(new UEmpty(1, 1));
+		ug.apply(new UTranslate(dimGrid.getWidth() + deltaX + margin, dimGrid.getHeight() + deltaY + margin)).draw(
+				new UEmpty(1, 1));
 
 	}
 
@@ -310,7 +267,7 @@ public class NwDiagram extends UmlDiagram {
 			currentNetwork().setOwnAdress(value);
 		}
 		if ("color".equalsIgnoreCase(property)) {
-			final HColor color = GridTextBlockDecorated.colors.getColorIfValid(value);
+			final HtmlColor color = GridTextBlockDecorated.colors.getColorIfValid(value);
 			if (currentGroup != null) {
 				currentGroup.setColor(color);
 			} else if (currentNetwork() != null) {

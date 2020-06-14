@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -53,12 +53,12 @@ public class TextBlockTitle implements TextBlock {
 			throw new IllegalArgumentException();
 		}
 		final LineBreakStrategy lineBreak = LineBreakStrategy.NONE;
-		textBlock = stringsToDisplay.create0(font, HorizontalAlignment.CENTER, spriteContainer, lineBreak,
+		textBlock = stringsToDisplay.create(font, HorizontalAlignment.CENTER, spriteContainer, lineBreak,
 				CreoleMode.FULL, null, null);
 	}
 
 	public final void drawU(UGraphic ug) {
-		textBlock.drawU(ug.apply(UTranslate.dx(outMargin)));
+		textBlock.drawU(ug.apply(new UTranslate(outMargin, 0)));
 	}
 
 	public Dimension2D calculateDimension(StringBounder stringBounder) {

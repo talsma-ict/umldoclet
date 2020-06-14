@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,6 +32,7 @@ package net.sourceforge.plantuml.cucadiagram;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -47,95 +48,45 @@ import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.api.ImageDataSimple;
-import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.core.ImageData;
-import net.sourceforge.plantuml.creole.CreoleMode;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramTxtMaker;
 import net.sourceforge.plantuml.cucadiagram.entity.EntityFactory;
 import net.sourceforge.plantuml.graphic.USymbol;
 import net.sourceforge.plantuml.jdot.CucaDiagramFileMakerJDot;
-import net.sourceforge.plantuml.security.SecurityUtils;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
 import net.sourceforge.plantuml.statediagram.StateDiagram;
 import net.sourceforge.plantuml.svek.CucaDiagramFileMaker;
 import net.sourceforge.plantuml.svek.CucaDiagramFileMakerSvek;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
+import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.xmi.CucaDiagramXmiMaker;
 import net.sourceforge.plantuml.xmlsc.StateDiagramScxmlMaker;
 
 public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, PortionShower {
-
-	static private final boolean G1972 = false;
-
-	// private String namespaceSeparator = ".";
-	// private String namespaceSeparator1 = GO1972 ? "::" : ".";
-	private String namespaceSeparator = null;
-	private boolean namespaceSeparatorHasBeenSet = false;
-
-	public final boolean V1972() {
-		if (getPragma().backToLegacyPackage()) {
-			return false;
-		}
-		if (getPragma().useNewPackage()) {
-			return true;
-		}
-		if (G1972)
-			return true;
-		return false;
-	}
-
-	public final boolean mergeIntricated() {
-		if (getNamespaceSeparator() == null) {
-			return false;
-		}
-		return this.V1972() && this.getUmlDiagramType() == UmlDiagramType.CLASS;
-	}
-
-	public Set<SuperGroup> getAllSuperGroups() {
-		return entityFactory.getAllSuperGroups();
-	}
 
 	private int horizontalPages = 1;
 	private int verticalPages = 1;
 
 	private final List<HideOrShow2> hides2 = new ArrayList<HideOrShow2>();
 	private final List<HideOrShow2> removed = new ArrayList<HideOrShow2>();
-	protected final EntityFactory entityFactory = new EntityFactory(hides2, removed, this);
+	protected final EntityFactory entityFactory = new EntityFactory(hides2, removed);
 	private IGroup currentGroup = entityFactory.getRootGroup();
-	private List<Ident> stacks2 = new ArrayList<Ident>();
-	private List<IGroup> stacks = new ArrayList<IGroup>();
 
 	private boolean visibilityModifierPresent;
 
-	public abstract IEntity getOrCreateLeaf(Ident ident, Code code, LeafType type, USymbol symbol);
+	public abstract IEntity getOrCreateLeaf(Code code, LeafType type, USymbol symbol);
 
-	public Ident cleanIdent(Ident ident) {
-		return ident;
-	}
-
+	
 	public CucaDiagram(ISkinSimple orig) {
 		super(orig);
-		this.stacks2.add(Ident.empty());
 	}
 
-	private Ident getLastID() {
-		if (stacks2.size() == 0) {
-			// Thread.dumpStack();
-			return Ident.empty();
-			// throw new IllegalArgumentException();
-		}
-		return this.stacks2.get(stacks2.size() - 1);
-	}
+	private String namespaceSeparator = ".";
 
 	final public void setNamespaceSeparator(String namespaceSeparator) {
-		this.namespaceSeparatorHasBeenSet = true;
 		this.namespaceSeparator = namespaceSeparator;
 	}
 
 	final public String getNamespaceSeparator() {
-		if (namespaceSeparatorHasBeenSet == false) {
-			return V1972() ? "::" : ".";
-		}
 		return namespaceSeparator;
 	}
 
@@ -146,7 +97,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 				return true;
 			}
 		}
-		for (IEntity entity : entityFactory.leafs()) {
+		for (IEntity entity : entityFactory.getLeafsvalues()) {
 			if (entity.hasUrl()) {
 				return true;
 			}
@@ -159,22 +110,13 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		return false;
 	}
 
-	final public void setLastEntity(ILeaf foo) {
-		this.lastEntity = foo;
-	}
-
-	final protected ILeaf getOrCreateLeafDefault(Ident idNewLong, Code code, LeafType type, USymbol symbol) {
-		checkNotNull(idNewLong);
+	final protected ILeaf getOrCreateLeafDefault(Code code, LeafType type, USymbol symbol) {
 		if (type == null) {
 			throw new IllegalArgumentException();
 		}
-		ILeaf result;
-		if (this.V1972())
-			result = entityFactory.getLeafStrict(idNewLong);
-		else
-			result = entityFactory.getLeaf(code);
+		ILeaf result = entityFactory.getLeafsget(code);
 		if (result == null) {
-			result = createLeafInternal(idNewLong, code, Display.getWithNewlines(code), type, symbol);
+			result = createLeafInternal(code, Display.getWithNewlines(code), type, symbol);
 			result.setUSymbol(symbol);
 		}
 		if (result.getLeafType() == LeafType.CLASS && type == LeafType.OBJECT) {
@@ -186,22 +128,19 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		return result;
 	}
 
-	public ILeaf createLeaf(Ident idNewLong, Code code, Display display, LeafType type, USymbol symbol) {
-		checkNotNull(idNewLong);
-		if (entityFactory.getLeafStrict(idNewLong) != null) {
+	public ILeaf createLeaf(Code code, Display display, LeafType type, USymbol symbol) {
+		if (entityFactory.getLeafsget(code) != null) {
 			return null;
 			// throw new IllegalArgumentException("Already known: " + code);
 		}
-		return createLeafInternal(idNewLong, code, display, type, symbol);
+		return createLeafInternal(code, display, type, symbol);
 	}
 
-	final protected ILeaf createLeafInternal(Ident newIdent, Code code, Display display, LeafType type,
-			USymbol symbol) {
-		checkNotNull(newIdent);
+	final protected ILeaf createLeafInternal(Code code, Display display, LeafType type, USymbol symbol) {
 		if (Display.isNull(display)) {
-			display = Display.getWithNewlines(code).withCreoleMode(CreoleMode.SIMPLE_LINE);
+			display = Display.getWithNewlines(code);
 		}
-		final ILeaf leaf = entityFactory.createLeaf(newIdent, code, display, type, getCurrentGroup(), getHides(),
+		final ILeaf leaf = entityFactory.createLeaf(code, display, type, getCurrentGroup(), getHides(),
 				getNamespaceSeparator());
 		entityFactory.addLeaf(leaf);
 		this.lastEntity = leaf;
@@ -209,53 +148,11 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		return leaf;
 	}
 
-	final public Ident buildLeafIdent(String id) {
-		return getLastID().add(id, getNamespaceSeparator());
-	}
-
-	final public Ident buildLeafIdentSpecial(String id) {
-		return buildFullyQualified(id);
-		// if (namespaceSeparator != null) {
-		// if (id.contains(namespaceSeparator)) {
-		// return Ident.empty().add(id, namespaceSeparator);
-		// }
-		// }
-		// return getLastID().add(id, namespaceSeparator);
-	}
-
-	final public Ident buildFullyQualified(String id) {
-		return entityFactory.buildFullyQualified(getLastID(), Ident.empty().add(id, getNamespaceSeparator()));
-	}
-
-	final public Code buildCode(String s) {
-		if (this.V1972())
-			throw new UnsupportedOperationException();
-		return CodeImpl.of(s);
-	}
-
-	protected final void checkNotNull(Object id) {
-		if (id == null) {
-			throw new IllegalArgumentException();
-		}
-	}
-
 	public boolean leafExist(Code code) {
-		if (this.V1972())
-			throw new UnsupportedOperationException();
-		return entityFactory.getLeaf(code) != null;
-	}
-
-	public boolean leafExistSmart(Ident ident) {
-		return entityFactory.getLeafSmart(ident) != null;
-	}
-
-	public boolean leafExistStrict(Ident ident) {
-		return entityFactory.getLeafStrict(ident) != null;
+		return entityFactory.getLeafsget(code) != null;
 	}
 
 	final public Collection<IGroup> getChildrenGroups(IGroup parent) {
-		if (this.V1972())
-			return getChildrenGroupsIdent1972(parent);
 		final Collection<IGroup> result = new ArrayList<IGroup>();
 		for (IGroup gg : getGroups(false)) {
 			if (gg.getParentContainer() == parent) {
@@ -265,164 +162,34 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		return Collections.unmodifiableCollection(result);
 	}
 
-	private Collection<IGroup> getChildrenGroupsIdent1972(IGroup parent) {
-		final Collection<IGroup> result = new ArrayList<IGroup>();
-		for (IGroup gg : entityFactory.groups2()) {
-			if (gg.getIdent().parent().equals(parent.getIdent())) {
-				result.add(gg);
-			}
-		}
-		return Collections.unmodifiableCollection(result);
-	}
-
-	final public void gotoGroup(Ident ident, Code code, Display display, GroupType type, IGroup parent,
-			NamespaceStrategy strategy) {
-		if (this.V1972()) {
-			gotoGroupInternalWithNamespace(ident, code, display, code, type, parent);
-			return;
-
-		}
+	final public void gotoGroup2(Code code, Display display, GroupType type, IGroup parent, NamespaceStrategy strategy) {
 		if (strategy == NamespaceStrategy.MULTIPLE) {
 			if (getNamespaceSeparator() != null) {
-				code = getFullyQualifiedCode1972(code);
+				code = getFullyQualifiedCode(code.withSeparator(getNamespaceSeparator()));
 			}
-			gotoGroupInternalWithNamespace(ident, code, display, code, type, parent);
+			gotoGroupInternal(code, display, code, type, parent);
 		} else if (strategy == NamespaceStrategy.SINGLE) {
-			final Ident newIdLong = buildLeafIdentSpecial(ident.toString(this.getNamespaceSeparator()));
-			gotoGroupExternal(newIdLong, code, display, null, type, parent);
-			stacks2.add(newIdLong);
+			gotoGroupInternal(code, display, null, type, parent);
 		} else {
 			throw new IllegalArgumentException();
 		}
 	}
 
-	protected final String getNamespace1972(Code fullyCode, String separator) {
-		String name = fullyCode.getName();
-		if (separator == null) {
-			throw new IllegalArgumentException(toString());
-		}
-		do {
-			final int x = name.lastIndexOf(separator);
-			if (x == -1) {
-				return null;
-			}
-			name = name.substring(0, x);
-		} while (entityFactory.getLeaf(buildCode(name)) != null);
-		return name;
-	}
-
-	private void gotoGroupInternalWithNamespace(Ident idNewLong, Code code, Display display, Code namespaceNew,
-			GroupType type, IGroup parent) {
-		this.stacks.add(currentGroup);
-		this.stacks2.add(idNewLong);
-
-		if (this.V1972()) {
-			gotoGroupInternal(idNewLong, code, display, namespaceNew, type, parent);
-			return;
-		}
-		if (getNamespaceSeparator() == null) {
-			gotoGroupInternal(idNewLong, code, display, namespaceNew, type, parent);
-			return;
-		}
-
-		final String namespaceCurrent = getNamespace1972(code, getNamespaceSeparator());
-		if (namespaceCurrent == null) {
-			gotoGroupInternal(idNewLong, code, display, namespaceNew, type, parent);
-			return;
-		}
-		final IGroup realParent = entityFactory.getGroup(buildCode(namespaceCurrent));
-		if (realParent == null) {
-			gotoGroupInternal(idNewLong, code, display, namespaceNew, type, parent);
-			return;
-		}
-		display = Display.create(idNewLong.getLast());
-		IGroup result = entityFactory.createGroup(idNewLong, code, display, namespaceNew, type, realParent, getHides(),
-				getNamespaceSeparator());
-
-		entityFactory.addGroup(result);
-		currentGroup = result;
-
-	}
-
-	public void endGroup() {
-		if (stacks2.size() > 0) {
-			// Thread.dumpStack();
-			stacks2.remove(stacks2.size() - 1);
-		}
-		if (EntityUtils.groupRoot(currentGroup)) {
-			Log.error("No parent group");
-			return;
-		}
-		if (stacks.size() > 0) {
-			currentGroup = stacks.remove(stacks.size() - 1);
-		} else {
-			currentGroup = currentGroup.getParentContainer();
-		}
-	}
-
-	private void gotoGroupInternal(Ident idNewLong, final Code code, Display display, final Code namespace,
-			GroupType type, IGroup parent) {
-		if (this.V1972()) {
-			gotoGroupInternal1972(idNewLong, code, display, namespace, type, parent);
-			return;
-		}
-
-		IGroup result = entityFactory.getGroup(code);
+	final protected void gotoGroupInternal(final Code code, Display display, final Code namespace2, GroupType type,
+			IGroup parent) {
+		IGroup result = entityFactory.getGroupsget(code);
 		if (result != null) {
 			currentGroup = result;
 			return;
 		}
-		if (entityFactory.getLeafStrict(idNewLong) != null) {
-			result = entityFactory.muteToGroup(code.getName(), namespace, type, parent);
+		if (entityFactory.getLeafsget(code) != null) {
+			result = entityFactory.muteToGroup(code, namespace2, type, parent);
 			result.setDisplay(display);
 		} else {
-			result = entityFactory.createGroup(idNewLong, code, display, namespace, type, parent, getHides(),
+			result = entityFactory.createGroup(code, display, namespace2, type, parent, getHides(),
 					getNamespaceSeparator());
 		}
 		entityFactory.addGroup(result);
-		currentGroup = result;
-	}
-
-	private void gotoGroupInternal1972(Ident idNewLong, final Code code, Display display, final Code namespace,
-			GroupType type, IGroup parent) {
-		IGroup result = entityFactory.getGroupStrict(idNewLong);
-		if (result != null) {
-			currentGroup = result;
-			return;
-		}
-		final boolean mutation;
-		if (getNamespaceSeparator() == null)
-			mutation = entityFactory.getLeafVerySmart(idNewLong) != null;
-		else
-			mutation = entityFactory.getLeafStrict(idNewLong) != null;
-		if (mutation) {
-			result = entityFactory.muteToGroup1972(idNewLong, namespace, type, parent);
-			result.setDisplay(display);
-		} else {
-			result = entityFactory.createGroup(idNewLong, code, display, namespace, type, parent, getHides(),
-					getNamespaceSeparator());
-		}
-		entityFactory.addGroup(result);
-		currentGroup = result;
-		stacks2.set(stacks2.size() - 1, result.getIdent());
-	}
-
-	final protected void gotoGroupExternal(Ident newIdLong, final Code code, Display display, final Code namespace,
-			GroupType type, IGroup parent) {
-		IGroup result = entityFactory.getGroup(code);
-		if (result != null) {
-			currentGroup = result;
-			return;
-		}
-		if (entityFactory.getLeaf(code) != null) {
-			result = entityFactory.muteToGroup(code.getName(), namespace, type, parent);
-			result.setDisplay(display);
-		} else {
-			result = entityFactory.createGroup(newIdLong, code, display, namespace, type, parent, getHides(),
-					getNamespaceSeparator());
-		}
-		entityFactory.addGroup(result);
-		// entityFactory.thisIsNotArealGroup(newIdLong);
 		currentGroup = result;
 	}
 
@@ -430,26 +197,26 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		currentGroup = group;
 	}
 
-	final protected Code getFullyQualifiedCode1972(Code code) {
-		final String separator = getNamespaceSeparator();
+	final protected Code getFullyQualifiedCode(Code code) {
+		final String separator = code.getSeparator();
 		if (separator == null) {
 			throw new IllegalArgumentException();
 		}
-		final String full = code.getName();
+		final String full = code.getFullName();
 		if (full.startsWith(separator)) {
-			return buildCode(full.substring(separator.length()));
+			return Code.of(full.substring(separator.length()), separator);
 		}
 		if (full.contains(separator)) {
-			return buildCode(full);
+			return Code.of(full, separator);
 		}
 		if (EntityUtils.groupRoot(currentGroup)) {
-			return buildCode(full);
+			return Code.of(full, separator);
 		}
-		final Code namespace = currentGroup.getNamespace();
-		if (namespace == null) {
-			return buildCode(full);
+		final Code namespace2 = currentGroup.getNamespace2();
+		if (namespace2 == null) {
+			return Code.of(full, separator);
 		}
-		return buildCode(namespace.getName() + separator + full);
+		return Code.of(namespace2.getFullName() + separator + full, separator);
 	}
 
 	public final IGroup getCurrentGroup() {
@@ -457,7 +224,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 	}
 
 	public final IGroup getGroup(Code code) {
-		final IGroup p = entityFactory.getGroup(code);
+		final IGroup p = entityFactory.getGroupsget(code);
 		if (p == null) {
 			throw new IllegalArgumentException();
 			// return null;
@@ -465,53 +232,25 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		return p;
 	}
 
-	public final IGroup getGroupStrict(Ident ident) {
-		if (!this.V1972())
-			throw new UnsupportedOperationException();
-		final IGroup p = entityFactory.getGroupStrict(ident);
-		if (p == null) {
-			throw new IllegalArgumentException();
-			// return null;
+	public void endGroup() {
+		if (EntityUtils.groupRoot(currentGroup)) {
+			Log.error("No parent group");
+			return;
 		}
-		return p;
-	}
-
-	public final IGroup getGroupVerySmart(Ident ident) {
-		if (!this.V1972())
-			throw new UnsupportedOperationException();
-		final IGroup p = entityFactory.getGroupVerySmart(ident);
-		if (p == null) {
-			throw new IllegalArgumentException();
-			// return null;
-		}
-		return p;
+		currentGroup = currentGroup.getParentContainer();
 	}
 
 	public final boolean isGroup(Code code) {
-		if (this.V1972())
-			return isGroupStrict((Ident) code);
-		return leafExist(code) == false && entityFactory.getGroup(code) != null;
-	}
-
-	public final boolean isGroupStrict(Ident ident) {
-		if (!this.V1972())
-			throw new UnsupportedOperationException();
-		return leafExistStrict(ident) == false && entityFactory.getGroupStrict(ident) != null;
-	}
-
-	public final boolean isGroupVerySmart(Ident ident) {
-		if (!this.V1972())
-			throw new UnsupportedOperationException();
-		return leafExistSmart(ident) == false && entityFactory.getGroupVerySmart(ident) != null;
+		return leafExist(code) == false && entityFactory.getGroupsget(code) != null;
 	}
 
 	public final Collection<IGroup> getGroups(boolean withRootGroup) {
 		if (withRootGroup == false) {
-			return entityFactory.groups();
+			return entityFactory.getGroupsvalues();
 		}
 		final Collection<IGroup> result = new ArrayList<IGroup>();
 		result.add(getRootGroup());
-		result.addAll(entityFactory.groups());
+		result.addAll(entityFactory.getGroupsvalues());
 		return Collections.unmodifiableCollection(result);
 	}
 
@@ -519,32 +258,16 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		return entityFactory.getRootGroup();
 	}
 
-	public SuperGroup getRootSuperGroup() {
-		return entityFactory.getRootSuperGroup();
-	}
-
-	public final Collection<ILeaf> getLeafsvalues() {
-		return entityFactory.leafs2();
+	public Collection<ILeaf> getLeafsvalues() {
+		return entityFactory.getLeafsvalues();
 	}
 
 	public final int getLeafssize() {
 		return getLeafsvalues().size();
 	}
 
-	public final ILeaf getLeaf(Code code) {
-		return entityFactory.getLeaf(code);
-	}
-
-	public final ILeaf getLeafStrict(Ident ident) {
-		return entityFactory.getLeafStrict(ident);
-	}
-
-	public final ILeaf getLeafSmart(Ident ident) {
-		return entityFactory.getLeafSmart(ident);
-	}
-
-	public /* final */ ILeaf getLeafVerySmart(Ident ident) {
-		return entityFactory.getLeafVerySmart(ident);
+	public final ILeaf getLeafsget(Code code) {
+		return entityFactory.getLeafsget(code);
 	}
 
 	final public void addLink(Link link) {
@@ -579,6 +302,17 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 	public int getNbImages() {
 		return this.horizontalPages * this.verticalPages;
 	}
+
+	// final public List<File> createPng2(File pngFile) throws IOException,
+	// InterruptedException {
+	// final CucaDiagramPngMaker3 maker = new CucaDiagramPngMaker3(this);
+	// return maker.createPng(pngFile);
+	// }
+	//
+	// final public void createPng2(OutputStream os) throws IOException {
+	// final CucaDiagramPngMaker3 maker = new CucaDiagramPngMaker3(this);
+	// maker.createPng(os);
+	// }
 
 	abstract protected List<String> getDotStrings();
 
@@ -619,7 +353,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 			try {
 				createFilesTxt(os, index, fileFormat);
 			} catch (Throwable t) {
-				t.printStackTrace(SecurityUtils.createPrintStream(os));
+				t.printStackTrace(new PrintStream(os));
 			}
 			return ImageDataSimple.ok();
 		}
@@ -638,11 +372,11 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 			throw new UnsupportedOperationException();
 		}
 
-		entityFactory.buildSuperGroups();
-
-		final CucaDiagramFileMaker maker = this.isUseJDot()
-				? new CucaDiagramFileMakerJDot(this, fileFormatOption.getDefaultStringBounder())
-				: new CucaDiagramFileMakerSvek(this);
+		// final CucaDiagramFileMaker maker = OptionFlags.USE_HECTOR ? new
+		// CucaDiagramFileMakerHectorC1(this)
+		// : new CucaDiagramFileMakerSvek(this);
+		final CucaDiagramFileMaker maker = this.isUseJDot() ? new CucaDiagramFileMakerJDot(this,
+				fileFormatOption.getDefaultStringBounder()) : new CucaDiagramFileMakerSvek(this);
 		final ImageData result = maker.createFile(os, getDotStrings(), fileFormatOption);
 
 		if (result == null) {
@@ -670,6 +404,14 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		final CucaDiagramTxtMaker maker = new CucaDiagramTxtMaker(this, fileFormat);
 		maker.createFiles(os, index);
 	}
+
+	// public final Rankdir getRankdir() {
+	// return rankdir;
+	// }
+	//
+	// public final void setRankdir(Rankdir rankdir) {
+	// this.rankdir = rankdir;
+	// }
 
 	public boolean isAutarkic(IGroup g) {
 		if (g.getGroupType() == GroupType.PACKAGE) {
@@ -776,8 +518,8 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		return result;
 	}
 
-	public final void hideOrShow(EntityGender gender, EntityPortion portions, boolean show) {
-		for (EntityPortion portion : portions.asSet()) {
+	public final void hideOrShow(EntityGender gender, Set<EntityPortion> portions, boolean show) {
+		for (EntityPortion portion : portions) {
 			this.hideOrShows.add(new HideOrShow(gender, portion, show));
 		}
 	}
@@ -789,6 +531,26 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 			hides.addAll(visibilities);
 		}
 	}
+
+	// public void hideOrShow(IEntity leaf, boolean show) {
+	// leaf.setRemoved(!show);
+	// }
+
+	// public void hideOrShow(Stereotype stereotype, boolean show) {
+	// if (show) {
+	// hiddenStereotype.remove(stereotype.getLabel(Guillemet.DOUBLE_COMPARATOR));
+	// } else {
+	// hiddenStereotype.add(stereotype.getLabel(Guillemet.DOUBLE_COMPARATOR));
+	// }
+	// }
+	//
+	// public void hideOrShow(LeafType leafType, boolean show) {
+	// if (show) {
+	// hiddenType.remove(leafType);
+	// } else {
+	// hiddenType.add(leafType);
+	// }
+	// }
 
 	public void hideOrShow2(String what, boolean show) {
 		this.hides2.add(new HideOrShow2(what, show));
@@ -841,24 +603,17 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		return null;
 	}
 
-	final public List<Link> getTwoLastLinks() {
-		final List<Link> result = new ArrayList<Link>();
-		final List<Link> links = getLinks();
-		for (int i = links.size() - 1; i >= 0; i--) {
-			final Link link = links.get(i);
-			if (link.getEntity1().getLeafType() != LeafType.NOTE && link.getEntity2().getLeafType() != LeafType.NOTE) {
-				result.add(link);
-				if (result.size() == 2) {
-					return Collections.unmodifiableList(result);
-				}
-			}
-		}
-		return null;
-	}
-
 	private ILeaf lastEntity = null;
 
 	final public ILeaf getLastEntity() {
+		// for (final Iterator<ILeaf> it = getLeafs().values().iterator();
+		// it.hasNext();) {
+		// final ILeaf ent = it.next();
+		// if (it.hasNext() == false) {
+		// return ent;
+		// }
+		// }
+		// return null;
 		return lastEntity;
 	}
 
@@ -871,6 +626,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 
 		for (IGroup g : getGroups(true)) {
 			final List<ILeaf> standalones = new ArrayList<ILeaf>();
+			// final SingleStrategy singleStrategy = g.getSingleStrategy();
 
 			for (ILeaf ent : g.getLeafsDirect()) {
 				if (isStandalone(ent)) {
@@ -883,6 +639,10 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 			final Magma magma = new Magma(this, standalones);
 			magma.putInSquare();
 			magmaList.add(magma);
+
+			// for (Link link : singleStrategy.generateLinks(standalones)) {
+			// addLink(link);
+			// }
 		}
 
 		for (IGroup g : getGroups(true)) {
@@ -901,13 +661,6 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 
 	protected void incRawLayout() {
 		entityFactory.incRawLayout();
-	}
-
-	public CommandExecutionResult constraintOnLinks(Link link1, Link link2, Display display) {
-		final LinkConstraint linkConstraint = new LinkConstraint(link1, link2, display);
-		link1.setLinkConstraint(linkConstraint);
-		link2.setLinkConstraint(linkConstraint);
-		return CommandExecutionResult.ok();
 	}
 
 }

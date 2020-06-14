@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -31,7 +31,6 @@
 package net.sourceforge.plantuml.skin.rose;
 
 import net.sourceforge.plantuml.ISkinSimple;
-import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
@@ -53,11 +52,7 @@ final public class ComponentRoseNoteHexagonal extends AbstractTextualComponent {
 	public ComponentRoseNoteHexagonal(Style style, SymbolContext symbolContext, FontConfiguration font,
 			Display strings, ISkinSimple spriteContainer, HorizontalAlignment alignment) {
 		super(style, spriteContainer.wrapWidth(), strings, font, alignment, 12, 12, 4, spriteContainer, false, null, null);
-		if (SkinParam.USE_STYLES()) {
-			this.symbolContext = style.getSymbolContext(getIHtmlColorSet());
-		} else {
-			this.symbolContext = symbolContext;
-		}
+		this.symbolContext = symbolContext;
 	}
 
 	@Override

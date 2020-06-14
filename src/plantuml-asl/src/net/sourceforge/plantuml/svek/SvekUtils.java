@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -31,21 +31,22 @@
 package net.sourceforge.plantuml.svek;
 
 import java.awt.geom.Point2D;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Locale;
 
 import net.sourceforge.plantuml.Log;
-import net.sourceforge.plantuml.security.SFile;
 
 public class SvekUtils {
 
-	static public void traceString(final SFile f, String text) throws IOException {
+	static public void traceString(final File f, String text) throws IOException {
 		PrintWriter pw = null;
 		try {
-			Log.info("Creating intermediate file " + f.getPrintablePath());
-			pw = f.createPrintWriter();
+			Log.info("Creating intermediate file " + f.getAbsolutePath());
+			pw = new PrintWriter(new FileWriter(f));
 			pw.print(text);
 		} finally {
 			if (pw != null) {

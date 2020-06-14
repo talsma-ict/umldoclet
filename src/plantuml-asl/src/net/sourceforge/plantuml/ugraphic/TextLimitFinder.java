@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,28 +32,28 @@ package net.sourceforge.plantuml.ugraphic;
 
 import java.awt.geom.Dimension2D;
 
+import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
-public class TextLimitFinder extends UGraphicNo implements UGraphic {
+public class TextLimitFinder implements UGraphic {
 
 	public boolean matchesProperty(String propertyName) {
 		return false;
 	}
-
+	
 	public double dpiFactor() {
 		return 1;
 	}
+
 
 	public UGraphic apply(UChange change) {
 		if (change instanceof UTranslate) {
 			return new TextLimitFinder(stringBounder, minmax, translate.compose((UTranslate) change));
 		} else if (change instanceof UStroke) {
 			return new TextLimitFinder(this);
-		} else if (change instanceof UBackground) {
+		} else if (change instanceof UChangeBackColor) {
 			return new TextLimitFinder(this);
-		} else if (change instanceof HColor) {
+		} else if (change instanceof UChangeColor) {
 			return new TextLimitFinder(this);
 		}
 		throw new UnsupportedOperationException();
@@ -95,6 +95,12 @@ public class TextLimitFinder extends UGraphicNo implements UGraphic {
 
 	public ColorMapper getColorMapper() {
 		throw new UnsupportedOperationException();
+	}
+
+	public void startUrl(Url url) {
+	}
+
+	public void closeAction() {
 	}
 
 	private void drawText(double x, double y, UText text) {

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -66,12 +66,11 @@ public class CommandCreateBlock extends SingleLineCommand2<CompositeDiagram> {
 	@Override
 	protected CommandExecutionResult executeArg(CompositeDiagram diagram, LineLocation location, RegexResult arg) {
 		String display = arg.get("DISPLAY", 0);
-		final String idShort = arg.get("CODE", 0);
-		final Code code = diagram.buildCode(idShort);
+		final Code code = Code.of(arg.get("CODE", 0));
 		if (display == null) {
-			display = code.getName();
+			display = code.getFullName();
 		}
-		final IEntity ent = diagram.getOrCreateLeaf(diagram.buildLeafIdent(idShort), code, null, null);
+		final IEntity ent = diagram.getOrCreateLeaf(code, null, null);
 		ent.setDisplay(Display.getWithNewlines(display));
 		return CommandExecutionResult.ok();
 	}

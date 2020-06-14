@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,7 +34,7 @@ import java.awt.Font;
 
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.style.SName;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleDefinition;
 
 interface FontParamConstant {
 	String FAMILY = "SansSerif";
@@ -89,11 +89,11 @@ public enum FontParam {
 	SEQUENCE_GROUP_HEADER(13, Font.BOLD), //
 	PARTICIPANT(14, Font.PLAIN), //
 	PARTICIPANT_STEREOTYPE(14, Font.ITALIC), //
+	SEQUENCE_TITLE(14, Font.BOLD), //
 	STATE(14, Font.PLAIN), //
 	STATE_ATTRIBUTE(12, Font.PLAIN), //
 	LEGEND(14, Font.PLAIN), //
 	TITLE(18, Font.PLAIN), //
-	// SEQUENCE_TITLE(14, Font.BOLD), //
 	CAPTION(14, Font.PLAIN), //
 	SWIMLANE_TITLE(18, Font.PLAIN), //
 	FOOTER(10, Font.PLAIN, "#888888", FontParamConstant.FAMILY), //
@@ -176,15 +176,15 @@ public enum FontParam {
 		return new FontConfiguration(skinParam, this, null);
 	}
 
-	public StyleSignature getStyleDefinition() {
+	public StyleDefinition getStyleDefinition() {
 		if (this == FOOTER) {
-			return StyleSignature.of(SName.root, SName.footer);
+			return StyleDefinition.of(SName.root, SName.footer);
 		}
 		if (this == HEADER) {
-			return StyleSignature.of(SName.root, SName.header);
+			return StyleDefinition.of(SName.root, SName.header);
 		}
 		if (this == TITLE) {
-			return StyleSignature.of(SName.root, SName.title);
+			return StyleDefinition.of(SName.root, SName.title);
 		}
 		System.err.println("Warning " + this);
 		return null;

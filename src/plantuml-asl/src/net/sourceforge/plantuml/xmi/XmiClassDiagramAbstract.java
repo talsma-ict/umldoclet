@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -46,17 +46,18 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import net.sourceforge.plantuml.classdiagram.ClassDiagram;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
+import net.sourceforge.plantuml.cucadiagram.LongCode;
 import net.sourceforge.plantuml.cucadiagram.Member;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
 import net.sourceforge.plantuml.utils.UniqueSequence;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 abstract class XmiClassDiagramAbstract implements IXmiClassDiagram {
 
@@ -146,12 +147,11 @@ abstract class XmiClassDiagramAbstract implements IXmiClassDiagram {
 
 		cla.setAttribute("xmi.id", entity.getUid());
 		cla.setAttribute("name", entity.getDisplay().get(0).toString());
-		final String parentCode = entity.getIdent().parent().forXmi();
-		// final LongCode parentCode = entity.getParentContainer().getLongCode();
-		if (parentCode.length() == 0) {
+		final LongCode parentCode = entity.getParentContainer().getLongCode();
+		if (parentCode == null) {
 			cla.setAttribute("namespace", CucaDiagramXmiMaker.getModel(classDiagram));
 		} else {
-			cla.setAttribute("namespace", parentCode);
+			cla.setAttribute("namespace", parentCode.getFullName());
 		}
 
 		final Stereotype stereotype = entity.getStereotype();

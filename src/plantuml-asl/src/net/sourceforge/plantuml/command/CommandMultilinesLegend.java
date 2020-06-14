@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -70,7 +70,7 @@ public class CommandMultilinesLegend extends CommandMultilines2<TitledDiagram> {
 	@Override
 	protected CommandExecutionResult executeNow(TitledDiagram diagram, BlocLines lines) {
 		lines = lines.trimSmart(1);
-		final RegexResult line0 = getStartingPattern().matcher(lines.getFirst().getTrimmed().getString());
+		final RegexResult line0 = getStartingPattern().matcher(lines.getFirst499().getTrimmed().getString());
 		final String align = line0.get("ALIGN", 0);
 		final String valign = line0.get("VALIGN", 0);
 		lines = lines.subExtract(1, 1);

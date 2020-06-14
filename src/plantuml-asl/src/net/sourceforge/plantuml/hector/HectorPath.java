@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -35,9 +35,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.plantuml.geom.LineSegmentDouble;
+import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class HectorPath {
 
@@ -56,8 +57,8 @@ public class HectorPath {
 		return segments.toString();
 	}
 
-	public void draw(UGraphic ug, HColor color) {
-		ug = ug.apply(color).apply(new UStroke(1.5));
+	public void draw(UGraphic ug, HtmlColor color) {
+		ug = ug.apply(new UChangeColor(color)).apply(new UStroke(1.5));
 		for (LineSegmentDouble seg : segments) {
 			seg.draw(ug);
 		}

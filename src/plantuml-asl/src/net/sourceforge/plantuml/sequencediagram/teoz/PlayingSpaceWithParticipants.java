@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -35,17 +35,18 @@ import java.util.List;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
+import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.VerticalAlignment;
 import net.sourceforge.plantuml.real.Real;
 import net.sourceforge.plantuml.skin.Context2D;
 import net.sourceforge.plantuml.skin.SimpleContext2D;
+import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UClip;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class PlayingSpaceWithParticipants extends AbstractTextBlock implements TextBlock {
 
@@ -85,26 +86,26 @@ public class PlayingSpaceWithParticipants extends AbstractTextBlock implements T
 		final double headHeight = livingSpaces.getHeadHeight(stringBounder);
 
 		if (ymax == 0) {
-			playingSpace.drawBackground(ug.apply(UTranslate.dy(headHeight)));
+			playingSpace.drawBackground(ug.apply(new UTranslate(0, headHeight)));
 		} else {
 			final UClip clip = new UClip(-1000, ymin, Double.MAX_VALUE, ymax - ymin + 1);
-			playingSpace.drawBackground(ug.apply(UTranslate.dy(headHeight)).apply(clip));
+			playingSpace.drawBackground(ug.apply(new UTranslate(0, headHeight)).apply(clip));
 		}
 
-		livingSpaces.drawLifeLines(ug.apply(UTranslate.dy(headHeight)), height, context);
+		livingSpaces.drawLifeLines(ug.apply(new UTranslate(0, headHeight)), height, context);
 
 		livingSpaces.drawHeads(ug, context, VerticalAlignment.BOTTOM);
 		if (playingSpace.isShowFootbox()) {
-			livingSpaces.drawHeads(ug.apply(UTranslate.dy(height + headHeight)), context, VerticalAlignment.TOP);
+			livingSpaces.drawHeads(ug.apply(new UTranslate(0, height + headHeight)), context, VerticalAlignment.TOP);
 		}
 		if (ymax == 0) {
-			playingSpace.drawForeground(ug.apply(UTranslate.dy(headHeight)));
+			playingSpace.drawForeground(ug.apply(new UTranslate(0, headHeight)));
 		} else {
 			final UClip clip = new UClip(-1000, ymin, Double.MAX_VALUE, ymax - ymin + 1);
-			// playingSpace.drawForeground(new UGraphicNewpages(ug.apply(UTranslate.dy(headHeight)), ymin, ymax));
-			playingSpace.drawForeground(ug.apply(UTranslate.dy(headHeight)).apply(clip));
+			// playingSpace.drawForeground(new UGraphicNewpages(ug.apply(new UTranslate(0, headHeight)), ymin, ymax));
+			playingSpace.drawForeground(ug.apply(new UTranslate(0, headHeight)).apply(clip));
 		}
-		// drawNewPages(ug.apply(UTranslate.dy(headHeight)));
+		// drawNewPages(ug.apply(new UTranslate(0, headHeight)));
 	}
 
 	public Real getMinX(StringBounder stringBounder) {
@@ -126,12 +127,12 @@ public class PlayingSpaceWithParticipants extends AbstractTextBlock implements T
 	}
 
 	private void drawNewPages(UGraphic ug) {
-		ug = ug.apply(HColorUtils.BLUE);
+		ug = ug.apply(new UChangeColor(HtmlColorUtils.BLUE));
 		for (Double change : yNewPages()) {
 			if (change == 0 || change == Double.MAX_VALUE) {
 				continue;
 			}
-			ug.apply(UTranslate.dy(change)).draw(ULine.hline(100));
+			ug.apply(new UTranslate(0, change)).draw(new ULine(100, 0));
 		}
 	}
 

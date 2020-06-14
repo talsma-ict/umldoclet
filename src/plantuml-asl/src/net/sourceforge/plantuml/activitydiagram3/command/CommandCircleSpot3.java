@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -38,8 +38,6 @@ import net.sourceforge.plantuml.command.regex.IRegex;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.command.regex.RegexResult;
-import net.sourceforge.plantuml.graphic.color.ColorParser;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class CommandCircleSpot3 extends SingleLineCommand2<ActivityDiagram3> {
 
@@ -49,7 +47,6 @@ public class CommandCircleSpot3 extends SingleLineCommand2<ActivityDiagram3> {
 
 	static IRegex getRegexConcat() {
 		return RegexConcat.build(CommandCircleSpot3.class.getName(), RegexLeaf.start(), //
-				ColorParser.exp4(), //
 				new RegexLeaf("SPOT", "\\((\\S)\\)"), //
 				new RegexLeaf(";?"), //
 				RegexLeaf.end());
@@ -57,8 +54,7 @@ public class CommandCircleSpot3 extends SingleLineCommand2<ActivityDiagram3> {
 
 	@Override
 	protected CommandExecutionResult executeArg(ActivityDiagram3 diagram, LineLocation location, RegexResult arg) {
-		final HColor color = diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("COLOR", 0));
-		diagram.addSpot(arg.get("SPOT", 0), color);
+		diagram.addSpot(arg.get("SPOT", 0));
 		return CommandExecutionResult.ok();
 	}
 

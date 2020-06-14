@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,38 +34,37 @@ import java.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.LineBreakStrategy;
+import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.SymbolContext;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.skin.AbstractTextualComponent;
-import net.sourceforge.plantuml.skin.ActorStyle;
 import net.sourceforge.plantuml.skin.Area;
+import net.sourceforge.plantuml.skin.StickMan;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class ComponentRoseActor extends AbstractTextualComponent {
 
 	private final TextBlock stickman;
 	private final boolean head;
 
-	public ComponentRoseActor(ActorStyle actorStyle, Style style, Style stereo, SymbolContext biColor,
-			FontConfiguration font, Display stringsToDisplay, boolean head, ISkinSimple spriteContainer,
-			UFont fontForStereotype, HColor htmlColorForStereotype) {
+	public ComponentRoseActor(Style style, Style stereo, SymbolContext biColor, FontConfiguration font, Display stringsToDisplay,
+			boolean head, ISkinSimple spriteContainer, UFont fontForStereotype, HtmlColor htmlColorForStereotype) {
 		super(style, stereo, LineBreakStrategy.NONE, stringsToDisplay, font, HorizontalAlignment.CENTER, 3, 3, 0,
 				spriteContainer, false, fontForStereotype, htmlColorForStereotype);
 		this.head = head;
 		if (SkinParam.USE_STYLES()) {
 			biColor = style.getSymbolContext(getIHtmlColorSet());
 		}
-		// this.stickman = new ActorStickMan(biColor);
-		this.stickman = actorStyle.getTextBlock(biColor);
+		this.stickman = new StickMan(biColor);
 	}
 
 	@Override
@@ -77,9 +76,9 @@ public class ComponentRoseActor extends AbstractTextualComponent {
 
 		if (head) {
 			textBlock.drawU(ug.apply(new UTranslate(getTextMiddlePostion(stringBounder), dimStickman.getHeight())));
-			ug = ug.apply(UTranslate.dx(delta));
+			ug = ug.apply(new UTranslate(delta, 0));
 		} else {
-			textBlock.drawU(ug.apply(UTranslate.dx(getTextMiddlePostion(stringBounder))));
+			textBlock.drawU(ug.apply(new UTranslate(getTextMiddlePostion(stringBounder), 0)));
 			ug = ug.apply(new UTranslate(delta, getTextHeight(stringBounder)));
 		}
 		stickman.drawU(ug);

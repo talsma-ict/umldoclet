@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,50 +34,51 @@ import java.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.LineBreakStrategy;
+import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.SymbolContext;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.skin.AbstractTextualComponent;
 import net.sourceforge.plantuml.skin.Area;
+import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class ComponentRoseReference extends AbstractTextualComponent {
 
+	private final HtmlColor background;
 	private final int cornersize = 10;
 	private final TextBlock textHeader;
 	private final double heightFooter = 5;
 	private final double xMargin = 2;
 	private final HorizontalAlignment position;
-	private final SymbolContext symbolContextHeader;
-	private final SymbolContext symbolContextBody;
+	private final SymbolContext symbolContext;
 
-	public ComponentRoseReference(Style style, Style styleHeader, FontConfiguration font, SymbolContext symbolContext,
-			FontConfiguration fcHeader, Display stringsToDisplay, HorizontalAlignment position,
-			ISkinSimple spriteContainer, HColor background) {
+	public ComponentRoseReference(Style style, FontConfiguration font, SymbolContext symbolContext,
+			FontConfiguration header, Display stringsToDisplay, HorizontalAlignment position,
+			ISkinSimple spriteContainer, HtmlColor background) {
 		super(style, LineBreakStrategy.NONE, stringsToDisplay.subList(1, stringsToDisplay.size()), font,
 				HorizontalAlignment.LEFT, 4, 4, 4, spriteContainer, false, null, null);
 		if (SkinParam.USE_STYLES()) {
-			this.symbolContextHeader = styleHeader.getSymbolContext(getIHtmlColorSet());
-			this.symbolContextBody = style.getSymbolContext(getIHtmlColorSet());
-			fcHeader = styleHeader.getFontConfiguration(getIHtmlColorSet());
-			this.position = style.getHorizontalAlignment();
+			this.symbolContext = style.getSymbolContext(getIHtmlColorSet());
+			this.background = style.value(PName.BackGroundColor).asColor(getIHtmlColorSet());
+			this.position = style.value(PName.HorizontalAlignment).asHorizontalAlignment();
 		} else {
-			this.symbolContextHeader = symbolContext;
-			this.symbolContextBody = symbolContextHeader.withBackColor(background);
+			this.symbolContext = symbolContext;
+			this.background = background;
 			this.position = position;
 		}
 
-		this.textHeader = stringsToDisplay.subList(0, 1).create(fcHeader, HorizontalAlignment.LEFT, spriteContainer);
+		this.textHeader = stringsToDisplay.subList(0, 1).create(header, HorizontalAlignment.LEFT, spriteContainer);
 
 	}
 
@@ -88,11 +89,12 @@ public class ComponentRoseReference extends AbstractTextualComponent {
 		final int textHeaderWidth = (int) (getHeaderWidth(stringBounder));
 		final int textHeaderHeight = (int) (getHeaderHeight(stringBounder));
 
-		final URectangle rect = new URectangle(dimensionToUse.getWidth() - xMargin * 2
-				- symbolContextHeader.getDeltaShadow(), dimensionToUse.getHeight() - heightFooter);
-		rect.setDeltaShadow(symbolContextHeader.getDeltaShadow());
-		ug = symbolContextBody.apply(ug);
-		ug.apply(UTranslate.dx(xMargin)).draw(rect);
+		final URectangle rect = new URectangle(
+				dimensionToUse.getWidth() - xMargin * 2 - symbolContext.getDeltaShadow(), dimensionToUse.getHeight()
+						- heightFooter);
+		rect.setDeltaShadow(symbolContext.getDeltaShadow());
+		ug = symbolContext.withBackColor(background).apply(ug);
+		ug.apply(new UTranslate(xMargin, 0)).draw(rect);
 
 		final UPolygon polygon = new UPolygon();
 		polygon.addPoint(0, 0);
@@ -104,8 +106,8 @@ public class ComponentRoseReference extends AbstractTextualComponent {
 		polygon.addPoint(0, textHeaderHeight);
 		polygon.addPoint(0, 0);
 
-		ug = symbolContextHeader.apply(ug);
-		ug.apply(UTranslate.dx(xMargin)).draw(polygon);
+		ug = symbolContext.apply(ug);
+		ug.apply(new UTranslate(xMargin, 0)).draw(polygon);
 
 		ug = ug.apply(new UStroke());
 
@@ -141,7 +143,7 @@ public class ComponentRoseReference extends AbstractTextualComponent {
 	@Override
 	public double getPreferredWidth(StringBounder stringBounder) {
 		return Math.max(getTextWidth(stringBounder), getHeaderWidth(stringBounder)) + xMargin * 2
-				+ symbolContextHeader.getDeltaShadow();
+				+ symbolContext.getDeltaShadow();
 	}
 
 }

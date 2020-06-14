@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,15 +30,13 @@
  */
 package net.sourceforge.plantuml;
 
-import java.util.Collection;
-
 import net.sourceforge.plantuml.cucadiagram.Rankdir;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.cucadiagram.dot.DotSplines;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.SkinParameter;
 import net.sourceforge.plantuml.graphic.color.Colors;
-import net.sourceforge.plantuml.skin.ActorStyle;
 import net.sourceforge.plantuml.skin.ArrowDirection;
 import net.sourceforge.plantuml.skin.Padder;
 import net.sourceforge.plantuml.style.Style;
@@ -48,23 +46,22 @@ import net.sourceforge.plantuml.svek.ConditionStyle;
 import net.sourceforge.plantuml.svek.PackageStyle;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public interface ISkinParam extends ISkinSimple {
 
 	public static final int SWIMLANE_WIDTH_SAME = -1;
 
-	public HColor getHyperlinkColor();
+	public HtmlColor getHyperlinkColor();
 
 	public boolean useUnderlineForHyperlink();
 
-	public HColor getBackgroundColor(boolean replaceTransparentByWhite);
+	public HtmlColor getBackgroundColor();
 
-	public HColor getHtmlColor(ColorParam param, Stereotype stereotype, boolean clickable);
+	public HtmlColor getHtmlColor(ColorParam param, Stereotype stereotype, boolean clickable);
 
 	public Colors getColors(ColorParam param, Stereotype stereotype);
 
-	public HColor getFontHtmlColor(Stereotype stereotype, FontParam... param);
+	public HtmlColor getFontHtmlColor(Stereotype stereotype, FontParam... param);
 
 	public UStroke getThickness(LineParam param, Stereotype stereotype);
 
@@ -137,8 +134,6 @@ public interface ISkinParam extends ISkinSimple {
 
 	public String getSvgLinkTarget();
 
-	public String getPreserveAspectRatio();
-
 	public int getTabSize();
 
 	public int maxAsciiMessageLength();
@@ -151,7 +146,7 @@ public interface ISkinParam extends ISkinSimple {
 
 	public UmlDiagramType getUmlDiagramType();
 
-	public HColor getHoverPathColor();
+	public HtmlColor getHoverPathColor();
 
 	public TikzFontDistortion getTikzFontDistortion();
 
@@ -176,13 +171,5 @@ public interface ISkinParam extends ISkinSimple {
 	public StyleBuilder getCurrentStyleBuilder();
 
 	public void muteStyle(Style modifiedStyle);
-
-	public Collection<String> getAllSpriteNames();
-
-	public String getDefaultSkin();
-
-	public void setDefaultSkin(String newSkin);
-
-	public ActorStyle getActorStyle();
 
 }

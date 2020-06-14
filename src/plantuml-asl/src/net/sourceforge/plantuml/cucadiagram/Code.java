@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,9 +30,92 @@
  */
 package net.sourceforge.plantuml.cucadiagram;
 
-public interface Code {
+import net.sourceforge.plantuml.StringUtils;
 
-	public String getName();
+public class Code implements Comparable<Code> {
 
-	public Code eventuallyRemoveStartingAndEndingDoubleQuote(String format);
+	private final String fullName;
+	private final String separator;
+
+	private Code(String fullName, String separator) {
+		if (fullName == null) {
+			throw new IllegalArgumentException();
+		}
+		this.fullName = fullName;
+		this.separator = separator;
+	}
+
+	public Code removeMemberPart() {
+		final int x = fullName.lastIndexOf("::");
+		if (x == -1) {
+			return null;
+		}
+		return new Code(fullName.substring(0, x), separator);
+	}
+
+	public String getPortMember() {
+		final int x = fullName.lastIndexOf("::");
+		if (x == -1) {
+			return null;
+		}
+		return fullName.substring(x + 2);
+	}
+
+	public Code withSeparator(String separator) {
+		if (separator == null) {
+			throw new IllegalArgumentException();
+		}
+		if (this.separator != null && this.separator.equals(separator) == false) {
+			throw new IllegalStateException();
+		}
+		return new Code(fullName, separator);
+	}
+
+	public static Code of(String code) {
+		return of(code, null);
+	}
+
+	public static Code of(String code, String separator) {
+		if (code == null) {
+			return null;
+		}
+		return new Code(code, separator);
+	}
+
+	public final String getFullName() {
+		return fullName;
+	}
+
+	@Override
+	public String toString() {
+		return fullName + "(" + separator + ")";
+	}
+
+	@Override
+	public int hashCode() {
+		return fullName.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		final Code other = (Code) obj;
+		return this.fullName.equals(other.fullName);
+	}
+
+	public Code addSuffix(String suffix) {
+		return new Code(fullName + suffix, separator);
+	}
+
+	public int compareTo(Code other) {
+		return this.fullName.compareTo(other.fullName);
+	}
+
+	public Code eventuallyRemoveStartingAndEndingDoubleQuote(String format) {
+		return Code.of(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(fullName, format), separator);
+	}
+
+	public final String getSeparator() {
+		return separator;
+	}
+
 }

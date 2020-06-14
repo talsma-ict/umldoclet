@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,12 +32,12 @@ package net.sourceforge.plantuml.ugraphic.eps;
 
 import net.sourceforge.plantuml.eps.EpsGraphics;
 import net.sourceforge.plantuml.ugraphic.ClipContainer;
+import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UClip;
 import net.sourceforge.plantuml.ugraphic.UDriver;
 import net.sourceforge.plantuml.ugraphic.UImage;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UShape;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 
 public class DriverImageEps implements UDriver<EpsGraphics> {
 
@@ -61,7 +61,7 @@ public class DriverImageEps implements UDriver<EpsGraphics> {
 			}
 		}
 
-		eps.drawImage(shape.muteTransparentColor(mapper.toColor(param.getBackcolor())).getImage(1), x, y);
+		eps.drawImage(shape.muteTransparentColor(mapper.getMappedColor(param.getBackcolor())).getImage(), x, y);
 	}
 
 }

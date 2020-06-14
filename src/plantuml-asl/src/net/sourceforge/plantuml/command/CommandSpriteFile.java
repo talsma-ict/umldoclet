@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,11 +30,14 @@
  */
 package net.sourceforge.plantuml.command;
 
-import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import javax.imageio.ImageIO;
 
 import net.sourceforge.plantuml.FileSystem;
 import net.sourceforge.plantuml.FileUtils;
@@ -45,11 +48,10 @@ import net.sourceforge.plantuml.command.regex.IRegex;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.command.regex.RegexResult;
-import net.sourceforge.plantuml.security.ImageIO;
-import net.sourceforge.plantuml.security.SFile;
-import net.sourceforge.plantuml.sprite.Sprite;
-import net.sourceforge.plantuml.sprite.SpriteImage;
-import net.sourceforge.plantuml.sprite.SpriteSvg;
+import net.sourceforge.plantuml.preproc.FileWithSuffix;
+import net.sourceforge.plantuml.ugraphic.sprite.Sprite;
+import net.sourceforge.plantuml.ugraphic.sprite.SpriteImage;
+import net.sourceforge.plantuml.ugraphic.sprite.SpriteSvg;
 
 public class CommandSpriteFile extends SingleLineCommand2<UmlDiagram> {
 
@@ -62,7 +64,7 @@ public class CommandSpriteFile extends SingleLineCommand2<UmlDiagram> {
 				new RegexLeaf("sprite"), //
 				RegexLeaf.spaceOneOrMore(), //
 				new RegexLeaf("\\$?"), //
-				new RegexLeaf("NAME", "([-\\p{L}0-9_]+)"), //
+				new RegexLeaf("NAME", "([\\p{L}0-9_]+)"), //
 				RegexLeaf.spaceOneOrMore(), //
 				new RegexLeaf("FILE", "(.*)"), RegexLeaf.end());
 	}
@@ -81,32 +83,24 @@ public class CommandSpriteFile extends SingleLineCommand2<UmlDiagram> {
 				sprite = new SpriteImage(ImageIO.read(is));
 			} else if (src.contains("~")) {
 				final int idx = src.lastIndexOf("~");
-				final SFile f = FileSystem.getInstance().getFile(src.substring(0, idx));
+				final File f = FileSystem.getInstance().getFile(src.substring(0, idx));
 				if (f.exists() == false) {
-					return CommandExecutionResult.error("Cannot read: " + src);
+					return CommandExecutionResult.error("File does not exist: " + src);
 				}
 				final String name = src.substring(idx + 1);
 				sprite = getImageFromZip(f, name);
 				if (sprite == null) {
-					return CommandExecutionResult.error("Cannot read: " + src);
+					return CommandExecutionResult.error("No image " + name + " in " + FileWithSuffix.getFileName(f));
 				}
 			} else {
-				final SFile f = FileSystem.getInstance().getFile(src);
+				final File f = FileSystem.getInstance().getFile(src);
 				if (f.exists() == false) {
-					return CommandExecutionResult.error("Cannot read: " + src);
+					return CommandExecutionResult.error("File does not exist: " + src);
 				}
 				if (isSvg(f.getName())) {
-					final String tmp = FileUtils.readSvg(f);
-					if (tmp == null) {
-						return CommandExecutionResult.error("Cannot read: " + src);
-					}
-					sprite = new SpriteSvg(tmp);
+					sprite = new SpriteSvg(f);
 				} else {
-					final BufferedImage tmp = f.readRasterImageFromFile();
-					if (tmp == null) {
-						return CommandExecutionResult.error("Cannot read: " + src);
-					}
-					sprite = new SpriteImage(tmp);
+					sprite = new SpriteImage(FileUtils.ImageIO_read(f));
 				}
 			}
 		} catch (IOException e) {
@@ -117,14 +111,10 @@ public class CommandSpriteFile extends SingleLineCommand2<UmlDiagram> {
 		return CommandExecutionResult.ok();
 	}
 
-	private Sprite getImageFromZip(SFile f, String name) throws IOException {
-		final InputStream tmp = f.openFile();
-		if (tmp == null) {
-			return null;
-		}
+	private Sprite getImageFromZip(File f, String name) throws IOException {
 		ZipInputStream zis = null;
 		try {
-			zis = new ZipInputStream(tmp);
+			zis = new ZipInputStream(new FileInputStream(f));
 			ZipEntry ze = zis.getNextEntry();
 
 			while (ze != null) {

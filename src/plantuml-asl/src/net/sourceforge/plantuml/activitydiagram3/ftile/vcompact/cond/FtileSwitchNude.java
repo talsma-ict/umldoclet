@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -95,7 +95,7 @@ public class FtileSwitchNude extends FtileDimensionMemoize {
 		for (Ftile candidate : tiles) {
 			final FtileGeometry dim1 = candidate.calculateDimension(stringBounder);
 			if (candidate == tile) {
-				return UTranslate.dx(x1);
+				return new UTranslate(x1, 0);
 			}
 			x1 += dim1.getWidth() + xSeparation;
 		}

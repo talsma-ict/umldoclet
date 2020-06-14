@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -35,17 +35,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.plantuml.ugraphic.comp.CompressionMode;
-
-public class UPath extends AbstractShadowable implements Iterable<USegment>, UShapeIgnorableForCompression {
+public class UPath extends AbstractShadowable implements Iterable<USegment> {
 
 	private final String comment;
 	private final List<USegment> segments = new ArrayList<USegment>();
 	private MinMax minmax = MinMax.getEmpty(false);
 
 	private boolean isOpenIconic;
-	private boolean ignoreForCompressionOnX;
-	private boolean ignoreForCompressionOnY;
 
 	public UPath(String comment) {
 		this.comment = comment;
@@ -176,27 +172,6 @@ public class UPath extends AbstractShadowable implements Iterable<USegment>, USh
 
 	public final String getComment() {
 		return comment;
-	}
-
-	public void setIgnoreForCompressionOnX() {
-		this.ignoreForCompressionOnX = true;
-	}
-
-	public void setIgnoreForCompressionOnY() {
-		this.ignoreForCompressionOnY = true;
-	}
-
-	public void drawWhenCompressed(UGraphic ug, CompressionMode mode) {
-	}
-
-	public boolean isIgnoreForCompressionOn(CompressionMode mode) {
-		if (mode == CompressionMode.ON_X) {
-			return ignoreForCompressionOnX;
-		}
-		if (mode == CompressionMode.ON_Y) {
-			return ignoreForCompressionOnY;
-		}
-		throw new IllegalArgumentException();
 	}
 
 	// public boolean isEmpty() {

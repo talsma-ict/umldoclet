@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,21 +30,20 @@
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
-import net.sourceforge.plantuml.security.SFile;
-
 public class DebugTrace {
 
-	private static final SFile out = new SFile("debug" + System.currentTimeMillis() + ".txt");
+	private static final File out = new File("debug" + System.currentTimeMillis() + ".txt");
 
 	private static PrintWriter pw;
 
 	private synchronized static PrintWriter getPrintWriter() {
 		if (pw == null) {
 			try {
-				pw = out.createPrintWriter();
+				pw = new PrintWriter(out);
 			} catch (FileNotFoundException e) {
 
 			}

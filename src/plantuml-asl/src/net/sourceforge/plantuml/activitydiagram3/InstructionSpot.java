@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,31 +34,28 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactory;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileKilled;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class InstructionSpot extends MonoSwimable implements Instruction {
 
 	private boolean killed = false;
 	private final LinkRendering inlinkRendering;
 	private final String spot;
-	private final HColor color;
 
 	public boolean containsBreak() {
 		return false;
 	}
 
-	public InstructionSpot(String spot, HColor color, LinkRendering inlinkRendering, Swimlane swimlane) {
+	public InstructionSpot(String spot, LinkRendering inlinkRendering, Swimlane swimlane) {
 		super(swimlane);
 		this.spot = spot;
 		this.inlinkRendering = inlinkRendering;
-		this.color = color;
 		if (inlinkRendering == null) {
 			throw new IllegalArgumentException();
 		}
 	}
 
 	public Ftile createFtile(FtileFactory factory) {
-		Ftile result = factory.spot(getSwimlaneIn(), spot, color);
+		Ftile result = factory.spot(getSwimlaneIn(), spot);
 		result = eventuallyAddNote(factory, result, result.getSwimlaneIn());
 		if (killed) {
 			return new FtileKilled(result);

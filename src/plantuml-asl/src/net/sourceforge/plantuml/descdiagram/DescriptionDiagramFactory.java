@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -44,9 +44,9 @@ import net.sourceforge.plantuml.command.CommandFootboxIgnored;
 import net.sourceforge.plantuml.command.CommandPage;
 import net.sourceforge.plantuml.command.CommandRankDir;
 import net.sourceforge.plantuml.command.UmlDiagramFactory;
-import net.sourceforge.plantuml.command.note.CommandFactoryNote;
-import net.sourceforge.plantuml.command.note.CommandFactoryNoteOnEntity;
-import net.sourceforge.plantuml.command.note.CommandFactoryNoteOnLink;
+import net.sourceforge.plantuml.command.note.FactoryNoteCommand;
+import net.sourceforge.plantuml.command.note.FactoryNoteOnEntityCommand;
+import net.sourceforge.plantuml.command.note.FactoryNoteOnLinkCommand;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.command.regex.RegexOr;
 import net.sourceforge.plantuml.descdiagram.command.CommandArchimate;
@@ -87,10 +87,10 @@ public class DescriptionDiagramFactory extends UmlDiagramFactory {
 		//
 		cmds.add(new CommandPackageWithUSymbol());
 		cmds.add(new CommandEndPackage());
-		final CommandFactoryNote factoryNoteCommand = new CommandFactoryNote();
+		final FactoryNoteCommand factoryNoteCommand = new FactoryNoteCommand();
 		cmds.add(factoryNoteCommand.createMultiLine(false));
 
-		final CommandFactoryNoteOnEntity factoryNoteOnEntityCommand = new CommandFactoryNoteOnEntity("desc",
+		final FactoryNoteOnEntityCommand factoryNoteOnEntityCommand = new FactoryNoteOnEntityCommand("desc",
 				new RegexOr("ENTITY", //
 						new RegexLeaf("[\\p{L}0-9_.]+"), //
 						new RegexLeaf("\\(\\)[%s]*[\\p{L}0-9_.]+"), //
@@ -112,7 +112,7 @@ public class DescriptionDiagramFactory extends UmlDiagramFactory {
 		cmds.add(factoryNoteOnEntityCommand.createMultiLine(false));
 		cmds.add(factoryNoteCommand.createMultiLine(false));
 
-		final CommandFactoryNoteOnLink factoryNoteOnLinkCommand = new CommandFactoryNoteOnLink();
+		final FactoryNoteOnLinkCommand factoryNoteOnLinkCommand = new FactoryNoteOnLinkCommand();
 		cmds.add(factoryNoteOnLinkCommand.createSingleLine());
 		cmds.add(factoryNoteOnLinkCommand.createMultiLine(false));
 

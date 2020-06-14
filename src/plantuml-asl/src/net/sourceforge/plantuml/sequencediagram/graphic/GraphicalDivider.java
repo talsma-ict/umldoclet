@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -51,7 +51,7 @@ class GraphicalDivider extends GraphicalElement {
 
 	@Override
 	protected void drawInternalU(UGraphic ug, double maxX, Context2D context) {
-		ug = ug.apply(UTranslate.dy(getStartingY()));
+		ug = ug.apply(new UTranslate(0, getStartingY()));
 		final StringBounder stringBounder = ug.getStringBounder();
 		final Dimension2D dim = new Dimension2DDouble(maxX, comp.getPreferredHeight(stringBounder));
 		comp.drawU(ug, new Area(dim), context);

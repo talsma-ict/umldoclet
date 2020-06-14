@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -35,8 +35,6 @@ import java.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.LineBreakStrategy;
-import net.sourceforge.plantuml.creole.atom.AbstractAtom;
-import net.sourceforge.plantuml.creole.atom.Atom;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
@@ -78,17 +76,16 @@ public class CreoleHorizontalLine extends AbstractAtom implements Atom {
 		if (line.length() == 0) {
 			return TextBlockUtils.empty(0, 0);
 		}
-		final SheetBuilder parser = Parser.build(fontConfiguration, HorizontalAlignment.LEFT, skinParam,
-				CreoleMode.FULL);
+		final CreoleParser parser = new CreoleParser(fontConfiguration, HorizontalAlignment.LEFT, skinParam, CreoleMode.FULL);
 		final Sheet sheet = parser.createSheet(Display.getWithNewlines(line));
 		final TextBlock tb = new SheetBlock1(sheet, LineBreakStrategy.NONE, skinParam.getPadding());
 		return tb;
 	}
 
 	public void drawU(UGraphic ug) {
-		// ug = ug.apply(UChangeColor.nnn(fontConfiguration.getColor()));
+		// ug = ug.apply(new UChangeColor(fontConfiguration.getColor()));
 		final Dimension2D dim = calculateDimension(ug.getStringBounder());
-		ug = ug.apply(UTranslate.dy(dim.getHeight() / 2));
+		ug = ug.apply(new UTranslate(0, dim.getHeight() / 2));
 		ug.draw(getHorizontalLine());
 	}
 
@@ -103,5 +100,5 @@ public class CreoleHorizontalLine extends AbstractAtom implements Atom {
 	public double getStartingAltitude(StringBounder stringBounder) {
 		return 0;
 	}
-
+	
 }

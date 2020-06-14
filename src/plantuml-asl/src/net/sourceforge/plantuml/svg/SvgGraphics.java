@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -40,9 +40,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -53,23 +52,22 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import net.sourceforge.plantuml.Log;
+import net.sourceforge.plantuml.OptionFlags;
+import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.SvgString;
+import net.sourceforge.plantuml.code.Base64Coder;
+import net.sourceforge.plantuml.graphic.HtmlColorGradient;
+import net.sourceforge.plantuml.tikz.TikzGraphics;
+import net.sourceforge.plantuml.ugraphic.ColorMapper;
+import net.sourceforge.plantuml.ugraphic.UPath;
+import net.sourceforge.plantuml.ugraphic.USegment;
+import net.sourceforge.plantuml.ugraphic.USegmentType;
+
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import net.sourceforge.plantuml.Log;
-import net.sourceforge.plantuml.SignatureUtils;
-import net.sourceforge.plantuml.SvgString;
-import net.sourceforge.plantuml.code.Base64Coder;
-import net.sourceforge.plantuml.security.ImageIO;
-import net.sourceforge.plantuml.security.SecurityUtils;
-import net.sourceforge.plantuml.tikz.TikzGraphics;
-import net.sourceforge.plantuml.ugraphic.UPath;
-import net.sourceforge.plantuml.ugraphic.USegment;
-import net.sourceforge.plantuml.ugraphic.USegmentType;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
-import net.sourceforge.plantuml.ugraphic.color.HColorGradient;
 
 public class SvgGraphics {
 
@@ -86,11 +84,8 @@ public class SvgGraphics {
 	// http://www.w3schools.com/svg/svg_feoffset.asp
 	// http://www.adobe.com/svg/demos/samples.html
 
-	private static final String XLINK_TITLE1 = "title";
-	private static final String XLINK_TITLE2 = "xlink:title";
-	private static final String XLINK_HREF1 = "href";
-	private static final String XLINK_HREF2 = "xlink:href";
-
+	private static final String XLINK_HREF = "href";
+	
 	final private Document document;
 	final private Element root;
 	final private Element defs;
@@ -104,8 +99,6 @@ public class SvgGraphics {
 
 	private int maxX = 10;
 	private int maxY = 10;
-
-	private final String preserveAspectRatio;
 
 	private final double scale;
 	private final String filterUid;
@@ -122,19 +115,17 @@ public class SvgGraphics {
 		}
 	}
 
-	public SvgGraphics(boolean svgDimensionStyle, Dimension2D minDim, double scale, String hover, long seed,
-			String preserveAspectRatio) {
-		this(svgDimensionStyle, minDim, null, scale, hover, seed, preserveAspectRatio);
+	public SvgGraphics(boolean svgDimensionStyle, Dimension2D minDim, double scale, String hover, long seed) {
+		this(svgDimensionStyle, minDim, null, scale, hover, seed);
 	}
 
 	public SvgGraphics(boolean svgDimensionStyle, Dimension2D minDim, String backcolor, double scale, String hover,
-			long seed, String preserveAspectRatio) {
+			long seed) {
 		try {
 			this.svgDimensionStyle = svgDimensionStyle;
 			this.scale = scale;
 			this.document = getDocument();
 			this.backcolor = backcolor;
-			this.preserveAspectRatio = preserveAspectRatio;
 			ensureVisible(minDim.getWidth(), minDim.getHeight());
 
 			this.root = getRootNode();
@@ -170,9 +161,9 @@ public class SvgGraphics {
 
 	private Element pendingBackground;
 
-	public void paintBackcolorGradient(ColorMapper mapper, HColorGradient gr) {
-		final String id = createSvgGradient(mapper.toRGB(gr.getColor1()), mapper.toRGB(gr.getColor2()),
-				gr.getPolicy());
+	public void paintBackcolorGradient(ColorMapper mapper, HtmlColorGradient gr) {
+		final String id = createSvgGradient(StringUtils.getAsHtml(mapper.getMappedColor(gr.getColor1())),
+				StringUtils.getAsHtml(mapper.getMappedColor(gr.getColor2())), gr.getPolicy());
 		setFillColor("url(#" + id + ")");
 		setStrokeColor(null);
 		pendingBackground = createRectangleInternal(0, 0, 0, 0);
@@ -305,7 +296,44 @@ public class SvgGraphics {
 		this.strokeDasharray = strokeDasharray;
 	}
 
+	public void closeLink() {
+		if (pendingAction.size() > 0) {
+			final Element element = pendingAction.get(0);
+			pendingAction.remove(0);
+			if (element.getFirstChild() != null) {
+				// Empty link
+				getG().appendChild(element);
+			}
+		}
+	}
+
 	private final List<Element> pendingAction = new ArrayList<Element>();
+
+	public void openLink(String url, String title, String target) {
+		if (url == null) {
+			throw new IllegalArgumentException();
+		}
+		if (OptionFlags.ALLOW_INCLUDE == false && url.toLowerCase().startsWith("javascript")) {
+			return;
+		}
+
+		if (pendingAction.size() > 0) {
+			closeLink();
+		}
+
+		pendingAction.add(0, (Element) document.createElement("a"));
+		pendingAction.get(0).setAttribute("target", target);
+		pendingAction.get(0).setAttribute(XLINK_HREF, url);
+		pendingAction.get(0).setAttribute("xlink:type", "simple");
+		pendingAction.get(0).setAttribute("xlink:actuate", "onRequest");
+		pendingAction.get(0).setAttribute("xlink:show", "new");
+		if (title == null) {
+			pendingAction.get(0).setAttribute("xlink:title", url);
+		} else {
+			title = title.replaceAll("\\\\n", "\n");
+			pendingAction.get(0).setAttribute("xlink:title", title);
+		}
+	}
 
 	public final Element getG() {
 		if (pendingAction.size() == 0) {
@@ -494,13 +522,13 @@ public class SvgGraphics {
 	private Transformer getTransformer() throws TransformerException {
 		// Get a TransformerFactory object.
 		TransformerFactory xformFactory = null;
-//		try {
-//			final Class<?> factoryClass = Class
-//					.forName("com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl");
-//			xformFactory = (TransformerFactory) factoryClass.newInstance();
-//		} catch (Exception e) {
-		xformFactory = TransformerFactory.newInstance();
-//		}
+		try {
+			final Class<?> factoryClass = Class
+					.forName("com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl");
+			xformFactory = (TransformerFactory) factoryClass.newInstance();
+		} catch (Exception e) {
+			xformFactory = TransformerFactory.newInstance();
+		}
 		Log.info("TransformerFactory=" + xformFactory.getClass());
 
 		// Get an XSL Transformer object.
@@ -525,8 +553,8 @@ public class SvgGraphics {
 		createXmlInternal(baos);
 		String s = new String(baos.toByteArray());
 		for (Map.Entry<String, String> ent : images.entrySet()) {
-			final String k = "<" + ent.getKey() + "/>";
-			s = s.replace(k, ent.getValue());
+			final String k = "\\<" + ent.getKey() + "/\\>";
+			s = s.replaceAll(k, ent.getValue());
 		}
 		os.write(s.getBytes());
 	}
@@ -554,7 +582,7 @@ public class SvgGraphics {
 		}
 		root.setAttribute("viewBox", "0 0 " + maxXscaled + " " + maxYscaled);
 		root.setAttribute("zoomAndPan", "magnify");
-		root.setAttribute("preserveAspectRatio", preserveAspectRatio);
+		root.setAttribute("preserveAspectRatio", "none");
 		root.setAttribute("contentScriptType", "application/ecmascript");
 		root.setAttribute("contentStyleType", "text/css");
 
@@ -706,7 +734,7 @@ public class SvgGraphics {
 			String svg = manageScale(image);
 			final String pos = "<svg x=\"" + format(x) + "\" y=\"" + format(y) + "\">";
 			svg = pos + svg.substring(5);
-			final String key = "imagesvginlined" + image.getMD5Hex() + images.size();
+			final String key = "imagesvginlined" + images.size();
 			final Element elt = (Element) document.createElement(key);
 			getG().appendChild(elt);
 			images.put(key, svg);
@@ -749,8 +777,8 @@ public class SvgGraphics {
 				addFilter(filter, "feGaussianBlur", "result", "blurOut", "stdDeviation", "" + (2 * scale));
 				addFilter(filter, "feColorMatrix", "type", "matrix", "in", "blurOut", "result", "blurOut2", "values",
 						"0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0");
-				addFilter(filter, "feOffset", "result", "blurOut3", "in", "blurOut2", "dx", "" + (4 * scale), "dy",
-						"" + (4 * scale));
+				addFilter(filter, "feOffset", "result", "blurOut3", "in", "blurOut2", "dx", "" + (4 * scale), "dy", ""
+						+ (4 * scale));
 				addFilter(filter, "feBlend", "in", "SourceGraphic", "in2", "blurOut3", "mode", "normal");
 				defs.appendChild(filter);
 
@@ -774,82 +802,9 @@ public class SvgGraphics {
 		this.hidden = hidden;
 	}
 
-	public static final String MD5_HEADER = "<!--MD5=[";
-
-	public static String getMD5Hex(String comment) {
-		return SignatureUtils.getMD5Hex(comment);
-	}
-
 	public void addComment(String comment) {
-		final String signature = getMD5Hex(comment);
-		comment = "MD5=[" + signature + "]\n" + comment;
 		final Comment commentElement = document.createComment(comment);
 		getG().appendChild(commentElement);
-	}
-
-	public void openLink(String url, String title, String target) {
-		if (url == null) {
-			throw new IllegalArgumentException();
-		}
-		// javascript: security issue
-		if (SecurityUtils.getJavascriptUnsecure() == false && url.toLowerCase().startsWith("javascript")) {
-			return;
-		}
-
-//		if (pendingAction.size() > 0) {
-//			closeLink();
-//		}
-
-		pendingAction.add(0, (Element) document.createElement("a"));
-		pendingAction.get(0).setAttribute("target", target);
-		pendingAction.get(0).setAttribute(XLINK_HREF1, url);
-		pendingAction.get(0).setAttribute(XLINK_HREF2, url);
-		pendingAction.get(0).setAttribute("xlink:type", "simple");
-		pendingAction.get(0).setAttribute("xlink:actuate", "onRequest");
-		pendingAction.get(0).setAttribute("xlink:show", "new");
-		if (title == null) {
-			pendingAction.get(0).setAttribute(XLINK_TITLE1, url);
-			pendingAction.get(0).setAttribute(XLINK_TITLE2, url);
-		} else {
-			title = formatTitle(title);
-			pendingAction.get(0).setAttribute(XLINK_TITLE1, title);
-			pendingAction.get(0).setAttribute(XLINK_TITLE2, title);
-		}
-	}
-
-	private String formatTitle(String title) {
-		final Pattern p = Pattern.compile("\\<U\\+([0-9A-Fa-f]+)\\>");
-		final Matcher m = p.matcher(title);
-		final StringBuffer sb = new StringBuffer();
-		while (m.find()) {
-			final String num = m.group(1);
-			final char c = (char) Integer.parseInt(num, 16);
-			m.appendReplacement(sb, "" + c);
-		}
-		m.appendTail(sb);
-
-		title = sb.toString().replaceAll("\\\\n", "\n");
-		return title;
-	}
-
-	public void closeLink() {
-		if (pendingAction.size() > 0) {
-			final Element element = pendingAction.get(0);
-			pendingAction.remove(0);
-			if (element.getFirstChild() != null) {
-				// Empty link
-				getG().appendChild(element);
-			}
-		}
-	}
-
-	public void startGroup(String groupId) {
-		pendingAction.add(0, (Element) document.createElement("g"));
-		pendingAction.get(0).setAttribute("id", groupId);
-	}
-
-	public void closeGroup() {
-		closeLink();
 	}
 
 }

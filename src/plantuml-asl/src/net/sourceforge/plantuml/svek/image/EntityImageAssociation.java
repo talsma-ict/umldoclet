@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -40,6 +40,8 @@ import net.sourceforge.plantuml.cucadiagram.ILeaf;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.svek.AbstractEntityImage;
 import net.sourceforge.plantuml.svek.ShapeType;
+import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
+import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.UStroke;
@@ -67,9 +69,9 @@ public class EntityImageAssociation extends AbstractEntityImage {
 		diams.addPoint(0, SIZE);
 		diams.addPoint(SIZE, 0);
 
-		ug.apply(SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.classBorder))
-				.apply(SkinParamUtils.getColor(getSkinParam(), getStereo(),
-				ColorParam.classBackground).bg()).apply(new UStroke(1.5)).draw(diams);
+		ug.apply(new UChangeColor(SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.classBorder)))
+				.apply(new UChangeBackColor(SkinParamUtils.getColor(getSkinParam(), getStereo(),
+						ColorParam.classBackground))).apply(new UStroke(1.5)).draw(diams);
 	}
 
 	public ShapeType getShapeType() {

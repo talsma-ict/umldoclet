@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -66,19 +66,18 @@ public class CommandArrowLong3 extends CommandMultilines2<ActivityDiagram3> {
 				RegexLeaf.end());
 	}
 
-	@Override
 	protected CommandExecutionResult executeNow(ActivityDiagram3 diagram, BlocLines lines) {
 		lines = lines.removeEmptyColumns();
-		final RegexResult line0 = getStartingPattern().matcher(lines.getFirst().getTrimmed().getString());
+		final RegexResult line0 = getStartingPattern().matcher(lines.getFirst499().getTrimmed().getString());
 		// final HtmlColor color = diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(line0.get("COLOR", 0));
-		// diagram.setColorNextArrow(Rainbow.fromColor(color));
+		// diagram.setColorNextArrow(HtmlColorAndStyle.fromColor(color));
 		final String colorString = line0.get("COLOR", 0);
 		if (colorString != null) {
 			Rainbow rainbow = Rainbow.build(diagram.getSkinParam(), colorString, diagram.getSkinParam()
 					.colorArrowSeparationSpace());
 			diagram.setColorNextArrow(rainbow);
 		}
-		lines = lines.removeStartingAndEnding(line0.get("LABEL", 0), 1);
+		lines = lines.removeStartingAndEnding2(line0.get("LABEL", 0));
 		diagram.setLabelNextArrow(lines.toDisplay());
 		return CommandExecutionResult.ok();
 	}

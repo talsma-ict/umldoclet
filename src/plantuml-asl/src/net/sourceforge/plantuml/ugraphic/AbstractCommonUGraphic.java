@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,20 +30,15 @@
  */
 package net.sourceforge.plantuml.ugraphic;
 
-import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapperTransparentWrapper;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorNone;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 
 public abstract class AbstractCommonUGraphic implements UGraphic {
 
 	private UStroke stroke = new UStroke();
 	private UPattern pattern = UPattern.FULL;
 	private boolean hidden = false;
-	private HColor backColor = null;
-	private HColor color = null;
-	private boolean enlargeClip = false;
+	private HtmlColor backColor = null;
+	private HtmlColor color = null;
 
 	private UTranslate translate = new UTranslate();
 
@@ -56,9 +51,6 @@ public abstract class AbstractCommonUGraphic implements UGraphic {
 	}
 
 	public UGraphic apply(UChange change) {
-		if (change == null) {
-			throw new IllegalArgumentException();
-		}
 		final AbstractCommonUGraphic copy = copyUGraphic();
 		if (change instanceof UTranslate) {
 			copy.translate = ((UTranslate) change).scaled(scale).compose(copy.translate);
@@ -71,12 +63,10 @@ public abstract class AbstractCommonUGraphic implements UGraphic {
 			copy.pattern = (UPattern) change;
 		} else if (change instanceof UHidden) {
 			copy.hidden = change == UHidden.HIDDEN;
-		} else if (change instanceof UBackground) {
-			copy.backColor = ((UBackground) change).getBackColor();
-		} else if (change instanceof HColorNone) {
-			copy.color = null;
-		} else if (change instanceof HColor) {
-			copy.color = (HColor) change;
+		} else if (change instanceof UChangeBackColor) {
+			copy.backColor = ((UChangeBackColor) change).getBackColor();
+		} else if (change instanceof UChangeColor) {
+			copy.color = ((UChangeColor) change).getColor();
 		} else if (change instanceof UScale) {
 			final double factor = ((UScale) change).getScale();
 			copy.scale = scale * factor;
@@ -85,14 +75,7 @@ public abstract class AbstractCommonUGraphic implements UGraphic {
 	}
 
 	final public UClip getClip() {
-		if (enlargeClip && clip != null) {
-			return clip.enlarge(1);
-		}
 		return clip;
-	}
-
-	final public void enlargeClip() {
-		this.enlargeClip = true;
 	}
 
 	public AbstractCommonUGraphic(ColorMapper colorMapper) {
@@ -100,7 +83,6 @@ public abstract class AbstractCommonUGraphic implements UGraphic {
 	}
 
 	protected AbstractCommonUGraphic(AbstractCommonUGraphic other) {
-		this.enlargeClip = other.enlargeClip;
 		this.colorMapper = other.colorMapper;
 		this.translate = other.translate;
 		this.clip = other.clip;
@@ -126,11 +108,11 @@ public abstract class AbstractCommonUGraphic implements UGraphic {
 				return stroke;
 			}
 
-			public HColor getColor() {
+			public HtmlColor getColor() {
 				return color;
 			}
 
-			public HColor getBackcolor() {
+			public HtmlColor getBackcolor() {
 				return backColor;
 			}
 
@@ -156,19 +138,8 @@ public abstract class AbstractCommonUGraphic implements UGraphic {
 		return new ColorMapperTransparentWrapper(colorMapper);
 	}
 
-	final public void flushUg() {
-	}
+	public void flushUg() {
 
-	public void startUrl(Url url) {
-	}
-
-	public void closeUrl() {
-	}
-
-	public void startGroup(String groupId) {
-	}
-
-	public void closeGroup() {
 	}
 
 	public boolean matchesProperty(String propertyName) {

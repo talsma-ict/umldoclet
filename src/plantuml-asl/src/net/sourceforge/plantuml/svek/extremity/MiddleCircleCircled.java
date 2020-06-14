@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,16 +32,18 @@ package net.sourceforge.plantuml.svek.extremity;
 
 import java.awt.geom.Point2D;
 
+import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.graphic.HtmlColorUtils;
+import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
+import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 class MiddleCircleCircled extends Extremity {
 
-	private final HColor diagramBackColor = HColorUtils.WHITE;
+	private final HtmlColor diagramBackColor = HtmlColorUtils.WHITE;
 	private final double angle;
 	private final MiddleCircleCircledMode mode;
 	private final double radius1 = 6;
@@ -49,9 +51,9 @@ class MiddleCircleCircled extends Extremity {
 
 	private final double radius2 = 10;
 	private final UEllipse bigcircle = new UEllipse(2 * radius2, 2 * radius2);
-	private final HColor backColor;
+	private final HtmlColor backColor;
 
-	public MiddleCircleCircled(double angle, MiddleCircleCircledMode mode, HColor backColor) {
+	public MiddleCircleCircled(double angle, MiddleCircleCircledMode mode, HtmlColor backColor) {
 		this.angle = angle;
 		this.mode = mode;
 		this.backColor = backColor;
@@ -64,11 +66,11 @@ class MiddleCircleCircled extends Extremity {
 
 	public void drawU(UGraphic ug) {
 		if (mode == MiddleCircleCircledMode.BOTH) {
-			ug.apply(diagramBackColor).apply(diagramBackColor.bg())
+			ug.apply(new UChangeColor(diagramBackColor)).apply(new UChangeBackColor(diagramBackColor))
 					.apply(new UTranslate(-radius2, -radius2)).draw(bigcircle);
 		}
 
-		ug = ug.apply(backColor.bg());
+		ug = ug.apply(new UChangeBackColor(backColor));
 		ug = ug.apply(new UStroke(1.5));
 
 		final double d = 0;

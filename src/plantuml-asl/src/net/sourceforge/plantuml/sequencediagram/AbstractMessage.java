@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -36,28 +36,25 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.skin.ArrowConfiguration;
-import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleBuilder;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleDefinition;
 import net.sourceforge.plantuml.style.WithStyle;
 
 public abstract class AbstractMessage implements EventWithDeactivate, WithStyle {
 
 	public Style[] getUsedStyles() {
-		Style style = getDefaultStyleDefinition().getMergedStyle(styleBuilder);
-		if (style != null && arrowConfiguration.getColor() != null) {
-			style = style.eventuallyOverride(PName.LineColor, arrowConfiguration.getColor());
-		}
-		return new Style[] { style };
+		return new Style[] { getDefaultStyleDefinition().getMergedStyle(styleBuilder) };
 	}
 
-	public StyleSignature getDefaultStyleDefinition() {
-		return StyleSignature.of(SName.root, SName.element, SName.sequenceDiagram, SName.arrow);
+	public StyleDefinition getDefaultStyleDefinition() {
+		return StyleDefinition.of(SName.root, SName.element, SName.sequenceDiagram,
+				SName.message);
 	}
 
 	private final Display label;
@@ -180,8 +177,7 @@ public abstract class AbstractMessage implements EventWithDeactivate, WithStyle 
 	}
 
 	public final void setNote(Note note) {
-		if (note.getPosition() != NotePosition.LEFT && note.getPosition() != NotePosition.RIGHT
-				&& note.getPosition() != NotePosition.BOTTOM && note.getPosition() != NotePosition.TOP) {
+		if (note.getPosition() != NotePosition.LEFT && note.getPosition() != NotePosition.RIGHT) {
 			throw new IllegalArgumentException();
 		}
 		note = note.withPosition(overideNotePosition(note.getPosition()));
@@ -250,7 +246,4 @@ public abstract class AbstractMessage implements EventWithDeactivate, WithStyle 
 		return this.anchor2;
 	}
 
-	public abstract Participant getParticipant1();
-
-	public abstract Participant getParticipant2();
 }

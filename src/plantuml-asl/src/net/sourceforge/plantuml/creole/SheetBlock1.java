@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -39,8 +39,6 @@ import java.util.Map;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.LineBreakStrategy;
-import net.sourceforge.plantuml.creole.atom.Atom;
-import net.sourceforge.plantuml.creole.legacy.StripeSimple;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.InnerStrategy;
@@ -55,7 +53,7 @@ public class SheetBlock1 extends AbstractTextBlock implements TextBlock, Atom, S
 	public List<Atom> splitInTwo(StringBounder stringBounder, double width) {
 		throw new UnsupportedOperationException(getClass().toString());
 	}
-
+	
 	private final Sheet sheet;
 	private List<Stripe> stripes;
 	private Map<Stripe, Double> heights;
@@ -73,7 +71,7 @@ public class SheetBlock1 extends AbstractTextBlock implements TextBlock, Atom, S
 			throw new IllegalArgumentException();
 		}
 	}
-
+	
 	@Override
 	public String toString() {
 		return sheet.toString();

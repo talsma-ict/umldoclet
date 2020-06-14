@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -39,9 +39,9 @@ import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
+import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.graphic.HtmlColorSetSimple;
+import net.sourceforge.plantuml.ugraphic.ColorMapperIdentity;
 
 public class PSystemMath extends AbstractPSystem {
 
@@ -105,8 +105,8 @@ public class PSystemMath extends AbstractPSystem {
 	}
 
 	private Color getColor(final String col) {
-		final HColor col2 = HColorSet.instance().getColorIfValid(col);
-		final Color col3 = new ColorMapperIdentity().toColor(col2);
+		final HtmlColor col2 = new HtmlColorSetSimple().getColorIfValid(col);
+		final Color col3 = new ColorMapperIdentity().getMappedColor(col2);
 		return col3;
 	}
 

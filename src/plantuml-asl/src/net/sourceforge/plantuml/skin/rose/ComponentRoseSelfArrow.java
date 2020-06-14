@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -38,6 +38,7 @@ import net.sourceforge.plantuml.LineBreakStrategy;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.ArrowConfiguration;
@@ -45,20 +46,21 @@ import net.sourceforge.plantuml.skin.ArrowDecoration;
 import net.sourceforge.plantuml.skin.ArrowHead;
 import net.sourceforge.plantuml.skin.ArrowPart;
 import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
+import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class ComponentRoseSelfArrow extends AbstractComponentRoseArrow {
 
 	private final double arrowWidth = 45;
 	private final boolean niceArrow;
 
-	public ComponentRoseSelfArrow(Style style, HColor foregroundColor, FontConfiguration font,
+	public ComponentRoseSelfArrow(Style style, HtmlColor foregroundColor, FontConfiguration font,
 			Display stringsToDisplay, ArrowConfiguration arrowConfiguration, ISkinSimple spriteContainer,
 			LineBreakStrategy maxMessageSize, boolean niceArrow) {
 		super(style, foregroundColor, font, stringsToDisplay, arrowConfiguration, spriteContainer,
@@ -74,7 +76,7 @@ public class ComponentRoseSelfArrow extends AbstractComponentRoseArrow {
 		final StringBounder stringBounder = ug.getStringBounder();
 		final double textHeight = getTextHeight(stringBounder);
 
-		ug = ug.apply(getForegroundColor());
+		ug = ug.apply(new UChangeColor(getForegroundColor()));
 		final double xRight = arrowWidth - 3;
 
 		final UGraphic ug2 = getArrowConfiguration().applyStroke(ug);
@@ -86,7 +88,7 @@ public class ComponentRoseSelfArrow extends AbstractComponentRoseArrow {
 		final UEllipse circle = new UEllipse(ComponentRoseArrow.diamCircle, ComponentRoseArrow.diamCircle);
 		if (getArrowConfiguration().getDecoration1() == ArrowDecoration.CIRCLE) {
 			ug2.apply(new UStroke(ComponentRoseArrow.thinCircle))
-					.apply(getForegroundColor())
+					.apply(new UChangeColor(getForegroundColor()))
 					.apply(new UTranslate(x1 + 1 - ComponentRoseArrow.diamCircle / 2 - ComponentRoseArrow.thinCircle,
 							textHeight - ComponentRoseArrow.diamCircle / 2 - ComponentRoseArrow.thinCircle / 2))
 					.draw(circle);
@@ -94,7 +96,7 @@ public class ComponentRoseSelfArrow extends AbstractComponentRoseArrow {
 		}
 		if (getArrowConfiguration().getDecoration2() == ArrowDecoration.CIRCLE) {
 			ug2.apply(new UStroke(ComponentRoseArrow.thinCircle))
-					.apply(getForegroundColor())
+					.apply(new UChangeColor(getForegroundColor()))
 					.apply(new UTranslate(x2 - ComponentRoseArrow.diamCircle / 2 - ComponentRoseArrow.thinCircle,
 							textAndArrowHeight - ComponentRoseArrow.diamCircle / 2 - ComponentRoseArrow.thinCircle / 2))
 					.draw(circle);
@@ -106,9 +108,9 @@ public class ComponentRoseSelfArrow extends AbstractComponentRoseArrow {
 		}
 
 		final double arrowHeight = textAndArrowHeight - textHeight;
-		ug2.apply(new UTranslate(x1, textHeight)).draw(ULine.hline(xRight - x1));
-		ug2.apply(new UTranslate(xRight, textHeight)).draw(ULine.vline(arrowHeight));
-		ug2.apply(new UTranslate(x2, textAndArrowHeight)).draw(ULine.hline(xRight - x2));
+		ug2.apply(new UTranslate(x1, textHeight)).draw(new ULine(xRight - x1, 0));
+		ug2.apply(new UTranslate(xRight, textHeight)).draw(new ULine(0, arrowHeight));
+		ug2.apply(new UTranslate(x2, textAndArrowHeight)).draw(new ULine(xRight - x2, 0));
 
 		if (getArrowConfiguration().isAsync()) {
 			if (getArrowConfiguration().getPart() != ArrowPart.BOTTOM_PART) {
@@ -123,18 +125,18 @@ public class ComponentRoseSelfArrow extends AbstractComponentRoseArrow {
 			ug = ug.apply(new UStroke(2));
 			ug.apply(
 					new UTranslate(ComponentRoseArrow.spaceCrossX, textHeight - getArrowDeltaX() / 2
-									+ getArrowOnlyHeight(stringBounder))).draw(new ULine(getArrowDeltaX(), getArrowDeltaX()));
+							+ getArrowOnlyHeight(stringBounder))).draw(new ULine(getArrowDeltaX(), getArrowDeltaX()));
 			ug.apply(
 					new UTranslate(ComponentRoseArrow.spaceCrossX, textHeight + getArrowDeltaX() / 2
-									+ getArrowOnlyHeight(stringBounder))).draw(new ULine(getArrowDeltaX(), -getArrowDeltaX()));
+							+ getArrowOnlyHeight(stringBounder))).draw(new ULine(getArrowDeltaX(), -getArrowDeltaX()));
 
 		} else {
 			final UPolygon polygon = getPolygon(textAndArrowHeight);
-			ug.apply(getForegroundColor().bg()).apply(UTranslate.dx(x2)).draw(polygon);
+			ug.apply(new UChangeBackColor(getForegroundColor())).apply(new UTranslate(x2, 0)).draw(polygon);
 
 		}
 
-		getTextBlock().drawU(ug.apply(UTranslate.dx(getMarginX1())));
+		getTextBlock().drawU(ug.apply(new UTranslate(getMarginX1(), 0)));
 	}
 
 	private UPolygon getPolygon(final double textAndArrowHeight) {

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -106,7 +106,6 @@ public class ActivityDiagramFactory3 extends UmlDiagramFactory {
 		cmds.add(new CommandGroupEnd3());
 		cmds.add(new CommandArrow3());
 		cmds.add(new CommandArrowLong3());
-		cmds.add(new CommandRepeat3());
 		cmds.add(new CommandActivity3());
 		cmds.add(new CommandIf4());
 		cmds.add(new CommandIf2());
@@ -122,6 +121,7 @@ public class ActivityDiagramFactory3 extends UmlDiagramFactory {
 		cmds.add(new CommandCase());
 		cmds.add(new CommandEndSwitch());
 
+		cmds.add(new CommandRepeat3());
 		cmds.add(new CommandRepeatWhile3());
 		cmds.add(new CommandRepeatWhile3Multilines());
 		cmds.add(new CommandBackward3());

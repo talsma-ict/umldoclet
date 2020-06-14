@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,20 +32,21 @@ package net.sourceforge.plantuml.skin.rose;
 
 import java.awt.geom.Dimension2D;
 
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.skin.AbstractComponent;
 import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.ArrowConfiguration;
 import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class ComponentRoseNewpage extends AbstractComponent {
 
-	private final HColor foregroundColor;
+	private final HtmlColor foregroundColor;
 
-	public ComponentRoseNewpage(Style style, HColor foregroundColor) {
+	public ComponentRoseNewpage(Style style, HtmlColor foregroundColor) {
 		super(style);
 		this.foregroundColor = foregroundColor;
 	}
@@ -53,8 +54,8 @@ public class ComponentRoseNewpage extends AbstractComponent {
 	@Override
 	protected void drawInternalU(UGraphic ug, Area area) {
 		final Dimension2D dimensionToUse = area.getDimensionToUse();
-		ug = ArrowConfiguration.stroke(ug, 2, 2, 1).apply(foregroundColor);
-		ug.draw(ULine.hline(dimensionToUse.getWidth()));
+		ug = ArrowConfiguration.stroke(ug, 2, 2, 1).apply(new UChangeColor(foregroundColor));
+		ug.draw(new ULine(dimensionToUse.getWidth(), 0));
 	}
 
 	@Override

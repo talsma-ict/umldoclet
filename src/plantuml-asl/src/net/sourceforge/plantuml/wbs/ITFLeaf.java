@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -35,6 +35,7 @@ import java.awt.geom.Point2D;
 
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
+import net.sourceforge.plantuml.activitydiagram3.ftile.BoxStyle;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileBox;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
@@ -43,22 +44,23 @@ import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
+import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.mindmap.IdeaShape;
-import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 
-class ITFLeaf extends AbstractTextBlock implements ITF {
+public class ITFLeaf extends AbstractTextBlock implements ITF {
 
+	private final ISkinParam skinParam;
 	private final TextBlock box;
 
-	public ITFLeaf(Style style, ISkinParam skinParam, Display label, IdeaShape shape) {
-		// this.skinParam = skinParam;
+	public ITFLeaf(ISkinParam skinParam, Display label, IdeaShape shape) {
+		this.skinParam = skinParam;
+		final UFont font = skinParam.getFont(null, false, FontParam.ACTIVITY);
 
 		if (shape == IdeaShape.BOX) {
-			this.box = FtileBox.createWbs(style, skinParam, label);
+			this.box = new FtileBox(Colors.empty().mute(skinParam), label, font, null, BoxStyle.SDL_TASK);
 		} else {
-			final UFont font = skinParam.getFont(null, false, FontParam.ACTIVITY);
 			final TextBlock text = label.create(FontConfiguration.blackBlueTrue(font), HorizontalAlignment.LEFT,
 					skinParam);
 			this.box = TextBlockUtils.withMargin(text, 0, 3, 1, 1);

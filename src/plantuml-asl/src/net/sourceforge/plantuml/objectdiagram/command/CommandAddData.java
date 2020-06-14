@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -37,6 +37,7 @@ import net.sourceforge.plantuml.command.regex.IRegex;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.command.regex.RegexResult;
+import net.sourceforge.plantuml.cucadiagram.Code;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.objectdiagram.AbstractClassOrObjectDiagram;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
@@ -59,15 +60,13 @@ public class CommandAddData extends SingleLineCommand2<AbstractClassOrObjectDiag
 	@Override
 	protected CommandExecutionResult executeArg(AbstractClassOrObjectDiagram diagram, LineLocation location,
 			RegexResult arg) {
-		final String name = arg.get("NAME", 0);
-		final IEntity entity = diagram.getOrCreateLeaf(diagram.buildLeafIdent(name),
-				diagram.buildCode(name), null, null);
+		final IEntity entity = diagram.getOrCreateLeaf(Code.of(arg.get("NAME", 0)), null, null);
 
 		final String field = arg.get("DATA", 0);
 		if (field.length() > 0 && VisibilityModifier.isVisibilityCharacter(field)) {
 			diagram.setVisibilityModifierPresent(true);
 		}
-		entity.getBodier().addFieldOrMethod(field);
+		entity.getBodier().addFieldOrMethod(field, entity);
 		return CommandExecutionResult.ok();
 	}
 }

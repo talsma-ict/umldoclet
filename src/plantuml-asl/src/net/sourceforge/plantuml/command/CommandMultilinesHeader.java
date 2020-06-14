@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -31,12 +31,14 @@
 package net.sourceforge.plantuml.command;
 
 import net.sourceforge.plantuml.FontParam;
+import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.TitledDiagram;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.command.regex.Matcher2;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.style.PName;
 
 public class CommandMultilinesHeader extends CommandMultilines<TitledDiagram> {
 
@@ -50,8 +52,8 @@ public class CommandMultilinesHeader extends CommandMultilines<TitledDiagram> {
 	}
 
 	public CommandExecutionResult execute(final TitledDiagram diagram, BlocLines lines) {
-		lines = lines.trim();
-		final Matcher2 m = getStartingPattern().matcher(lines.getFirst().getTrimmed().getString());
+		lines = lines.trim(false);
+		final Matcher2 m = getStartingPattern().matcher(lines.getFirst499().getTrimmed().getString());
 		if (m.find() == false) {
 			throw new IllegalStateException();
 		}
@@ -59,13 +61,13 @@ public class CommandMultilinesHeader extends CommandMultilines<TitledDiagram> {
 		lines = lines.subExtract(1, 1);
 		final Display strings = lines.toDisplay();
 		if (strings.size() > 0) {
-			HorizontalAlignment ha = HorizontalAlignment.fromString(align, HorizontalAlignment.RIGHT);
-			if (SkinParam.USE_STYLES() && align == null) {
-				ha = FontParam.HEADER.getStyleDefinition()
+			HorizontalAlignment defaultAlign = HorizontalAlignment.RIGHT;
+			if (SkinParam.USE_STYLES()) {
+				defaultAlign = FontParam.HEADER.getStyleDefinition()
 						.getMergedStyle(((UmlDiagram) diagram).getSkinParam().getCurrentStyleBuilder())
-						.getHorizontalAlignment();
+						.value(PName.HorizontalAlignment).asHorizontalAlignment();
 			}
-			diagram.getHeader().putDisplay(strings, ha);
+			diagram.getHeader().putDisplay(strings, HorizontalAlignment.fromString(align, defaultAlign));
 			return CommandExecutionResult.ok();
 		}
 		return CommandExecutionResult.error("Empty header");

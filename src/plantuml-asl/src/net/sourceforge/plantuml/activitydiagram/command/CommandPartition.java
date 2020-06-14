@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -45,9 +45,7 @@ import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.GroupType;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.IGroup;
-import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.NamespaceStrategy;
-import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.color.ColorParser;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.graphic.color.Colors;
@@ -68,9 +66,7 @@ public class CommandPartition extends SingleLineCommand2<ActivityDiagram> {
 						color().getRegex(), //
 						new RegexLeaf("LEGACYCOLORIGNORED", "(#[0-9a-fA-F]{6}|#?\\w+)?")), //
 				RegexLeaf.spaceZeroOrMore(), //
-				new RegexLeaf("STEREOTYPE", "(\\<\\<.*\\>\\>)?"), //
-				RegexLeaf.spaceZeroOrMore(), //
-				new RegexLeaf("\\{?"), //
+				new RegexLeaf("\\{?"),
 				RegexLeaf.end());
 	}
 
@@ -80,11 +76,9 @@ public class CommandPartition extends SingleLineCommand2<ActivityDiagram> {
 
 	@Override
 	protected CommandExecutionResult executeArg(ActivityDiagram diagram, LineLocation location, RegexResult arg) {
-		final String idShort = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("NAME", 0));
-		final Ident ident = diagram.buildLeafIdent(idShort);
-		final Code code = diagram.V1972() ? ident : diagram.buildCode(idShort);
+		final Code code = Code.of(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("NAME", 0)));
 		final IGroup currentPackage = diagram.getCurrentGroup();
-		diagram.gotoGroup(ident, code, Display.getWithNewlines(code), GroupType.PACKAGE, currentPackage,
+		diagram.gotoGroup2(code, Display.getWithNewlines(code), GroupType.PACKAGE, currentPackage,
 				NamespaceStrategy.SINGLE);
 		final IEntity p = diagram.getCurrentGroup();
 
@@ -92,10 +86,12 @@ public class CommandPartition extends SingleLineCommand2<ActivityDiagram> {
 		if (colors.isEmpty() == false) {
 			p.setColors(colors);
 		}
-		if (arg.get("STEREOTYPE", 0) != null) {
-			p.setStereotype(new Stereotype(arg.get("STEREOTYPE", 0)));
-		}
 
+		// final String color = arg.get("COLOR", 0);
+		// if (color != null) {
+		// p.setSpecificColorTOBEREMOVED(ColorType.BACK,
+		// diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(color));
+		// }
 		return CommandExecutionResult.ok();
 	}
 

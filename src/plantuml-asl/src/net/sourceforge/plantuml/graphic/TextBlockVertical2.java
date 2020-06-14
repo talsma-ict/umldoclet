@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -39,10 +39,11 @@ import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.svek.Ports;
 import net.sourceforge.plantuml.svek.TextBlockBackcolored;
 import net.sourceforge.plantuml.svek.WithPorts;
+import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
+import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class TextBlockVertical2 extends AbstractTextBlock implements TextBlock, WithPorts {
 
@@ -74,18 +75,20 @@ public class TextBlockVertical2 extends AbstractTextBlock implements TextBlock, 
 	public void drawU(UGraphic ug) {
 		double y = 0;
 		final Dimension2D dimtotal = calculateDimension(ug.getStringBounder());
-
+		// if (backColor != null) {
+		// ug.apply(new UChangeColor(backColor)).apply(new UChangeBackColor(backColor)).draw(new URectangle(dimtotal));
+		// }
 		for (TextBlock block : blocks) {
 			final Dimension2D dimb = block.calculateDimension(ug.getStringBounder());
 			if (block instanceof TextBlockBackcolored) {
-				final HColor back = ((TextBlockBackcolored) block).getBackcolor();
+				final HtmlColor back = ((TextBlockBackcolored) block).getBackcolor();
 				if (back != null) {
-					ug.apply(UTranslate.dy(y)).apply(back).apply(back.bg())
+					ug.apply(new UTranslate(0, y)).apply(new UChangeColor(back)).apply(new UChangeBackColor(back))
 							.draw(new URectangle(dimtotal.getWidth(), dimb.getHeight()));
 				}
 			}
 			if (horizontalAlignment == HorizontalAlignment.LEFT) {
-				block.drawU(ug.apply(UTranslate.dy(y)));
+				block.drawU(ug.apply(new UTranslate(0, y)));
 			} else if (horizontalAlignment == HorizontalAlignment.CENTER) {
 				final double dx = (dimtotal.getWidth() - dimb.getWidth()) / 2;
 				block.drawU(ug.apply(new UTranslate(dx, y)));
@@ -119,7 +122,7 @@ public class TextBlockVertical2 extends AbstractTextBlock implements TextBlock, 
 			final Dimension2D dimb = block.calculateDimension(stringBounder);
 			final Rectangle2D result = block.getInnerPosition(member, stringBounder, strategy);
 			if (result != null) {
-				return UTranslate.dy(y).apply(result);
+				return new UTranslate(0, y).apply(result);
 			}
 			y += dimb.getHeight();
 		}

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,28 +30,23 @@
  */
 package net.sourceforge.plantuml.style;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import net.sourceforge.plantuml.FileSystem;
 import net.sourceforge.plantuml.LineLocationImpl;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.SkinParam;
-import net.sourceforge.plantuml.StringLocated;
 import net.sourceforge.plantuml.command.BlocLines;
-import net.sourceforge.plantuml.command.regex.Matcher2;
-import net.sourceforge.plantuml.command.regex.MyPattern;
-import net.sourceforge.plantuml.command.regex.Pattern2;
-import net.sourceforge.plantuml.security.SFile;
+import net.sourceforge.plantuml.command.CommandControl;
 
 public class StyleLoader {
+
+	public static StyleBuilder mainStyle(SkinParam skinParam) throws IOException {
+		return new StyleLoader(skinParam).loadSkin(SkinParam.DEFAULT_STYLE);
+	}
 
 	private final SkinParam skinParam;
 
@@ -59,122 +54,55 @@ public class StyleLoader {
 		this.skinParam = skinParam;
 	}
 
-	private StyleBuilder styleBuilder;
+	private StyleBuilder result;
 
 	public StyleBuilder loadSkin(String filename) throws IOException {
-		this.styleBuilder = new StyleBuilder(skinParam);
+		this.result = new StyleBuilder(skinParam);
 
 		InputStream internalIs = null;
-		SFile localFile = new SFile(filename);
+		File localFile = new File(filename);
 		Log.info("Trying to load style " + filename);
 		if (localFile.exists() == false) {
 			localFile = FileSystem.getInstance().getFile(filename);
 		}
 		if (localFile.exists()) {
-			Log.info("File found : " + localFile.getPrintablePath());
-			internalIs = localFile.openFile();
+			Log.info("File found : " + localFile.getAbsolutePath());
+			internalIs = new FileInputStream(localFile);
 		} else {
-			Log.info("File not found : " + localFile.getPrintablePath());
+			Log.info("File not found");
 			final String res = "/skin/" + filename;
 			internalIs = StyleLoader.class.getResourceAsStream(res);
-			if (internalIs != null) {
-				Log.info("... but " + filename + " found inside the .jar");
-			}
 		}
 		if (internalIs == null) {
 			return null;
 		}
 		final BlocLines lines2 = BlocLines.load(internalIs, new LineLocationImpl(filename, null));
 		loadSkinInternal(lines2);
-		return styleBuilder;
+		return result;
 	}
 
 	private void loadSkinInternal(final BlocLines lines) {
-		for (Style newStyle : getDeclaredStyles(lines, styleBuilder)) {
-			this.styleBuilder.put(newStyle.getSignature(), newStyle);
+		final CommandStyleMultilines cmd2 = new CommandStyleMultilines();
+		for (int i = 0; i < lines.size(); i++) {
+			final BlocLines ext1 = lines.subList(i, i + 1);
+			if (cmd2.isValid(ext1) == CommandControl.OK_PARTIAL) {
+				i = tryMultilines(cmd2, i, lines);
+			}
 		}
 	}
 
-	private static final String NAME_USER = "[\\w()]+?";
-	private final static Pattern2 userName = MyPattern.cmpile("^[.:]?(" + NAME_USER + ")([%s]+\\*)?[%s]*\\{$");
-	private final static Pattern2 propertyAndValue = MyPattern.cmpile("^([\\w]+):?[%s]+(.*?);?$");
-	private final static Pattern2 closeBracket = MyPattern.cmpile("^\\}$");
-
-	public static Collection<Style> getDeclaredStyles(BlocLines lines, AutomaticCounter counter) {
-		lines = lines.eventuallyMoveAllEmptyBracket();
-		final List<Style> result = new ArrayList<Style>();
-
-		final List<String> context = new ArrayList<String>();
-		final List<Map<PName, Value>> maps = new ArrayList<Map<PName, Value>>();
-		boolean inComment = false;
-		for (StringLocated s : lines) {
-			String trimmed = s.getTrimmed().getString();
-			if (trimmed.startsWith("/*") || trimmed.startsWith("/'")) {
-				inComment = true;
-				continue;
-			}
-			if (trimmed.endsWith("*/") || trimmed.endsWith("'/")) {
-				inComment = false;
-				continue;
-			}
-			if (inComment) {
-				continue;
-			}
-			final int x = trimmed.lastIndexOf("//");
-			if (x != -1) {
-				trimmed = trimmed.substring(0, x).trim();
-			}
-			final Matcher2 mUserName = userName.matcher(trimmed);
-			if (mUserName.find()) {
-				String n = mUserName.group(1);
-				final boolean isRecurse = mUserName.group(2) != null;
-				if (isRecurse) {
-					n += "*";
-				}
-				context.add(n);
-				maps.add(new EnumMap<PName, Value>(PName.class));
-				continue;
-			}
-			final Matcher2 mPropertyAndValue = propertyAndValue.matcher(trimmed);
-			if (mPropertyAndValue.find()) {
-				final PName key = PName.getFromName(mPropertyAndValue.group(1));
-				final String value = mPropertyAndValue.group(2);
-				if (key != null) {
-					maps.get(maps.size() - 1).put(key, new ValueImpl(value, counter));
-				}
-				continue;
-			}
-			final Matcher2 mCloseBracket = closeBracket.matcher(trimmed);
-			if (mCloseBracket.find()) {
-				if (context.size() > 0) {
-					final StyleSignature signature = contextToSignature(context);
-					final Style style = new Style(signature, maps.get(maps.size() - 1));
-					result.add(style);
-					context.remove(context.size() - 1);
-					maps.remove(maps.size() - 1);
-				}
+	private int tryMultilines(CommandStyleMultilines cmd2, int i, BlocLines lines) {
+		for (int j = i + 1; j <= lines.size(); j++) {
+			final BlocLines ext1 = lines.subList(i, j);
+			if (cmd2.isValid(ext1) == CommandControl.OK) {
+				final Style newStyle = cmd2.getDeclaredStyle(ext1, result);
+				this.result.put(newStyle.getStyleName(), newStyle);
+				return j;
+			} else if (cmd2.isValid(ext1) == CommandControl.NOT_OK) {
+				return j;
 			}
 		}
-
-		return Collections.unmodifiableList(result);
-
-	}
-
-	private static StyleSignature contextToSignature(List<String> context) {
-		StyleSignature result = StyleSignature.empty();
-		boolean star = false;
-		for (Iterator<String> it = context.iterator(); it.hasNext();) {
-			String s = it.next();
-			if (s.endsWith("*")) {
-				star = true;
-				s = s.substring(0, s.length() - 1);
-			}
-			result = result.add(s);
-		}
-		if (star) {
-			result = result.addStar();
-		}
-		return result;
+		return i;
 	}
 
 }

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -37,43 +37,35 @@ import java.util.Set;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.activitydiagram3.ftile.AbstractFtile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Diamond;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileGeometry;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
-import net.sourceforge.plantuml.style.PName;
-import net.sourceforge.plantuml.style.SName;
-import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
+import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class FtileDiamond extends AbstractFtile {
 
-	private final HColor backColor;
-	private final HColor borderColor;
+	private final HtmlColor backColor;
+	private final HtmlColor borderColor;
 	private final Swimlane swimlane;
 	private final TextBlock north;
 	private final TextBlock south;
 	private final TextBlock west1;
 	private final TextBlock east1;
-	private final double shadowing;
 
-	public FtileDiamond(ISkinParam skinParam, HColor backColor, HColor borderColor, Swimlane swimlane) {
+	public FtileDiamond(ISkinParam skinParam, HtmlColor backColor, HtmlColor borderColor, Swimlane swimlane) {
 		this(skinParam, backColor, borderColor, swimlane, TextBlockUtils.empty(0, 0), TextBlockUtils.empty(0, 0),
 				TextBlockUtils.empty(0, 0), TextBlockUtils.empty(0, 0));
 	}
-
-	public StyleSignature getDefaultStyleDefinitionDiamond() {
-		return StyleSignature.of(SName.root, SName.element, SName.activityDiagram, SName.diamond);
-	}
-
+	
 	@Override
 	public Collection<Ftile> getMyChildren() {
 		return Collections.emptyList();
@@ -101,16 +93,9 @@ public class FtileDiamond extends AbstractFtile {
 		return new FtileDiamond(skinParam(), backColor, borderColor, swimlane, north, south, east1, west1);
 	}
 
-	private FtileDiamond(ISkinParam skinParam, HColor backColor, HColor borderColor, Swimlane swimlane,
+	private FtileDiamond(ISkinParam skinParam, HtmlColor backColor, HtmlColor borderColor, Swimlane swimlane,
 			TextBlock north, TextBlock south, TextBlock east1, TextBlock west1) {
 		super(skinParam);
-		if (SkinParam.USE_STYLES()) {
-			Style style = getDefaultStyleDefinitionDiamond().getMergedStyle(skinParam.getCurrentStyleBuilder());
-			shadowing = style.value(PName.Shadowing).asDouble();
-		} else {
-			shadowing = skinParam().shadowing(null) ? 3 : 0;
-		}
-
 		this.backColor = backColor;
 		this.swimlane = swimlane;
 		this.borderColor = borderColor;
@@ -138,9 +123,9 @@ public class FtileDiamond extends AbstractFtile {
 	public void drawU(UGraphic ug) {
 
 		final double suppY1 = north.calculateDimension(ug.getStringBounder()).getHeight();
-		ug = ug.apply(UTranslate.dy(suppY1));
-		ug.apply(borderColor).apply(getThickness()).apply(backColor.bg())
-				.draw(Diamond.asPolygon(shadowing));
+		ug = ug.apply(new UTranslate(0, suppY1));
+		ug.apply(new UChangeColor(borderColor)).apply(getThickness()).apply(new UChangeBackColor(backColor))
+				.draw(Diamond.asPolygon(skinParam().shadowing(null)));
 		// final Dimension2D dimNorth = north.calculateDimension(ug.getStringBounder());
 		north.drawU(ug.apply(new UTranslate(Diamond.diamondHalfSize * 1.5, -suppY1)));
 
@@ -154,7 +139,7 @@ public class FtileDiamond extends AbstractFtile {
 
 		final Dimension2D dimEast1 = east1.calculateDimension(ug.getStringBounder());
 		east1.drawU(ug.apply(new UTranslate(Diamond.diamondHalfSize * 2, -dimEast1.getHeight()
-						+ Diamond.diamondHalfSize)));
+				+ Diamond.diamondHalfSize)));
 	}
 
 	@Override
@@ -172,10 +157,11 @@ public class FtileDiamond extends AbstractFtile {
 		final Dimension2D dimEast = east1.calculateDimension(stringBounder);
 		return dimEast.getWidth();
 	}
-
+	
 	public double getSouthLabelHeight(StringBounder stringBounder) {
 		final Dimension2D dimSouth = south.calculateDimension(stringBounder);
 		return dimSouth.getHeight();
 	}
+
 
 }

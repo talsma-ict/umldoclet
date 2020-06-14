@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -172,7 +172,6 @@ class Step1Message extends Step1Abstract {
 			for (int i = 0; i < getNotes().size(); i++) {
 				final Component note = getNotes().get(i);
 				final Note noteOnMessage = getMessage().getNoteOnMessages().get(i);
-				noteOnMessage.temporaryProtectedUntilTeozIsStandard();
 				noteBoxes.add(createNoteBox(getStringBounder(), messageSelfArrow, note, noteOnMessage));
 			}
 			return new ArrowAndNoteBox(getStringBounder(), messageSelfArrow, noteBoxes);
@@ -181,7 +180,6 @@ class Step1Message extends Step1Abstract {
 			for (int i = 0; i < getNotes().size(); i++) {
 				final Component note = getNotes().get(i);
 				final Note noteOnMessage = getMessage().getNoteOnMessages().get(i);
-				noteOnMessage.temporaryProtectedUntilTeozIsStandard();
 				noteBoxes.add(createNoteBox(getStringBounder(), messageArrow, note, noteOnMessage));
 			}
 			return new ArrowAndNoteBox(getStringBounder(), messageArrow, noteBoxes);
@@ -261,8 +259,7 @@ class Step1Message extends Step1Abstract {
 		}
 		if (m.getArrowConfiguration().getDressing2().getHead() == ArrowHead.CROSSX) {
 			result = result.withHead2(m.getArrowConfiguration().getDressing2().getHead());
-			// System.err.println("WARNING : CROSSX");
-			// Thread.dumpStack();
+			System.err.println("WARNING : CROSSX");
 			// assert false;
 		}
 		result = result.withPart(m.getArrowConfiguration().getPart());

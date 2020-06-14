@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -36,6 +36,9 @@ import java.awt.Shape;
 import java.awt.geom.Line2D;
 
 import net.sourceforge.plantuml.golem.MinMaxDouble;
+import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.graphic.HtmlColorGradient;
+import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UDriver;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UPath;
@@ -43,10 +46,6 @@ import net.sourceforge.plantuml.ugraphic.USegment;
 import net.sourceforge.plantuml.ugraphic.USegmentType;
 import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.arc.ExtendedGeneralPath;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorGradient;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class DriverPathG2d extends DriverShadowedG2d implements UDriver<Graphics2D> {
 
@@ -86,17 +85,17 @@ public class DriverPathG2d extends DriverShadowedG2d implements UDriver<Graphics
 
 		if (shape.isOpenIconic()) {
 			p.closePath();
-			g2d.setColor(mapper.toColor(param.getColor()));
+			g2d.setColor(mapper.getMappedColor(param.getColor()));
 			g2d.fill(p);
 			return;
 		}
 
 		// Shadow
-		final HColor back = param.getBackcolor();
+		final HtmlColor back = param.getBackcolor();
 		if (back != null) {
 			slowShadow = true;
 		}
-		if (shape.getDeltaShadow() != 0 && HColorUtils.isTransparent(back) == false) {
+		if (shape.getDeltaShadow() != 0) {
 			if (slowShadow) {
 				drawShadow(g2d, p, shape.getDeltaShadow(), dpiFactor);
 			} else {
@@ -121,36 +120,36 @@ public class DriverPathG2d extends DriverShadowedG2d implements UDriver<Graphics
 			}
 		}
 
-		if (back instanceof HColorGradient) {
-			final HColorGradient gr = (HColorGradient) back;
+		if (back instanceof HtmlColorGradient) {
+			final HtmlColorGradient gr = (HtmlColorGradient) back;
 			final char policy = gr.getPolicy();
 			final GradientPaint paint;
 			if (policy == '|') {
 				paint = new GradientPaint((float) minMax.getMinX(), (float) minMax.getMaxY() / 2,
-						mapper.toColor(gr.getColor1()), (float) minMax.getMaxX(), (float) minMax.getMaxY() / 2,
-						mapper.toColor(gr.getColor2()));
+						mapper.getMappedColor(gr.getColor1()), (float) minMax.getMaxX(), (float) minMax.getMaxY() / 2,
+						mapper.getMappedColor(gr.getColor2()));
 			} else if (policy == '\\') {
-				paint = new GradientPaint((float) minMax.getMinX(), (float) minMax.getMaxY(),
-						mapper.toColor(gr.getColor1()), (float) minMax.getMaxX(), (float) minMax.getMinY(),
-						mapper.toColor(gr.getColor2()));
+				paint = new GradientPaint((float) minMax.getMinX(), (float) minMax.getMaxY(), mapper.getMappedColor(gr
+						.getColor1()), (float) minMax.getMaxX(), (float) minMax.getMinY(), mapper.getMappedColor(gr
+						.getColor2()));
 			} else if (policy == '-') {
 				paint = new GradientPaint((float) minMax.getMaxX() / 2, (float) minMax.getMinY(),
-						mapper.toColor(gr.getColor1()), (float) minMax.getMaxX() / 2, (float) minMax.getMaxY(),
-						mapper.toColor(gr.getColor2()));
+						mapper.getMappedColor(gr.getColor1()), (float) minMax.getMaxX() / 2, (float) minMax.getMaxY(),
+						mapper.getMappedColor(gr.getColor2()));
 			} else {
 				// for /
-				paint = new GradientPaint((float) x, (float) y, mapper.toColor(gr.getColor1()),
-						(float) minMax.getMaxX(), (float) minMax.getMaxY(), mapper.toColor(gr.getColor2()));
+				paint = new GradientPaint((float) x, (float) y, mapper.getMappedColor(gr.getColor1()),
+						(float) minMax.getMaxX(), (float) minMax.getMaxY(), mapper.getMappedColor(gr.getColor2()));
 			}
 			g2d.setPaint(paint);
 			g2d.fill(p);
 		} else if (back != null) {
-			g2d.setColor(mapper.toColor(back));
+			g2d.setColor(mapper.getMappedColor(back));
 			g2d.fill(p);
 		}
 
 		if (param.getColor() != null) {
-			g2d.setColor(mapper.toColor(param.getColor()));
+			g2d.setColor(mapper.getMappedColor(param.getColor()));
 			g2d.draw(p);
 		}
 	}

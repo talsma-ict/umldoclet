@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -43,10 +43,10 @@ import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.command.regex.RegexOptional;
 import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.Display;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.sequencediagram.Participant;
 import net.sourceforge.plantuml.sequencediagram.Reference;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class CommandReferenceOverSeveral extends SingleLineCommand2<SequenceDiagram> {
 
@@ -72,8 +72,8 @@ public class CommandReferenceOverSeveral extends SingleLineCommand2<SequenceDiag
 
 	@Override
 	protected CommandExecutionResult executeArg(SequenceDiagram diagram, LineLocation location, RegexResult arg) {
-		final HColor backColorElement = diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("REF", 0));
-		// final HtmlColor backColorGeneral = HtmlColorSetSimple.instance().getColorIfValid(arg.get("REF").get(1));
+		final HtmlColor backColorElement = diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("REF", 0));
+		// final HtmlColor backColorGeneral = HtmlColorSet.getInstance().getColorIfValid(arg.get("REF").get(1));
 
 		final List<String> participants = StringUtils.splitComma(arg.get("PARTS", 0));
 		final String url = arg.get("URL", 0);
@@ -92,7 +92,7 @@ public class CommandReferenceOverSeveral extends SingleLineCommand2<SequenceDiag
 			u = new Url(url, title);
 		}
 
-		final HColor backColorGeneral = null;
+		final HtmlColor backColorGeneral = null;
 		final Reference ref = new Reference(p, u, strings, backColorGeneral, backColorElement, diagram.getSkinParam()
 				.getCurrentStyleBuilder());
 		diagram.addReference(ref);

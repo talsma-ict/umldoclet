@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -35,7 +35,6 @@ import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
 import net.sourceforge.plantuml.cucadiagram.Code;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
-import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.graphic.USymbol;
 
@@ -46,16 +45,14 @@ public class CompositeDiagram extends AbstractEntityDiagram {
 	}
 
 	@Override
-	public IEntity getOrCreateLeaf(Ident ident, Code code, LeafType type, USymbol symbol) {
-		checkNotNull(ident);
-		// final Ident idNewLong = buildLeafIdent(id);
+	public IEntity getOrCreateLeaf(Code code, LeafType type, USymbol symbol) {
 		if (type == null) {
 			if (isGroup(code)) {
 				return getGroup(code);
 			}
-			return getOrCreateLeafDefault(ident, code, LeafType.BLOCK, symbol);
+			return getOrCreateLeafDefault(code, LeafType.BLOCK, symbol);
 		}
-		return getOrCreateLeafDefault(ident, code, type, symbol);
+		return getOrCreateLeafDefault(code, type, symbol);
 	}
 
 	@Override

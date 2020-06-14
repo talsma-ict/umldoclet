@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -38,12 +38,13 @@ import java.util.Map;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinSimple;
+import net.sourceforge.plantuml.graphic.HtmlColorSet;
 import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public class ElementMenuBar extends AbstractElement {
 
@@ -100,10 +101,10 @@ public class ElementMenuBar extends AbstractElement {
 
 		double x1 = 0;
 		if (zIndex == 0) {
-			ug.apply(HColorSet.instance().getColorIfValid("#DDDDDD").bg()).draw(
+			ug.apply(new UChangeBackColor(HtmlColorSet.getInstance().getColorIfValid("#DDDDDD"))).draw(
 					new URectangle(dimToUse.getWidth(), dimToUse.getHeight()));
 			for (ElementMenuEntry entry : entries) {
-				entry.drawU(ug.apply(UTranslate.dx(x1)), zIndex, dimToUse);
+				entry.drawU(ug.apply(new UTranslate(x1, 0)), zIndex, dimToUse);
 				final double w = entry.getPreferredDimension(ug.getStringBounder(), x1, 0).getWidth();
 				entry.setX(x1);
 				x1 += w + 10;
@@ -113,7 +114,7 @@ public class ElementMenuBar extends AbstractElement {
 
 		if (zIndex == 1) {
 			for (ElementMenuEntry entry : popups.keySet()) {
-				entry.setBackground(HColorSet.instance().getColorIfValid("#BBBBBB"));
+				entry.setBackground(HtmlColorSet.getInstance().getColorIfValid("#BBBBBB"));
 			}
 
 			final double y1 = preferred.getHeight();

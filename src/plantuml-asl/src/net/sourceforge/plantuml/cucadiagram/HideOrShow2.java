@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -35,11 +35,6 @@ public class HideOrShow2 {
 	private final String what;
 	private final boolean show;
 
-	@Override
-	public String toString() {
-		return what + " (" + show + ")";
-	}
-
 	private boolean isApplyable(ILeaf leaf) {
 		if (what.startsWith("$")) {
 			return isApplyableTag(leaf, what.substring(1));
@@ -47,19 +42,9 @@ public class HideOrShow2 {
 		if (what.startsWith("<<") && what.endsWith(">>")) {
 			return isApplyableStereotype(leaf, what.substring(2, what.length() - 2).trim());
 		}
-		if (what.equalsIgnoreCase("@unlinked")) {
-			return isApplyableUnlinked(leaf);
-		}
-		final String fullName = leaf.getCodeGetName();
+		final String fullName = leaf.getCode().getFullName();
 		// System.err.println("fullName=" + fullName);
 		return match(fullName, what);
-	}
-
-	private boolean isApplyableUnlinked(ILeaf leaf) {
-		if (leaf.isAloneAndUnlinked()) {
-			return true;
-		}
-		return false;
 	}
 
 	private boolean isApplyableStereotype(ILeaf leaf, String pattern) {

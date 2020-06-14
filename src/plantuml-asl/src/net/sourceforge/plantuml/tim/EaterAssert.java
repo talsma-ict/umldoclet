@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,17 +30,16 @@
  */
 package net.sourceforge.plantuml.tim;
 
-import net.sourceforge.plantuml.StringLocated;
 import net.sourceforge.plantuml.tim.expression.TValue;
 
 public class EaterAssert extends Eater {
 
-	public EaterAssert(StringLocated s) {
+	public EaterAssert(String s) {
 		super(s);
 	}
 
 	@Override
-	public void analyze(TContext context, TMemory memory) throws EaterException, EaterExceptionLocated {
+	public void execute(TContext context, TMemory memory) throws EaterException {
 		skipSpaces();
 		checkAndEatChar("!assert");
 		skipSpaces();
@@ -51,9 +50,9 @@ public class EaterAssert extends Eater {
 			if (ch == ':') {
 				checkAndEatChar(':');
 				final TValue message = eatExpression(context, memory);
-				throw EaterException.located("Assertion error : " + message.toString());
+				throw new EaterException("Assertion error : " + message.toString());
 			}
-			throw EaterException.located("Assertion error");
+			throw new EaterException("Assertion error");
 		}
 	}
 

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -31,52 +31,42 @@
 package net.sourceforge.plantuml.timingdiagram;
 
 import java.awt.geom.Dimension2D;
-import java.awt.geom.Point2D;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.command.Position;
 import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.AbstractTextBlock;
+import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.SymbolContext;
 import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.graphic.UDrawable;
 import net.sourceforge.plantuml.graphic.color.Colors;
-import net.sourceforge.plantuml.timingdiagram.graphic.IntricatedPoint;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
-public class PlayerBinary extends Player {
+public class PlayerBinary extends ReallyAbstractPlayer implements Player {
 
+	private static final int HEIGHT = 30;
 	private final SortedMap<TimeTick, Boolean> values = new TreeMap<TimeTick, Boolean>();
-	private Boolean initialState;
 
-	public PlayerBinary(String code, ISkinParam skinParam, TimingRuler ruler, boolean compact) {
-		super(code, skinParam, ruler, compact);
-		this.suggestedHeight = 30;
+	public PlayerBinary(TitleStrategy titleStrategy, String code, ISkinParam skinParam, TimingRuler ruler) {
+		super(titleStrategy, code, skinParam, ruler);
 	}
 
-	public double getFullHeight(StringBounder stringBounder) {
-		return suggestedHeight;
-	}
-
-	public void drawFrameTitle(UGraphic ug) {
+	public double getHeight(StringBounder stringBounder) {
+		return HEIGHT;
 	}
 
 	private SymbolContext getContext() {
-		return new SymbolContext(HColorUtils.COL_D7E0F2, HColorUtils.COL_038048).withStroke(new UStroke(1.5));
+		return new SymbolContext(HtmlColorUtils.COL_D7E0F2, HtmlColorUtils.COL_038048).withStroke(new UStroke(1.5));
 	}
 
 	public IntricatedPoint getTimeProjection(StringBounder stringBounder, TimeTick tick) {
-		final double x = ruler.getPosInPixel(tick);
-		return new IntricatedPoint(new Point2D.Double(x, getYpos(false)), new Point2D.Double(x, getYpos(true)));
+		throw new UnsupportedOperationException();
 	}
 
 	public void addNote(TimeTick now, Display note, Position position) {
@@ -89,11 +79,7 @@ public class PlayerBinary extends Player {
 
 	public void setState(TimeTick now, String comment, Colors color, String... states) {
 		final boolean state = getState(states[0]);
-		if (now == null) {
-			this.initialState = state;
-		} else {
-			this.values.put(now, state);
-		}
+		this.values.put(now, state);
 	}
 
 	private boolean getState(String value) {
@@ -106,46 +92,39 @@ public class PlayerBinary extends Player {
 
 	private final double ymargin = 8;
 
+	public void drawFrameTitle(UGraphic ug) {
+	}
+
 	private double getYpos(boolean state) {
-		return state ? ymargin : getFullHeight(null) - ymargin;
+		return state ? ymargin : HEIGHT - ymargin;
 	}
 
-	public TextBlock getPart1(double fullAvailableWidth, double specialVSpace) {
-		return new AbstractTextBlock() {
-
-			public void drawU(UGraphic ug) {
-				final StringBounder stringBounder = ug.getStringBounder();
-				final TextBlock title = getTitle();
-				final Dimension2D dim = title.calculateDimension(stringBounder);
-				final double y = (getFullHeight(stringBounder) - dim.getHeight()) / 2;
-				title.drawU(ug.apply(UTranslate.dy(y)));
+	public void drawContent(UGraphic ug) {
+		ug = getContext().apply(ug);
+		double lastx = 0;
+		boolean lastValue = false;
+		for (Map.Entry<TimeTick, Boolean> ent : values.entrySet()) {
+			final double x = ruler.getPosInPixel(ent.getKey());
+			ug.apply(new UTranslate(lastx, getYpos(lastValue))).draw(new ULine(x - lastx, 0));
+			if (lastValue != ent.getValue()) {
+				ug.apply(new UTranslate(x, ymargin)).draw(new ULine(0, HEIGHT - 2 * ymargin));
 			}
-
-			public Dimension2D calculateDimension(StringBounder stringBounder) {
-				final Dimension2D dim = getTitle().calculateDimension(stringBounder);
-				return Dimension2DDouble.delta(dim, 5, 0);
-			}
-		};
+			lastx = x;
+			lastValue = ent.getValue();
+		}
+		ug.apply(new UTranslate(lastx, getYpos(lastValue))).draw(new ULine(ruler.getWidth() - lastx, 0));
 	}
 
-	public UDrawable getPart2() {
-		return new UDrawable() {
-			public void drawU(UGraphic ug) {
-				ug = getContext().apply(ug);
-				double lastx = 0;
-				boolean lastValue = initialState == null ? false : initialState;
-				for (Map.Entry<TimeTick, Boolean> ent : values.entrySet()) {
-					final double x = ruler.getPosInPixel(ent.getKey());
-					ug.apply(new UTranslate(lastx, getYpos(lastValue))).draw(ULine.hline(x - lastx));
-					if (lastValue != ent.getValue()) {
-						ug.apply(new UTranslate(x, ymargin)).draw(ULine.vline(getFullHeight(null) - 2 * ymargin));
-					}
-					lastx = x;
-					lastValue = ent.getValue();
-				}
-				ug.apply(new UTranslate(lastx, getYpos(lastValue))).draw(ULine.hline(ruler.getWidth() - lastx));
-			}
-		};
+	public void drawLeftHeader(UGraphic ug) {
+		final StringBounder stringBounder = ug.getStringBounder();
+		final TextBlock title = getTitle();
+		final Dimension2D dim = title.calculateDimension(stringBounder);
+		final double y = (getHeight(stringBounder) - dim.getHeight()) / 2;
+		title.drawU(ug.apply(new UTranslate(0, y)));
+	}
+
+	public double getWidthHeader(StringBounder stringBounder) {
+		return getTitle().calculateDimension(stringBounder).getWidth() + 5;
 	}
 
 }

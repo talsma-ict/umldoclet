@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -37,7 +37,7 @@ import net.sourceforge.plantuml.command.regex.IRegex;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.command.regex.RegexResult;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
+import net.sourceforge.plantuml.graphic.HtmlColorSetSimple;
 
 public class CommandHelpColor extends SingleLineCommand2<Help> {
 
@@ -60,7 +60,7 @@ public class CommandHelpColor extends SingleLineCommand2<Help> {
 		diagram.add("You may improve it on <i>https://github.com/plantuml/plantuml/tree/master/src/net/sourceforge/plantuml/help</i>");
 		diagram.add(" ");
 		diagram.add(" The possible colors are :");
-		for (String type : HColorSet.instance().names()) {
+		for (String type : new HtmlColorSetSimple().names()) {
 			diagram.add("* " + type);
 		}
 

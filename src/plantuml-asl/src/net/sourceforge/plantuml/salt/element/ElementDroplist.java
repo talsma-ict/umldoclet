@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -39,16 +39,16 @@ import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.HtmlColorSet;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class ElementDroplist extends AbstractElementText implements Element {
 
@@ -88,11 +88,11 @@ public class ElementDroplist extends AbstractElementText implements Element {
 	public void drawU(UGraphic ug, int zIndex, Dimension2D dimToUse) {
 		final Dimension2D dim = getPreferredDimension(ug.getStringBounder(), 0, 0);
 		if (zIndex == 0) {
-			ug.apply(HColorSet.instance().getColorIfValid("#EEEEEE").bg())
-					.draw(new URectangle(dim.getWidth() - 1, dim.getHeight() - 1));
+			ug.apply(new UChangeBackColor(HtmlColorSet.getInstance().getColorIfValid("#EEEEEE"))).draw(
+					new URectangle(dim.getWidth() - 1, dim.getHeight() - 1));
 			drawText(ug, 2, 2);
 			final double xline = dim.getWidth() - box;
-			ug.apply(UTranslate.dx(xline)).draw(ULine.vline(dim.getHeight() - 1));
+			ug.apply(new UTranslate(xline, 0)).draw(new ULine(0, dim.getHeight() - 1));
 
 			final UPolygon poly = new UPolygon();
 			poly.addPoint(0, 0);
@@ -100,16 +100,16 @@ public class ElementDroplist extends AbstractElementText implements Element {
 			final Dimension2D dimText = getPureTextDimension(ug.getStringBounder());
 			poly.addPoint((box - 6) / 2, dimText.getHeight() - 8);
 
-			ug.apply(HColorUtils.changeBack(ug)).apply(new UTranslate(xline + 3, 6)).draw(poly);
+			ug.apply(new UChangeBackColor(ug.getParam().getColor())).apply(new UTranslate(xline + 3, 6)).draw(poly);
 		}
 
 		if (openDrop != null) {
 			final Dimension2D dimOpen = Dimension2DDouble.atLeast(openDrop.calculateDimension(ug.getStringBounder()),
 					dim.getWidth() - 1, 0);
-			ug = ug.apply(UTranslate.dy(dim.getHeight() - 1));
-			ug.apply(HColorSet.instance().getColorIfValid("#EEEEEE").bg())
+			ug.apply(new UChangeBackColor(HtmlColorSet.getInstance().getColorIfValid("#EEEEEE")))
+					.apply(new UTranslate(0, dim.getHeight() - 1))
 					.draw(new URectangle(dimOpen.getWidth() - 1, dimOpen.getHeight() - 1));
-			openDrop.drawU(ug);
+			openDrop.drawU(ug.apply(new UTranslate(0, dim.getHeight() - 1)));
 		}
 	}
 }

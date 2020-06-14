@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,14 +32,15 @@ package net.sourceforge.plantuml.svek.extremity;
 
 import java.awt.geom.Point2D;
 
+import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 class ExtremityExtends extends Extremity {
 
 	private UPolygon polygon = new UPolygon();
-	private final HColor fill;
+	private final HtmlColor fill;
 	private final Point2D contact;
 
 	@Override
@@ -47,7 +48,7 @@ class ExtremityExtends extends Extremity {
 		return contact;
 	}
 
-	public ExtremityExtends(Point2D p1, double angle, HColor backgroundColor) {
+	public ExtremityExtends(Point2D p1, double angle, HtmlColor backgroundColor) {
 		this.fill = backgroundColor;
 		this.contact = new Point2D.Double(p1.getX(), p1.getY());
 		angle = manageround(angle);
@@ -62,7 +63,7 @@ class ExtremityExtends extends Extremity {
 	}
 
 	public void drawU(UGraphic ug) {
-		ug = ug.apply(fill.bg());
+		ug = ug.apply(new UChangeBackColor(fill));
 		ug.draw(polygon);
 	}
 

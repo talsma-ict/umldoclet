@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -40,12 +40,12 @@ import java.util.TreeMap;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.tim.expression.TValue;
 
-public class TMemoryGlobal extends ExecutionContexts implements TMemory {
+public class TMemoryGlobal extends ConditionalContexts implements TMemory {
 
-	private final Map<String, TValue> globalVariables = new HashMap<String, TValue>();
-	private final TrieImpl variables = new TrieImpl();
+	private final Map<String, TVariable> globalVariables = new HashMap<String, TVariable>();
+	private final Trie variables = new Trie();
 
-	public TValue getVariable(String varname) {
+	public TVariable getVariable(String varname) {
 		return this.globalVariables.get(varname);
 	}
 
@@ -57,17 +57,17 @@ public class TMemoryGlobal extends ExecutionContexts implements TMemory {
 
 	void dumpMemoryInternal() {
 		Log.error("[MemGlobal] Number of variable(s) : " + globalVariables.size());
-		for (Entry<String, TValue> ent : new TreeMap<String, TValue>(globalVariables).entrySet()) {
+		for (Entry<String, TVariable> ent : new TreeMap<String, TVariable>(globalVariables).entrySet()) {
 			final String name = ent.getKey();
-			final TValue value = ent.getValue();
+			final TValue value = ent.getValue().getValue();
 			Log.error("[MemGlobal] " + name + " = " + value);
 		}
 	}
 
-	public void putVariable(String varname, TValue value, TVariableScope scope) throws EaterException {
+	public void putVariable(String varname, TVariable value, TVariableScope scope) throws EaterException {
 		Log.info("[MemGlobal] Setting " + varname);
 		if (scope == TVariableScope.LOCAL) {
-			throw EaterException.unlocated("Cannot use local variable here");
+			throw new EaterException("Cannot use local variable here");
 		}
 		this.globalVariables.put(varname, value);
 		this.variables.add(varname);
@@ -90,7 +90,7 @@ public class TMemoryGlobal extends ExecutionContexts implements TMemory {
 		return variables;
 	}
 
-	public TMemory forkFromGlobal(Map<String, TValue> input) {
+	public TMemory forkFromGlobal(Map<String, TVariable> input) {
 		return new TMemoryLocal(this, input);
 	}
 

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -33,7 +33,6 @@ package net.sourceforge.plantuml.svek;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.FontParam;
@@ -49,10 +48,10 @@ import net.sourceforge.plantuml.cucadiagram.ILeaf;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.cucadiagram.SuperGroup;
 import net.sourceforge.plantuml.cucadiagram.dot.DotData;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockEmpty;
@@ -60,10 +59,8 @@ import net.sourceforge.plantuml.graphic.TextBlockWidth;
 import net.sourceforge.plantuml.graphic.TextBlockWidthAdapter;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.skin.rose.Rose;
-import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.svek.image.EntityImageState;
 import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public final class GroupPngMakerState {
 
@@ -72,18 +69,6 @@ public final class GroupPngMakerState {
 	private final StringBounder stringBounder;
 
 	class InnerGroupHierarchy implements GroupHierarchy {
-
-		public Set<SuperGroup> getAllSuperGroups() {
-			throw new UnsupportedOperationException();
-		}
-
-		public IGroup getRootGroup() {
-			throw new UnsupportedOperationException();
-		}
-
-		public SuperGroup getRootSuperGroup() {
-			throw new UnsupportedOperationException();
-		}
 
 		public Collection<IGroup> getChildrenGroups(IGroup parent) {
 			if (EntityUtils.groupRoot(parent)) {
@@ -120,8 +105,9 @@ public final class GroupPngMakerState {
 	public IEntityImage getImage() {
 		final Display display = group.getDisplay();
 		final ISkinParam skinParam = diagram.getSkinParam();
-		final TextBlock title = display.create(new FontConfiguration(skinParam, FontParam.STATE, group.getStereotype()),
-				HorizontalAlignment.CENTER, diagram.getSkinParam());
+		final TextBlock title = display.create(
+				new FontConfiguration(skinParam, FontParam.STATE, group.getStereotype()), HorizontalAlignment.CENTER,
+				diagram.getSkinParam());
 
 		if (group.size() == 0 && group.getChildren().size() == 0) {
 			return new EntityImageState(group, diagram.getSkinParam());
@@ -133,8 +119,8 @@ public final class GroupPngMakerState {
 				diagram.isHideEmptyDescriptionForState(), DotMode.NORMAL, diagram.getNamespaceSeparator(),
 				diagram.getPragma());
 
-		final GeneralImageBuilder svek2 = new GeneralImageBuilder(false, dotData, diagram.getEntityFactory(),
-				diagram.getSource(), diagram.getPragma(), stringBounder, SName.stateDiagram);
+		final GeneralImageBuilder svek2 = new GeneralImageBuilder(dotData, diagram.getEntityFactory(),
+				diagram.getSource(), diagram.getPragma(), stringBounder);
 
 		if (group.getGroupType() == GroupType.CONCURRENT_STATE) {
 			// return new InnerStateConcurrent(svek2.createFile());
@@ -145,28 +131,27 @@ public final class GroupPngMakerState {
 			throw new UnsupportedOperationException(group.getGroupType().toString());
 		}
 
-		HColor borderColor = group.getColors(skinParam).getColor(ColorType.LINE);
+		HtmlColor borderColor = group.getColors(skinParam).getColor(ColorType.LINE);
 		if (borderColor == null) {
 			borderColor = getColor(ColorParam.stateBorder, group.getStereotype());
 		}
 		final Stereotype stereo = group.getStereotype();
-		final HColor backColor = group.getColors(skinParam).getColor(ColorType.BACK) == null
-				? getColor(ColorParam.stateBackground, stereo)
-				: group.getColors(skinParam).getColor(ColorType.BACK);
+		final HtmlColor backColor = group.getColors(skinParam).getColor(ColorType.BACK) == null ? getColor(
+				ColorParam.stateBackground, stereo) : group.getColors(skinParam).getColor(ColorType.BACK);
 		final TextBlockWidth attribute = getAttributes(skinParam);
 
 		final Stereotype stereotype = group.getStereotype();
 		final boolean withSymbol = stereotype != null && stereotype.isWithOOSymbol();
 
 		final boolean containsOnlyConcurrentStates = containsOnlyConcurrentStates(dotData);
-		final IEntityImage image = containsOnlyConcurrentStates ? buildImageForConcurrentState(dotData)
-				: svek2.buildImage(null, new String[0]);
+		final IEntityImage image = containsOnlyConcurrentStates ? buildImageForConcurrentState(dotData) : svek2
+				.buildImage(null, new String[0]);
 		UStroke stroke = group.getColors(skinParam).getSpecificLineStroke();
 		if (stroke == null) {
 			stroke = new UStroke(1.5);
 		}
-		return new InnerStateAutonom(image, title, attribute, borderColor, backColor,
-				skinParam.shadowing(group.getStereotype()), group.getUrl99(), withSymbol, stroke);
+		return new InnerStateAutonom(image, title, attribute, borderColor, backColor, skinParam.shadowing(group
+				.getStereotype()), group.getUrl99(), withSymbol, stroke);
 
 	}
 
@@ -215,7 +200,7 @@ public final class GroupPngMakerState {
 
 	private final Rose rose = new Rose();
 
-	private HColor getColor(ColorParam colorParam, Stereotype stereo) {
+	private HtmlColor getColor(ColorParam colorParam, Stereotype stereo) {
 		final ISkinParam skinParam = diagram.getSkinParam();
 		return rose.getHtmlColor(skinParam, stereo, colorParam);
 	}

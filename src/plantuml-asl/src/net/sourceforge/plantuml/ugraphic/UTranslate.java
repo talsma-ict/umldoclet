@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -43,21 +43,9 @@ public class UTranslate implements UChange {
 		return "translate dx=" + dx + " dy=" + dy;
 	}
 
-	public static UTranslate none() {
-		return new UTranslate(0, 0);
-	}
-
 	public UTranslate(double dx, double dy) {
 		this.dx = dx;
 		this.dy = dy;
-	}
-
-	public static UTranslate dx(double dx) {
-		return new UTranslate(dx, 0);
-	}
-
-	public static UTranslate dy(double dy) {
-		return new UTranslate(0, dy);
 	}
 
 	public UTranslate(Point2D p) {

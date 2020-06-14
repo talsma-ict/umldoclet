@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,18 +34,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.SkinParam;
-import net.sourceforge.plantuml.skin.rose.Rose;
-import net.sourceforge.plantuml.style.PName;
-import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public class Rainbow {
-
-	private final static Rose rose = new Rose();
 
 	private final List<HtmlColorAndStyle> colors = new ArrayList<HtmlColorAndStyle>();
 	private final int colorArrowSeparationSpace;
@@ -61,27 +52,6 @@ public class Rainbow {
 
 	public static Rainbow none() {
 		return new Rainbow(0);
-	}
-
-	public static Rainbow fromColor(HColor arrowColor, HColor arrowHeadColor) {
-		if (arrowColor == null) {
-			return Rainbow.none();
-		}
-		return Rainbow.build(new HtmlColorAndStyle(arrowColor, arrowHeadColor));
-	}
-
-	public static Rainbow build(ISkinParam skinParam) {
-		if (SkinParam.USE_STYLES()) {
-			throw new IllegalStateException();
-		}
-		final HColor arrow = rose.getHtmlColor(skinParam, ColorParam.arrow);
-		final HColor arrowHead = rose.getHtmlColor(skinParam, null, ColorParam.arrowHead, ColorParam.arrow);
-		return fromColor(arrow, arrowHead);
-	}
-
-	public static Rainbow build(Style style, HColorSet set) {
-		final HColor color = style.value(PName.LineColor).asColor(set);
-		return fromColor(color, null);
 	}
 
 	public Rainbow withDefault(Rainbow defaultColor) {
@@ -124,8 +94,8 @@ public class Rainbow {
 		return Collections.unmodifiableList(colors);
 	}
 
-	public HColor getColor() {
-		return colors.get(0).getArrowColor();
+	public HtmlColor getColor() {
+		return colors.get(0).getColor();
 	}
 
 	public int getColorArrowSeparationSpace() {

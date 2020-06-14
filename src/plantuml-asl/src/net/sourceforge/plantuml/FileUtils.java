@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,17 +30,23 @@
  */
 package net.sourceforge.plantuml;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import net.sourceforge.plantuml.security.SFile;
+import javax.swing.ImageIcon;
 
 // Used by the Eclipse Plugin, so do not change package location.
 public class FileUtils {
@@ -51,19 +57,19 @@ public class FileUtils {
 		counter = new AtomicInteger(0);
 	}
 
-	static public SFile createTempFile(String prefix, String suffix) throws IOException {
+	static public File createTempFile(String prefix, String suffix) throws IOException {
 		if (suffix.startsWith(".") == false) {
 			throw new IllegalArgumentException();
 		}
 		if (prefix == null) {
 			throw new IllegalArgumentException();
 		}
-		final SFile f;
+		final File f;
 		if (counter == null) {
-			f = SFile.createTempFile(prefix, suffix);
+			f = File.createTempFile(prefix, suffix);
 		} else {
 			final String name = prefix + counter.addAndGet(1) + suffix;
-			f = new SFile(name);
+			f = new File(name);
 		}
 		Log.info("Creating temporary file: " + f);
 		f.deleteOnExit();
@@ -80,23 +86,17 @@ public class FileUtils {
 		fis.close();
 	}
 
-	static public void copyToFile(SFile src, SFile dest) throws IOException {
+	static public void copyToFile(File src, File dest) throws IOException {
 		if (dest.isDirectory()) {
-			dest = dest.file(src.getName());
+			dest = new File(dest, src.getName());
 		}
-		final InputStream fis = src.openFile();
-		if (fis == null) {
-			throw new FileNotFoundException();
-		}
-		final OutputStream fos = dest.createBufferedOutputStream();
+		final InputStream fis = new BufferedInputStream(new FileInputStream(src));
+		final OutputStream fos = new BufferedOutputStream(new FileOutputStream(dest));
 		copyInternal(fis, fos);
 	}
 
-	static public void copyToStream(SFile src, OutputStream os) throws IOException {
-		final InputStream fis = src.openFile();
-		if (fis == null) {
-			throw new FileNotFoundException();
-		}
+	static public void copyToStream(File src, OutputStream os) throws IOException {
+		final InputStream fis = new BufferedInputStream(new FileInputStream(src));
 		final OutputStream fos = new BufferedOutputStream(os);
 		copyInternal(fis, fos);
 	}
@@ -107,17 +107,14 @@ public class FileUtils {
 		copyInternal(fis, fos);
 	}
 
-	static public void copyToFile(byte[] src, SFile dest) throws IOException {
-		final OutputStream fos = dest.createBufferedOutputStream();
+	static public void copyToFile(byte[] src, File dest) throws IOException {
+		final OutputStream fos = new BufferedOutputStream(new FileOutputStream(dest));
 		fos.write(src);
 		fos.close();
 	}
 
-	static public String readSvg(SFile svgFile) throws IOException {
-		final BufferedReader br = svgFile.openBufferedReader();
-		if (br == null) {
-			return null;
-		}
+	static public String readSvg(File svgFile) throws IOException {
+		final BufferedReader br = new BufferedReader(new FileReader(svgFile));
 		return readSvg(br, false, true);
 	}
 
@@ -126,15 +123,12 @@ public class FileUtils {
 		return readSvg(br, false, false);
 	}
 
-	static public String readFile(SFile svgFile) throws IOException {
-		final BufferedReader br = svgFile.openBufferedReader();
-		if (br == null) {
-			return null;
-		}
+	static public String readFile(File svgFile) throws IOException {
+		final BufferedReader br = new BufferedReader(new FileReader(svgFile));
 		return readSvg(br, true, true);
 	}
 
-	private static String readSvg(BufferedReader br, boolean withNewline, boolean withClose) throws IOException {
+	private static String readSvg(final BufferedReader br, boolean withNewline, boolean withClose) throws IOException {
 		final StringBuilder sb = new StringBuilder();
 		String s;
 		while ((s = br.readLine()) != null) {
@@ -147,6 +141,40 @@ public class FileUtils {
 			br.close();
 		}
 		return sb.toString();
+	}
+
+	// public static BufferedImage ImageIO_read(File f) throws IOException {
+	// return ImageIO.read(f);
+	// }
+
+	// http://forum.plantuml.net/9048/img-tag-for-sequence-diagram-participants-does-always-render
+	
+	public synchronized static BufferedImage ImageIO_read(File f) {
+		// https://www.experts-exchange.com/questions/26171948/Why-are-ImageIO-read-images-losing-their-transparency.html
+		// https://stackoverflow.com/questions/18743790/can-java-load-images-with-transparency
+
+		try {
+			return readImage(new ImageIcon(f.getAbsolutePath()));
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	public synchronized static BufferedImage ImageIO_read(URL url) {
+		try {
+			return readImage(new ImageIcon(url));
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	private synchronized static BufferedImage readImage(final ImageIcon imageIcon) {
+		final Image tmpImage = imageIcon.getImage();
+		final BufferedImage image = new BufferedImage(imageIcon.getIconWidth(), imageIcon.getIconHeight(),
+				BufferedImage.TYPE_INT_ARGB);
+		image.getGraphics().drawImage(tmpImage, 0, 0, null);
+		tmpImage.flush();
+		return image;
 	}
 
 }

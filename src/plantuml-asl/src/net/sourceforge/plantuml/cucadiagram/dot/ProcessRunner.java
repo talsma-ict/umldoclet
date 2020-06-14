@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,6 +30,7 @@
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -39,7 +40,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.api.MyRunnable;
 import net.sourceforge.plantuml.api.TimeoutExecutor;
-import net.sourceforge.plantuml.security.SFile;
 
 public class ProcessRunner {
 
@@ -59,7 +59,7 @@ public class ProcessRunner {
 		return run(in, redirection, null);
 	}
 
-	public ProcessState run(byte in[], OutputStream redirection, SFile dir) {
+	public ProcessState run(byte in[], OutputStream redirection, File dir) {
 		if (this.state.differs(ProcessState.INIT())) {
 			throw new IllegalStateException();
 		}
@@ -91,14 +91,14 @@ public class ProcessRunner {
 	class MainThread implements MyRunnable {
 
 		private final String[] cmd;
-		private final SFile dir;
+		private final File dir;
 		private final OutputStream redirection;
 		private final byte[] in;
 		private volatile Process process;
 		private volatile ThreadStream errorStream;
 		private volatile ThreadStream outStream;
 
-		public MainThread(String[] cmd, SFile dir, OutputStream redirection, byte[] in) {
+		public MainThread(String[] cmd, File dir, OutputStream redirection, byte[] in) {
 			this.cmd = cmd;
 			this.dir = dir;
 			this.redirection = redirection;
@@ -155,7 +155,7 @@ public class ProcessRunner {
 
 		private void startThreads() {
 			try {
-				process = Runtime.getRuntime().exec(cmd, null, dir == null ? null : dir.conv());
+				process = Runtime.getRuntime().exec(cmd, null, dir);
 			} catch (IOException e) {
 				e.printStackTrace();
 				changeState.lock();

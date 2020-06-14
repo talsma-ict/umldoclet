@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -31,72 +31,35 @@
 package net.sourceforge.plantuml.style;
 
 public enum SName {
-	activity, //
-	activityBar, //
-	activityDiagram, //
-	actor, //
-	agent, //
-	archimate, //
-	arrow, //
-	artifact, //
-	boundary, //
-	box, //
-	caption, //
-	card, //
-	circle, //
-	classDiagram, //
-	class_, //
-	clickable, //
-	cloud, //
-	collection, //
-	collections, //
-	component, //
-	componentDiagram, //
-	control, //
-	database, //
-	databse, //
-	delay, //
-	destroy, //
-	diamond, //
-	document, //
-	element, //
-	entity, //
-	file, //
-	folder, //
-	footer, //
-	frame, //
-	group, //
-	groupHeader, //
-	header, //
-	interface_, //
-	leafNode, //
-	legend, //
-	lifeLine, //
-	mindmapDiagram, //
-	node, //
-	note, //
-	objectDiagram, //
-	package_, //
-	participant, //
-	partition, //
-	queue, //
-	rectangle, //
-	reference, //
-	referenceHeader, //
-	root, //
-	rootNode, //
-	separator, //
-	sequenceDiagram, //
-	stack, //
-	stateDiagram, //
-	stereotype, //
-	storage, //
-	swimlane, //
-	title, //
-	usecase, //
-	wbsDiagram; //
-
-	public static String depth(int level) {
-		return "depth(" + level + ")";
-	}
+	   root,
+	   title,
+	   header,
+	   footer,
+	   legend,
+	   caption,
+	   element,
+	   sequenceDiagram,
+	   destroy,
+	   lifeLine,
+	   group,
+	   groupHeader,
+	   reference,
+	   box,
+	   separator,
+	   delay,
+	   message,
+	   participant,
+	   actor,
+	   boundary,
+	   control,
+	   entity,
+	   queue,
+	   database,
+	   collections,
+	   class_,
+	   classDiagram,
+	   activityDiagram,
+	   note,
+	   stereotype,
+	   swimlane,
 }

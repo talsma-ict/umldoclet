@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,41 +30,44 @@
  */
 package net.sourceforge.plantuml.cucadiagram;
 
-import net.sourceforge.plantuml.svek.Ports;
-
 public class EntityPort {
 
-	private final String entityUid;
-	private final String portId;
+	private final String uid;
+	private final String portName;
 
-	public EntityPort(String entityUid, String portName) {
-		this.entityUid = entityUid;
-		this.portId = portName == null ? null : Ports.encodePortNameToId(portName);
+	public EntityPort(String uid, String portName) {
+		this.uid = uid;
+		this.portName = portName;
 	}
 
 	public String getFullString() {
-		if (portId != null) {
-			return entityUid + ":" + portId;
+		if (portName != null) {
+			return uid + ":" + portName;
 		}
-		return entityUid;
+		return uid;
 	}
 
 	private boolean isShielded() {
-		return entityUid.endsWith(":h");
+		return uid.endsWith(":h");
 	}
 
 	public String getPrefix() {
 		if (isShielded()) {
-			return entityUid.substring(0, entityUid.length() - 2);
+			return uid.substring(0, uid.length() - 2);
 		}
-		return entityUid;
+		return uid;
 	}
 
 	public boolean startsWith(String centerId) {
-		return entityUid.startsWith(centerId);
+		return uid.startsWith(centerId);
 	}
 
 	public boolean equalsId(EntityPort other) {
-		return this.entityUid.equals(other.entityUid);
+		return this.uid.equals(other.uid);
 	}
+
+	private String getPortName() {
+		return portName;
+	}
+
 }

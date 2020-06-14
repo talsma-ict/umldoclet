@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,14 +30,14 @@
  */
 package net.sourceforge.plantuml.svek.extremity;
 
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.UDrawable;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class MiddleFactoryCircle implements MiddleFactory {
 	
-	private final HColor backColor;
+	private final HtmlColor backColor;
 
-	public MiddleFactoryCircle(HColor backColor) {
+	public MiddleFactoryCircle(HtmlColor backColor) {
 		this.backColor = backColor;
 	}
 

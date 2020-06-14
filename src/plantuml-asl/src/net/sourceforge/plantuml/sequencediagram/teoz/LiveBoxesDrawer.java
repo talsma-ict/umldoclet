@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -53,7 +53,7 @@ import net.sourceforge.plantuml.ugraphic.UTranslate;
 public class LiveBoxesDrawer {
 
 	private double y1;
-	private SymbolContext symbolContext;
+	private SymbolContext color;
 
 	private final Component cross;
 	private final Context2D context;
@@ -81,9 +81,9 @@ public class LiveBoxesDrawer {
 		return compForWidth.getPreferredWidth(stringBounder);
 	}
 
-	public void addStart(double y1, SymbolContext symbolContext) {
+	public void addStart(double y1, SymbolContext color) {
 		this.y1 = y1;
-		this.symbolContext = symbolContext;
+		this.color = color;
 	}
 
 	public void doDrawing(UGraphic ug, StairsPosition yposition) {
@@ -116,13 +116,10 @@ public class LiveBoxesDrawer {
 	private void drawInternal(UGraphic ug, StairsPosition yposition, double ya, double yb, ComponentType type) {
 		final double width = getWidth(ug.getStringBounder());
 		final Area area = new Area(width, yb - ya);
-		ISkinParam skinParam2 = new SkinParamBackcolored(skinParam, symbolContext == null ? null
-				: symbolContext.getBackColor());
-		Style style = type.getDefaultStyleDefinition().getMergedStyle(skinParam.getCurrentStyleBuilder());
-		if (style != null) {
-			style = style.eventuallyOverride(symbolContext);
-		}
-		final Component comp = skin.createComponent(new Style[] { style }, type, null, skinParam2, null);
+		final ISkinParam skinParam2 = new SkinParamBackcolored(skinParam, color == null ? null : color.getBackColor());
+		final Component comp = skin.createComponent(
+				new Style[] { type.getDefaultStyleDefinition().getMergedStyle(skinParam.getCurrentStyleBuilder()) },
+				type, null, skinParam2, null);
 		comp.drawU(ug.apply(new UTranslate(-width / 2, ya)), area, context);
 	}
 

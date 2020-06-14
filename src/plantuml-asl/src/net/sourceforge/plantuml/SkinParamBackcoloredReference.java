@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  https://plantuml.com
+ * Project Info:  http://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * https://plantuml.com/patreon (only 1$ per month!)
- * https://plantuml.com/paypal
+ * http://plantuml.com/patreon (only 1$ per month!)
+ * http://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -31,22 +31,22 @@
 package net.sourceforge.plantuml;
 
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 
 public class SkinParamBackcoloredReference extends SkinParamDelegator {
 
-	final private HColor sequenceReferenceHeaderBackground;
-	final private HColor sequenceReferenceBackground;
+	final private HtmlColor sequenceReferenceHeaderBackground;
+	final private HtmlColor sequenceReferenceBackground;
 
-	public SkinParamBackcoloredReference(ISkinParam skinParam, HColor sequenceReferenceHeaderBackground,
-			HColor sequenceReferenceBackground) {
+	public SkinParamBackcoloredReference(ISkinParam skinParam, HtmlColor sequenceReferenceHeaderBackground,
+			HtmlColor sequenceReferenceBackground) {
 		super(skinParam);
 		this.sequenceReferenceBackground = sequenceReferenceBackground;
 		this.sequenceReferenceHeaderBackground = sequenceReferenceHeaderBackground;
 	}
 
 	@Override
-	public HColor getHtmlColor(ColorParam param, Stereotype stereotype, boolean clickable) {
+	public HtmlColor getHtmlColor(ColorParam param, Stereotype stereotype, boolean clickable) {
 		if (param == ColorParam.sequenceReferenceHeaderBackground && sequenceReferenceHeaderBackground != null) {
 			return sequenceReferenceHeaderBackground;
 		}
