@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Talsma ICT
+ * Copyright 2016-2020 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -173,12 +173,14 @@ public class JavaBeanProperty {
      */
     private static Optional<String> propertyNameOfAccessor(Method method) {
         Optional<String> propertyName = Optional.empty();
-        if (isGetterMethod(method) || isSetterMethod(method)) {
-            // Method name without 'get' / 'set' decapitalized
-            propertyName = Optional.of(decapitalize(method.name.substring(3)));
-        } else if (isBooleanGetterMethod(method)) {
-            // Method name without 'is' decapitalized
-            propertyName = Optional.of(decapitalize(method.name.substring(2)));
+        if (!method.isStatic && !method.isAbstract) {
+            if (isGetterMethod(method) || isSetterMethod(method)) {
+                // Method name without 'get' / 'set' decapitalized
+                propertyName = Optional.of(decapitalize(method.name.substring(3)));
+            } else if (isBooleanGetterMethod(method)) {
+                // Method name without 'is' decapitalized
+                propertyName = Optional.of(decapitalize(method.name.substring(2)));
+            }
         }
         return propertyName;
     }
