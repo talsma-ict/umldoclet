@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Talsma ICT
+ * Copyright 2016-2020 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,7 +68,10 @@ public class DependencyDiagram extends Diagram {
     @Override
     protected File getPlantUmlFile() {
         if (pumlFile == null) {
-            pumlFile = new File(getConfiguration().destinationDirectory(), pumlFileName);
+            StringBuilder result = new StringBuilder(getConfiguration().destinationDirectory());
+            if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');
+            result.append(pumlFileName);
+            pumlFile = new File(result.toString());
         }
         return pumlFile;
     }

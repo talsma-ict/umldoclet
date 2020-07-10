@@ -21,6 +21,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,5 +113,20 @@ public class DependencyDiagramTest {
         diagram.addPackageDependency("foo.bar", "foo.bar.baz");
         assertThat(diagram.getChildren(), hasSize(1));
         assertThat(diagram.getChildren(), contains(hasToString(containsString("foo.bar --> foo.bar.baz"))));
+    }
+
+    @Test
+    public void testEmptyDirectorynameIssue284() throws IOException {
+        // prepare
+        final File currentDirectory = new File(".").getCanonicalFile();
+        final String expectedPath = new File(currentDirectory, "package-dependencies.puml").getPath();
+        when(mockConfig.destinationDirectory()).thenReturn("");
+
+        // execute
+        final File plantUmlFile = diagram.getPlantUmlFile();
+
+        // verify
+        assertThat(plantUmlFile.getAbsolutePath(), equalTo(expectedPath));
+        verify(mockConfig).destinationDirectory();
     }
 }

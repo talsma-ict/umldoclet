@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Talsma ICT
+ * Copyright 2016-2020 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ public final class FileUtils {
             for (int i = fromParts.length; i > skip; i--) toParts.add(0, "..");
 
             // Return the resulting path, joined by path separators.
-            return String.join("/", toParts);
+            return String.join(File.separator, toParts);
         } catch (IOException ioe) {
             throw new IllegalStateException("I/O exception calculating relative path from \""
                     + from + "\" to \"" + to + "\": " + ioe.getMessage(), ioe);
