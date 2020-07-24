@@ -122,6 +122,8 @@ public class DocletConfig implements Configuration {
 
     List<ExternalLink> externalLinks = new ArrayList<>();
 
+    List<String> customPlantumlDirectives = new ArrayList<>();
+
     private Indentation indentation = Indentation.DEFAULT;
 
     public DocletConfig() {
@@ -198,6 +200,11 @@ public class DocletConfig implements Configuration {
                 .map(link -> link.resolveType(packageName, type))
                 .filter(Optional::isPresent).map(Optional::get)
                 .findFirst();
+    }
+
+    @Override
+    public List<String> customPlantumlDirectives() {
+        return customPlantumlDirectives;
     }
 
     @Override

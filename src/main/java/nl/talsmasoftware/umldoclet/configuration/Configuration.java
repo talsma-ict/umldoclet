@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Talsma ICT
+ * Copyright 2016-2020 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,6 +98,18 @@ public interface Configuration {
      * @return The external link, if resolved
      */
     Optional<URI> resolveExternalLinkToType(String packageName, String type);
+
+
+    /**
+     * Custom directives to include in rendered PlantUML diagram sources.
+     * <p>
+     * Custom directives are rendered as-is at the top of each PlantUML diagram.
+     * For example, to use jdot for rendering,
+     * use the {@code "!pragma graphviz_dot jdot"} custom directive.
+     *
+     * @return Any custom PlantUML directives.
+     */
+    List<String> customPlantumlDirectives();
 
     /**
      * The UML character set can be explicitly configured with the {@code "-umlEncoding"} option.

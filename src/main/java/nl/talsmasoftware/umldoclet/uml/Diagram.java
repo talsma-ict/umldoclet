@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Talsma ICT
+ * Copyright 2016-2020 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,6 +59,7 @@ public abstract class Diagram extends UMLNode {
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         output.append("@startuml").newline();
         IndentingPrintWriter indented = output.indent();
+        config.customPlantumlDirectives().forEach(indented::println);
         writeChildrenTo(indented);
         indented.newline();
         writeFooterTo(indented);
