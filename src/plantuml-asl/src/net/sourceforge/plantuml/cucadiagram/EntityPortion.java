@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,6 +30,16 @@
  */
 package net.sourceforge.plantuml.cucadiagram;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 public enum EntityPortion {
-	FIELD, METHOD, CIRCLED_CHARACTER, STEREOTYPE, LOLLIPOP, ENTIRELY
+	FIELD, METHOD, MEMBER, CIRCLED_CHARACTER, STEREOTYPE;
+
+	public Set<EntityPortion> asSet() {
+		if (this == MEMBER) {
+			return EnumSet.<EntityPortion> of(FIELD, METHOD);
+		}
+		return EnumSet.<EntityPortion> of(this);
+	}
 }

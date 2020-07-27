@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -47,8 +47,6 @@ import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.svek.AbstractEntityImage;
 import net.sourceforge.plantuml.svek.ShapeType;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UStroke;
@@ -85,8 +83,8 @@ public class EntityImageLollipopInterface extends AbstractEntityImage {
 			}
 		}
 		ug = ug.apply(
-				new UChangeBackColor(SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.classBackground)))
-				.apply(new UChangeColor(SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.classBorder)));
+				SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.classBackground).bg())
+				.apply(SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.classBorder));
 		if (url != null) {
 			ug.startUrl(url);
 		}
@@ -100,7 +98,7 @@ public class EntityImageLollipopInterface extends AbstractEntityImage {
 		final double y = SIZE;
 		desc.drawU(ug.apply(new UTranslate(x, y)));
 		if (url != null) {
-			ug.closeAction();
+			ug.closeUrl();
 		}
 	}
 

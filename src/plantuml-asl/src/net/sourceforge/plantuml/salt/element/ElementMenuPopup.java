@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -36,14 +36,13 @@ import java.util.Collection;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinSimple;
-import net.sourceforge.plantuml.graphic.HtmlColorSet;
 import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public class ElementMenuPopup extends AbstractElement {
 
@@ -75,16 +74,16 @@ public class ElementMenuPopup extends AbstractElement {
 		if (zIndex != 1) {
 			return;
 		}
-		ug.apply(new UChangeBackColor(HtmlColorSet.getInstance().getColorIfValid("#DDDDDD"))).draw(
+		ug.apply(HColorSet.instance().getColorIfValid("#DDDDDD").bg()).draw(
 				new URectangle(dimToUse.getWidth(), dimToUse.getHeight()));
 
 		double y1 = 0;
 		for (ElementMenuEntry entry : entries) {
 			final double h = entry.getPreferredDimension(ug.getStringBounder(), 0, y1).getHeight();
 			if (entry.getText().equals("-")) {
-				ug.apply(new UTranslate(0, y1 + h / 2)).draw(new ULine(dimToUse.getWidth(), 0));
+				ug.apply(UTranslate.dy(y1 + h / 2)).draw(ULine.hline(dimToUse.getWidth()));
 			} else {
-				entry.drawU(ug.apply(new UTranslate(0, y1)), zIndex, dimToUse);
+				entry.drawU(ug.apply(UTranslate.dy(y1)), zIndex, dimToUse);
 			}
 			y1 += h;
 		}

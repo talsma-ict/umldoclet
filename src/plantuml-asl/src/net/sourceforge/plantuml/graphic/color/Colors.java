@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -41,14 +41,14 @@ import net.sourceforge.plantuml.SkinParamColors;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.cucadiagram.LinkStyle;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.graphic.IHtmlColorSet;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UStroke;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public class Colors {
 
-	private final Map<ColorType, HtmlColor> map = new EnumMap<ColorType, HtmlColor>(ColorType.class);
+	private final Map<ColorType, HColor> map = new EnumMap<ColorType, HColor>(ColorType.class);
 	private LinkStyle lineStyle = null;
 	private Boolean shadowing = null;
 
@@ -75,7 +75,7 @@ public class Colors {
 	private Colors() {
 	}
 
-	public Colors(String data, IHtmlColorSet set, ColorType mainType) {
+	public Colors(String data, HColorSet set, ColorType mainType) {
 		data = StringUtils.goLowerCase(data);
 
 		for (final StringTokenizer st = new StringTokenizer(data, "#;"); st.hasMoreTokens();) {
@@ -92,7 +92,7 @@ public class Colors {
 					this.shadowing = value.equalsIgnoreCase("true");
 				} else {
 					final ColorType key = ColorType.getType(name);
-					final HtmlColor color = set.getColorIfValid(value);
+					final HColor color = set.getColorIfValid(value);
 					map.put(key, color);
 				}
 			}
@@ -106,15 +106,15 @@ public class Colors {
 		}
 	}
 
-	public HtmlColor getColor(ColorType key) {
+	public HColor getColor(ColorType key) {
 		if (key == null) {
 			throw new IllegalArgumentException();
 		}
 		return map.get(key);
 	}
 
-	public HtmlColor getColor(ColorType key1, ColorType key2) {
-		final HtmlColor result = getColor(key1);
+	public HColor getColor(ColorType key1, ColorType key2) {
+		final HColor result = getColor(key1);
 		if (result != null) {
 			return result;
 		}
@@ -134,7 +134,7 @@ public class Colors {
 	// return result;
 	// }
 
-	public Colors add(ColorType type, HtmlColor color) {
+	public Colors add(ColorType type, HColor color) {
 		if (color == null) {
 			return this;
 		}
@@ -209,7 +209,7 @@ public class Colors {
 		if (getColor(colorType) != null) {
 			return this;
 		}
-		final HtmlColor col = skinParam.getFontHtmlColor(stereotype, param);
+		final HColor col = skinParam.getFontHtmlColor(stereotype, param);
 		return add(colorType, col);
 	}
 

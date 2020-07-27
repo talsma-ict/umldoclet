@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -37,12 +37,10 @@ import java.util.concurrent.atomic.AtomicLong;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.StringLocated;
 
-public class RegexConcat extends RegexComposed implements IRegex {
+public final class RegexConcat extends RegexComposed implements IRegex {
 
 	private static final ConcurrentMap<Object, RegexConcat> cache = new ConcurrentHashMap<Object, RegexConcat>();
 	private final AtomicLong foxRegex = new AtomicLong(-1L);
-
-	private boolean invoked;
 
 	// private static final Set<String> PRINTED2 = new HashSet<String>();
 
@@ -53,7 +51,7 @@ public class RegexConcat extends RegexComposed implements IRegex {
 			if (reg.isCompiled()) {
 				nbCompiled++;
 			}
-			if (reg.invoked) {
+			if (reg.invoked()) {
 				nbInvoked++;
 			}
 		}
@@ -68,8 +66,8 @@ public class RegexConcat extends RegexComposed implements IRegex {
 	private long foxRegex() {
 		if (foxRegex.get() == -1L) {
 			long tmp = 0L;
-			for (int i = 1; i < partials.size() - 1; i++) {
-				final IRegex part = partials.get(i);
+			for (int i = 1; i < partials().size() - 1; i++) {
+				final IRegex part = partials().get(i);
 				if (part instanceof RegexLeaf) {
 					final RegexLeaf leaf = (RegexLeaf) part;
 					tmp = tmp | leaf.getFoxSignature();
@@ -104,9 +102,12 @@ public class RegexConcat extends RegexComposed implements IRegex {
 		return result;
 	}
 
+	private boolean invoked() {
+		return foxRegex.get() != -1L;
+	}
+
 	@Override
 	public boolean match(StringLocated s) {
-		invoked = true;
 		final long foxRegex = foxRegex();
 		if (foxRegex != 0L) {
 			final long foxLine = s.getFoxSignature();
@@ -124,7 +125,7 @@ public class RegexConcat extends RegexComposed implements IRegex {
 	@Override
 	protected String getFullSlow() {
 		final StringBuilder sb = new StringBuilder();
-		for (IRegex p : partials) {
+		for (IRegex p : partials()) {
 			sb.append(p.getPattern());
 		}
 		return sb.toString();

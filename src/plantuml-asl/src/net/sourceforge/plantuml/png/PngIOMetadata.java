@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -36,13 +36,13 @@ import java.io.OutputStream;
 import java.util.Iterator;
 
 import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 
-import net.sourceforge.plantuml.Log;
-
 import com.sun.imageio.plugins.png.PNGMetadata;
+
+import net.sourceforge.plantuml.Log;
+import net.sourceforge.plantuml.security.ImageIO;
 
 public class PngIOMetadata {
 

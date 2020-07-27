@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -37,14 +37,13 @@ import net.sourceforge.plantuml.Guillemet;
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.LineBreakStrategy;
 import net.sourceforge.plantuml.SpriteContainer;
-import net.sourceforge.plantuml.creole.CommandCreoleMonospaced;
-import net.sourceforge.plantuml.graphic.HtmlColorSetSimple;
-import net.sourceforge.plantuml.graphic.IHtmlColorSet;
+import net.sourceforge.plantuml.creole.Parser;
 import net.sourceforge.plantuml.salt.element.Element;
 import net.sourceforge.plantuml.salt.element.WrappedElement;
-import net.sourceforge.plantuml.ugraphic.ColorMapper;
-import net.sourceforge.plantuml.ugraphic.ColorMapperIdentity;
-import net.sourceforge.plantuml.ugraphic.sprite.Sprite;
+import net.sourceforge.plantuml.sprite.Sprite;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
+import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public class Dictionary implements SpriteContainer, ISkinSimple {
 
@@ -79,15 +78,15 @@ public class Dictionary implements SpriteContainer, ISkinSimple {
 	}
 
 	public String getMonospacedFamily() {
-		return CommandCreoleMonospaced.MONOSPACED;
+		return Parser.MONOSPACED;
 	}
 
 	public int getTabSize() {
 		return 8;
 	}
 
-	public IHtmlColorSet getIHtmlColorSet() {
-		return new HtmlColorSetSimple();
+	public HColorSet getIHtmlColorSet() {
+		return HColorSet.instance();
 	}
 
 	public int getDpi() {

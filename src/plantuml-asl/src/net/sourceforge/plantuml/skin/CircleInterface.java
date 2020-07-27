@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,28 +30,26 @@
  */
 package net.sourceforge.plantuml.skin;
 
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.UDrawable;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class CircleInterface implements UDrawable {
 
 	private final float thickness;
 	private final double headDiam;
-	private final HtmlColor backgroundColor;
-	private final HtmlColor foregroundColor;
+	private final HColor backgroundColor;
+	private final HColor foregroundColor;
 
-	public CircleInterface(HtmlColor backgroundColor, HtmlColor foregroundColor) {
+	public CircleInterface(HColor backgroundColor, HColor foregroundColor) {
 		this(backgroundColor, foregroundColor, 16, 2);
 	}
 
-	public CircleInterface(HtmlColor backgroundColor, HtmlColor foregroundColor, double headDiam, float thickness) {
+	public CircleInterface(HColor backgroundColor, HColor foregroundColor, double headDiam, float thickness) {
 		this.backgroundColor = backgroundColor;
 		this.foregroundColor = foregroundColor;
 		this.headDiam = headDiam;
@@ -61,8 +59,8 @@ public class CircleInterface implements UDrawable {
 	public void drawU(UGraphic ug) {
 		final UEllipse head = new UEllipse(headDiam, headDiam);
 		
-		ug.apply(new UStroke(thickness)).apply(new UChangeBackColor(backgroundColor))
-		.apply(new UChangeColor(foregroundColor)).apply(new UTranslate((double) thickness, (double) thickness)).draw(head);
+		ug.apply(new UStroke(thickness)).apply(backgroundColor.bg())
+		.apply(foregroundColor).apply(new UTranslate((double) thickness, (double) thickness)).draw(head);
 	}
 
 	public double getPreferredWidth(StringBounder stringBounder) {

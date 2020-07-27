@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -144,14 +144,14 @@ public class ParticipantBox implements Pushable {
 		// ug.translate(outMargin, 0);
 		final StringBounder stringBounder = ug.getStringBounder();
 		head.drawU(
-				ug.apply(new UTranslate(outMargin, 0)),
+				ug.apply(UTranslate.dx(outMargin)),
 				new Area(new Dimension2DDouble(head.getPreferredWidth(stringBounder), head
 						.getPreferredHeight(stringBounder))), new SimpleContext2D(false));
 		// ug.translate(-outMargin, 0);
 	}
 
 	public void drawLineU22(UGraphic ug, double startingY, final double endingY, boolean showTail, double myDelta) {
-		ug = ug.apply(new UTranslate(startingX, 0));
+		ug = ug.apply(UTranslate.dx(startingX));
 		if (delays.size() > 0) {
 			final StringBounder stringBounder = ug.getStringBounder();
 			for (GraphicalDelayText delay : delays) {
@@ -180,7 +180,7 @@ public class ParticipantBox implements Pushable {
 
 	private void drawLine(UGraphic ug, double startingY, double endingY, Component comp) {
 		final StringBounder stringBounder = ug.getStringBounder();
-		comp.drawU(ug.apply(new UTranslate(0, startingY)),
+		comp.drawU(ug.apply(UTranslate.dy(startingY)),
 				new Area(new Dimension2DDouble(head.getPreferredWidth(stringBounder) + outMargin * 2, endingY
 						- startingY)), new SimpleContext2D(false));
 	}

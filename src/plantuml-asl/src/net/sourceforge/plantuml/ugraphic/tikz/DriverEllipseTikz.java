@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -31,11 +31,11 @@
 package net.sourceforge.plantuml.ugraphic.tikz;
 
 import net.sourceforge.plantuml.tikz.TikzGraphics;
-import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UDriver;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UShape;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 
 public class DriverEllipseTikz implements UDriver<TikzGraphics> {
 
@@ -48,8 +48,8 @@ public class DriverEllipseTikz implements UDriver<TikzGraphics> {
 		final double extend = shape.getExtend();
 		final double cx = x + width / 2;
 		final double cy = y + height / 2;
-		tikz.setFillColor(mapper.getMappedColor(param.getBackcolor()));
-		tikz.setStrokeColor(mapper.getMappedColor(param.getColor()));
+		tikz.setFillColor(mapper.toColor(param.getBackcolor()));
+		tikz.setStrokeColor(mapper.toColor(param.getColor()));
 		tikz.setStrokeWidth(param.getStroke().getThickness(), param.getStroke().getDashTikz());
 		if (start == 0 && extend == 0) {
 			tikz.ellipse(cx, cy, width / 2, height / 2);

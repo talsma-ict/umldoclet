@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -60,9 +60,9 @@ class USymbolCloud extends USymbol {
 	private void drawCloud(UGraphic ug, double width, double height, boolean shadowing) {
 		final UPath shape = getSpecificFrontierForCloud(width, height);
 		if (shadowing) {
-			// shape.setDeltaShadow(3.0);
+			 shape.setDeltaShadow(3.0);
 		}
-		ug.apply(new UTranslate(0, 0)).draw(shape);
+		ug.apply(UTranslate.dy(0)).draw(shape);
 	}
 
 	private UPath getSpecificFrontierForCloudNew(double width, double height) {
@@ -148,7 +148,11 @@ class USymbolCloud extends USymbol {
 	private void bubbleLine(Random rnd, List<Point2D> points, Point2D p1, Point2D p2, double bubbleSize) {
 		final CoordinateChange change = new CoordinateChange(p1, p2);
 		final double length = change.getLength();
-		final int nb = (int) (length / bubbleSize);
+		int nb = (int) (length / bubbleSize);
+		if (nb == 0) {
+			bubbleSize = length / 2;
+			nb = (int) (length / bubbleSize);
+		}
 		for (int i = 0; i < nb; i++) {
 			points.add(rnd(rnd, change.getTrueCoordinate(i * length / nb, 0), bubbleSize * .2));
 		}
@@ -234,7 +238,8 @@ class USymbolCloud extends USymbol {
 
 	@Override
 	public TextBlock asBig(final TextBlock title, HorizontalAlignment labelAlignment, final TextBlock stereotype,
-			final double width, final double height, final SymbolContext symbolContext, final HorizontalAlignment stereoAlignment) {
+			final double width, final double height, final SymbolContext symbolContext,
+			final HorizontalAlignment stereoAlignment) {
 		return new AbstractTextBlock() {
 
 			public void drawU(UGraphic ug) {

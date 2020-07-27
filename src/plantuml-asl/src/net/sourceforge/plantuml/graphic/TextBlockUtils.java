@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,17 +32,16 @@ package net.sourceforge.plantuml.graphic;
 
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.Graphics2D;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.CornerParam;
 import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.LineParam;
 import net.sourceforge.plantuml.SkinParam;
@@ -50,6 +49,7 @@ import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.posimo.Positionable;
 import net.sourceforge.plantuml.posimo.PositionableImpl;
 import net.sourceforge.plantuml.skin.rose.Rose;
+import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
 import net.sourceforge.plantuml.svek.TextBlockBackcolored;
 import net.sourceforge.plantuml.ugraphic.LimitFinder;
 import net.sourceforge.plantuml.ugraphic.MinMax;
@@ -57,27 +57,36 @@ import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UImage;
 import net.sourceforge.plantuml.ugraphic.UStroke;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class TextBlockUtils {
 
-	public static TextBlock bordered(TextBlock textBlock, UStroke stroke, HtmlColor borderColor,
-			HtmlColor backgroundColor, double cornersize) {
+	public static final TextBlock EMPTY_TEXT_BLOCK = TextBlockUtils.empty(0, 0);
+
+	public static TextBlock bordered(TextBlock textBlock, UStroke stroke, HColor borderColor, HColor backgroundColor,
+			double cornersize) {
 		return new TextBlockBordered(textBlock, stroke, borderColor, backgroundColor, cornersize);
 	}
 
-	public static TextBlock bordered(TextBlock textBlock, UStroke stroke, HtmlColor borderColor,
-			HtmlColor backgroundColor, double cornersize, double marginX, double marginY) {
+	public static TextBlock bordered(TextBlock textBlock, UStroke stroke, HColor borderColor, HColor backgroundColor,
+			double cornersize, double marginX, double marginY) {
 		return new TextBlockBordered(textBlock, stroke, borderColor, backgroundColor, cornersize, marginX, marginY);
 	}
 
+	public static TextBlock bordered(TextBlock textBlock, UStroke stroke, HColor borderColor, HColor backgroundColor,
+			double cornersize, ClockwiseTopRightBottomLeft margins) {
+		return new TextBlockBordered(textBlock, stroke, borderColor, backgroundColor, cornersize, margins);
+	}
+
 	public static TextBlock title(FontConfiguration font, Display stringsToDisplay, ISkinParam skinParam) {
-		// if (SkinParam.USE_STYLES()) {
-		// throw new UnsupportedOperationException();
-		// }
+		if (SkinParam.USE_STYLES()) {
+			throw new UnsupportedOperationException();
+		}
 		UStroke stroke = skinParam.getThickness(LineParam.titleBorder, null);
 		final Rose rose = new Rose();
-		HtmlColor borderColor = rose.getHtmlColor(skinParam, ColorParam.titleBorder);
-		final HtmlColor backgroundColor = rose.getHtmlColor(skinParam, ColorParam.titleBackground);
+		HColor borderColor = rose.getHtmlColor(skinParam, ColorParam.titleBorder);
+		final HColor backgroundColor = rose.getHtmlColor(skinParam, ColorParam.titleBackground);
 		final TextBlockTitle result = new TextBlockTitle(font, stringsToDisplay, skinParam);
 		if (stroke == null && borderColor == null) {
 			return result;
@@ -86,22 +95,27 @@ public class TextBlockUtils {
 			stroke = new UStroke(1.5);
 		}
 		if (borderColor == null) {
-			borderColor = HtmlColorUtils.BLACK;
+			borderColor = HColorUtils.BLACK;
 		}
 		final double corner = skinParam.getRoundCorner(CornerParam.titleBorder, null);
 		return withMargin(bordered(result, stroke, borderColor, backgroundColor, corner), 2, 2);
 	}
 
 	public static TextBlock withMargin(TextBlock textBlock, double marginX, double marginY) {
-		return new TextBlockMarged(textBlock, marginX, marginX, marginY, marginY);
+		return new TextBlockMarged(textBlock, marginY, marginX, marginY, marginX);
+	}
+
+	public static TextBlock withMargin(TextBlock textBlock, ClockwiseTopRightBottomLeft margins) {
+		return new TextBlockMarged(textBlock, margins);
 	}
 
 	public static TextBlock withMargin(TextBlock textBlock, double marginX1, double marginX2, double marginY1,
 			double marginY2) {
-		return new TextBlockMarged(textBlock, marginX1, marginX2, marginY1, marginY2);
+		return new TextBlockMarged(textBlock, marginY1, marginX2, marginY2, marginX1);
 	}
 
-	public static TextBlock withMinWidth(TextBlock textBlock, double minWidth, HorizontalAlignment horizontalAlignment) {
+	public static TextBlock withMinWidth(TextBlock textBlock, double minWidth,
+			HorizontalAlignment horizontalAlignment) {
 		return new TextBlockMinWidth(textBlock, minWidth, horizontalAlignment);
 	}
 
@@ -120,30 +134,40 @@ public class TextBlockUtils {
 		return new PositionableImpl(pt, textBlock.calculateDimension(stringBounder));
 	}
 
+	public static Positionable asPositionable(Dimension2D dim, StringBounder stringBounder, Point2D pt) {
+		return new PositionableImpl(pt, dim);
+	}
+
 	public static TextBlock mergeLR(TextBlock b1, TextBlock b2, VerticalAlignment verticallAlignment) {
+		if (b1 == EMPTY_TEXT_BLOCK) {
+			return b2;
+		}
+		if (b2 == EMPTY_TEXT_BLOCK) {
+			return b1;
+		}
 		return new TextBlockHorizontal(b1, b2, verticallAlignment);
 	}
 
 	public static TextBlock mergeTB(TextBlock b1, TextBlock b2, HorizontalAlignment horizontalAlignment) {
+		if (b1 == EMPTY_TEXT_BLOCK) {
+			return b2;
+		}
+		if (b2 == EMPTY_TEXT_BLOCK) {
+			return b1;
+		}
 		return new TextBlockVertical2(b1, b2, horizontalAlignment);
 	}
 
-	// public static TextBlockBackcolored mergeColoredTB(TextBlockBackcolored b1, TextBlockBackcolored b2,
+	// public static TextBlockBackcolored mergeColoredTB(TextBlockBackcolored b1,
+	// TextBlockBackcolored b2,
 	// HorizontalAlignment horizontalAlignment) {
 	// return addBackcolor(mergeTB(b1, b2, horizontalAlignment), b1.getBackcolor());
 	// }
 
-	public static MinMax getMinMax(TextBlock tb, StringBounder stringBounder) {
-		final LimitFinder limitFinder = new LimitFinder(stringBounder, false);
+	public static MinMax getMinMax(UDrawable tb, StringBounder stringBounder, boolean initToZero) {
+		final LimitFinder limitFinder = new LimitFinder(stringBounder, initToZero);
 		tb.drawU(limitFinder);
 		return limitFinder.getMinMax();
-	}
-
-	private static final Graphics2D gg;
-
-	static {
-		final BufferedImage imDummy = new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB);
-		gg = imDummy.createGraphics();
 	}
 
 	public static boolean isEmpty(TextBlock text, StringBounder dummyStringBounder) {
@@ -155,15 +179,15 @@ public class TextBlockUtils {
 	}
 
 	public static FontRenderContext getFontRenderContext() {
-		return gg.getFontRenderContext();
+		return FileFormat.gg.getFontRenderContext();
 	}
 
 	public static LineMetrics getLineMetrics(UFont font, String text) {
-		return font.getLineMetrics(gg, text);
+		return font.getLineMetrics(FileFormat.gg, text);
 	}
 
 	public static FontMetrics getFontMetrics(Font font) {
-		return gg.getFontMetrics(font);
+		return FileFormat.gg.getFontMetrics(font);
 	}
 
 	public static TextBlock fullInnerPosition(final TextBlock bloc, final String display) {
@@ -192,7 +216,7 @@ public class TextBlockUtils {
 		};
 	}
 
-	public static TextBlockBackcolored addBackcolor(final TextBlock text, final HtmlColor backColor) {
+	public static TextBlockBackcolored addBackcolor(final TextBlock text, final HColor backColor) {
 		return new TextBlockBackcolored() {
 			public void drawU(UGraphic ug) {
 				text.drawU(ug);
@@ -210,7 +234,7 @@ public class TextBlockUtils {
 				return text.calculateDimension(stringBounder);
 			}
 
-			public HtmlColor getBackcolor() {
+			public HColor getBackcolor() {
 				return backColor;
 			}
 		};

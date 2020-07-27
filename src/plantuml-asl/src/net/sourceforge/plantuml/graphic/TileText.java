@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -36,7 +36,6 @@ import java.util.StringTokenizer;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UText;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
@@ -79,7 +78,7 @@ public class TileText extends AbstractTextBlock implements TextBlock {
 		if (url != null) {
 			ug.startUrl(url);
 		}
-		ug = ug.apply(new UChangeColor(fontConfiguration.getColor()));
+		ug = ug.apply(fontConfiguration.getColor());
 
 		final StringTokenizer tokenizer = new StringTokenizer(text, "\t", true);
 
@@ -106,7 +105,7 @@ public class TileText extends AbstractTextBlock implements TextBlock {
 			}
 		}
 		if (url != null) {
-			ug.closeAction();
+			ug.closeUrl();
 		}
 	}
 

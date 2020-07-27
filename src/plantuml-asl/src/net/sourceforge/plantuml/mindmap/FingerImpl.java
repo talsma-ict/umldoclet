@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -39,38 +39,76 @@ import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.Direction;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.activitydiagram3.ftile.BoxStyle;
+import net.sourceforge.plantuml.SkinParam;
+import net.sourceforge.plantuml.SkinParamColors;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileBox;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.UDrawable;
+import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.graphic.color.Colors;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
+import net.sourceforge.plantuml.style.PName;
+import net.sourceforge.plantuml.style.SName;
+import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.style.StyleBuilder;
+import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UPath;
+import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class FingerImpl implements Finger, UDrawable {
 
 	private final Display label;
+	private final HColor backColor;
+	private final String stereotype;
 	private final ISkinParam skinParam;
+	private final StyleBuilder styleBuilder;
 	private final IdeaShape shape;
 	private final Direction direction;
+	private final int level;
 	private boolean drawPhalanx = true;
+	private double marginLeft = 10;
+	private double marginRight = 10;
+	private double marginTop = 10;
+	private double marginBottom = 10;
 
 	private final List<FingerImpl> nail = new ArrayList<FingerImpl>();
+	private Tetris tetris = null;
+
+	private StyleSignature getDefaultStyleDefinitionNode() {
+		final String depth = SName.depth(level);
+		if (level == 0) {
+			return StyleSignature.of(SName.root, SName.element, SName.mindmapDiagram, SName.node, SName.rootNode)
+					.add(stereotype).add(depth);
+		}
+		if (nail.size() == 0) {
+			return StyleSignature.of(SName.root, SName.element, SName.mindmapDiagram, SName.node, SName.leafNode)
+					.add(stereotype).add(depth);
+		}
+		return StyleSignature.of(SName.root, SName.element, SName.mindmapDiagram, SName.node).add(stereotype)
+				.add(depth);
+	}
+
+	public StyleSignature getDefaultStyleDefinitionArrow() {
+		final String depth = SName.depth(level);
+		return StyleSignature.of(SName.root, SName.element, SName.mindmapDiagram, SName.arrow).add(stereotype)
+				.add(depth);
+	}
 
 	public static FingerImpl build(Idea idea, ISkinParam skinParam, Direction direction) {
-		final FingerImpl result = new FingerImpl(idea.getLabel(), skinParam, idea.getShape(), direction);
+		final FingerImpl result = new FingerImpl(idea.getStyleBuilder(), idea.getBackColor(), idea.getLabel(),
+				skinParam, idea.getShape(), direction, idea.getLevel(), idea.getStereotype());
 		for (Idea child : idea.getChildren()) {
 			result.addInNail(build(child, skinParam, direction));
 		}
+		// System.err.println("End of build for " + idea);
 		return result;
 	}
 
@@ -78,47 +116,21 @@ public class FingerImpl implements Finger, UDrawable {
 		nail.add(child);
 	}
 
-	private FingerImpl(Display label, ISkinParam skinParam, IdeaShape shape, Direction direction) {
+	private FingerImpl(StyleBuilder styleBuilder, HColor backColor, Display label, ISkinParam skinParam,
+			IdeaShape shape, Direction direction, int level, String stereotype) {
+		this.backColor = backColor;
+		this.stereotype = stereotype;
+		this.level = level;
 		this.label = label;
 		this.skinParam = skinParam;
 		this.shape = shape;
+		this.styleBuilder = styleBuilder;
 		this.direction = direction;
-	}
-
-	public double getPhalanxThickness(StringBounder stringBounder) {
-		return getPhalanx().calculateDimension(stringBounder).getHeight();
-	}
-
-	public double getPhalanxElongation(StringBounder stringBounder) {
-		return getPhalanx().calculateDimension(stringBounder).getWidth();
-	}
-
-	public double getNailThickness(StringBounder stringBounder) {
-		double result = 0;
-		for (FingerImpl child : nail) {
-			result += child.getFullThickness(stringBounder);
-		}
-		return result;
-	}
-
-	public double getNailElongation(StringBounder stringBounder) {
-		double result = 0;
-		for (FingerImpl child : nail) {
-			result = Math.max(result, child.getFullElongation(stringBounder));
-		}
-		return result;
-	}
-
-	public double getFullElongation(StringBounder stringBounder) {
-		return getPhalanxElongation(stringBounder) + marginX1 + getNailElongation(stringBounder);
-	}
-
-	public double getFullThickness(StringBounder stringBounder) {
-		return Math.max(getPhalanxThickness(stringBounder), getNailThickness(stringBounder));
-	}
-
-	public void doNotDrawFirstPhalanx() {
-		this.drawPhalanx = false;
+		final Style styleNode = getDefaultStyleDefinitionNode().getMergedStyle(styleBuilder);
+		this.marginLeft = styleNode.getMargin().getLeft();
+		this.marginRight = styleNode.getMargin().getRight();
+		this.marginTop = styleNode.getMargin().getTop();
+		this.marginBottom = styleNode.getMargin().getBottom();
 	}
 
 	public void drawU(final UGraphic ug) {
@@ -130,28 +142,38 @@ public class FingerImpl implements Finger, UDrawable {
 			final double posX = direction == Direction.RIGHT ? 0 : -dimPhalanx.getWidth();
 			phalanx.drawU(ug.apply(new UTranslate(posX, posY)));
 		}
-		final Point2D p1 = new Point2D.Double(direction == Direction.RIGHT ? dimPhalanx.getWidth()
-				: -dimPhalanx.getWidth(), 0);
+		final Point2D p1 = new Point2D.Double(
+				direction == Direction.RIGHT ? dimPhalanx.getWidth() : -dimPhalanx.getWidth(), 0);
 
-		double y = -getFullThickness(stringBounder) / 2;
-		for (FingerImpl child : nail) {
-			final double childThickness = child.getFullThickness(stringBounder);
-			final double x = direction == Direction.RIGHT ? dimPhalanx.getWidth() + marginX1 : -dimPhalanx.getWidth()
-					- marginX1;
-			child.drawU(ug.apply(new UTranslate(x, y + childThickness / 2)));
-			final Point2D p2 = new Point2D.Double(x, y + childThickness / 2);
-			drawLine(ug.apply(new UChangeColor(getLinkColor())), p1, p2);
-			y += childThickness;
+		for (int i = 0; i < nail.size(); i++) {
+			final FingerImpl child = nail.get(i);
+			final SymetricalTeePositioned stp = tetris(stringBounder).getElements().get(i);
+			final double x = direction == Direction.RIGHT ? dimPhalanx.getWidth() + getX12()
+					: -dimPhalanx.getWidth() - getX12();
+			final Point2D p2 = new Point2D.Double(x, stp.getY());
+			child.drawU(ug.apply(new UTranslate(p2)));
+			drawLine(ug.apply(getLinkColor()).apply(getUStroke()), p1, p2);
 		}
+
 	}
 
-	private HtmlColor getLinkColor() {
-		// return skinParam.getColors(ColorParam.activityBorder, null).getColor(ColorType.ARROW);
+	private HColor getLinkColor() {
+		if (SkinParam.USE_STYLES()) {
+			final Style styleArrow = getDefaultStyleDefinitionArrow().getMergedStyle(styleBuilder);
+			return styleArrow.value(PName.LineColor).asColor(skinParam.getIHtmlColorSet());
+
+		}
 		return ColorParam.activityBorder.getDefaultValue();
-		// return HtmlColorUtils.BLACK;
 	}
 
-	final private double marginX1 = 50;
+	private UStroke getUStroke() {
+		if (SkinParam.USE_STYLES()) {
+			final Style styleArrow = getDefaultStyleDefinitionArrow().getMergedStyle(styleBuilder);
+			return styleArrow.getStroke();
+
+		}
+		return new UStroke();
+	}
 
 	private void drawLine(UGraphic ug, Point2D p1, Point2D p2) {
 		// final ULine line = new ULine(p1, p2);
@@ -166,17 +188,95 @@ public class FingerImpl implements Finger, UDrawable {
 		ug.draw(path);
 	}
 
+	private Tetris tetris(StringBounder stringBounder) {
+		if (tetris == null) {
+			tetris = new Tetris(label.toString());
+			for (FingerImpl child : nail) {
+				tetris.add(child.asSymetricalTee(stringBounder));
+			}
+			tetris.balance();
+		}
+		return tetris;
+	}
+
+	private SymetricalTee asSymetricalTee(StringBounder stringBounder) {
+		final double thickness1 = getPhalanxThickness(stringBounder);
+		final double elongation1 = getPhalanxElongation(stringBounder);
+		if (nail.size() == 0) {
+			return new SymetricalTee(thickness1, elongation1, 0, 0);
+		}
+		final double thickness2 = getNailThickness(stringBounder);
+		final double elongation2 = getNailElongation(stringBounder);
+		return new SymetricalTee(thickness1, elongation1 + getX1(), thickness2, getX2() + elongation2);
+	}
+
+	private double getX1() {
+		return marginLeft;
+	}
+
+	private double getX2() {
+		return marginRight + 30;
+	}
+
+	public double getX12() {
+		return getX1() + getX2();
+	}
+
+	public double getPhalanxThickness(StringBounder stringBounder) {
+		return getPhalanx().calculateDimension(stringBounder).getHeight();
+	}
+
+	public double getPhalanxElongation(StringBounder stringBounder) {
+		return getPhalanx().calculateDimension(stringBounder).getWidth();
+	}
+
 	private TextBlock getPhalanx() {
 		if (drawPhalanx == false) {
 			return TextBlockUtils.empty(0, 0);
 		}
-		final UFont font = skinParam.getFont(null, false, FontParam.ACTIVITY);
-		if (shape == IdeaShape.BOX) {
-			final FtileBox box = new FtileBox(Colors.empty().mute(skinParam), label, font, null, BoxStyle.PLAIN);
-			return TextBlockUtils.withMargin(box, 0, 10);
+		final UFont font;
+		if (SkinParam.USE_STYLES()) {
+			final Style styleNode = getDefaultStyleDefinitionNode().getMergedStyle(styleBuilder);
+			font = styleNode.getUFont();
+		} else {
+			font = skinParam.getFont(null, false, FontParam.ACTIVITY);
 		}
-		return TextBlockUtils.withMargin(
-				label.create(FontConfiguration.blackBlueTrue(font), HorizontalAlignment.LEFT, skinParam), 5, 5);
+		if (shape == IdeaShape.BOX) {
+			// final ISkinParam foo = new
+			// SkinParamBackcolored(Colors.empty().mute(skinParam), backColor);
+			final ISkinParam foo = new SkinParamColors(skinParam, Colors.empty().add(ColorType.BACK, backColor));
+			final FtileBox box = FtileBox.createMindMap(styleBuilder, foo, label, getDefaultStyleDefinitionNode());
+			return TextBlockUtils.withMargin(box, 0, 0, marginTop, marginBottom);
+		}
+
+		final TextBlock text = label.create(FontConfiguration.blackBlueTrue(font), HorizontalAlignment.LEFT, skinParam);
+		if (direction == Direction.RIGHT) {
+			return TextBlockUtils.withMargin(text, 3, 0, 1, 1);
+		}
+		return TextBlockUtils.withMargin(text, 0, 3, 1, 1);
+	}
+
+	public double getNailThickness(StringBounder stringBounder) {
+		return tetris(stringBounder).getHeight();
+	}
+
+	public double getNailElongation(StringBounder stringBounder) {
+		return tetris(stringBounder).getWidth();
+	}
+
+	public double getFullThickness(StringBounder stringBounder) {
+		final double thickness1 = getPhalanxThickness(stringBounder);
+		final double thickness2 = getNailThickness(stringBounder);
+		// System.err.println("thickness1=" + thickness1 + " thickness2=" + thickness2);
+		return Math.max(thickness1, thickness2);
+	}
+
+	public double getFullElongation(StringBounder stringBounder) {
+		return getPhalanxElongation(stringBounder) + getNailElongation(stringBounder);
+	}
+
+	public void doNotDrawFirstPhalanx() {
+		this.drawPhalanx = false;
 	}
 
 }

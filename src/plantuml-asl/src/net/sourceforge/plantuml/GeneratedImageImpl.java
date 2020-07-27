@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -31,13 +31,15 @@
 package net.sourceforge.plantuml;
 
 import java.io.File;
+import java.io.IOException;
 
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.error.PSystemError;
+import net.sourceforge.plantuml.security.SFile;
 
 public class GeneratedImageImpl implements GeneratedImage {
 
-	private final File pngFile;
+	private final SFile pngFile;
 	private final String description;
 	private final BlockUml blockUml;
 	private final int status;
@@ -46,7 +48,7 @@ public class GeneratedImageImpl implements GeneratedImage {
 		return status;
 	}
 
-	public GeneratedImageImpl(File pngFile, String description, BlockUml blockUml, int status) {
+	public GeneratedImageImpl(SFile pngFile, String description, BlockUml blockUml, int status) {
 		this.blockUml = blockUml;
 		this.pngFile = pngFile;
 		this.description = description;
@@ -54,7 +56,7 @@ public class GeneratedImageImpl implements GeneratedImage {
 	}
 
 	public File getPngFile() {
-		return pngFile;
+		return pngFile.internal;
 	}
 
 	public String getDescription() {
@@ -71,13 +73,17 @@ public class GeneratedImageImpl implements GeneratedImage {
 
 	@Override
 	public String toString() {
-		return pngFile.getAbsolutePath() + " " + description;
+		return pngFile.getPrintablePath() + " " + description;
 	}
 
 	public int compareTo(GeneratedImage this2) {
-		final int cmp = this.pngFile.compareTo(this2.getPngFile());
-		if (cmp != 0) {
-			return cmp;
+		try {
+			final int cmp = this.getPngFile().getCanonicalPath().compareTo(this2.getPngFile().getCanonicalPath());
+			if (cmp != 0) {
+				return cmp;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		return this.description.compareTo(this2.getDescription());
 	}

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -60,14 +60,14 @@ class USymbolCollections extends USymbol {
 	}
 
 	private void drawCollections(UGraphic ug, double width, double height, boolean shadowing, double roundCorner) {
-		final URectangle small = new URectangle(width - getDeltaCollection(), height - getDeltaCollection(),
-				roundCorner, roundCorner);
+		final URectangle small = new URectangle(width - getDeltaCollection(), height - getDeltaCollection())
+				.rounded(roundCorner);
 		if (shadowing) {
 			small.setDeltaShadow(3.0);
 		}
 		ug.apply(new UTranslate(getDeltaCollection(), getDeltaCollection())).draw(small);
 		small.setDeltaShadow(0);
-		ug.apply(new UTranslate(0, 0)).draw(small);
+		ug.apply(UTranslate.dy(0)).draw(small);
 	}
 
 	private Margin getMargin() {
@@ -91,8 +91,8 @@ class USymbolCollections extends USymbol {
 						symbolContext.getRoundCorner());
 				final Margin margin = getMargin();
 				final TextBlock tb = TextBlockUtils.mergeTB(stereotype, label, stereoAlignment);
-				tb.drawU(ug.apply(new UTranslate(margin.getX1() - getDeltaCollection() / 2, margin.getY1()
-						- getDeltaCollection() / 2)));
+				tb.drawU(ug.apply(new UTranslate(margin.getX1() - getDeltaCollection() / 2,
+						margin.getY1() - getDeltaCollection() / 2)));
 			}
 
 			public Dimension2D calculateDimension(StringBounder stringBounder) {
@@ -105,7 +105,8 @@ class USymbolCollections extends USymbol {
 
 	@Override
 	public TextBlock asBig(final TextBlock title, HorizontalAlignment labelAlignment, final TextBlock stereotype,
-			final double width, final double height, final SymbolContext symbolContext, final HorizontalAlignment stereoAlignment) {
+			final double width, final double height, final SymbolContext symbolContext,
+			final HorizontalAlignment stereoAlignment) {
 		return new AbstractTextBlock() {
 			public void drawU(UGraphic ug) {
 				final Dimension2D dim = calculateDimension(ug.getStringBounder());

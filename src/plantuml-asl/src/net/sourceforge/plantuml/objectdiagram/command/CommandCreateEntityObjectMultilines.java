@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -44,6 +44,7 @@ import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.Code;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
+import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.color.ColorParser;
@@ -78,9 +79,10 @@ public class CommandCreateEntityObjectMultilines extends CommandMultilines2<Abst
 		return "(?i)^[%s]*\\}[%s]*$";
 	}
 
+	@Override
 	protected CommandExecutionResult executeNow(AbstractClassOrObjectDiagram diagram, BlocLines lines) {
-		lines = lines.trim(true);
-		final RegexResult line0 = getStartingPattern().matcher(lines.getFirst499().getTrimmed().getString());
+		lines = lines.trim().removeEmptyLines();
+		final RegexResult line0 = getStartingPattern().matcher(lines.getFirst().getTrimmed().getString());
 		final IEntity entity = executeArg0(diagram, line0);
 		if (entity == null) {
 			return CommandExecutionResult.error("No such entity");
@@ -91,19 +93,22 @@ public class CommandCreateEntityObjectMultilines extends CommandMultilines2<Abst
 			if (VisibilityModifier.isVisibilityCharacter(s.getString())) {
 				diagram.setVisibilityModifierPresent(true);
 			}
-			entity.getBodier().addFieldOrMethod(s.getString(), entity);
+			entity.getBodier().addFieldOrMethod(s.getString());
 		}
 		return CommandExecutionResult.ok();
 	}
 
 	private IEntity executeArg0(AbstractClassOrObjectDiagram diagram, RegexResult line0) {
-		final Code code = Code.of(line0.get("NAME", 1));
+		final String name = line0.get("NAME", 1);
+		final Ident ident = diagram.buildLeafIdent(name);
+		final Code code = diagram.V1972() ? ident : diagram.buildCode(name);
 		final String display = line0.get("NAME", 0);
 		final String stereotype = line0.get("STEREO", 0);
-		if (diagram.leafExist(code)) {
-			return diagram.getOrCreateLeaf(code, LeafType.OBJECT, null);
+		final boolean leafExist = diagram.V1972() ? diagram.leafExistSmart(ident) : diagram.leafExist(code);
+		if (leafExist) {
+			return diagram.getOrCreateLeaf(diagram.buildLeafIdent(name), code, LeafType.OBJECT, null);
 		}
-		final IEntity entity = diagram.createLeaf(code, Display.getWithNewlines(display), LeafType.OBJECT, null);
+		final IEntity entity = diagram.createLeaf(ident, code, Display.getWithNewlines(display), LeafType.OBJECT, null);
 		if (stereotype != null) {
 			entity.setStereotype(new Stereotype(stereotype, diagram.getSkinParam().getCircledCharacterRadius(), diagram
 					.getSkinParam().getFont(null, false, FontParam.CIRCLED_CHARACTER), diagram.getSkinParam()

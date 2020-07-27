@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -31,12 +31,15 @@
 package net.sourceforge.plantuml;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.Collections;
 import java.util.List;
 
 import net.sourceforge.plantuml.preproc.Defines;
 import net.sourceforge.plantuml.preproc.FileWithSuffix;
+import net.sourceforge.plantuml.security.SFile;
 
 public class SourceFileReader extends SourceFileReaderAbstract implements ISourceFileReader {
 
@@ -45,44 +48,45 @@ public class SourceFileReader extends SourceFileReaderAbstract implements ISourc
 	}
 
 	public SourceFileReader(File file, File outputDirectory, String charset) throws IOException {
-		this(Defines.createWithFileName(file), file, outputDirectory, Collections.<String> emptyList(), charset,
+		this(Defines.createWithFileName(file), file, outputDirectory, Collections.<String>emptyList(), charset,
 				new FileFormatOption(FileFormat.PNG));
 	}
 
 	public SourceFileReader(final File file, File outputDirectory) throws IOException {
-		this(Defines.createWithFileName(file), file, outputDirectory, Collections.<String> emptyList(), null,
+		this(Defines.createWithFileName(file), file, outputDirectory, Collections.<String>emptyList(), null,
 				new FileFormatOption(FileFormat.PNG));
 	}
 
 	public SourceFileReader(final File file, File outputDirectory, FileFormatOption fileFormatOption)
 			throws IOException {
-		this(Defines.createWithFileName(file), file, outputDirectory, Collections.<String> emptyList(), null,
+		this(Defines.createWithFileName(file), file, outputDirectory, Collections.<String>emptyList(), null,
 				fileFormatOption);
 	}
 
-	public SourceFileReader(Defines defines, final File file, File outputDirectory, List<String> config,
-			String charset, FileFormatOption fileFormatOption) throws IOException {
+	public SourceFileReader(Defines defines, final File file, File outputDirectory, List<String> config, String charset,
+			FileFormatOption fileFormatOption) throws IOException {
 		this.file = file;
 		this.fileFormatOption = fileFormatOption;
 		if (file.exists() == false) {
 			throw new IllegalArgumentException();
 		}
-		FileSystem.getInstance().setCurrentDir(file.getAbsoluteFile().getParentFile());
+		FileSystem.getInstance().setCurrentDir(SFile.fromFile(file.getAbsoluteFile().getParentFile()));
 		if (outputDirectory == null) {
 			outputDirectory = file.getAbsoluteFile().getParentFile();
 		} else if (outputDirectory.isAbsolute() == false) {
-			outputDirectory = FileSystem.getInstance().getFile(outputDirectory.getPath());
+			outputDirectory = FileSystem.getInstance().getFile(outputDirectory.getPath()).conv();
 		}
 		if (outputDirectory.exists() == false) {
 			outputDirectory.mkdirs();
 		}
 		this.outputDirectory = outputDirectory;
 
-		builder = new BlockUmlBuilder(config, charset, defines, getReader(charset), file.getAbsoluteFile()
-				.getParentFile(), FileWithSuffix.getFileName(file));
+		final Reader reader = getReader(charset);
+		builder = new BlockUmlBuilder(config, charset, defines, reader,
+				SFile.fromFile(file.getAbsoluteFile().getParentFile()), FileWithSuffix.getFileName(file));
 	}
 
-	private File getDirIfDirectory(String newName) {
+	private File getDirIfDirectory(String newName) throws FileNotFoundException {
 		Log.info("Checking=" + newName);
 		if (endsWithSlashOrAntislash(newName)) {
 			Log.info("It ends with / so it looks like a directory");
@@ -130,7 +134,7 @@ public class SourceFileReader extends SourceFileReaderAbstract implements ISourc
 	}
 
 	@Override
-	protected SuggestedFile getSuggestedFile(BlockUml blockUml) {
+	protected SuggestedFile getSuggestedFile(BlockUml blockUml) throws FileNotFoundException {
 		final String newName = blockUml.getFileOrDirname();
 		SuggestedFile suggested = null;
 		if (newName != null) {
@@ -154,6 +158,5 @@ public class SourceFileReader extends SourceFileReaderAbstract implements ISourc
 		suggested.getParentFile().mkdirs();
 		return suggested;
 	}
-
 
 }

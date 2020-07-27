@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -50,7 +50,7 @@ class USymbolArtifact extends USymbol {
 
 	private void drawArtifact(UGraphic ug, double widthTotal, double heightTotal, boolean shadowing, double roundCorner) {
 
-		final URectangle form = new URectangle(widthTotal, heightTotal, roundCorner, roundCorner);
+		final URectangle form = new URectangle(widthTotal, heightTotal).rounded(roundCorner);
 		if (shadowing) {
 			form.setDeltaShadow(4);
 		}
@@ -75,8 +75,8 @@ class USymbolArtifact extends USymbol {
 		final double ySymbol = 5;
 
 		ug.apply(new UTranslate(xSymbol, ySymbol)).draw(polygon);
-		ug.apply(new UTranslate(xSymbol + widthSymbol - cornersize, ySymbol)).draw(new ULine(0, cornersize));
-		ug.apply(new UTranslate(xSymbol + widthSymbol, ySymbol + cornersize)).draw(new ULine(-cornersize, 0));
+		ug.apply(new UTranslate(xSymbol + widthSymbol - cornersize, ySymbol)).draw(ULine.vline(cornersize));
+		ug.apply(new UTranslate(xSymbol + widthSymbol, ySymbol + cornersize)).draw(ULine.hline(-cornersize));
 
 	}
 

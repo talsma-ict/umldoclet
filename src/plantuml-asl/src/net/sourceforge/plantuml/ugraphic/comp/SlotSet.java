@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -114,7 +114,7 @@ public class SlotSet implements Iterable<Slot> {
 	public void drawDebugX(UGraphic ug, double size) {
 		for (Slot slot : all) {
 			final URectangle rect = new URectangle(slot.getEnd() - slot.getStart(), size);
-			ug.apply(new UTranslate(slot.getStart(), 0)).draw(rect);
+			ug.apply(UTranslate.dx(slot.getStart())).draw(rect);
 		}
 	}
 

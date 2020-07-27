@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -33,22 +33,20 @@ package net.sourceforge.plantuml.svek;
 import java.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UStroke;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public final class InnerActivity extends AbstractTextBlock implements IEntityImage {
 
 	private final IEntityImage im;
-	private final HtmlColor borderColor;
-	private final boolean shadowing;
-	private final HtmlColor backColor;
+	private final HColor borderColor;
+	private final double shadowing;
+	private final HColor backColor;
 
-	public InnerActivity(final IEntityImage im, HtmlColor borderColor, HtmlColor backColor, boolean shadowing) {
+	public InnerActivity(final IEntityImage im, HColor borderColor, HColor backColor, double shadowing) {
 		this.im = im;
 		this.backColor = backColor;
 		this.borderColor = borderColor;
@@ -60,19 +58,16 @@ public final class InnerActivity extends AbstractTextBlock implements IEntityIma
 	public void drawU(UGraphic ug) {
 		final Dimension2D total = calculateDimension(ug.getStringBounder());
 
-		ug = ug.apply(new UChangeBackColor(backColor)).apply(new UChangeColor(borderColor))
+		ug = ug.apply(backColor.bg()).apply(borderColor)
 				.apply(new UStroke(THICKNESS_BORDER));
-		final URectangle rect = new URectangle(total.getWidth(), total.getHeight(), IEntityImage.CORNER,
-				IEntityImage.CORNER);
-		if (shadowing) {
-			rect.setDeltaShadow(4);
-		}
+		final URectangle rect = new URectangle(total.getWidth(), total.getHeight()).rounded(IEntityImage.CORNER);
+		rect.setDeltaShadow(shadowing);
 		ug.draw(rect);
 		ug = ug.apply(new UStroke());
 		im.drawU(ug);
 	}
 
-	public HtmlColor getBackcolor() {
+	public HColor getBackcolor() {
 		return im.getBackcolor();
 	}
 
@@ -92,10 +87,9 @@ public final class InnerActivity extends AbstractTextBlock implements IEntityIma
 	public boolean isHidden() {
 		return im.isHidden();
 	}
-	
+
 	public double getOverscanX(StringBounder stringBounder) {
 		return 0;
 	}
-
 
 }

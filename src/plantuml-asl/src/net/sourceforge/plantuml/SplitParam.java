@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,20 +32,20 @@ package net.sourceforge.plantuml;
 
 import java.awt.Color;
 
-import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.graphic.HtmlColorSimple;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorSimple;
 
 public class SplitParam {
 
-	private final HtmlColor borderColor;
-	private final HtmlColor externalColor;
+	private final HColor borderColor;
+	private final HColor externalColor;
 	private final int externalMargin;
 
 	public SplitParam() {
 		this(null, null, 0);
 	}
 
-	public SplitParam(HtmlColor borderColor, HtmlColor externalColor, int externalMargin) {
+	public SplitParam(HColor borderColor, HColor externalColor, int externalMargin) {
 		if (borderColor != null && externalMargin == 0) {
 			externalMargin = 1;
 		}
@@ -66,14 +66,14 @@ public class SplitParam {
 		if (borderColor == null) {
 			return null;
 		}
-		return ((HtmlColorSimple) borderColor).getColor999();
+		return ((HColorSimple) borderColor).getColor999();
 	}
 
 	public Color getExternalColor() {
 		if (externalColor == null) {
 			return null;
 		}
-		return ((HtmlColorSimple) externalColor).getColor999();
+		return ((HColorSimple) externalColor).getColor999();
 	}
 
 }

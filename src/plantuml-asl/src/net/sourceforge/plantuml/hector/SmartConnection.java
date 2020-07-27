@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,12 +34,11 @@ import java.awt.geom.Point2D;
 import java.util.List;
 
 import net.sourceforge.plantuml.geom.LineSegmentDouble;
-import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.graphic.HtmlColorUtils;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UPath;
 import net.sourceforge.plantuml.ugraphic.UStroke;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 class SmartConnection {
 
@@ -61,13 +60,13 @@ class SmartConnection {
 		this(p1.getX(), p1.getY(), p2.getX(), p2.getY(), b);
 	}
 
-	public void draw(UGraphic ug, HtmlColor color) {
+	public void draw(UGraphic ug, HColor color) {
 		final LineSegmentDouble seg = new LineSegmentDouble(x1, y1, x2, y2);
 		boolean clash = intersect(seg);
 		if (clash) {
-			ug = ug.apply(new UChangeColor(HtmlColorUtils.BLACK)).apply(new UStroke(1.0));
+			ug = ug.apply(HColorUtils.BLACK).apply(new UStroke(1.0));
 		} else {
-			ug = ug.apply(new UChangeColor(color)).apply(new UStroke(1.5));
+			ug = ug.apply(color).apply(new UStroke(1.5));
 		}
 		seg.draw(ug);
 	}
@@ -81,8 +80,8 @@ class SmartConnection {
 		return false;
 	}
 
-	public void drawEx1(UGraphic ug, HtmlColor color) {
-		ug = ug.apply(new UChangeColor(color)).apply(new UStroke(1.5));
+	public void drawEx1(UGraphic ug, HColor color) {
+		ug = ug.apply(color).apply(new UStroke(1.5));
 		final double orthoX = -(y2 - y1);
 		final double orthoY = x2 - x1;
 		for (int i = -10; i <= 10; i++) {

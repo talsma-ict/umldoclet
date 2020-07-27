@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,24 +30,23 @@
  */
 package net.sourceforge.plantuml;
 
-import java.io.File;
-
 import net.sourceforge.plantuml.core.ImageData;
+import net.sourceforge.plantuml.security.SFile;
 
 public class FileImageData {
 	
 	public static final int ERROR = 400;
 	public static final int CRASH = 503;
 
-	private final File file;
+	private final SFile file;
 	private final ImageData imageData;
 
-	public FileImageData(File file, ImageData imageData) {
+	public FileImageData(SFile file, ImageData imageData) {
 		this.file = file;
 		this.imageData = imageData;
 	}
 
-	public File getFile() {
+	public SFile getFile() {
 		return file;
 	}
 

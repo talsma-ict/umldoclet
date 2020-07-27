@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -35,20 +35,29 @@ import java.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinParam;
+import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.SkinParamUtils;
 import net.sourceforge.plantuml.cucadiagram.ILeaf;
 import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.style.PName;
+import net.sourceforge.plantuml.style.SName;
+import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.svek.AbstractEntityImage;
 import net.sourceforge.plantuml.svek.ShapeType;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorNone;
 
 public class EntityImageCircleStart extends AbstractEntityImage {
 
 	private static final int SIZE = 20;
 	private final ColorParam colorParam; // = ColorParam.activityStart;
+
+	public StyleSignature getDefaultStyleDefinitionCircle() {
+		return StyleSignature.of(SName.root, SName.element, SName.activityDiagram, SName.circle);
+	}
 
 	public EntityImageCircleStart(ILeaf entity, ISkinParam skinParam, ColorParam colorParam) {
 		super(entity, skinParam);
@@ -61,11 +70,19 @@ public class EntityImageCircleStart extends AbstractEntityImage {
 
 	final public void drawU(UGraphic ug) {
 		final UEllipse circle = new UEllipse(SIZE, SIZE);
+		double shadowing = 0;
 		if (getSkinParam().shadowing(getEntity().getStereotype())) {
-			circle.setDeltaShadow(3);
+			shadowing = 3;
 		}
-		ug.apply(new UChangeBackColor(SkinParamUtils.getColor(getSkinParam(), getStereo(), colorParam)))
-				.apply(new UChangeColor(null)).draw(circle);
+		HColor color = SkinParamUtils.getColor(getSkinParam(), getStereo(), colorParam);
+		if (SkinParam.USE_STYLES()) {
+			final Style style = getDefaultStyleDefinitionCircle().getMergedStyle(
+					getSkinParam().getCurrentStyleBuilder());
+			color = style.value(PName.LineColor).asColor(getSkinParam().getIHtmlColorSet());
+			shadowing = style.value(PName.Shadowing).asDouble();
+		}
+		circle.setDeltaShadow(shadowing);
+		ug.apply(color.bg()).apply(new HColorNone()).draw(circle);
 	}
 
 	public ShapeType getShapeType() {

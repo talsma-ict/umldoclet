@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -62,7 +62,7 @@ public abstract class AbstractUGraphicHorizontalLine extends UGraphicDelegator {
 
 	public void draw(UShape shape) {
 		if (shape instanceof UHorizontalLine) {
-			drawHline(getUg(), (UHorizontalLine) shape, new UTranslate(0, translate.getDy()));
+			drawHline(getUg(), (UHorizontalLine) shape, UTranslate.dy(translate.getDy()));
 		} else {
 			getUg().apply(translate).draw(shape);
 		}

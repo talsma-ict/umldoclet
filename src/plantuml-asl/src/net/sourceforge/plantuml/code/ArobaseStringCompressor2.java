@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,17 +30,15 @@
  */
 package net.sourceforge.plantuml.code;
 
-import java.io.IOException;
-
 import net.sourceforge.plantuml.StringUtils;
 
 public class ArobaseStringCompressor2 implements StringCompressor {
 
-	public String compress(String data) throws IOException {
+	public String compress(String data) {
 		return clean2(data);
 	}
 
-	public String decompress(String s) throws IOException {
+	public String decompress(String s) {
 		return clean2(s);
 	}
 

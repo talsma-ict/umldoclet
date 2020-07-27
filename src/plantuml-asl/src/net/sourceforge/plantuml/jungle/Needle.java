@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -33,12 +33,11 @@ package net.sourceforge.plantuml.jungle;
 import java.util.List;
 
 import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.graphic.UDrawable;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class Needle implements UDrawable {
 
@@ -101,7 +100,7 @@ public class Needle implements UDrawable {
 		final UDrawable n1 = needle0.addChildren(root.getChildren());
 		return new UDrawable() {
 			public void drawU(UGraphic ug) {
-				ug = ug.apply(new UChangeColor(HtmlColorUtils.BLACK));
+				ug = ug.apply(HColorUtils.BLACK);
 				n1.drawU(ug);
 			}
 		};

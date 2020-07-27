@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -36,10 +36,10 @@ import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.ugraphic.UFont;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 abstract class AbstractEntityImage2 implements IEntityImageBlock {
 
@@ -66,11 +66,11 @@ abstract class AbstractEntityImage2 implements IEntityImageBlock {
 		return skinParam.getFont(null, false, fontParam);
 	}
 
-	protected HtmlColor getFontColor(FontParam fontParam) {
+	protected HColor getFontColor(FontParam fontParam) {
 		return skinParam.getFontHtmlColor(null, fontParam);
 	}
 
-	protected final HtmlColor getColor(ColorParam colorParam) {
+	protected final HColor getColor(ColorParam colorParam) {
 		return rose.getHtmlColor(skinParam, colorParam);
 	}
 

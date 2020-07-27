@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,10 +32,7 @@ package net.sourceforge.plantuml.posimo;
 
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
@@ -47,6 +44,7 @@ import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.cucadiagram.dot.Graphviz;
 import net.sourceforge.plantuml.cucadiagram.dot.GraphvizUtils;
 import net.sourceforge.plantuml.cucadiagram.dot.ProcessState;
+import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.svek.MinFinder;
 import net.sourceforge.plantuml.svek.SvgResult;
 import net.sourceforge.plantuml.svek.YDelta;
@@ -54,10 +52,10 @@ import net.sourceforge.plantuml.svek.YDelta;
 public class GraphvizSolverB {
 
 	// static private void traceDotString(String dotString) throws IOException {
-	// final File f = new File("dottmpfile" + UniqueSequence.getValue() + ".tmp");
+	// final File f = SecurityUtils.File("dottmpfile" + UniqueSequence.getValue() + ".tmp");
 	// PrintWriter pw = null;
 	// try {
-	// pw = new PrintWriter(new FileWriter(f));
+	// pw = SecurityUtils.PrintWriter(new FileWriter(f));
 	// pw.print(dotString);
 	// Log.info("Creating file " + f);
 	// } finally {
@@ -68,10 +66,10 @@ public class GraphvizSolverB {
 	// }
 	//
 	// static private void traceSvgString(String svg) throws IOException {
-	// final File f = new File("svgtmpfile" + UniqueSequence.getValue() + ".svg");
+	// final File f = SecurityUtils.File("svgtmpfile" + UniqueSequence.getValue() + ".svg");
 	// PrintWriter pw = null;
 	// try {
-	// pw = new PrintWriter(new FileWriter(f));
+	// pw = SecurityUtils.PrintWriter(new FileWriter(f));
 	// pw.print(svg);
 	// Log.info("Creating file " + f);
 	// } finally {
@@ -92,7 +90,7 @@ public class GraphvizSolverB {
 
 		// Log.println("dotString=" + dotString);
 
-		// exportPng(dotString, new File("png", "test1.png"));
+		// exportPng(dotString, SecurityUtils.File("png", "test1.png"));
 
 		final Graphviz graphviz = GraphvizUtils.create(null, dotString, "svg");
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -217,9 +215,9 @@ public class GraphvizSolverB {
 		return result;
 	}
 
-	private void exportPng(final String dotString, File f) throws IOException {
+	private void exportPng(final String dotString, SFile f) throws IOException {
 		final Graphviz graphviz = GraphvizUtils.create(null, dotString, "png");
-		final OutputStream os = new BufferedOutputStream(new FileOutputStream(f));
+		final OutputStream os = f.createBufferedOutputStream();
 		final ProcessState state = graphviz.createFile3(os);
 		os.close();
 		if (state.differs(ProcessState.TERMINATED_OK())) {

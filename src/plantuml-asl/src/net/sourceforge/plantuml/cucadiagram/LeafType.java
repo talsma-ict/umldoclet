@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -27,6 +27,8 @@
  *
  *
  * Original Author:  Arnaud Roques
+ * Contribution :  Hisashi Miyashita
+ * Contribution :  Serge Wenger
  */
 package net.sourceforge.plantuml.cucadiagram;
 
@@ -36,7 +38,7 @@ public enum LeafType {
 
 	EMPTY_PACKAGE,
 
-	ABSTRACT_CLASS, CLASS, INTERFACE, ANNOTATION, LOLLIPOP_FULL, LOLLIPOP_HALF, NOTE, TIPS, OBJECT, ASSOCIATION, ENUM, CIRCLE,
+	ABSTRACT_CLASS, CLASS, INTERFACE, ANNOTATION, LOLLIPOP_FULL, LOLLIPOP_HALF, NOTE, TIPS, OBJECT, MAP, ASSOCIATION, ENUM, CIRCLE,
 	
 	USECASE, 
 
@@ -46,11 +48,13 @@ public enum LeafType {
 
 	ACTIVITY, BRANCH, SYNCHRO_BAR, CIRCLE_START, CIRCLE_END, POINT_FOR_ASSOCIATION, ACTIVITY_CONCURRENT,
 
-	STATE, STATE_CONCURRENT, PSEUDO_STATE, STATE_CHOICE, STATE_FORK_JOIN,
+	STATE, STATE_CONCURRENT, PSEUDO_STATE, DEEP_HISTORY, STATE_CHOICE, STATE_FORK_JOIN,
 
 	BLOCK, ENTITY,
 	
 	DOMAIN, REQUIREMENT,
+	
+	PORT, PORTIN, PORTOUT,
 
 	STILL_UNKNOWN;
 

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -101,7 +101,7 @@ public class ReferenceTile extends AbstractTile implements Tile {
 		final Dimension2D dim = comp.getPreferredDimension(stringBounder);
 		final Area area = new Area(last.getCurrentValue() - first.getCurrentValue(), dim.getHeight());
 
-		ug = ug.apply(new UTranslate(first.getCurrentValue(), 0));
+		ug = ug.apply(UTranslate.dx(first.getCurrentValue()));
 		comp.drawU(ug, area, (Context2D) ug);
 	}
 

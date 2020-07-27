@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -45,10 +45,10 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
 import net.sourceforge.plantuml.activitydiagram3.ftile.WeldingPoint;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.FtileWithNoteOpale;
 import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
 import net.sourceforge.plantuml.sequencediagram.NoteType;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class InstructionIf extends WithNote implements Instruction, InstructionCollection {
 
@@ -79,7 +79,7 @@ public class InstructionIf extends WithNote implements Instruction, InstructionC
 	}
 
 	public InstructionIf(Swimlane swimlane, Instruction parent, Display labelTest, Display whenThen,
-			LinkRendering inlinkRendering, HtmlColor color, ISkinParam skinParam, Url url) {
+			LinkRendering inlinkRendering, HColor color, ISkinParam skinParam, Url url) {
 		this.url = url;
 		this.parent = parent;
 		this.skinParam = skinParam;
@@ -88,7 +88,8 @@ public class InstructionIf extends WithNote implements Instruction, InstructionC
 			throw new IllegalArgumentException();
 		}
 		this.swimlane = swimlane;
-		this.thens.add(new Branch(swimlane, whenThen, labelTest, color, Display.NULL));
+		this.thens.add(new Branch(skinParam.getCurrentStyleBuilder(), swimlane, whenThen, labelTest, color,
+				Display.NULL));
 		this.current = this.thens.get(0);
 	}
 
@@ -101,7 +102,8 @@ public class InstructionIf extends WithNote implements Instruction, InstructionC
 			branch.updateFtile(factory);
 		}
 		if (elseBranch == null) {
-			this.elseBranch = new Branch(swimlane, Display.NULL, Display.NULL, null, Display.NULL);
+			this.elseBranch = new Branch(skinParam.getCurrentStyleBuilder(), swimlane, Display.NULL, Display.NULL,
+					null, Display.NULL);
 		}
 		elseBranch.updateFtile(factory);
 		Ftile result = factory.createIf(swimlane, thens, elseBranch, afterEndwhile, topInlinkRendering, url);
@@ -128,19 +130,20 @@ public class InstructionIf extends WithNote implements Instruction, InstructionC
 			return false;
 		}
 		this.current.setInlinkRendering(nextLinkRenderer);
-		this.elseBranch = new Branch(swimlane, whenElse, Display.NULL, null, Display.NULL);
+		this.elseBranch = new Branch(skinParam.getCurrentStyleBuilder(), swimlane, whenElse, Display.NULL, null,
+				Display.NULL);
 		this.current = elseBranch;
 		return true;
 	}
 
 	public boolean elseIf(Display inlabel, Display test, Display whenThen, LinkRendering nextLinkRenderer,
-			HtmlColor color) {
+			HColor color) {
 		if (elseBranch != null) {
 			return false;
 		}
 		// this.current.setInlinkRendering(nextLinkRenderer);
 		this.current.setSpecial(nextLinkRenderer);
-		this.current = new Branch(swimlane, whenThen, test, color, inlabel);
+		this.current = new Branch(skinParam.getCurrentStyleBuilder(), swimlane, whenThen, test, color, inlabel);
 		this.thens.add(current);
 		return true;
 
@@ -149,7 +152,8 @@ public class InstructionIf extends WithNote implements Instruction, InstructionC
 	public void endif(LinkRendering nextLinkRenderer) {
 		endifCalled = true;
 		if (elseBranch == null) {
-			this.elseBranch = new Branch(swimlane, Display.NULL, Display.NULL, null, Display.NULL);
+			this.elseBranch = new Branch(skinParam.getCurrentStyleBuilder(), swimlane, Display.NULL, Display.NULL,
+					null, Display.NULL);
 		}
 		this.elseBranch.setSpecial(nextLinkRenderer);
 		this.current.setInlinkRendering(nextLinkRenderer);

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,33 +30,60 @@
  */
 package net.sourceforge.plantuml.timingdiagram;
 
+import net.sourceforge.plantuml.FontParam;
+import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.command.Position;
 import net.sourceforge.plantuml.cucadiagram.Display;
+import net.sourceforge.plantuml.graphic.FontConfiguration;
+import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.graphic.UDrawable;
 import net.sourceforge.plantuml.graphic.color.Colors;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
 
-public interface Player extends TimeProjected {
+public abstract class Player implements TimeProjected {
 
-	public void addNote(TimeTick now, Display note, Position position);
+	protected final ISkinParam skinParam;
+	protected final TimingRuler ruler;
+	private final boolean compact;
+	private final Display title;
+	protected int suggestedHeight;
 
-	public void defineState(String stateCode, String label);
+	public Player(String title, ISkinParam skinParam, TimingRuler ruler, boolean compact) {
+		this.skinParam = skinParam;
+		this.compact = compact;
+		this.ruler = ruler;
+		this.title = Display.getWithNewlines(title);
+	}
 
-	public void setState(TimeTick now, String comment, Colors color, String... states);
+	public boolean isCompact() {
+		return compact;
+	}
 
-	public void createConstraint(TimeTick tick1, TimeTick tick2, String message);
+	final protected FontConfiguration getFontConfiguration() {
+		return new FontConfiguration(skinParam, FontParam.TIMING, null);
+	}
 
-	public void drawFrameTitle(UGraphic ug);
+	final protected TextBlock getTitle() {
+		return title.create(getFontConfiguration(), HorizontalAlignment.LEFT, skinParam);
+	}
 
-	public void drawContent(UGraphic ug);
+	public abstract void addNote(TimeTick now, Display note, Position position);
 
-	public void drawLeftHeader(UGraphic ug);
+	public abstract void defineState(String stateCode, String label);
 
-	public double getWidthHeader(StringBounder stringBounder);
+	public abstract void setState(TimeTick now, String comment, Colors color, String... states);
 
-	public double getHeight(StringBounder stringBounder);
-	
-	public double getFirstColumnWidth(StringBounder stringBounder);
+	public abstract void createConstraint(TimeTick tick1, TimeTick tick2, String message);
 
+	public abstract TextBlock getPart1(double fullAvailableWidth, double specialVSpace);
+
+	public abstract UDrawable getPart2();
+
+	public abstract double getFullHeight(StringBounder stringBounder);
+
+	public final void setHeight(int height) {
+		this.suggestedHeight = height;
+	}
 
 }

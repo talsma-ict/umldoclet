@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -41,21 +41,28 @@ import net.sourceforge.plantuml.Direction;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.Scale;
+import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.InnerStrategy;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
+import net.sourceforge.plantuml.style.PName;
+import net.sourceforge.plantuml.style.SName;
+import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.style.StyleBuilder;
+import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.svek.TextBlockBackcolored;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
 import net.sourceforge.plantuml.ugraphic.MinMax;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class MindMapDiagram extends UmlDiagram {
 
@@ -84,9 +91,23 @@ public class MindMapDiagram extends UmlDiagram {
 
 		final double dpiFactor = scale == null ? getScaleCoef(fileFormatOption) : scale.getScale(100, 100);
 		final ISkinParam skinParam = getSkinParam();
-		final ImageBuilder imageBuilder = new ImageBuilder(skinParam.getColorMapper(), dpiFactor,
-				skinParam.getBackgroundColor(), fileFormatOption.isWithMetadata() ? getMetadata() : null, "", 10, 10,
-				null, skinParam.handwritten());
+		final int margin1;
+		final int margin2;
+		final HColor backgroundColor;
+		if (SkinParam.USE_STYLES()) {
+			margin1 = SkinParam.zeroMargin(10);
+			margin2 = SkinParam.zeroMargin(10);
+			final Style style = StyleSignature.of(SName.root, SName.document, SName.mindmapDiagram)
+					.getMergedStyle(skinParam.getCurrentStyleBuilder());
+			backgroundColor = style.value(PName.BackGroundColor).asColor(skinParam.getIHtmlColorSet());
+		} else {
+			margin1 = 10;
+			margin2 = 10;
+			backgroundColor = skinParam.getBackgroundColor(false);
+		}
+		final ImageBuilder imageBuilder = ImageBuilder.buildBB(skinParam.getColorMapper(), skinParam.handwritten(),
+				ClockwiseTopRightBottomLeft.margin1margin2(margin1, margin2), null,
+				fileFormatOption.isWithMetadata() ? getMetadata() : null, "", dpiFactor, backgroundColor);
 		TextBlock result = getTextBlock();
 
 		result = new AnnotatedWorker(this, skinParam, fileFormatOption.getDefaultStringBounder()).addAdd(result);
@@ -126,13 +147,16 @@ public class MindMapDiagram extends UmlDiagram {
 				throw new UnsupportedOperationException();
 			}
 
-			public HtmlColor getBackcolor() {
+			public HColor getBackcolor() {
 				return null;
 			}
 		};
 	}
 
 	private void drawMe(UGraphic ug) {
+		if (left.root == null && right.root == null) {
+			return;
+		}
 		computeFinger();
 
 		final StringBounder stringBounder = ug.getStringBounder();
@@ -140,8 +164,8 @@ public class MindMapDiagram extends UmlDiagram {
 		final double y2 = left.finger == null ? 0 : left.finger.getFullThickness(stringBounder) / 2;
 		final double y = Math.max(y1, y2);
 
-		final double x = left.finger == null ? 0 : left.finger.getFullElongation(stringBounder)
-				+ ((FingerImpl2) left.finger).getX12();
+		final double x = left.finger == null ? 0
+				: left.finger.getFullElongation(stringBounder) + ((FingerImpl) left.finger).getX12();
 		if (right.finger != null) {
 			right.finger.drawU(ug.apply(new UTranslate(x, y)));
 		}
@@ -153,10 +177,10 @@ public class MindMapDiagram extends UmlDiagram {
 	private void computeFinger() {
 		if (left.finger == null && right.finger == null) {
 			if (left.root.hasChildren()) {
-				left.finger = FingerImpl2.build(left.root, getSkinParam(), Direction.LEFT);
+				left.finger = FingerImpl.build(left.root, getSkinParam(), Direction.LEFT);
 			}
 			if (left.finger == null || right.root.hasChildren()) {
-				right.finger = FingerImpl2.build(right.root, getSkinParam(), Direction.RIGHT);
+				right.finger = FingerImpl.build(right.root, getSkinParam(), Direction.RIGHT);
 			}
 			if (left.finger != null && right.finger != null) {
 				left.finger.doNotDrawFirstPhalanx();
@@ -164,25 +188,39 @@ public class MindMapDiagram extends UmlDiagram {
 		}
 	}
 
-	public CommandExecutionResult addIdea(HtmlColor backColor, int level, String label, IdeaShape shape) {
+	public CommandExecutionResult addIdea(HColor backColor, int level, Display label, IdeaShape shape) {
 		return addIdea(backColor, level, label, shape, defaultDirection);
 	}
 
-	public CommandExecutionResult addIdea(HtmlColor backColor, int level, String label, IdeaShape shape,
+	public CommandExecutionResult addIdea(HColor backColor, int level, Display label, IdeaShape shape,
 			Direction direction) {
+		String stereotype = label.getEndingStereotype();
+		if (stereotype != null) {
+			label = label.removeEndingStereotype();
+		}
+		return addIdeaInternal(stereotype, backColor, level, label, shape, direction);
+	}
+
+	public CommandExecutionResult addIdea(String stereotype, HColor backColor, int level, Display label,
+			IdeaShape shape) {
+		return addIdeaInternal(stereotype, backColor, level, label, shape, defaultDirection);
+	}
+
+	private CommandExecutionResult addIdeaInternal(String stereotype, HColor backColor, int level, Display label,
+			IdeaShape shape, Direction direction) {
 		if (level == 0) {
 			if (this.right.root != null) {
-				return CommandExecutionResult
-						.error("I don't know how to draw multi-root diagram. You should suggest an image so that the PlantUML team implements it :-)");
+				return CommandExecutionResult.error(
+						"I don't know how to draw multi-root diagram. You should suggest an image so that the PlantUML team implements it :-)");
 			}
-			right.initRoot(label, shape);
-			left.initRoot(label, shape);
+			right.initRoot(getSkinParam().getCurrentStyleBuilder(), backColor, label, shape, stereotype);
+			left.initRoot(getSkinParam().getCurrentStyleBuilder(), backColor, label, shape, stereotype);
 			return CommandExecutionResult.ok();
 		}
 		if (direction == Direction.LEFT) {
-			return left.add(backColor, level, label, shape);
+			return left.add(getSkinParam().getCurrentStyleBuilder(), backColor, level, label, shape, stereotype);
 		}
-		return right.add(backColor, level, label, shape);
+		return right.add(getSkinParam().getCurrentStyleBuilder(), backColor, level, label, shape, stereotype);
 	}
 
 	static class Branch {
@@ -190,8 +228,9 @@ public class MindMapDiagram extends UmlDiagram {
 		private Idea last;
 		private Finger finger;
 
-		private void initRoot(String label, IdeaShape shape) {
-			root = new Idea(Display.getWithNewlines(label), shape);
+		private void initRoot(StyleBuilder styleBuilder, HColor backColor, Display label, IdeaShape shape,
+				String stereotype) {
+			root = new Idea(styleBuilder, backColor, label, shape, stereotype);
 			last = root;
 		}
 
@@ -203,15 +242,20 @@ public class MindMapDiagram extends UmlDiagram {
 			return result;
 		}
 
-		private CommandExecutionResult add(HtmlColor backColor, int level, String label, IdeaShape shape) {
+		private CommandExecutionResult add(StyleBuilder styleBuilder, HColor backColor, int level, Display label,
+				IdeaShape shape, String stereotype) {
+			if (last == null) {
+				return CommandExecutionResult.error("Check your indentation ?");
+			}
 			if (level == last.getLevel() + 1) {
-				final Idea newIdea = last.createIdea(backColor, level, Display.getWithNewlines(label), shape);
+				final Idea newIdea = last.createIdea(styleBuilder, backColor, level, label, shape, stereotype);
 				last = newIdea;
 				return CommandExecutionResult.ok();
 			}
 			if (level <= last.getLevel()) {
 				final int diff = last.getLevel() - level + 1;
-				final Idea newIdea = getParentOfLast(diff).createIdea(backColor, level, Display.getWithNewlines(label), shape);
+				final Idea newIdea = getParentOfLast(diff).createIdea(styleBuilder, backColor, level, label, shape,
+						stereotype);
 				last = newIdea;
 				return CommandExecutionResult.ok();
 			}

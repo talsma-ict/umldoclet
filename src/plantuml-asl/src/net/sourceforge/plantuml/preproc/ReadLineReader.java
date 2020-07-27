@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -39,9 +39,8 @@ import net.sourceforge.plantuml.LineLocationImpl;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.StringLocated;
 
-public class ReadLineReader extends ReadLineInstrumented implements ReadLine {
+public class ReadLineReader implements ReadLine {
 
-	// private static final int LIMIT = 850;
 	private final BufferedReader br;
 	private LineLocationImpl location;
 	private final String description;
@@ -73,8 +72,7 @@ public class ReadLineReader extends ReadLineInstrumented implements ReadLine {
 		return new ReadLineReader(reader, description, parent);
 	}
 
-	@Override
-	StringLocated readLineInst() throws IOException {
+	public StringLocated readLine() throws IOException {
 		String s = br.readLine();
 		location = location.oneLineRead();
 		if (s == null) {
@@ -103,8 +101,7 @@ public class ReadLineReader extends ReadLineInstrumented implements ReadLine {
 		return new StringLocated(s, location);
 	}
 
-	@Override
-	void closeInst() throws IOException {
+	public void close() throws IOException {
 		br.close();
 	}
 

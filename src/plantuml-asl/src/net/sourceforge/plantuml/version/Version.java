@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,15 +30,16 @@
  */
 package net.sourceforge.plantuml.version;
 
-import java.net.URL;
 import java.util.Date;
+
+import net.sourceforge.plantuml.security.SURL;
 
 public class Version {
 
 	private static final int MAJOR_SEPARATOR = 1000000;
 
 	public static int version() {
-		return 1201908;
+		return 1202015;
 	}
 
 	public static int versionPatched() {
@@ -54,11 +55,10 @@ public class Version {
 		}
 		return dotted(version());
 	}
-	
+
 	public static String fullDescription() {
 		return "PlantUML version " + Version.versionString() + " (" + Version.compileTimeString() + ")";
 	}
-
 
 	private static String dotted(int nb) {
 		final String minor = "" + nb % MAJOR_SEPARATOR;
@@ -88,7 +88,7 @@ public class Version {
 	}
 
 	public static long compileTime() {
-		return 1563045914306L;
+		return 1593344385646L;
 	}
 
 	public static String compileTimeString() {
@@ -104,7 +104,7 @@ public class Version {
 			if (loader == null) {
 				return "No ClassLoader?";
 			}
-			final URL url = loader.getResource("net/sourceforge/plantuml/version/Version.class");
+			final SURL url = SURL.create(loader.getResource("net/sourceforge/plantuml/version/Version.class"));
 			if (url == null) {
 				return "No URL?";
 			}

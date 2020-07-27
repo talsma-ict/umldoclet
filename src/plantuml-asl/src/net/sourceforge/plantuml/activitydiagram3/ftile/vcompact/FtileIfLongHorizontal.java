@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -40,7 +40,6 @@ import java.util.List;
 import java.util.Set;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
-import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.activitydiagram3.Branch;
 import net.sourceforge.plantuml.activitydiagram3.LinkRendering;
 import net.sourceforge.plantuml.activitydiagram3.ftile.AbstractConnection;
@@ -52,7 +51,7 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileAssemblySimple;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactory;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileGeometry;
-import net.sourceforge.plantuml.activitydiagram3.ftile.FtileMinWidth;
+import net.sourceforge.plantuml.activitydiagram3.ftile.FtileMinWidthCentered;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileUtils;
 import net.sourceforge.plantuml.activitydiagram3.ftile.MergeStrategy;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Snake;
@@ -62,13 +61,13 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileDiamondInsi
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.Rainbow;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.svek.ConditionStyle;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 class FtileIfLongHorizontal extends AbstractFtile {
 
@@ -136,7 +135,7 @@ class FtileIfLongHorizontal extends AbstractFtile {
 		return getSwimlaneIn();
 	}
 
-	static Ftile create(Swimlane swimlane, HtmlColor borderColor, HtmlColor backColor, Rainbow arrowColor,
+	static Ftile create(Swimlane swimlane, HColor borderColor, HColor backColor, Rainbow arrowColor,
 			FtileFactory ftileFactory, ConditionStyle conditionStyle, List<Branch> thens, Branch branch2,
 			FontConfiguration fcArrow, LinkRendering topInlinkRendering, LinkRendering afterEndwhile,
 			FontConfiguration fcTest) {
@@ -146,10 +145,10 @@ class FtileIfLongHorizontal extends AbstractFtile {
 		final List<Ftile> tiles = new ArrayList<Ftile>();
 
 		for (Branch branch : thens) {
-			tiles.add(new FtileMinWidth(branch.getFtile(), 30));
+			tiles.add(new FtileMinWidthCentered(branch.getFtile(), 30));
 		}
 
-		final Ftile tile2 = new FtileMinWidth(branch2.getFtile(), 30);
+		final Ftile tile2 = new FtileMinWidthCentered(branch2.getFtile(), 30);
 
 		List<Ftile> diamonds = new ArrayList<Ftile>();
 		List<Double> inlabelSizes = new ArrayList<Double>();
@@ -159,7 +158,7 @@ class FtileIfLongHorizontal extends AbstractFtile {
 			final TextBlock tbTest = branch.getLabelTest().create(fcTest,
 					ftileFactory.skinParam().getDefaultTextAlignment(HorizontalAlignment.LEFT),
 					ftileFactory.skinParam());
-			final HtmlColor diamondColor = branch.getColor() == null ? backColor : branch.getColor();
+			final HColor diamondColor = branch.getColor() == null ? backColor : branch.getColor();
 
 			FtileDiamondInside2 diamond = new FtileDiamondInside2(branch.skinParam(), diamondColor, borderColor,
 					swimlane, tbTest);
@@ -182,7 +181,8 @@ class FtileIfLongHorizontal extends AbstractFtile {
 
 		diamonds = alignDiamonds(diamonds, ftileFactory.getStringBounder());
 
-		final FtileIfLongHorizontal result = new FtileIfLongHorizontal(diamonds, inlabelSizes, tiles, tile2, arrowColor);
+		final FtileIfLongHorizontal result = new FtileIfLongHorizontal(diamonds, inlabelSizes, tiles, tile2,
+				arrowColor);
 		final List<Connection> conns = new ArrayList<Connection>();
 
 		int nbOut = 0;
@@ -200,8 +200,8 @@ class FtileIfLongHorizontal extends AbstractFtile {
 			final Rainbow rainbowOut = branch.getInlinkRenderingColorAndStyle();
 			TextBlock out2 = null;
 			if (branch.getSpecial() != null) {
-				out2 = branch.getSpecial().getDisplay()
-						.create(fcTest, HorizontalAlignment.LEFT, ftileFactory.skinParam());
+				out2 = branch.getSpecial().getDisplay().create(fcTest, HorizontalAlignment.LEFT,
+						ftileFactory.skinParam());
 			}
 			conns.add(result.new ConnectionVerticalIn(diam, ftile, rainbowIn.size() == 0 ? arrowColor : rainbowIn));
 			conns.add(result.new ConnectionVerticalOut(ftile, rainbowOut.size() == 0 ? arrowColor : rainbowOut, out2));
@@ -230,13 +230,6 @@ class FtileIfLongHorizontal extends AbstractFtile {
 		return FtileUtils.addConnection(result, conns);
 	}
 
-	static private TextBlock getSpecial(Branch branch, FontConfiguration fcTest, ISkinParam skinParam) {
-		if (branch.getSpecial() == null) {
-			return null;
-		}
-		return branch.getSpecial().getDisplay().create(fcTest, HorizontalAlignment.LEFT, skinParam);
-	}
-
 	class ConnectionHorizontal extends AbstractConnection {
 
 		private final Rainbow color;
@@ -259,8 +252,8 @@ class FtileIfLongHorizontal extends AbstractFtile {
 
 		private Point2D getP1(StringBounder stringBounder) {
 			final FtileGeometry dimDiamond1 = getFtile1().calculateDimension(stringBounder);
-			final Point2D p = new Point2D.Double(dimDiamond1.getLeft() * 2, getYdiamontOutToLeft(dimDiamond1,
-					stringBounder));
+			final Point2D p = new Point2D.Double(dimDiamond1.getLeft() * 2,
+					getYdiamontOutToLeft(dimDiamond1, stringBounder));
 
 			return getTranslateDiamond1(getFtile1(), stringBounder).getTranslated(p);
 		}
@@ -322,8 +315,8 @@ class FtileIfLongHorizontal extends AbstractFtile {
 
 		private Point2D getP1(StringBounder stringBounder) {
 			final FtileGeometry dimDiamond1 = getFtile1().calculateDimension(stringBounder);
-			final Point2D p = new Point2D.Double(dimDiamond1.getLeft() * 2, getYdiamontOutToLeft(dimDiamond1,
-					stringBounder));
+			final Point2D p = new Point2D.Double(dimDiamond1.getLeft() * 2,
+					getYdiamontOutToLeft(dimDiamond1, stringBounder));
 			return getTranslateDiamond1(getFtile1(), stringBounder).getTranslated(p);
 		}
 
@@ -465,45 +458,122 @@ class FtileIfLongHorizontal extends AbstractFtile {
 			final StringBounder stringBounder = ug.getStringBounder();
 			final Dimension2D totalDim = calculateDimensionInternal(stringBounder);
 
-			final Swimlane intoSw;
+			final List<Ftile> allTiles = new ArrayList<Ftile>(couples);
+			allTiles.add(tile2);
+
+			final double[] minmax;
 			if (ug instanceof UGraphicInterceptorOneSwimlane) {
-				intoSw = ((UGraphicInterceptorOneSwimlane) ug).getSwimlane();
+				final UGraphicInterceptorOneSwimlane interceptor = (UGraphicInterceptorOneSwimlane) ug;
+				final List<Swimlane> allSwimlanes = interceptor.getOrderedListOfAllSwimlanes();
+				minmax = getMinmax(stringBounder, totalDim.getWidth(), allTiles, interceptor.getSwimlane(),
+						allSwimlanes);
 			} else {
-				intoSw = null;
+				minmax = getMinmaxSimple(stringBounder, totalDim.getWidth(), allTiles);
 			}
 
-			final List<Ftile> all = new ArrayList<Ftile>(couples);
-			all.add(tile2);
-			double minX = totalDim.getWidth() / 2;
-			double maxX = totalDim.getWidth() / 2;
-			boolean atLeastOne = false;
-			for (Ftile tmp : all) {
-				if (tmp.calculateDimension(stringBounder).hasPointOut() == false) {
-					continue;
-				}
-				if (intoSw != null && tmp.getSwimlanes().contains(intoSw) == false) {
-					continue;
-				}
-				if (intoSw != null && tmp.getSwimlaneOut() != intoSw) {
-					continue;
-				}
-				atLeastOne = true;
-				final UTranslate ut = getTranslateFor(tmp, stringBounder);
-				final double out = tmp.calculateDimension(stringBounder).translate(ut).getLeft();
-				minX = Math.min(minX, out);
-				maxX = Math.max(maxX, out);
-			}
-			if (atLeastOne == false) {
+			final double minX = minmax[0];
+			final double maxX = minmax[1];
+			if (Double.isNaN(minX) || Double.isNaN(maxX)) {
 				return;
 			}
 
 			final Snake s = new Snake(arrowHorizontalAlignment(), arrowColor);
 			s.goUnmergeable(MergeStrategy.NONE);
-			final double height = totalDim.getHeight();
-			s.addPoint(minX, height);
-			s.addPoint(maxX, height);
+			s.addPoint(minX, totalDim.getHeight());
+			s.addPoint(maxX, totalDim.getHeight());
 			ug.draw(s);
 		}
+
+		private Double getLeftOut(final StringBounder stringBounder) {
+			final FtileGeometry dim = calculateDimension(stringBounder);
+			if (dim.hasPointOut()) {
+				return dim.getLeft();
+			}
+			return null;
+		}
+
+		private double[] getMinmax(StringBounder stringBounder, double width, List<Ftile> allTiles, Swimlane intoSw,
+				List<Swimlane> allSwimlanes) {
+			final int current = allSwimlanes.indexOf(intoSw);
+			final Double leftOut = getLeftOut(stringBounder);
+			if (leftOut == null)
+				return new double[] { Double.NaN, Double.NaN };
+
+			if (current == -1) {
+				throw new IllegalStateException();
+			}
+			final int first = getFirstSwimlane(stringBounder, allTiles, allSwimlanes);
+			final int last = getLastSwimlane(stringBounder, allTiles, allSwimlanes);
+			if (current < first || current > last)
+				return new double[] { Double.NaN, Double.NaN };
+			double minX = current != first ? 0 : width;
+			double maxX = current != last ? width : 0;
+			minX = Math.min(minX, leftOut);
+			maxX = Math.max(maxX, leftOut);
+			for (Ftile tmp : allTiles) {
+				if (tmp.calculateDimension(stringBounder).hasPointOut() == false) {
+					continue;
+				}
+				if (ftileDoesOutcomeInThatSwimlane(tmp, intoSw) == false) {
+					continue;
+				}
+				final UTranslate ut = getTranslateFor(tmp, stringBounder);
+				final double out = tmp.calculateDimension(stringBounder).translate(ut).getLeft();
+				minX = Math.min(minX, out);
+				maxX = Math.max(maxX, out);
+			}
+			return new double[] { minX, maxX };
+		}
+
+		private double[] getMinmaxSimple(StringBounder stringBounder, double width, List<Ftile> allTiles) {
+			final Double leftOut = getLeftOut(stringBounder);
+			if (leftOut == null)
+				return new double[] { Double.NaN, Double.NaN };
+			double minX = width / 2;
+			double maxX = width / 2;
+			minX = Math.min(minX, leftOut);
+			maxX = Math.max(maxX, leftOut);
+			for (Ftile tmp : allTiles) {
+				if (tmp.calculateDimension(stringBounder).hasPointOut() == false) {
+					continue;
+				}
+				final UTranslate ut = getTranslateFor(tmp, stringBounder);
+				final double out = tmp.calculateDimension(stringBounder).translate(ut).getLeft();
+				minX = Math.min(minX, out);
+				maxX = Math.max(maxX, out);
+			}
+			return new double[] { minX, maxX };
+		}
+
+		private int getFirstSwimlane(StringBounder stringBounder, List<Ftile> allTiles, List<Swimlane> allSwimlanes) {
+			for (int i = 0; i < allSwimlanes.size(); i++) {
+				if (atLeastOne(stringBounder, allSwimlanes.get(i), allTiles)) {
+					return i;
+				}
+			}
+			throw new IllegalStateException();
+		}
+
+		private int getLastSwimlane(StringBounder stringBounder, List<Ftile> allTiles, List<Swimlane> allSwimlanes) {
+			for (int i = allSwimlanes.size() - 1; i >= 0; i--) {
+				if (atLeastOne(stringBounder, allSwimlanes.get(i), allTiles)) {
+					return i;
+				}
+			}
+			throw new IllegalStateException();
+		}
+
+		private boolean atLeastOne(StringBounder stringBounder, Swimlane intoSw, List<Ftile> allTiles) {
+			for (Ftile tmp : allTiles)
+				if (tmp.calculateDimension(stringBounder).hasPointOut() && ftileDoesOutcomeInThatSwimlane(tmp, intoSw))
+					return true;
+			return false;
+		}
+
+		private boolean ftileDoesOutcomeInThatSwimlane(Ftile ftile, Swimlane swimlane) {
+			return ftile.getSwimlaneOut() == swimlane && ftile.getSwimlanes().contains(swimlane);
+		}
+
 	}
 
 	@Override

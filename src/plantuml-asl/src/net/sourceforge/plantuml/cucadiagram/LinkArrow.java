@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,9 +30,12 @@
  */
 package net.sourceforge.plantuml.cucadiagram;
 
+import net.sourceforge.plantuml.Direction;
+import net.sourceforge.plantuml.svek.GuideLine;
+
 public enum LinkArrow {
 
-	NONE, DIRECT_NORMAL, BACKWARD;
+	NONE_OR_SEVERAL, DIRECT_NORMAL, BACKWARD;
 
 	public LinkArrow reverse() {
 		if (this == DIRECT_NORMAL) {
@@ -41,7 +44,22 @@ public enum LinkArrow {
 		if (this == BACKWARD) {
 			return DIRECT_NORMAL;
 		}
-		return NONE;
+		return NONE_OR_SEVERAL;
+	}
+
+	public GuideLine mute(final GuideLine guide) {
+		switch (this) {
+		case DIRECT_NORMAL:
+			return guide;
+		case BACKWARD:
+			return new GuideLine() {
+				public Direction getArrowDirection() {
+					return guide.getArrowDirection().getInv();
+				}
+			};
+
+		}
+		throw new UnsupportedOperationException();
 	}
 
 }

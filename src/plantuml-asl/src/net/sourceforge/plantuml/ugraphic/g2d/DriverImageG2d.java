@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -31,24 +31,25 @@
 package net.sourceforge.plantuml.ugraphic.g2d;
 
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 
 import net.sourceforge.plantuml.EnsureVisible;
-import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UDriver;
 import net.sourceforge.plantuml.ugraphic.UImage;
 import net.sourceforge.plantuml.ugraphic.UImageSvg;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UShape;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 
 public class DriverImageG2d implements UDriver<Graphics2D> {
 
 	private final EnsureVisible visible;
 
-	// private final double dpiFactor;
+	private final double dpiFactor;
 
 	public DriverImageG2d(double dpiFactor, EnsureVisible visible) {
 		this.visible = visible;
-		// this.dpiFactor = dpiFactor;
+		this.dpiFactor = dpiFactor;
 	}
 
 	public void draw(UShape ushape, double x, double y, ColorMapper mapper, UParam param, Graphics2D g2d) {
@@ -58,11 +59,14 @@ public class DriverImageG2d implements UDriver<Graphics2D> {
 		final UImage shape = ((UImage) ushape);
 		visible.ensureVisible(x, y);
 		visible.ensureVisible(x + shape.getWidth(), y + shape.getHeight());
-		// final AffineTransform back = g2d.getTransform();
-		// System.err.println("dpiFactor=" + dpiFactor);
-		// g2d.scale(1 / dpiFactor, 1 / dpiFactor);
-		g2d.drawImage(shape.getImage(), (int) (x), (int) (y), null);
-		// g2d.setTransform(back);
+		if (dpiFactor == 1) {
+			g2d.drawImage(shape.getImage(1), (int) (x), (int) (y), null);
+		} else {
+			final AffineTransform back = g2d.getTransform();
+			g2d.scale(1 / dpiFactor, 1 / dpiFactor);
+			g2d.drawImage(shape.getImage(dpiFactor), (int) (x * dpiFactor), (int) (y * dpiFactor), null);
+			g2d.setTransform(back);
+		}
 	}
 
 }

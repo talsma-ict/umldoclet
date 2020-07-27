@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,8 +34,8 @@ import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
-import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.graphic.HtmlColorUtils;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class MinMax {
 
@@ -85,6 +85,18 @@ public class MinMax {
 		this.minY = minY;
 		this.maxX = maxX;
 		this.maxY = maxY;
+		if (Double.isNaN(minX)) {
+			throw new IllegalArgumentException();
+		}
+		if (Double.isNaN(maxX)) {
+			throw new IllegalArgumentException();
+		}
+		if (Double.isNaN(minY)) {
+			throw new IllegalArgumentException();
+		}
+		if (Double.isNaN(maxY)) {
+			throw new IllegalArgumentException();
+		}
 	}
 
 	public MinMax addPoint(Point2D pt) {
@@ -137,11 +149,11 @@ public class MinMax {
 	}
 
 	public void drawGrey(UGraphic ug) {
-		draw(ug, HtmlColorUtils.GRAY);
+		draw(ug, HColorUtils.GRAY);
 	}
 
-	public void draw(UGraphic ug, HtmlColor color) {
-		ug = ug.apply(new UChangeColor(color)).apply(new UChangeBackColor(color));
+	public void draw(UGraphic ug, HColor color) {
+		ug = ug.apply(color).apply(color.bg());
 		ug = ug.apply(new UTranslate(minX, minY));
 		ug.draw(new URectangle(getWidth(), getHeight()));
 	}

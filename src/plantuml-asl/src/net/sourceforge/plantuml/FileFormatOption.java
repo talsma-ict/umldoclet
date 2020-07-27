@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -52,13 +52,39 @@ public final class FileFormatOption implements Serializable {
 	private final String hoverColor;
 	private final TikzFontDistortion tikzFontDistortion;
 	private final double scale;
+	private final String preserveAspectRatio;
+	private final String watermark;
 
 	public double getScaleCoef() {
 		return scale;
 	}
 
 	public FileFormatOption(FileFormat fileFormat) {
-		this(fileFormat, null, true, false, "_top", false, null, TikzFontDistortion.getDefault(), 1.0);
+		this(fileFormat, null, true, false, "_top", false, null, TikzFontDistortion.getDefault(), 1.0, "none", null);
+	}
+
+	public FileFormatOption(FileFormat fileFormat, boolean withMetadata) {
+		this(fileFormat, null, withMetadata, false, "_top", false, null, TikzFontDistortion.getDefault(), 1.0, "none",
+				null);
+	}
+
+	private FileFormatOption(FileFormat fileFormat, AffineTransform at, boolean withMetadata, boolean useRedForError,
+			String svgLinkTarget, boolean debugsvek, String hoverColor, TikzFontDistortion tikzFontDistortion,
+			double scale, String preserveAspectRatio, String watermark) {
+		this.hoverColor = hoverColor;
+		this.watermark = watermark;
+		this.fileFormat = fileFormat;
+		this.affineTransform = at;
+		this.withMetadata = withMetadata;
+		this.useRedForError = useRedForError;
+		this.svgLinkTarget = svgLinkTarget;
+		this.debugsvek = debugsvek;
+		this.tikzFontDistortion = tikzFontDistortion;
+		this.scale = scale;
+		this.preserveAspectRatio = preserveAspectRatio;
+		if (tikzFontDistortion == null) {
+			throw new IllegalArgumentException();
+		}
 	}
 
 	public StringBounder getDefaultStringBounder() {
@@ -73,50 +99,43 @@ public final class FileFormatOption implements Serializable {
 		return withMetadata;
 	}
 
-	public FileFormatOption(FileFormat fileFormat, boolean withMetadata) {
-		this(fileFormat, null, false, false, "_top", false, null, TikzFontDistortion.getDefault(), 1.0);
-	}
-
-	private FileFormatOption(FileFormat fileFormat, AffineTransform at, boolean withMetadata, boolean useRedForError,
-			String svgLinkTarget, boolean debugsvek, String hoverColor, TikzFontDistortion tikzFontDistortion,
-			double scale) {
-		this.hoverColor = hoverColor;
-		this.fileFormat = fileFormat;
-		this.affineTransform = at;
-		this.withMetadata = withMetadata;
-		this.useRedForError = useRedForError;
-		this.svgLinkTarget = svgLinkTarget;
-		this.debugsvek = debugsvek;
-		this.tikzFontDistortion = tikzFontDistortion;
-		this.scale = scale;
-		if (tikzFontDistortion == null) {
-			throw new IllegalArgumentException();
-		}
+	public final String getPreserveAspectRatio() {
+		return preserveAspectRatio;
 	}
 
 	public FileFormatOption withUseRedForError() {
 		return new FileFormatOption(fileFormat, affineTransform, withMetadata, true, svgLinkTarget, debugsvek,
-				hoverColor, tikzFontDistortion, scale);
+				hoverColor, tikzFontDistortion, scale, preserveAspectRatio, watermark);
 	}
 
 	public FileFormatOption withTikzFontDistortion(TikzFontDistortion tikzFontDistortion) {
 		return new FileFormatOption(fileFormat, affineTransform, withMetadata, true, svgLinkTarget, debugsvek,
-				hoverColor, tikzFontDistortion, scale);
+				hoverColor, tikzFontDistortion, scale, preserveAspectRatio, watermark);
 	}
 
 	public FileFormatOption withSvgLinkTarget(String svgLinkTarget) {
-		return new FileFormatOption(fileFormat, affineTransform, withMetadata, useRedForError, svgLinkTarget,
-				debugsvek, hoverColor, tikzFontDistortion, scale);
+		return new FileFormatOption(fileFormat, affineTransform, withMetadata, useRedForError, svgLinkTarget, debugsvek,
+				hoverColor, tikzFontDistortion, scale, preserveAspectRatio, watermark);
+	}
+
+	public FileFormatOption withPreserveAspectRatio(String preserveAspectRatio) {
+		return new FileFormatOption(fileFormat, affineTransform, withMetadata, useRedForError, svgLinkTarget, debugsvek,
+				hoverColor, tikzFontDistortion, scale, preserveAspectRatio, watermark);
 	}
 
 	public FileFormatOption withHoverColor(String hoverColor) {
-		return new FileFormatOption(fileFormat, affineTransform, withMetadata, useRedForError, svgLinkTarget,
-				debugsvek, hoverColor, tikzFontDistortion, scale);
+		return new FileFormatOption(fileFormat, affineTransform, withMetadata, useRedForError, svgLinkTarget, debugsvek,
+				hoverColor, tikzFontDistortion, scale, preserveAspectRatio, watermark);
 	}
 
 	public FileFormatOption withScale(double scale) {
-		return new FileFormatOption(fileFormat, affineTransform, withMetadata, useRedForError, svgLinkTarget,
-				debugsvek, hoverColor, tikzFontDistortion, scale);
+		return new FileFormatOption(fileFormat, affineTransform, withMetadata, useRedForError, svgLinkTarget, debugsvek,
+				hoverColor, tikzFontDistortion, scale, preserveAspectRatio, watermark);
+	}
+
+	public FileFormatOption withWartermark(String watermark) {
+		return new FileFormatOption(fileFormat, affineTransform, withMetadata, useRedForError, svgLinkTarget, debugsvek,
+				hoverColor, tikzFontDistortion, scale, preserveAspectRatio, watermark);
 	}
 
 	@Override
@@ -156,6 +175,10 @@ public final class FileFormatOption implements Serializable {
 
 	public final TikzFontDistortion getTikzFontDistortion() {
 		return tikzFontDistortion;
+	}
+
+	public final String getWatermark() {
+		return watermark;
 	}
 
 }

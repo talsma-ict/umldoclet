@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,15 +30,13 @@
  */
 package net.sourceforge.plantuml.braille;
 
-import net.sourceforge.plantuml.graphic.HtmlColorSetSimple;
-import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.graphic.UDrawable;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColorSet;
+import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class BrailleDrawer implements UDrawable {
 
@@ -51,16 +49,16 @@ public class BrailleDrawer implements UDrawable {
 	}
 
 	public void drawU(UGraphic ug) {
-		ug = ug.apply(new UChangeColor(new HtmlColorSetSimple().getColorIfValid("#F0F0F0")));
+		ug = ug.apply(HColorSet.instance().getColorIfValid("#F0F0F0"));
 		for (int x = grid.getMinX(); x <= grid.getMaxX(); x++) {
-			ug.apply(new UTranslate(x * step + spotSize + 1, 0)).draw(
-					new ULine(0, (grid.getMaxY() - grid.getMinY()) * step));
+			ug.apply(UTranslate.dx(x * step + spotSize + 1)).draw(
+					ULine.vline((grid.getMaxY() - grid.getMinY()) * step));
 		}
 		for (int y = grid.getMinY(); y <= grid.getMaxY(); y++) {
-			ug.apply(new UTranslate(0, y * step + spotSize + 1)).draw(
-					new ULine((grid.getMaxX() - grid.getMinX()) * step, 0));
+			ug.apply(UTranslate.dy(y * step + spotSize + 1)).draw(
+					ULine.hline((grid.getMaxX() - grid.getMinX()) * step));
 		}
-		ug = ug.apply(new UChangeColor(HtmlColorUtils.BLACK)).apply(new UChangeBackColor(HtmlColorUtils.BLACK));
+		ug = ug.apply(HColorUtils.BLACK).apply(HColorUtils.BLACK.bg());
 		for (int x = grid.getMinX(); x <= grid.getMaxX(); x++) {
 			for (int y = grid.getMinY(); y <= grid.getMaxY(); y++) {
 				if (grid.getState(x, y)) {

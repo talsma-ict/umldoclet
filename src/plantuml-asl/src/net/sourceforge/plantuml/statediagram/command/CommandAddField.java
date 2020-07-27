@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -40,6 +40,7 @@ import net.sourceforge.plantuml.command.regex.RegexOr;
 import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.Code;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
+import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.statediagram.StateDiagram;
 
 public class CommandAddField extends SingleLineCommand2<StateDiagram> {
@@ -61,12 +62,20 @@ public class CommandAddField extends SingleLineCommand2<StateDiagram> {
 
 	@Override
 	protected CommandExecutionResult executeArg(StateDiagram diagram, LineLocation location, RegexResult arg) {
-		final String code = arg.getLazzy("CODE", 0);
+		final String codeString = arg.getLazzy("CODE", 0);
 		final String field = arg.get("FIELD", 0);
 
-		final IEntity entity = diagram.getOrCreateLeaf(Code.of(code), null, null);
+		Ident ident = diagram.buildLeafIdent(codeString);
+		if (diagram.V1972()) {
+			// This is very bad. xi04 xc06
+			if (ident.parent().getLast().equals(codeString)) {
+				ident = ident.parent();
+			}
+		}
+		final Code code = diagram.V1972() ? ident : diagram.buildCode(codeString);
+		final IEntity entity = diagram.getOrCreateLeaf(ident, code, null, null);
 
-		entity.getBodier().addFieldOrMethod(field, entity);
+		entity.getBodier().addFieldOrMethod(field);
 		return CommandExecutionResult.ok();
 	}
 

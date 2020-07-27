@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,13 +34,12 @@ import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.UDrawable;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class GridArray implements UDrawable {
 
@@ -132,7 +131,7 @@ public class GridArray implements UDrawable {
 
 					cell.toTextBlock(skinParam).drawU(
 							ug.apply(new UTranslate(dx + (widthOfCol + margin - dim.getWidth()) / 2, dy
-									+ (heightOfLine + margin - dim.getHeight()) / 2)));
+											+ (heightOfLine + margin - dim.getHeight()) / 2)));
 				}
 				dx += widthOfCol + margin;
 			}
@@ -150,22 +149,22 @@ public class GridArray implements UDrawable {
 		for (int c = 0; c < cols; c++) {
 			widthMax += getWidthOfCol(ug.getStringBounder(), c) + margin;
 		}
-		ug = ug.apply(new UChangeColor(HtmlColorUtils.BLACK));
+		ug = ug.apply(HColorUtils.BLACK);
 		double y = 0;
 		for (int l = 0; l < lines; l++) {
-			ug.apply(new UTranslate(0, y)).draw(new ULine(widthMax, 0));
+			ug.apply(UTranslate.dy(y)).draw(ULine.hline(widthMax));
 			y += getHeightOfLine(ug.getStringBounder(), l) + margin;
 		}
 		double x = 0;
 		for (int c = 0; c < cols; c++) {
-			ug.apply(new UTranslate(x, 0)).draw(new ULine(0, heightMax));
+			ug.apply(UTranslate.dx(x)).draw(ULine.vline(heightMax));
 			x += getWidthOfCol(ug.getStringBounder(), c) + margin;
 		}
 
 	}
 
 	private void drawArrow(UGraphic ug, Point2D pt1, Point2D pt2) {
-		ug = ug.apply(new UChangeColor(HtmlColorUtils.BLUE));
+		ug = ug.apply(HColorUtils.BLUE);
 		final ULine line = new ULine(pt2.getX() - pt1.getX(), pt2.getY() - pt1.getY());
 		ug.apply(new UTranslate(pt1)).draw(line);
 	}

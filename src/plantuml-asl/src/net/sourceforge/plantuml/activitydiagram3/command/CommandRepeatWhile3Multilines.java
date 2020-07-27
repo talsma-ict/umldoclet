@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -75,9 +75,9 @@ public class CommandRepeatWhile3Multilines extends CommandMultilines3<ActivityDi
 
 	@Override
 	protected CommandExecutionResult executeNow(ActivityDiagram3 diagram, BlocLines lines) {
-		lines = lines.trim(false);
-		final RegexResult line0 = getStartingPattern().matcher(StringUtils.trin(lines.getFirst499().getString()));
-		final RegexResult lineLast = getPatternEnd2().matcher(lines.getLast499().getString());
+		lines = lines.trim();
+		final RegexResult line0 = getStartingPattern().matcher(StringUtils.trin(lines.getFirst().getString()));
+		final RegexResult lineLast = getPatternEnd2().matcher(lines.getLast().getString());
 
 		// System.err.println("line0=" + line0);
 		// System.err.println("linesLast=" + lineLast);

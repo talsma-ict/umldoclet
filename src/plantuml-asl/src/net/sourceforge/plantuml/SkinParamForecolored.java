@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -31,19 +31,19 @@
 package net.sourceforge.plantuml;
 
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class SkinParamForecolored extends SkinParamDelegator {
 
-	final private HtmlColor forecolor;
+	final private HColor forecolor;
 
-	public SkinParamForecolored(ISkinParam skinParam, HtmlColor forecolor) {
+	public SkinParamForecolored(ISkinParam skinParam, HColor forecolor) {
 		super(skinParam);
 		this.forecolor = forecolor;
 	}
 
 	@Override
-	public HtmlColor getHtmlColor(ColorParam param, Stereotype stereotype, boolean clickable) {
+	public HColor getHtmlColor(ColorParam param, Stereotype stereotype, boolean clickable) {
 		return forecolor;
 	}
 

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,17 +34,16 @@ import java.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.Direction;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class TextBlockArrow extends AbstractTextBlock implements TextBlock {
 
 	private final double size;
 	private final Direction arrow;
-	private final HtmlColor color;
+	private final HColor color;
 
 	public TextBlockArrow(Direction arrow, FontConfiguration fontConfiguration) {
 		if (arrow == null) {
@@ -58,8 +57,8 @@ public class TextBlockArrow extends AbstractTextBlock implements TextBlock {
 	}
 
 	public void drawU(UGraphic ug) {
-		ug = ug.apply(new UChangeBackColor(color));
-		ug = ug.apply(new UChangeColor(color));
+		ug = ug.apply(color.bg());
+		ug = ug.apply(color);
 		int triSize = (int) (size * .8 - 3);
 		if (triSize % 2 == 1) {
 			triSize--;

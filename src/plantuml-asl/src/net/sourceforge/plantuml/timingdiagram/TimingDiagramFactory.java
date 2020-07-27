@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -36,6 +36,26 @@ import java.util.List;
 import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.CommandFootboxIgnored;
 import net.sourceforge.plantuml.command.UmlDiagramFactory;
+import net.sourceforge.plantuml.timingdiagram.command.CommandAnalog;
+import net.sourceforge.plantuml.timingdiagram.command.CommandAtPlayer;
+import net.sourceforge.plantuml.timingdiagram.command.CommandAtTime;
+import net.sourceforge.plantuml.timingdiagram.command.CommandBinary;
+import net.sourceforge.plantuml.timingdiagram.command.CommandChangeStateByPlayerCode;
+import net.sourceforge.plantuml.timingdiagram.command.CommandChangeStateByTime;
+import net.sourceforge.plantuml.timingdiagram.command.CommandClock;
+import net.sourceforge.plantuml.timingdiagram.command.CommandConstraint;
+import net.sourceforge.plantuml.timingdiagram.command.CommandDefineStateLong;
+import net.sourceforge.plantuml.timingdiagram.command.CommandDefineStateShort;
+import net.sourceforge.plantuml.timingdiagram.command.CommandHideTimeAxis;
+import net.sourceforge.plantuml.timingdiagram.command.CommandHighlight;
+import net.sourceforge.plantuml.timingdiagram.command.CommandModeCompact;
+import net.sourceforge.plantuml.timingdiagram.command.CommandNote;
+import net.sourceforge.plantuml.timingdiagram.command.CommandNoteLong;
+import net.sourceforge.plantuml.timingdiagram.command.CommandPixelHeight;
+import net.sourceforge.plantuml.timingdiagram.command.CommandRobustConcise;
+import net.sourceforge.plantuml.timingdiagram.command.CommandScalePixel;
+import net.sourceforge.plantuml.timingdiagram.command.CommandTicks;
+import net.sourceforge.plantuml.timingdiagram.command.CommandTimeMessage;
 
 public class TimingDiagramFactory extends UmlDiagramFactory {
 
@@ -53,6 +73,7 @@ public class TimingDiagramFactory extends UmlDiagramFactory {
 		cmds.add(new CommandFootboxIgnored());
 		cmds.add(new CommandRobustConcise());
 		cmds.add(new CommandClock());
+		cmds.add(new CommandAnalog());
 		cmds.add(new CommandBinary());
 		cmds.add(new CommandDefineStateShort());
 		cmds.add(new CommandDefineStateLong());
@@ -66,6 +87,10 @@ public class TimingDiagramFactory extends UmlDiagramFactory {
 		cmds.add(new CommandConstraint());
 		cmds.add(new CommandScalePixel());
 		cmds.add(new CommandHideTimeAxis());
+		cmds.add(new CommandHighlight());
+		cmds.add(new CommandModeCompact());
+		cmds.add(new CommandTicks());
+		cmds.add(new CommandPixelHeight());
 
 		return cmds;
 	}

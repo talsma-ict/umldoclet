@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -33,17 +33,17 @@ package net.sourceforge.plantuml.svek;
 import java.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class DecorateEntityImage3 extends AbstractTextBlock  implements TextBlockBackcolored {
 
 	private final TextBlock original;
-	private final HtmlColor color;
+	private final HColor color;
 
-	public DecorateEntityImage3(TextBlock original, HtmlColor color) {
+	public DecorateEntityImage3(TextBlock original, HColor color) {
 		this.original = original;
 		this.color = color;
 	}
@@ -56,7 +56,7 @@ public class DecorateEntityImage3 extends AbstractTextBlock  implements TextBloc
 		original.drawU(ug);
 	}
 
-	public HtmlColor getBackcolor() {
+	public HColor getBackcolor() {
 		return color;
 	}
 

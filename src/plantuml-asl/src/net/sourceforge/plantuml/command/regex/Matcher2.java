@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -52,7 +52,8 @@ public class Matcher2 {
 		final long now = System.currentTimeMillis();
 		final String id = pattern.pattern();
 		try {
-			return new Matcher2(pattern.matcher(input), id);
+			final Matcher matcher2 = pattern.matcher(input);
+			return new Matcher2(matcher2, id);
 		} finally {
 			if (INSTRUMENT) {
 				addTime(id, System.currentTimeMillis() - now);

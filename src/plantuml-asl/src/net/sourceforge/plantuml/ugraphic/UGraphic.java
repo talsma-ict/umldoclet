@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,6 +32,7 @@ package net.sourceforge.plantuml.ugraphic;
 
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 
 public interface UGraphic {
 
@@ -47,10 +48,14 @@ public interface UGraphic {
 
 	public void startUrl(Url url);
 
-	public void closeAction();
+	public void closeUrl();
+
+	public void startGroup(String id);
+
+	public void closeGroup();
 
 	public void flushUg();
 
 	public boolean matchesProperty(String propertyName);
-	
+
 }

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -40,16 +40,16 @@ import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.Scale;
+import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.activitydiagram3.ftile.BoxStyle;
-import net.sourceforge.plantuml.activitydiagram3.ftile.SwimlanesC;
+import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlanes;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.Rainbow;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockRecentred;
@@ -57,9 +57,11 @@ import net.sourceforge.plantuml.graphic.USymbol;
 import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
 import net.sourceforge.plantuml.sequencediagram.NoteType;
+import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.comp.CompressionMode;
-import net.sourceforge.plantuml.ugraphic.comp.TextBlockCompressedOnXorY;
+import net.sourceforge.plantuml.ugraphic.comp.CompressionXorYBuilder;
 
 public class ActivityDiagram3 extends UmlDiagram {
 
@@ -69,12 +71,11 @@ public class ActivityDiagram3 extends UmlDiagram {
 
 	private SwimlaneStrategy swimlaneStrategy;
 
-	private final SwimlanesC swinlanes = new SwimlanesC(getSkinParam(), getPragma());
-	
+	private final Swimlanes swinlanes = new Swimlanes(getSkinParam(), getPragma());
+
 	public ActivityDiagram3(ISkinSimple skinParam) {
 		super(skinParam);
 	}
-
 
 	private void manageSwimlaneStrategy() {
 		if (swimlaneStrategy == null) {
@@ -82,7 +83,7 @@ public class ActivityDiagram3 extends UmlDiagram {
 		}
 	}
 
-	public CommandExecutionResult swimlane(String name, HtmlColor color, Display label) {
+	public CommandExecutionResult swimlane(String name, HColor color, Display label) {
 		if (swimlaneStrategy == null) {
 			swimlaneStrategy = SwimlaneStrategy.SWIMLANE_ALLOWED;
 		}
@@ -118,8 +119,9 @@ public class ActivityDiagram3 extends UmlDiagram {
 		}
 	}
 
-	public void addSpot(String spot) {
-		final InstructionSpot ins = new InstructionSpot(spot, nextLinkRenderer(), swinlanes.getCurrentSwimlane());
+	public void addSpot(String spot, HColor color) {
+		final InstructionSpot ins = new InstructionSpot(spot, color, nextLinkRenderer(),
+				swinlanes.getCurrentSwimlane());
 		current().add(ins);
 		setNextLinkRendererInternal(LinkRendering.none());
 		manageSwimlaneStrategy();
@@ -199,22 +201,29 @@ public class ActivityDiagram3 extends UmlDiagram {
 			throws IOException {
 		// BUG42
 		// COMPRESSION
+		swinlanes.computeSize(fileFormatOption.getDefaultStringBounder());
 		TextBlock result = swinlanes;
-		// result = new TextBlockCompressedOnY(CompressionMode.ON_Y, result);
-		result = new TextBlockCompressedOnXorY(CompressionMode.ON_X, result);
-		result = new TextBlockCompressedOnXorY(CompressionMode.ON_Y, result);
+
+		result = CompressionXorYBuilder.build(CompressionMode.ON_X, result, fileFormatOption.getDefaultStringBounder());
+		result = CompressionXorYBuilder.build(CompressionMode.ON_Y, result, fileFormatOption.getDefaultStringBounder());
+
 		result = new TextBlockRecentred(result);
 		final ISkinParam skinParam = getSkinParam();
 		result = new AnnotatedWorker(this, skinParam, fileFormatOption.getDefaultStringBounder()).addAdd(result);
-		// final Dimension2D dim = TextBlockUtils.getMinMax(result, fileFormatOption.getDefaultStringBounder())
-		// .getDimension();
-		final Dimension2D dim = result.getMinMax(fileFormatOption.getDefaultStringBounder()).getDimension();
-		final double margin = 10;
-		final double dpiFactor = getDpiFactor(fileFormatOption, Dimension2DDouble.delta(dim, 2 * margin, 0));
 
-		final ImageBuilder imageBuilder = new ImageBuilder(getSkinParam(), dpiFactor,
-				fileFormatOption.isWithMetadata() ? getMetadata() : null, getWarningOrError(), margin, margin,
-				getAnimation());
+		final Dimension2D dim = result.getMinMax(fileFormatOption.getDefaultStringBounder()).getDimension();
+		final ClockwiseTopRightBottomLeft margins;
+		if (SkinParam.USE_STYLES()) {
+			margins = ClockwiseTopRightBottomLeft.marginForDocument(skinParam.getCurrentStyleBuilder());
+		} else {
+			margins = ClockwiseTopRightBottomLeft.margin1margin2(10, 10);
+		}
+
+		final double dpiFactor = getDpiFactor(fileFormatOption,
+				Dimension2DDouble.delta(dim, margins.getLeft() + margins.getRight(), 0));
+
+		final ImageBuilder imageBuilder = ImageBuilder.buildD(getSkinParam(), margins, getAnimation(),
+				fileFormatOption.isWithMetadata() ? getMetadata() : null, getWarningOrError(), dpiFactor);
 		imageBuilder.setUDrawable(result);
 
 		return imageBuilder.writeImageTOBEMOVED(fileFormatOption, seed(), os);
@@ -233,7 +242,9 @@ public class ActivityDiagram3 extends UmlDiagram {
 	}
 
 	public void fork() {
-		final InstructionFork instructionFork = new InstructionFork(current(), nextLinkRenderer(), getSkinParam());
+		manageSwimlaneStrategy();
+		final InstructionFork instructionFork = new InstructionFork(current(), nextLinkRenderer(), getSkinParam(),
+				swinlanes.getCurrentSwimlane());
 		current().add(instructionFork);
 		setNextLinkRendererInternal(LinkRendering.none());
 		setCurrent(instructionFork);
@@ -244,7 +255,7 @@ public class ActivityDiagram3 extends UmlDiagram {
 			final InstructionFork currentFork = (InstructionFork) current();
 			currentFork.manageOutRendering(nextLinkRenderer(), false);
 			setNextLinkRendererInternal(LinkRendering.none());
-			currentFork.forkAgain();
+			currentFork.forkAgain(swinlanes.getCurrentSwimlane());
 			return CommandExecutionResult.ok();
 		}
 		return CommandExecutionResult.error("Cannot find fork");
@@ -253,7 +264,7 @@ public class ActivityDiagram3 extends UmlDiagram {
 	public CommandExecutionResult endFork(ForkStyle forkStyle, String label) {
 		if (current() instanceof InstructionFork) {
 			final InstructionFork currentFork = (InstructionFork) current();
-			currentFork.setStyle(forkStyle, label);
+			currentFork.setStyle(forkStyle, label, swinlanes.getCurrentSwimlane());
 			currentFork.manageOutRendering(nextLinkRenderer(), true);
 			setNextLinkRendererInternal(LinkRendering.none());
 			setCurrent(currentFork.getParent());
@@ -263,7 +274,8 @@ public class ActivityDiagram3 extends UmlDiagram {
 	}
 
 	public void split() {
-		final InstructionSplit instructionSplit = new InstructionSplit(current(), nextLinkRenderer(), swinlanes.getCurrentSwimlane());
+		final InstructionSplit instructionSplit = new InstructionSplit(current(), nextLinkRenderer(),
+				swinlanes.getCurrentSwimlane());
 		setNextLinkRendererInternal(LinkRendering.none());
 		current().add(instructionSplit);
 		setCurrent(instructionSplit);
@@ -288,10 +300,10 @@ public class ActivityDiagram3 extends UmlDiagram {
 		return CommandExecutionResult.error("Cannot find split");
 	}
 
-	public void startSwitch(Display test, HtmlColor color) {
+	public void startSwitch(Display test, HColor color) {
 		manageSwimlaneStrategy();
-		final InstructionSwitch instructionSwitch = new InstructionSwitch(swinlanes.getCurrentSwimlane(), current(), test,
-				nextLinkRenderer(), color, getSkinParam());
+		final InstructionSwitch instructionSwitch = new InstructionSwitch(swinlanes.getCurrentSwimlane(), current(),
+				test, nextLinkRenderer(), color, getSkinParam());
 		current().add(instructionSwitch);
 		setNextLinkRendererInternal(LinkRendering.none());
 		setCurrent(instructionSwitch);
@@ -305,7 +317,7 @@ public class ActivityDiagram3 extends UmlDiagram {
 			}
 			setNextLinkRendererInternal(LinkRendering.none());
 			return CommandExecutionResult.ok();
-			
+
 		}
 		return CommandExecutionResult.error("Cannot find switch");
 	}
@@ -320,16 +332,16 @@ public class ActivityDiagram3 extends UmlDiagram {
 		return CommandExecutionResult.error("Cannot find switch");
 	}
 
-	public void startIf(Display test, Display whenThen, HtmlColor color, Url url) {
+	public void startIf(Display test, Display whenThen, HColor color, Url url) {
 		manageSwimlaneStrategy();
-		final InstructionIf instructionIf = new InstructionIf(swinlanes.getCurrentSwimlane(), current(), test,
-				whenThen, nextLinkRenderer(), color, getSkinParam(), url);
+		final InstructionIf instructionIf = new InstructionIf(swinlanes.getCurrentSwimlane(), current(), test, whenThen,
+				nextLinkRenderer(), color, getSkinParam(), url);
 		current().add(instructionIf);
 		setNextLinkRendererInternal(LinkRendering.none());
 		setCurrent(instructionIf);
 	}
 
-	public CommandExecutionResult elseIf(Display inlabel, Display test, Display whenThen, HtmlColor color) {
+	public CommandExecutionResult elseIf(Display inlabel, Display test, Display whenThen, HColor color) {
 		if (current() instanceof InstructionIf) {
 			final boolean ok = ((InstructionIf) current()).elseIf(inlabel, test, whenThen, nextLinkRenderer(), color);
 			if (ok == false) {
@@ -364,10 +376,10 @@ public class ActivityDiagram3 extends UmlDiagram {
 		return CommandExecutionResult.error("Cannot find if");
 	}
 
-	public void startRepeat(HtmlColor color, Display label) {
+	public void startRepeat(HColor color, Display label, BoxStyle boxStyleIn, Colors colors) {
 		manageSwimlaneStrategy();
 		final InstructionRepeat instructionRepeat = new InstructionRepeat(swinlanes.getCurrentSwimlane(), current(),
-				nextLinkRenderer(), color, label);
+				nextLinkRenderer(), color, label, boxStyleIn, colors);
 		current().add(instructionRepeat);
 		setCurrent(instructionRepeat);
 		setNextLinkRendererInternal(LinkRendering.none());
@@ -389,21 +401,23 @@ public class ActivityDiagram3 extends UmlDiagram {
 
 	}
 
-	public CommandExecutionResult backwardWhile(Display label) {
+	public CommandExecutionResult backwardWhile(Display label, BoxStyle boxStyle) {
 		manageSwimlaneStrategy();
 		if (current() instanceof InstructionRepeat) {
 			final InstructionRepeat instructionRepeat = (InstructionRepeat) current();
-			// final LinkRendering back = new LinkRendering(linkColor).withDisplay(linkLabel);
-			instructionRepeat.setBackward(label, swinlanes.getCurrentSwimlane());
-			// setCurrent(instructionRepeat.getParent());
-			// this.setNextLinkRendererInternal(LinkRendering.none());
+			instructionRepeat.setBackward(label, swinlanes.getCurrentSwimlane(), boxStyle);
+			return CommandExecutionResult.ok();
+		}
+		if (current() instanceof InstructionWhile) {
+			final InstructionWhile instructionWhile = (InstructionWhile) current();
+			instructionWhile.setBackward(label, swinlanes.getCurrentSwimlane(), boxStyle);
 			return CommandExecutionResult.ok();
 		}
 		return CommandExecutionResult.error("Cannot find repeat");
 
 	}
 
-	public void doWhile(Display test, Display yes, HtmlColor color) {
+	public void doWhile(Display test, Display yes, HColor color) {
 		manageSwimlaneStrategy();
 		final InstructionWhile instructionWhile = new InstructionWhile(swinlanes.getCurrentSwimlane(), current(), test,
 				nextLinkRenderer(), yes, color, getSkinParam());
@@ -428,8 +442,8 @@ public class ActivityDiagram3 extends UmlDiagram {
 		return CommandExecutionResult.ok();
 	}
 
-	public void startGroup(Display name, HtmlColor backColor, HtmlColor titleColor, HtmlColor borderColor,
-			USymbol type, double roundCorner) {
+	public void startGroup(Display name, HColor backColor, HColor titleColor, HColor borderColor, USymbol type,
+			double roundCorner) {
 		manageSwimlaneStrategy();
 		final InstructionGroup instructionGroup = new InstructionGroup(current(), name, backColor, titleColor,
 				swinlanes.getCurrentSwimlane(), borderColor, nextLinkRenderer(), type, roundCorner);

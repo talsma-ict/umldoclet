@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,21 +34,20 @@ import java.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorNone;
 
 public class Padder {
 
 	private final double margin;
 	private final double padding;
-	private final HtmlColor backgroundColor;
-	private final HtmlColor borderColor;
+	private final HColor backgroundColor;
+	private final HColor borderColor;
 	private final double roundCorner;
 
 	public static final Padder NONE = new Padder(0, 0, null, null, 0);
@@ -58,7 +57,7 @@ public class Padder {
 		return "" + margin + "/" + padding + "/" + borderColor + "/" + backgroundColor;
 	}
 
-	private Padder(double margin, double padding, HtmlColor backgroundColor, HtmlColor borderColor, double roundCorner) {
+	private Padder(double margin, double padding, HColor backgroundColor, HColor borderColor, double roundCorner) {
 		this.margin = margin;
 		this.padding = padding;
 		this.borderColor = borderColor;
@@ -74,11 +73,11 @@ public class Padder {
 		return new Padder(margin, padding, backgroundColor, borderColor, roundCorner);
 	}
 
-	public Padder withBackgroundColor(HtmlColor backgroundColor) {
+	public Padder withBackgroundColor(HColor backgroundColor) {
 		return new Padder(margin, padding, backgroundColor, borderColor, roundCorner);
 	}
 
-	public Padder withBorderColor(HtmlColor borderColor) {
+	public Padder withBorderColor(HColor borderColor) {
 		return new Padder(margin, padding, backgroundColor, borderColor, roundCorner);
 	}
 
@@ -94,11 +93,11 @@ public class Padder {
 		return padding;
 	}
 
-	public final HtmlColor getBackgroundColor() {
+	public final HColor getBackgroundColor() {
 		return backgroundColor;
 	}
 
-	public final HtmlColor getBorderColor() {
+	public final HColor getBorderColor() {
 		return borderColor;
 	}
 
@@ -113,11 +112,20 @@ public class Padder {
 
 			public void drawU(UGraphic ug) {
 				ug = ug.apply(new UTranslate(margin, margin));
-				final UGraphic ug2 = ug.apply(new UChangeBackColor(backgroundColor)).apply(
-						new UChangeColor(borderColor));
+				UGraphic ug2 = ug;
+				if (borderColor == null) {
+					ug2 = ug2.apply(new HColorNone());
+				} else {
+					ug2 = ug2.apply(borderColor);
+				}
+				if (backgroundColor == null) {
+					ug2 = ug2.apply(new HColorNone().bg());
+				} else {
+					ug2 = ug2.apply(backgroundColor.bg());
+				}
 				final Dimension2D originalDim = orig.calculateDimension(ug.getStringBounder());
-				final URectangle rect = new URectangle(Dimension2DDouble.delta(originalDim, 2 * padding), roundCorner,
-						roundCorner);
+				final URectangle rect = new URectangle(Dimension2DDouble.delta(originalDim, 2 * padding))
+						.rounded(roundCorner);
 				ug2.draw(rect);
 				orig.drawU(ug.apply(new UTranslate(padding, padding)));
 			}

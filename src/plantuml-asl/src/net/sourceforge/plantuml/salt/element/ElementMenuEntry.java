@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -37,19 +37,18 @@ import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.URectangle;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class ElementMenuEntry extends AbstractElement {
 
 	private final TextBlock block;
 	private final String text;
-	private HtmlColor background;
+	private HColor background;
 	private double xxx;
 
 	public ElementMenuEntry(String text, UFont font, ISkinSimple spriteContainer) {
@@ -68,7 +67,7 @@ public class ElementMenuEntry extends AbstractElement {
 	public void drawU(UGraphic ug, int zIndex, Dimension2D dimToUse) {
 		if (background != null) {
 			final Dimension2D dim = getPreferredDimension(ug.getStringBounder(), 0, 0);
-			ug.apply(new UChangeBackColor(background)).draw(new URectangle(dim.getWidth(), dim.getHeight()));
+			ug.apply(background.bg()).draw(new URectangle(dim.getWidth(), dim.getHeight()));
 		}
 		block.drawU(ug);
 	}
@@ -85,11 +84,11 @@ public class ElementMenuEntry extends AbstractElement {
 		return text;
 	}
 
-	public HtmlColor getBackground() {
+	public HColor getBackground() {
 		return background;
 	}
 
-	public void setBackground(HtmlColor background) {
+	public void setBackground(HColor background) {
 		this.background = background;
 	}
 }

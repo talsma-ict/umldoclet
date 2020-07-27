@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -35,37 +35,46 @@ import java.util.Collections;
 import java.util.Set;
 
 import net.sourceforge.plantuml.ISkinParam;
+import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.activitydiagram3.ftile.AbstractFtile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileGeometry;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
-import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
+import net.sourceforge.plantuml.style.PName;
+import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class FtileCircleEnd extends AbstractFtile {
 
 	private static final int SIZE = 20;
 
-	private final HtmlColor backColor;
+	private final HColor backColor;
 	private final Swimlane swimlane;
+	private double shadowing;
 
 	@Override
 	public Collection<Ftile> getMyChildren() {
 		return Collections.emptyList();
 	}
 
-	public FtileCircleEnd(ISkinParam skinParam, HtmlColor backColor, Swimlane swimlane) {
+	public FtileCircleEnd(ISkinParam skinParam, HColor backColor, Swimlane swimlane, Style style) {
 		super(skinParam);
 		this.backColor = backColor;
 		this.swimlane = swimlane;
+		if (SkinParam.USE_STYLES()) {
+			this.shadowing = style.value(PName.Shadowing).asDouble();
+		} else {
+			if (skinParam().shadowing(null)) {
+				this.shadowing = 3;
+			}
+		}
 	}
 
 	public Set<Swimlane> getSwimlanes() {
@@ -90,12 +99,10 @@ public class FtileCircleEnd extends AbstractFtile {
 		yTheoricalPosition = Math.round(yTheoricalPosition);
 
 		final UEllipse circle = new UEllipse(SIZE, SIZE);
-		if (skinParam().shadowing(null)) {
-			circle.setDeltaShadow(3);
-		}
-		ug = ug.apply(new UChangeColor(backColor));
+		circle.setDeltaShadow(shadowing);
+		ug = ug.apply(backColor);
 		final double thickness = 2.5;
-		ug.apply(new UChangeBackColor(HtmlColorUtils.WHITE)).apply(new UStroke(1.5))
+		ug.apply(HColorUtils.WHITE.bg()).apply(new UStroke(1.5))
 				.apply(new UTranslate(xTheoricalPosition, yTheoricalPosition)).draw(circle);
 
 		final double size2 = (SIZE - thickness) / Math.sqrt(2);

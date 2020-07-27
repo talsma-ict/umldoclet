@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -33,7 +33,6 @@ package net.sourceforge.plantuml.sequencediagram;
 import java.util.List;
 
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.SpecificBackcolorable;
 import net.sourceforge.plantuml.Url;
@@ -42,17 +41,24 @@ import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleBuilder;
-import net.sourceforge.plantuml.style.StyleDefinition;
+import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.style.WithStyle;
 
-public class Note extends AbstractEvent implements Event, SpecificBackcolorable, WithStyle {
+final public class Note extends AbstractEvent implements Event, SpecificBackcolorable, WithStyle {
 
 	private final Participant p;
 	private final Participant p2;
 
 	private final Display strings;
 
-	private final NotePosition position;
+	private/* final */NotePosition position;
+
+	public void temporaryProtectedUntilTeozIsStandard() {
+		if (position == NotePosition.BOTTOM || position == NotePosition.TOP) {
+			position = NotePosition.LEFT;
+		}
+	}
+
 	private final StyleBuilder styleBuilder;
 	private NoteStyle noteStyle = NoteStyle.NORMAL;
 	private Colors colors = Colors.empty();
@@ -61,7 +67,7 @@ public class Note extends AbstractEvent implements Event, SpecificBackcolorable,
 
 	private Style style;
 
-	public StyleDefinition getDefaultStyleDefinition() {
+	public StyleSignature getDefaultStyleDefinition() {
 		return noteStyle.getDefaultStyleDefinition();
 	}
 
@@ -182,14 +188,4 @@ public class Note extends AbstractEvent implements Event, SpecificBackcolorable,
 		return parallel;
 	}
 
-//	public Style[] applyStyle2(Style[] usedStyles) {
-//		if (usedStyles.length != 1) {
-//			throw new IllegalArgumentException();
-//		}
-//		Style tmp = usedStyles[0];
-//		if (tmp != null) {
-//			tmp = tmp.eventuallyOverride(colors);
-//		}
-//		return new Style[] { tmp };
-//	}
 }

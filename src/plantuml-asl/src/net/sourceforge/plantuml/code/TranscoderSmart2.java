@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -35,24 +35,23 @@ import java.io.IOException;
 public class TranscoderSmart2 implements Transcoder {
 
 	// Legacy encoder
-	private final Transcoder oldOne = new TranscoderImpl(new AsciiEncoder(), new ArobaseStringCompressor2(),
+	private final Transcoder oldOne = TranscoderImpl.utf8(new AsciiEncoder(), new ArobaseStringCompressor2(),
 			new CompressionHuffman());
-	private final Transcoder zlib = new TranscoderImpl(new AsciiEncoder(), new ArobaseStringCompressor2(),
+	private final Transcoder zlib = TranscoderImpl.utf8(new AsciiEncoder(), new ArobaseStringCompressor2(),
 			new CompressionZlib());
-	private final Transcoder brotli = new TranscoderImpl(new AsciiEncoder(), new ArobaseStringCompressor2(),
+	private final Transcoder brotli = TranscoderImpl.utf8(new AsciiEncoder(), new ArobaseStringCompressor2(),
 			new CompressionBrotli());
-	
-	
-	private final Transcoder zlibBase64 = new TranscoderImpl(new AsciiEncoderBase64(), new ArobaseStringCompressor2(),
+
+	private final Transcoder zlibBase64 = TranscoderImpl.utf8(new AsciiEncoderBase64(), new ArobaseStringCompressor2(),
 			new CompressionZlib());
-	private final Transcoder brotliBase64 = new TranscoderImpl(new AsciiEncoderBase64(), new ArobaseStringCompressor2(),
-			new CompressionBrotli());
-	private final Transcoder base64only = new TranscoderImpl(new AsciiEncoderBase64(), new ArobaseStringCompressor2(),
+	private final Transcoder brotliBase64 = TranscoderImpl.utf8(new AsciiEncoderBase64(),
+			new ArobaseStringCompressor2(), new CompressionBrotli());
+	private final Transcoder base64only = TranscoderImpl.utf8(new AsciiEncoderBase64(), new ArobaseStringCompressor2(),
 			new CompressionNone());
-	private final Transcoder hexOnly = new TranscoderImpl(new AsciiEncoderHex(), new ArobaseStringCompressor2(),
+	private final Transcoder hexOnly = TranscoderImpl.utf8(new AsciiEncoderHex(), new ArobaseStringCompressor2(),
 			new CompressionNone());
 
-	public String decode(String code) throws IOException {
+	public String decode(String code) throws NoPlantumlCompressionException {
 		// Work in progress
 		// See https://github.com/plantuml/plantuml/issues/117
 

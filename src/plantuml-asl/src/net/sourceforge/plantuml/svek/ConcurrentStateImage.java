@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -39,21 +39,20 @@ import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.skin.rose.Rose;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public final class ConcurrentStateImage extends AbstractTextBlock implements IEntityImage {
 
 	private final List<IEntityImage> inners = new ArrayList<IEntityImage>();
 	private final Separator separator;
 	private final ISkinParam skinParam;
-	private final HtmlColor backColor;
+	private final HColor backColor;
 
 	static enum Separator {
 		VERTICAL, HORIZONTAL;
@@ -70,9 +69,9 @@ public final class ConcurrentStateImage extends AbstractTextBlock implements IEn
 
 		UTranslate move(Dimension2D dim) {
 			if (this == VERTICAL) {
-				return new UTranslate(dim.getWidth(), 0);
+				return UTranslate.dx(dim.getWidth());
 			}
-			return new UTranslate(0, dim.getHeight());
+			return UTranslate.dy(dim.getHeight());
 		}
 
 		Dimension2D add(Dimension2D orig, Dimension2D other) {
@@ -89,29 +88,29 @@ public final class ConcurrentStateImage extends AbstractTextBlock implements IEn
 			final int DASH = 8;
 			ug = ug.apply(new UStroke(DASH, 10, THICKNESS_BORDER));
 			if (this == VERTICAL) {
-				ug.draw(new ULine(0, dimTotal.getHeight() + DASH));
+				ug.draw(ULine.vline(dimTotal.getHeight() + DASH));
 			} else {
-				ug.draw(new ULine(dimTotal.getWidth() + DASH, 0));
+				ug.draw(ULine.hline(dimTotal.getWidth() + DASH));
 			}
 
 		}
 	}
 
-	private HtmlColor getColor(ColorParam colorParam) {
+	private HColor getColor(ColorParam colorParam) {
 		return new Rose().getHtmlColor(skinParam, colorParam);
 	}
 
 	public ConcurrentStateImage(Collection<IEntityImage> images, char concurrentSeparator, ISkinParam skinParam,
-			HtmlColor backColor) {
+			HColor backColor) {
 		this.separator = Separator.fromChar(concurrentSeparator);
 		this.skinParam = skinParam;
-		this.backColor = skinParam.getBackgroundColor();
+		this.backColor = skinParam.getBackgroundColor(false);
 		this.inners.addAll(images);
 	}
 
 	public void drawU(UGraphic ug) {
 		System.err.println("drawing " + inners.size());
-		final HtmlColor dotColor = getColor(ColorParam.stateBorder);
+		final HColor dotColor = getColor(ColorParam.stateBorder);
 		final StringBounder stringBounder = ug.getStringBounder();
 		final Dimension2D dimTotal = calculateDimension(stringBounder);
 
@@ -121,7 +120,7 @@ public final class ConcurrentStateImage extends AbstractTextBlock implements IEn
 			final Dimension2D dim = inner.calculateDimension(stringBounder);
 			ug = ug.apply(separator.move(dim));
 			if (i < inners.size() - 1) {
-				separator.drawSeparator(ug.apply(new UChangeColor(dotColor)), dimTotal);
+				separator.drawSeparator(ug.apply(dotColor), dimTotal);
 			}
 		}
 
@@ -136,7 +135,7 @@ public final class ConcurrentStateImage extends AbstractTextBlock implements IEn
 		return result;
 	}
 
-	public HtmlColor getBackcolor() {
+	public HColor getBackcolor() {
 		return backColor;
 	}
 

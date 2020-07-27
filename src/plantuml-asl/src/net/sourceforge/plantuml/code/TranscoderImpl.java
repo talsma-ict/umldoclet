@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,43 +34,54 @@ import java.io.IOException;
 
 public class TranscoderImpl implements Transcoder {
 
+	static enum Format {
+		UTF8, UPF9;
+	}
+
 	private final Compression compression;
 	private final URLEncoder urlEncoder;
 	private final StringCompressor stringCompressor;
+	private final Format format;
 
-//	private TranscoderImpl() {
-//		this(new AsciiEncoder(), new StringCompressorNone(), new CompressionHuffman());
-//	}
-//
-//	private TranscoderImpl(Compression compression) {
-//		this(new AsciiEncoder(), new StringCompressorNone(), compression);
-//	}
-//
-//	private TranscoderImpl(URLEncoder urlEncoder, Compression compression) {
-//		this(urlEncoder, new ArobaseStringCompressor(), compression);
-//	}
-
-	public TranscoderImpl(URLEncoder urlEncoder, StringCompressor stringCompressor, Compression compression) {
+	private TranscoderImpl(URLEncoder urlEncoder, StringCompressor stringCompressor, Compression compression,
+			Format format) {
 		this.compression = compression;
 		this.urlEncoder = urlEncoder;
 		this.stringCompressor = stringCompressor;
+		this.format = format;
+	}
+
+	public static Transcoder utf8(URLEncoder urlEncoder, StringCompressor stringCompressor, Compression compression) {
+		return new TranscoderImpl(urlEncoder, stringCompressor, compression, Format.UTF8);
+	}
+
+	public static Transcoder upf9(URLEncoder urlEncoder, StringCompressor stringCompressor, Compression compression) {
+		return new TranscoderImpl(urlEncoder, stringCompressor, compression, Format.UPF9);
 	}
 
 	public String encode(String text) throws IOException {
-
 		final String stringAnnoted = stringCompressor.compress(text);
+		final byte[] data;
+		if (format == Format.UTF8)
+			data = stringAnnoted.getBytes("UTF-8");
+		else
+			data = Upf9Encoder.getBytes(stringAnnoted);
 
-		final byte[] data = stringAnnoted.getBytes("UTF-8");
 		final byte[] compressedData = compression.compress(data);
 
 		return urlEncoder.encode(compressedData);
 	}
 
-	public String decode(String code) throws IOException {
-		final byte compressedData[] = urlEncoder.decode(code);
-		final byte data[] = compression.decompress(compressedData);
-
-		return stringCompressor.decompress(new String(data, "UTF-8"));
+	public String decode(String code) throws NoPlantumlCompressionException {
+		try {
+			final byte compressedData[] = urlEncoder.decode(code);
+			final ByteArray data = compression.decompress(compressedData);
+			final String string = format == Format.UTF8 ? data.toUFT8String() : data.toUPF9String();
+			return stringCompressor.decompress(string);
+		} catch (Exception e) {
+			// System.err.println("Cannot decode string");
+			throw new NoPlantumlCompressionException(e);
+		}
 	}
 
 }

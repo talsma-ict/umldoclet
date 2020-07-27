@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,27 +32,25 @@ package net.sourceforge.plantuml.svek;
 
 import java.awt.geom.Dimension2D;
 
-import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public final class RoundedContainer {
 
 	private final Dimension2D dim;
 	private final double titleHeight;
 	private final double attributeHeight;
-	private final HtmlColor borderColor;
-	private final HtmlColor backColor;
-	private final HtmlColor imgBackcolor;
+	private final HColor borderColor;
+	private final HColor backColor;
+	private final HColor imgBackcolor;
 	private final UStroke stroke;
 
-	public RoundedContainer(Dimension2D dim, double titleHeight, double attributeHeight, HtmlColor borderColor,
-			HtmlColor backColor, HtmlColor imgBackcolor, UStroke stroke) {
+	public RoundedContainer(Dimension2D dim, double titleHeight, double attributeHeight, HColor borderColor,
+			HColor backColor, HColor imgBackcolor, UStroke stroke) {
 		if (dim.getWidth() == 0) {
 			throw new IllegalArgumentException();
 		}
@@ -67,9 +65,8 @@ public final class RoundedContainer {
 
 	public void drawU(UGraphic ug, boolean shadowing) {
 
-		ug = ug.apply(new UChangeBackColor(backColor)).apply(new UChangeColor(borderColor));
-		final URectangle rect = new URectangle(dim.getWidth(), dim.getHeight(), IEntityImage.CORNER,
-				IEntityImage.CORNER);
+		ug = ug.apply(backColor.bg()).apply(borderColor);
+		final URectangle rect = new URectangle(dim.getWidth(), dim.getHeight()).rounded(IEntityImage.CORNER);
 		if (shadowing) {
 			rect.setDeltaShadow(3.0);
 		}
@@ -77,21 +74,21 @@ public final class RoundedContainer {
 
 		final double yLine = titleHeight + attributeHeight;
 
-		ug = ug.apply(new UChangeBackColor(imgBackcolor));
+		ug = ug.apply(imgBackcolor.bg());
 
 		final double thickness = stroke.getThickness();
 
-		final URectangle inner = new URectangle(dim.getWidth() - 4 * thickness, dim.getHeight() - titleHeight - 4
-				* thickness - attributeHeight, IEntityImage.CORNER, IEntityImage.CORNER);
-		ug.apply(new UChangeColor(imgBackcolor)).apply(new UTranslate(2 * thickness, yLine + 2 * thickness))
+		final URectangle inner = new URectangle(dim.getWidth() - 4 * thickness,
+				dim.getHeight() - titleHeight - 4 * thickness - attributeHeight).rounded(IEntityImage.CORNER);
+		ug.apply(imgBackcolor).apply(new UTranslate(2 * thickness, yLine + 2 * thickness))
 				.draw(inner);
 
 		if (titleHeight > 0) {
-			ug.apply(stroke).apply(new UTranslate(0, yLine)).draw(new ULine(dim.getWidth(), 0));
+			ug.apply(stroke).apply(UTranslate.dy(yLine)).draw(ULine.hline(dim.getWidth()));
 		}
 
 		if (attributeHeight > 0) {
-			ug.apply(stroke).apply(new UTranslate(0, yLine - attributeHeight)).draw(new ULine(dim.getWidth(), 0));
+			ug.apply(stroke).apply(UTranslate.dy(yLine - attributeHeight)).draw(ULine.hline(dim.getWidth()));
 		}
 
 	}

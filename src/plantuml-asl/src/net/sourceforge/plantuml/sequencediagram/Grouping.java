@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,32 +30,32 @@
  */
 package net.sourceforge.plantuml.sequencediagram;
 
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleBuilder;
-import net.sourceforge.plantuml.style.StyleDefinition;
+import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.style.WithStyle;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public abstract class Grouping implements Event, WithStyle {
 
 	private final String title;
 	private final GroupingType type;
 	private final String comment;
-	private final HtmlColor backColorElement;
+	private final HColor backColorElement;
 
 	// private final StyleBuilder styleBuilder;
 
 	final private Style style;
 	final private Style styleHeader;
 
-	public StyleDefinition getDefaultStyleDefinition() {
-		return StyleDefinition.of(SName.root, SName.element, SName.sequenceDiagram, SName.group);
+	public StyleSignature getDefaultStyleDefinition() {
+		return StyleSignature.of(SName.root, SName.element, SName.sequenceDiagram, SName.group);
 	}
 
-	private StyleDefinition getHeaderStyleDefinition() {
-		return StyleDefinition.of(SName.root, SName.element, SName.sequenceDiagram, SName.groupHeader);
+	private StyleSignature getHeaderStyleDefinition() {
+		return StyleSignature.of(SName.root, SName.element, SName.sequenceDiagram, SName.groupHeader);
 	}
 
 	public Style[] getUsedStyles() {
@@ -65,7 +65,7 @@ public abstract class Grouping implements Event, WithStyle {
 						backColorElement) };
 	}
 
-	public Grouping(String title, String comment, GroupingType type, HtmlColor backColorElement,
+	public Grouping(String title, String comment, GroupingType type, HColor backColorElement,
 			StyleBuilder styleBuilder) {
 		this.title = title;
 		// this.styleBuilder = styleBuilder;
@@ -91,13 +91,13 @@ public abstract class Grouping implements Event, WithStyle {
 
 	public abstract int getLevel();
 
-	public abstract HtmlColor getBackColorGeneral();
+	public abstract HColor getBackColorGeneral();
 
 	final public String getComment() {
 		return comment;
 	}
 
-	public final HtmlColor getBackColorElement() {
+	public final HColor getBackColorElement() {
 		return backColorElement;
 	}
 

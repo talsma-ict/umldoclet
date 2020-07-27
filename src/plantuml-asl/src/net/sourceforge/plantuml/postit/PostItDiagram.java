@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -48,8 +48,8 @@ import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.png.PngIO;
-import net.sourceforge.plantuml.ugraphic.ColorMapperIdentity;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
 import net.sourceforge.plantuml.ugraphic.eps.UGraphicEps;
 import net.sourceforge.plantuml.ugraphic.g2d.UGraphicG2d;
 import net.sourceforge.plantuml.ugraphic.svg.UGraphicSvg;
@@ -111,11 +111,11 @@ public class PostItDiagram extends UmlDiagram {
 
 	private UGraphic createImage(FileFormatOption fileFormatOption) {
 		final Color backColor = getSkinParam().getColorMapper()
-				.getMappedColor(this.getSkinParam().getBackgroundColor());
+				.toColor(this.getSkinParam().getBackgroundColor(false));
 		final FileFormat fileFormat = fileFormatOption.getFileFormat();
 		if (fileFormat == FileFormat.PNG) {
 			final double height = getDefaultArea().heightWhenWidthIs(width, fileFormatOption.getDefaultStringBounder());
-			final EmptyImageBuilder builder = new EmptyImageBuilder(width, height, backColor);
+			final EmptyImageBuilder builder = new EmptyImageBuilder(fileFormatOption.getWatermark(), width, height, backColor);
 
 			final Graphics2D graphics2D = builder.getGraphics2D();
 			final double dpiFactor = this.getScaleCoef(fileFormatOption);

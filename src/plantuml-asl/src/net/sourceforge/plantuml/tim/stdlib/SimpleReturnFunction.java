@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -31,7 +31,9 @@
 package net.sourceforge.plantuml.tim.stdlib;
 
 import java.util.List;
+import java.util.Map;
 
+import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.tim.EaterException;
 import net.sourceforge.plantuml.tim.TContext;
 import net.sourceforge.plantuml.tim.TFunction;
@@ -42,21 +44,21 @@ import net.sourceforge.plantuml.tim.expression.TValue;
 public abstract class SimpleReturnFunction implements TFunction {
 
 	final public TFunctionType getFunctionType() {
-		return TFunctionType.RETURN;
+		return TFunctionType.RETURN_FUNCTION;
 	}
 
-	final public void executeVoid(TContext context, TMemory memory, String s) throws EaterException {
+	final public void executeProcedure(TContext context, TMemory memory, LineLocation location, String s)
+			throws EaterException {
 		throw new UnsupportedOperationException();
 	}
 
-	final public void executeVoidInternal(TContext context, TMemory memory, List<TValue> args) throws EaterException {
+	final public void executeProcedureInternal(TContext context, TMemory memory, List<TValue> args,
+			Map<String, TValue> named) throws EaterException {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	final public boolean isUnquoted() {
 		return false;
 	}
-
-
 
 }

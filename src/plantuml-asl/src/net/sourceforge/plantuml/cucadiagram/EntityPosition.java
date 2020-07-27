@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -27,6 +27,7 @@
  *
  *
  * Original Author:  Arnaud Roques
+ * Contribution :  Hisashi Miyashita
  */
 package net.sourceforge.plantuml.cucadiagram;
 
@@ -45,7 +46,7 @@ import net.sourceforge.plantuml.ugraphic.UTranslate;
 
 public enum EntityPosition {
 
-	NORMAL, ENTRY_POINT, EXIT_POINT, INPUT_PIN, OUTPUT_PIN, EXPANSION_INPUT, EXPANSION_OUTPUT;
+	NORMAL, ENTRY_POINT, EXIT_POINT, INPUT_PIN, OUTPUT_PIN, EXPANSION_INPUT, EXPANSION_OUTPUT, PORT, PORTIN, PORTOUT;
 
 	public static final double RADIUS = 6;
 
@@ -64,24 +65,24 @@ public enum EntityPosition {
 				drawLine(ug, getPointOnCircle(xc, yc, -Math.PI / 4, radius),
 						getPointOnCircle(xc, yc, Math.PI - Math.PI / 4, radius));
 			}
-		} else if (this == INPUT_PIN || this == OUTPUT_PIN) {
+		} else if (this == INPUT_PIN || this == OUTPUT_PIN || this == PORT) {
 			final Shadowable rectangle = new URectangle(RADIUS * 2, RADIUS * 2);
 			ug.draw(rectangle);
 		} else if (this == EXPANSION_INPUT || this == EXPANSION_OUTPUT) {
 			if (rankdir == Rankdir.TOP_TO_BOTTOM) {
 				final Shadowable rectangle = new URectangle(RADIUS * 2 * 4, RADIUS * 2);
 				ug.draw(rectangle);
-				final ULine vline = new ULine(0, RADIUS * 2);
-				ug.apply(new UTranslate(RADIUS * 2, 0)).draw(vline);
-				ug.apply(new UTranslate(RADIUS * 2 * 2, 0)).draw(vline);
-				ug.apply(new UTranslate(RADIUS * 2 * 3, 0)).draw(vline);
+				final ULine vline = ULine.vline(RADIUS * 2);
+				ug.apply(UTranslate.dx(RADIUS * 2)).draw(vline);
+				ug.apply(UTranslate.dx(RADIUS * 2 * 2)).draw(vline);
+				ug.apply(UTranslate.dx(RADIUS * 2 * 3)).draw(vline);
 			} else {
 				final Shadowable rectangle = new URectangle(RADIUS * 2, RADIUS * 2 * 4);
-				ug.apply(new UTranslate(0, 0)).draw(rectangle);
-				final ULine hline = new ULine(RADIUS * 2, 0);
-				ug.apply(new UTranslate(0, RADIUS * 2)).draw(hline);
-				ug.apply(new UTranslate(0, RADIUS * 2 * 2)).draw(hline);
-				ug.apply(new UTranslate(0, RADIUS * 2 * 3)).draw(hline);
+				ug.apply(UTranslate.dy(0)).draw(rectangle);
+				final ULine hline = ULine.hline(RADIUS * 2);
+				ug.apply(UTranslate.dy(RADIUS * 2)).draw(hline);
+				ug.apply(UTranslate.dy(RADIUS * 2 * 2)).draw(hline);
+				ug.apply(UTranslate.dy(RADIUS * 2 * 3)).draw(hline);
 			}
 		}
 
@@ -121,6 +122,9 @@ public enum EntityPosition {
 	}
 
 	public static EntityPosition fromStereotype(String label) {
+		if ("<<port>>".equalsIgnoreCase(label)) {
+			return PORT;
+		}
 		if ("<<entrypoint>>".equalsIgnoreCase(label)) {
 			return ENTRY_POINT;
 		}
@@ -143,11 +147,19 @@ public enum EntityPosition {
 	}
 
 	public static EnumSet<EntityPosition> getInputs() {
-		return EnumSet.of(ENTRY_POINT, INPUT_PIN, EXPANSION_INPUT);
+		return EnumSet.of(ENTRY_POINT, INPUT_PIN, EXPANSION_INPUT, PORTIN);
 	}
 
 	public static EnumSet<EntityPosition> getOutputs() {
-		return EnumSet.of(EXIT_POINT, OUTPUT_PIN, EXPANSION_OUTPUT);
+		return EnumSet.of(EXIT_POINT, OUTPUT_PIN, EXPANSION_OUTPUT, PORTOUT);
+	}
+
+	public static EnumSet<EntityPosition> getSame() {
+		return EnumSet.of(PORT);
+	}
+
+	public boolean isPort() {
+		return this == PORT || this == PORTIN || this == PORTOUT;
 	}
 
 }

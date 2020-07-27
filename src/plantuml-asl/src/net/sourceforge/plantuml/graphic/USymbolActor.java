@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,21 +30,28 @@
  */
 package net.sourceforge.plantuml.graphic;
 
-import net.sourceforge.plantuml.skin.StickMan;
+import net.sourceforge.plantuml.skin.ActorStyle;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 
 class USymbolActor extends USymbolSimpleAbstract {
+
+	private final ActorStyle actorStyle;
+
+	public USymbolActor(ActorStyle actorStyle) {
+		this.actorStyle = actorStyle;
+
+	}
 
 	@Override
 	public SkinParameter getSkinParameter() {
 		return SkinParameter.ACTOR;
 	}
 
-
 	@Override
 	protected TextBlock getDrawing(SymbolContext symbolContext) {
 		final double deltaShadow = symbolContext.isShadowing() ? 4.0 : 0.0;
-		return new StickMan(symbolContext.withDeltaShadow(deltaShadow).withStroke(new UStroke(2)));
+		final SymbolContext tmp = symbolContext.withDeltaShadow(deltaShadow).withStroke(new UStroke(2));
+		return actorStyle.getTextBlock(symbolContext);
 	}
 
 }

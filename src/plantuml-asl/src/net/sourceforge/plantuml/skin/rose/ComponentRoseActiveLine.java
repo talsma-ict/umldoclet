@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,20 +32,17 @@ package net.sourceforge.plantuml.skin.rose;
 
 import java.awt.geom.Dimension2D;
 
-import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.SkinParam;
-import net.sourceforge.plantuml.graphic.IHtmlColorSet;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.SymbolContext;
 import net.sourceforge.plantuml.skin.AbstractComponent;
 import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public class ComponentRoseActiveLine extends AbstractComponent {
 
@@ -54,7 +51,7 @@ public class ComponentRoseActiveLine extends AbstractComponent {
 	private final boolean closeDown;
 
 	public ComponentRoseActiveLine(Style style, SymbolContext symbolContext, boolean closeUp, boolean closeDown,
-			IHtmlColorSet set) {
+			HColorSet set) {
 		super(style);
 		if (SkinParam.USE_STYLES()) {
 			symbolContext = style.getSymbolContext(set);
@@ -69,25 +66,29 @@ public class ComponentRoseActiveLine extends AbstractComponent {
 		final StringBounder stringBounder = ug.getStringBounder();
 		final int x = (int) (dimensionToUse.getWidth() - getPreferredWidth(stringBounder)) / 2;
 
+		if (dimensionToUse.getHeight() == 0) {
+			return;
+		}
+
 		final URectangle rect = new URectangle(getPreferredWidth(stringBounder), dimensionToUse.getHeight());
 		if (symbolContext.isShadowing()) {
 			rect.setDeltaShadow(1);
 		}
-		ug = ug.apply(new UChangeColor(symbolContext.getForeColor()));
+		ug = ug.apply(symbolContext.getForeColor());
 		if (closeUp && closeDown) {
-			ug.apply(new UChangeBackColor(symbolContext.getBackColor())).apply(new UTranslate(x, 0)).draw(rect);
+			ug.apply(symbolContext.getBackColor().bg()).apply(UTranslate.dx(x)).draw(rect);
 			return;
 		}
-		ug.apply(new UChangeBackColor(symbolContext.getBackColor()))
-				.apply(new UChangeColor(symbolContext.getBackColor())).apply(new UTranslate(x, 0)).draw(rect);
+		ug.apply(symbolContext.getBackColor().bg())
+				.apply(symbolContext.getBackColor()).apply(UTranslate.dx(x)).draw(rect);
 
-		final ULine vline = new ULine(0, dimensionToUse.getHeight());
-		ug.apply(new UTranslate(x, 0)).draw(vline);
-		ug.apply(new UTranslate(x + getPreferredWidth(stringBounder), 0)).draw(vline);
+		final ULine vline = ULine.vline(dimensionToUse.getHeight());
+		ug.apply(UTranslate.dx(x)).draw(vline);
+		ug.apply(UTranslate.dx(x + getPreferredWidth(stringBounder))).draw(vline);
 
-		final ULine hline = new ULine(getPreferredWidth(stringBounder), 0);
+		final ULine hline = ULine.hline(getPreferredWidth(stringBounder));
 		if (closeUp) {
-			ug.apply(new UTranslate(x, 0)).draw(hline);
+			ug.apply(UTranslate.dx(x)).draw(hline);
 		}
 		if (closeDown) {
 			ug.apply(new UTranslate(x, dimensionToUse.getHeight())).draw(hline);

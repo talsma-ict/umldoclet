@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -46,8 +46,8 @@ import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.CommandFootboxIgnored;
 import net.sourceforge.plantuml.command.CommandRankDir;
 import net.sourceforge.plantuml.command.UmlDiagramFactory;
-import net.sourceforge.plantuml.command.note.FactoryNoteActivityCommand;
-import net.sourceforge.plantuml.command.note.FactoryNoteOnLinkCommand;
+import net.sourceforge.plantuml.command.note.CommandFactoryNoteActivity;
+import net.sourceforge.plantuml.command.note.CommandFactoryNoteOnLink;
 
 public class ActivityDiagramFactory extends UmlDiagramFactory {
 
@@ -74,11 +74,11 @@ public class ActivityDiagramFactory extends UmlDiagramFactory {
 		cmds.add(new CommandEndPartition());
 		cmds.add(new CommandLinkLongActivity());
 
-		final FactoryNoteActivityCommand factoryNoteActivityCommand = new FactoryNoteActivityCommand();
+		final CommandFactoryNoteActivity factoryNoteActivityCommand = new CommandFactoryNoteActivity();
 		cmds.add(factoryNoteActivityCommand.createSingleLine());
 		cmds.add(factoryNoteActivityCommand.createMultiLine(false));
 
-		final FactoryNoteOnLinkCommand factoryNoteOnLinkCommand = new FactoryNoteOnLinkCommand();
+		final CommandFactoryNoteOnLink factoryNoteOnLinkCommand = new CommandFactoryNoteOnLink();
 		cmds.add(factoryNoteOnLinkCommand.createSingleLine());
 		cmds.add(factoryNoteOnLinkCommand.createMultiLine(false));
 

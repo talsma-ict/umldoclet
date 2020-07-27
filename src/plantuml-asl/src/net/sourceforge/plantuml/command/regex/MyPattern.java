@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -56,27 +56,7 @@ public abstract class MyPattern {
 	}
 
 	private static String transformAndCheck(String p) {
-		// if (p.contains("\\s")) {
-		// Thread.dumpStack();
-		// System.err.println(p);
-		// System.exit(0);
-		// }
-		// if (p.contains("'")) {
-		// Thread.dumpStack();
-		// System.err.println(p);
-		// System.exit(0);
-		// }
-		// if (p.contains("\"")) {
-		// Thread.dumpStack();
-		// System.err.println(p);
-		// System.exit(0);
-		// }
 		p = transform(p);
-		// if (p.contains(" ") || p.contains("%")) {
-		// Thread.dumpStack();
-		// System.err.println(p);
-		// System.exit(0);
-		// }
 		return p;
 	}
 
@@ -88,10 +68,6 @@ public abstract class MyPattern {
 		return p;
 	}
 
-	// public static boolean mtches(String input, String regex) {
-	// return cmpile(regex).matcher(input).matches();
-	// }
-	//
 	public static boolean mtches(CharSequence input, String regex) {
 		return cmpile(regex).matcher(input).matches();
 	}

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,11 +30,10 @@
  */
 package net.sourceforge.plantuml;
 
-import java.io.BufferedOutputStream;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -49,6 +48,8 @@ import java.util.Set;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.error.PSystemError;
 import net.sourceforge.plantuml.preproc.FileWithSuffix;
+import net.sourceforge.plantuml.security.SFile;
+import net.sourceforge.plantuml.security.SecurityUtils;
 
 public abstract class SourceFileReaderAbstract {
 
@@ -80,10 +81,10 @@ public abstract class SourceFileReaderAbstract {
 	protected Reader getReader(String charset) throws FileNotFoundException, UnsupportedEncodingException {
 		if (charset == null) {
 			Log.info("Using default charset");
-			return new InputStreamReader(new FileInputStream(file));
+			return new InputStreamReader(new BufferedInputStream(new FileInputStream(file)));
 		}
 		Log.info("Using charset " + charset);
-		return new InputStreamReader(new FileInputStream(file), charset);
+		return new InputStreamReader(new BufferedInputStream(new FileInputStream(file)), charset);
 	}
 
 	public final Set<FileWithSuffix> getIncludedFiles() {
@@ -98,11 +99,11 @@ public abstract class SourceFileReaderAbstract {
 		return newName.endsWith("/") || newName.endsWith("\\");
 	}
 
-	private List<GeneratedImage> getCrashedImage(BlockUml blockUml, Throwable t, File outputFile) throws IOException {
+	private List<GeneratedImage> getCrashedImage(BlockUml blockUml, Throwable t, SFile outputFile) throws IOException {
 		final GeneratedImage image = new GeneratedImageImpl(outputFile, "Crash Error", blockUml, FileImageData.CRASH);
 		OutputStream os = null;
 		try {
-			os = new BufferedOutputStream(new FileOutputStream(outputFile));
+			os = outputFile.createBufferedOutputStream();
 			UmlDiagram.exportDiagramError(os, t, fileFormatOption, 42, null, blockUml.getFlashData(),
 					UmlDiagram.getFailureText2(t, blockUml.getFlashData()));
 		} finally {
@@ -114,13 +115,13 @@ public abstract class SourceFileReaderAbstract {
 		return Collections.singletonList(image);
 	}
 
-	protected void exportWarnOrErrIfWord(final File f, final Diagram system) throws FileNotFoundException {
+	protected void exportWarnOrErrIfWord(final SFile f, final Diagram system) throws FileNotFoundException {
 		if (OptionFlags.getInstance().isWord()) {
 			final String warnOrError = system.getWarningOrError();
 			if (warnOrError != null) {
 				final String name = f.getName().substring(0, f.getName().length() - 4) + ".err";
-				final File errorFile = new File(f.getParentFile(), name);
-				final PrintStream ps = new PrintStream(new FileOutputStream(errorFile));
+				final SFile errorFile = f.getParentFile().file(name);
+				final PrintStream ps = SecurityUtils.createPrintStream(errorFile.createFileOutputStream());
 				ps.print(warnOrError);
 				ps.close();
 			}
@@ -142,6 +143,7 @@ public abstract class SourceFileReaderAbstract {
 			try {
 				system = blockUml.getDiagram();
 			} catch (Throwable t) {
+				t.printStackTrace();
 				return getCrashedImage(blockUml, t, suggested.getFile(0));
 			}
 
@@ -149,7 +151,7 @@ public abstract class SourceFileReaderAbstract {
 				continue;
 			}
 
-			OptionFlags.getInstance().logData(file, system);
+			OptionFlags.getInstance().logData(SFile.fromFile(file), system);
 			final List<FileImageData> exportDiagrams = PSystemUtils.exportDiagrams(system, suggested, fileFormatOption,
 					checkMetadata);
 			if (exportDiagrams.size() > 1) {
@@ -158,7 +160,7 @@ public abstract class SourceFileReaderAbstract {
 
 			for (FileImageData fdata : exportDiagrams) {
 				final String desc = "[" + file.getName() + "] " + system.getDescription();
-				final File f = fdata.getFile();
+				final SFile f = fdata.getFile();
 				exportWarnOrErrIfWord(f, system);
 				final GeneratedImage generatedImage = new GeneratedImageImpl(f, desc, blockUml, fdata.getStatus());
 				result.add(generatedImage);
@@ -171,6 +173,6 @@ public abstract class SourceFileReaderAbstract {
 		return Collections.unmodifiableList(result);
 	}
 
-	abstract protected SuggestedFile getSuggestedFile(BlockUml blockUml);
+	abstract protected SuggestedFile getSuggestedFile(BlockUml blockUml) throws FileNotFoundException;
 
 }

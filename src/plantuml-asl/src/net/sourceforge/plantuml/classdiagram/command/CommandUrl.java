@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -44,6 +44,7 @@ import net.sourceforge.plantuml.command.regex.RegexOptional;
 import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.Code;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
+import net.sourceforge.plantuml.cucadiagram.Ident;
 
 public class CommandUrl extends SingleLineCommand2<AbstractEntityDiagram> {
 
@@ -67,13 +68,16 @@ public class CommandUrl extends SingleLineCommand2<AbstractEntityDiagram> {
 
 	@Override
 	protected CommandExecutionResult executeArg(AbstractEntityDiagram diagram, LineLocation location, RegexResult arg) {
-		final Code code = Code.of(arg.get("CODE", 0));
+		final String idShort = arg.get("CODE", 0);
+		final Ident ident = diagram.buildLeafIdent(idShort);
+		final Code code = diagram.V1972() ? ident : diagram.buildCode(idShort);
 		final String urlString = arg.get("URL", 0);
 		final IEntity entity;
-		if (diagram.leafExist(code)) {
-			entity = diagram.getOrCreateLeaf(code, null, null);
-		} else if (diagram.isGroup(code)) {
-			entity = diagram.getGroup(code);
+		final boolean leafExist = diagram.V1972() ? diagram.leafExistSmart(ident) : diagram.leafExist(code);
+		if (leafExist) {
+			entity = diagram.getOrCreateLeaf(ident, code, null, null);
+		} else if (diagram.V1972() ? diagram.isGroupStrict(ident) : diagram.isGroup(code)) {
+			entity = diagram.V1972() ? diagram.getGroupStrict(ident) : diagram.getGroup(code);
 		} else {
 			return CommandExecutionResult.error(code + " does not exist");
 		}

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -78,7 +78,7 @@ public class DividerTile extends AbstractTile implements Tile {
 		final Area area = new Area(tileArguments.getBorder2() - tileArguments.getBorder1() - origin.getCurrentValue(),
 				dim.getHeight());
 
-		ug = ug.apply(new UTranslate(tileArguments.getBorder1(), 0));
+		ug = ug.apply(UTranslate.dx(tileArguments.getBorder1()));
 		comp.drawU(ug, area, (Context2D) ug);
 	}
 
