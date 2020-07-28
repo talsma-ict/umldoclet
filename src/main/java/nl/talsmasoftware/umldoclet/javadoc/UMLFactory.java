@@ -57,6 +57,9 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 import static javax.lang.model.element.ElementKind.ENUM;
+import static javax.lang.model.element.Modifier.ABSTRACT;
+import static javax.lang.model.element.Modifier.PUBLIC;
+import static javax.lang.model.element.Modifier.STATIC;
 import static nl.talsmasoftware.umldoclet.uml.Reference.Side.from;
 import static nl.talsmasoftware.umldoclet.uml.Reference.Side.to;
 
@@ -207,7 +210,7 @@ public class UMLFactory {
         if (env.isIncluded(superclass)) return true;
         // TODO Make configurable:
         // See https://github.com/talsma-ict/umldoclet/issues/148
-        return superclass.getModifiers().contains(Modifier.PUBLIC)
+        return superclass.getModifiers().contains(PUBLIC)
                 || superclass.getModifiers().contains(Modifier.PROTECTED);
     }
 
@@ -315,7 +318,7 @@ public class UMLFactory {
     static Visibility visibilityOf(Set<Modifier> modifiers) {
         return modifiers.contains(Modifier.PRIVATE) ? Visibility.PRIVATE
                 : modifiers.contains(Modifier.PROTECTED) ? Visibility.PROTECTED
-                : modifiers.contains(Modifier.PUBLIC) ? Visibility.PUBLIC
+                : modifiers.contains(PUBLIC) ? Visibility.PUBLIC
                 : Visibility.PACKAGE_PRIVATE;
     }
 
@@ -539,18 +542,22 @@ public class UMLFactory {
     }
 
     private static String propertyName(ExecutableElement method) {
-        String name = method.getSimpleName().toString();
-        int params = method.getParameters().size();
-        if (params == 0 && name.length() > 3 && name.startsWith("get")) {
-            char[] result = name.substring(3).toCharArray();
-            result[0] = Character.toLowerCase(result[0]);
-            return new String(result);
-        } else if (params == 1 && name.length() > 3 && name.startsWith("set")) {
-            char[] result = name.substring(3).toCharArray();
-            result[0] = Character.toLowerCase(result[0]);
-            return new String(result);
-        } else if (params == 0 && name.length() > 2 && name.startsWith("is") && isBooleanPrimitive(method.getReturnType())) {
-            char[] result = name.substring(2).toCharArray();
+        char[] result = null;
+        final Set<Modifier> modifiers = method.getModifiers();
+        if (modifiers.contains(PUBLIC) && !modifiers.contains(ABSTRACT) && !modifiers.contains(STATIC)) {
+            String name = method.getSimpleName().toString();
+            int params = method.getParameters().size();
+            if (params == 0 && name.length() > 3 && name.startsWith("get")) {
+                // TODO: check non-void return type?
+                result = name.substring(3).toCharArray();
+            } else if (params == 1 && name.length() > 3 && name.startsWith("set")) {
+                // TODO: check void return type?
+                result = name.substring(3).toCharArray();
+            } else if (params == 0 && name.length() > 2 && name.startsWith("is") && isBooleanPrimitive(method.getReturnType())) {
+                result = name.substring(2).toCharArray();
+            }
+        }
+        if (result != null) {
             result[0] = Character.toLowerCase(result[0]);
             return new String(result);
         }
