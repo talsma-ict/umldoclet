@@ -29,13 +29,11 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class UMLOptionsTest {
-    private DocletConfig config;
     private UMLOptions umlOptions;
 
     @BeforeEach
     void setUpUmlOptions() {
-        config = new DocletConfig();
-        umlOptions = new UMLOptions(config);
+        umlOptions = new UMLOptions(new DocletConfig());
     }
 
     private Doclet.Option docletOption(String name) {
