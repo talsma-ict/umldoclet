@@ -1,0 +1,24 @@
+@startuml
+    ' Diagram containing nested name-space definition: java.util and java.util.function
+    namespace issues {
+        interface issues.MySupplier<T>
+
+        class issues.MySet<T> {
+            +iterator(): Iterator<T>
+            +size(): int
+        }
+
+        java.util.function.Supplier <|-- issues.MySupplier
+        java.util.AbstractSet <|-- issues.MySet
+    }
+
+    namespace java.util.function {
+        interface Supplier<T> {
+            {abstract} +get(): T
+        }
+    }
+
+    namespace java.util {
+        abstract class AbstractSet<E>
+    }
+@enduml
