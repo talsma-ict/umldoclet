@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,17 +30,16 @@
  */
 package net.sourceforge.plantuml;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
+
+import net.sourceforge.plantuml.security.SFile;
+import net.sourceforge.plantuml.security.SecurityUtils;
 
 public class FileSystem {
 
 	private final static FileSystem singleton = new FileSystem();
 
-	private final ThreadLocal<File> currentDir = new ThreadLocal<File>();
+	private final ThreadLocal<SFile> currentDir = new ThreadLocal<SFile>();
 
 	private FileSystem() {
 		reset();
@@ -50,70 +49,63 @@ public class FileSystem {
 		return singleton;
 	}
 
-	public void setCurrentDir(File dir) {
+	public void setCurrentDir(SFile dir) {
 		// if (dir == null) {
 		// throw new IllegalArgumentException();
 		// }
-		Log.info("Setting current dir: " + dir);
+		if (dir != null) {
+			Log.info("Setting current dir: " + dir.getAbsolutePath());
+		}
 		this.currentDir.set(dir);
 	}
 
-	public File getCurrentDir() {
+	public SFile getCurrentDir() {
 		return this.currentDir.get();
 	}
 
-	public File getFile(String nameOrPath) throws IOException {
-		final File dir = currentDir.get();
-		if (dir == null || isAbsolute(nameOrPath)) {
-			return new File(nameOrPath).getCanonicalFile();
+	public SFile getFile(String nameOrPath) throws IOException {
+		if (isAbsolute(nameOrPath)) {
+			return new SFile(nameOrPath).getCanonicalFile();
 		}
-		final File filecurrent = new File(dir.getAbsoluteFile(), nameOrPath);
-		if (filecurrent.exists()) {
-			return filecurrent.getCanonicalFile();
-		}
-		for (File d : getPath("plantuml.include.path", true)) {
-			if (d.isDirectory()) {
-				final File file = new File(d, nameOrPath);
-				if (file.exists()) {
-					return file.getCanonicalFile();
-				}
+		final SFile dir = currentDir.get();
+		SFile filecurrent = null;
+		if (dir != null) {
+			filecurrent = dir.getAbsoluteFile().file(nameOrPath);
+			if (filecurrent.exists()) {
+				return filecurrent.getCanonicalFile();
+
 			}
 		}
-		for (File d : getPath("java.class.path", true)) {
-			if (d.isDirectory()) {
-				final File file = new File(d, nameOrPath);
-				if (file.exists()) {
-					return file.getCanonicalFile();
-				}
+		for (SFile d : SecurityUtils.getPath("plantuml.include.path")) {
+			assert d.isDirectory();
+			final SFile file = d.file(nameOrPath);
+			if (file.exists()) {
+				return file.getCanonicalFile();
+
 			}
 		}
+		for (SFile d : SecurityUtils.getPath("java.class.path")) {
+			assert d.isDirectory();
+			final SFile file = d.file(nameOrPath);
+			if (file.exists()) {
+				return file.getCanonicalFile();
+			}
+		}
+		if (dir == null) {
+			assert filecurrent == null;
+			return new SFile(nameOrPath).getCanonicalFile();
+		}
+		assert filecurrent != null;
 		return filecurrent;
 	}
 
-	public static List<File> getPath(String prop, boolean onlyDir) {
-		final List<File> result = new ArrayList<File>();
-		String paths = System.getProperty(prop);
-		if (paths == null) {
-			return result;
-		}
-		paths = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(paths);
-		final StringTokenizer st = new StringTokenizer(paths, System.getProperty("path.separator"));
-		while (st.hasMoreTokens()) {
-			final File f = new File(st.nextToken());
-			if (f.exists() && (onlyDir == false || f.isDirectory())) {
-				result.add(f);
-			}
-		}
-		return result;
-	}
-
 	private boolean isAbsolute(String nameOrPath) {
-		final File f = new File(nameOrPath);
+		final SFile f = new SFile(nameOrPath);
 		return f.isAbsolute();
 	}
 
 	public void reset() {
-		setCurrentDir(new File("."));
+		setCurrentDir(new SFile("."));
 	}
 
 }

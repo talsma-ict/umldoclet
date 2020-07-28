@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -43,6 +43,7 @@ import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.GroupType;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.ILeaf;
+import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.NamespaceStrategy;
 import net.sourceforge.plantuml.graphic.USymbol;
@@ -56,34 +57,46 @@ public class ActivityDiagram extends CucaDiagram {
 
 	public ActivityDiagram(ISkinSimple skinParam) {
 		super(skinParam);
+		setNamespaceSeparator(null);
 	}
 
-	public ILeaf getOrCreateLeaf(Code code, LeafType type, USymbol symbol) {
-		return getOrCreateLeafDefault(code, type, symbol);
+	public ILeaf getOrCreateLeaf(Ident ident, Code code, LeafType type, USymbol symbol) {
+		checkNotNull(ident);
+		return getOrCreateLeafDefault(ident, code, type, symbol);
 	}
 
 	private String getAutoBranch() {
 		return "#" + UniqueSequence.getValue();
 	}
 
-	public IEntity getOrCreate(Code code, Display display, LeafType type) {
+	public IEntity getOrCreate(Ident idNewLong, Code code, Display display, LeafType type) {
 		final IEntity result;
-		if (leafExist(code)) {
-			result = getOrCreateLeafDefault(code, type, null);
+		final boolean leafExist = this.V1972() ? leafExistSmart(idNewLong) : leafExist(code);
+		if (leafExist) {
+			result = getOrCreateLeafDefault(idNewLong, code, type, null);
 			if (result.getLeafType() != type) {
-				// throw new IllegalArgumentException("Already known: " + code + " " + result.getType() + " " + type);
 				return null;
 			}
 		} else {
-			result = createLeaf(code, display, type, null);
+			result = createLeaf(idNewLong, code, display, type, null);
 		}
 		updateLasts(result);
 		return result;
 	}
+	
+	@Override
+	public /*final*/ ILeaf getLeafVerySmart(Ident ident) {
+		final ILeaf result = super.getLeafVerySmart(ident);
+		updateLasts(result);
+		return result;
+	}
 
-	public void startIf(Code optionalCode) {
-		final IEntity br = createLeaf(optionalCode == null ? Code.of(getAutoBranch()) : optionalCode,
-				Display.create(""), LeafType.BRANCH, null);
+
+	public void startIf(String optionalCodeString) {
+		final String idShort = optionalCodeString == null ? getAutoBranch() : optionalCodeString;
+		final Ident idNewLong = buildLeafIdent(idShort);
+		final Code code = this.V1972() ? idNewLong : buildCode(idShort);
+		final IEntity br = createLeaf(idNewLong, code, Display.create(""), LeafType.BRANCH, null);
 		currentContext = new ConditionalContext(currentContext, br, Direction.DOWN);
 	}
 
@@ -92,12 +105,16 @@ public class ActivityDiagram extends CucaDiagram {
 	}
 
 	public ILeaf getStart() {
-		return (ILeaf) getOrCreate(Code.of("start"), Display.getWithNewlines("start"), LeafType.CIRCLE_START);
+		final Ident ident = buildLeafIdent("start");
+		final Code code = this.V1972() ? ident : buildCode("start");
+		return (ILeaf) getOrCreate(ident, code, Display.getWithNewlines("start"), LeafType.CIRCLE_START);
 	}
 
 	public ILeaf getEnd(String suppId) {
-		final Code code = suppId == null ? Code.of("end") : Code.of("end$" + suppId);
-		return (ILeaf) getOrCreate(code, Display.getWithNewlines("end"), LeafType.CIRCLE_END);
+		final String tmp = suppId == null ? "end" : "end$" + suppId;
+		final Ident ident = buildLeafIdent(tmp);
+		final Code code = this.V1972() ? ident : buildCode(tmp);
+		return (ILeaf) getOrCreate(ident, code, Display.getWithNewlines("end"), LeafType.CIRCLE_END);
 	}
 
 	private void updateLasts(final IEntity result) {
@@ -111,14 +128,16 @@ public class ActivityDiagram extends CucaDiagram {
 	}
 
 	@Override
-	public ILeaf createLeaf(Code code, Display display, LeafType type, USymbol symbol) {
-		final ILeaf result = super.createLeaf(code, display, type, symbol);
+	public ILeaf createLeaf(Ident idNewLong, Code code, Display display, LeafType type, USymbol symbol) {
+		checkNotNull(idNewLong);
+		final ILeaf result = super.createLeaf(idNewLong, code, display, type, symbol);
 		updateLasts(result);
 		return result;
 	}
 
-	public IEntity createNote(Code code, Display display) {
-		return super.createLeaf(code, display, LeafType.NOTE, null);
+	public IEntity createNote(Ident idNewLong, Code code, Display display) {
+		checkNotNull(idNewLong);
+		return super.createLeaf(idNewLong, code, display, LeafType.NOTE, null);
 	}
 
 	final protected List<String> getDotStrings() {
@@ -154,8 +173,10 @@ public class ActivityDiagram extends CucaDiagram {
 
 	public IEntity createInnerActivity() {
 		// Log.println("createInnerActivity A");
-		final Code code = Code.of("##" + UniqueSequence.getValue());
-		gotoGroup2(code, Display.getWithNewlines(code), GroupType.INNER_ACTIVITY, getCurrentGroup(),
+		final String idShort = "##" + UniqueSequence.getValue();
+		final Ident idNewLong = buildLeafIdent(idShort);
+		final Code code = this.V1972() ? idNewLong : buildCode(idShort);
+		gotoGroup(idNewLong, code, Display.getWithNewlines(code), GroupType.INNER_ACTIVITY, getCurrentGroup(),
 				NamespaceStrategy.SINGLE);
 		final IEntity g = getCurrentGroup();
 		// g.setRankdir(Rankdir.LEFT_TO_RIGHT);
@@ -172,12 +193,14 @@ public class ActivityDiagram extends CucaDiagram {
 			endGroup();
 			// Log.println("endgroup");
 		}
+		final String idShort = "##" + UniqueSequence.getValue();
 		// Log.println("concurrentActivity A name=" + name+" "+getCurrentGroup());
-		final Code code = Code.of("##" + UniqueSequence.getValue());
+		final Code code = buildCode(idShort);
 		if (getCurrentGroup().getGroupType() != GroupType.INNER_ACTIVITY) {
 			throw new IllegalStateException("type=" + getCurrentGroup().getGroupType());
 		}
-		gotoGroup2(code, Display.getWithNewlines("code"), GroupType.CONCURRENT_ACTIVITY, getCurrentGroup(),
+		final Ident idNewLong = buildLeafIdent(idShort);
+		gotoGroup(idNewLong, code, Display.getWithNewlines("code"), GroupType.CONCURRENT_ACTIVITY, getCurrentGroup(),
 				NamespaceStrategy.SINGLE);
 		lastEntityConsulted = null;
 		lastEntityBrancheConsulted = null;

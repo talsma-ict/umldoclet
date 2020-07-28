@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,9 +30,6 @@
  */
 package net.sourceforge.plantuml;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
@@ -45,35 +42,40 @@ import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.graphic.GraphicStrings;
 import net.sourceforge.plantuml.preproc.Defines;
+import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.svek.TextBlockBackcolored;
-import net.sourceforge.plantuml.ugraphic.ColorMapperIdentity;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
 
 public class SourceStringReader {
 
 	final private List<BlockUml> blocks;
 
 	public SourceStringReader(String source) {
-		this(Defines.createEmpty(), source, Collections.<String> emptyList());
+		this(Defines.createEmpty(), source, Collections.<String>emptyList());
 	}
 
 	public SourceStringReader(String source, String charset) {
-		this(Defines.createEmpty(), source, "UTF-8", Collections.<String> emptyList());
+		this(Defines.createEmpty(), source, "UTF-8", Collections.<String>emptyList());
 	}
 
 	public SourceStringReader(Defines defines, String source, List<String> config) {
 		this(defines, source, "UTF-8", config);
 	}
 
-	public SourceStringReader(String source, File newCurrentDir) {
-		this(Defines.createEmpty(), source, "UTF-8", Collections.<String> emptyList(), newCurrentDir);
+	public SourceStringReader(Defines defines, String source) {
+		this(defines, source, "UTF-8", Collections.<String>emptyList());
+	}
+
+	public SourceStringReader(String source, SFile newCurrentDir) {
+		this(Defines.createEmpty(), source, "UTF-8", Collections.<String>emptyList(), newCurrentDir);
 	}
 
 	public SourceStringReader(Defines defines, String source, String charset, List<String> config) {
 		this(defines, source, charset, config, FileSystem.getInstance().getCurrentDir());
 	}
 
-	public SourceStringReader(Defines defines, String source, String charset, List<String> config, File newCurrentDir) {
+	public SourceStringReader(Defines defines, String source, String charset, List<String> config, SFile newCurrentDir) {
 		// // WARNING GLOBAL LOCK HERE
 		// synchronized (SourceStringReader.class) {
 		try {
@@ -97,12 +99,12 @@ public class SourceStringReader {
 	}
 
 	@Deprecated
-	public String generateImage(File f) throws IOException {
+	public String generateImage(SFile f) throws IOException {
 		return outputImage(f).getDescription();
 	}
 
-	public DiagramDescription outputImage(File f) throws IOException {
-		final OutputStream os = new BufferedOutputStream(new FileOutputStream(f));
+	public DiagramDescription outputImage(SFile f) throws IOException {
+		final OutputStream os = f.createBufferedOutputStream();
 		DiagramDescription result = null;
 		try {
 			result = outputImage(os, 0);
@@ -148,7 +150,8 @@ public class SourceStringReader {
 				// final CMapData cmap = new CMapData();
 				final ImageData imageData = system.exportDiagram(os, numImage, fileFormatOption);
 				// if (imageData.containsCMapData()) {
-				// return system.getDescription().getDescription() + BackSlash.BS_N + imageData.getCMapData("plantuml");
+				// return system.getDescription().getDescription() + BackSlash.BS_N +
+				// imageData.getCMapData("plantuml");
 				// }
 				return system.getDescription();
 			}
@@ -167,9 +170,11 @@ public class SourceStringReader {
 			final Diagram system = b.getDiagram();
 			final int nbInSystem = system.getNbImages();
 			if (numImage < nbInSystem) {
-				// final ImageData imageData = system.exportDiagram(os, numImage, fileFormatOption);
+				// final ImageData imageData = system.exportDiagram(os, numImage,
+				// fileFormatOption);
 				// if (imageData.containsCMapData()) {
-				// return system.getDescription().withCMapData(imageData.getCMapData("plantuml"));
+				// return
+				// system.getDescription().withCMapData(imageData.getCMapData("plantuml"));
 				// }
 				return system.getDescription();
 			}
@@ -212,10 +217,10 @@ public class SourceStringReader {
 	}
 
 	private void noStartumlFound(OutputStream os, FileFormatOption fileFormatOption, long seed) throws IOException {
-		final TextBlockBackcolored error = GraphicStrings.createForError(Arrays.asList("No @startuml found"),
+		final TextBlockBackcolored error = GraphicStrings.createForError(Arrays.asList("No @startuml/@enduml found"),
 				fileFormatOption.isUseRedForError());
-		final ImageBuilder imageBuilder = new ImageBuilder(new ColorMapperIdentity(), 1.0, error.getBackcolor(), null,
-				null, 0, 0, null, false);
+		final ImageBuilder imageBuilder = ImageBuilder.buildA(new ColorMapperIdentity(), false, null, null, null, 1.0,
+				error.getBackcolor());
 		imageBuilder.setUDrawable(error);
 		imageBuilder.writeImageTOBEMOVED(fileFormatOption, seed, os);
 	}

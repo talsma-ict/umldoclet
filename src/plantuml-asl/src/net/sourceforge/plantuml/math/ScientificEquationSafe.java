@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -38,8 +38,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 
-import javax.imageio.ImageIO;
-
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.Log;
@@ -49,8 +47,12 @@ import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.eps.EpsGraphics;
 import net.sourceforge.plantuml.graphic.GraphicStrings;
 import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.ugraphic.ColorMapperIdentity;
+import net.sourceforge.plantuml.security.ImageIO;
+import net.sourceforge.plantuml.ugraphic.AffineTransformType;
+import net.sourceforge.plantuml.ugraphic.MutableImage;
+import net.sourceforge.plantuml.ugraphic.PixelImage;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
 
 public class ScientificEquationSafe {
 
@@ -85,7 +87,6 @@ public class ScientificEquationSafe {
 	private ImageData dimSvg;
 
 	public SvgString getSvg(double scale, Color foregroundColor, Color backgroundColor) {
-
 		try {
 			final SvgString svg = equation.getSvg(scale, foregroundColor, backgroundColor);
 			dimSvg = new ImageDataSimple(equation.getDimension());
@@ -103,16 +104,17 @@ public class ScientificEquationSafe {
 		}
 	}
 
-	public BufferedImage getImage(double scale, Color foregroundColor, Color backgroundColor) {
+	public MutableImage getImage(Color foregroundColor, Color backgroundColor) {
 		try {
-			return equation.getImage(scale, foregroundColor, backgroundColor);
+			return equation.getImage(foregroundColor, backgroundColor);
 		} catch (Exception e) {
 			printTrace(e);
 			final ImageBuilder imageBuilder = getRollback();
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			try {
 				imageBuilder.writeImageTOBEMOVED(new FileFormatOption(FileFormat.PNG), 42, baos);
-				return ImageIO.read(new ByteArrayInputStream(baos.toByteArray()));
+				return new PixelImage(ImageIO.read(new ByteArrayInputStream(baos.toByteArray())),
+						AffineTransformType.TYPE_BILINEAR);
 			} catch (IOException e1) {
 				return null;
 			}
@@ -121,7 +123,7 @@ public class ScientificEquationSafe {
 
 	private void printTrace(Exception e) {
 		System.err.println("formula=" + formula);
-		if (formula != null) {
+		if (equation != null) {
 			System.err.println("Latex=" + equation.getSource());
 		}
 		e.printStackTrace();
@@ -129,8 +131,8 @@ public class ScientificEquationSafe {
 
 	private ImageBuilder getRollback() {
 		final TextBlock block = GraphicStrings.createBlackOnWhiteMonospaced(Arrays.asList(formula));
-		final ImageBuilder imageBuilder = new ImageBuilder(new ColorMapperIdentity(), 1.0, null, null, null, 0, 0,
-				null, false);
+		final ImageBuilder imageBuilder = ImageBuilder.buildA(new ColorMapperIdentity(), false, null, null, null, 1.0,
+				null);
 		imageBuilder.setUDrawable(block);
 		return imageBuilder;
 	}
@@ -138,7 +140,7 @@ public class ScientificEquationSafe {
 	public ImageData export(OutputStream os, FileFormatOption fileFormat, float scale, Color foregroundColor,
 			Color backgroundColor) throws IOException {
 		if (fileFormat.getFileFormat() == FileFormat.PNG) {
-			final BufferedImage image = getImage(scale, foregroundColor, backgroundColor);
+			final BufferedImage image = getImage(foregroundColor, backgroundColor).withScale(scale).getImage();
 			ImageIO.write(image, "png", os);
 			return new ImageDataSimple(image.getWidth(), image.getHeight());
 		}
@@ -147,7 +149,7 @@ public class ScientificEquationSafe {
 			return dimSvg;
 		}
 		if (fileFormat.getFileFormat() == FileFormat.EPS) {
-			final BufferedImage image = getImage(scale, foregroundColor, backgroundColor);
+			final BufferedImage image = getImage(foregroundColor, backgroundColor).withScale(scale).getImage();
 			final EpsGraphics out = new EpsGraphics();
 			out.drawImage(image, 0, 0);
 			out.close();

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,8 +30,6 @@
  */
 package net.sourceforge.plantuml;
 
-import java.awt.Color;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -44,16 +42,9 @@ import net.sourceforge.plantuml.command.regex.Matcher2;
 import net.sourceforge.plantuml.command.regex.MyPattern;
 import net.sourceforge.plantuml.command.regex.Pattern2;
 import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.graphic.HtmlColorTransparent;
-import net.sourceforge.plantuml.ugraphic.ColorMapper;
 
 // Do not move
 public class StringUtils {
-
-	public static String getPlateformDependentAbsolutePath(File file) {
-		return file.getAbsolutePath();
-	}
 
 	final static public List<String> getSplit(Pattern2 pattern, String line) {
 		final Matcher2 m = pattern.matcher(line);
@@ -65,7 +56,6 @@ public class StringUtils {
 			result.add(m.group(i));
 		}
 		return result;
-
 	}
 
 	public static boolean isNotEmpty(String input) {
@@ -227,6 +217,9 @@ public class StringUtils {
 	// }
 
 	public static String eventuallyRemoveStartingAndEndingDoubleQuote(String s, String format) {
+		if (s == null) {
+			return null;
+		}
 		if (format.contains("\"") && s.length() > 1 && isDoubleQuote(s.charAt(0))
 				&& isDoubleQuote(s.charAt(s.length() - 1))) {
 			return s.substring(1, s.length() - 1);
@@ -313,28 +306,37 @@ public class StringUtils {
 	}
 
 	public static boolean isDiagramCacheable(String uml) {
-		uml = uml.toLowerCase();
-		if (uml.startsWith("@startuml\nversion\n")) {
+		if (uml.length() < 35) {
 			return false;
 		}
-		if (uml.startsWith("@startuml\nlicense\n")) {
-			return false;
-		}
-		if (uml.startsWith("@startuml\nlicence\n")) {
-			return false;
-		}
-		if (uml.startsWith("@startuml\nauthor\n")) {
-			return false;
-		}
-		if (uml.startsWith("@startuml\ncheckversion")) {
-			return false;
-		}
-		if (uml.startsWith("@startuml\ntestdot\n")) {
-			return false;
-		}
-		if (uml.startsWith("@startuml\nsudoku\n")) {
-			return false;
-		}
+//		uml = uml.toLowerCase();
+//		if (uml.startsWith("@startuml\nversion\n")) {
+//			return false;
+//		}
+//		if (uml.startsWith("@startuml\nlicense\n")) {
+//			return false;
+//		}
+//		if (uml.startsWith("@startuml\nlicence\n")) {
+//			return false;
+//		}
+//		if (uml.startsWith("@startuml\nauthor\n")) {
+//			return false;
+//		}
+//		if (uml.startsWith("@startuml\ndonors\n")) {
+//			return false;
+//		}
+////		if (uml.startsWith("@startuml\ncheckversion")) {
+////			return false;
+////		}
+//		if (uml.startsWith("@startuml\ntestdot\n")) {
+//			return false;
+//		}
+//		if (uml.startsWith("@startuml\nsudoku\n")) {
+//			return false;
+//		}
+//		if (uml.startsWith("@startuml\nstdlib\n")) {
+//			return false;
+//		}
 		return true;
 	}
 
@@ -357,7 +359,9 @@ public class StringUtils {
 
 	public static List<String> splitComma(String s) {
 		s = trin(s);
-		// if (s.matches("([\\p{L}0-9_.]+|[%g][^%g]+[%g])(\\s*,\\s*([\\p{L}0-9_.]+|[%g][^%g]+[%g]))*") == false) {
+		// if
+		// (s.matches("([\\p{L}0-9_.]+|[%g][^%g]+[%g])(\\s*,\\s*([\\p{L}0-9_.]+|[%g][^%g]+[%g]))*")
+		// == false) {
 		// throw new IllegalArgumentException();
 		// }
 		final List<String> result = new ArrayList<String>();
@@ -367,30 +371,6 @@ public class StringUtils {
 			result.add(eventuallyRemoveStartingAndEndingDoubleQuote(m.group(0)));
 		}
 		return Collections.unmodifiableList(result);
-	}
-
-	public static String getAsHtml(Color color) {
-		if (color == null) {
-			return null;
-		}
-		return getAsHtml(color.getRGB());
-	}
-
-	public static String getAsSvg(ColorMapper mapper, HtmlColor color) {
-		if (color == null) {
-			return "none";
-		}
-		if (color instanceof HtmlColorTransparent) {
-			return "#FFFFFF";
-		}
-		return getAsHtml(mapper.getMappedColor(color));
-	}
-
-	public static String getAsHtml(int color) {
-		final int v = 0xFFFFFF & color;
-		String s = "000000" + Integer.toHexString(v).toUpperCase();
-		s = s.substring(s.length() - 6);
-		return "#" + s;
 	}
 
 	public static String getUid(String uid1, int uid2) {
@@ -463,18 +443,33 @@ public class StringUtils {
 		if (arg.length() == 0) {
 			return arg;
 		}
+		return trinEndingInternal(arg, getPositionStartNonSpace(arg));
+	}
+
+	private static int getPositionStartNonSpace(String arg) {
 		int i = 0;
 		while (i < arg.length() && isSpaceOrTabOrNull(arg.charAt(i))) {
 			i++;
 		}
-		int j = arg.length() - 1;
-		while (j >= i && isSpaceOrTabOrNull(arg.charAt(j))) {
-			j--;
-		}
-		if (i == 0 && j == arg.length() - 1) {
+		return i;
+	}
+
+	private static String trinEnding(String arg) {
+		if (arg.length() == 0) {
 			return arg;
 		}
-		return arg.substring(i, j + 1);
+		return trinEndingInternal(arg, 0);
+	}
+
+	private static String trinEndingInternal(String arg, int from) {
+		int j = arg.length() - 1;
+		while (j >= from && isSpaceOrTabOrNull(arg.charAt(j))) {
+			j--;
+		}
+		if (from == 0 && j == arg.length() - 1) {
+			return arg;
+		}
+		return arg.substring(from, j + 1);
 	}
 
 	private static boolean isSpaceOrTabOrNull(char c) {

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -35,7 +35,9 @@ import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import net.sourceforge.plantuml.code.AsciiEncoder;
 import net.sourceforge.plantuml.code.Transcoder;
@@ -44,7 +46,7 @@ import net.sourceforge.plantuml.command.regex.Matcher2;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.error.PSystemErrorPreprocessor;
 import net.sourceforge.plantuml.preproc.Defines;
-import net.sourceforge.plantuml.preproc2.PreprocessorMode;
+import net.sourceforge.plantuml.preproc.FileWithSuffix;
 import net.sourceforge.plantuml.preproc2.PreprocessorModeSet;
 import net.sourceforge.plantuml.tim.TimLoader;
 import net.sourceforge.plantuml.utils.StartUtils;
@@ -52,11 +54,17 @@ import net.sourceforge.plantuml.version.Version;
 
 public class BlockUml {
 
+	private final List<StringLocated> rawSource;
 	private final List<StringLocated> data;
 	private List<StringLocated> debug;
 	private Diagram system;
 	private final Defines localDefines;
 	private final ISkinSimple skinParam;
+	private final Set<FileWithSuffix> included = new HashSet<FileWithSuffix>();
+
+	public Set<FileWithSuffix> getIncluded() {
+		return Collections.unmodifiableSet(included);
+	}
 
 	BlockUml(String... strings) {
 		this(convert(strings), Defines.createEmpty(), null, null);
@@ -93,26 +101,25 @@ public class BlockUml {
 		return result;
 	}
 
-	private PreprocessorMode pmode = PreprocessorMode.V1_LEGACY;
 	private boolean preprocessorError;
 
 	public BlockUml(List<StringLocated> strings, Defines defines, ISkinSimple skinParam, PreprocessorModeSet mode) {
+		this.rawSource = new ArrayList<StringLocated>(strings);
 		this.localDefines = defines;
 		this.skinParam = skinParam;
 		final String s0 = strings.get(0).getTrimmed().getString();
 		if (StartUtils.startsWithSymbolAnd("start", s0) == false) {
 			throw new IllegalArgumentException();
 		}
-		if (mode != null && mode.getPreprocessorMode() == PreprocessorMode.V2_NEW_TIM) {
-			this.pmode = mode.getPreprocessorMode();
+		if (mode == null) {
+			this.data = new ArrayList<StringLocated>(strings);
+		} else {
 			final TimLoader timLoader = new TimLoader(mode.getImportedFiles(), defines, mode.getCharset(),
 					(DefinitionsContainer) mode);
-			timLoader.load(strings);
-			this.data = timLoader.getResult();
+			this.included.addAll(timLoader.load(strings));
+			this.data = timLoader.getResultList();
 			this.debug = timLoader.getDebug();
 			this.preprocessorError = timLoader.isPreprocessorError();
-		} else {
-			this.data = new ArrayList<StringLocated>(strings);
 		}
 	}
 
@@ -148,7 +155,7 @@ public class BlockUml {
 			if (preprocessorError) {
 				system = new PSystemErrorPreprocessor(data, debug);
 			} else {
-				system = new PSystemBuilder().createPSystem(skinParam, data);
+				system = new PSystemBuilder().createPSystem(skinParam, data, rawSource);
 			}
 		}
 		return system;
@@ -187,25 +194,14 @@ public class BlockUml {
 	}
 
 	public List<String> getDefinition(boolean withHeader) {
-		final List<String> data2 = new ArrayList<String>();
+		final List<String> result = new ArrayList<String>();
 		for (StringLocated s : data) {
-			data2.add(s.getString());
+			result.add(s.getString());
 		}
 		if (withHeader) {
-			return Collections.unmodifiableList(data2);
+			return Collections.unmodifiableList(result);
 		}
-		return Collections.unmodifiableList(data2.subList(1, data2.size() - 1));
-	}
-
-	public List<String> getDefinition2(boolean withHeader) {
-		final List<String> data2 = new ArrayList<String>();
-		for (StringLocated s : debug) {
-			data2.add(s.getString());
-		}
-		if (withHeader) {
-			return Collections.unmodifiableList(data2);
-		}
-		return Collections.unmodifiableList(data2.subList(1, data2.size() - 1));
+		return Collections.unmodifiableList(result.subList(1, result.size() - 1));
 	}
 
 	public Defines getLocalDefines() {

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -44,6 +44,7 @@ import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.ugraphic.MinMax;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public abstract class AbstractFtile extends AbstractTextBlock implements Ftile {
 
@@ -58,6 +59,10 @@ public abstract class AbstractFtile extends AbstractTextBlock implements Ftile {
 			throw new IllegalStateException();
 		}
 		return skinParam;
+	}
+
+	final public HColorSet getIHtmlColorSet() {
+		return skinParam.getIHtmlColorSet();
 	}
 
 	public LinkRendering getInLinkRendering() {

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -81,10 +82,11 @@ class Election {
 
 	public Map<Member, String> getAllElected(Collection<String> shortNames) {
 		final Map<Member, String> memberWithPort = new HashMap<Member, String>();
-		for (String shortName : shortNames) {
+		for (String shortName : new HashSet<String>(shortNames)) {
 			final Member m = getCandidate(shortName);
 			if (m != null) {
 				memberWithPort.put(m, shortName);
+				shortNames.remove(shortName);
 			}
 		}
 		return Collections.unmodifiableMap(memberWithPort);

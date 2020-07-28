@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -33,27 +33,24 @@ package net.sourceforge.plantuml.graphic;
 import java.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
-import net.sourceforge.plantuml.SpriteContainer;
-import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 
-public class TextBlockSprited extends TextBlockSimple {
+public class TextBlockSprited extends AbstractTextBlock {
 
+	private final TextBlock parent;
 	private final TextBlock sprite;
 
-	public TextBlockSprited(TextBlock sprite, Display texts, FontConfiguration fontConfiguration,
-			HorizontalAlignment horizontalAlignment, SpriteContainer spriteContainer) {
-		super(texts, fontConfiguration, horizontalAlignment, spriteContainer, 0);
+	public TextBlockSprited(TextBlock sprite, TextBlock parent) {
 		this.sprite = sprite;
+		this.parent = parent;
 	}
 
-	@Override
 	public Dimension2D calculateDimension(StringBounder stringBounder) {
 		final double widthCircledCharacter = getCircledCharacterWithAndMargin(stringBounder);
 		final double heightCircledCharacter = sprite.calculateDimension(stringBounder).getHeight();
 
-		final Dimension2D dim = super.calculateDimension(stringBounder);
+		final Dimension2D dim = parent.calculateDimension(stringBounder);
 		return new Dimension2DDouble(dim.getWidth() + widthCircledCharacter, Math.max(heightCircledCharacter,
 				dim.getHeight()));
 	}
@@ -62,7 +59,6 @@ public class TextBlockSprited extends TextBlockSimple {
 		return sprite.calculateDimension(stringBounder).getWidth() + 6.0;
 	}
 
-	@Override
 	public void drawU(UGraphic ug) {
 		final StringBounder stringBounder = ug.getStringBounder();
 
@@ -70,7 +66,7 @@ public class TextBlockSprited extends TextBlockSimple {
 
 		final double widthCircledCharacter = getCircledCharacterWithAndMargin(stringBounder);
 
-		super.drawU(ug.apply(new UTranslate(widthCircledCharacter, 0)));
+		parent.drawU(ug.apply(UTranslate.dx(widthCircledCharacter)));
 	}
 
 }

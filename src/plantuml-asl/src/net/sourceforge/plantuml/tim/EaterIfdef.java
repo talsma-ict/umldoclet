@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,19 +30,21 @@
  */
 package net.sourceforge.plantuml.tim;
 
+import net.sourceforge.plantuml.StringLocated;
 import net.sourceforge.plantuml.preproc.EvalBoolean;
 import net.sourceforge.plantuml.preproc.Truth;
+import net.sourceforge.plantuml.tim.expression.TValue;
 
 public class EaterIfdef extends Eater {
 
 	private String expression;
 
-	public EaterIfdef(String s) {
+	public EaterIfdef(StringLocated s) {
 		super(s);
 	}
 
 	@Override
-	public void execute(TContext context, TMemory memory) throws EaterException {
+	public void analyze(TContext context, TMemory memory) throws EaterException {
 		skipSpaces();
 		checkAndEatChar("!ifdef");
 		skipSpaces();
@@ -53,7 +55,7 @@ public class EaterIfdef extends Eater {
 		final EvalBoolean eval = new EvalBoolean(expression, new Truth() {
 
 			public boolean isTrue(String varname) {
-				final TVariable currentValue = memory.getVariable(varname);
+				final TValue currentValue = memory.getVariable(varname);
 				return currentValue != null || context.doesFunctionExist(varname);
 			}
 		});

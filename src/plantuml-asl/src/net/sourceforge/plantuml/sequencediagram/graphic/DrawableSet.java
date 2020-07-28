@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -60,7 +60,6 @@ import net.sourceforge.plantuml.skin.ComponentType;
 import net.sourceforge.plantuml.skin.Context2D;
 import net.sourceforge.plantuml.skin.SimpleContext2D;
 import net.sourceforge.plantuml.skin.rose.Rose;
-import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.ugraphic.MinMax;
 import net.sourceforge.plantuml.ugraphic.UClip;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -291,7 +290,7 @@ public class DrawableSet {
 
 	private UTranslate getTranslate4(final double delta) {
 		if (delta > 0) {
-			return new UTranslate(0, -delta);
+			return UTranslate.dy(-delta);
 		}
 		return new UTranslate();
 	}
@@ -341,7 +340,7 @@ public class DrawableSet {
 			}
 			box.getParticipantBox().drawHeadTailU(ug, topStartingY, showHead, positionTail);
 			if (url != null) {
-				ug.closeAction();
+				ug.closeUrl();
 			}
 		}
 	}

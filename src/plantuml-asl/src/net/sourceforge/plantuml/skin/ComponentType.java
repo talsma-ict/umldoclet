@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,11 +30,10 @@
  */
 package net.sourceforge.plantuml.skin;
 
-import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.style.SName;
+import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.style.Styleable;
-import net.sourceforge.plantuml.style.StyleDefinition;
 
 public enum ComponentType implements Styleable {
 
@@ -66,52 +65,52 @@ public enum ComponentType implements Styleable {
 		return this == ARROW;
 	}
 
-	public StyleDefinition getDefaultStyleDefinition() {
+	public StyleSignature getDefaultStyleDefinition() {
 		if (this == PARTICIPANT_HEAD || this == PARTICIPANT_TAIL) {
-			return StyleDefinition.of(SName.root, SName.element,
+			return StyleSignature.of(SName.root, SName.element,
 					SName.sequenceDiagram, SName.participant);
 		}
 		if (this == PARTICIPANT_LINE || this == CONTINUE_LINE) {
-			return StyleDefinition.of(SName.root, SName.element,
-					SName.sequenceDiagram);
+			return StyleSignature.of(SName.root, SName.element,
+					SName.sequenceDiagram, SName.lifeLine);
 		}
 		if (this == ALIVE_BOX_CLOSE_CLOSE || this == ALIVE_BOX_CLOSE_OPEN || this == ALIVE_BOX_OPEN_CLOSE
 				|| this == ALIVE_BOX_OPEN_OPEN) {
-			return StyleDefinition.of(SName.root, SName.element,
+			return StyleSignature.of(SName.root, SName.element,
 					SName.sequenceDiagram, SName.lifeLine);
 		}
 		if (this == DESTROY) {
-			return StyleDefinition.of(SName.root, SName.element,
+			return StyleSignature.of(SName.root, SName.element,
 					SName.sequenceDiagram, SName.lifeLine);
 		}
 		if (this == DIVIDER) {
-			return StyleDefinition.of(SName.root, SName.element,
+			return StyleSignature.of(SName.root, SName.element,
 					SName.sequenceDiagram, SName.separator);
 		}
 		if (this == ENGLOBER) {
-			return StyleDefinition.of(SName.root, SName.element,
+			return StyleSignature.of(SName.root, SName.element,
 					SName.sequenceDiagram, SName.box);
 		}
 		if (this == NOTE) {
-			return StyleDefinition.of(SName.root, SName.element,
+			return StyleSignature.of(SName.root, SName.element,
 					SName.sequenceDiagram, SName.note);
 		}
 		if (this == DELAY_TEXT) {
-			return StyleDefinition.of(SName.root, SName.element,
+			return StyleSignature.of(SName.root, SName.element,
 					SName.sequenceDiagram, SName.delay);
 		}
 		if (this == DELAY_LINE) {
-			return StyleDefinition.of(SName.root, SName.element,
+			return StyleSignature.of(SName.root, SName.element,
 					SName.sequenceDiagram, SName.delay);
 		}
-		if (this == REFERENCE) {
-			return StyleDefinition.of(SName.root, SName.element,
-					SName.sequenceDiagram, SName.reference);
-		}
+//		if (this == REFERENCE) {
+//			return StyleSignature.of(SName.root, SName.element,
+//					SName.sequenceDiagram, SName.reference);
+//		}
 		if (SkinParam.USE_STYLES()) {
 			throw new UnsupportedOperationException(toString());
 
 		}
-		return StyleDefinition.of(SName.root);
+		return StyleSignature.of(SName.root);
 	}
 }

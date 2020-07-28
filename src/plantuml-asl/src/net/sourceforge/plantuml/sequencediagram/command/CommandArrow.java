@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -47,8 +47,6 @@ import net.sourceforge.plantuml.command.regex.RegexOr;
 import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.descdiagram.command.CommandLinkElement;
-import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.graphic.HtmlColorSet;
 import net.sourceforge.plantuml.sequencediagram.LifeEventType;
 import net.sourceforge.plantuml.sequencediagram.Message;
 import net.sourceforge.plantuml.sequencediagram.Participant;
@@ -58,10 +56,12 @@ import net.sourceforge.plantuml.skin.ArrowConfiguration;
 import net.sourceforge.plantuml.skin.ArrowDecoration;
 import net.sourceforge.plantuml.skin.ArrowHead;
 import net.sourceforge.plantuml.skin.ArrowPart;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 
-	private static final String ANCHOR = "(\\{([\\p{L}0-9_]+)\\}[%s]+)?";
+	static final String ANCHOR = "(\\{([\\p{L}0-9_]+)\\}[%s]+)?";
 
 	public CommandArrow() {
 		super(getRegexConcat());
@@ -72,44 +72,42 @@ public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 	}
 
 	static IRegex getRegexConcat() {
-		return RegexConcat
-				.build(CommandArrow.class.getName(),
-						RegexLeaf.start(), //
-						new RegexLeaf("PARALLEL", "(&[%s]*)?"), //
-						new RegexLeaf("ANCHOR", ANCHOR), //
-						new RegexOr("PART1", //
-								new RegexLeaf("PART1CODE", "([\\p{L}0-9_.@]+)"), //
-								new RegexLeaf("PART1LONG", "[%g]([^%g]+)[%g]"), //
-								new RegexLeaf("PART1LONGCODE", "[%g]([^%g]+)[%g][%s]*as[%s]+([\\p{L}0-9_.@]+)"), //
-								new RegexLeaf("PART1CODELONG", "([\\p{L}0-9_.@]+)[%s]+as[%s]*[%g]([^%g]+)[%g]")), //
-						new RegexLeaf("PART1ANCHOR", ANCHOR), //
-						RegexLeaf.spaceZeroOrMore(), //
-						new RegexLeaf("ARROW_DRESSING1",
-								"([%s][ox]|(?:[%s][ox])?<<?|(?:[%s][ox])?//?|(?:[%s][ox])?\\\\\\\\?)?"), //
-						new RegexOr(new RegexConcat( //
-								new RegexLeaf("ARROW_BODYA1", "(-+)"), //
-								new RegexLeaf("ARROW_STYLE1", getColorOrStylePattern()), //
-								new RegexLeaf("ARROW_BODYB1", "(-*)")), //
-								new RegexConcat( //
-										new RegexLeaf("ARROW_BODYA2", "(-*)"), //
-										new RegexLeaf("ARROW_STYLE2", getColorOrStylePattern()), //
-										new RegexLeaf("ARROW_BODYB2", "(-+)"))), //
-						new RegexLeaf("ARROW_DRESSING2",
-								"(>>?(?:[ox][%s])?|//?(?:[ox][%s])?|\\\\\\\\?(?:[ox][%s])?|[ox][%s])?"), //
-						RegexLeaf.spaceZeroOrMore(), //
-						new RegexOr("PART2", //
-								new RegexLeaf("PART2CODE", "([\\p{L}0-9_.@]+)"), //
-								new RegexLeaf("PART2LONG", "[%g]([^%g]+)[%g]"), //
-								new RegexLeaf("PART2LONGCODE", "[%g]([^%g]+)[%g][%s]*as[%s]+([\\p{L}0-9_.@]+)"), //
-								new RegexLeaf("PART2CODELONG", "([\\p{L}0-9_.@]+)[%s]+as[%s]*[%g]([^%g]+)[%g]")), //
-						new RegexLeaf("PART2ANCHOR", ANCHOR), //
-						RegexLeaf.spaceZeroOrMore(), //
-						new RegexLeaf("ACTIVATION", "(?:([+*!-]+)?)"), //
-						RegexLeaf.spaceZeroOrMore(), //
-						new RegexLeaf("LIFECOLOR", "(?:(#\\w+)?)"), //
-						RegexLeaf.spaceZeroOrMore(), //
-						new RegexLeaf("URL", "(" + UrlBuilder.getRegexp() + ")?"), //
-						RegexLeaf.spaceZeroOrMore(), new RegexLeaf("MESSAGE", "(?::[%s]*(.*))?"), RegexLeaf.end());
+		return RegexConcat.build(CommandArrow.class.getName(), RegexLeaf.start(), //
+				new RegexLeaf("PARALLEL", "(&[%s]*)?"), //
+				new RegexLeaf("ANCHOR", ANCHOR), //
+				new RegexOr("PART1", //
+						new RegexLeaf("PART1CODE", "([\\p{L}0-9_.@]+)"), //
+						new RegexLeaf("PART1LONG", "[%g]([^%g]+)[%g]"), //
+						new RegexLeaf("PART1LONGCODE", "[%g]([^%g]+)[%g][%s]*as[%s]+([\\p{L}0-9_.@]+)"), //
+						new RegexLeaf("PART1CODELONG", "([\\p{L}0-9_.@]+)[%s]+as[%s]*[%g]([^%g]+)[%g]")), //
+				new RegexLeaf("PART1ANCHOR", ANCHOR), //
+				RegexLeaf.spaceZeroOrMore(), //
+				new RegexLeaf("ARROW_DRESSING1",
+						"([%s][ox]|(?:[%s][ox])?<<?|(?:[%s][ox])?//?|(?:[%s][ox])?\\\\\\\\?)?"), //
+				new RegexOr(new RegexConcat( //
+						new RegexLeaf("ARROW_BODYA1", "(-+)"), //
+						new RegexLeaf("ARROW_STYLE1", getColorOrStylePattern()), //
+						new RegexLeaf("ARROW_BODYB1", "(-*)")), //
+						new RegexConcat( //
+								new RegexLeaf("ARROW_BODYA2", "(-*)"), //
+								new RegexLeaf("ARROW_STYLE2", getColorOrStylePattern()), //
+								new RegexLeaf("ARROW_BODYB2", "(-+)"))), //
+				new RegexLeaf("ARROW_DRESSING2",
+						"(>>?(?:[ox][%s])?|//?(?:[ox][%s])?|\\\\\\\\?(?:[ox][%s])?|[ox][%s])?"), //
+				RegexLeaf.spaceZeroOrMore(), //
+				new RegexOr("PART2", //
+						new RegexLeaf("PART2CODE", "([\\p{L}0-9_.@]+)"), //
+						new RegexLeaf("PART2LONG", "[%g]([^%g]+)[%g]"), //
+						new RegexLeaf("PART2LONGCODE", "[%g]([^%g]+)[%g][%s]*as[%s]+([\\p{L}0-9_.@]+)"), //
+						new RegexLeaf("PART2CODELONG", "([\\p{L}0-9_.@]+)[%s]+as[%s]*[%g]([^%g]+)[%g]")), //
+				new RegexLeaf("PART2ANCHOR", ANCHOR), //
+				RegexLeaf.spaceZeroOrMore(), //
+				new RegexLeaf("ACTIVATION", "(?:([+*!-]+)?)"), //
+				RegexLeaf.spaceZeroOrMore(), //
+				new RegexLeaf("LIFECOLOR", "(?:(#\\w+)?)"), //
+				RegexLeaf.spaceZeroOrMore(), //
+				new RegexLeaf("URL", "(" + UrlBuilder.getRegexp() + ")?"), //
+				RegexLeaf.spaceZeroOrMore(), new RegexLeaf("MESSAGE", "(?::[%s]*(.*))?"), RegexLeaf.end());
 	}
 
 	private Participant getOrCreateParticipant(SequenceDiagram system, RegexResult arg2, String n) {
@@ -258,7 +256,7 @@ public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 			return CommandExecutionResult.error(error);
 		}
 
-		final HtmlColor activationColor = diagram.getSkinParam().getIHtmlColorSet()
+		final HColor activationColor = diagram.getSkinParam().getIHtmlColorSet()
 				.getColorIfValid(arg.get("LIFECOLOR", 0));
 
 		if (activationSpec != null) {
@@ -318,7 +316,7 @@ public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 				config = config.withBody(ArrowBody.HIDDEN);
 				// link.goHidden();
 			} else {
-				config = config.withColor(HtmlColorSet.getInstance().getColorIfValid(s));
+				config = config.withColor(HColorSet.instance().getColorIfValid(s));
 			}
 		}
 		return config;

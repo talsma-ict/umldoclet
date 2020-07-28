@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,19 +30,26 @@
  */
 package net.sourceforge.plantuml.style;
 
-import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.graphic.IHtmlColorSet;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public class ValueColor extends ValueAbstract {
 
-	private final HtmlColor color;
+	private final HColor color;
+	private final int priority;
 
-	public ValueColor(HtmlColor color) {
+	public ValueColor(HColor color, int priority) {
 		this.color = color;
+		this.priority = priority;
 	}
 
-	public HtmlColor asColor(IHtmlColorSet set) {
+	public HColor asColor(HColorSet set) {
 		return color;
+	}
+
+	@Override
+	public int getPriority() {
+		return priority;
 	}
 
 }

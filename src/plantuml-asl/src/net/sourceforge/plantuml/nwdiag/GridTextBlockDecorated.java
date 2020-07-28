@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,18 +32,17 @@ package net.sourceforge.plantuml.nwdiag;
 
 import java.util.Collection;
 
-import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.graphic.HtmlColorSetSimple;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.ugraphic.MinMax;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public class GridTextBlockDecorated extends GridTextBlockSimple {
 
-	public static final HtmlColorSetSimple colors = new HtmlColorSetSimple();
+	public static final HColorSet colors = HColorSet.instance();
 
 	public static final int NETWORK_THIN = 5;
 
@@ -83,7 +82,7 @@ public class GridTextBlockDecorated extends GridTextBlockSimple {
 			y += lineHeight;
 		}
 		if (size != null) {
-			HtmlColor color = group.getColor();
+			HColor color = group.getColor();
 			if (color == null) {
 				color = colors.getColorIfValid("#AAA");
 			}
@@ -114,7 +113,7 @@ public class GridTextBlockDecorated extends GridTextBlockSimple {
 			rect.setDeltaShadow(1.0);
 			UGraphic ug2 = ug.apply(new UTranslate(xmin, y));
 			if (network != null && network.getColor() != null) {
-				ug2 = ug2.apply(new UChangeBackColor(network.getColor()));
+				ug2 = ug2.apply(network.getColor().bg());
 			}
 			ug2.draw(rect);
 			y += lineHeight(stringBounder, i);

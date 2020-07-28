@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,6 +30,12 @@
  */
 package net.sourceforge.plantuml.style;
 
+import java.awt.Font;
+
+import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorSet;
+import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class ValueNull extends ValueAbstract implements Value {
 
@@ -38,12 +44,39 @@ public class ValueNull extends ValueAbstract implements Value {
 	private ValueNull() {
 	}
 
+	@Override
 	public int asInt() {
 		return 0;
 	}
 
+	@Override
 	public double asDouble() {
 		return 0;
+	}
+
+	@Override
+	public boolean asBoolean() {
+		return false;
+	}
+
+	@Override
+	public String asString() {
+		return "";
+	}
+
+	@Override
+	public int asFontStyle() {
+		return Font.PLAIN;
+	}
+
+	@Override
+	public HColor asColor(HColorSet set) {
+		return HColorUtils.BLACK;
+	}
+
+	@Override
+	public HorizontalAlignment asHorizontalAlignment() {
+		return HorizontalAlignment.LEFT;
 	}
 
 }

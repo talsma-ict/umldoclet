@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -66,7 +66,6 @@ public class Cheese implements CuteShape {
 		final Point2D ptA = balloon.getPointOnCircle(angle1);
 		final Point2D ptB = balloon.getPointOnCircle(angle2);
 
-		// balloon.drawU(ug.apply(new UChangeBackColor(null)).apply(new UChangeColor(HtmlColorUtils.BLACK)));
 		final UPath path = new UPath();
 		final Point2D ptA0;
 		if (radius.hasCurvation()) {
@@ -111,12 +110,6 @@ public class Cheese implements CuteShape {
 		path.closePath();
 		ug.draw(path);
 
-		// if (startAngle.hasCurvation()) {
-		// insideA.drawU(ug.apply(new UChangeColor(HtmlColorUtils.BLACK)).apply(new UChangeBackColor(null)));
-		// }
-		// if (endAngle.hasCurvation()) {
-		// insideB.drawU(ug.apply(new UChangeColor(HtmlColorUtils.BLACK)).apply(new UChangeBackColor(null)));
-		// }
 	}
 
 	public CuteShape rotateZoom(RotationZoom other) {

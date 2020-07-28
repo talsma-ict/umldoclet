@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,7 +32,6 @@ package net.sourceforge.plantuml.command;
 
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.LineLocation;
-import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.TitledDiagram;
 import net.sourceforge.plantuml.UmlDiagram;
@@ -44,7 +43,6 @@ import net.sourceforge.plantuml.command.regex.RegexOr;
 import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.style.PName;
 
 public class CommandFooter extends SingleLineCommand2<TitledDiagram> {
 
@@ -67,14 +65,15 @@ public class CommandFooter extends SingleLineCommand2<TitledDiagram> {
 	@Override
 	protected CommandExecutionResult executeArg(TitledDiagram diagram, LineLocation location, RegexResult arg) {
 		final String align = arg.get("POSITION", 0);
-		HorizontalAlignment defaultAlign = HorizontalAlignment.CENTER;
-		if (SkinParam.USE_STYLES()) {
-			defaultAlign = FontParam.FOOTER.getStyleDefinition()
+		HorizontalAlignment ha = HorizontalAlignment.fromString(align, HorizontalAlignment.CENTER);
+		if (SkinParam.USE_STYLES() && align == null) {
+			ha = FontParam.FOOTER.getStyleDefinition(null)
 					.getMergedStyle(((UmlDiagram) diagram).getSkinParam().getCurrentStyleBuilder())
-					.value(PName.HorizontalAlignment).asHorizontalAlignment();
+					.getHorizontalAlignment();
 		}
-		diagram.getFooter().putDisplay(Display.getWithNewlines(arg.get("LABEL", 0)),
-				HorizontalAlignment.fromString(align, defaultAlign));
+		diagram.getFooter().putDisplay(Display.getWithNewlines(arg.get("LABEL", 0)), ha);
+
+		
 		return CommandExecutionResult.ok();
 	}
 }

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -39,7 +39,6 @@ import javax.xml.transform.TransformerException;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.TikzFontDistortion;
 import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.graphic.HtmlColorGradient;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.posimo.DotPath;
@@ -47,7 +46,6 @@ import net.sourceforge.plantuml.svg.SvgGraphics;
 import net.sourceforge.plantuml.ugraphic.AbstractCommonUGraphic;
 import net.sourceforge.plantuml.ugraphic.AbstractUGraphic;
 import net.sourceforge.plantuml.ugraphic.ClipContainer;
-import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UCenteredCharacter;
 import net.sourceforge.plantuml.ugraphic.UComment;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
@@ -59,6 +57,8 @@ import net.sourceforge.plantuml.ugraphic.UPath;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UText;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
+import net.sourceforge.plantuml.ugraphic.color.HColorGradient;
 
 public class UGraphicSvg extends AbstractUGraphic<SvgGraphics> implements ClipContainer, UGraphic2 {
 
@@ -84,20 +84,22 @@ public class UGraphicSvg extends AbstractUGraphic<SvgGraphics> implements ClipCo
 	}
 
 	public UGraphicSvg(boolean svgDimensionStyle, Dimension2D minDim, ColorMapper colorMapper, String backcolor,
-			boolean textAsPath, double scale, String linkTarget, String hover, long seed) {
-		this(minDim, colorMapper, new SvgGraphics(svgDimensionStyle, minDim, backcolor, scale, hover, seed),
+			boolean textAsPath, double scale, String linkTarget, String hover, long seed, String preserveAspectRatio) {
+		this(minDim, colorMapper,
+				new SvgGraphics(svgDimensionStyle, minDim, backcolor, scale, hover, seed, preserveAspectRatio),
 				textAsPath, linkTarget);
 	}
 
 	public UGraphicSvg(boolean svgDimensionStyle, Dimension2D minDim, ColorMapper colorMapper, boolean textAsPath,
-			double scale, String linkTarget, String hover, long seed) {
-		this(minDim, colorMapper, new SvgGraphics(svgDimensionStyle, minDim, scale, hover, seed), textAsPath,
-				linkTarget);
+			double scale, String linkTarget, String hover, long seed, String preserveAspectRatio) {
+		this(minDim, colorMapper, new SvgGraphics(svgDimensionStyle, minDim, scale, hover, seed, preserveAspectRatio),
+				textAsPath, linkTarget);
 	}
 
-	public UGraphicSvg(boolean svgDimensionStyle, Dimension2D minDim, ColorMapper mapper, HtmlColorGradient gr,
-			boolean textAsPath, double scale, String linkTarget, String hover, long seed) {
-		this(minDim, mapper, new SvgGraphics(svgDimensionStyle, minDim, scale, hover, seed), textAsPath, linkTarget);
+	public UGraphicSvg(boolean svgDimensionStyle, Dimension2D minDim, ColorMapper mapper, HColorGradient gr,
+			boolean textAsPath, double scale, String linkTarget, String hover, long seed, String preserveAspectRatio) {
+		this(minDim, mapper, new SvgGraphics(svgDimensionStyle, minDim, scale, hover, seed, preserveAspectRatio),
+				textAsPath, linkTarget);
 
 		final SvgGraphics svg = getGraphicObject();
 		svg.paintBackcolorGradient(mapper, gr);
@@ -155,7 +157,7 @@ public class UGraphicSvg extends AbstractUGraphic<SvgGraphics> implements ClipCo
 	public void createXml(OutputStream os, String metadata) throws IOException {
 		try {
 			if (metadata != null) {
-				getGraphicObject().addComment("\n" + metadata);
+				getGraphicObject().addComment(metadata);
 			}
 			getGraphicObject().createXml(os);
 		} catch (TransformerException e) {
@@ -163,11 +165,25 @@ public class UGraphicSvg extends AbstractUGraphic<SvgGraphics> implements ClipCo
 		}
 	}
 
+	@Override
+	public void startGroup(String groupId) {
+		getGraphicObject().startGroup(groupId);
+
+	}
+
+	@Override
+	public void closeGroup() {
+		getGraphicObject().closeGroup();
+	}
+
+
+	@Override
 	public void startUrl(Url url) {
 		getGraphicObject().openLink(url.getUrl(), url.getTooltip(), target);
 	}
 
-	public void closeAction() {
+	@Override
+	public void closeUrl() {
 		getGraphicObject().closeLink();
 	}
 

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -46,21 +46,19 @@ import net.sourceforge.plantuml.cucadiagram.Member;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.svek.AbstractEntityImage;
 import net.sourceforge.plantuml.svek.ShapeType;
 import net.sourceforge.plantuml.ugraphic.Shadowable;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class EntityImageState extends AbstractEntityImage {
 
@@ -86,7 +84,7 @@ public class EntityImageState extends AbstractEntityImage {
 		final Stereotype stereotype = entity.getStereotype();
 		this.withSymbol = stereotype != null && stereotype.isWithOOSymbol();
 
-		this.desc = entity.getDisplay().create(new FontConfiguration(getSkinParam(), FontParam.STATE, stereotype),
+		this.desc = entity.getDisplay().create8(new FontConfiguration(getSkinParam(), FontParam.STATE, stereotype),
 				HorizontalAlignment.CENTER, skinParam, CreoleMode.FULL, skinParam.wrapWidth());
 
 		Display list = Display.empty();
@@ -96,7 +94,7 @@ public class EntityImageState extends AbstractEntityImage {
 
 		this.url = entity.getUrl99();
 
-		this.fields = list.create(new FontConfiguration(getSkinParam(), FontParam.STATE_ATTRIBUTE, stereotype),
+		this.fields = list.create8(new FontConfiguration(getSkinParam(), FontParam.STATE_ATTRIBUTE, stereotype),
 				HorizontalAlignment.LEFT, skinParam, CreoleMode.FULL, skinParam.wrapWidth());
 
 	}
@@ -113,6 +111,7 @@ public class EntityImageState extends AbstractEntityImage {
 	}
 
 	final public void drawU(UGraphic ug) {
+		ug.startGroup(getEntity().getIdent().toString("."));
 		if (url != null) {
 			ug.startUrl(url);
 		}
@@ -122,26 +121,26 @@ public class EntityImageState extends AbstractEntityImage {
 
 		final double widthTotal = dimTotal.getWidth();
 		final double heightTotal = dimTotal.getHeight();
-		final Shadowable rect = new URectangle(widthTotal, heightTotal, CORNER, CORNER);
+		final Shadowable rect = new URectangle(widthTotal, heightTotal).rounded(CORNER);
 		if (getSkinParam().shadowing(getEntity().getStereotype())) {
 			rect.setDeltaShadow(4);
 		}
 
-		HtmlColor classBorder = lineConfig.getColors(getSkinParam()).getColor(ColorType.LINE);
+		HColor classBorder = lineConfig.getColors(getSkinParam()).getColor(ColorType.LINE);
 		if (classBorder == null) {
 			classBorder = SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.stateBorder);
 		}
-		ug = ug.apply(getStroke()).apply(new UChangeColor(classBorder));
-		HtmlColor backcolor = getEntity().getColors(getSkinParam()).getColor(ColorType.BACK);
+		ug = ug.apply(getStroke()).apply(classBorder);
+		HColor backcolor = getEntity().getColors(getSkinParam()).getColor(ColorType.BACK);
 		if (backcolor == null) {
 			backcolor = SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.stateBackground);
 		}
-		ug = ug.apply(new UChangeBackColor(backcolor));
+		ug = ug.apply(backcolor.bg());
 
 		ug.draw(rect);
 
 		final double yLine = MARGIN + dimDesc.getHeight() + MARGIN_LINE;
-		ug.apply(new UTranslate(0, yLine)).draw(new ULine(widthTotal, 0));
+		ug.apply(UTranslate.dy(yLine)).draw(ULine.hline(widthTotal));
 
 		ug = ug.apply(new UStroke());
 
@@ -160,8 +159,9 @@ public class EntityImageState extends AbstractEntityImage {
 		fields.drawU(ug.apply(new UTranslate(xFields, yFields)));
 
 		if (url != null) {
-			ug.closeAction();
+			ug.closeUrl();
 		}
+		ug.closeGroup();
 	}
 
 	private UStroke getStroke() {
@@ -178,7 +178,7 @@ public class EntityImageState extends AbstractEntityImage {
 		final UEllipse small = new UEllipse(2 * smallRadius, 2 * smallRadius);
 		ug.apply(new UTranslate(xSymbol, ySymbol)).draw(small);
 		ug.apply(new UTranslate(xSymbol + smallLine + 2 * smallRadius, ySymbol)).draw(small);
-		ug.apply(new UTranslate(xSymbol + 2 * smallRadius, ySymbol + smallLine)).draw(new ULine(smallLine, 0));
+		ug.apply(new UTranslate(xSymbol + 2 * smallRadius, ySymbol + smallLine)).draw(ULine.hline(smallLine));
 	}
 
 	public ShapeType getShapeType() {

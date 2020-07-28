@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,9 +30,6 @@
  */
 package net.sourceforge.plantuml.classdiagram.command;
 
-import java.util.EnumSet;
-import java.util.Set;
-
 import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagram;
@@ -49,17 +46,13 @@ import net.sourceforge.plantuml.cucadiagram.EntityGenderUtils;
 import net.sourceforge.plantuml.cucadiagram.EntityPortion;
 import net.sourceforge.plantuml.cucadiagram.EntityUtils;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
+import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.descdiagram.DescriptionDiagram;
 import net.sourceforge.plantuml.objectdiagram.AbstractClassOrObjectDiagram;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 
 public class CommandHideShowByGender extends SingleLineCommand2<UmlDiagram> {
-
-	private static final EnumSet<EntityPortion> PORTION_METHOD = EnumSet.<EntityPortion> of(EntityPortion.METHOD);
-	private static final EnumSet<EntityPortion> PORTION_MEMBER = EnumSet.<EntityPortion> of(EntityPortion.FIELD,
-			EntityPortion.METHOD);
-	private static final EnumSet<EntityPortion> PORTION_FIELD = EnumSet.<EntityPortion> of(EntityPortion.FIELD);
 
 	public CommandHideShowByGender() {
 		super(getRegexConcat());
@@ -80,14 +73,14 @@ public class CommandHideShowByGender extends SingleLineCommand2<UmlDiagram> {
 				RegexLeaf.end());
 	}
 
-	private final EntityGender emptyByGender(Set<EntityPortion> portion) {
-		if (portion == PORTION_METHOD) {
+	private final EntityGender emptyByGender(EntityPortion portion) {
+		if (portion == EntityPortion.METHOD) {
 			return EntityGenderUtils.emptyMethods();
 		}
-		if (portion == PORTION_FIELD) {
+		if (portion == EntityPortion.FIELD) {
 			return EntityGenderUtils.emptyFields();
 		}
-		if (portion == PORTION_MEMBER) {
+		if (portion == EntityPortion.MEMBER) {
 			throw new IllegalArgumentException();
 			// return EntityGenderUtils.emptyMembers();
 		}
@@ -110,13 +103,13 @@ public class CommandHideShowByGender extends SingleLineCommand2<UmlDiagram> {
 	}
 
 	private CommandExecutionResult executeSequenceDiagram(SequenceDiagram diagram, RegexResult arg) {
-		final Set<EntityPortion> portion = getEntityPortion(arg.get("PORTION", 0));
-		diagram.hideOrShow(portion, arg.get("COMMAND", 0).equalsIgnoreCase("show"));
+		final EntityPortion portion = getEntityPortion(arg.get("PORTION", 0));
+		diagram.hideOrShow(portion.asSet(), arg.get("COMMAND", 0).equalsIgnoreCase("show"));
 		return CommandExecutionResult.ok();
 	}
 
 	private CommandExecutionResult executeDescriptionDiagram(DescriptionDiagram diagram, RegexResult arg) {
-		final Set<EntityPortion> portion = getEntityPortion(arg.get("PORTION", 0));
+		final EntityPortion portion = getEntityPortion(arg.get("PORTION", 0));
 		final EntityGender gender;
 		final String arg1 = arg.get("GENDER", 0);
 		if (arg1 == null) {
@@ -136,7 +129,8 @@ public class CommandHideShowByGender extends SingleLineCommand2<UmlDiagram> {
 		} else if (arg1.startsWith("<<")) {
 			gender = EntityGenderUtils.byStereotype(arg1);
 		} else {
-			final IEntity entity = diagram.getOrCreateLeaf(Code.of(arg1), null, null);
+			final IEntity entity = diagram.getOrCreateLeaf(diagram.buildLeafIdent(arg1), diagram.buildCode(arg1), null,
+					null);
 			gender = EntityGenderUtils.byEntityAlone(entity);
 		}
 
@@ -144,12 +138,12 @@ public class CommandHideShowByGender extends SingleLineCommand2<UmlDiagram> {
 		return CommandExecutionResult.ok();
 	}
 
-	private CommandExecutionResult executeClassDiagram(AbstractClassOrObjectDiagram classDiagram, RegexResult arg) {
+	private CommandExecutionResult executeClassDiagram(AbstractClassOrObjectDiagram diagram, RegexResult arg) {
 
-		final Set<EntityPortion> portion = getEntityPortion(arg.get("PORTION", 0));
+		final EntityPortion portion = getEntityPortion(arg.get("PORTION", 0));
 
 		EntityGender gender = null;
-		final String arg1 = arg.get("GENDER", 0);
+		String arg1 = arg.get("GENDER", 0);
 		if (arg1 == null) {
 			gender = EntityGenderUtils.all();
 		} else if (arg1.equalsIgnoreCase("class")) {
@@ -167,47 +161,50 @@ public class CommandHideShowByGender extends SingleLineCommand2<UmlDiagram> {
 		} else if (arg1.startsWith("<<")) {
 			gender = EntityGenderUtils.byStereotype(arg1);
 		} else {
-			final IEntity entity = classDiagram.getOrCreateLeaf(Code.of(arg1), null, null);
+			arg1 = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg1);
+			final Ident ident = diagram.buildLeafIdent(arg1);
+			final Code code = diagram.V1972() ? ident : diagram.buildCode(arg1);
+			final IEntity entity = diagram.getOrCreateLeaf(ident, code, null, null);
 			gender = EntityGenderUtils.byEntityAlone(entity);
 		}
 		if (gender != null) {
 			final boolean empty = arg.get("EMPTY", 0) != null;
-			final boolean emptyMembers = empty && portion == PORTION_MEMBER;
+			final boolean emptyMembers = empty && portion == EntityPortion.MEMBER;
 			if (empty == true && emptyMembers == false) {
 				gender = EntityGenderUtils.and(gender, emptyByGender(portion));
 			}
-			if (EntityUtils.groupRoot(classDiagram.getCurrentGroup()) == false) {
-				gender = EntityGenderUtils.and(gender, EntityGenderUtils.byPackage(classDiagram.getCurrentGroup()));
+			if (EntityUtils.groupRoot(diagram.getCurrentGroup()) == false) {
+				gender = EntityGenderUtils.and(gender, EntityGenderUtils.byPackage(diagram.getCurrentGroup()));
 			}
 
 			if (emptyMembers) {
-				classDiagram.hideOrShow(EntityGenderUtils.and(gender, emptyByGender(PORTION_FIELD)), PORTION_FIELD, arg
-						.get("COMMAND", 0).equalsIgnoreCase("show"));
-				classDiagram.hideOrShow(EntityGenderUtils.and(gender, emptyByGender(PORTION_METHOD)), PORTION_METHOD,
-						arg.get("COMMAND", 0).equalsIgnoreCase("show"));
+				diagram.hideOrShow(EntityGenderUtils.and(gender, emptyByGender(EntityPortion.FIELD)),
+						EntityPortion.FIELD, arg.get("COMMAND", 0).equalsIgnoreCase("show"));
+				diagram.hideOrShow(EntityGenderUtils.and(gender, emptyByGender(EntityPortion.METHOD)),
+						EntityPortion.METHOD, arg.get("COMMAND", 0).equalsIgnoreCase("show"));
 			} else {
-				classDiagram.hideOrShow(gender, portion, arg.get("COMMAND", 0).equalsIgnoreCase("show"));
+				diagram.hideOrShow(gender, portion, arg.get("COMMAND", 0).equalsIgnoreCase("show"));
 			}
 		}
 		return CommandExecutionResult.ok();
 	}
 
-	private Set<EntityPortion> getEntityPortion(String s) {
+	private EntityPortion getEntityPortion(String s) {
 		final String sub = StringUtils.goLowerCase(s.substring(0, 3));
 		if (sub.equals("met")) {
-			return PORTION_METHOD;
+			return EntityPortion.METHOD;
 		}
 		if (sub.equals("mem")) {
-			return PORTION_MEMBER;
+			return EntityPortion.MEMBER;
 		}
 		if (sub.equals("att") || sub.equals("fie")) {
-			return PORTION_FIELD;
+			return EntityPortion.FIELD;
 		}
 		if (sub.equals("cir")) {
-			return EnumSet.<EntityPortion> of(EntityPortion.CIRCLED_CHARACTER);
+			return EntityPortion.CIRCLED_CHARACTER;
 		}
 		if (sub.equals("ste")) {
-			return EnumSet.<EntityPortion> of(EntityPortion.STEREOTYPE);
+			return EntityPortion.STEREOTYPE;
 		}
 		throw new IllegalArgumentException();
 	}

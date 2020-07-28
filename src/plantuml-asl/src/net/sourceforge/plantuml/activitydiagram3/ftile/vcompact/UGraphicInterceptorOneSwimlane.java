@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,27 +30,29 @@
  */
 package net.sourceforge.plantuml.activitydiagram3.ftile.vcompact;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import net.sourceforge.plantuml.activitydiagram3.ftile.Connection;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
-import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.graphic.UGraphicDelegator;
 import net.sourceforge.plantuml.ugraphic.UChange;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UShape;
+import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class UGraphicInterceptorOneSwimlane extends UGraphicDelegator {
 
 	private final Swimlane swimlane;
+	private final List<Swimlane> orderedList;
 
-	public UGraphicInterceptorOneSwimlane(UGraphic ug, Swimlane swimlane) {
+	public UGraphicInterceptorOneSwimlane(UGraphic ug, Swimlane swimlane, List<Swimlane> orderedList) {
 		super(ug);
 		this.swimlane = swimlane;
+		this.orderedList = orderedList;
 	}
 
 	public void draw(UShape shape) {
@@ -83,17 +85,20 @@ public class UGraphicInterceptorOneSwimlane extends UGraphicDelegator {
 	}
 
 	private void drawGoto() {
-		final UGraphic ugGoto = getUg().apply(new UChangeColor(HtmlColorUtils.GREEN)).apply(
-				new UChangeBackColor(HtmlColorUtils.GREEN));
+		final UGraphic ugGoto = getUg().apply(HColorUtils.GREEN).apply(HColorUtils.GREEN.bg());
 		ugGoto.draw(new ULine(100, 100));
 	}
 
 	public UGraphic apply(UChange change) {
-		return new UGraphicInterceptorOneSwimlane(getUg().apply(change), swimlane);
+		return new UGraphicInterceptorOneSwimlane(getUg().apply(change), swimlane, orderedList);
 	}
 
 	public final Swimlane getSwimlane() {
 		return swimlane;
+	}
+
+	public final List<Swimlane> getOrderedListOfAllSwimlanes() {
+		return Collections.unmodifiableList(orderedList);
 	}
 
 }

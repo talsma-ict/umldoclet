@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -45,13 +45,14 @@ import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.Code;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
+import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.color.ColorParser;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.statediagram.StateDiagram;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class CommandCreateState extends SingleLineCommand2<StateDiagram> {
 
@@ -98,18 +99,20 @@ public class CommandCreateState extends SingleLineCommand2<StateDiagram> {
 
 	@Override
 	protected CommandExecutionResult executeArg(StateDiagram diagram, LineLocation location, RegexResult arg) {
-		final Code code = Code.of(arg.getLazzy("CODE", 0));
+		final String idShort = arg.getLazzy("CODE", 0);
+		final Ident ident = diagram.buildLeafIdent(idShort);
+		final Code code = diagram.V1972() ? ident : diagram.buildCode(idShort);
 		String display = arg.getLazzy("DISPLAY", 0);
 		if (display == null) {
-			display = code.getFullName();
+			display = code.getName();
 		}
 		final String stereotype = arg.get("STEREOTYPE", 0);
 		final LeafType type = getTypeFromStereotype(stereotype);
-		if (diagram.checkConcurrentStateOk(code) == false) {
-			return CommandExecutionResult.error("The state " + code.getFullName()
+		if (diagram.checkConcurrentStateOk(ident, code) == false) {
+			return CommandExecutionResult.error("The state " + code.getName()
 					+ " has been created in a concurrent state : it cannot be used here.");
 		}
-		final IEntity ent = diagram.getOrCreateLeaf(code, type, null);
+		final IEntity ent = diagram.getOrCreateLeaf(diagram.buildLeafIdent(idShort), code, type, null);
 		ent.setDisplay(Display.getWithNewlines(display));
 
 		if (stereotype != null) {
@@ -124,7 +127,7 @@ public class CommandCreateState extends SingleLineCommand2<StateDiagram> {
 
 		Colors colors = color().getColor(arg, diagram.getSkinParam().getIHtmlColorSet());
 
-		final HtmlColor lineColor = diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("LINECOLOR", 1));
+		final HColor lineColor = diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("LINECOLOR", 1));
 		if (lineColor != null) {
 			colors = colors.add(ColorType.LINE, lineColor);
 		}
@@ -141,7 +144,7 @@ public class CommandCreateState extends SingleLineCommand2<StateDiagram> {
 
 		final String addFields = arg.get("ADDFIELD", 0);
 		if (addFields != null) {
-			ent.getBodier().addFieldOrMethod(addFields, ent);
+			ent.getBodier().addFieldOrMethod(addFields);
 		}
 		return CommandExecutionResult.ok();
 	}

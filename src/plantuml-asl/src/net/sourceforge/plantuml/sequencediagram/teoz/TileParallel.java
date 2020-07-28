@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -72,8 +72,9 @@ public class TileParallel implements Tile, TileWithUpdateStairs, TileWithCallbac
 		final double yPointAll = getYPoint(stringBounder);
 		for (Tile tile : tiles) {
 			final double yPoint = tile.getYPoint(stringBounder);
-			// tile.drawU(ug.apply(new UTranslate(0, totalHeight - tile.getPreferredHeight(stringBounder))));
-			tile.drawU(ug.apply(new UTranslate(0, yPointAll - yPoint)));
+			// tile.drawU(ug.apply(UTranslate.dy(totalHeight -
+			// tile.getPreferredHeight(stringBounder))));
+			tile.drawU(ug.apply(UTranslate.dy(yPointAll - yPoint)));
 		}
 	}
 
@@ -159,9 +160,9 @@ public class TileParallel implements Tile, TileWithUpdateStairs, TileWithCallbac
 		return null;
 	}
 
-	public boolean matchAnchor(String anchor) {
+	public boolean matchAnchorV1(String anchor) {
 		for (Tile tile : tiles) {
-			if (tile.matchAnchor(anchor)) {
+			if (tile.matchAnchorV1(anchor)) {
 				return true;
 			}
 		}

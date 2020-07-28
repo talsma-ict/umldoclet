@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -44,7 +44,9 @@ public interface IEntity extends SpecificBackcolorable, Hideable, Removeable, Li
 
 	public Code getCode();
 
-	public LongCode getLongCode();
+	public String getCodeGetName();
+
+	public Ident getIdent();
 
 	public USymbol getUSymbol();
 
@@ -87,5 +89,10 @@ public interface IEntity extends SpecificBackcolorable, Hideable, Removeable, Li
 	public void addStereotag(Stereotag tag);
 
 	public Set<Stereotag> stereotags();
+	
+	public boolean isAloneAndUnlinked();
+
+	public void setThisIsTogether();
+
 
 }

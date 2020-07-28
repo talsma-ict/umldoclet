@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -56,10 +56,11 @@ public class PlacementStrategyVisibility extends AbstractPlacementStrategy {
 			final Map.Entry<TextBlock, Dimension2D> ent2 = it.next();
 			final double height1 = ent1.getValue().getHeight();
 			final double height2 = ent2.getValue().getHeight();
-			final double maxHeight = Math.max(height1, height2);
-			result.put(ent1.getKey(), new Point2D.Double(0, 2 + y + (maxHeight - height1) / 2));
-			result.put(ent2.getKey(), new Point2D.Double(col2, y + (maxHeight - height2) / 2));
-			y += maxHeight;
+			final double maxHeight12 = Math.max(height1, height2);
+			// result.put(ent1.getKey(), new Point2D.Double(0, 2 + y + (maxHeight - height1) / 2));
+			result.put(ent1.getKey(), new Point2D.Double(0, 2 + y));
+			result.put(ent2.getKey(), new Point2D.Double(col2, y + (maxHeight12 - height2) / 2));
+			y += maxHeight12;
 		}
 		return result;
 	}

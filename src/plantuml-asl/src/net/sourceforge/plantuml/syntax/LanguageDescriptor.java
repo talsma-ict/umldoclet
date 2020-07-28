@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -37,7 +37,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import net.sourceforge.plantuml.SkinParam;
-import net.sourceforge.plantuml.graphic.HtmlColorSetSimple;
+import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 import net.sourceforge.plantuml.utils.Cypher;
 
 public class LanguageDescriptor {
@@ -77,6 +77,7 @@ public class LanguageDescriptor {
 		type.add("queue");
 		type.add("archimate");
 		type.add("diamond");
+		type.add("detach");
 
 		keyword.add("@startuml");
 		keyword.add("@enduml");
@@ -151,7 +152,11 @@ public class LanguageDescriptor {
 		keyword.add("allow_mixing");
 		keyword.add("allowmixing");
 		keyword.add("mainframe");
-		keyword.add("accross");
+		keyword.add("across");
+		keyword.add("stereotype");
+		keyword.add("split");
+		keyword.add("style");
+		keyword.add("sprite");
 
 		preproc.add("!exit");
 		preproc.add("!include");
@@ -165,6 +170,19 @@ public class LanguageDescriptor {
 		preproc.add("!else");
 		preproc.add("!definelong");
 		preproc.add("!enddefinelong");
+		preproc.add("!function");
+		preproc.add("!procedure");
+		preproc.add("!endfunction");
+		preproc.add("!endprocedure");
+		preproc.add("!unquoted");
+		preproc.add("!return");
+		preproc.add("!startsub");
+		preproc.add("!endsub");
+		preproc.add("!assert");
+		preproc.add("!log");
+		preproc.add("!local");
+		preproc.add("!dump_memory");
+		preproc.add("!import");
 	}
 
 	public Cypher getCypher() {
@@ -181,7 +199,7 @@ public class LanguageDescriptor {
 		for (String s : SkinParam.getPossibleValues()) {
 			cypher.addException(s);
 		}
-		for (String s : new HtmlColorSetSimple().names()) {
+		for (String s : HColorSet.instance().names()) {
 			cypher.addException(s);
 		}
 		cypher.addException("o");
@@ -193,7 +211,7 @@ public class LanguageDescriptor {
 		print(ps, "keyword", keyword);
 		print(ps, "preprocessor", preproc);
 		print(ps, "skinparameter", SkinParam.getPossibleValues());
-		print(ps, "color", new HtmlColorSetSimple().names());
+		print(ps, "color", HColorSet.instance().names());
 		ps.println(";EOF");
 	}
 

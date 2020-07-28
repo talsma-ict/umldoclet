@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -38,10 +38,10 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactory;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileKilled;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
 import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
 import net.sourceforge.plantuml.sequencediagram.NoteType;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class InstructionRepeat implements Instruction {
 
@@ -50,8 +50,9 @@ public class InstructionRepeat implements Instruction {
 	private final LinkRendering nextLinkRenderer;
 	private final Swimlane swimlane;
 	private Swimlane swimlaneOut;
-	private final HtmlColor color;
+	private BoxStyle boxStyle;
 	private boolean killed = false;
+	private final BoxStyle boxStyleIn;
 
 	private Display backward = Display.NULL;
 	private Display test = Display.NULL;
@@ -61,13 +62,15 @@ public class InstructionRepeat implements Instruction {
 	private boolean testCalled = false;
 	private LinkRendering endRepeatLinkRendering = LinkRendering.none();
 	private LinkRendering backRepeatLinkRendering = LinkRendering.none();
+	private final Colors colors;
 
 	public boolean containsBreak() {
 		return repeatList.containsBreak();
 	}
 
-	public InstructionRepeat(Swimlane swimlane, Instruction parent, LinkRendering nextLinkRenderer, HtmlColor color,
-			Display startLabel) {
+	public InstructionRepeat(Swimlane swimlane, Instruction parent, LinkRendering nextLinkRenderer, HColor color,
+			Display startLabel, BoxStyle boxStyleIn, Colors colors) {
+		this.boxStyleIn = boxStyleIn;
 		this.startLabel = startLabel;
 		this.parent = parent;
 		this.swimlane = swimlane;
@@ -75,7 +78,7 @@ public class InstructionRepeat implements Instruction {
 		if (nextLinkRenderer == null) {
 			throw new IllegalArgumentException();
 		}
-		this.color = color;
+		this.colors = colors;
 	}
 
 	private boolean isLastOfTheParent() {
@@ -85,9 +88,10 @@ public class InstructionRepeat implements Instruction {
 		return false;
 	}
 
-	public void setBackward(Display label, Swimlane swimlaneOut) {
+	public void setBackward(Display label, Swimlane swimlaneOut, BoxStyle boxStyle) {
 		this.backward = label;
 		this.swimlaneOut = swimlaneOut;
+		this.boxStyle = boxStyle;
 	}
 
 	public void add(Instruction ins) {
@@ -95,11 +99,11 @@ public class InstructionRepeat implements Instruction {
 	}
 
 	public Ftile createFtile(FtileFactory factory) {
-		final Ftile back = Display.isNull(backward) ? null : factory.activity(backward, swimlane, BoxStyle.PLAIN,
-				Colors.empty());
-		final Ftile result = factory.repeat(swimlane, swimlaneOut, startLabel,
-				factory.decorateOut(repeatList.createFtile(factory), endRepeatLinkRendering), test, yes, out, color,
-				backRepeatLinkRendering, back, isLastOfTheParent());
+		final Ftile back = Display.isNull(backward) ? null
+				: factory.activity(backward, swimlane, boxStyle, Colors.empty());
+		final Ftile decorateOut = factory.decorateOut(repeatList.createFtile(factory), endRepeatLinkRendering);
+		final Ftile result = factory.repeat(boxStyleIn, swimlane, swimlaneOut, startLabel, decorateOut, test, yes, out,
+				colors, backRepeatLinkRendering, back, isLastOfTheParent());
 		if (killed) {
 			return new FtileKilled(result);
 		}

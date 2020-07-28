@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -40,21 +40,20 @@ import net.sourceforge.plantuml.activitydiagram3.LinkRendering;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactory;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactoryDelegator;
-import net.sourceforge.plantuml.activitydiagram3.ftile.FtileMinWidth;
+import net.sourceforge.plantuml.activitydiagram3.ftile.FtileMinWidthCentered;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.cond.FtileSwitchNude;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.cond.FtileSwitchWithDiamonds;
-import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.cond.FtileSwitchWithOneLink;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.cond.FtileSwitchWithManyLinks;
+import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.cond.FtileSwitchWithOneLink;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileDiamondInside;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.graphic.HtmlColorAndStyle;
 import net.sourceforge.plantuml.graphic.Rainbow;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class FtileFactoryDelegatorSwitch extends FtileFactoryDelegator {
 
@@ -73,7 +72,7 @@ public class FtileFactoryDelegatorSwitch extends FtileFactoryDelegator {
 	private Ftile createNude(Swimlane swimlane, List<Branch> branches) {
 		final List<Ftile> ftiles = new ArrayList<Ftile>();
 		for (Branch branch : branches) {
-			ftiles.add(new FtileMinWidth(branch.getFtile(), 30));
+			ftiles.add(new FtileMinWidthCentered(branch.getFtile(), 30));
 		}
 		return new FtileSwitchNude(ftiles, swimlane);
 	}
@@ -81,7 +80,7 @@ public class FtileFactoryDelegatorSwitch extends FtileFactoryDelegator {
 	private Ftile createWithDiamonds(Swimlane swimlane, List<Branch> branches, Display labelTest) {
 		final List<Ftile> ftiles = new ArrayList<Ftile>();
 		for (Branch branch : branches) {
-			ftiles.add(new FtileMinWidth(branch.getFtile(), 30));
+			ftiles.add(new FtileMinWidthCentered(branch.getFtile(), 30));
 		}
 		final Ftile diamond1 = getDiamond1(swimlane, branches.get(0), labelTest);
 		final Ftile diamond2 = getDiamond2(swimlane, branches.get(0));
@@ -94,9 +93,9 @@ public class FtileFactoryDelegatorSwitch extends FtileFactoryDelegator {
 		final Ftile diamond1 = getDiamond1(swimlane, branches.get(0), labelTest);
 		final Ftile diamond2 = getDiamond2(swimlane, branches.get(0));
 		for (Branch branch : branches) {
-			ftiles.add(new FtileMinWidth(branch.getFtile(), 30));
+			ftiles.add(new FtileMinWidthCentered(branch.getFtile(), 30));
 		}
-		final Rainbow arrowColor = HtmlColorAndStyle.build(skinParam());
+		final Rainbow arrowColor = Rainbow.build(skinParam());
 		if (ftiles.size() == 1) {
 			final FtileSwitchWithOneLink result = new FtileSwitchWithOneLink(ftiles, branches, swimlane, diamond1,
 					diamond2, getStringBounder(), arrowColor);
@@ -109,8 +108,8 @@ public class FtileFactoryDelegatorSwitch extends FtileFactoryDelegator {
 	}
 
 	private Ftile getDiamond1(Swimlane swimlane, Branch branch0, Display test) {
-		final HtmlColor borderColor = getRose().getHtmlColor(skinParam(), ColorParam.activityDiamondBorder);
-		final HtmlColor backColor = branch0.getColor() == null ? getRose().getHtmlColor(skinParam(),
+		final HColor borderColor = getRose().getHtmlColor(skinParam(), ColorParam.activityDiamondBorder);
+		final HColor backColor = branch0.getColor() == null ? getRose().getHtmlColor(skinParam(),
 				ColorParam.activityDiamondBackground) : branch0.getColor();
 
 		final FontConfiguration fcDiamond = new FontConfiguration(skinParam(), FontParam.ACTIVITY_DIAMOND, null);
@@ -122,14 +121,14 @@ public class FtileFactoryDelegatorSwitch extends FtileFactoryDelegator {
 	}
 
 	private Ftile getDiamond2(Swimlane swimlane, Branch branch0) {
-		final HtmlColor borderColor = getRose().getHtmlColor(skinParam(), ColorParam.activityDiamondBorder);
-		final HtmlColor backColor = branch0.getColor() == null ? getRose().getHtmlColor(skinParam(),
+		final HColor borderColor = getRose().getHtmlColor(skinParam(), ColorParam.activityDiamondBorder);
+		final HColor backColor = branch0.getColor() == null ? getRose().getHtmlColor(skinParam(),
 				ColorParam.activityDiamondBackground) : branch0.getColor();
 
 		return new FtileDiamondInside(branch0.skinParam(), backColor, borderColor, swimlane, TextBlockUtils.empty(0, 0));
 	}
 
-	private HtmlColor fontColor(FontParam param) {
+	private HColor fontColor(FontParam param) {
 		return skinParam().getFontHtmlColor(null, param);
 	}
 

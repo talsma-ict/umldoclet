@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -31,12 +31,15 @@
 package net.sourceforge.plantuml.tim.stdlib;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.tim.EaterException;
+import net.sourceforge.plantuml.tim.EaterExceptionLocated;
 import net.sourceforge.plantuml.tim.TContext;
 import net.sourceforge.plantuml.tim.TFunctionSignature;
 import net.sourceforge.plantuml.tim.TMemory;
-import net.sourceforge.plantuml.tim.TVariable;
 import net.sourceforge.plantuml.tim.TVariableScope;
 import net.sourceforge.plantuml.tim.expression.TValue;
 
@@ -46,17 +49,18 @@ public class SetVariableValue extends SimpleReturnFunction {
 		return new TFunctionSignature("%set_variable_value", 2);
 	}
 
-	public boolean canCover(int nbArg) {
+	public boolean canCover(int nbArg, Set<String> namedArgument) {
 		return nbArg == 2;
 	}
 
-	public TValue executeReturn(TContext context, TMemory memory, List<TValue> args) throws EaterException {
+	public TValue executeReturnFunction(TContext context, TMemory memory, LineLocation location, List<TValue> values,
+			Map<String, TValue> named) throws EaterException, EaterExceptionLocated {
 		// if (memory instanceof TMemoryLocal) {
 		// memory = ((TMemoryLocal) memory).getGlobalForInternalUseOnly();
 		// }
-		final String name = args.get(0).toString();
-		final TValue value = args.get(1);
-		memory.putVariable(name, new TVariable(value), TVariableScope.GLOBAL);
+		final String name = values.get(0).toString();
+		final TValue value = values.get(1);
+		memory.putVariable(name, value, TVariableScope.GLOBAL);
 		return TValue.fromString("");
 	}
 

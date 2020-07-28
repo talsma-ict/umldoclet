@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -36,7 +36,7 @@ import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 
-class TextBlockMinWidth extends AbstractTextBlock  implements TextBlock {
+class TextBlockMinWidth extends AbstractTextBlock implements TextBlock {
 
 	private final TextBlock textBlock;
 	private final double minWidth;
@@ -56,10 +56,16 @@ class TextBlockMinWidth extends AbstractTextBlock  implements TextBlock {
 	public void drawU(UGraphic ug) {
 		if (horizontalAlignment == HorizontalAlignment.LEFT) {
 			textBlock.drawU(ug);
+		} else if (horizontalAlignment == HorizontalAlignment.CENTER) {
+			final Dimension2D dimText = textBlock.calculateDimension(ug.getStringBounder());
+			final Dimension2D dimFull = calculateDimension(ug.getStringBounder());
+			final double diffx = dimFull.getWidth() - dimText.getWidth();
+			textBlock.drawU(ug.apply(UTranslate.dx(diffx / 2)));
 		} else if (horizontalAlignment == HorizontalAlignment.RIGHT) {
-			final Dimension2D dim = textBlock.calculateDimension(ug.getStringBounder());
-			final double diffx = minWidth - dim.getWidth();
-			textBlock.drawU(ug.apply(new UTranslate(diffx, 0)));
+			final Dimension2D dimText = textBlock.calculateDimension(ug.getStringBounder());
+			final Dimension2D dimFull = calculateDimension(ug.getStringBounder());
+			final double diffx = dimFull.getWidth() - dimText.getWidth();
+			textBlock.drawU(ug.apply(UTranslate.dx(diffx)));
 		} else {
 			throw new UnsupportedOperationException();
 		}

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,24 +32,24 @@ package net.sourceforge.plantuml.svek.extremity;
 
 import java.awt.geom.Point2D;
 
-import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 class ExtremityDiamond extends Extremity {
 
 	private UPolygon polygon = new UPolygon();
 	private final boolean fill;
 	private final Point2D contact;
-	private final HtmlColor backgroundColor;
+	private final HColor backgroundColor;
 
 	@Override
 	public Point2D somePoint() {
 		return contact;
 	}
 
-	public ExtremityDiamond(Point2D p1, double angle, boolean fill, HtmlColor backgroundColor) {
+	public ExtremityDiamond(Point2D p1, double angle, boolean fill, HColor backgroundColor) {
 		this.fill = fill;
 		this.backgroundColor = backgroundColor;
 		this.contact = new Point2D.Double(p1.getX(), p1.getY());
@@ -67,9 +67,9 @@ class ExtremityDiamond extends Extremity {
 
 	public void drawU(UGraphic ug) {
 		if (fill) {
-			ug = ug.apply(new UChangeBackColor(ug.getParam().getColor()));
+			ug = ug.apply(HColorUtils.changeBack(ug));
 		} else {
-			ug = ug.apply(new UChangeBackColor(backgroundColor));
+			ug = ug.apply(backgroundColor.bg());
 		}
 		ug.draw(polygon);
 	}

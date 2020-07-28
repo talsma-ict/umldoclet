@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,7 +34,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 import net.sourceforge.plantuml.tim.EaterException;
-import net.sourceforge.plantuml.tim.TVariable;
+import net.sourceforge.plantuml.tim.EaterExceptionLocated;
 
 // https://en.wikipedia.org/wiki/Shunting-yard_algorithm
 // https://en.cppreference.com/w/c/language/operator_precedence
@@ -54,7 +54,7 @@ public class ShuntingYard {
 		System.err.println("");
 	}
 
-	public ShuntingYard(TokenIterator it, Knowledge knowledge) throws EaterException {
+	public ShuntingYard(TokenIterator it, Knowledge knowledge) throws EaterException, EaterExceptionLocated {
 
 		while (it.hasMoreTokens()) {
 			final Token token = it.nextToken();
@@ -67,15 +67,16 @@ public class ShuntingYard {
 				operatorStack.addFirst(token);
 			} else if (token.getTokenType() == TokenType.PLAIN_TEXT) {
 				final String name = token.getSurface();
-				final TVariable variable = knowledge.getVariable(name);
+				final TValue variable = knowledge.getVariable(name);
 				if (variable == null) {
-					throw new EaterException("Unknown variable " + name);
+					ouputQueue.add(new Token("undefined", TokenType.QUOTED_STRING, null));
+				} else {
+					ouputQueue.add(variable.toToken());
 				}
-				ouputQueue.add(variable.getValue().toToken());
 			} else if (token.getTokenType() == TokenType.OPERATOR) {
 				while ((thereIsAFunctionAtTheTopOfTheOperatorStack(token) //
 						|| thereIsAnOperatorAtTheTopOfTheOperatorStackWithGreaterPrecedence(token) //
-				|| theOperatorAtTheTopOfTheOperatorStackHasEqualPrecedenceAndIsLeftAssociative(token)) //
+						|| theOperatorAtTheTopOfTheOperatorStackHasEqualPrecedenceAndIsLeftAssociative(token)) //
 						&& theOperatorAtTheTopOfTheOperatorStackIsNotALeftParenthesis(token)) {
 					ouputQueue.add(operatorStack.removeFirst());
 				}
@@ -86,19 +87,20 @@ public class ShuntingYard {
 			} else if (token.getTokenType() == TokenType.OPEN_PAREN_MATH) {
 				operatorStack.addFirst(token);
 			} else if (token.getTokenType() == TokenType.CLOSE_PAREN_FUNC) {
-				ouputQueue.add(operatorStack.removeFirst());
+				final Token first = operatorStack.removeFirst();
+				ouputQueue.add(first);
 			} else if (token.getTokenType() == TokenType.CLOSE_PAREN_MATH) {
 				while (operatorStack.peekFirst().getTokenType() != TokenType.OPEN_PAREN_MATH) {
 					ouputQueue.add(operatorStack.removeFirst());
-					// System.err.println("Warning 2013");
 				}
 				if (operatorStack.peekFirst().getTokenType() == TokenType.OPEN_PAREN_MATH) {
-					// System.err.println("Warning 4210");
 					operatorStack.removeFirst();
-					// throw new UnsupportedOperationException(token.toString());
 				}
 			} else if (token.getTokenType() == TokenType.COMMA) {
-				// Just ignore
+				while (operatorStack.peekFirst() != null
+						&& operatorStack.peekFirst().getTokenType() != TokenType.OPEN_PAREN_FUNC) {
+					ouputQueue.add(operatorStack.removeFirst());
+				}
 			} else {
 				throw new UnsupportedOperationException(token.toString());
 			}

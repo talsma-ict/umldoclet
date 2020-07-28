@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -47,14 +47,14 @@ import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.TikzFontDistortion;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.FontStyle;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UDriver;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.UText;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class DriverTextAsPathG2d implements UDriver<Graphics2D> {
 
@@ -82,7 +82,7 @@ public class DriverTextAsPathG2d implements UDriver<Graphics2D> {
 		final UFont font = fontConfiguration.getFont().scaled(param.getScale());
 		final Dimension2D dimBack = calculateDimension(FileFormat.PNG.getDefaultStringBounder(TikzFontDistortion.getDefault()), font, shape.getText());
 		if (fontConfiguration.containsStyle(FontStyle.BACKCOLOR)) {
-			final Color extended = mapper.getMappedColor(fontConfiguration.getExtendedColor());
+			final Color extended = mapper.toColor(fontConfiguration.getExtendedColor());
 			if (extended != null) {
 				g2d.setColor(extended);
 				g2d.setBackground(extended);
@@ -94,16 +94,16 @@ public class DriverTextAsPathG2d implements UDriver<Graphics2D> {
 		visible.ensureVisible(x + dimBack.getWidth(), y + 1.5);
 
 		g2d.setFont(font.getFont());
-		g2d.setColor(mapper.getMappedColor(fontConfiguration.getColor()));
+		g2d.setColor(mapper.toColor(fontConfiguration.getColor()));
 		final TextLayout t = new TextLayout(shape.getText(), font.getFont(), fontRenderContext);
 		g2d.translate(x, y);
 		g2d.fill(t.getOutline(null));
 		g2d.translate(-x, -y);
 
 		if (fontConfiguration.containsStyle(FontStyle.UNDERLINE)) {
-			final HtmlColor extended = fontConfiguration.getExtendedColor();
+			final HColor extended = fontConfiguration.getExtendedColor();
 			if (extended != null) {
-				g2d.setColor(mapper.getMappedColor(extended));
+				g2d.setColor(mapper.toColor(extended));
 			}
 			final Dimension2D dim = calculateDimension(FileFormat.PNG.getDefaultStringBounder(TikzFontDistortion.getDefault()), font, shape.getText());
 			final int ypos = (int) (y + 2.5);
@@ -114,9 +114,9 @@ public class DriverTextAsPathG2d implements UDriver<Graphics2D> {
 		if (fontConfiguration.containsStyle(FontStyle.WAVE)) {
 			final Dimension2D dim = calculateDimension(FileFormat.PNG.getDefaultStringBounder(TikzFontDistortion.getDefault()), font, shape.getText());
 			final int ypos = (int) (y + 2.5) - 1;
-			final HtmlColor extended = fontConfiguration.getExtendedColor();
+			final HColor extended = fontConfiguration.getExtendedColor();
 			if (extended != null) {
-				g2d.setColor(mapper.getMappedColor(extended));
+				g2d.setColor(mapper.toColor(extended));
 			}
 			for (int i = (int) x; i < x + dim.getWidth() - 5; i += 6) {
 				g2d.drawLine(i, ypos - 0, i + 3, ypos + 1);
@@ -127,9 +127,9 @@ public class DriverTextAsPathG2d implements UDriver<Graphics2D> {
 			final Dimension2D dim = calculateDimension(FileFormat.PNG.getDefaultStringBounder(TikzFontDistortion.getDefault()), font, shape.getText());
 			final FontMetrics fm = g2d.getFontMetrics(font.getFont());
 			final int ypos = (int) (y - fm.getDescent() - 0.5);
-			final HtmlColor extended = fontConfiguration.getExtendedColor();
+			final HColor extended = fontConfiguration.getExtendedColor();
 			if (extended != null) {
-				g2d.setColor(mapper.getMappedColor(extended));
+				g2d.setColor(mapper.toColor(extended));
 			}
 			g2d.setStroke(new BasicStroke((float) 1.5));
 			g2d.drawLine((int) x, ypos, (int) (x + dim.getWidth()), ypos);

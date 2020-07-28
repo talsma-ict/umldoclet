@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -79,7 +79,7 @@ public enum PackageStyle {
 			return USymbol.RECTANGLE;
 		}
 		if (this == FOLDER) {
-			return USymbol.FOLDER;
+			return USymbol.PACKAGE;
 		}
 		return null;
 	}
@@ -130,12 +130,12 @@ public enum PackageStyle {
 			polygon.setDeltaShadow(3.0);
 		}
 		ug.draw(polygon);
-		ug.apply(new UTranslate(width - cornersize, 0)).draw(new ULine(0, cornersize));
-		ug.apply(new UTranslate(width, cornersize)).draw(new ULine(-cornersize, 0));
+		ug.apply(UTranslate.dx(width - cornersize)).draw(ULine.vline(cornersize));
+		ug.apply(new UTranslate(width, cornersize)).draw(ULine.hline(-cornersize));
 	}
 
 	private void drawStorage(UGraphic ug, double width, double height, boolean shadowing) {
-		final URectangle shape = new URectangle(width, height, 70, 70);
+		final URectangle shape = new URectangle(width, height).rounded(70);
 		if (shadowing) {
 			shape.setDeltaShadow(3.0);
 		}
@@ -266,7 +266,7 @@ public enum PackageStyle {
 			shape.setDeltaShadow(3.0);
 		}
 		ug.draw(shape);
-		ug.apply(new UTranslate(0, htitle)).draw(new ULine(wtitle + marginTitleX3, 0));
+		ug.apply(UTranslate.dy(htitle)).draw(ULine.hline(wtitle + marginTitleX3));
 	}
 
 	private void drawDatabase(UGraphic ug, double width, double height, boolean shadowing) {

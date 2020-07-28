@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -38,14 +38,21 @@ import net.sourceforge.plantuml.svek.Side;
 
 public class ExtremityFactoryCircle extends AbstractExtremityFactory implements ExtremityFactory {
 
+	private final boolean fill;
+
+	public ExtremityFactoryCircle(boolean fill) {
+		this.fill = fill;
+	}
+
 	@Override
 	public UDrawable createUDrawable(Point2D center, double angle, Side side) {
-		// return ExtremityCircle.createContact(center, angle);
-		return ExtremityCircle.create(center);
+		angle -= Math.PI / 2;
+		return ExtremityCircle.create(center, fill, angle);
 	}
 
 	public UDrawable createUDrawable(Point2D p0, Point2D p1, Point2D p2, Side side) {
-		return ExtremityCircle.create(p1);
+		final double ortho = atan2(p0, p2);
+		return ExtremityCircle.create(p1, fill, ortho);
 	}
 
 }

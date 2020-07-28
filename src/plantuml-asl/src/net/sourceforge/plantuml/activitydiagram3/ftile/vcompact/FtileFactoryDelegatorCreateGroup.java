@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -38,9 +38,9 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactory;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactoryDelegator;
 import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.USymbol;
 import net.sourceforge.plantuml.skin.rose.Rose;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class FtileFactoryDelegatorCreateGroup extends FtileFactoryDelegator {
 
@@ -51,9 +51,9 @@ public class FtileFactoryDelegatorCreateGroup extends FtileFactoryDelegator {
 	}
 
 	@Override
-	public Ftile createGroup(Ftile list, Display name, HtmlColor backColor, HtmlColor titleColor, PositionedNote note,
-			HtmlColor borderColor, USymbol type, double roundCorner) {
-		final HtmlColor arrowColor = rose.getHtmlColor(skinParam(), ColorParam.arrow);
+	public Ftile createGroup(Ftile list, Display name, HColor backColor, HColor titleColor, PositionedNote note,
+			HColor borderColor, USymbol type, double roundCorner) {
+		final HColor arrowColor = rose.getHtmlColor(skinParam(), ColorParam.arrow);
 		Ftile result = new FtileGroup(list, name, null, arrowColor, backColor, titleColor, skinParam(), borderColor,
 				type, roundCorner);
 		if (note != null) {

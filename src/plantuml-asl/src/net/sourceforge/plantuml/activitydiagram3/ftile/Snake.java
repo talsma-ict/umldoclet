@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -49,7 +49,7 @@ import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.comp.CompressionTransform;
+import net.sourceforge.plantuml.ugraphic.comp.PiecewiseAffineTransform;
 
 public class Snake implements UShape {
 
@@ -63,11 +63,11 @@ public class Snake implements UShape {
 	private Direction emphasizeDirection;
 	private final HorizontalAlignment horizontalAlignment;
 
-	public final void setIgnoreForCompression(boolean ignoreForCompression) {
-		this.worm.setIgnoreForCompression(ignoreForCompression);
+	public final void setIgnoreForCompression() {
+		this.worm.setIgnoreForCompression();
 	}
 
-	public Snake transformX(CompressionTransform compressionTransform) {
+	public Snake transformX(PiecewiseAffineTransform compressionTransform) {
 		final Snake result = new Snake(startDecoration, horizontalAlignment, color, endDecoration);
 		result.textBlock = this.textBlock;
 		result.mergeable = this.mergeable;

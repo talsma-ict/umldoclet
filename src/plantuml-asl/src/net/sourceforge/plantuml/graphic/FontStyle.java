@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -36,6 +36,8 @@ import java.util.EnumSet;
 import net.sourceforge.plantuml.command.regex.Matcher2;
 import net.sourceforge.plantuml.command.regex.MyPattern;
 import net.sourceforge.plantuml.ugraphic.UFont;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public enum FontStyle {
 	PLAIN, ITALIC, BOLD, UNDERLINE, STRIKE, WAVE, BACKCOLOR;
@@ -114,14 +116,14 @@ public enum FontStyle {
 		throw new UnsupportedOperationException();
 	}
 
-	public HtmlColor getExtendedColor(String s) {
+	public HColor getExtendedColor(String s) {
 		final Matcher2 m = MyPattern.cmpile(getActivationPattern()).matcher(s);
 		if (m.find() == false || m.groupCount() != 1) {
 			return null;
 		}
 		final String color = m.group(1);
-		if (HtmlColorSet.getInstance().getColorIfValid(color) != null) {
-			return HtmlColorSet.getInstance().getColorIfValid(color);
+		if (HColorSet.instance().getColorIfValid(color) != null) {
+			return HColorSet.instance().getColorIfValid(color);
 		}
 		return null;
 	}

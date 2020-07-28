@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -80,8 +80,8 @@ public class ElementBorder extends AbstractElement {
 		// - dimSouth.getHeight());
 
 		north.drawU(ug, zIndex, dimToUse);
-		south.drawU(ug.apply(new UTranslate(0, pC.getY())), zIndex, dimToUse);
-		west.drawU(ug.apply(new UTranslate(0, pA.getY())), zIndex, dimToUse);
+		south.drawU(ug.apply(UTranslate.dy(pC.getY())), zIndex, dimToUse);
+		west.drawU(ug.apply(UTranslate.dy(pA.getY())), zIndex, dimToUse);
 		east.drawU(ug.apply(new UTranslate(pB.getX(), pB.getY())), zIndex, dimToUse);
 		center.drawU(ug.apply(new UTranslate(pA.getX(), pA.getY())), zIndex, dimToUse);
 	}

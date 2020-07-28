@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -37,16 +37,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-
 import net.sourceforge.plantuml.core.Diagram;
-import net.sourceforge.plantuml.creole.Atom;
+import net.sourceforge.plantuml.creole.atom.Atom;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.Line;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.preproc.Defines;
+import net.sourceforge.plantuml.security.ImageIO;
+import net.sourceforge.plantuml.ugraphic.AffineTransformType;
+import net.sourceforge.plantuml.ugraphic.PixelImage;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UImage;
 import net.sourceforge.plantuml.ugraphic.UImageSvg;
@@ -83,7 +84,7 @@ public class EmbeddedDiagram implements CharSequence {
 		public List<Atom> splitInTwo(StringBounder stringBounder, double width) {
 			throw new UnsupportedOperationException(getClass().toString());
 		}
-		
+
 		private Draw(ISkinSimple skinParam) {
 			this.skinParam = skinParam;
 		}
@@ -114,7 +115,7 @@ public class EmbeddedDiagram implements CharSequence {
 					return;
 				}
 				final BufferedImage im = getImage();
-				final UShape image = new UImage(im);
+				final UShape image = new UImage(new PixelImage(im, AffineTransformType.TYPE_BILINEAR));
 				ug.draw(image);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -134,7 +135,9 @@ public class EmbeddedDiagram implements CharSequence {
 
 		private BufferedImage getImage() throws IOException, InterruptedException {
 			if (image == null) {
+				final boolean sav = SkinParam.USE_STYLES();
 				image = getImageSlow();
+				SkinParam.setBetaStyle(sav);
 			}
 			return image;
 		}

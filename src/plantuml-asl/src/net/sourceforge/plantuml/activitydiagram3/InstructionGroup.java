@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -38,19 +38,19 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactory;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.FtileWithNotes;
 import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.USymbol;
 import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
 import net.sourceforge.plantuml.sequencediagram.NoteType;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class InstructionGroup implements Instruction, InstructionCollection {
 
 	private final InstructionList list;
 	private final Instruction parent;
-	private final HtmlColor backColor;
-	private final HtmlColor borderColor;
-	private final HtmlColor titleColor;
+	private final HColor backColor;
+	private final HColor borderColor;
+	private final HColor titleColor;
 	private final LinkRendering linkRendering;
 	private final USymbol type;
 
@@ -62,8 +62,8 @@ public class InstructionGroup implements Instruction, InstructionCollection {
 		return list.containsBreak();
 	}
 
-	public InstructionGroup(Instruction parent, Display test, HtmlColor backColor, HtmlColor titleColor,
-			Swimlane swimlane, HtmlColor borderColor, LinkRendering linkRendering, USymbol type, double roundCorner) {
+	public InstructionGroup(Instruction parent, Display test, HColor backColor, HColor titleColor,
+			Swimlane swimlane, HColor borderColor, LinkRendering linkRendering, USymbol type, double roundCorner) {
 		this.list = new InstructionList(swimlane);
 		this.type = type;
 		this.linkRendering = linkRendering;

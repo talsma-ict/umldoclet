@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,19 +32,18 @@ package net.sourceforge.plantuml.graphic;
 
 import java.awt.geom.Dimension2D;
 
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UStroke;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class TextBlockGeneric extends AbstractTextBlock implements TextBlock {
 
 	private final TextBlock textBlock;
-	private final HtmlColor background;
-	private final HtmlColor border;
+	private final HColor background;
+	private final HColor border;
 
-	public TextBlockGeneric(TextBlock textBlock, HtmlColor background, HtmlColor border) {
+	public TextBlockGeneric(TextBlock textBlock, HColor background, HColor border) {
 		this.textBlock = textBlock;
 		this.border = border;
 		this.background = background;
@@ -56,8 +55,8 @@ public class TextBlockGeneric extends AbstractTextBlock implements TextBlock {
 	}
 
 	public void drawU(UGraphic ug) {
-		ug = ug.apply(new UChangeBackColor(background));
-		ug = ug.apply(new UChangeColor(border));
+		ug = ug.apply(background.bg());
+		ug = ug.apply(border);
 		final Dimension2D dim = calculateDimension(ug.getStringBounder());
 		ug.apply(new UStroke(2, 2, 1)).draw(new URectangle(dim.getWidth(), dim.getHeight()));
 		

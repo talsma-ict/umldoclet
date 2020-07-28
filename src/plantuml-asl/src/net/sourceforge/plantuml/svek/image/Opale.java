@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -36,25 +36,23 @@ import java.awt.geom.Point2D;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.Direction;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UPath;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.utils.MathUtils;
 
 public class Opale extends AbstractTextBlock implements TextBlock {
 
 	private static final int cornersize = 10;
-	private final HtmlColor noteBackgroundColor;
-	private final HtmlColor borderColor;
+	private final HColor noteBackgroundColor;
+	private final HColor borderColor;
 	private final int marginX1 = 6;
 	private final int marginX2 = 15;
 	private final int marginY = 5;
-	private final boolean withShadow;
+	private final double shadowing2;
 	private Direction strategy;
 	private Point2D pp1;
 	private Point2D pp2;
@@ -63,12 +61,11 @@ public class Opale extends AbstractTextBlock implements TextBlock {
 
 	private final TextBlock textBlock;
 
-	public Opale(HtmlColor borderColor, HtmlColor noteBackgroundColor, TextBlock textBlock, boolean withShadow,
+	public Opale(double shadowing, HColor borderColor, HColor noteBackgroundColor, TextBlock textBlock,
 			boolean withLink) {
 		this.noteBackgroundColor = noteBackgroundColor;
 		this.withLink = withLink;
-
-		this.withShadow = withShadow;
+		this.shadowing2 = shadowing;
 		this.borderColor = borderColor;
 		this.textBlock = textBlock;
 	}
@@ -100,7 +97,7 @@ public class Opale extends AbstractTextBlock implements TextBlock {
 
 	final public void drawU(UGraphic ug) {
 		final StringBounder stringBounder = ug.getStringBounder();
-		ug = ug.apply(new UChangeBackColor(noteBackgroundColor)).apply(new UChangeColor(borderColor));
+		ug = ug.apply(noteBackgroundColor.bg()).apply(borderColor);
 		final UPath polygon;
 		if (withLink == false) {
 			polygon = getPolygonNormal(stringBounder);
@@ -115,9 +112,7 @@ public class Opale extends AbstractTextBlock implements TextBlock {
 		} else {
 			throw new IllegalArgumentException();
 		}
-		if (withShadow) {
-			polygon.setDeltaShadow(4);
-		}
+		polygon.setDeltaShadow(shadowing2);
 		ug.draw(polygon);
 		ug.draw(getCorner(getWidth(stringBounder), roundCorner));
 		textBlock.drawU(ug.apply(new UTranslate(marginX1, marginY)));

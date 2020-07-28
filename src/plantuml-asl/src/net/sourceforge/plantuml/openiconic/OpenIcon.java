@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -32,7 +32,6 @@ package net.sourceforge.plantuml.openiconic;
 
 import java.awt.geom.Dimension2D;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -42,12 +41,12 @@ import java.util.List;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.openiconic.data.DummyIcon;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
+import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class OpenIcon {
 
@@ -96,8 +95,8 @@ public class OpenIcon {
 		}
 	}
 
-	void saveCopy(File fnew) throws IOException {
-		final PrintWriter pw = new PrintWriter(fnew);
+	void saveCopy(SFile fnew) throws IOException {
+		final PrintWriter pw = fnew.createPrintWriter();
 		pw.println(rawData.get(0));
 		pw.println(svgPath.toSvg());
 		pw.println(rawData.get(rawData.size() - 1));
@@ -127,10 +126,10 @@ public class OpenIcon {
 		return s.substring(x1 + 1, x2);
 	}
 
-	public TextBlock asTextBlock(final HtmlColor color, final double factor) {
+	public TextBlock asTextBlock(final HColor color, final double factor) {
 		return new AbstractTextBlock() {
 			public void drawU(UGraphic ug) {
-				svgPath.drawMe(ug.apply(new UChangeColor(color)), factor);
+				svgPath.drawMe(ug.apply(color), factor);
 			}
 
 			public Dimension2D calculateDimension(StringBounder stringBounder) {

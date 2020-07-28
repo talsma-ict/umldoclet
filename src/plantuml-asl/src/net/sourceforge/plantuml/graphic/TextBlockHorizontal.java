@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -74,7 +74,7 @@ public class TextBlockHorizontal extends AbstractTextBlock implements TextBlock 
 				final double dy = (dimtotal.getHeight() - dimb.getHeight()) / 2;
 				block.drawU(ug.apply(new UTranslate(x, dy)));
 			} else {
-				block.drawU(ug.apply(new UTranslate(x, 0)));
+				block.drawU(ug.apply(UTranslate.dx(x)));
 			}
 			x += dimb.getWidth();
 		}

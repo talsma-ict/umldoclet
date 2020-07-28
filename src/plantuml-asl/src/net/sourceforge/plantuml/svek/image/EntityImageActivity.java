@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -36,30 +36,34 @@ import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
+import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.SkinParamUtils;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.cucadiagram.ILeaf;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.color.ColorType;
+import net.sourceforge.plantuml.style.PName;
+import net.sourceforge.plantuml.style.SName;
+import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.svek.AbstractEntityImage;
 import net.sourceforge.plantuml.svek.Bibliotekon;
-import net.sourceforge.plantuml.svek.Shape;
+import net.sourceforge.plantuml.svek.Node;
 import net.sourceforge.plantuml.svek.ShapeType;
 import net.sourceforge.plantuml.ugraphic.Shadowable;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class EntityImageActivity extends AbstractEntityImage {
 
+	private double shadowing = 0;
 	public static final int CORNER = 25;
 	final private TextBlock desc;
 	final private static int MARGIN = 10;
@@ -71,8 +75,21 @@ public class EntityImageActivity extends AbstractEntityImage {
 		this.bibliotekon = bibliotekon;
 		final Stereotype stereotype = entity.getStereotype();
 
-		this.desc = entity.getDisplay().create(new FontConfiguration(getSkinParam(), FontParam.ACTIVITY, stereotype),
-				HorizontalAlignment.CENTER, skinParam);
+		final FontConfiguration fontConfiguration;
+		final HorizontalAlignment horizontalAlignment;
+		if (SkinParam.USE_STYLES()) {
+			final Style style = getDefaultStyleDefinition().getMergedStyle(getSkinParam().getCurrentStyleBuilder());
+			fontConfiguration = style.getFontConfiguration(skinParam.getIHtmlColorSet());
+			horizontalAlignment = style.getHorizontalAlignment();
+			shadowing = style.value(PName.Shadowing).asDouble();
+		} else {
+			fontConfiguration = new FontConfiguration(getSkinParam(), FontParam.ACTIVITY, stereotype);
+			horizontalAlignment = HorizontalAlignment.CENTER;
+			if (getSkinParam().shadowing(getEntity().getStereotype())) {
+				shadowing = 4;
+			}
+		}
+		this.desc = entity.getDisplay().create(fontConfiguration, horizontalAlignment, skinParam);
 		this.url = entity.getUrl99();
 	}
 
@@ -93,16 +110,14 @@ public class EntityImageActivity extends AbstractEntityImage {
 			throw new UnsupportedOperationException();
 		}
 		if (url != null) {
-			ug.closeAction();
+			ug.closeUrl();
 		}
 	}
 
 	private UGraphic drawOctagon(UGraphic ug) {
-		final Shape shape = bibliotekon.getShape(getEntity());
-		final Shadowable octagon = shape.getOctagon();
-		if (getSkinParam().shadowing(getEntity().getStereotype())) {
-			octagon.setDeltaShadow(4);
-		}
+		final Node node = bibliotekon.getNode(getEntity());
+		final Shadowable octagon = node.getOctagon();
+		octagon.setDeltaShadow(shadowing);
 		ug = applyColors(ug);
 		ug.apply(new UStroke(1.5)).draw(octagon);
 		desc.drawU(ug.apply(new UTranslate(MARGIN, MARGIN)));
@@ -116,25 +131,42 @@ public class EntityImageActivity extends AbstractEntityImage {
 
 		final double widthTotal = dimTotal.getWidth();
 		final double heightTotal = dimTotal.getHeight();
-		final Shadowable rect = new URectangle(widthTotal, heightTotal, CORNER, CORNER);
-		if (getSkinParam().shadowing(getEntity().getStereotype())) {
-			rect.setDeltaShadow(4);
-		}
+		final Shadowable rect = new URectangle(widthTotal, heightTotal).rounded(CORNER);
+		rect.setDeltaShadow(shadowing);
 
 		ug = applyColors(ug);
-		ug.apply(new UStroke(1.5)).draw(rect);
+		UStroke stroke = new UStroke(1.5);
+		if (SkinParam.USE_STYLES()) {
+			final Style style = getDefaultStyleDefinition().getMergedStyle(getSkinParam().getCurrentStyleBuilder());
+			stroke = style.getStroke();
+		}
+		ug.apply(stroke).draw(rect);
 
 		desc.drawU(ug.apply(new UTranslate(MARGIN, MARGIN)));
 		return ug;
 	}
 
+	public StyleSignature getDefaultStyleDefinition() {
+		return StyleSignature.of(SName.root, SName.element, SName.activityDiagram, SName.activity).with(getStereo());
+	}
+
 	private UGraphic applyColors(UGraphic ug) {
-		ug = ug.apply(new UChangeColor(SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.activityBorder)));
-		HtmlColor backcolor = getEntity().getColors(getSkinParam()).getColor(ColorType.BACK);
+		HColor borderColor = SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.activityBorder);
+		HColor backcolor = getEntity().getColors(getSkinParam()).getColor(ColorType.BACK);
 		if (backcolor == null) {
 			backcolor = SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.activityBackground);
 		}
-		ug = ug.apply(new UChangeBackColor(backcolor));
+
+		if (SkinParam.USE_STYLES()) {
+			final Style style = getDefaultStyleDefinition().getMergedStyle(getSkinParam().getCurrentStyleBuilder());
+			borderColor = style.value(PName.LineColor).asColor(getSkinParam().getIHtmlColorSet());
+			backcolor = getEntity().getColors(getSkinParam()).getColor(ColorType.BACK);
+			if (backcolor == null) {
+				backcolor = style.value(PName.BackGroundColor).asColor(getSkinParam().getIHtmlColorSet());
+			}
+		}
+		ug = ug.apply(borderColor);
+		ug = ug.apply(backcolor.bg());
 		return ug;
 	}
 

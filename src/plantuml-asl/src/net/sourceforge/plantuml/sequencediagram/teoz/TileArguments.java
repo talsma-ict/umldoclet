@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -33,12 +33,12 @@ package net.sourceforge.plantuml.sequencediagram.teoz;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.SkinParamBackcolored;
 import net.sourceforge.plantuml.SkinParamBackcoloredReference;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.real.Real;
 import net.sourceforge.plantuml.sequencediagram.Participant;
 import net.sourceforge.plantuml.sequencediagram.Reference;
 import net.sourceforge.plantuml.skin.rose.Rose;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class TileArguments implements Bordered {
 	private final StringBounder stringBounder;
@@ -56,7 +56,7 @@ public class TileArguments implements Bordered {
 		this.skinParam = skinParam;
 	}
 
-	public TileArguments withBackColorGeneral(HtmlColor backColorElement, HtmlColor backColorGeneral) {
+	public TileArguments withBackColorGeneral(HColor backColorElement, HColor backColorGeneral) {
 		return new TileArguments(stringBounder, livingSpaces, skin, new SkinParamBackcolored(skinParam,
 				backColorElement, backColorGeneral), origin);
 	}

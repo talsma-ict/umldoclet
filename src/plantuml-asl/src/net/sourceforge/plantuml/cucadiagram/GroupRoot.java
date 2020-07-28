@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -42,7 +42,6 @@ import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.cucadiagram.entity.EntityFactory;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.USymbol;
 import net.sourceforge.plantuml.graphic.color.ColorType;
@@ -51,6 +50,7 @@ import net.sourceforge.plantuml.svek.IEntityImage;
 import net.sourceforge.plantuml.svek.PackageStyle;
 import net.sourceforge.plantuml.svek.SingleStrategy;
 import net.sourceforge.plantuml.ugraphic.UStroke;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class GroupRoot implements IGroup {
 
@@ -62,13 +62,18 @@ public class GroupRoot implements IGroup {
 
 	public Collection<ILeaf> getLeafsDirect() {
 		final List<ILeaf> result = new ArrayList<ILeaf>();
-		for (ILeaf ent : entityFactory.getLeafsvalues()) {
+		for (ILeaf ent : entityFactory.leafs()) {
 			if (ent.getParentContainer() == this) {
 				result.add(ent);
 			}
 		}
 		return Collections.unmodifiableCollection(result);
 
+	}
+	
+	@Override
+	public String toString() {
+		return "ROOT";
 	}
 
 	public boolean isGroup() {
@@ -115,11 +120,11 @@ public class GroupRoot implements IGroup {
 	}
 
 	public Code getCode() {
-		return Code.of("__ROOT__");
+		return CodeImpl.of("__ROOT__");
 	}
 
-	public LongCode getLongCode() {
-		return null;
+	public String getCodeGetName() {
+		return getCode().getName();
 	}
 
 	public void addUrl(Url url) {
@@ -138,9 +143,18 @@ public class GroupRoot implements IGroup {
 
 	public Collection<IGroup> getChildren() {
 		final List<IGroup> result = new ArrayList<IGroup>();
-		for (IGroup ent : entityFactory.getGroupsvalues()) {
-			if (ent.getParentContainer() == this) {
-				result.add(ent);
+		if (entityFactory.namespaceSeparator.V1972()) {
+			for (IGroup ent : entityFactory.groups()) {
+				if (ent.getIdent().size() == 1) {
+					result.add(ent);
+				}
+			}
+
+		} else {
+			for (IGroup ent : entityFactory.groups()) {
+				if (ent.getParentContainer() == this) {
+					result.add(ent);
+				}
 			}
 		}
 		return Collections.unmodifiableCollection(result);
@@ -158,7 +172,7 @@ public class GroupRoot implements IGroup {
 		return null;
 	}
 
-	public Code getNamespace2() {
+	public Code getNamespace() {
 		throw new UnsupportedOperationException();
 
 	}
@@ -237,7 +251,7 @@ public class GroupRoot implements IGroup {
 		throw new UnsupportedOperationException();
 	}
 
-	public void setSpecificColorTOBEREMOVED(ColorType type, HtmlColor color) {
+	public void setSpecificColorTOBEREMOVED(ColorType type, HColor color) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -262,6 +276,18 @@ public class GroupRoot implements IGroup {
 	}
 
 	public DisplayPositionned getLegend() {
+		throw new UnsupportedOperationException();
+	}
+
+	public Ident getIdent() {
+		return Ident.empty();
+	}
+
+	public boolean isAloneAndUnlinked() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void setThisIsTogether() {
 		throw new UnsupportedOperationException();
 	}
 }

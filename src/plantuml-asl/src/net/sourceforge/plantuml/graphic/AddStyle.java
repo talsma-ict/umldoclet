@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,13 +30,14 @@
  */
 package net.sourceforge.plantuml.graphic;
 
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class AddStyle implements FontChange {
 
 	private final FontStyle style;
-	private final HtmlColor extendedColor;
+	private final HColor extendedColor;
 
-	public AddStyle(FontStyle style, HtmlColor extendedColor) {
+	public AddStyle(FontStyle style, HColor extendedColor) {
 		this.style = style;
 		this.extendedColor = extendedColor;
 	}

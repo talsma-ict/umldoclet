@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -50,7 +50,6 @@ import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.graphic.HtmlColorSet;
 import net.sourceforge.plantuml.graphic.color.ColorParser;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.graphic.color.Colors;
@@ -61,6 +60,7 @@ import net.sourceforge.plantuml.sequencediagram.Note;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
 import net.sourceforge.plantuml.sequencediagram.NoteStyle;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
+import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public final class FactorySequenceNoteOnArrowCommand implements SingleMultiFactoryCommand<SequenceDiagram> {
 
@@ -71,7 +71,7 @@ public final class FactorySequenceNoteOnArrowCommand implements SingleMultiFacto
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("STEREO", "(\\<{2}.*\\>{2})?"), //
 				RegexLeaf.spaceOneOrMore(), //
-				new RegexLeaf("POSITION", "(right|left)"), //
+				new RegexLeaf("POSITION", "(right|left|bottom|top)"), //
 				RegexLeaf.spaceZeroOrMore(), //
 				ColorParser.exp1(), //
 				RegexLeaf.spaceZeroOrMore(), //
@@ -85,7 +85,7 @@ public final class FactorySequenceNoteOnArrowCommand implements SingleMultiFacto
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("STEREO", "(\\<{2}.*\\>{2})?"), //
 				RegexLeaf.spaceOneOrMore(), //
-				new RegexLeaf("POSITION", "(right|left)"), //
+				new RegexLeaf("POSITION", "(right|left|bottom|top)"), //
 				RegexLeaf.spaceZeroOrMore(), //
 				ColorParser.exp1(), //
 				RegexLeaf.spaceZeroOrMore(), //
@@ -118,7 +118,7 @@ public final class FactorySequenceNoteOnArrowCommand implements SingleMultiFacto
 			}
 
 			protected CommandExecutionResult executeNow(final SequenceDiagram diagram, BlocLines lines) {
-				final RegexResult line0 = getStartingPattern().matcher(lines.getFirst499().getTrimmed().getString());
+				final RegexResult line0 = getStartingPattern().matcher(lines.getFirst().getTrimmed().getString());
 				lines = lines.subExtract(1, 1);
 				lines = lines.removeEmptyColumns();
 				return executeInternal(diagram, line0, lines);
@@ -140,7 +140,7 @@ public final class FactorySequenceNoteOnArrowCommand implements SingleMultiFacto
 			final NoteStyle style = NoteStyle.getNoteStyle(line0.get("STYLE", 0));
 			final Display display = diagram.manageVariable(lines.toDisplay());
 			final String backcolor0 = line0.get("COLOR", 0);
-			Colors colors = Colors.empty().add(ColorType.BACK, HtmlColorSet.getInstance().getColorIfValid(backcolor0));
+			Colors colors = Colors.empty().add(ColorType.BACK, HColorSet.instance().getColorIfValid(backcolor0));
 			final Note note = new Note(display, position, style, diagram.getSkinParam().getCurrentStyleBuilder());
 			final String stereotypeString = line0.get("STEREO", 0);
 			if (stereotypeString != null) {

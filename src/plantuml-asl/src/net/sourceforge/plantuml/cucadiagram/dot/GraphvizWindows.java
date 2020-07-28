@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -41,36 +41,53 @@ import net.sourceforge.plantuml.StringUtils;
 
 class GraphvizWindows extends AbstractGraphviz {
 
+	static private File specificDotExe;
+
 	@Override
 	protected File specificDotExe() {
-		final File result = searchInDir(new File("c:/Program Files"));
-		if (result != null) {
-			return result;
+		synchronized (GraphvizWindows.class) {
+			if (specificDotExe == null) {
+				specificDotExe = specificDotExeSlow();
+			}
+			return specificDotExe;
 		}
-		final File result86 = searchInDir(new File("c:/Program Files (x86)"));
-		if (result86 != null) {
-			return result86;
-		}
-		final File resultEclipse = searchInDir(new File("c:/eclipse/graphviz"));
-		if (resultEclipse != null) {
-			return resultEclipse;
+	}
+
+	private File specificDotExeSlow() {
+		for (File tmp : new File("c:/").listFiles(new FileFilter() {
+			public boolean accept(java.io.File pathname) {
+				return pathname.isDirectory() && pathname.canRead();
+			}
+		})) {
+			final File result = searchInDir(tmp);
+			if (result != null) {
+				return result;
+			}
 		}
 		return null;
 	}
 
-	private static File searchInDir(final File programFile) {
-		if (programFile.exists() == false || programFile.isDirectory() == false) {
+	private static File searchInDir(final File dir) {
+		if (dir.exists() == false || dir.isDirectory() == false) {
 			return null;
 		}
 		final List<File> dots = new ArrayList<File>();
-		for (File f : programFile.listFiles(new FileFilter() {
-			public boolean accept(File pathname) {
+		final File[] files = dir.listFiles(new FileFilter() {
+			public boolean accept(java.io.File pathname) {
 				return pathname.isDirectory() && StringUtils.goLowerCase(pathname.getName()).startsWith("graphviz");
 			}
-		})) {
+		});
+		if (files == null) {
+			return null;
+		}
+		for (File f : files) {
 			final File result = new File(new File(f, "bin"), "dot.exe");
 			if (result.exists() && result.canRead()) {
 				dots.add(result.getAbsoluteFile());
+			}
+			final File result2 = new File(new File(f, "release/bin"), "dot.exe");
+			if (result2.exists() && result2.canRead()) {
+				dots.add(result2.getAbsoluteFile());
 			}
 		}
 		return higherVersion(dots);
@@ -87,11 +104,10 @@ class GraphvizWindows extends AbstractGraphviz {
 	GraphvizWindows(ISkinParam skinParam, String dotString, String... type) {
 		super(skinParam, dotString, type);
 	}
-	
+
 	@Override
 	protected String getExeName() {
 		return "dot.exe";
 	}
-
 
 }

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -36,8 +36,8 @@ import java.io.OutputStream;
 import net.sourceforge.plantuml.EnsureVisible;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.TikzFontDistortion;
-import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
 
 public class UGraphicNull extends AbstractUGraphic<String> implements EnsureVisible, UGraphic2 {
 
@@ -56,12 +56,6 @@ public class UGraphicNull extends AbstractUGraphic<String> implements EnsureVisi
 
 	public StringBounder getStringBounder() {
 		return FileFormat.PNG.getDefaultStringBounder(TikzFontDistortion.getDefault());
-	}
-
-	public void startUrl(Url url) {
-	}
-
-	public void closeAction() {
 	}
 
 	public void writeImageTOBEMOVED(OutputStream os, String metadata, int dpi) throws IOException {

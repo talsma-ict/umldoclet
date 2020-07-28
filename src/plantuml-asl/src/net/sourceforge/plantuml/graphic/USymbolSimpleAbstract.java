@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -49,7 +49,7 @@ abstract class USymbolSimpleAbstract extends USymbol {
 
 			public void drawU(UGraphic ug) {
 				final StringBounder stringBounder = ug.getStringBounder();
-				final Dimension2D dimName = label.calculateDimension(stringBounder);
+				final Dimension2D dimLabel = label.calculateDimension(stringBounder);
 				final Dimension2D dimStereo = stereotype.calculateDimension(stringBounder);
 				final Dimension2D dimStickMan = stickman.calculateDimension(stringBounder);
 				final Dimension2D dimTotal = calculateDimension(stringBounder);
@@ -57,19 +57,23 @@ abstract class USymbolSimpleAbstract extends USymbol {
 				final double stickmanY = dimStereo.getHeight();
 				ug = symbolContext.apply(ug);
 				stickman.drawU(ug.apply(new UTranslate(stickmanX, stickmanY)));
-				final double labelX = (dimTotal.getWidth() - dimName.getWidth()) / 2;
+				final double labelX = (dimTotal.getWidth() - dimLabel.getWidth()) / 2;
 				final double labelY = dimStickMan.getHeight() + dimStereo.getHeight();
+
+				// Actor bug?
+				// final UGraphic ug2 = UGraphicStencil.create(ug, getRectangleStencil(dimLabel), new UStroke());
+				// label.drawU(ug2.apply(new UTranslate(labelX, labelY)));
 				label.drawU(ug.apply(new UTranslate(labelX, labelY)));
 
 				final double stereoX = (dimTotal.getWidth() - dimStereo.getWidth()) / 2;
-				stereotype.drawU(ug.apply(new UTranslate(stereoX, 0)));
+				stereotype.drawU(ug.apply(UTranslate.dx(stereoX)));
 			}
 
 			public Dimension2D calculateDimension(StringBounder stringBounder) {
-				final Dimension2D dimName = label.calculateDimension(stringBounder);
+				final Dimension2D dimLabel = label.calculateDimension(stringBounder);
 				final Dimension2D dimStereo = stereotype.calculateDimension(stringBounder);
 				final Dimension2D dimActor = stickman.calculateDimension(stringBounder);
-				return Dimension2DDouble.mergeLayoutT12B3(dimStereo, dimActor, dimName);
+				return Dimension2DDouble.mergeLayoutT12B3(dimStereo, dimActor, dimLabel);
 			}
 		};
 	}
@@ -78,7 +82,8 @@ abstract class USymbolSimpleAbstract extends USymbol {
 
 	@Override
 	public TextBlock asBig(final TextBlock title, HorizontalAlignment labelAlignment, TextBlock stereotype,
-			final double width, final double height, final SymbolContext symbolContext, final HorizontalAlignment stereoAlignment) {
+			final double width, final double height, final SymbolContext symbolContext,
+			final HorizontalAlignment stereoAlignment) {
 		throw new UnsupportedOperationException();
 	}
 

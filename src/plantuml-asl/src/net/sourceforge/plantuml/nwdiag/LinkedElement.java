@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,14 +34,13 @@ import java.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.Dimension2DDouble;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.ugraphic.MinMax;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.utils.MathUtils;
 
 public class LinkedElement {
@@ -86,8 +85,8 @@ public class LinkedElement {
 
 		drawCenter(ug, box, xMiddle, yMiddle);
 
-		final HtmlColor color = ColorParam.activityBorder.getDefaultValue();
-		ug = ug.apply(new UChangeColor(color));
+		final HColor color = ColorParam.activityBorder.getDefaultValue();
+		ug = ug.apply(color);
 		drawHLine(ug, xMiddle, GridTextBlockDecorated.NETWORK_THIN, y1);
 		if (ad2 != null) {
 			drawHLine(ug, xMiddle, y2, height);
@@ -106,7 +105,7 @@ public class LinkedElement {
 	}
 
 	private void drawHLine(UGraphic ug, double x, double y1, double y2) {
-		final ULine line = new ULine(0, y2 - y1);
+		final ULine line = ULine.vline(y2 - y1);
 		ug.apply(new UTranslate(x, y1)).draw(line);
 	}
 

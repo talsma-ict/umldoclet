@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -56,13 +56,15 @@ public class CommandNoteLong3 extends CommandMultilines2<ActivityDiagram3> {
 		return ColorParser.simpleColor(ColorType.BACK);
 	}
 
+	@Override
 	public String getPatternEnd() {
 		return "(?i)^end[%s]?note$";
 	}
 
+	@Override
 	protected CommandExecutionResult executeNow(final ActivityDiagram3 diagram, BlocLines lines) {
 		// final List<? extends CharSequence> in = StringUtils.removeEmptyColumns2(lines.subList(1, lines.size() - 1));
-		final RegexResult line0 = getStartingPattern().matcher(lines.getFirst499().getTrimmed().getString());
+		final RegexResult line0 = getStartingPattern().matcher(lines.getFirst().getTrimmed().getString());
 		lines = lines.subExtract(1, 1);
 		lines = lines.removeEmptyColumns();
 		final NotePosition position = NotePosition.defaultLeft(line0.get("POSITION", 0));

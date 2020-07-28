@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -42,9 +42,6 @@ public class Triangle implements CuteShape {
 
 	private Triangle(CutePath cutePath) {
 		this.cutePath = cutePath;
-		// if (points.size() != 3) {
-		// throw new IllegalArgumentException();
-		// }
 	}
 
 	public Triangle rotateZoom(final RotationZoom angle) {
@@ -56,9 +53,5 @@ public class Triangle implements CuteShape {
 
 	public void drawU(UGraphic ug) {
 		cutePath.drawU(ug);
-		// ug = ug.apply(new UChangeBackColor(null)).apply(new UChangeColor(HtmlColorUtils.BLACK));
-		// cutePath.withNoTension().drawU(
-		// ug.apply(new UChangeBackColor(null)).apply(new UChangeColor(HtmlColorUtils.BLACK)));
-
 	}
 }

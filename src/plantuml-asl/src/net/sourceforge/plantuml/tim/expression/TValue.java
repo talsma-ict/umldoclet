@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -73,6 +73,9 @@ public class TValue {
 
 	@Override
 	public String toString() {
+		if (jsonValue != null && jsonValue.isString()) {
+			return jsonValue.asString();
+		}
 		if (jsonValue != null) {
 			return jsonValue.toString();
 		}
@@ -138,9 +141,12 @@ public class TValue {
 
 	public Token toToken() {
 		if (isNumber()) {
-			return new Token(toString(), TokenType.NUMBER);
+			return new Token(toString(), TokenType.NUMBER, null);
 		}
-		return new Token(toString(), TokenType.QUOTED_STRING);
+		if (isJson()) {
+			return new Token(toString(), TokenType.JSON_DATA, jsonValue);
+		}
+		return new Token(toString(), TokenType.QUOTED_STRING, null);
 	}
 
 	public TValue greaterThanOrEquals(TValue v2) {

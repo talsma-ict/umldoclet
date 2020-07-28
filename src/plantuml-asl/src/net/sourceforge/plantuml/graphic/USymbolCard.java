@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -34,8 +34,10 @@ import java.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
+import net.sourceforge.plantuml.ugraphic.UGraphicStencil;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.URectangle;
+import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 
 class USymbolCard extends USymbol {
@@ -52,13 +54,13 @@ class USymbolCard extends USymbol {
 	}
 
 	private void drawCard(UGraphic ug, double width, double height, boolean shadowing, double top, double roundCorner) {
-		final URectangle shape = new URectangle(width, height, roundCorner, roundCorner);
+		final URectangle shape = new URectangle(width, height).rounded(roundCorner);
 		if (shadowing) {
 			shape.setDeltaShadow(3.0);
 		}
 		ug.draw(shape);
 		if (top != 0) {
-			ug.apply(new UTranslate(0, top)).draw(new ULine(width, 0));
+			ug.apply(UTranslate.dy(top)).draw(ULine.hline(width));
 		}
 	}
 
@@ -73,6 +75,7 @@ class USymbolCard extends USymbol {
 
 			public void drawU(UGraphic ug) {
 				final Dimension2D dim = calculateDimension(ug.getStringBounder());
+				ug = UGraphicStencil.create(ug, getRectangleStencil(dim), new UStroke());
 				ug = symbolContext.apply(ug);
 				drawCard(ug, dim.getWidth(), dim.getHeight(), symbolContext.isShadowing(), 0,
 						symbolContext.getRoundCorner());
@@ -91,7 +94,8 @@ class USymbolCard extends USymbol {
 
 	@Override
 	public TextBlock asBig(final TextBlock title, HorizontalAlignment labelAlignment, final TextBlock stereotype,
-			final double width, final double height, final SymbolContext symbolContext, final HorizontalAlignment stereoAlignment) {
+			final double width, final double height, final SymbolContext symbolContext,
+			final HorizontalAlignment stereoAlignment) {
 		return new AbstractTextBlock() {
 
 			public void drawU(UGraphic ug) {
@@ -99,8 +103,8 @@ class USymbolCard extends USymbol {
 				ug = symbolContext.apply(ug);
 				final Dimension2D dimStereo = stereotype.calculateDimension(ug.getStringBounder());
 				final Dimension2D dimTitle = title.calculateDimension(ug.getStringBounder());
-				drawCard(ug, dim.getWidth(), dim.getHeight(), symbolContext.isShadowing(), dimTitle.getHeight()
-						+ dimStereo.getHeight() + 4, symbolContext.getRoundCorner());
+				drawCard(ug, dim.getWidth(), dim.getHeight(), symbolContext.isShadowing(),
+						dimTitle.getHeight() + dimStereo.getHeight() + 4, symbolContext.getRoundCorner());
 				final double posStereo = (width - dimStereo.getWidth()) / 2;
 				stereotype.drawU(ug.apply(new UTranslate(posStereo, 2)));
 				final double posTitle = (width - dimTitle.getWidth()) / 2;
@@ -111,6 +115,11 @@ class USymbolCard extends USymbol {
 				return new Dimension2DDouble(width, height);
 			}
 		};
+	}
+
+	@Override
+	public boolean manageHorizontalLine() {
+		return true;
 	}
 
 }

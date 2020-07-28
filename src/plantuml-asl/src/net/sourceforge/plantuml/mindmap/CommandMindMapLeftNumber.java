@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -38,6 +38,7 @@ import net.sourceforge.plantuml.command.regex.IRegex;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.command.regex.RegexResult;
+import net.sourceforge.plantuml.cucadiagram.Display;
 
 public class CommandMindMapLeftNumber extends SingleLineCommand2<MindMapDiagram> {
 
@@ -56,7 +57,7 @@ public class CommandMindMapLeftNumber extends SingleLineCommand2<MindMapDiagram>
 	@Override
 	protected CommandExecutionResult executeArg(MindMapDiagram diagram, LineLocation location, RegexResult arg) {
 		final String label = arg.get("LABEL", 0);
-		return diagram.addIdea(null, Integer.parseInt(arg.get("TYPE", 0)), label,
+		return diagram.addIdea(null, Integer.parseInt(arg.get("TYPE", 0)), Display.getWithNewlines(label),
 				IdeaShape.fromDesc(arg.get("SHAPE", 0)), Direction.LEFT);
 	}
 

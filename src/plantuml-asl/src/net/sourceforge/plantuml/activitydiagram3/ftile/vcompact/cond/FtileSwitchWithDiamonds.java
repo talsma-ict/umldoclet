@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -150,14 +150,14 @@ public class FtileSwitchWithDiamonds extends FtileSwitchNude {
 			final double suppx = (w13 - w9) / (tiles.size() - 1);
 			for (int i = 0; i < tiles.size() - 1; i++) {
 				if (tile == tiles.get(i)) {
-					return main.compose(new UTranslate(dx, 0));
+					return main.compose(UTranslate.dx(dx));
 				}
 				dx += tiles.get(i).calculateDimension(stringBounder).getWidth() + suppx;
 
 			}
 			if (tile == tiles.get(tiles.size() - 1)) {
 				final double dx9 = tiles.get(0).calculateDimension(stringBounder).getWidth() + w13 + SUPP15 + SUPP15;
-				return main.compose(new UTranslate(dx9, 0));
+				return main.compose(UTranslate.dx(dx9));
 			}
 			throw new IllegalArgumentException();
 
@@ -168,7 +168,7 @@ public class FtileSwitchWithDiamonds extends FtileSwitchNude {
 	protected UTranslate getTranslateMain(StringBounder stringBounder) {
 		final FtileGeometry dimDiamond1 = diamond1.calculateDimension(stringBounder);
 		final double dy1 = dimDiamond1.getHeight() + getYdelta1a(stringBounder);
-		return new UTranslate(0, dy1);
+		return UTranslate.dy(dy1);
 	}
 
 	protected UTranslate getTranslateDiamond1(StringBounder stringBounder) {
@@ -189,7 +189,7 @@ public class FtileSwitchWithDiamonds extends FtileSwitchNude {
 
 	protected TextBlock getLabelPositive(Branch branch) {
 		final FontConfiguration fcArrow = new FontConfiguration(skinParam(), FontParam.ARROW, null);
-		return branch.getLabelPositive().create(fcArrow, HorizontalAlignment.LEFT, skinParam(), CreoleMode.SIMPLE_LINE);
+		return branch.getLabelPositive().create7(fcArrow, HorizontalAlignment.LEFT, skinParam(), CreoleMode.SIMPLE_LINE);
 	}
 
 }

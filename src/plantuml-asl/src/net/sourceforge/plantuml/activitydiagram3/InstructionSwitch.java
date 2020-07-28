@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -41,7 +41,7 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactory;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
 import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class InstructionSwitch extends WithNote implements Instruction, InstructionCollection {
 
@@ -67,7 +67,7 @@ public class InstructionSwitch extends WithNote implements Instruction, Instruct
 	}
 
 	public InstructionSwitch(Swimlane swimlane, Instruction parent, Display labelTest, LinkRendering inlinkRendering,
-			HtmlColor color, ISkinParam skinParam) {
+			HColor color, ISkinParam skinParam) {
 		this.topInlinkRendering = inlinkRendering;
 		this.parent = parent;
 		this.skinParam = skinParam;
@@ -132,7 +132,7 @@ public class InstructionSwitch extends WithNote implements Instruction, Instruct
 	}
 
 	public boolean switchCase(Display labelCase, LinkRendering nextLinkRenderer) {
-		this.current = new Branch(swimlane, labelCase, labelCase, null, labelCase);
+		this.current = new Branch(skinParam.getCurrentStyleBuilder(), swimlane, labelCase, labelCase, null, labelCase);
 		this.branches.add(this.current);
 		return true;
 	}

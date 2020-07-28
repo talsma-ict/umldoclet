@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -42,25 +42,29 @@ import net.sourceforge.plantuml.svek.IEntityImage;
 import net.sourceforge.plantuml.svek.Margins;
 import net.sourceforge.plantuml.svek.ShapeType;
 import net.sourceforge.plantuml.svek.TextBlockBackcolored;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
+import net.sourceforge.plantuml.ugraphic.AffineTransformType;
+import net.sourceforge.plantuml.ugraphic.PixelImage;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UImage;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class GraphicStrings extends AbstractTextBlock implements IEntityImage {
 
 	private final double margin = 5;
 
-	private final HtmlColor background;
+	private final HColor background;
 
-	private final static HtmlColor hyperlinkColor = HtmlColorUtils.BLUE;
+	private final static HColor hyperlinkColor = HColorUtils.BLUE;
 
 	private final static boolean useUnderlineForHyperlink = true;
 
 	private final List<String> strings;
 
 	private final BufferedImage image;
+	private final double imagePadding = 30;
 
 	private final GraphicPosition position;
 
@@ -71,56 +75,56 @@ public class GraphicStrings extends AbstractTextBlock implements IEntityImage {
 				CreoleMode.NO_CREOLE);
 	}
 
-	private static HtmlColor getForeColor(boolean useRed) {
+	private static HColor getForeColor(boolean useRed) {
 		if (useRed) {
-			return HtmlColorUtils.BLACK;
+			return HColorUtils.BLACK;
 		}
-		return HtmlColorUtils.MY_GREEN;
+		return HColorUtils.MY_GREEN;
 	}
 
-	private static HtmlColor getBackColor(boolean useRed) {
+	private static HColor getBackColor(boolean useRed) {
 		if (useRed) {
-			return HtmlColorUtils.RED_LIGHT;
+			return HColorUtils.RED_LIGHT;
 		}
-		return HtmlColorUtils.BLACK;
+		return HColorUtils.BLACK;
 	}
 
 	public static TextBlockBackcolored createGreenOnBlackMonospaced(List<String> strings) {
-		return new GraphicStrings(strings, monospaced14(HtmlColorUtils.GREEN), HtmlColorUtils.BLACK, null, null,
+		return new GraphicStrings(strings, monospaced14(HColorUtils.GREEN), HColorUtils.BLACK, null, null,
 				CreoleMode.SIMPLE_LINE);
 	}
 
 	public static TextBlockBackcolored createBlackOnWhite(List<String> strings) {
-		return new GraphicStrings(strings, sansSerif12(HtmlColorUtils.BLACK), HtmlColorUtils.WHITE, null, null,
+		return new GraphicStrings(strings, sansSerif12(HColorUtils.BLACK), HColorUtils.WHITE, null, null,
 				CreoleMode.FULL);
 	}
 
 	public static TextBlockBackcolored createBlackOnWhiteMonospaced(List<String> strings) {
-		return new GraphicStrings(strings, monospaced14(HtmlColorUtils.BLACK), HtmlColorUtils.WHITE, null, null,
+		return new GraphicStrings(strings, monospaced14(HColorUtils.BLACK), HColorUtils.WHITE, null, null,
 				CreoleMode.FULL);
 	}
 
 	public static TextBlockBackcolored createBlackOnWhite(List<String> strings, BufferedImage image,
 			GraphicPosition position) {
-		return new GraphicStrings(strings, sansSerif12(HtmlColorUtils.BLACK), HtmlColorUtils.WHITE, image, position,
+		return new GraphicStrings(strings, sansSerif12(HColorUtils.BLACK), HColorUtils.WHITE, image, position,
 				CreoleMode.FULL);
 	}
 
-	private static FontConfiguration sansSerif12(HtmlColor color) {
+	public static FontConfiguration sansSerif12(HColor color) {
 		return new FontConfiguration(UFont.sansSerif(12), color, hyperlinkColor, useUnderlineForHyperlink);
 	}
 
-	public static FontConfiguration sansSerif14(HtmlColor color) {
+	public static FontConfiguration sansSerif14(HColor color) {
 		return new FontConfiguration(UFont.sansSerif(14), color, hyperlinkColor, useUnderlineForHyperlink);
 	}
 
-	private static FontConfiguration monospaced14(HtmlColor color) {
+	private static FontConfiguration monospaced14(HColor color) {
 		return new FontConfiguration(UFont.monospaced(14), color, hyperlinkColor, useUnderlineForHyperlink);
 	}
 
 	private final CreoleMode mode;
 
-	private GraphicStrings(List<String> strings, FontConfiguration fontConfiguration, HtmlColor background,
+	private GraphicStrings(List<String> strings, FontConfiguration fontConfiguration, HColor background,
 			BufferedImage image, GraphicPosition position, CreoleMode mode) {
 		this.strings = strings;
 		this.background = background;
@@ -137,24 +141,25 @@ public class GraphicStrings extends AbstractTextBlock implements IEntityImage {
 			return new TextBlockRaw(strings, fontConfiguration);
 
 		} else {
-			return display.create(fontConfiguration, HorizontalAlignment.LEFT, new SpriteContainerEmpty(), mode);
+			return display.create7(fontConfiguration, HorizontalAlignment.LEFT, new SpriteContainerEmpty(), mode);
 		}
 	}
 
 	public void drawU(UGraphic ug) {
 		ug = ug.apply(new UTranslate(margin, margin));
 		final Dimension2D size = calculateDimensionInternal(ug.getStringBounder());
-		getTextBlock().drawU(ug.apply(new UChangeColor(fontConfiguration.getColor())));
+		getTextBlock().drawU(ug.apply(fontConfiguration.getColor()));
 
 		if (image != null) {
 			if (position == GraphicPosition.BOTTOM) {
 				ug.apply(new UTranslate((size.getWidth() - image.getWidth()) / 2, size.getHeight() - image.getHeight()))
-						.draw(new UImage(image));
+						.draw(new UImage(new PixelImage(image, AffineTransformType.TYPE_BILINEAR)));
 			} else if (position == GraphicPosition.BACKGROUND_CORNER_BOTTOM_RIGHT) {
 				ug.apply(new UTranslate(size.getWidth() - image.getWidth(), size.getHeight() - image.getHeight()))
-						.draw(new UImage(image));
+						.draw(new UImage(new PixelImage(image, AffineTransformType.TYPE_BILINEAR)));
 			} else if (position == GraphicPosition.BACKGROUND_CORNER_TOP_RIGHT) {
-				ug.apply(new UTranslate(size.getWidth() - image.getWidth() - 1, 1)).draw(new UImage(image));
+				ug.apply(new UTranslate(size.getWidth() - image.getWidth() - 1, 1))
+						.draw(new UImage(new PixelImage(image, AffineTransformType.TYPE_BILINEAR)));
 			}
 		}
 	}
@@ -169,9 +174,9 @@ public class GraphicStrings extends AbstractTextBlock implements IEntityImage {
 			if (position == GraphicPosition.BOTTOM) {
 				dim = new Dimension2DDouble(dim.getWidth(), dim.getHeight() + image.getHeight());
 			} else if (position == GraphicPosition.BACKGROUND_CORNER_BOTTOM_RIGHT) {
-				dim = new Dimension2DDouble(dim.getWidth() + image.getWidth(), dim.getHeight());
+				dim = new Dimension2DDouble(dim.getWidth() + imagePadding + image.getWidth(), dim.getHeight());
 			} else if (position == GraphicPosition.BACKGROUND_CORNER_TOP_RIGHT) {
-				dim = new Dimension2DDouble(dim.getWidth() + image.getWidth(), dim.getHeight());
+				dim = new Dimension2DDouble(dim.getWidth() + imagePadding + image.getWidth(), dim.getHeight());
 			}
 		}
 		return dim;
@@ -181,7 +186,7 @@ public class GraphicStrings extends AbstractTextBlock implements IEntityImage {
 		return ShapeType.RECTANGLE;
 	}
 
-	public HtmlColor getBackcolor() {
+	public HColor getBackcolor() {
 		return background;
 	}
 

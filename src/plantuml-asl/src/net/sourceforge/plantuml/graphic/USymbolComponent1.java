@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -50,7 +50,7 @@ class USymbolComponent1 extends USymbol {
 	private void drawComponent1(UGraphic ug, double widthTotal, double heightTotal, boolean shadowing,
 			double roundCorner) {
 
-		final URectangle form = new URectangle(widthTotal, heightTotal, roundCorner, roundCorner);
+		final URectangle form = new URectangle(widthTotal, heightTotal).rounded(roundCorner);
 		if (shadowing) {
 			form.setDeltaShadow(4);
 		}
@@ -94,9 +94,10 @@ class USymbolComponent1 extends USymbol {
 	}
 
 	@Override
-	public TextBlock asBig(final TextBlock title, HorizontalAlignment labelAlignment, final TextBlock stereotype,
-			final double width, final double height, final SymbolContext symbolContext, final HorizontalAlignment stereoAlignment) {
-		throw new UnsupportedOperationException();
+	public TextBlock asBig(TextBlock title, HorizontalAlignment labelAlignment, TextBlock stereotype, double width,
+			double height, SymbolContext symbolContext, HorizontalAlignment stereoAlignment) {
+		return USymbol.COMPONENT2.asBig(title, labelAlignment, stereotype, width, height, symbolContext,
+				stereoAlignment);
 	}
 
 	@Override

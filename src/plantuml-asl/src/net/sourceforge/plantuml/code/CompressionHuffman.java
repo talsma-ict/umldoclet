@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -54,19 +54,24 @@ public class CompressionHuffman implements Compression {
 		}
 	}
 
-	public byte[] decompress(byte[] in) throws IOException {
-		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	public ByteArray decompress(byte[] in) throws NoPlantumlCompressionException {
+		try {
+			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-		final ByteArrayInputStream bais = new ByteArrayInputStream(in);
-		final InflaterInputStream gz = new InflaterInputStream(bais);
-		int read;
-		while ((read = gz.read()) != -1) {
-			baos.write(read);
+			final ByteArrayInputStream bais = new ByteArrayInputStream(in);
+			final InflaterInputStream gz = new InflaterInputStream(bais);
+			int read;
+			while ((read = gz.read()) != -1) {
+				baos.write(read);
+			}
+			gz.close();
+			bais.close();
+			baos.close();
+			return ByteArray.from(baos.toByteArray());
+		} catch (IOException e) {
+			// System.err.println("Not Huffman");
+			throw new NoPlantumlCompressionException(e);
 		}
-		gz.close();
-		bais.close();
-		baos.close();
-		return baos.toByteArray();
 	}
 
 }

@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -52,7 +52,7 @@ public class CommandActivityLong3 extends CommandMultilines2<ActivityDiagram3> {
 
 	@Override
 	public String getPatternEnd() {
-		return "^(.*)" + CommandActivity3.ENDING_GROUP + "$";
+		return "^(.*)" + CommandActivity3.endingGroup() + "$";
 	}
 
 	private static ColorParser color() {
@@ -67,13 +67,14 @@ public class CommandActivityLong3 extends CommandMultilines2<ActivityDiagram3> {
 				RegexLeaf.end());
 	}
 
+	@Override
 	protected CommandExecutionResult executeNow(ActivityDiagram3 diagram, BlocLines lines) {
 		lines = lines.removeEmptyColumns();
-		final RegexResult line0 = getStartingPattern().matcher(lines.getFirst499().getTrimmed().getString());
+		final RegexResult line0 = getStartingPattern().matcher(lines.getFirst().getTrimmed().getString());
 		final Colors colors = color().getColor(line0, diagram.getSkinParam().getIHtmlColorSet());
 		// final HtmlColor color = diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(line0.get("COLOR", 0));
 		final BoxStyle style = BoxStyle.fromChar(lines.getLastChar());
-		lines = lines.removeStartingAndEnding2(line0.get("DATA", 0));
+		lines = lines.removeStartingAndEnding(line0.get("DATA", 0), 1);
 		diagram.addActivity(lines.toDisplay(), style, null, colors);
 		return CommandExecutionResult.ok();
 	}

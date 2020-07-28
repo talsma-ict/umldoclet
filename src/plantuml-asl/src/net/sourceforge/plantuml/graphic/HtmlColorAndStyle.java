@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -30,70 +30,80 @@
  */
 package net.sourceforge.plantuml.graphic;
 
-import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.ISkinParam;
+import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.cucadiagram.LinkStyle;
-import net.sourceforge.plantuml.skin.rose.Rose;
+import net.sourceforge.plantuml.style.PName;
+import net.sourceforge.plantuml.style.SName;
+import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public class HtmlColorAndStyle {
 
-	private final static Rose rose = new Rose();
-
-	private final HtmlColor color;
+	private final HColor arrowHeadColor;
+	private final HColor arrowColor;
 	private final LinkStyle style;
 
 	@Override
 	public String toString() {
-		return color + " " + style;
+		return arrowColor + " " + style;
 	}
 
-	public static Rainbow fromColor(HtmlColor color) {
-		if (color == null) {
-			return Rainbow.none();
-		}
-		return Rainbow.build(new HtmlColorAndStyle(color));
+	public HtmlColorAndStyle(HColor color, HColor arrowHeadColor) {
+		this(color, LinkStyle.NORMAL(), arrowHeadColor);
 	}
 
-	public static Rainbow build(ISkinParam skinParam) {
-		return fromColor(rose.getHtmlColor(skinParam, ColorParam.arrow));
-	}
-
-	private HtmlColorAndStyle(HtmlColor color) {
-		this(color, LinkStyle.NORMAL());
-	}
-
-	public HtmlColorAndStyle(HtmlColor color, LinkStyle style) {
-		if (color == null) {
+	public HtmlColorAndStyle(HColor arrowColor, LinkStyle style, HColor arrowHeadColor) {
+		if (arrowColor == null) {
 			throw new IllegalArgumentException();
 		}
-		this.color = color;
+		this.arrowColor = arrowColor;
+		this.arrowHeadColor = arrowHeadColor == null ? arrowColor : arrowHeadColor;
 		this.style = style;
 	}
 
-	public HtmlColor getColor() {
-		return color;
+	public HColor getArrowColor() {
+		return arrowColor;
+	}
+
+	public HColor getArrowHeadColor() {
+		return arrowHeadColor;
 	}
 
 	public LinkStyle getStyle() {
 		return style;
 	}
 
+	static final public StyleSignature getDefaultStyleDefinitionArrow() {
+		return StyleSignature.of(SName.root, SName.element, SName.activityDiagram, SName.arrow);
+	}
+
 	public static HtmlColorAndStyle build(ISkinParam skinParam, String definition) {
-		HtmlColor color = build(skinParam).getColors().get(0).color;
+		HColor arrowColor;
+		HColor arrowHeadColor = null;
+		if (SkinParam.USE_STYLES()) {
+			final Style style = getDefaultStyleDefinitionArrow().getMergedStyle(skinParam.getCurrentStyleBuilder());
+			arrowColor = style.value(PName.LineColor).asColor(skinParam.getIHtmlColorSet());
+		} else {
+			arrowColor = Rainbow.build(skinParam).getColors().get(0).arrowColor;
+			arrowColor = Rainbow.build(skinParam).getColors().get(0).arrowHeadColor;
+		}
 		LinkStyle style = LinkStyle.NORMAL();
-		final IHtmlColorSet set = skinParam.getIHtmlColorSet();
+		final HColorSet set = skinParam.getIHtmlColorSet();
 		for (String s : definition.split(",")) {
 			final LinkStyle tmpStyle = LinkStyle.fromString1(s);
 			if (tmpStyle.isNormal() == false) {
 				style = tmpStyle;
 				continue;
 			}
-			final HtmlColor tmpColor = set.getColorIfValid(s);
+			final HColor tmpColor = set.getColorIfValid(s);
 			if (tmpColor != null) {
-				color = tmpColor;
+				arrowColor = tmpColor;
 			}
 		}
-		return new HtmlColorAndStyle(color, style);
+		return new HtmlColorAndStyle(arrowColor, style, arrowHeadColor);
 	}
 
 }

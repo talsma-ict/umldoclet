@@ -4,12 +4,12 @@
  *
  * (C) Copyright 2009-2020, Arnaud Roques
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of PlantUML.
  *
@@ -40,26 +40,24 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.AbstractFtile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Diamond;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileGeometry;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class FtileDiamondFoo1 extends AbstractFtile {
 
-	private final HtmlColor backColor;
-	private final HtmlColor borderColor;
+	private final HColor backColor;
+	private final HColor borderColor;
 	private final Swimlane swimlane;
 	private final TextBlock label;
 	private final TextBlock west;
 	private final TextBlock east;
 	private final TextBlock north;
 
-	public FtileDiamondFoo1(ISkinParam skinParam, HtmlColor backColor, HtmlColor borderColor, Swimlane swimlane,
+	public FtileDiamondFoo1(ISkinParam skinParam, HColor backColor, HColor borderColor, Swimlane swimlane,
 			TextBlock label) {
 		this(skinParam, backColor, borderColor, swimlane, label, TextBlockUtils.empty(0, 0),
 				TextBlockUtils.empty(0, 0), TextBlockUtils.empty(0, 0));
@@ -77,7 +75,7 @@ public class FtileDiamondFoo1 extends AbstractFtile {
 		return new FtileDiamondFoo1(skinParam(), backColor, borderColor, swimlane, label, north, west, east);
 	}
 
-	private FtileDiamondFoo1(ISkinParam skinParam, HtmlColor backColor, HtmlColor borderColor, Swimlane swimlane,
+	private FtileDiamondFoo1(ISkinParam skinParam, HColor backColor, HColor borderColor, Swimlane swimlane,
 			TextBlock label, TextBlock north, TextBlock west, TextBlock east) {
 		super(skinParam);
 		this.backColor = backColor;
@@ -108,7 +106,7 @@ public class FtileDiamondFoo1 extends AbstractFtile {
 		final StringBounder stringBounder = ug.getStringBounder();
 		final Dimension2D dimLabel = label.calculateDimension(stringBounder);
 		final Dimension2D dimTotal = calculateDimensionInternal(stringBounder);
-		ug = ug.apply(new UChangeColor(borderColor)).apply(getThickness()).apply(new UChangeBackColor(backColor));
+		ug = ug.apply(borderColor).apply(getThickness()).apply(backColor.bg());
 		ug.draw(Diamond.asPolygonFoo1(skinParam().shadowing(null), dimTotal.getWidth(), dimTotal.getHeight()));
 
 		north.drawU(ug.apply(new UTranslate(4 + dimTotal.getWidth() / 2, dimTotal.getHeight())));
