@@ -32,6 +32,7 @@ import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
+import static java.util.Locale.ENGLISH;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
@@ -149,7 +150,7 @@ final class UMLOptions {
 
         private String resourceMsg(String key) {
             try {
-                String resourceKey = "doclet.usage." + key.toLowerCase().replaceFirst("^-+", "");
+                String resourceKey = "doclet.usage." + key.toLowerCase(ENGLISH).replaceFirst("^-+", "");
                 return ResourceBundle.getBundle(UMLDoclet.class.getName()).getString(resourceKey);
             } catch (MissingResourceException mre) {
                 return MISSING_KEY;
