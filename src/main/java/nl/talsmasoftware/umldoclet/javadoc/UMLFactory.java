@@ -539,18 +539,24 @@ public class UMLFactory {
     }
 
     private static String propertyName(ExecutableElement method) {
-        String name = method.getSimpleName().toString();
-        int params = method.getParameters().size();
-        if (params == 0 && name.length() > 3 && name.startsWith("get")) {
-            char[] result = name.substring(3).toCharArray();
-            result[0] = Character.toLowerCase(result[0]);
-            return new String(result);
-        } else if (params == 1 && name.length() > 3 && name.startsWith("set")) {
-            char[] result = name.substring(3).toCharArray();
-            result[0] = Character.toLowerCase(result[0]);
-            return new String(result);
-        } else if (params == 0 && name.length() > 2 && name.startsWith("is") && isBooleanPrimitive(method.getReturnType())) {
-            char[] result = name.substring(2).toCharArray();
+        char[] result = null;
+        final Set<Modifier> modifiers = method.getModifiers();
+        if (modifiers.contains(Modifier.PUBLIC)
+                && !modifiers.contains(Modifier.ABSTRACT)
+                && !modifiers.contains(Modifier.STATIC)) {
+            String name = method.getSimpleName().toString();
+            int params = method.getParameters().size();
+            if (params == 0 && name.length() > 3 && name.startsWith("get")) {
+                // TODO: check non-void return type?
+                result = name.substring(3).toCharArray();
+            } else if (params == 1 && name.length() > 3 && name.startsWith("set")) {
+                // TODO: check void return type?
+                result = name.substring(3).toCharArray();
+            } else if (params == 0 && name.length() > 2 && name.startsWith("is") && isBooleanPrimitive(method.getReturnType())) {
+                result = name.substring(2).toCharArray();
+            }
+        }
+        if (result != null) {
             result[0] = Character.toLowerCase(result[0]);
             return new String(result);
         }
