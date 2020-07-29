@@ -32,12 +32,6 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 
 public class Issue266Test {
-    public static class Tester {
-        public static Set<Tester> setOf(Tester... testers) {
-            return Collections.unmodifiableSet(new LinkedHashSet<>(asList(testers)));
-        }
-    }
-
     private static final String packageAsPath = Issue266Test.class.getPackageName().replace('.', '/');
     private static final File outputDir = new File("target/issues/266");
     private static String classUml;
@@ -45,7 +39,7 @@ public class Issue266Test {
 
     @BeforeAll
     public static void prepareJavadocWithPumlFiles() {
-        String classAsPath = packageAsPath + "/Issue266Test.Tester";
+        String classAsPath = packageAsPath + "/Issue266Test.TesterUtil";
         ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
                 "-d", outputDir.getPath(),
@@ -57,6 +51,11 @@ public class Issue266Test {
         packageUml = TestUtil.read(new File(outputDir, packageAsPath + "/package.puml"));
     }
 
+    public static class TesterUtil {
+        public static Set<TesterUtil> setOf(TesterUtil... testers) {
+            return Collections.unmodifiableSet(new LinkedHashSet<>(asList(testers)));
+        }
+    }
 
     @Test
     public void testBug266Rendering() {
