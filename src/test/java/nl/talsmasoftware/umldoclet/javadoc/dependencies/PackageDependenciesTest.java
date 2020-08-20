@@ -16,6 +16,7 @@
 package nl.talsmasoftware.umldoclet.javadoc.dependencies;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
+import nl.talsmasoftware.umldoclet.javadoc.dependencies.exceptions.TestException;
 import nl.talsmasoftware.umldoclet.util.TestUtil;
 import org.junit.jupiter.api.Test;
 
@@ -87,6 +88,22 @@ public class PackageDependenciesTest {
         assertThat(puml, containsString("nl.talsmasoftware.umldoclet.javadoc.dependencies --> java.lang"));
         assertThat(puml, containsString("nl.talsmasoftware.umldoclet.javadoc.dependencies --> javax.lang.model.type"));
         assertThat(puml, containsString("nl.talsmasoftware.umldoclet.javadoc.dependencies --> java.util"));
+    }
+
+    @Test
+    public void testPackageDependenciesIncludeExceptions() throws TestException {
+        String expectedPackageDependency = getClass().getPackageName() + " --> " + TestException.class.getPackageName();
+        File output = TestUtil.createDirectory(new File(testDir, "exception-dependencies"));
+        assertThat("Javadoc reult", ToolProvider.findFirst("javadoc").get().run(
+                System.out, System.err,
+                "-d", output.getPath(),
+                "-doclet", UMLDoclet.class.getName(),
+                "-quiet", "-createPumlFiles",
+                "src/test/java/" +PackageDependenciesTest.class.getName().replace('.', '/') + ".java"
+        ), is(0));
+
+        String puml = TestUtil.read(new File(output, "package-dependencies.puml"));
+        assertThat(puml, containsString(expectedPackageDependency));
     }
 
 }

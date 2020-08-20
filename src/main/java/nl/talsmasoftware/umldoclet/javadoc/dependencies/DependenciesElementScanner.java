@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Talsma ICT
+ * Copyright 2016-2020 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,6 +72,7 @@ public class DependenciesElementScanner extends ElementScanner9<Set<PackageDepen
     @Override
     public Set<PackageDependency> visitExecutable(ExecutableElement e, String fromPackage) {
         addDependency(fromPackage, e.getReturnType());
+        e.getThrownTypes().forEach(thrownType -> addDependency(fromPackage, thrownType));
         return super.visitExecutable(e, fromPackage); // will add the argument dependencies
     }
 
