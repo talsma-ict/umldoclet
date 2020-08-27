@@ -70,4 +70,8 @@ public class UnusedTimeScaleWithoutWeekEnd implements TimeScale {
 		throw new UnsupportedOperationException();
 	}
 
+	public boolean isBreaking(Wink instant) {
+		throw new UnsupportedOperationException();
+	}
+
 }

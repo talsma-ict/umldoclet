@@ -30,14 +30,14 @@
  */
 package net.sourceforge.plantuml.project.core;
 
-import net.sourceforge.plantuml.Direction;
 import net.sourceforge.plantuml.Url;
+import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.project.Load;
-import net.sourceforge.plantuml.project.lang.ComplementColors;
-import net.sourceforge.plantuml.project.lang.Subject;
+import net.sourceforge.plantuml.project.lang.CenterBorderColor;
+import net.sourceforge.plantuml.project.time.DayOfWeek;
 import net.sourceforge.plantuml.project.time.Wink;
 
-public interface Task extends Subject, Moment {
+public interface Task extends Moment {
 
 	public TaskCode getCode();
 
@@ -53,7 +53,7 @@ public interface Task extends Subject, Moment {
 
 	public void setEnd(Wink end);
 
-	public void setColors(ComplementColors colors);
+	public void setColors(CenterBorderColor colors);
 
 	public void addResource(Resource resource, int percentage);
 
@@ -65,12 +65,14 @@ public interface Task extends Subject, Moment {
 
 	public void setUrl(Url url);
 
-	public double getHeight();
+	public void putInSameRowAs(Task row);
 
-	public double getY();
+	public Task getRow();
 
-	public void setY(double y);
+	public void addPause(Wink pause);
 
-	public double getY(Direction direction);
+	public void addPause(DayOfWeek pause);
+
+	public void setNote(Display note);
 
 }
