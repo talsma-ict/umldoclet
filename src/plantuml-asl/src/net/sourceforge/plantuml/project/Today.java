@@ -30,8 +30,6 @@
  */
 package net.sourceforge.plantuml.project;
 
-import net.sourceforge.plantuml.project.lang.Subject;
-
-public class Today implements Subject {
+public class Today {
 
 }

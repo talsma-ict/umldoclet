@@ -39,7 +39,7 @@ import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.project.GanttDiagram;
 import net.sourceforge.plantuml.project.core.Task;
-import net.sourceforge.plantuml.project.lang.ComplementColors;
+import net.sourceforge.plantuml.project.lang.CenterBorderColor;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class CommandColorTask extends SingleLineCommand2<GanttDiagram> {
@@ -69,7 +69,7 @@ public class CommandColorTask extends SingleLineCommand2<GanttDiagram> {
 		final String color2 = arg.get("COLORS", 1);
 		final HColor col1 = diagram.getIHtmlColorSet().getColorIfValid(color1);
 		final HColor col2 = diagram.getIHtmlColorSet().getColorIfValid(color2);
-		task.setColors(new ComplementColors(col1, col2));
+		task.setColors(new CenterBorderColor(col1, col2));
 
 		return CommandExecutionResult.ok();
 	}

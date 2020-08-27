@@ -158,10 +158,10 @@ public class Pipe {
 				break;
 			}
 		}
+		String source = sb.toString().trim();
 		if (sb.length() == 0) {
 			return null;
 		}
-		String source = sb.toString();
 		if (source.startsWith("@start") == false) {
 			source = "@startuml\n" + source + "\n@enduml";
 		}

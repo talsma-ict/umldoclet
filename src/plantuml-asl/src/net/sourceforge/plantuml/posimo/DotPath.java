@@ -27,6 +27,7 @@
  *
  *
  * Original Author:  Arnaud Roques
+ * Contribution:  Miguel Esteves
  */
 package net.sourceforge.plantuml.posimo;
 
@@ -89,6 +90,7 @@ public class DotPath implements UShape, Moveable {
 
 	private final List<CubicCurve2D.Double> beziers = new ArrayList<CubicCurve2D.Double>();
 	private String comment;
+	private String codeLine;
 
 	public DotPath() {
 		this(new ArrayList<CubicCurve2D.Double>());
@@ -422,7 +424,7 @@ public class DotPath implements UShape, Moveable {
 	}
 
 	public UPath toUPath() {
-		final UPath result = new UPath(comment);
+		final UPath result = new UPath(comment, codeLine);
 		boolean start = true;
 		for (CubicCurve2D.Double bez : beziers) {
 			if (start) {
@@ -684,8 +686,9 @@ public class DotPath implements UShape, Moveable {
 		return Collections.unmodifiableList(result);
 	}
 
-	public void setComment(String comment) {
+	public void setCommentAndCodeLine(String comment, String codeLine) {
 		this.comment = comment;
+		this.codeLine = codeLine;
 	}
 
 }

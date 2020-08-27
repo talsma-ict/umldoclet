@@ -30,16 +30,15 @@
  */
 package net.sourceforge.plantuml.project.lang;
 
-public class ComplementName implements Complement {
+import net.sourceforge.plantuml.command.regex.IRegex;
+import net.sourceforge.plantuml.command.regex.RegexResult;
+import net.sourceforge.plantuml.project.Failable;
+import net.sourceforge.plantuml.project.GanttDiagram;
 
-	private final String name;
+public interface Something {
 
-	public ComplementName(String name) {
-		this.name = name;
-	}
+	public IRegex toRegex(String suffix);
 
-	public final String getName() {
-		return name;
-	}
+	public Failable<? extends Object> getMe(GanttDiagram project, RegexResult arg, String suffix);
 
 }

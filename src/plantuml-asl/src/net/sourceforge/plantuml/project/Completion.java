@@ -30,9 +30,7 @@
  */
 package net.sourceforge.plantuml.project;
 
-import net.sourceforge.plantuml.project.lang.Complement;
-
-public class Completion implements Complement {
+public class Completion {
 
 	private final int completion;
 

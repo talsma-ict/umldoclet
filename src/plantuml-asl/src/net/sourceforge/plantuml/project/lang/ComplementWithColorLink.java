@@ -30,37 +30,27 @@
  */
 package net.sourceforge.plantuml.project.lang;
 
-import net.sourceforge.plantuml.ugraphic.UGraphic;
+import net.sourceforge.plantuml.command.regex.IRegex;
+import net.sourceforge.plantuml.command.regex.RegexLeaf;
+import net.sourceforge.plantuml.command.regex.RegexResult;
+import net.sourceforge.plantuml.project.Failable;
+import net.sourceforge.plantuml.project.GanttDiagram;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 
-public class ComplementColors implements Complement {
+public class ComplementWithColorLink implements Something {
 
-	private final HColor center;
-	private final HColor border;
-
-	public ComplementColors(HColor center, HColor border) {
-		this.center = center;
-		this.border = border;
+	public IRegex toRegex(String suffix) {
+		final String optionalStyle = "(?:(dotted|bold|dashed)[%s]+)?";
+		return new RegexLeaf("COMPLEMENT" + suffix,
+				"with[%s]+" + optionalStyle + "(#?\\w+)[%s]+" + optionalStyle + "link");
 	}
 
-	public UGraphic apply(UGraphic ug) {
-		if (isOk() == false) {
-			throw new IllegalStateException();
-		}
-		ug = ug.apply(center.bg());
-		if (border == null) {
-			ug = ug.apply(center);
-		} else {
-			ug = ug.apply(border);
-		}
-		return ug;
-	}
-
-	public boolean isOk() {
-		return center != null;
-	}
-
-	public HColor getCenter() {
-		return center;
+	public Failable<CenterBorderColor> getMe(GanttDiagram system, RegexResult arg, String suffix) {
+		final String style0 = arg.get("COMPLEMENT" + suffix, 0);
+		final String color1 = arg.get("COMPLEMENT" + suffix, 1);
+		final String style2 = arg.get("COMPLEMENT" + suffix, 2);
+		final HColor col1 = system.getIHtmlColorSet().getColorIfValid(color1);
+		final String style = style0 == null ? style2 : style0;
+		return Failable.ok(new CenterBorderColor(col1, col1, style));
 	}
 }

@@ -30,6 +30,7 @@
  */
 package net.sourceforge.plantuml;
 
+import java.io.File;
 import java.io.PrintStream;
 
 import net.sourceforge.plantuml.core.Diagram;
@@ -37,5 +38,9 @@ import net.sourceforge.plantuml.core.Diagram;
 public interface Stdrpt {
 
 	public void printInfo(PrintStream output, Diagram sys);
+
+	public void finalMessage(ErrorStatus error);
+
+	public void errorLine(int lineError, File file);
 
 }

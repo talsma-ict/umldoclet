@@ -36,16 +36,14 @@ import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.project.Failable;
 import net.sourceforge.plantuml.project.GanttDiagram;
 
-public class ComplementOpen implements ComplementPattern {
-
-	public static final Complement OPEN = new Complement() {
-	};
+public class ComplementOpen implements Something {
 
 	public IRegex toRegex(String suffix) {
 		return new RegexLeaf("OPEN" + suffix, "(opene?d?)");
 	}
 
-	public Failable<Complement> getComplement(GanttDiagram system, RegexResult arg, String suffix) {
-		return Failable.<Complement> ok(OPEN);
+	public Failable<Object> getMe(GanttDiagram project, RegexResult arg, String suffix) {
+		return Failable.ok(new Object());
 	}
+
 }

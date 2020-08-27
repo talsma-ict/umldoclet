@@ -30,6 +30,8 @@
  */
 package net.sourceforge.plantuml.activitydiagram3;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import net.sourceforge.plantuml.activitydiagram3.ftile.BoxStyle;
@@ -55,6 +57,7 @@ public class InstructionRepeat implements Instruction {
 	private final BoxStyle boxStyleIn;
 
 	private Display backward = Display.NULL;
+	private List<PositionedNote> backwardNotes = new ArrayList<PositionedNote>();
 	private Display test = Display.NULL;
 	private Display yes = Display.NULL;
 	private Display out = Display.NULL;
@@ -99,13 +102,23 @@ public class InstructionRepeat implements Instruction {
 	}
 
 	public Ftile createFtile(FtileFactory factory) {
-		final Ftile back = Display.isNull(backward) ? null
-				: factory.activity(backward, swimlane, boxStyle, Colors.empty());
+		final Ftile back = getBackward(factory);
 		final Ftile decorateOut = factory.decorateOut(repeatList.createFtile(factory), endRepeatLinkRendering);
 		final Ftile result = factory.repeat(boxStyleIn, swimlane, swimlaneOut, startLabel, decorateOut, test, yes, out,
 				colors, backRepeatLinkRendering, back, isLastOfTheParent());
 		if (killed) {
 			return new FtileKilled(result);
+		}
+		return result;
+	}
+
+	private Ftile getBackward(FtileFactory factory) {
+		if (Display.isNull(backward)) {
+			return null;
+		}
+		Ftile result = factory.activity(backward, swimlane, boxStyle, Colors.empty());
+		if (backwardNotes.size() > 0) {
+			result = factory.addNote(result, swimlane, backwardNotes);
 		}
 		return result;
 	}
@@ -147,7 +160,12 @@ public class InstructionRepeat implements Instruction {
 	}
 
 	public boolean addNote(Display note, NotePosition position, NoteType type, Colors colors, Swimlane swimlaneNote) {
-		return repeatList.addNote(note, position, type, colors, swimlaneNote);
+		if (Display.isNull(backward)) {
+			return repeatList.addNote(note, position, type, colors, swimlaneNote);
+		}
+		this.backwardNotes.add(new PositionedNote(note, position, type, colors, swimlaneNote));
+		return true;
+
 	}
 
 	public Set<Swimlane> getSwimlanes() {

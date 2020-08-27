@@ -30,35 +30,40 @@
  */
 package net.sourceforge.plantuml.project.lang;
 
-import java.util.Arrays;
-import java.util.Collection;
-
-import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.regex.IRegex;
+import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.command.regex.RegexResult;
+import net.sourceforge.plantuml.project.Failable;
 import net.sourceforge.plantuml.project.GanttDiagram;
-import net.sourceforge.plantuml.project.core.Task;
 
-public class VerbIsColored implements VerbPattern {
+public class PairOfSomething implements Something {
 
-	public Collection<ComplementPattern> getComplements() {
-		return Arrays.<ComplementPattern> asList(new ComplementInColors());
+	private final Something complement1;
+	private final Something complement2;
+
+	public PairOfSomething(Something complement1, Something complement2) {
+		this.complement1 = complement1;
+		this.complement2 = complement2;
 	}
 
-	public IRegex toRegex() {
-		return new RegexLeaf("is[%s]+colou?red");
+	public Failable<? extends Object> getMe(GanttDiagram system, RegexResult arg, String suffix) {
+		final Failable<? extends Object> r1 = complement1.getMe(system, arg, "A" + suffix);
+		final Failable<? extends Object> r2 = complement2.getMe(system, arg, "B" + suffix);
+		if (r1.isFail()) {
+			return r1;
+		}
+		if (r2.isFail()) {
+			return r2;
+		}
+		final Object[] result = new Object[] { r1.get(), r2.get() };
+		return Failable.ok(result);
 	}
 
-	public Verb getVerb(final GanttDiagram project, RegexResult arg) {
-		return new Verb() {
-			public CommandExecutionResult execute(Subject subject, Complement complement) {
-				final Task task = (Task) subject;
-				final ComplementColors colors = (ComplementColors) complement;
-				task.setColors(colors);
-				return CommandExecutionResult.ok();
-			}
-
-		};
+	public IRegex toRegex(String suffix) {
+		final IRegex pattern1 = complement1.toRegex("A" + suffix);
+		final IRegex pattern2 = complement2.toRegex("B" + suffix);
+		return new RegexConcat(pattern1, new RegexLeaf("[%s]+"), pattern2);
 	}
+
 }
