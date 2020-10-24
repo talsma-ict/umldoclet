@@ -34,10 +34,11 @@ import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.SpriteContainerEmpty;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.project.ToTaskDraw;
 import net.sourceforge.plantuml.project.core.Task;
-import net.sourceforge.plantuml.project.time.Wink;
+import net.sourceforge.plantuml.project.time.Day;
 import net.sourceforge.plantuml.project.timescale.TimeScale;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
@@ -49,7 +50,7 @@ import net.sourceforge.plantuml.ugraphic.UTranslate;
 
 public class TaskDrawDiamond extends AbstractTaskDraw {
 
-	public TaskDrawDiamond(TimeScale timeScale, double y, String prettyDisplay, Wink start, ISkinParam skinParam,
+	public TaskDrawDiamond(TimeScale timeScale, double y, String prettyDisplay, Day start, ISkinParam skinParam,
 			Task task, ToTaskDraw toTaskDraw) {
 		super(timeScale, y, prettyDisplay, start, skinParam, task, toTaskDraw);
 	}
@@ -61,6 +62,10 @@ public class TaskDrawDiamond extends AbstractTaskDraw {
 		return style;
 	}
 
+	public double getHeightMax(StringBounder stringBounder) {
+		return getHeightTask();
+	}
+
 //		final UFont font = UFont.serif(11);
 //		return new FontConfiguration(font, HColorUtils.BLACK, HColorUtils.BLACK, false);
 
@@ -69,7 +74,7 @@ public class TaskDrawDiamond extends AbstractTaskDraw {
 				HorizontalAlignment.LEFT, new SpriteContainerEmpty());
 		final double titleHeight = title.calculateDimension(ug.getStringBounder()).getHeight();
 		final double h = (margin + getShapeHeight() - titleHeight) / 2;
-		final double endingPosition = timeScale.getStartingPosition(start) + getHeight();
+		final double endingPosition = timeScale.getStartingPosition(start) + getHeightTask();
 		title.drawU(ug.apply(new UTranslate(endingPosition, h)));
 	}
 
@@ -91,8 +96,18 @@ public class TaskDrawDiamond extends AbstractTaskDraw {
 		ug.draw(getDiamond());
 	}
 
+	public FingerPrint getFingerPrintNote(StringBounder stringBounder) {
+		return null;
+	}
+
+	public FingerPrint getFingerPrint() {
+		final double h = getHeightTask();
+		final double startPos = timeScale.getStartingPosition(start);
+		return new FingerPrint(startPos, getY(), startPos + h, getY() + h);
+	}
+
 	private UShape getDiamond() {
-		final double h = getHeight() - 2 * margin;
+		final double h = getHeightTask() - 2 * margin;
 		final UPolygon result = new UPolygon();
 		result.addPoint(h / 2, 0);
 		result.addPoint(h, h / 2);

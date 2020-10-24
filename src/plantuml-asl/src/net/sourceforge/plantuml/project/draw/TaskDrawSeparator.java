@@ -36,12 +36,12 @@ import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
-import net.sourceforge.plantuml.project.core.AbstractTask;
 import net.sourceforge.plantuml.project.core.Task;
 import net.sourceforge.plantuml.project.lang.CenterBorderColor;
-import net.sourceforge.plantuml.project.time.Wink;
+import net.sourceforge.plantuml.project.time.Day;
 import net.sourceforge.plantuml.project.timescale.TimeScale;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -52,12 +52,12 @@ import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 public class TaskDrawSeparator implements TaskDraw {
 
 	private final TimeScale timeScale;
-	private final double y;
-	private final Wink min;
-	private final Wink max;
+	private double y;
+	private final Day min;
+	private final Day max;
 	private final String name;
 
-	public TaskDrawSeparator(String name, TimeScale timeScale, double y, Wink min, Wink max) {
+	public TaskDrawSeparator(String name, TimeScale timeScale, double y, Day min, Day max) {
 		this.name = name;
 		this.y = y;
 		this.timeScale = timeScale;
@@ -91,7 +91,7 @@ public class TaskDrawSeparator implements TaskDraw {
 		final double end = timeScale.getEndingPosition(max);
 
 		ug = ug.apply(HColorUtils.BLACK);
-		ug = ug.apply(UTranslate.dy(getHeight() / 2));
+		ug = ug.apply(UTranslate.dy(getHeightTask() / 2));
 
 		if (widthTitle == 0) {
 			final ULine line = ULine.hline(end - start);
@@ -104,12 +104,26 @@ public class TaskDrawSeparator implements TaskDraw {
 		}
 	}
 
-	public double getHeight() {
+	public FingerPrint getFingerPrint() {
+		final double h = getHeightTask();
+		final double end = timeScale.getEndingPosition(max);
+		return new FingerPrint(0, y, end, y + h);
+	}
+
+	public double getHeightTask() {
 		return 16;
 	}
 
 	public double getY() {
 		return y;
+	}
+
+	public void pushMe(double deltaY) {
+		this.y += deltaY;
+	}
+
+	public TaskDraw getTrueRow() {
+		return null;
 	}
 
 	public void setColorsAndCompletion(CenterBorderColor colors, int completion, Url url, Display note) {
@@ -121,6 +135,14 @@ public class TaskDrawSeparator implements TaskDraw {
 
 	public double getY(Direction direction) {
 		throw new UnsupportedOperationException();
+	}
+
+	public FingerPrint getFingerPrintNote(StringBounder stringBounder) {
+		return null;
+	}
+
+	public double getHeightMax(StringBounder stringBounder) {
+		return getHeightTask();
 	}
 
 }

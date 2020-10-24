@@ -96,8 +96,8 @@ public class Member {
 			this.visibilityModifier = null;
 			this.abstractModifier = false;
 			tmpDisplay = StringUtils.trin(tmpDisplay);
-			this.display = tmpDisplay.length() == 0 ? " " : Guillemet.GUILLEMET.manageGuillemet(StringUtils
-					.trin(tmpDisplay));
+			this.display = tmpDisplay.length() == 0 ? " "
+					: Guillemet.GUILLEMET.manageGuillemet(StringUtils.trin(tmpDisplay));
 		}
 	}
 
@@ -109,7 +109,8 @@ public class Member {
 	}
 
 	private String getDisplayWithoutVisibilityChar() {
-		// assert display.length() == 0 || VisibilityModifier.isVisibilityCharacter(display.charAt(0)) == false;
+		// assert display.length() == 0 ||
+		// VisibilityModifier.isVisibilityCharacter(display.charAt(0)) == false;
 		return display;
 	}
 
@@ -188,13 +189,13 @@ public class Member {
 	}
 
 	public static boolean isMethod(String s) {
-		// s = UrlBuilder.purgeUrl(s);
-		if (s.contains("{method}")) {
+		final String purged = s.replaceAll(UrlBuilder.getRegexp(), "");
+		if (purged.contains("{method}")) {
 			return true;
 		}
-		if (s.contains("{field}")) {
+		if (purged.contains("{field}")) {
 			return false;
 		}
-		return s.contains("(") || s.contains(")");
+		return purged.contains("(") || purged.contains(")");
 	}
 }

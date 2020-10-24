@@ -37,6 +37,7 @@ import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
 import net.sourceforge.plantuml.svek.Ports;
 import net.sourceforge.plantuml.svek.WithPorts;
+import net.sourceforge.plantuml.ugraphic.UEmpty;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 
@@ -70,8 +71,14 @@ class TextBlockMarged extends AbstractTextBlock implements TextBlock, WithPorts 
 	}
 
 	public void drawU(UGraphic ug) {
-		final UTranslate translate = new UTranslate(left, top);
-		textBlock.drawU(ug.apply(translate));
+		// ug.apply(HColorUtils.BLUE).draw(new
+		// URectangle(calculateDimension(ug.getStringBounder())));
+		final Dimension2D dim = calculateDimension(ug.getStringBounder());
+		if (dim.getWidth() > 0) {
+			ug.draw(new UEmpty(dim));
+			final UTranslate translate = new UTranslate(left, top);
+			textBlock.drawU(ug.apply(translate));
+		}
 	}
 
 	@Override

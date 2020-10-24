@@ -28,55 +28,21 @@
  *
  * Original Author:  Arnaud Roques
  */
-package net.sourceforge.plantuml.project.time;
+package net.sourceforge.plantuml.project.core2;
 
-import net.sourceforge.plantuml.project.Value;
+import java.util.Collections;
 
-public class Wink implements Value, Comparable<Wink> {
+public class WorkLoadConstant implements WorkLoad {
 
-	private final int wink;
+	private final int value;
 
-	public Wink(int wink) {
-		this.wink = wink;
+	public WorkLoadConstant(int value) {
+		this.value = value;
 	}
 
-	@Override
-	public String toString() {
-		return "(Wink +" + wink + ")";
-	}
-
-	public Wink increment() {
-		return new Wink(wink + 1);
-	}
-
-	public Wink decrement() {
-		return new Wink(wink - 1);
-	}
-
-	public final int getWink() {
-		return wink;
-	}
-
-	public int compareTo(Wink other) {
-		return this.wink - other.wink;
-	}
-
-	public String toShortString() {
-		return "" + (wink + 1);
-	}
-
-	public static Wink min(Wink wink1, Wink wink2) {
-		if (wink2.wink < wink1.wink) {
-			return wink2;
-		}
-		return wink1;
-	}
-
-	public static Wink max(Wink wink1, Wink wink2) {
-		if (wink2.wink > wink1.wink) {
-			return wink2;
-		}
-		return wink1;
+	public IteratorSlice slices(long timeBiggerThan) {
+		return new ListIteratorSlice(
+				Collections.singletonList(new Slice(timeBiggerThan, 1000L * Integer.MAX_VALUE, value)));
 	}
 
 }

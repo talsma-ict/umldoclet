@@ -74,6 +74,7 @@ public class Option {
 	private boolean textProgressBar = false;
 	private int nbThreads = 0;
 	private int ftpPort = -1;
+	private int picowebPort = -1;
 	private boolean hideMetadata = false;
 	private boolean checkMetadata = false;
 	private int stdrpt = 0;
@@ -363,6 +364,13 @@ public class Option {
 				} else {
 					this.ftpPort = Integer.parseInt(s.substring(x + 1));
 				}
+			} else if (StringUtils.goLowerCase(s).startsWith("-picoweb")) {
+				final int x = s.indexOf(':');
+				if (x == -1) {
+					this.picowebPort = 8080;
+				} else {
+					this.picowebPort = Integer.parseInt(s.substring(x + 1));
+				}
 			} else if (s.startsWith("-c")) {
 				s = s.substring(2);
 				config.add(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(s));
@@ -388,6 +396,10 @@ public class Option {
 
 	public int getFtpPort() {
 		return ftpPort;
+	}
+
+	public int getPicowebPort() {
+		return picowebPort;
 	}
 
 	private void addInConfig(BufferedReader br) throws IOException {

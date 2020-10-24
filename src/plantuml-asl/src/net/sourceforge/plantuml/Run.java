@@ -54,9 +54,10 @@ import net.sourceforge.plantuml.classdiagram.ClassDiagramFactory;
 import net.sourceforge.plantuml.code.NoPlantumlCompressionException;
 import net.sourceforge.plantuml.code.Transcoder;
 import net.sourceforge.plantuml.code.TranscoderUtil;
-import net.sourceforge.plantuml.command.UmlDiagramFactory;
+import net.sourceforge.plantuml.command.PSystemCommandFactory;
 import net.sourceforge.plantuml.descdiagram.DescriptionDiagramFactory;
 import net.sourceforge.plantuml.ftp.FtpServer;
+import net.sourceforge.plantuml.picoweb.PicoWebServer;
 import net.sourceforge.plantuml.png.MetadataTag;
 import net.sourceforge.plantuml.preproc.Stdlib;
 import net.sourceforge.plantuml.security.ImageIO;
@@ -136,6 +137,11 @@ public class Run {
 
 		if (option.getFtpPort() != -1) {
 			goFtp(option);
+			return;
+		}
+
+		if (option.getPicowebPort() != -1) {
+			goPicoweb(option);
 			return;
 		}
 
@@ -322,6 +328,12 @@ public class Run {
 		ftpServer.go();
 	}
 
+	private static void goPicoweb(Option option) throws IOException {
+		final int picoWebport = option.getPicowebPort();
+		System.err.println("webPort=" + picoWebport);
+		PicoWebServer.startServer(picoWebport);
+	}
+
 	public static void printFonts() {
 		final Font fonts[] = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
 		for (Font f : fonts) {
@@ -344,7 +356,7 @@ public class Run {
 		// printPattern(new ObjectDiagramFactory(null));
 	}
 
-	private static void printPattern(UmlDiagramFactory factory) {
+	private static void printPattern(PSystemCommandFactory factory) {
 		System.out.println();
 		System.out.println(factory.getClass().getSimpleName().replaceAll("Factory", ""));
 		final List<String> descriptions = factory.getDescription();

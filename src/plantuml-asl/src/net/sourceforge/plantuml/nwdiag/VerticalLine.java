@@ -30,29 +30,31 @@
  */
 package net.sourceforge.plantuml.nwdiag;
 
-import java.util.TreeSet;
+import java.util.Set;
 
 import net.sourceforge.plantuml.graphic.UDrawable;
-import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.ULine;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.UPath;
+import net.sourceforge.plantuml.ugraphic.color.HColorNone;
 
 public class VerticalLine implements UDrawable {
 
 	private final double y1;
 	private final double y2;
-	private final TreeSet<Double> skip;
+	private final Set<Double> skip;
 
-	public VerticalLine(double y1, double y2, TreeSet<Double> skip) {
+	public VerticalLine(double y1, double y2, Set<Double> skip) {
 		this.y1 = Math.min(y1, y2);
 		this.y2 = Math.max(y1, y2);
 		this.skip = skip;
 	}
 
 	public void drawU(UGraphic ug) {
+		ug = ug.apply(new HColorNone().bg());
 		boolean drawn = false;
 		double current = y1;
+		UPath path = new UPath();
+		path.moveTo(0, current);
 		for (Double step : skip) {
 			if (step < y1) {
 				continue;
@@ -60,33 +62,27 @@ public class VerticalLine implements UDrawable {
 			assert step >= y1;
 			drawn = true;
 			if (step == y2) {
-				drawVLine(ug, current, y2);
+				path.lineTo(0, y2);
 			} else {
-				drawVLine(ug, current, Math.min(y2, step - 3));
+				path.lineTo(0, Math.min(y2, step - 3));
 				if (y2 > step) {
-					drawArc(ug, step - 3);
+					path.arcTo(4, 4, 0, 0, 1, 0, step + 9);
+					continue;
 				}
 			}
+			ug.draw(path);
+			path = new UPath();
 			current = step + 9;
+			path.moveTo(0, current);
 			if (current >= y2) {
 				break;
 			}
 		}
 		if (drawn == false) {
-			drawVLine(ug, y1, y2);
+			path.lineTo(0, y2);
+			ug.draw(path);
 		}
 
-	}
-
-	private void drawArc(UGraphic ug, double y) {
-		final UEllipse arc = new UEllipse(11, 11, 90, -180);
-		ug.apply(new UTranslate(-5, y)).draw(arc);
-
-	}
-
-	private void drawVLine(UGraphic ug, double start, double end) {
-		final ULine line = ULine.vline(end - start);
-		ug.apply(UTranslate.dy(start)).draw(line);
 	}
 
 }

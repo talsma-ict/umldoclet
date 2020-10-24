@@ -35,7 +35,7 @@ import java.util.List;
 
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.command.Command;
-import net.sourceforge.plantuml.command.UmlDiagramFactory;
+import net.sourceforge.plantuml.command.PSystemCommandFactory;
 import net.sourceforge.plantuml.command.note.sequence.FactorySequenceNoteAcrossCommand;
 import net.sourceforge.plantuml.command.note.sequence.FactorySequenceNoteCommand;
 import net.sourceforge.plantuml.command.note.sequence.FactorySequenceNoteOnArrowCommand;
@@ -72,7 +72,7 @@ import net.sourceforge.plantuml.sequencediagram.command.CommandReferenceOverSeve
 import net.sourceforge.plantuml.sequencediagram.command.CommandReturn;
 import net.sourceforge.plantuml.sequencediagram.command.CommandUrl;
 
-public class SequenceDiagramFactory extends UmlDiagramFactory {
+public class SequenceDiagramFactory extends PSystemCommandFactory {
 
 	private final ISkinSimple skinParam;
 

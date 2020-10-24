@@ -36,7 +36,7 @@ import net.sourceforge.plantuml.graphic.USymbol;
 
 public enum ActorStyle {
 
-	STICKMAN, AWESOME;
+	STICKMAN, STICKMAN_BUSINESS, AWESOME;
 
 	public USymbol toUSymbol() {
 		if (this == STICKMAN) {
@@ -49,7 +49,9 @@ public enum ActorStyle {
 
 	public TextBlock getTextBlock(SymbolContext symbolContext) {
 		if (this == STICKMAN) {
-			return new ActorStickMan(symbolContext);
+			return new ActorStickMan(symbolContext, false);
+		} else if (this == STICKMAN_BUSINESS) {
+			return new ActorStickMan(symbolContext, true);
 		} else if (this == AWESOME) {
 			return new ActorAwesome(symbolContext);
 		}

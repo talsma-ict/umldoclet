@@ -37,9 +37,8 @@ import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.UDrawable;
 import net.sourceforge.plantuml.project.GanttDiagram;
-import net.sourceforge.plantuml.project.core.PrintScale;
 import net.sourceforge.plantuml.project.core.Resource;
-import net.sourceforge.plantuml.project.time.Wink;
+import net.sourceforge.plantuml.project.time.Day;
 import net.sourceforge.plantuml.project.timescale.TimeScale;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -53,11 +52,11 @@ public class ResourceDraw implements UDrawable {
 	private final Resource res;
 	private final TimeScale timeScale;
 	private final double y;
-	private final Wink min;
-	private final Wink max;
+	private final Day min;
+	private final Day max;
 	private final GanttDiagram gantt;
 
-	public ResourceDraw(GanttDiagram gantt, Resource res, TimeScale timeScale, double y, Wink min, Wink max) {
+	public ResourceDraw(GanttDiagram gantt, Resource res, TimeScale timeScale, double y, Day min, Day max) {
 		this.res = res;
 		this.timeScale = timeScale;
 		this.y = y;
@@ -77,7 +76,7 @@ public class ResourceDraw implements UDrawable {
 		double startingPosition = -1;
 		int totalLoad = 0;
 		int totalLimit = 0;
-		for (Wink i = min; i.compareTo(max) <= 0; i = i.increment()) {
+		for (Day i = min; i.compareTo(max) <= 0; i = i.increment()) {
 			final boolean isBreaking = timeScale.isBreaking(i);
 			totalLoad += gantt.getLoadForResource(res, i);
 			totalLimit += 100;
@@ -119,7 +118,7 @@ public class ResourceDraw implements UDrawable {
 		return 16 * 2;
 	}
 
-	public double getY() {
+	public final double getY() {
 		return y;
 	}
 

@@ -28,50 +28,38 @@
  *
  * Original Author:  Arnaud Roques
  */
-package net.sourceforge.plantuml.project.timescale;
+package net.sourceforge.plantuml.project.core2;
 
-import net.sourceforge.plantuml.project.time.Day;
 import net.sourceforge.plantuml.project.time.DayOfWeek;
-import net.sourceforge.plantuml.project.time.GCalendar;
-import net.sourceforge.plantuml.project.time.Wink;
 
-public class UnusedTimeScaleWithoutWeekEnd implements TimeScale {
+public class Hole implements Comparable<Hole> {
 
-	private final double scale = 16.0;
-	private final GCalendar calendar;
+	private final long start;
+	private final long end;
 
-	public UnusedTimeScaleWithoutWeekEnd(GCalendar calendar) {
-		if (calendar == null) {
+	public Hole(long start, long end) {
+		if (end <= start) {
 			throw new IllegalArgumentException();
 		}
-		this.calendar = calendar;
+		this.start = start;
+		this.end = end;
 	}
 
-	public double getStartingPosition(Wink instant) {
-		double result = 0;
-		Wink current = (Wink) instant;
-		while (current.getWink() > 0) {
-			current = current.decrement();
-			result += getWidth(current);
-		}
-		return result;
+	@Override
+	public String toString() {
+		return DayOfWeek.timeToString(start) + " --> " + DayOfWeek.timeToString(end);
 	}
 
-	public double getWidth(Wink instant) {
-		final Day day = calendar.toDayAsDate((Wink) instant);
-		final DayOfWeek dayOfWeek = day.getDayOfWeek();
-		if (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) {
-			return 1;
-		}
-		return scale;
+	public final long getStart() {
+		return start;
 	}
 
-	public double getEndingPosition(Wink instant) {
-		throw new UnsupportedOperationException();
+	public final long getEnd() {
+		return end;
 	}
 
-	public boolean isBreaking(Wink instant) {
-		throw new UnsupportedOperationException();
+	public int compareTo(Hole other) {
+		return Long.compare(this.start, other.start);
 	}
 
 }

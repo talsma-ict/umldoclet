@@ -51,7 +51,7 @@ public class SentenceHappensDate extends SentenceSimple {
 		if (startingDate == null) {
 			return CommandExecutionResult.error("No starting date for the project");
 		}
-		task.setStart(start.asInstantDay(startingDate));
+		task.setStart(start);
 		task.setDiamond(true);
 		return CommandExecutionResult.ok();
 	}

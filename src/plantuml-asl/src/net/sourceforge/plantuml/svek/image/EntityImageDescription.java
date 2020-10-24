@@ -42,6 +42,7 @@ import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.SkinParamUtils;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.cucadiagram.BodyEnhanced;
+import net.sourceforge.plantuml.cucadiagram.BodyEnhanced2;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.EntityPortion;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
@@ -68,6 +69,7 @@ import net.sourceforge.plantuml.svek.Margins;
 import net.sourceforge.plantuml.svek.ShapeType;
 import net.sourceforge.plantuml.ugraphic.UComment;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
+import net.sourceforge.plantuml.ugraphic.UGraphicStencil;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
@@ -94,8 +96,8 @@ public class EntityImageDescription extends AbstractEntityImage {
 	public EntityImageDescription(ILeaf entity, ISkinParam skinParam, PortionShower portionShower,
 			Collection<Link> links, SName styleName, UStroke forceStroke) {
 		super(entity, entity.getColors(skinParam).mute(skinParam));
-		this.useRankSame = skinParam.useRankSame();
-		this.fixCircleLabelOverlapping = skinParam.fixCircleLabelOverlapping();
+		this.useRankSame = getSkinParam().useRankSame();
+		this.fixCircleLabelOverlapping = getSkinParam().fixCircleLabelOverlapping();
 
 		this.links = links;
 		final Stereotype stereotype = entity.getStereotype();
@@ -103,22 +105,12 @@ public class EntityImageDescription extends AbstractEntityImage {
 		if (symbol == USymbol.FOLDER) {
 			this.shapeType = ShapeType.FOLDER;
 		} else if (symbol == USymbol.INTERFACE) {
-			this.shapeType = skinParam.fixCircleLabelOverlapping() ? ShapeType.RECTANGLE_WITH_CIRCLE_INSIDE
+			this.shapeType = getSkinParam().fixCircleLabelOverlapping() ? ShapeType.RECTANGLE_WITH_CIRCLE_INSIDE
 					: ShapeType.RECTANGLE;
 		} else {
 			this.shapeType = ShapeType.RECTANGLE;
 		}
 		this.hideText = symbol == USymbol.INTERFACE;
-
-		final Display codeDisplay = Display.getWithNewlines(entity.getCodeGetName());
-		if ((entity.getDisplay().equals(codeDisplay) && symbol.getSkinParameter() == SkinParameter.PACKAGE)
-				|| entity.getDisplay().isWhite()) {
-			desc = TextBlockUtils.empty(skinParam.minClassWidth(), 0);
-		} else {
-			desc = new BodyEnhanced(entity.getDisplay(), symbol.getFontParam(), getSkinParam(),
-					HorizontalAlignment.LEFT, stereotype, symbol.manageHorizontalLine(), false, entity,
-					skinParam.minClassWidth(), SName.componentDiagram);
-		}
 
 		this.url = entity.getUrl99();
 
@@ -160,6 +152,22 @@ public class EntityImageDescription extends AbstractEntityImage {
 
 		final SymbolContext ctx = new SymbolContext(backcolor, forecolor).withStroke(stroke).withShadow(deltaShadow)
 				.withCorner(roundCorner, diagonalCorner);
+
+		final Display codeDisplay = Display.getWithNewlines(entity.getCodeGetName());
+		if ((entity.getDisplay().equals(codeDisplay) && symbol.getSkinParameter() == SkinParameter.PACKAGE)
+				|| entity.getDisplay().isWhite()) {
+			desc = TextBlockUtils.empty(getSkinParam().minClassWidth(), 0);
+		} else {
+			final FontConfiguration titleConfig = new FontConfiguration(getSkinParam(), symbol.getFontParam(),
+					stereotype);
+
+			desc = new BodyEnhanced2(entity.getDisplay(), symbol.getFontParam(), getSkinParam(),
+					getSkinParam().getDefaultTextAlignment(HorizontalAlignment.LEFT), titleConfig,
+					getSkinParam().wrapWidth(), getSkinParam().minClassWidth());
+//			desc = new BodyEnhanced(entity.getDisplay(), symbol.getFontParam(), getSkinParam(),
+//					HorizontalAlignment.LEFT, stereotype, symbol.manageHorizontalLine(), false, entity,
+//					skinParam.minClassWidth(), SName.componentDiagram);
+		}
 
 		stereo = TextBlockUtils.empty(0, 0);
 
@@ -276,7 +284,11 @@ public class EntityImageDescription extends AbstractEntityImage {
 			final Dimension2D dimSmall = asSmall.calculateDimension(ug.getStringBounder());
 			final Dimension2D dimDesc = desc.calculateDimension(ug.getStringBounder());
 			final double posx1 = (dimSmall.getWidth() - dimDesc.getWidth()) / 2;
-			desc.drawU(ug.apply(new UTranslate(posx1, space + dimSmall.getHeight())));
+			
+			UGraphic ugDesc = ug.apply(new UTranslate(posx1, space + dimSmall.getHeight()));
+			ugDesc = UGraphicStencil.create(ugDesc, dimDesc);
+			desc.drawU(ugDesc);
+			
 			final Dimension2D dimStereo = stereo.calculateDimension(ug.getStringBounder());
 			final double posx2 = (dimSmall.getWidth() - dimStereo.getWidth()) / 2;
 			stereo.drawU(ug.apply(new UTranslate(posx2, -space - dimStereo.getHeight())));

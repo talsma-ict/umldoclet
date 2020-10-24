@@ -35,17 +35,28 @@ import java.awt.geom.Point2D;
 import net.sourceforge.plantuml.graphic.UDrawable;
 import net.sourceforge.plantuml.svek.AbstractExtremityFactory;
 import net.sourceforge.plantuml.svek.Side;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class ExtremityFactoryTriangle extends AbstractExtremityFactory implements ExtremityFactory {
 
+	private final HColor backgroundColor;
+	private final int xWing;
+	private final int yAperture;
+
+	public ExtremityFactoryTriangle(HColor backgroundColor, int xWing, int yAperture) {
+		this.backgroundColor = backgroundColor;
+		this.xWing = xWing;
+		this.yAperture = yAperture;
+	}
+
 	@Override
 	public UDrawable createUDrawable(Point2D p0, double angle, Side side) {
-		return new ExtremityTriangle(p0, angle - Math.PI / 2, false);
+		return new ExtremityTriangle(p0, angle - Math.PI / 2, false, backgroundColor, xWing, yAperture);
 	}
 
 	public UDrawable createUDrawable(Point2D p0, Point2D p1, Point2D p2, Side side) {
 		final double ortho = atan2(p0, p2);
-		return new ExtremityTriangle(p1, ortho, true);
+		return new ExtremityTriangle(p1, ortho, true, backgroundColor, xWing, yAperture);
 	}
 
 }
