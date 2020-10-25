@@ -56,6 +56,7 @@ public class DiagElement {
 	private String description;
 	private final Network mainNetwork;
 	private final ISkinSimple spriteContainer;
+	private boolean hasItsOwnColumn = true;
 
 	@Override
 	public String toString() {
@@ -120,6 +121,14 @@ public class DiagElement {
 		if (shapeFromString != null) {
 			this.shape = shapeFromString;
 		}
+	}
+
+	public void doNotHaveItsOwnColumn() {
+		this.hasItsOwnColumn = false;
+	}
+
+	public final boolean hasItsOwnColumn() {
+		return hasItsOwnColumn;
 	}
 
 }

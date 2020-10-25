@@ -38,6 +38,7 @@ import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.Splitter;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.ugraphic.UFont;
@@ -63,6 +64,7 @@ abstract class AbstractElementText extends AbstractElement {
 
 	private int getCharNumber(String text) {
 		text = text.replaceAll("<&[-\\w]+>", "00");
+		text = Splitter.purgeAllTag(text);
 		return text.length();
 	}
 
@@ -91,7 +93,8 @@ abstract class AbstractElementText extends AbstractElement {
 		// double max = 0;
 		// for (int i = 32; i < 127; i++) {
 		// final char c = (char) i;
-		// final double w = Display.create(Arrays.asList("" + c), config, HorizontalAlignment.LEFT)
+		// final double w = Display.create(Arrays.asList("" + c), config,
+		// HorizontalAlignment.LEFT)
 		// .calculateDimension(stringBounder).getWidth();
 		// if (w > max) {
 		// Log.println("c="+c+" "+max);

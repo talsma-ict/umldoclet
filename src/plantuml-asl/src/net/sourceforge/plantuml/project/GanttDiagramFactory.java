@@ -37,8 +37,7 @@ import java.util.List;
 
 import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.CommandNope;
-import net.sourceforge.plantuml.command.CommandScale;
-import net.sourceforge.plantuml.command.UmlDiagramFactory;
+import net.sourceforge.plantuml.command.PSystemCommandFactory;
 import net.sourceforge.plantuml.core.DiagramType;
 import net.sourceforge.plantuml.project.command.CommandColorTask;
 import net.sourceforge.plantuml.project.command.CommandGanttArrow;
@@ -64,7 +63,7 @@ import net.sourceforge.plantuml.project.lang.SubjectToday;
 import net.sourceforge.plantuml.style.CommandStyleImport;
 import net.sourceforge.plantuml.style.CommandStyleMultilinesCSS;
 
-public class GanttDiagramFactory extends UmlDiagramFactory {
+public class GanttDiagramFactory extends PSystemCommandFactory {
 
 	static private final List<Subject> subjects() {
 		return Arrays.<Subject>asList(new SubjectTask(), new SubjectProject(), new SubjectDayOfWeek(),
@@ -80,6 +79,7 @@ public class GanttDiagramFactory extends UmlDiagramFactory {
 	protected List<Command> createCommands() {
 		final List<Command> cmds = new ArrayList<Command>();
 		addTitleCommands(cmds);
+		addCommonCommands2(cmds);
 
 		cmds.add(new CommandStyleMultilinesCSS());
 		cmds.add(new CommandStyleImport());
@@ -96,7 +96,6 @@ public class GanttDiagramFactory extends UmlDiagramFactory {
 
 		cmds.add(new CommandPrintScale());
 		cmds.add(new CommandPrintBetween());
-		cmds.add(new CommandScale());
 		cmds.add(new CommandPage());
 		cmds.add(new CommandNoteBottom());
 

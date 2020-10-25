@@ -107,6 +107,7 @@ public class SequenceDiagramFileMakerTeoz implements FileMaker {
 				+ heightEnglober2 + title.calculateDimension(stringBounder).getHeight()
 				+ header.calculateDimension(stringBounder).getHeight()
 				+ legend.calculateDimension(stringBounder).getHeight()
+				+ caption.calculateDimension(stringBounder).getHeight()
 				+ footer.calculateDimension(stringBounder).getHeight() + (annotatedWorker.hasMainFrame() ? 10 : 0);
 		this.dimTotal = new Dimension2DDouble(totalWidth, totalHeight);
 	}
@@ -145,17 +146,17 @@ public class SequenceDiagramFileMakerTeoz implements FileMaker {
 		final double scale = 1;
 		final String metadata = fileFormatOption.isWithMetadata() ? diagram.getMetadata() : null;
 
-		final int margin1;
-		final int margin2;
+		final ClockwiseTopRightBottomLeft margins;
 		if (SkinParam.USE_STYLES()) {
-			margin1 = SkinParam.zeroMargin(3);
-			margin2 = SkinParam.zeroMargin(10);
+			final Style style = StyleSignature.of(SName.root, SName.document)
+					.getMergedStyle(diagram.getSkinParam().getCurrentStyleBuilder());
+			margins = style.getMargin();
 		} else {
-			margin1 = 3;
-			margin2 = 10;
+			margins = ClockwiseTopRightBottomLeft.topRightBottomLeft(5, 5, 5, 5);
 		}
-		final ImageBuilder imageBuilder = ImageBuilder.buildD(diagram.getSkinParam(), ClockwiseTopRightBottomLeft.margin1margin2((double) margin1, (double) margin2), diagram.getAnimation(), metadata,
-		null, oneOf(scale, dpiFactor));
+
+		final ImageBuilder imageBuilder = ImageBuilder.buildD(diagram.getSkinParam(), margins, diagram.getAnimation(),
+				metadata, null, oneOf(scale, dpiFactor));
 
 		imageBuilder.setUDrawable(new Foo(index));
 		return imageBuilder.writeImageTOBEMOVED(fileFormatOption, diagram.seed(), os);
@@ -310,12 +311,12 @@ public class SequenceDiagramFileMakerTeoz implements FileMaker {
 		ug = goDown(ug, bodyFramed);
 		ug = ug.apply(UTranslate.dy(heightEnglober2));
 
-		printAligned(ug, HorizontalAlignment.CENTER, caption);
-
 		if (diagram.getLegend().getVerticalAlignment() == VerticalAlignment.BOTTOM) {
 			printAligned(ug, diagram.getLegend().getHorizontalAlignment(), legend);
 			ug = goDown(ug, legend);
 		}
+		printAligned(ug, HorizontalAlignment.CENTER, caption);
+		ug = goDown(ug, caption);
 
 		printAligned(ug, diagram.getFooterOrHeaderTeoz(FontParam.FOOTER).getHorizontalAlignment(), footer);
 	}

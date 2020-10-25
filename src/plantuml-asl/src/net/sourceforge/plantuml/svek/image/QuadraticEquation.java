@@ -28,40 +28,29 @@
  *
  * Original Author:  Arnaud Roques
  */
-package net.sourceforge.plantuml.project.time;
+package net.sourceforge.plantuml.svek.image;
 
-public class GCalendar {
+public class QuadraticEquation {
 
-	private final Day start;
+	private final double a;
+	private final double b;
+	private final double c;
 
-	public GCalendar(Day start) {
-		this.start = start;
+	public QuadraticEquation(double a, double b, double c) {
+		this.a = a;
+		this.b = b;
+		this.c = c;
 	}
 
-	public Day toDayAsDate(Wink day) {
-		Day result = start;
-		final int target = day.getWink();
-		int work = 0;
-		while (work < target) {
-			result = result.next();
-			work++;
-		}
-		return result;
+	public double[] solve() {
+		final double delta = b * b - 4 * a * c;
+		final double x0 = (-b - Math.sqrt(delta)) / 2 / a;
+		final double x1 = (-b + Math.sqrt(delta)) / 2 / a;
+		return new double[] { x0, x1 };
 	}
 
-	public Wink fromDayAsDate(Day day) {
-		if (day.compareTo(start) < 0) {
-			throw new IllegalArgumentException();
-		}
-		Wink result = new Wink(0);
-		while (toDayAsDate(result).equals(day) == false) {
-			result = result.increment();
-		}
-		return result;
-	}
-
-	public Day getStartingDate() {
-		return start;
+	public double getV(double x) {
+		return a * x * x + b * x + c;
 	}
 
 }

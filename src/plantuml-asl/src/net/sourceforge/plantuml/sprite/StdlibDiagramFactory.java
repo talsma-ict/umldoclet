@@ -35,9 +35,9 @@ import java.util.List;
 
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.command.Command;
-import net.sourceforge.plantuml.command.UmlDiagramFactory;
+import net.sourceforge.plantuml.command.PSystemCommandFactory;
 
-public class StdlibDiagramFactory extends UmlDiagramFactory {
+public class StdlibDiagramFactory extends PSystemCommandFactory {
 
 	private final ISkinSimple skinParam;
 

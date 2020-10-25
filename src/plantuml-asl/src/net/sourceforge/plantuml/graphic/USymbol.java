@@ -71,6 +71,8 @@ public abstract class USymbol {
 	public final static USymbol AGENT = record("AGENT", SkinParameter.AGENT, new USymbolRect(SkinParameter.AGENT));
 	public final static USymbol ACTOR_STICKMAN = record("ACTOR_STICKMAN", SkinParameter.ACTOR,
 			new USymbolActor(ActorStyle.STICKMAN));
+	public final static USymbol ACTOR_STICKMAN_BUSINESS = record("ACTOR_STICKMAN_BUSINESS", SkinParameter.ACTOR,
+			new USymbolActor(ActorStyle.STICKMAN_BUSINESS));
 	public final static USymbol ACTOR_AWESOME = record("ACTOR_AWESOME", SkinParameter.ACTOR,
 			new USymbolActor(ActorStyle.AWESOME));
 	public final static USymbol USECASE = null;
@@ -78,8 +80,8 @@ public abstract class USymbol {
 	public final static USymbol COMPONENT2 = record("COMPONENT2", SkinParameter.COMPONENT2, new USymbolComponent2());
 	public final static USymbol BOUNDARY = record("BOUNDARY", SkinParameter.BOUNDARY, new USymbolBoundary());
 	public final static USymbol ENTITY_DOMAIN = record("ENTITY_DOMAIN", SkinParameter.ENTITY,
-			new USymbolEntityDomain(2));
-	public final static USymbol CONTROL = record("CONTROL", SkinParameter.CONTROL, new USymbolControl(2));
+			new USymbolEntityDomain());
+	public final static USymbol CONTROL = record("CONTROL", SkinParameter.CONTROL, new USymbolControl());
 	public final static USymbol INTERFACE = record("INTERFACE", SkinParameter.INTERFACE, new USymbolInterface());
 	public final static USymbol QUEUE = record("QUEUE", SkinParameter.QUEUE, new USymbolQueue());
 	public final static USymbol STACK = record("STACK", SkinParameter.STACK, new USymbolStack());
@@ -165,17 +167,17 @@ public abstract class USymbol {
 		return 0;
 	}
 
-	final Stencil getRectangleStencil(final Dimension2D dim) {
-		return new Stencil() {
-			public double getStartingX(StringBounder stringBounder, double y) {
-				return 0;
-			}
-
-			public double getEndingX(StringBounder stringBounder, double y) {
-				return dim.getWidth();
-			}
-		};
-	}
+//	final Stencil getRectangleStencil(final Dimension2D dim) {
+//		return new Stencil() {
+//			public double getStartingX(StringBounder stringBounder, double y) {
+//				return 0;
+//			}
+//
+//			public double getEndingX(StringBounder stringBounder, double y) {
+//				return dim.getWidth();
+//			}
+//		};
+//	}
 
 	public static USymbol fromString(String s, ActorStyle actorStyle, ComponentStyle componentStyle,
 			PackageStyle packageStyle) {
@@ -230,6 +232,8 @@ public abstract class USymbol {
 			usymbol = USymbol.STORAGE;
 		} else if (symbol.equalsIgnoreCase("agent")) {
 			usymbol = USymbol.AGENT;
+		} else if (symbol.equalsIgnoreCase("actor/")) {
+			usymbol = USymbol.ACTOR_STICKMAN_BUSINESS;
 		} else if (symbol.equalsIgnoreCase("actor")) {
 			usymbol = skinParam.actorStyle().toUSymbol();
 		} else if (symbol.equalsIgnoreCase("component")) {

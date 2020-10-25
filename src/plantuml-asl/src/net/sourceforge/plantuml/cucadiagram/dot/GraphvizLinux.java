@@ -59,4 +59,8 @@ class GraphvizLinux extends AbstractGraphviz {
 		return "dot";
 	}
 
+	public boolean graphviz244onWindows() {
+		return false;
+	}
+
 }

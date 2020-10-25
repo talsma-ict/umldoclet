@@ -36,4 +36,6 @@ public interface GuideLine {
 
 	public Direction getArrowDirection();
 
+	public double getArrowDirection2();
+
 }

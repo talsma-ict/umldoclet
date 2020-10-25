@@ -50,7 +50,7 @@ public class StdrptNull implements Stdrpt {
 	}
 
 	public void errorLine(int lineError, File file) {
-		Log.error("Error line " + lineError + " in file: " + file.getPath());		
+		Log.error("Error line " + (lineError + 1) + " in file: " + file.getPath());
 	}
 
 }

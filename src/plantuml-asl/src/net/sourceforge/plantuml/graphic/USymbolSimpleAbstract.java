@@ -34,6 +34,7 @@ import java.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
+import net.sourceforge.plantuml.ugraphic.UGraphicStencil;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 
 abstract class USymbolSimpleAbstract extends USymbol {
@@ -61,9 +62,9 @@ abstract class USymbolSimpleAbstract extends USymbol {
 				final double labelY = dimStickMan.getHeight() + dimStereo.getHeight();
 
 				// Actor bug?
-				// final UGraphic ug2 = UGraphicStencil.create(ug, getRectangleStencil(dimLabel), new UStroke());
-				// label.drawU(ug2.apply(new UTranslate(labelX, labelY)));
-				label.drawU(ug.apply(new UTranslate(labelX, labelY)));
+				final UGraphic ug2 = UGraphicStencil.create(ug, dimLabel);
+				label.drawU(ug2.apply(new UTranslate(labelX, labelY)));
+				// label.drawU(ug.apply(new UTranslate(labelX, labelY)));
 
 				final double stereoX = (dimTotal.getWidth() - dimStereo.getWidth()) / 2;
 				stereotype.drawU(ug.apply(UTranslate.dx(stereoX)));

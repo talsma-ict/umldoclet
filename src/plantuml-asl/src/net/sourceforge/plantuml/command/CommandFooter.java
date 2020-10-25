@@ -34,7 +34,6 @@ import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.TitledDiagram;
-import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.command.regex.IRegex;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
@@ -67,13 +66,11 @@ public class CommandFooter extends SingleLineCommand2<TitledDiagram> {
 		final String align = arg.get("POSITION", 0);
 		HorizontalAlignment ha = HorizontalAlignment.fromString(align, HorizontalAlignment.CENTER);
 		if (SkinParam.USE_STYLES() && align == null) {
-			ha = FontParam.FOOTER.getStyleDefinition(null)
-					.getMergedStyle(((UmlDiagram) diagram).getSkinParam().getCurrentStyleBuilder())
+			ha = FontParam.FOOTER.getStyleDefinition(null).getMergedStyle(diagram.getCurrentStyleBuilder())
 					.getHorizontalAlignment();
 		}
 		diagram.getFooter().putDisplay(Display.getWithNewlines(arg.get("LABEL", 0)), ha);
 
-		
 		return CommandExecutionResult.ok();
 	}
 }

@@ -47,7 +47,7 @@ import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class InstructionRepeat implements Instruction {
 
-	private final InstructionList repeatList = new InstructionList();
+	private final InstructionList repeatList;
 	private final Instruction parent;
 	private final LinkRendering nextLinkRenderer;
 	private final Swimlane swimlane;
@@ -57,6 +57,9 @@ public class InstructionRepeat implements Instruction {
 	private final BoxStyle boxStyleIn;
 
 	private Display backward = Display.NULL;
+	private Display backwardArrowLabel = Display.NULL;
+	private String incoming;
+	private String outcoming;
 	private List<PositionedNote> backwardNotes = new ArrayList<PositionedNote>();
 	private Display test = Display.NULL;
 	private Display yes = Display.NULL;
@@ -73,6 +76,7 @@ public class InstructionRepeat implements Instruction {
 
 	public InstructionRepeat(Swimlane swimlane, Instruction parent, LinkRendering nextLinkRenderer, HColor color,
 			Display startLabel, BoxStyle boxStyleIn, Colors colors) {
+		this.repeatList = new InstructionList(swimlane);
 		this.boxStyleIn = boxStyleIn;
 		this.startLabel = startLabel;
 		this.parent = parent;
@@ -91,10 +95,21 @@ public class InstructionRepeat implements Instruction {
 		return false;
 	}
 
-	public void setBackward(Display label, Swimlane swimlaneOut, BoxStyle boxStyle) {
+	public void setBackward(Display label, Swimlane swimlaneOut, BoxStyle boxStyle, String incoming, String outcoming) {
 		this.backward = label;
 		this.swimlaneOut = swimlaneOut;
 		this.boxStyle = boxStyle;
+		this.incoming = incoming;
+		this.outcoming = outcoming;
+		this.backwardArrowLabel = Display.getWithNewlines(outcoming);
+	}
+
+	public void setBackwardArrowLabel(Display label) {
+		// this.backwardArrowLabel = label;
+	}
+
+	public boolean hasBackward() {
+		return this.backward != Display.NULL;
 	}
 
 	public void add(Instruction ins) {
@@ -104,8 +119,10 @@ public class InstructionRepeat implements Instruction {
 	public Ftile createFtile(FtileFactory factory) {
 		final Ftile back = getBackward(factory);
 		final Ftile decorateOut = factory.decorateOut(repeatList.createFtile(factory), endRepeatLinkRendering);
+		final LinkRendering tmp = incoming == null ? backRepeatLinkRendering
+				: backRepeatLinkRendering.withDisplay(Display.create(incoming));
 		final Ftile result = factory.repeat(boxStyleIn, swimlane, swimlaneOut, startLabel, decorateOut, test, yes, out,
-				colors, backRepeatLinkRendering, back, isLastOfTheParent());
+				colors, tmp, back, isLastOfTheParent(), backwardArrowLabel);
 		if (killed) {
 			return new FtileKilled(result);
 		}
