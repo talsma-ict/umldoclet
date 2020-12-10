@@ -12,7 +12,7 @@
  * This file is part of Smetana.
  * Smetana is a partial translation of Graphviz/Dot sources from C to Java.
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2022, Arnaud Roques
  *
  * This translation is distributed under the same Licence as the original C program:
  * 
@@ -46,15 +46,12 @@
 package h;
 
 import smetana.core.CFunction;
-import smetana.core.HardcodedStruct;
-import smetana.core.UnsupportedStructAndPtr;
+import smetana.core.UnsupportedStarStruct;
 import smetana.core.__ptr__;
-import smetana.core.amiga.StarStruct;
 
-public class ST_GVCOMMON_t extends UnsupportedStructAndPtr implements HardcodedStruct {
+final public class ST_GVCOMMON_t extends UnsupportedStarStruct {
 
-	// "typedef struct GVCOMMON_s",
-	// "{",
+
 	public __ptr__ info;
 	// "char *cmdname",
 	// "int verbose",
@@ -67,35 +64,7 @@ public class ST_GVCOMMON_t extends UnsupportedStructAndPtr implements HardcodedS
 	// "const lt_symlist_t *builtins",
 	public __ptr__ builtins;
 	public boolean demand_loading;
-	// "}",
-	// "GVCOMMON_t");
 
-	private final StarStruct parent;
-
-	public ST_GVCOMMON_t() {
-		this(null);
-	}
-
-	public ST_GVCOMMON_t(StarStruct parent) {
-		this.parent = parent;
-	}
-
-	@Override
-	public __ptr__ setPtr(String fieldName, __ptr__ newData) {
-		if (fieldName.equals("info")) {
-			this.info = newData;
-			return newData;
-		}
-		if (fieldName.equals("errorfn")) {
-			this.errorfn = (CFunction) newData;
-			return newData;
-		}
-		if (fieldName.equals("builtins")) {
-			this.builtins = newData;
-			return newData;
-		}
-		return super.setPtr(fieldName, newData);
-	}
 
 }
 

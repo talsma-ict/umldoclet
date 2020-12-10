@@ -36,8 +36,8 @@ import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.Guillemet;
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.SkinParamUtils;
+import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.EntityPortion;
 import net.sourceforge.plantuml.cucadiagram.ILeaf;
@@ -78,10 +78,10 @@ public class EntityImageClassHeader extends AbstractEntityImage {
 		final String generic = displayGenericWithOldFashion ? null : entity.getGeneric();
 		FontConfiguration fontConfigurationName;
 
-		if (SkinParam.USE_STYLES()) {
-			final Style style = FontParam.CLASS.getStyleDefinition(SName.classDiagram)
+		if (UseStyle.useBetaStyle()) {
+			final Style style = FontParam.CLASS.getStyleDefinition(SName.classDiagram).with(stereotype)
 					.getMergedStyle(skinParam.getCurrentStyleBuilder());
-			fontConfigurationName = new FontConfiguration(style, skinParam, stereotype, FontParam.CLASS);
+			fontConfigurationName = new FontConfiguration(skinParam, style);
 		} else {
 			fontConfigurationName = new FontConfiguration(getSkinParam(), FontParam.CLASS, stereotype);
 		}

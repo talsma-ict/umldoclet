@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.project.core3;
 
-class TaskLoadImpl implements TaskLoad {
+public class TaskLoadImpl implements TaskLoad {
 
 	private long start;
 	private long end;

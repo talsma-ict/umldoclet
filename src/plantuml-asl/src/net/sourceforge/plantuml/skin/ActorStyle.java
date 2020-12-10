@@ -36,13 +36,15 @@ import net.sourceforge.plantuml.graphic.USymbol;
 
 public enum ActorStyle {
 
-	STICKMAN, STICKMAN_BUSINESS, AWESOME;
+	STICKMAN, STICKMAN_BUSINESS, AWESOME, HOLLOW;
 
 	public USymbol toUSymbol() {
 		if (this == STICKMAN) {
 			return USymbol.ACTOR_STICKMAN;
 		} else if (this == AWESOME) {
 			return USymbol.ACTOR_AWESOME;
+		} else if (this == HOLLOW) {
+			return USymbol.ACTOR_HOLLOW;
 		}
 		throw new IllegalStateException();
 	}
@@ -54,6 +56,8 @@ public enum ActorStyle {
 			return new ActorStickMan(symbolContext, true);
 		} else if (this == AWESOME) {
 			return new ActorAwesome(symbolContext);
+		} else if (this == HOLLOW) {
+			return new ActorHollow(symbolContext);
 		}
 		throw new IllegalStateException();
 	}

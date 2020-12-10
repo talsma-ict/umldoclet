@@ -40,6 +40,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -84,18 +85,25 @@ public class SkinParam implements ISkinParam {
 	// private String skin = "debug.skin";
 
 	private String skin = "plantuml.skin";
+	private StyleBuilder styleBuilder;
 
 	private SkinParam(UmlDiagramType type) {
-		USE_STYLE2.set(false);
+		UseStyle.setBetaStyle(false);
 		this.type = type;
 		if (type == UmlDiagramType.MINDMAP) {
-			USE_STYLE2.set(true);
+			UseStyle.setBetaStyle(true);
 		}
 		if (type == UmlDiagramType.WBS) {
-			USE_STYLE2.set(true);
+			UseStyle.setBetaStyle(true);
 		}
 		if (type == UmlDiagramType.GANTT) {
-			USE_STYLE2.set(true);
+			UseStyle.setBetaStyle(true);
+		}
+		if (type == UmlDiagramType.JSON) {
+			UseStyle.setBetaStyle(true);
+		}
+		if (type == UmlDiagramType.GIT) {
+			UseStyle.setBetaStyle(true);
 		}
 		if (type == UmlDiagramType.SEQUENCE) {
 			// skin = "debug.skin";
@@ -107,10 +115,8 @@ public class SkinParam implements ISkinParam {
 		// }
 	}
 
-	private StyleBuilder styleBuilder;
-
 	public StyleBuilder getCurrentStyleBuilder() {
-		if (styleBuilder == null && SkinParam.USE_STYLES()) {
+		if (styleBuilder == null && UseStyle.useBetaStyle()) {
 			try {
 				this.styleBuilder = getCurrentStyleBuilderInternal();
 			} catch (IOException e) {
@@ -121,7 +127,7 @@ public class SkinParam implements ISkinParam {
 	}
 
 	public void muteStyle(Style modifiedStyle) {
-		if (SkinParam.USE_STYLES()) {
+		if (UseStyle.useBetaStyle()) {
 			styleBuilder = getCurrentStyleBuilder().muteStyle(modifiedStyle);
 		}
 	}
@@ -144,20 +150,6 @@ public class SkinParam implements ISkinParam {
 		return result;
 	}
 
-	private static ThreadLocal<Boolean> USE_STYLE2 = new ThreadLocal<Boolean>();
-
-	static public boolean USE_STYLES() {
-		final Boolean result = USE_STYLE2.get();
-		if (result == null) {
-			return false;
-		}
-		return result;
-	}
-
-	static public void setBetaStyle(boolean betastyle) {
-		USE_STYLE2.set(betastyle);
-	}
-
 	public static int zeroMargin(int defaultValue) {
 		return defaultValue;
 	}
@@ -166,6 +158,7 @@ public class SkinParam implements ISkinParam {
 	private static final Pattern2 stereoPattern = MyPattern.cmpile(stereoPatternString);
 
 	private final Map<String, String> params = new HashMap<String, String>();
+	private final Map<String, String> svgCharSizes = new HashMap<String, String>();
 	private Rankdir rankdir = Rankdir.TOP_TO_BOTTOM;
 	private final UmlDiagramType type;
 	private boolean useVizJs;
@@ -183,9 +176,9 @@ public class SkinParam implements ISkinParam {
 			params.put(key2, StringUtils.trin(value));
 			if (key2.startsWith("usebetastyle")) {
 				final boolean betastyle = "true".equalsIgnoreCase(value);
-				setBetaStyle(betastyle);
+				UseStyle.setBetaStyle(betastyle);
 			}
-			if (USE_STYLES()) {
+			if (UseStyle.useBetaStyle()) {
 				final FromSkinparamToStyle convertor = new FromSkinparamToStyle(key2, value, getCurrentStyleBuilder());
 				for (Style style : convertor.getStyles()) {
 					muteStyle(style);
@@ -193,7 +186,7 @@ public class SkinParam implements ISkinParam {
 			}
 		}
 		if ("style".equalsIgnoreCase(key) && "strictuml".equalsIgnoreCase(value)) {
-			if (USE_STYLES()) {
+			if (UseStyle.useBetaStyle()) {
 				final InputStream internalIs = StyleLoader.class.getResourceAsStream("/skin/strictuml.skin");
 				final StyleBuilder styleBuilder = this.getCurrentStyleBuilder();
 				try {
@@ -976,7 +969,7 @@ public class SkinParam implements ISkinParam {
 		final String value = getValue("conditionStyle");
 		final ConditionStyle p = ConditionStyle.fromString(value);
 		if (p == null) {
-			return ConditionStyle.INSIDE;
+			return ConditionStyle.INSIDE_HEXAGON;
 		}
 		return p;
 	}
@@ -1239,7 +1232,22 @@ public class SkinParam implements ISkinParam {
 		if ("awesome".equalsIgnoreCase(value)) {
 			return ActorStyle.AWESOME;
 		}
+		if ("hollow".equalsIgnoreCase(value)) {
+			return ActorStyle.HOLLOW;
+		}
 		return ActorStyle.STICKMAN;
+	}
+
+	public void setSvgSize(String origin, String sizeToUse) {
+		svgCharSizes.put(StringUtils.manageUnicodeNotationUplus(origin),
+				StringUtils.manageUnicodeNotationUplus(sizeToUse));
+	}
+
+	public String transformStringForSizeHack(String s) {
+		for (Entry<String, String> ent : svgCharSizes.entrySet()) {
+			s = s.replace(ent.getKey(), ent.getValue());
+		}
+		return s;
 	}
 
 }

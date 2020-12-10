@@ -36,9 +36,9 @@ import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.SkinParamUtils;
 import net.sourceforge.plantuml.Url;
+import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.cucadiagram.ILeaf;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
@@ -77,7 +77,7 @@ public class EntityImageActivity extends AbstractEntityImage {
 
 		final FontConfiguration fontConfiguration;
 		final HorizontalAlignment horizontalAlignment;
-		if (SkinParam.USE_STYLES()) {
+		if (UseStyle.useBetaStyle()) {
 			final Style style = getDefaultStyleDefinition().getMergedStyle(getSkinParam().getCurrentStyleBuilder());
 			fontConfiguration = style.getFontConfiguration(skinParam.getIHtmlColorSet());
 			horizontalAlignment = style.getHorizontalAlignment();
@@ -117,6 +117,9 @@ public class EntityImageActivity extends AbstractEntityImage {
 	private UGraphic drawOctagon(UGraphic ug) {
 		final Node node = bibliotekon.getNode(getEntity());
 		final Shadowable octagon = node.getOctagon();
+		if (octagon == null) {
+			return drawNormal(ug);
+		}
 		octagon.setDeltaShadow(shadowing);
 		ug = applyColors(ug);
 		ug.apply(new UStroke(1.5)).draw(octagon);
@@ -136,7 +139,7 @@ public class EntityImageActivity extends AbstractEntityImage {
 
 		ug = applyColors(ug);
 		UStroke stroke = new UStroke(1.5);
-		if (SkinParam.USE_STYLES()) {
+		if (UseStyle.useBetaStyle()) {
 			final Style style = getDefaultStyleDefinition().getMergedStyle(getSkinParam().getCurrentStyleBuilder());
 			stroke = style.getStroke();
 		}
@@ -157,7 +160,7 @@ public class EntityImageActivity extends AbstractEntityImage {
 			backcolor = SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.activityBackground);
 		}
 
-		if (SkinParam.USE_STYLES()) {
+		if (UseStyle.useBetaStyle()) {
 			final Style style = getDefaultStyleDefinition().getMergedStyle(getSkinParam().getCurrentStyleBuilder());
 			borderColor = style.value(PName.LineColor).asColor(getSkinParam().getIHtmlColorSet());
 			backcolor = getEntity().getColors(getSkinParam()).getColor(ColorType.BACK);

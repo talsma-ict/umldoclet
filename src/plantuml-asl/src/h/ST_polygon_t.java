@@ -12,7 +12,7 @@
  * This file is part of Smetana.
  * Smetana is a partial translation of Graphviz/Dot sources from C to Java.
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2022, Arnaud Roques
  *
  * This translation is distributed under the same Licence as the original C program:
  * 
@@ -45,80 +45,20 @@
  */
 package h;
 
-import smetana.core.HardcodedStruct;
-import smetana.core.UnsupportedStructAndPtr;
-import smetana.core.amiga.StarStruct;
+import smetana.core.CArray;
+import smetana.core.UnsupportedStarStruct;
 
-public class ST_polygon_t extends UnsupportedStructAndPtr implements HardcodedStruct {
+final public class ST_polygon_t extends UnsupportedStarStruct implements SHAPE_INFO {
 
-	public int regular;
+	public boolean regular;
 	public int peripheries;
 	public int sides;
 	public double orientation;
 	public double distortion;
 	public double skew;
 	public int option;
-	public ST_pointf.Array vertices;
+	public CArray<ST_pointf> vertices;
 
-	// "pointf *vertices",
-
-	public ST_polygon_t() {
-		this(null);
-	}
-
-	public ST_polygon_t(StarStruct parent) {
-	}
-
-
-
-	@Override
-	public void setInt(String fieldName, int data) {
-		if (fieldName.equals("regular")) {
-			this.regular = data;
-			return;
-		}
-		if (fieldName.equals("peripheries")) {
-			this.peripheries = data;
-			return;
-		}
-		if (fieldName.equals("sides")) {
-			this.sides = data;
-			return;
-		}
-		super.setInt(fieldName, data);
-	}
-
-	@Override
-	public void setDouble(String fieldName, double data) {
-		if (fieldName.equals("orientation")) {
-			this.orientation = data;
-			return;
-		}
-		if (fieldName.equals("distortion")) {
-			this.distortion = data;
-			return;
-		}
-		if (fieldName.equals("skew")) {
-			this.skew = data;
-			return;
-		}
-		super.setDouble(fieldName, data);
-	}
-
-
-	// public static List<String> DEFINITION = Arrays.asList(
-	// "typedef struct polygon_t",
-	// "{",
-	// "int regular",
-	// "int peripheries",
-	// "int sides",
-	// "double orientation",
-	// "double distortion",
-	// "double skew",
-	// "int option",
-	// "pointf *vertices",
-	// "}",
-	// "polygon_t");
 }
 
 // typedef struct polygon_t { /* mutable shape information for a node */

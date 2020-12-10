@@ -62,7 +62,9 @@ import net.sourceforge.plantuml.error.PSystemError;
 import net.sourceforge.plantuml.error.PSystemErrorUtils;
 import net.sourceforge.plantuml.flowdiagram.FlowDiagramFactory;
 import net.sourceforge.plantuml.font.PSystemListFontsFactory;
+import net.sourceforge.plantuml.gitlog.GitDiagramFactory;
 import net.sourceforge.plantuml.help.HelpFactory;
+import net.sourceforge.plantuml.jsondiagram.JsonDiagramFactory;
 import net.sourceforge.plantuml.math.PSystemLatexFactory;
 import net.sourceforge.plantuml.math.PSystemMathFactory;
 import net.sourceforge.plantuml.mindmap.MindMapDiagramFactory;
@@ -194,6 +196,8 @@ public class PSystemBuilder {
 		factories.add(new TimingDiagramFactory());
 		factories.add(new HelpFactory());
 		factories.add(new WireDiagramFactory());
+		factories.add(new JsonDiagramFactory());
+		factories.add(new GitDiagramFactory());
 		return factories;
 	}
 

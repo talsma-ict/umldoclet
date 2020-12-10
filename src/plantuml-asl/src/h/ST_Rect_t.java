@@ -12,7 +12,7 @@
  * This file is part of Smetana.
  * Smetana is a partial translation of Graphviz/Dot sources from C to Java.
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2022, Arnaud Roques
  *
  * This translation is distributed under the same Licence as the original C program:
  * 
@@ -45,28 +45,16 @@
  */
 package h;
 
-import smetana.core.HardcodedStruct;
-import smetana.core.UnsupportedStructAndPtr;
+import smetana.core.UnsupportedStarStruct;
 import smetana.core.__struct__;
-import smetana.core.amiga.StarStruct;
 
-public class ST_Rect_t extends UnsupportedStructAndPtr implements HardcodedStruct {
+final public class ST_Rect_t extends UnsupportedStarStruct {
 
 	public final int[] boundary = new int[2 * 2];
 
-	public ST_Rect_t(StarStruct parent) {
-	}
-
-	public ST_Rect_t() {
-	}
 
 	@Override
 	public void ___(__struct__ other) {
-		this.copyDataFrom(other);
-	}
-
-	@Override
-	public void copyDataFrom(__struct__ other) {
 		ST_Rect_t other2 = (ST_Rect_t) other;
 		this.boundary[0] = other2.boundary[0];
 		this.boundary[1] = other2.boundary[1];

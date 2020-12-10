@@ -38,15 +38,19 @@ import java.util.Deque;
 import java.util.List;
 
 import net.sourceforge.plantuml.FileFormatOption;
+import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
+import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.graphic.UDrawable;
 import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
+import net.sourceforge.plantuml.ugraphic.ImageParameter;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class BpmDiagram extends UmlDiagram {
 
@@ -81,16 +85,21 @@ public class BpmDiagram extends UmlDiagram {
 		final double dpiFactor = 1;
 		final int margin1;
 		final int margin2;
-		if (SkinParam.USE_STYLES()) {
+		if (UseStyle.useBetaStyle()) {
 			margin1 = SkinParam.zeroMargin(10);
 			margin2 = SkinParam.zeroMargin(10);
 		} else {
 			margin1 = 10;
 			margin2 = 10;
 		}
-		final ImageBuilder imageBuilder = ImageBuilder.buildD(getSkinParam(),
-				ClockwiseTopRightBottomLeft.margin1margin2(margin1, margin2), getAnimation(),
-				fileFormatOption.isWithMetadata() ? getMetadata() : null, getWarningOrError(), dpiFactor);
+		ISkinParam skinParam = getSkinParam();
+		final HColor backcolor = skinParam.getBackgroundColor(false);
+		final ClockwiseTopRightBottomLeft margins = ClockwiseTopRightBottomLeft.margin1margin2(margin1, margin2);
+		final String metadata = fileFormatOption.isWithMetadata() ? getMetadata() : null;
+		final ImageParameter imageParameter = new ImageParameter(skinParam, getAnimation(), dpiFactor, metadata,
+				getWarningOrError(), margins, backcolor);
+		
+		final ImageBuilder imageBuilder = ImageBuilder.build(imageParameter);
 		imageBuilder.setUDrawable(getUDrawable());
 
 		return imageBuilder.writeImageTOBEMOVED(fileFormatOption, seed(), os);

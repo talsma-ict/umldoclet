@@ -12,7 +12,7 @@
  * This file is part of Smetana.
  * Smetana is a partial translation of Graphviz/Dot sources from C to Java.
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2022, Arnaud Roques
  *
  * This translation is distributed under the same Licence as the original C program:
  * 
@@ -45,10 +45,13 @@
  */
 package gen.lib.cdt;
 import static gen.lib.cdt.dtsize__c.dtsize_;
-import static smetana.core.JUtilsDebug.ENTERING;
-import static smetana.core.JUtilsDebug.LEAVING;
 import static smetana.core.Macro.N;
 import static smetana.core.Macro.UNSUPPORTED;
+import static smetana.core.debug.SmetanaDebug.ENTERING;
+import static smetana.core.debug.SmetanaDebug.LEAVING;
+
+import gen.annotation.Original;
+import gen.annotation.Unused;
 import h.ST_dt_s;
 import h.ST_dtdisc_s;
 import smetana.core.Memory;
@@ -122,6 +125,8 @@ public class dtclose__c {
 
 //3 7ggbhlblmrfr1wq1k20npwyxb
 // int dtclose(register Dt_t* dt)     
+@Unused
+@Original(version="2.38.0", path="lib/cdt/dtclose.c", name="dtclose", key="7ggbhlblmrfr1wq1k20npwyxb", definition="int dtclose(register Dt_t* dt)")
 public static int dtclose(ST_dt_s dt) {
 ENTERING("7ggbhlblmrfr1wq1k20npwyxb","dtclose");
 	try {

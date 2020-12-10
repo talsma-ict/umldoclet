@@ -44,6 +44,8 @@ import net.sourceforge.plantuml.style.StyleBuilder;
 
 public abstract class TitledDiagram extends AbstractPSystem implements Diagram, Annotated {
 
+	public static final boolean FORCE_JDOT = false;
+
 	private DisplayPositionned title = DisplayPositionned.none(HorizontalAlignment.CENTER, VerticalAlignment.TOP);
 
 	private DisplayPositionned caption = DisplayPositionned.none(HorizontalAlignment.CENTER, VerticalAlignment.BOTTOM);
@@ -187,8 +189,6 @@ public abstract class TitledDiagram extends AbstractPSystem implements Diagram, 
 	public void setUseJDot(boolean useJDot) {
 		this.useJDot = useJDot;
 	}
-
-	public static final boolean FORCE_JDOT = false;
 
 	public boolean isUseJDot() {
 		if (FORCE_JDOT)

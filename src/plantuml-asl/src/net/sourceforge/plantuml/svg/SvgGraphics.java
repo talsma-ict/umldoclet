@@ -31,6 +31,7 @@
 package net.sourceforge.plantuml.svg;
 
 import java.awt.geom.Dimension2D;
+import java.awt.geom.PathIterator;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -223,7 +224,7 @@ public class SvgGraphics {
 			elt.setAttribute("cy", format(y));
 			elt.setAttribute("rx", format(xRadius));
 			elt.setAttribute("ry", format(yRadius));
-			elt.setAttribute("fill", fill);
+			fillMe(elt);
 			elt.setAttribute("style", getStyle());
 			addFilterShadowId(elt, deltaShadow);
 			getG().appendChild(elt);
@@ -237,7 +238,7 @@ public class SvgGraphics {
 					+ format(x2) + " " + format(y2);
 			final Element elt = (Element) document.createElement("path");
 			elt.setAttribute("d", path);
-			elt.setAttribute("fill", fill);
+			fillMe(elt);
 			elt.setAttribute("style", getStyle());
 			getG().appendChild(elt);
 		}
@@ -345,8 +346,8 @@ public class SvgGraphics {
 		elt.setAttribute("y", format(y));
 		elt.setAttribute("width", format(width));
 		elt.setAttribute("height", format(height));
-		elt.setAttribute("fill", fill);
-		elt.setAttribute("style", getStyle());
+		fillMe(elt);
+		elt.setAttribute("style", getStyleSpecial());
 		return elt;
 	}
 
@@ -367,13 +368,28 @@ public class SvgGraphics {
 	}
 
 	private String getStyle() {
-		return getStyleInternal(stroke, strokeWidth, strokeDasharray);
+		final StringBuilder style = new StringBuilder();
+		style.append("stroke:" + stroke + ";");
+		style.append("stroke-width:" + strokeWidth + ";");
+		if (fill.equals("#00000000")) {
+			style.append("fill:none;");
+		}
+		if (strokeDasharray != null) {
+			style.append("stroke-dasharray:" + strokeDasharray + ";");
+		}
+		return style.toString();
 	}
 
-	private static String getStyleInternal(String color, String strokeWidth, String strokeDasharray) {
-		final StringBuilder style = new StringBuilder("stroke: " + color + "; stroke-width: " + strokeWidth + ";");
+	// https://forum.plantuml.net/12469/package-background-transparent-package-default-background?show=12479#c12479
+	private String getStyleSpecial() {
+		final StringBuilder style = new StringBuilder();
+		style.append("stroke:" + stroke + ";");
+		style.append("stroke-width:" + strokeWidth + ";");
+		if (fill.equals("#00000000")) {
+			style.append("fill:none;");
+		}
 		if (strokeDasharray != null) {
-			style.append(" stroke-dasharray: " + strokeDasharray + ";");
+			style.append("stroke-dasharray:" + strokeDasharray + ";");
 		}
 		return style.toString();
 	}
@@ -391,8 +407,8 @@ public class SvgGraphics {
 				sb.append(format(coord));
 			}
 			elt.setAttribute("points", sb.toString());
-			elt.setAttribute("fill", fill);
-			elt.setAttribute("style", getStyle());
+			fillMe(elt);
+			elt.setAttribute("style", getStyleSpecial());
 			addFilterShadowId(elt, deltaShadow);
 			getG().appendChild(elt);
 		}
@@ -412,7 +428,7 @@ public class SvgGraphics {
 			// elt.setAttribute("text-rendering", "geometricPrecision");
 			elt.setAttribute("x", format(x));
 			elt.setAttribute("y", format(y));
-			elt.setAttribute("fill", fill);
+			fillMe(elt);
 			elt.setAttribute("font-size", format(fontSize));
 			// elt.setAttribute("text-anchor", "middle");
 			elt.setAttribute("lengthAdjust", "spacingAndGlyphs");
@@ -530,7 +546,13 @@ public class SvgGraphics {
 			final String k = "<" + ent.getKey() + "/>";
 			s = s.replace(k, ent.getValue());
 		}
+		s = removeXmlHeader(s);
 		os.write(s.getBytes());
+	}
+
+	private String removeXmlHeader(String s) {
+		s = s.replaceFirst("^<\\?xml [^<>]+?\\>", "");
+		return s;
 	}
 
 	private void createXmlInternal(OutputStream os) throws TransformerException {
@@ -614,7 +636,7 @@ public class SvgGraphics {
 			final Element elt = (Element) document.createElement("path");
 			elt.setAttribute("d", sb.toString());
 			elt.setAttribute("style", getStyle());
-			elt.setAttribute("fill", fill);
+			fillMe(elt);
 			final String id = path.getComment();
 			if (id != null) {
 				elt.setAttribute("id", id);
@@ -625,6 +647,12 @@ public class SvgGraphics {
 			}
 			addFilterShadowId(elt, deltaShadow);
 			getG().appendChild(elt);
+		}
+	}
+
+	private void fillMe(Element elt) {
+		if (fill.equals("#00000000") == false) {
+			elt.setAttribute("fill", fill);
 		}
 	}
 
@@ -683,10 +711,38 @@ public class SvgGraphics {
 		if (hidden == false) {
 			final Element elt = (Element) document.createElement("path");
 			elt.setAttribute("d", currentPath.toString());
+			fillMe(elt);
 			// elt elt.setAttribute("style", getStyle());
 			getG().appendChild(elt);
 		}
 		currentPath = null;
+
+	}
+
+	public void drawPathIterator(double x, double y, PathIterator path) {
+
+		this.newpath();
+		final double coord[] = new double[6];
+		while (path.isDone() == false) {
+			final int code = path.currentSegment(coord);
+			if (code == PathIterator.SEG_MOVETO) {
+				this.moveto(coord[0] + x, coord[1] + y);
+			} else if (code == PathIterator.SEG_LINETO) {
+				this.lineto(coord[0] + x, coord[1] + y);
+			} else if (code == PathIterator.SEG_CLOSE) {
+				this.closepath();
+			} else if (code == PathIterator.SEG_CUBICTO) {
+				this.curveto(coord[0] + x, coord[1] + y, coord[2] + x, coord[3] + y, coord[4] + x, coord[5] + y);
+			} else if (code == PathIterator.SEG_QUADTO) {
+				this.quadto(coord[0] + x, coord[1] + y, coord[2] + x, coord[3] + y);
+			} else {
+				throw new UnsupportedOperationException("code=" + code);
+			}
+
+			path.next();
+		}
+
+		this.fill(path.getWindingRule());
 
 	}
 

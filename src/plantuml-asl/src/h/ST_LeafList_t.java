@@ -12,7 +12,7 @@
  * This file is part of Smetana.
  * Smetana is a partial translation of Graphviz/Dot sources from C to Java.
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2022, Arnaud Roques
  *
  * This translation is distributed under the same Licence as the original C program:
  * 
@@ -45,15 +45,14 @@
  */
 package h;
 
-import smetana.core.UnsupportedStructAndPtr;
+import smetana.core.UnsupportedStarStruct;
 
-public class ST_LeafList_t extends UnsupportedStructAndPtr {
+final public class ST_LeafList_t extends UnsupportedStarStruct {
 
 	public ST_LeafList_t next;
+	// WARNING
 	public ST_Branch_t /* ST_Leaf_t */leaf;
 
-	public ST_LeafList_t() {
-	}
 
 
 	// typedef struct LeafList {

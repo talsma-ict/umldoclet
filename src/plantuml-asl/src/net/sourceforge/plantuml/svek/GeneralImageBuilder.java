@@ -53,12 +53,12 @@ import net.sourceforge.plantuml.LineParam;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.Pragma;
-import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.SkinParamForecolored;
 import net.sourceforge.plantuml.SkinParamSameClassWidth;
 import net.sourceforge.plantuml.SkinParamUtils;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagramType;
+import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.activitydiagram3.ftile.EntityImageLegend;
 import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.cucadiagram.Display;
@@ -378,7 +378,7 @@ public final class GeneralImageBuilder {
 
 	// Duplicate SvekResult / GeneralImageBuilder
 	private HColor getBackcolor() {
-		if (SkinParam.USE_STYLES()) {
+		if (UseStyle.useBetaStyle()) {
 			final Style style = StyleSignature.of(SName.root, SName.document)
 					.getMergedStyle(dotData.getSkinParam().getCurrentStyleBuilder());
 			return style.value(PName.BackGroundColor).asColor(dotData.getSkinParam().getIHtmlColorSet());
@@ -413,7 +413,7 @@ public final class GeneralImageBuilder {
 			try {
 				final ISkinParam skinParam = dotData.getSkinParam();
 				final FontConfiguration labelFont;
-				if (SkinParam.USE_STYLES()) {
+				if (UseStyle.useBetaStyle()) {
 					final Style style = getDefaultStyleDefinitionArrow()
 							.getMergedStyle(skinParam.getCurrentStyleBuilder());
 					labelFont = style.getFontConfiguration(skinParam.getIHtmlColorSet());
@@ -630,7 +630,7 @@ public final class GeneralImageBuilder {
 				attribute = new TextBlockEmpty();
 			} else {
 				attribute = new MethodsOrFieldsArea(members, FontParam.STATE_ATTRIBUTE, dotData.getSkinParam(),
-						g.getStereotype(), null, SName.stateDiagram);
+						g.getStereotype(), null, getStyle(FontParam.STATE_ATTRIBUTE));
 			}
 			final Dimension2D dimAttribute = attribute.calculateDimension(stringBounder);
 			final double attributeHeight = dimAttribute.getHeight();
@@ -651,6 +651,11 @@ public final class GeneralImageBuilder {
 		printGroups(dotStringFactory, g);
 
 		dotStringFactory.closeCluster();
+	}
+
+	private Style getStyle(FontParam fontParam) {
+		return fontParam.getStyleDefinition(SName.stateDiagram)
+				.getMergedStyle(dotData.getSkinParam().getCurrentStyleBuilder());
 	}
 
 	private TextBlock getTitleBlock(IGroup g) {

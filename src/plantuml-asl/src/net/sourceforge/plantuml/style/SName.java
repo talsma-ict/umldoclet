@@ -70,6 +70,8 @@ public enum SName {
 	groupHeader, //
 	header, //
 	interface_, //
+	jsonDiagram, //
+	gitDiagram, //
 	leafNode, //
 	legend, //
 	lifeLine, //

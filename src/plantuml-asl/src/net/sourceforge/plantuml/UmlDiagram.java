@@ -67,11 +67,14 @@ import net.sourceforge.plantuml.pdf.PdfConverter;
 import net.sourceforge.plantuml.security.ImageIO;
 import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.security.SecurityUtils;
+import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
+import net.sourceforge.plantuml.style.NoStyleAvailableException;
 import net.sourceforge.plantuml.svek.EmptySvgException;
 import net.sourceforge.plantuml.svek.GraphvizCrash;
 import net.sourceforge.plantuml.svek.TextBlockBackcolored;
 import net.sourceforge.plantuml.ugraphic.AffineTransformType;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
+import net.sourceforge.plantuml.ugraphic.ImageParameter;
 import net.sourceforge.plantuml.ugraphic.PixelImage;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UImage;
@@ -168,6 +171,9 @@ public abstract class UmlDiagram extends TitledDiagram implements Diagram, Annot
 			final ImageData imageData = exportDiagramInternal(os, index, fileFormatOption);
 			this.lastInfo = new Dimension2DDouble(imageData.getWidth(), imageData.getHeight());
 			return imageData;
+		} catch (NoStyleAvailableException e) {
+			// e.printStackTrace();
+			exportDiagramError(os, e, fileFormatOption, seed, null);
 		} catch (UnparsableGraphvizException e) {
 			e.printStackTrace();
 			exportDiagramError(os, e.getCause(), fileFormatOption, seed, e.getGraphvizVersion());
@@ -196,20 +202,26 @@ public abstract class UmlDiagram extends TitledDiagram implements Diagram, Annot
 		}
 
 		strings.addAll(CommandExecutionResult.getStackTrace(exception));
+		HColor backcolor = HColorUtils.WHITE;
+		final ImageParameter imageParameter = new ImageParameter(new ColorMapperIdentity(), false, null, 1.0, metadata,
+				null, ClockwiseTopRightBottomLeft.none(), backcolor);
 
-		final ImageBuilder imageBuilder = ImageBuilder.buildA(new ColorMapperIdentity(), false, null, metadata, null,
-				1.0, HColorUtils.WHITE);
+		final ImageBuilder imageBuilder = ImageBuilder.build(imageParameter);
 
-		final BufferedImage im;
-		if (flash == null) {
-			im = null;
-		} else {
+		BufferedImage im2 = null;
+		if (flash != null) {
 			final FlashCodeUtils utils = FlashCodeFactory.getFlashCodeUtils();
-			im = utils.exportFlashcode(flash, Color.BLACK, Color.WHITE);
-			if (im != null) {
+			try {
+				im2 = utils.exportFlashcode(flash, Color.BLACK, Color.WHITE);
+			} catch (Throwable e) {
+				Log.error("Issue in flashcode generation " + e);
+				// e.printStackTrace();
+			}
+			if (im2 != null) {
 				GraphvizCrash.addDecodeHint(strings);
 			}
 		}
+		final BufferedImage im = im2;
 		final TextBlockBackcolored graphicStrings = GraphicStrings.createBlackOnWhite(strings, IconLoader.getRandom(),
 				GraphicPosition.BACKGROUND_CORNER_TOP_RIGHT);
 

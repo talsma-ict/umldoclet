@@ -36,7 +36,7 @@ import java.util.List;
 
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.SkinParam;
+import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.Style;
@@ -71,7 +71,7 @@ public class Rainbow {
 	}
 
 	public static Rainbow build(ISkinParam skinParam) {
-		if (SkinParam.USE_STYLES()) {
+		if (UseStyle.useBetaStyle()) {
 			throw new IllegalStateException();
 		}
 		final HColor arrow = rose.getHtmlColor(skinParam, ColorParam.arrow);

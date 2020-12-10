@@ -40,9 +40,9 @@ import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.LineConfigurable;
 import net.sourceforge.plantuml.LineParam;
-import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.SkinParamUtils;
 import net.sourceforge.plantuml.Url;
+import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.creole.Stencil;
 import net.sourceforge.plantuml.cucadiagram.EntityPortion;
 import net.sourceforge.plantuml.cucadiagram.ILeaf;
@@ -93,7 +93,7 @@ public class EntityImageClass extends AbstractEntityImage implements Stencil, Wi
 		final boolean showMethods = portionShower.showPortion(EntityPortion.METHOD, entity);
 		final boolean showFields = portionShower.showPortion(EntityPortion.FIELD, entity);
 		this.body = entity.getBodier().getBody(FontParam.CLASS_ATTRIBUTE, getSkinParam(), showMethods, showFields,
-				entity.getStereotype());
+				entity.getStereotype(), getStyle());
 
 		header = new EntityImageClassHeader(entity, getSkinParam(), portionShower);
 		this.url = entity.getUrl99();
@@ -134,7 +134,8 @@ public class EntityImageClass extends AbstractEntityImage implements Stencil, Wi
 	}
 
 	private Style getStyle() {
-		return getDefaultStyleDefinition().getMergedStyle(getSkinParam().getCurrentStyleBuilder());
+		return getDefaultStyleDefinition().with(getEntity().getStereotype())
+				.getMergedStyle(getSkinParam().getCurrentStyleBuilder());
 	}
 
 	private StyleSignature getDefaultStyleDefinition() {
@@ -158,14 +159,14 @@ public class EntityImageClass extends AbstractEntityImage implements Stencil, Wi
 		HColor headerBackcolor = getEntity().getColors(getSkinParam()).getColor(ColorType.HEADER);
 
 		if (classBorder == null) {
-			if (SkinParam.USE_STYLES())
+			if (UseStyle.useBetaStyle())
 				classBorder = getStyle().value(PName.LineColor).asColor(getSkinParam().getIHtmlColorSet());
 			else
 				classBorder = SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.classBorder);
 		}
 		HColor backcolor = getEntity().getColors(getSkinParam()).getColor(ColorType.BACK);
 		if (backcolor == null) {
-			if (SkinParam.USE_STYLES())
+			if (UseStyle.useBetaStyle())
 				backcolor = getStyle().value(PName.BackGroundColor).asColor(getSkinParam().getIHtmlColorSet());
 			else {
 				if (leafType == LeafType.ENUM) {
@@ -183,7 +184,7 @@ public class EntityImageClass extends AbstractEntityImage implements Stencil, Wi
 		final UStroke stroke = getStroke();
 
 		if (headerBackcolor == null) {
-			if (SkinParam.USE_STYLES())
+			if (UseStyle.useBetaStyle())
 				headerBackcolor = getStyle().value(PName.BackGroundColor).asColor(getSkinParam().getIHtmlColorSet());
 			else
 				headerBackcolor = getSkinParam().getHtmlColor(ColorParam.classHeaderBackground, getStereo(), false);

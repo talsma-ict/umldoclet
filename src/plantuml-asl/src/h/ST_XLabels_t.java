@@ -12,7 +12,7 @@
  * This file is part of Smetana.
  * Smetana is a partial translation of Graphviz/Dot sources from C to Java.
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2022, Arnaud Roques
  *
  * This translation is distributed under the same Licence as the original C program:
  * 
@@ -45,73 +45,24 @@
  */
 package h;
 
-import smetana.core.UnsupportedStructAndPtr;
-import smetana.core.__ptr__;
-import smetana.core.amiga.StarStruct;
+import smetana.core.CArray;
+import smetana.core.UnsupportedStarStruct;
 
-public class ST_XLabels_t extends UnsupportedStructAndPtr {
+final public class ST_XLabels_t extends UnsupportedStarStruct {
 
-	private final StarStruct parent;
-
-	public ST_XLabels_t() {
-		this(null);
-	}
-
-	public ST_XLabels_t(StarStruct parent) {
-		this.parent = parent;
-	}
-
-	// "typedef struct XLabels_s",
-	// "{",
-	public ST_object_t.Array /*ST_object_t*/ objs;
+	public CArray<ST_object_t> objs;
 	public int n_objs;
-	public ST_xlabel_t.Array /*ST_xlabel_t*/ lbls;
+	public CArray<ST_xlabel_t> lbls;
 	public int n_lbls;
-	public ST_label_params_t /*ST_label_params_t*/ params;
+	public ST_label_params_t params;
 	public ST_dt_s hdx;
 	public ST_RTree spdx;
-	// "}",
-	// "XLabels_t");
 
-	@Override
-	public void setInt(String fieldName, int data) {
-		if (fieldName.equals("n_objs")) {
-			this.n_objs = data;
-			return;
-		}
-		if (fieldName.equals("n_lbls")) {
-			this.n_lbls = data;
-			return;
-		}
-		super.setInt(fieldName, data);
-	}
 
 
 	
-	@Override
-	public __ptr__ setPtr(String fieldName, __ptr__ newData) {
-		if (fieldName.equals("hdx")) {
-			this.hdx = (ST_dt_s) newData;
-			return this.hdx;
-		}
-		if (fieldName.equals("spdx")) {
-			this.spdx = (ST_RTree) newData;
-			return this.spdx;
-		}
-//		if (fieldName.equals("objs")) {
-//			this.objs = newData;
-//			return this.objs;
-//		}
-//		if (fieldName.equals("lbls")) {
-//			this.lbls = newData;
-//			return this.lbls;
-//		}
-		if (fieldName.equals("params")) {
-			this.params = (ST_label_params_t) newData;
-			return this.params;
-		}
-		return super.setPtr(fieldName, newData);
-	}
+
+
 
 }
 

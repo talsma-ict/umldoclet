@@ -90,6 +90,10 @@ public class DescriptionDiagramFactory extends PSystemCommandFactory {
 		final CommandFactoryNote factoryNoteCommand = new CommandFactoryNote();
 		cmds.add(factoryNoteCommand.createMultiLine(false));
 
+		final CommandFactoryNoteOnLink factoryNoteOnLinkCommand = new CommandFactoryNoteOnLink();
+		cmds.add(factoryNoteOnLinkCommand.createSingleLine());
+		cmds.add(factoryNoteOnLinkCommand.createMultiLine(false));
+		
 		final CommandFactoryNoteOnEntity factoryNoteOnEntityCommand = new CommandFactoryNoteOnEntity("desc",
 				new RegexOr("ENTITY", //
 						new RegexLeaf("[\\p{L}0-9_.]+"), //
@@ -112,9 +116,6 @@ public class DescriptionDiagramFactory extends PSystemCommandFactory {
 		cmds.add(factoryNoteOnEntityCommand.createMultiLine(false));
 		cmds.add(factoryNoteCommand.createMultiLine(false));
 
-		final CommandFactoryNoteOnLink factoryNoteOnLinkCommand = new CommandFactoryNoteOnLink();
-		cmds.add(factoryNoteOnLinkCommand.createSingleLine());
-		cmds.add(factoryNoteOnLinkCommand.createMultiLine(false));
 
 		// cmds.add(new CommandHideShowSpecificClass());
 

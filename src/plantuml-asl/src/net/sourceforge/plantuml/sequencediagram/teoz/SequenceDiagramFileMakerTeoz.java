@@ -39,7 +39,7 @@ import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.SkinParam;
+import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.activitydiagram3.ftile.EntityImageLegend;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.cucadiagram.Display;
@@ -65,6 +65,7 @@ import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
+import net.sourceforge.plantuml.ugraphic.ImageParameter;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
@@ -78,17 +79,17 @@ public class SequenceDiagramFileMakerTeoz implements FileMaker {
 	private final AnnotatedWorker annotatedWorker;
 	private final int index;
 
-	public SequenceDiagramFileMakerTeoz(SequenceDiagram sequenceDiagram, Rose skin, FileFormatOption fileFormatOption,
+	public SequenceDiagramFileMakerTeoz(SequenceDiagram diagram, Rose skin, FileFormatOption fileFormatOption,
 			int index) {
 		this.index = index;
-		this.stringBounder = fileFormatOption.getDefaultStringBounder();
-		this.diagram = sequenceDiagram;
+		this.stringBounder = fileFormatOption.getDefaultStringBounder(diagram.getSkinParam());
+		this.diagram = diagram;
 		this.fileFormatOption = fileFormatOption;
 		this.skin = skin;
 		this.body = new PlayingSpaceWithParticipants(createMainTile());
 		this.footer = getFooterOrHeader(FontParam.FOOTER);
 		this.header = getFooterOrHeader(FontParam.HEADER);
-		this.annotatedWorker = new AnnotatedWorker(sequenceDiagram, sequenceDiagram.getSkinParam(), stringBounder);
+		this.annotatedWorker = new AnnotatedWorker(diagram, diagram.getSkinParam(), stringBounder);
 
 		this.min1 = body.getMinX(stringBounder);
 
@@ -147,16 +148,20 @@ public class SequenceDiagramFileMakerTeoz implements FileMaker {
 		final String metadata = fileFormatOption.isWithMetadata() ? diagram.getMetadata() : null;
 
 		final ClockwiseTopRightBottomLeft margins;
-		if (SkinParam.USE_STYLES()) {
+		if (UseStyle.useBetaStyle()) {
 			final Style style = StyleSignature.of(SName.root, SName.document)
 					.getMergedStyle(diagram.getSkinParam().getCurrentStyleBuilder());
 			margins = style.getMargin();
 		} else {
 			margins = ClockwiseTopRightBottomLeft.topRightBottomLeft(5, 5, 5, 5);
 		}
+		ISkinParam skinParam = diagram.getSkinParam();
+		final HColor backcolor = skinParam.getBackgroundColor(false);
+		final double factor = oneOf(scale, dpiFactor);
+		final ImageParameter imageParameter = new ImageParameter(skinParam, diagram.getAnimation(), factor, metadata,
+				null, margins, backcolor);
 
-		final ImageBuilder imageBuilder = ImageBuilder.buildD(diagram.getSkinParam(), margins, diagram.getAnimation(),
-				metadata, null, oneOf(scale, dpiFactor));
+		final ImageBuilder imageBuilder = ImageBuilder.build(imageParameter);
 
 		imageBuilder.setUDrawable(new Foo(index));
 		return imageBuilder.writeImageTOBEMOVED(fileFormatOption, diagram.seed(), os);
@@ -233,7 +238,7 @@ public class SequenceDiagramFileMakerTeoz implements FileMaker {
 			return new ComponentAdapter(null);
 		}
 		final TextBlock compTitle;
-		if (SkinParam.USE_STYLES()) {
+		if (UseStyle.useBetaStyle()) {
 			final Style style = StyleSignature.of(SName.root, SName.title)
 					.getMergedStyle(diagram.getSkinParam().getCurrentStyleBuilder());
 			compTitle = style.createTextBlockBordered(diagram.getTitle().getDisplay(),
@@ -265,7 +270,7 @@ public class SequenceDiagramFileMakerTeoz implements FileMaker {
 		final int fontSize = getSkinParam().getFont(null, false, param).getSize();
 		Style style = null;
 		final ISkinParam skinParam = diagram.getSkinParam();
-		if (SkinParam.USE_STYLES()) {
+		if (UseStyle.useBetaStyle()) {
 			final StyleSignature def = param.getStyleDefinition(null);
 			style = def.getMergedStyle(skinParam.getCurrentStyleBuilder());
 		}
@@ -291,7 +296,7 @@ public class SequenceDiagramFileMakerTeoz implements FileMaker {
 		ug = goDown(ug, header);
 
 		HorizontalAlignment titleAlignment = HorizontalAlignment.CENTER;
-		if (SkinParam.USE_STYLES()) {
+		if (UseStyle.useBetaStyle()) {
 			final StyleSignature def = FontParam.TITLE.getStyleDefinition(null);
 			titleAlignment = def.getMergedStyle(diagram.getSkinParam().getCurrentStyleBuilder())
 					.getHorizontalAlignment();

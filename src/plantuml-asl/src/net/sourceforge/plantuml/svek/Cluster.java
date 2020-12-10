@@ -49,10 +49,10 @@ import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.SkinParamUtils;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.Url;
+import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.cucadiagram.EntityPosition;
 import net.sourceforge.plantuml.cucadiagram.EntityUtils;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
@@ -309,7 +309,7 @@ public class Cluster implements Moveable {
 		}
 		final Stereotype stereotype = group.getStereotype();
 		HColor borderColor;
-		if (SkinParam.USE_STYLES()) {
+		if (UseStyle.useBetaStyle()) {
 			final Style style = getDefaultStyleDefinition(umlDiagramType.getStyleName())
 					.getMergedStyle(skinParam.getCurrentStyleBuilder());
 			borderColor = style.value(PName.LineColor).asColor(skinParam2.getIHtmlColorSet());
@@ -360,7 +360,7 @@ public class Cluster implements Moveable {
 
 			final double shadowing;
 			final UStroke stroke;
-			if (SkinParam.USE_STYLES()) {
+			if (UseStyle.useBetaStyle()) {
 				final Style style = getDefaultStyleDefinition(umlDiagramType.getStyleName())
 						.getMergedStyle(skinParam.getCurrentStyleBuilder());
 				shadowing = style.value(PName.Shadowing).asDouble();
@@ -511,7 +511,7 @@ public class Cluster implements Moveable {
 			attribute = new TextBlockEmpty();
 		} else {
 			attribute = new MethodsOrFieldsArea(members, FontParam.STATE_ATTRIBUTE, skinParam, group.getStereotype(),
-					null, SName.stateDiagram);
+					null, getStyle(FontParam.STATE_ATTRIBUTE, skinParam));
 		}
 		return attribute;
 	}
@@ -521,7 +521,10 @@ public class Cluster implements Moveable {
 		this.maxX = maxX;
 		this.minY = minY;
 		this.maxY = maxY;
+	}
 
+	private Style getStyle(FontParam fontParam, ISkinParam skinParam) {
+		return fontParam.getStyleDefinition(SName.stateDiagram).getMergedStyle(skinParam.getCurrentStyleBuilder());
 	}
 
 	private boolean isThereALinkFromOrToGroup(Collection<Line> lines) {
@@ -931,7 +934,7 @@ public class Cluster implements Moveable {
 	}
 
 	public static HColor getBackColor(HColor backColor, ISkinParam skinParam, Stereotype stereotype, SName styleName) {
-		if (SkinParam.USE_STYLES()) {
+		if (UseStyle.useBetaStyle()) {
 			final Style style = getDefaultStyleDefinition(styleName).getMergedStyle(skinParam.getCurrentStyleBuilder());
 			if (backColor == null) {
 				backColor = style.value(PName.BackGroundColor).asColor(skinParam.getIHtmlColorSet());

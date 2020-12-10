@@ -85,6 +85,8 @@ public class LanguageDescriptor {
 		keyword.add("@enddot");
 		keyword.add("@startsalt");
 		keyword.add("@endsalt");
+		keyword.add("@startjson");
+		keyword.add("@endjson");
 		keyword.add("as");
 		keyword.add("also");
 		keyword.add("autonumber");
@@ -167,6 +169,11 @@ public class LanguageDescriptor {
 		keyword.add("italic");
 		keyword.add("bold");
 		keyword.add("plain");
+		keyword.add("color");
+		keyword.add("dotted");
+		keyword.add("dashed");
+		keyword.add("bold");
+		keyword.add("map");
 
 
 		preproc.add("!exit");

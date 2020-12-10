@@ -107,4 +107,8 @@ public class UTranslate implements UChange {
 		return new UTranslate(dx * v, dy * v);
 	}
 
+	public UTranslate sym() {
+		return new UTranslate(dy, dx);
+	}
+
 }

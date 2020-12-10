@@ -32,7 +32,6 @@ package net.sourceforge.plantuml.ugraphic.svg;
 
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
-import java.awt.geom.PathIterator;
 
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.svg.SvgGraphics;
@@ -65,37 +64,9 @@ public class DriverTextAsPathSvg implements UDriver<SvgGraphics> {
 		final UText shape = (UText) ushape;
 		final FontConfiguration fontConfiguration = shape.getFontConfiguration();
 		final UFont font = fontConfiguration.getFont();
-		
+
 		final TextLayout t = new TextLayout(shape.getText(), font.getFont(), fontRenderContext);
-		drawPathIterator(svg, x, y, t.getOutline(null).getPathIterator(null));
-
-	}
-	
-	static void drawPathIterator(SvgGraphics svg, double x, double y, PathIterator path) {
-
-		svg.newpath();
-		final double coord[] = new double[6];
-		while (path.isDone() == false) {
-			final int code = path.currentSegment(coord);
-			if (code == PathIterator.SEG_MOVETO) {
-				svg.moveto(coord[0] + x, coord[1] + y);
-			} else if (code == PathIterator.SEG_LINETO) {
-				svg.lineto(coord[0] + x, coord[1] + y);
-			} else if (code == PathIterator.SEG_CLOSE) {
-				svg.closepath();
-			} else if (code == PathIterator.SEG_CUBICTO) {
-				svg.curveto(coord[0] + x, coord[1] + y, coord[2] + x, coord[3] + y, coord[4] + x, coord[5] + y);
-			} else if (code == PathIterator.SEG_QUADTO) {
-				svg.quadto(coord[0] + x, coord[1] + y, coord[2] + x, coord[3] + y);
-			} else {
-				throw new UnsupportedOperationException("code=" + code);
-			}
-
-			path.next();
-		}
-
-		svg.fill(path.getWindingRule());
-
+		svg.drawPathIterator(x, y, t.getOutline(null).getPathIterator(null));
 	}
 
 }

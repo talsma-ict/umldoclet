@@ -40,7 +40,6 @@ import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.creole.Stencil;
 import net.sourceforge.plantuml.skin.ActorStyle;
 import net.sourceforge.plantuml.svek.PackageStyle;
 
@@ -75,6 +74,8 @@ public abstract class USymbol {
 			new USymbolActor(ActorStyle.STICKMAN_BUSINESS));
 	public final static USymbol ACTOR_AWESOME = record("ACTOR_AWESOME", SkinParameter.ACTOR,
 			new USymbolActor(ActorStyle.AWESOME));
+	public final static USymbol ACTOR_HOLLOW = record("ACTOR_HOLLOW", SkinParameter.ACTOR,
+			new USymbolActor(ActorStyle.HOLLOW));
 	public final static USymbol USECASE = null;
 	public final static USymbol COMPONENT1 = record("COMPONENT1", SkinParameter.COMPONENT1, new USymbolComponent1());
 	public final static USymbol COMPONENT2 = record("COMPONENT2", SkinParameter.COMPONENT2, new USymbolComponent2());

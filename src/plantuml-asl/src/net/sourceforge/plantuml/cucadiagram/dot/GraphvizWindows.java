@@ -32,12 +32,14 @@ package net.sourceforge.plantuml.cucadiagram.dot;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.windowsdot.WindowsDotArchive;
 
 class GraphvizWindows extends AbstractGraphviz {
 
@@ -49,6 +51,13 @@ class GraphvizWindows extends AbstractGraphviz {
 			if (specificDotExe == null) {
 				specificDotExe = specificDotExeSlow();
 			}
+			if (specificDotExe == null)
+				try {
+					specificDotExe = new WindowsDotArchive().getWindowsExeLite();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
 			return specificDotExe;
 		}
 	}

@@ -12,7 +12,7 @@
  * This file is part of Smetana.
  * Smetana is a partial translation of Graphviz/Dot sources from C to Java.
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2022, Arnaud Roques
  *
  * This translation is distributed under the same Licence as the original C program:
  * 
@@ -45,29 +45,15 @@
  */
 package h;
 
-import smetana.core.UnsupportedStructAndPtr;
+import smetana.core.UnsupportedStarStruct;
 import smetana.core.__struct__;
-import smetana.core.amiga.StarStruct;
 
-public class ST_point extends UnsupportedStructAndPtr {
-
-	private final StarStruct parent;
-
-	public ST_point() {
-		this(null);
-	}
-
-	public ST_point(StarStruct parent) {
-		this.parent = parent;
-	}
+final public class ST_point extends UnsupportedStarStruct {
 
 
-	// "typedef struct",
-	// "{",
 	public int x, y;
 
-	// "}",
-	// "point");
+
 
 	@Override
 	public __struct__ copy() {
@@ -82,19 +68,6 @@ public class ST_point extends UnsupportedStructAndPtr {
 		ST_point this2 = (ST_point) other;
 		this.x = this2.x;
 		this.y = this2.y;
-	}
-
-	@Override
-	public void setInt(String fieldName, int data) {
-		if (fieldName.equals("x")) {
-			this.x = data;
-			return;
-		}
-		if (fieldName.equals("y")) {
-			this.y = data;
-			return;
-		}
-		super.setInt(fieldName, data);
 	}
 
 }

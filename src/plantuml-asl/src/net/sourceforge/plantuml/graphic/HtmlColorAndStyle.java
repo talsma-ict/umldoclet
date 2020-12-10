@@ -31,7 +31,7 @@
 package net.sourceforge.plantuml.graphic;
 
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.SkinParam;
+import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.cucadiagram.LinkStyle;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
@@ -83,7 +83,7 @@ public class HtmlColorAndStyle {
 	public static HtmlColorAndStyle build(ISkinParam skinParam, String definition) {
 		HColor arrowColor;
 		HColor arrowHeadColor = null;
-		if (SkinParam.USE_STYLES()) {
+		if (UseStyle.useBetaStyle()) {
 			final Style style = getDefaultStyleDefinitionArrow().getMergedStyle(skinParam.getCurrentStyleBuilder());
 			arrowColor = style.value(PName.LineColor).asColor(skinParam.getIHtmlColorSet());
 		} else {

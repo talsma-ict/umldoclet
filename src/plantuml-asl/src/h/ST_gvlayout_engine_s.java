@@ -12,7 +12,7 @@
  * This file is part of Smetana.
  * Smetana is a partial translation of Graphviz/Dot sources from C to Java.
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2022, Arnaud Roques
  *
  * This translation is distributed under the same Licence as the original C program:
  * 
@@ -46,32 +46,13 @@
 package h;
 
 import smetana.core.CFunction;
-import smetana.core.UnsupportedStructAndPtr;
-import smetana.core.__ptr__;
+import smetana.core.UnsupportedStarStruct;
 
-public class ST_gvlayout_engine_s extends UnsupportedStructAndPtr {
+final public class ST_gvlayout_engine_s extends UnsupportedStarStruct {
 
 	public CFunction layout;
 	public CFunction cleanup;
 
-	// "struct gvlayout_engine_s",
-	// "{",
-	// "void (*layout) (graph_t * g)",
-	// "void (*cleanup) (graph_t * g)",
-	// "}");
-
-	@Override
-	public __ptr__ setPtr(String fieldName, __ptr__ newData) {
-		if (fieldName.equals("layout")) {
-			this.layout = (CFunction) newData;
-			return newData;
-		}
-		if (fieldName.equals("cleanup")) {
-			this.cleanup = (CFunction) newData;
-			return newData;
-		}
-		return super.setPtr(fieldName, newData);
-	}
 
 
 }
