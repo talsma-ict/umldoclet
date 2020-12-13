@@ -35,8 +35,8 @@ import java.util.List;
 
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.Url;
+import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.activitydiagram3.Branch;
 import net.sourceforge.plantuml.activitydiagram3.ForkStyle;
 import net.sourceforge.plantuml.activitydiagram3.Instruction;
@@ -44,6 +44,7 @@ import net.sourceforge.plantuml.activitydiagram3.LinkRendering;
 import net.sourceforge.plantuml.activitydiagram3.PositionedNote;
 import net.sourceforge.plantuml.creole.CreoleMode;
 import net.sourceforge.plantuml.cucadiagram.Display;
+import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.Rainbow;
@@ -79,7 +80,7 @@ public class FtileFactoryDelegator implements FtileFactory {
 		Rainbow color;
 		final LinkRendering linkRendering = tile.getInLinkRendering();
 		if (linkRendering == null) {
-			if (SkinParam.USE_STYLES()) {
+			if (UseStyle.useBetaStyle()) {
 				final Style style = getDefaultStyleDefinitionArrow()
 						.getMergedStyle(skinParam().getCurrentStyleBuilder());
 				return Rainbow.build(style, skinParam().getIHtmlColorSet());
@@ -90,7 +91,7 @@ public class FtileFactoryDelegator implements FtileFactory {
 			color = linkRendering.getRainbow();
 		}
 		if (color.size() == 0) {
-			if (SkinParam.USE_STYLES()) {
+			if (UseStyle.useBetaStyle()) {
 				final Style style = getDefaultStyleDefinitionArrow()
 						.getMergedStyle(skinParam().getCurrentStyleBuilder());
 				return Rainbow.build(style, skinParam().getIHtmlColorSet());
@@ -107,7 +108,7 @@ public class FtileFactoryDelegator implements FtileFactory {
 			return null;
 		}
 		final FontConfiguration fontConfiguration;
-		if (SkinParam.USE_STYLES()) {
+		if (UseStyle.useBetaStyle()) {
 			final Style style = getDefaultStyleDefinitionArrow().getMergedStyle(skinParam().getCurrentStyleBuilder());
 			fontConfiguration = style.getFontConfiguration(skinParam().getIHtmlColorSet());
 		} else {
@@ -144,8 +145,8 @@ public class FtileFactoryDelegator implements FtileFactory {
 		return factory.spot(swimlane, spot, color);
 	}
 
-	public Ftile activity(Display label, Swimlane swimlane, BoxStyle style, Colors colors) {
-		return factory.activity(label, swimlane, style, colors);
+	public Ftile activity(Display label, Swimlane swimlane, BoxStyle style, Colors colors, Stereotype stereotype) {
+		return factory.activity(label, swimlane, style, colors, stereotype);
 	}
 
 	public Ftile addNote(Ftile ftile, Swimlane swimlane, Collection<PositionedNote> notes) {
@@ -175,15 +176,16 @@ public class FtileFactoryDelegator implements FtileFactory {
 	}
 
 	public Ftile repeat(BoxStyle boxStyleIn, Swimlane swimlane, Swimlane swimlaneOut, Display startLabel, Ftile repeat,
-			Display test, Display yes, Display out, Colors colors, LinkRendering backRepeatLinkRendering,
-			Ftile backward, boolean noOut, Display labelBackward) {
-		return factory.repeat(boxStyleIn, swimlane, swimlaneOut, startLabel, repeat, test, yes, out, colors,
-				backRepeatLinkRendering, backward, noOut, labelBackward);
+			Display test, Display yes, Display out, Colors colors, Ftile backward, boolean noOut,
+			LinkRendering incoming1, LinkRendering incoming2) {
+		return factory.repeat(boxStyleIn, swimlane, swimlaneOut, startLabel, repeat, test, yes, out, colors, backward,
+				noOut, incoming1, incoming2);
 	}
 
-	public Ftile createWhile(Swimlane swimlane, Ftile whileBlock, Display test, Display yes, Display out,
-			LinkRendering afterEndwhile, HColor color, Instruction specialOut, Ftile back, String incoming, String outcoming) {
-		return factory.createWhile(swimlane, whileBlock, test, yes, out, afterEndwhile, color, specialOut, back, incoming, outcoming);
+	public Ftile createWhile(LinkRendering outColor, Swimlane swimlane, Ftile whileBlock, Display test, Display yes,
+			HColor color, Instruction specialOut, Ftile back, LinkRendering incoming1, LinkRendering incoming2) {
+		return factory.createWhile(outColor, swimlane, whileBlock, test, yes, color, specialOut, back, incoming1,
+				incoming2);
 	}
 
 	public Ftile createIf(Swimlane swimlane, List<Branch> thens, Branch elseBranch, LinkRendering afterEndwhile,

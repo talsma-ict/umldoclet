@@ -12,7 +12,7 @@
  * This file is part of Smetana.
  * Smetana is a partial translation of Graphviz/Dot sources from C to Java.
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2022, Arnaud Roques
  *
  * This translation is distributed under the same Licence as the original C program:
  * 
@@ -45,30 +45,19 @@
  */
 package h;
 
-import smetana.core.HardcodedStruct;
-import smetana.core.UnsupportedStructAndPtr;
-import smetana.core.amiga.StarStruct;
+import smetana.core.UnsupportedStarStruct;
 
-public class ST_Agedgepair_s extends UnsupportedStructAndPtr implements HardcodedStruct {
+final public class ST_Agedgepair_s extends UnsupportedStarStruct {
 
-	public final ST_Agedge_s out = new ST_Agedge_s(this);
-	public final ST_Agedge_s in = new ST_Agedge_s(this);
-
-	private final StarStruct parent;
-
+	public final ST_Agedge_s out = new ST_Agedge_s();
+	public final ST_Agedge_s in = new ST_Agedge_s();
+	
 	public ST_Agedgepair_s() {
-		this(null);
+		this.out.NEXT = in;
+		this.in.PREV = out;
 	}
 
-	public ST_Agedgepair_s(StarStruct parent) {
-		this.parent = parent;
-	}
 
-	// public static List<String> DEFINITION = Arrays.asList(
-	// "struct Agedgepair_s",
-	// "{",
-	// "Agedge_t out, in",
-	// "}");
 }
 
 // struct Agedgepair_s {

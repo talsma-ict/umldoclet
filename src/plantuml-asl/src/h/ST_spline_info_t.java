@@ -12,7 +12,7 @@
  * This file is part of Smetana.
  * Smetana is a partial translation of Graphviz/Dot sources from C to Java.
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2022, Arnaud Roques
  *
  * This translation is distributed under the same Licence as the original C program:
  * 
@@ -45,49 +45,14 @@
  */
 package h;
 
-import smetana.core.UnsupportedStructAndPtr;
-import smetana.core.amiga.StarStruct;
+import smetana.core.UnsupportedStarStruct;
 
-public class ST_spline_info_t extends UnsupportedStructAndPtr {
+final public class ST_spline_info_t extends UnsupportedStarStruct {
 
-	private final StarStruct parent;
 
-	public ST_spline_info_t() {
-		this(null);
-	}
-
-	public ST_spline_info_t(StarStruct parent) {
-		this.parent = parent;
-	}
-
-	// "typedef struct",
-	// "{",
 	public int LeftBound, RightBound, Splinesep, Multisep;
 	public ST_boxf Rank_box[];
 
-	// "}",
-	// "spline_info_t");
-
-	@Override
-	public void setInt(String fieldName, int data) {
-		if (fieldName.equals("LeftBound")) {
-			this.LeftBound = data;
-			return;
-		}
-		if (fieldName.equals("RightBound")) {
-			this.RightBound = data;
-			return;
-		}
-		if (fieldName.equals("Splinesep")) {
-			this.Splinesep = data;
-			return;
-		}
-		if (fieldName.equals("Multisep")) {
-			this.Multisep = data;
-			return;
-		}
-		super.setInt(fieldName, data);
-	}
 
 }
 

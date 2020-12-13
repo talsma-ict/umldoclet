@@ -32,7 +32,7 @@ package net.sourceforge.plantuml;
 
 import net.sourceforge.plantuml.sprite.Sprite;
 
-public interface SpriteContainer {
+public interface SpriteContainer extends SvgCharSizeHack {
 
 	public Sprite getSprite(String name);
 

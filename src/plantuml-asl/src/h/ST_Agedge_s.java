@@ -12,7 +12,7 @@
  * This file is part of Smetana.
  * Smetana is a partial translation of Graphviz/Dot sources from C to Java.
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2022, Arnaud Roques
  *
  * This translation is distributed under the same Licence as the original C program:
  * 
@@ -45,208 +45,66 @@
  */
 package h;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import smetana.core.HardcodedStruct;
 import smetana.core.OFFSET;
-import smetana.core.UnsupportedArrayOfPtr;
-import smetana.core.UnsupportedStructAndPtr;
-import smetana.core.__array_of_ptr__;
 import smetana.core.__ptr__;
 import smetana.core.__struct__;
-import smetana.core.amiga.StarStruct;
 
-public class ST_Agedge_s extends UnsupportedStructAndPtr implements HardcodedStruct {
+final public class ST_Agedge_s extends ST_Agobj_s {
 
-	private final StarStruct parent;
+	public ST_Agedge_s PREV;
+	public ST_Agedge_s NEXT;
 
-	public final ST_Agobj_s base = new ST_Agobj_s(this);
+	public final ST_Agobj_s base = this;
 	public final ST_dtlink_s id_link = new ST_dtlink_s(this);
 	public final ST_dtlink_s seq_link = new ST_dtlink_s(this);
 	public ST_Agnode_s node;
 
-	public static class ArrayOfStar extends UnsupportedArrayOfPtr implements __ptr__, __array_of_ptr__ {
+	public String NAME;
 
-		private final List<ST_Agedge_s> data;
-		private final int pos;
-
-		public ArrayOfStar(int size) {
-			this.data = new ArrayList<ST_Agedge_s>();
-			this.pos = 0;
-			for (int i = 0; i < size; i++) {
-				data.add(null);
-			}
-		}
-
-		public void swap(int i, int j) {
-			ST_Agedge_s e1 = data.get(i);
-			ST_Agedge_s e2 = data.get(j);
-			data.set(i, e2);
-			data.set(j, e1);
-		}
-
-		public ArrayOfStar(List<ST_Agedge_s> data, int pos) {
-			this.data = data;
-			this.pos = pos;
-		}
-
-		public ArrayOfStar reallocJ(int newsize) {
-			while (data.size() < newsize) {
-				data.add(null);
-			}
-			return this;
-		}
-
-		@Override
-		public ArrayOfStar plus(int delta) {
-			return new ArrayOfStar(data, pos + delta);
-		}
-		
-		public ST_Agedge_s get(int i) {
-			return plus(i).getPtr();
-		}
-
-
-		@Override
-		public ArrayOfStar asPtr() {
-			return this;
-		}
-
-		@Override
-		public void setPtr(__ptr__ value) {
-			this.data.set(pos, (ST_Agedge_s) value);
-		}
-
-		@Override
-		public ST_Agedge_s getPtr() {
-			return this.data.get(pos);
-		}
-
-		@Override
-		public int comparePointer(__ptr__ other) {
-			final ArrayOfStar this2 = (ArrayOfStar) other;
-			if (this.data != this2.data) {
-				throw new IllegalArgumentException();
-			}
-			return this.pos - this2.pos;
-		}
-
-		public boolean isSameThan2(ArrayOfStar other) {
-			if (this.data != other.data) {
-				throw new IllegalArgumentException();
-			}
-			return this.pos == other.pos;
-		}
-
+	@Override
+	public String toString() {
+		return NAME;
 	}
 
 	@Override
-	public void copyDataFrom(__ptr__ arg) {
+	public void ___(__struct__ arg) {
 		ST_Agedge_s this2 = (ST_Agedge_s) arg;
-		this.base.copyDataFrom((__struct__) this2.base);
-		this.id_link.copyDataFrom((__struct__) this2.id_link);
-		this.seq_link.copyDataFrom((__struct__) this2.seq_link);
+		this.tag.___(this2.tag);
+		this.data = this2.data;
+		this.id_link.___(this2.id_link);
+		this.seq_link.___(this2.seq_link);
 		this.node = this2.node;
 	}
 
-	public ST_Agedge_s() {
-		this(null);
-	}
-
-	public ST_Agedge_s(StarStruct parent) {
-		this.parent = parent;
-	}
-
 	@Override
-	public boolean isSameThan(StarStruct other) {
+	public boolean isSameThan(__ptr__ other) {
 		ST_Agedge_s other2 = (ST_Agedge_s) other;
 		return this == other2;
 	}
 
 	@Override
-	public Object addVirtualBytes(int virtualBytes) {
-		if (virtualBytes == 0) {
+	public Object getTheField(OFFSET offset) {
+		if (offset == null || offset.getSign()==0) {
 			return this;
 		}
-		OFFSET offset = OFFSET.fromInt(virtualBytes);
-		if (offset.toString().equals("h.ST_Agedge_s::seq_link")) {
+		if (offset.getField().equals("seq_link")) {
 			return seq_link;
 		}
-		if (offset.toString().equals("h.ST_Agedge_s::id_link")) {
+		if (offset.getField().equals("id_link")) {
 			return id_link;
-		}
-		System.err.println("offset2=" + offset);
-		return super.addVirtualBytes(virtualBytes);
-	}
-
-	@Override
-	public ST_Agedge_s plus(int pointerMove) {
-		ST_Agedgepair_s pair = (ST_Agedgepair_s) parent;
-		// Order=out, in
-		if (pair.out == this && pointerMove == 1) {
-			return pair.in;
-		}
-		if (pair.in == this && pointerMove == -1) {
-			return pair.out;
 		}
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
-	public __ptr__ castTo(Class dest) {
-		if (dest == ST_Agobj_s.class) {
-			return base;
+	public ST_Agedge_s plus_(int pointerMove) {
+		if (pointerMove == 1 && NEXT != null) {
+			return NEXT;
 		}
-		if (dest == ST_Agedge_s.class) {
-			return this;
+		if (pointerMove == -1 && PREV != null) {
+			return PREV;
 		}
-		return super.castTo(dest);
+		throw new UnsupportedOperationException();
 	}
-	
-	public ST_Agobj_s castTo_ST_Agobj_s() {
-		return base;
-	}
-
-
-	@Override
-	public __ptr__ setPtr(String fieldName, __ptr__ newData) {
-		if (fieldName.equals("node")) {
-			this.node = (ST_Agnode_s) newData;
-			return node;
-		}
-		return super.setPtr(fieldName, newData);
-	}
-
-	@Override
-	public ST_Agedge_s getPtr() {
-		return this;
-	}
-
-	public StarStruct from_seq_link(ST_dtlink_s from) {
-		if (from == seq_link) {
-			return this;
-		}
-		throw new IllegalArgumentException();
-	}
-
-	public StarStruct from_id_link(ST_dtlink_s from) {
-		if (from == id_link) {
-			return this;
-		}
-		throw new IllegalArgumentException();
-	}
-
-
-	// public interface ST_Agedge_s extends __ptr__ {
-	// public static List<String> DEFINITION = Arrays.asList(
-	// "struct Agedge_s",
-	// "{",
-	// "Agobj_t base",
-	// "Dtlink_t id_link",
-	// "Dtlink_t seq_link",
-	// "Agnode_t *node",
-	// "}");
 }
 
 // struct Agedge_s {

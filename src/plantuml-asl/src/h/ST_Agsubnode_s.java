@@ -12,7 +12,7 @@
  * This file is part of Smetana.
  * Smetana is a partial translation of Graphviz/Dot sources from C to Java.
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2022, Arnaud Roques
  *
  * This translation is distributed under the same Licence as the original C program:
  * 
@@ -45,63 +45,88 @@
  */
 package h;
 
-import smetana.core.HardcodedStruct;
+import smetana.core.ACCESS;
+import smetana.core.CStarStar;
 import smetana.core.OFFSET;
-import smetana.core.UnsupportedStructAndPtr;
+import smetana.core.UnsupportedStarStruct;
 import smetana.core.__ptr__;
-import smetana.core.amiga.StarStruct;
 
-public class ST_Agsubnode_s extends UnsupportedStructAndPtr implements HardcodedStruct {
+final public class ST_Agsubnode_s extends UnsupportedStarStruct {
 
 	public final ST_dtlink_s seq_link = new ST_dtlink_s(this);
 	public final ST_dtlink_s id_link = new ST_dtlink_s(this);
 	public ST_Agnode_s node;
+
 	public ST_dtlink_s in_id;
+	public CStarStar<ST_dtlink_s> in_id_AMP() {
+		return CStarStar.<ST_dtlink_s>BUILD(new ACCESS<ST_dtlink_s>() {
+			public ST_dtlink_s get() {
+				return in_id;
+			}
+
+			public void set(ST_dtlink_s data) {
+				in_id = data;
+			}
+		});
+	}
+
 	public ST_dtlink_s out_id;
+	public CStarStar<ST_dtlink_s> out_id_AMP() {
+		return CStarStar.<ST_dtlink_s>BUILD(new ACCESS<ST_dtlink_s>() {
+			public ST_dtlink_s get() {
+				return out_id;
+			}
+
+			public void set(ST_dtlink_s data) {
+				out_id = data;
+			}
+		});
+	}
+
 	public ST_dtlink_s in_seq;
+	public CStarStar<ST_dtlink_s> in_seq_AMP() {
+		return CStarStar.<ST_dtlink_s>BUILD(new ACCESS<ST_dtlink_s>() {
+			public ST_dtlink_s get() {
+				return in_seq;
+			}
+
+			public void set(ST_dtlink_s data) {
+				in_seq = data;
+			}
+		});
+	}
+
 	public ST_dtlink_s out_seq;
+	public CStarStar<ST_dtlink_s> out_seq_AMP() {
+		return CStarStar.<ST_dtlink_s>BUILD(new ACCESS<ST_dtlink_s>() {
+			public ST_dtlink_s get() {
+				return out_seq;
+			}
 
-	public ST_Agsubnode_s() {
-		this(null);
+			public void set(ST_dtlink_s data) {
+				out_seq = data;
+			}
+		});
 	}
 
-	public ST_Agsubnode_s(StarStruct parent) {
-	}
-
-	public ST_Agsubnode_s from_id_link(ST_dtlink_s from) {
-		if (from == id_link) {
-			return this;
-		}
-		throw new IllegalArgumentException();
-	}
-
-	public ST_Agsubnode_s from_seq_link(ST_dtlink_s from) {
-		if (from == seq_link) {
-			return this;
-		}
-		throw new IllegalArgumentException();
-	}
 
 	@Override
-	public boolean isSameThan(StarStruct other) {
+	public boolean isSameThan(__ptr__ other) {
 		return this == (ST_Agsubnode_s) other;
 	}
 
 	@Override
-	public Object addVirtualBytes(int virtualBytes) {
-		if (virtualBytes == 0) {
+	public Object getTheField(OFFSET offset) {
+		if (offset == null || offset.getSign()==0) {
 			return this;
 		}
-		final OFFSET offset = OFFSET.fromInt(virtualBytes);
-		if (offset.toString().equals("h.ST_Agsubnode_s::id_link")) {
+		if (offset.getField().equals("id_link")) {
 			return id_link;
 		}
-		if (offset.toString().equals("h.ST_Agsubnode_s::seq_link")) {
+		if (offset.getField().equals("seq_link")) {
 			return seq_link;
 		}
-		System.err.println("virtualBytes=" + virtualBytes);
-		System.err.println("offset=" + offset);
-		return super.addVirtualBytes(virtualBytes);
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -113,46 +138,7 @@ public class ST_Agsubnode_s extends UnsupportedStructAndPtr implements Hardcoded
 		return super.castTo(dest);
 	}
 
-	@Override
-	public __ptr__ setPtr(String fieldName, __ptr__ newData) {
-		if (fieldName.equals("node")) {
-			this.node = (ST_Agnode_s) newData;
-			return node;
-		}
-		if (fieldName.equals("in_id")) {
-			this.in_id = (h.ST_dtlink_s) newData;
-			return in_id;
-		}
-		if (fieldName.equals("out_seq")) {
-			this.out_seq = (h.ST_dtlink_s) newData;
-			return out_seq;
-		}
-		if (fieldName.equals("out_id")) {
-			this.out_id = (h.ST_dtlink_s) newData;
-			return out_id;
-		}
-		if (fieldName.equals("seq_link")) {
-			this.seq_link.copyDataFrom(newData);
-			return seq_link;
-		}
-		if (fieldName.equals("in_seq")) {
-			this.in_seq = (h.ST_dtlink_s) newData;
-			return in_seq;
-		}
-		return super.setPtr(fieldName, newData);
-	}
 
-
-	// public interface ST_Agsubnode_s extends __ptr__ {
-	// public static List<String> DEFINITION = Arrays.asList(
-	// "struct Agsubnode_s",
-	// "{",
-	// "Dtlink_t seq_link",
-	// "Dtlink_t id_link",
-	// "Agnode_t *node",
-	// "Dtlink_t *in_id, *out_id",
-	// "Dtlink_t *in_seq, *out_seq",
-	// "}");
 }
 
 // struct Agsubnode_s { /* the node-per-graph-or-subgraph record */

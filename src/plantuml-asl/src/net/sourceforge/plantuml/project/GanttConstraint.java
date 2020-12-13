@@ -34,6 +34,8 @@ import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.cucadiagram.WithLinkType;
 import net.sourceforge.plantuml.graphic.UDrawable;
+import net.sourceforge.plantuml.project.core.Task;
+import net.sourceforge.plantuml.project.core.TaskAttribute;
 import net.sourceforge.plantuml.project.core.TaskInstant;
 import net.sourceforge.plantuml.project.time.Day;
 import net.sourceforge.plantuml.project.timescale.TimeScale;
@@ -49,6 +51,21 @@ public class GanttConstraint extends WithLinkType {
 		this.dest = dest;
 		this.type = new LinkType(LinkDecor.NONE, LinkDecor.NONE);
 		this.setSpecificColor(forcedColor);
+	}
+
+	public boolean isOn(Task task) {
+		return source.getMoment() == task || dest.getMoment() == task;
+	}
+
+	public boolean isThereRightArrow(Task task) {
+		if (dest.getMoment() == task && dest.getAttribute() == TaskAttribute.END) {
+			return true;
+		}
+		if (source.getMoment() == task && dest.getAttribute() == TaskAttribute.END
+				&& source.getAttribute() == TaskAttribute.END) {
+			return true;
+		}
+		return false;
 	}
 
 	public GanttConstraint(TaskInstant source, TaskInstant dest) {
@@ -90,4 +107,5 @@ public class GanttConstraint extends WithLinkType {
 	@Override
 	public void goNorank() {
 	}
+
 }

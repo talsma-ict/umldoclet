@@ -50,6 +50,7 @@ import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.TitledDiagram;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
+import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.WithSprite;
 import net.sourceforge.plantuml.api.ImageDataSimple;
 import net.sourceforge.plantuml.command.BlocLines;
@@ -58,7 +59,6 @@ import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.CommandFactorySprite;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
-import net.sourceforge.plantuml.graphic.AbstractTextBlock;
 import net.sourceforge.plantuml.graphic.InnerStrategy;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
@@ -86,6 +86,7 @@ import net.sourceforge.plantuml.sprite.Sprite;
 import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
 import net.sourceforge.plantuml.svek.TextBlockBackcolored;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
+import net.sourceforge.plantuml.ugraphic.ImageParameter;
 import net.sourceforge.plantuml.ugraphic.MinMax;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
@@ -115,7 +116,8 @@ public class PSystemSalt extends TitledDiagram implements WithSprite {
 		try {
 			final Element salt = createElement(manageSprite());
 
-			final Dimension2D size = salt.getPreferredDimension(fileFormatOption.getDefaultStringBounder(), 0, 0);
+			final StringBounder stringBounder = fileFormatOption.getDefaultStringBounder(getSkinParam());
+			final Dimension2D size = salt.getPreferredDimension(stringBounder, 0, 0);
 
 			final Scale scale = getScale();
 			final double dpiFactor = scale == null ? getScaleCoef(fileFormatOption) : scale.getScale(100, 100);
@@ -123,22 +125,25 @@ public class PSystemSalt extends TitledDiagram implements WithSprite {
 
 			final double margin1;
 			final double margin2;
-			if (SkinParam.USE_STYLES()) {
+			if (UseStyle.useBetaStyle()) {
 				margin1 = SkinParam.zeroMargin(5);
 				margin2 = SkinParam.zeroMargin(5);
 			} else {
 				margin1 = 5;
 				margin2 = 5;
 			}
+			HColor backcolor = skinParam.getBackgroundColor(false);
+			final ClockwiseTopRightBottomLeft margins = ClockwiseTopRightBottomLeft.margin1margin2(margin1, margin2);
+			final String metadata = fileFormatOption.isWithMetadata() ? getMetadata() : null;
 
-			final ImageBuilder imageBuilder = ImageBuilder.buildB(skinParam.getColorMapper(), skinParam.handwritten(),
-					ClockwiseTopRightBottomLeft.margin1margin2(margin1, margin2), null,
-					fileFormatOption.isWithMetadata() ? getMetadata() : null, "", dpiFactor,
-					skinParam.getBackgroundColor(false));
+			final ImageParameter imageParameter = new ImageParameter(skinParam.getColorMapper(),
+					skinParam.handwritten(), null, dpiFactor, metadata, "", margins, backcolor);
+
+			final ImageBuilder imageBuilder = ImageBuilder.build(imageParameter);
 
 			TextBlock result = getTextBlock(salt, size);
 
-			result = new AnnotatedWorker(this, skinParam, fileFormatOption.getDefaultStringBounder()).addAdd(result);
+			result = new AnnotatedWorker(this, skinParam, stringBounder).addAdd(result);
 			imageBuilder.setUDrawable(result);
 
 			return imageBuilder.writeImageTOBEMOVED(fileFormatOption, seed(), os);

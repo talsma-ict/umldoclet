@@ -12,7 +12,7 @@
  * This file is part of Smetana.
  * Smetana is a partial translation of Graphviz/Dot sources from C to Java.
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2022, Arnaud Roques
  *
  * This translation is distributed under the same Licence as the original C program:
  * 
@@ -48,9 +48,12 @@ import static gen.lib.label.rectangle__c.CombineRect;
 import static gen.lib.label.rectangle__c.InitRect;
 import static gen.lib.label.rectangle__c.RectArea;
 import static gen.lib.label.split_q__c.SplitNode;
-import static smetana.core.JUtilsDebug.ENTERING;
-import static smetana.core.JUtilsDebug.LEAVING;
 import static smetana.core.Macro.UNSUPPORTED;
+import static smetana.core.debug.SmetanaDebug.ENTERING;
+import static smetana.core.debug.SmetanaDebug.LEAVING;
+
+import gen.annotation.Original;
+import gen.annotation.Unused;
 import h.ST_Branch_t;
 import h.ST_Node_t___;
 import h.ST_RTree;
@@ -61,11 +64,13 @@ public class node__c {
 
 //3 9uj7ni1m6q6drtoh56w82d6m4
 // Node_t *RTreeNewNode(RTree_t * rtp) 
+@Unused
+@Original(version="2.38.0", path="lib/label/node.c", name="", key="9uj7ni1m6q6drtoh56w82d6m4", definition="Node_t *RTreeNewNode(RTree_t * rtp)")
 public static ST_Node_t___ RTreeNewNode(ST_RTree rtp) {
 ENTERING("9uj7ni1m6q6drtoh56w82d6m4","RTreeNewNode");
 try {
 	ST_Node_t___ n;
-	rtp.setInt("NodeCount", rtp.NodeCount + 1);
+	rtp.NodeCount = rtp.NodeCount + 1;
 	n = new ST_Node_t___();
      InitNode(n);
      return n;
@@ -77,33 +82,17 @@ LEAVING("9uj7ni1m6q6drtoh56w82d6m4","RTreeNewNode");
 
 
 
-//3 65wa5vy8i5k40218lbhdibrjx
-// void RTreeFreeNode(RTree_t * rtp, Node_t * p) 
-public static Object RTreeFreeNode(Object... arg) {
-UNSUPPORTED("e9yu9bfc7a1ihpoc5axpyg4eg"); // void RTreeFreeNode(RTree_t * rtp, Node_t * p)
-UNSUPPORTED("erg9i1970wdri39osu8hx2a6e"); // {
-UNSUPPORTED("2jtyh6hx1w2fcx2gjs8ksbkuh"); //     rtp->NodeCount--;
-UNSUPPORTED("ed5n0l2c9xevohsgtsmv822gw"); //     if (p->level == 0)
-UNSUPPORTED("8pbkap1jra9u3gvgio7ou7y1n"); // 	rtp->LeafCount--;
-UNSUPPORTED("div10atae09n36x269sl208r1"); //     else
-UNSUPPORTED("357domcrb707wvdox73ayvdj1"); // 	rtp->NonLeafCount--;
-UNSUPPORTED("bo0y3vz195pcz24vm46pixpb2"); //     free(p);
-UNSUPPORTED("c24nfmv9i7o5eoqaymbibp7m7"); // }
-
-throw new UnsupportedOperationException();
-}
-
-
-
 
 //3 4qk9wkm05q2pwf20ud6g2tufg
 // void InitNode(Node_t * n) 
+@Unused
+@Original(version="2.38.0", path="lib/label/node.c", name="InitNode", key="4qk9wkm05q2pwf20ud6g2tufg", definition="void InitNode(Node_t * n)")
 public static void InitNode(ST_Node_t___ n) {
 ENTERING("4qk9wkm05q2pwf20ud6g2tufg","InitNode");
 try {
      int i;
-     n.setInt("count", 0);
-     n.setInt("level", -1);
+     n.count = 0;
+     n.level = -1;
      for (i = 0; i < 64; i++)
     	 InitBranch(n.branch[i]);
      // InitBranch(&(n->branch[i]));
@@ -117,6 +106,8 @@ LEAVING("4qk9wkm05q2pwf20ud6g2tufg","InitNode");
 
 //3 ruhxixxei7au9z1iaj0zggwo
 // void InitBranch(Branch_t * b) 
+@Unused
+@Original(version="2.38.0", path="lib/label/node.c", name="InitBranch", key="ruhxixxei7au9z1iaj0zggwo", definition="void InitBranch(Branch_t * b)")
 public static void InitBranch(ST_Branch_t b) {
 ENTERING("ruhxixxei7au9z1iaj0zggwo","InitBranch");
 try {
@@ -132,6 +123,8 @@ LEAVING("ruhxixxei7au9z1iaj0zggwo","InitBranch");
 
 //3 42vjqe8n5yeq2jjby00xzrotk
 // Rect_t NodeCover(Node_t * n) 
+@Unused
+@Original(version="2.38.0", path="lib/label/node.c", name="NodeCover", key="42vjqe8n5yeq2jjby00xzrotk", definition="Rect_t NodeCover(Node_t * n)")
 public static ST_Rect_t NodeCover(ST_Node_t___ n) {
 ENTERING("42vjqe8n5yeq2jjby00xzrotk","NodeCover");
 try {
@@ -159,6 +152,8 @@ LEAVING("42vjqe8n5yeq2jjby00xzrotk","NodeCover");
 
 //3 bek56v2skz6jfvw4uggy2h5w3
 // int PickBranch(Rect_t * r, Node_t * n) 
+@Unused
+@Original(version="2.38.0", path="lib/label/node.c", name="PickBranch", key="bek56v2skz6jfvw4uggy2h5w3", definition="int PickBranch(Rect_t * r, Node_t * n)")
 public static int PickBranch(ST_Rect_t r, ST_Node_t___ n) {
 	ENTERING("bek56v2skz6jfvw4uggy2h5w3","PickBranch");
 	try {
@@ -197,6 +192,8 @@ LEAVING("bek56v2skz6jfvw4uggy2h5w3","PickBranch");
 
 //3 2njctcrpeff95ysmv9ji34x4s
 // int AddBranch(RTree_t * rtp, Branch_t * b, Node_t * n, Node_t ** new) 
+@Unused
+@Original(version="2.38.0", path="lib/label/node.c", name="AddBranch", key="2njctcrpeff95ysmv9ji34x4s", definition="int AddBranch(RTree_t * rtp, Branch_t * b, Node_t * n, Node_t ** new)")
 public static int AddBranch(ST_RTree rtp, ST_Branch_t b, ST_Node_t___ n, ST_Node_t___ new_[]) {
 ENTERING("2njctcrpeff95ysmv9ji34x4s","AddBranch");
 try {
@@ -206,8 +203,8 @@ try {
      if (n.count < 64) {	/* split won't be necessary */
  	for (i = 0; i < 64; i++) {	/* find empty branch */
  	    if (n.branch[i].child == null) {
- 		n.branch[i].___(b.getStruct());
- 		n.setInt("count", n.count+1);
+ 		n.branch[i].___(b);
+ 		n.count = n.count+1;
  		break;
  	    }
 }
@@ -223,7 +220,7 @@ UNSUPPORTED("2u8wpa4w1q7rg14t07bny6p8i"); // 		rtp->InTouchCount++;
 // 	assert(new);
  	SplitNode(rtp, n, b, new_);
  	if (n.level == 0)
- 		rtp.setInt("LeafCount", rtp.LeafCount+1);
+ 		rtp.LeafCount = rtp.LeafCount+1;
  	else
 UNSUPPORTED("6tkfiebspy7ecivrzb3l5y7jd"); // 	    rtp->NonLeafCount++;
  	return 1;
@@ -238,13 +235,15 @@ LEAVING("2njctcrpeff95ysmv9ji34x4s","AddBranch");
 
 //3 eqzamflj58f43cflwns9cemnk
 // void DisconBranch(Node_t * n, int i) 
+@Unused
+@Original(version="2.38.0", path="lib/label/node.c", name="DisconBranch", key="eqzamflj58f43cflwns9cemnk", definition="void DisconBranch(Node_t * n, int i)")
 public static void DisconBranch(ST_Node_t___ n, int i) {
 ENTERING("eqzamflj58f43cflwns9cemnk","DisconBranch");
 try {
 //     assert(n && i >= 0 && i < 64);
 //     assert(n->branch[i].child);
      InitBranch(n.branch[i]);
-     n.setInt("count", n.count-1);
+     n.count = n.count-1;
 } finally {
 LEAVING("eqzamflj58f43cflwns9cemnk","DisconBranch");
 }

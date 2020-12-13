@@ -41,10 +41,6 @@ public interface Task extends Moment {
 
 	public TaskCode getCode();
 
-	public Day getStart();
-
-	public Day getEnd();
-
 	public Load getLoad();
 
 	public void setLoad(Load load);

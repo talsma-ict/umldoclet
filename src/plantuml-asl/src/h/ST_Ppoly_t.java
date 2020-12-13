@@ -12,7 +12,7 @@
  * This file is part of Smetana.
  * Smetana is a partial translation of Graphviz/Dot sources from C to Java.
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2022, Arnaud Roques
  *
  * This translation is distributed under the same Licence as the original C program:
  * 
@@ -45,28 +45,17 @@
  */
 package h;
 
-import smetana.core.HardcodedStruct;
-import smetana.core.UnsupportedArrayOfStruct;
-import smetana.core.UnsupportedStructAndPtr;
-import smetana.core.__struct__;
-import smetana.core.amiga.Area;
-import smetana.core.amiga.StarStruct;
+import smetana.core.CArray;
+import smetana.core.UnsupportedStarStruct;
 
-public class ST_Ppoly_t extends UnsupportedStructAndPtr implements HardcodedStruct {
+final public class ST_Ppoly_t extends UnsupportedStarStruct {
 
-	// public StarArrayOfPtr ps;
-	public ST_pointf.Array ps;
+	public CArray<ST_pointf> ps;
 	public int pn;
 
-	public ST_Ppoly_t() {
-		this(null);
-	}
-
-	public ST_Ppoly_t(StarStruct parent) {
-	}
 
 	@Override
-	public __struct__ copy() {
+	public ST_Ppoly_t copy() {
 		ST_Ppoly_t result = new ST_Ppoly_t();
 		result.ps = this.ps;
 		result.pn = this.pn;
@@ -74,48 +63,6 @@ public class ST_Ppoly_t extends UnsupportedStructAndPtr implements HardcodedStru
 	}
 
 
-	class Adaptor2 extends UnsupportedArrayOfStruct {
-
-		final private int pos;
-
-		public Adaptor2(int pos) {
-			this.pos = pos;
-		}
-
-		public Adaptor2 plus(int delta) {
-			return new Adaptor2(pos + delta);
-		}
-
-		@Override
-		public __struct__ getStruct() {
-			return ps.plus(pos).getStruct();
-		}
-
-	}
-
-	@Override
-	public void memcopyFrom(Area source) {
-		ST_Ppoly_t source2 = (ST_Ppoly_t) source;
-		this.ps = source2.ps;
-		this.pn = source2.pn;
-	}
-
-	@Override
-	public void setInt(String fieldName, int data) {
-		if (fieldName.equals("pn")) {
-			this.pn = data;
-			return;
-		}
-		super.setInt(fieldName, data);
-	}
-
-	// public static List<String> DEFINITION = Arrays.asList(
-	// "typedef struct Ppoly_t",
-	// "{",
-	// "Ppoint_t *ps",
-	// "int pn",
-	// "}",
-	// "Ppoly_t");
 }
 
 // typedef struct Ppoly_t {

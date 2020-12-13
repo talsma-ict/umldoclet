@@ -12,7 +12,7 @@
  * This file is part of Smetana.
  * Smetana is a partial translation of Graphviz/Dot sources from C to Java.
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2022, Arnaud Roques
  *
  * This translation is distributed under the same Licence as the original C program:
  * 
@@ -46,9 +46,9 @@
 package h;
 
 import smetana.core.CFunction;
-import smetana.core.UnsupportedStructAndPtr;
+import smetana.core.UnsupportedStarStruct;
 
-public class ST_Agiddisc_s extends UnsupportedStructAndPtr {
+final public class ST_Agiddisc_s extends UnsupportedStarStruct {
 
 	public CFunction open;
 	public CFunction map;
@@ -59,17 +59,7 @@ public class ST_Agiddisc_s extends UnsupportedStructAndPtr {
 	public CFunction idregister;
 
 
-	// public static List<String> DEFINITION = Arrays.asList(
-	// "struct Agiddisc_s",
-	// "{",
-	// "void *(*open) (Agraph_t * g, Agdisc_t*)",
-	// "long (*map) (void *state, int objtype, char *str, unsigned long *id,    int createflag)",
-	// "long (*alloc) (void *state, int objtype, unsigned long id)",
-	// "void (*free) (void *state, int objtype, unsigned long id)",
-	// "char *(*print) (void *state, int objtype, unsigned long id)",
-	// "void (*close) (void *state)",
-	// "void (*idregister) (void *state, int objtype, void *obj)",
-	// "}");
+
 }
 
 // struct Agiddisc_s { /* object ID allocator */

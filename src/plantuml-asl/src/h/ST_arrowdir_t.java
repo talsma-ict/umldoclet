@@ -12,7 +12,7 @@
  * This file is part of Smetana.
  * Smetana is a partial translation of Graphviz/Dot sources from C to Java.
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2022, Arnaud Roques
  *
  * This translation is distributed under the same Licence as the original C program:
  * 
@@ -45,24 +45,13 @@
  */
 package h;
 
-import smetana.core.UnsupportedStructAndPtr;
-import smetana.core.amiga.StarStruct;
+import smetana.core.UnsupportedStarStruct;
 
-public class ST_arrowdir_t extends UnsupportedStructAndPtr {
+final public class ST_arrowdir_t extends UnsupportedStarStruct {
 
 	// char *dir;
 	public int sflag;
 	public int eflag;
-
-	private final StarStruct parent;
-
-	public ST_arrowdir_t() {
-		this(null);
-	}
-
-	public ST_arrowdir_t(StarStruct parent) {
-		this.parent = parent;
-	}
 
 	// typedef struct arrowdir_t {
 	// char *dir;

@@ -31,6 +31,8 @@
 package net.sourceforge.plantuml.activitydiagram3.ftile;
 
 import java.awt.geom.Dimension2D;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import net.sourceforge.plantuml.activitydiagram3.LinkRendering;
@@ -48,6 +50,13 @@ public class FtileHeightFixedCentered extends AbstractFtile {
 		this.tile = tile;
 		this.fixedHeight = fixedHeight;
 	}
+	
+	@Override
+	public Collection<Ftile> getMyChildren() {
+		return Collections.singleton(tile);
+		// return tile.getMyChildren();
+	}
+
 
 	@Override
 	public LinkRendering getInLinkRendering() {

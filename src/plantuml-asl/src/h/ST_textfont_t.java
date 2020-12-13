@@ -12,7 +12,7 @@
  * This file is part of Smetana.
  * Smetana is a partial translation of Graphviz/Dot sources from C to Java.
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2022, Arnaud Roques
  *
  * This translation is distributed under the same Licence as the original C program:
  * 
@@ -46,52 +46,17 @@
 package h;
 
 import smetana.core.CString;
-import smetana.core.UnsupportedStructAndPtr;
-import smetana.core.__ptr__;
-import smetana.core.amiga.StarStruct;
+import smetana.core.UnsupportedStarStruct;
 
-public class ST_textfont_t extends UnsupportedStructAndPtr {
+final public class ST_textfont_t extends UnsupportedStarStruct {
 
 	public CString name;
 	public double size;
 
-	public ST_textfont_t() {
-		this(null);
-	}
 
-	public ST_textfont_t(StarStruct parent) {
-	}
 
-	@Override
-	public __ptr__ setPtr(String fieldName, __ptr__ newData) {
-		if (fieldName.equals("name")) {
-			this.name = (CString) newData;
-			return name;
-		}
-		return super.setPtr(fieldName, newData);
-	}
 
-	@Override
-	public void setDouble(String fieldName, double data) {
-		if (fieldName.equals("size")) {
-			this.size = data;
-			return;
-		}
-		super.setDouble(fieldName, data);
-	}
 
-	// public interface ST_textfont_t extends __ptr__ {
-	// public static List<String> DEFINITION = Arrays.asList(
-	// "typedef struct",
-	// "{",
-	// "char*  name",
-	// "char*  color",
-	// "PostscriptAlias *postscript_alias",
-	// "double size",
-	// "unsigned int flags:7",
-	// "unsigned int cnt:(sizeof(unsigned int) * 8 - 7)",
-	// "}",
-	// "textfont_t");
 }
 
 // typedef struct {

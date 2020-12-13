@@ -12,7 +12,7 @@
  * This file is part of Smetana.
  * Smetana is a partial translation of Graphviz/Dot sources from C to Java.
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2022, Arnaud Roques
  *
  * This translation is distributed under the same Licence as the original C program:
  * 
@@ -45,38 +45,21 @@
  */
 package h;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import smetana.core.HardcodedStruct;
-import smetana.core.UnsupportedStructAndPtr;
-import smetana.core.__ptr__;
+import smetana.core.CArrayOfStar;
+import smetana.core.UnsupportedStarStruct;
 import smetana.core.__struct__;
-import smetana.core.amiga.StarStruct;
 
-public class ST_elist extends UnsupportedStructAndPtr implements HardcodedStruct {
+//typedef struct elist {
+//edge_t **list;
+//int size;
+//} elist;
+
+final public class ST_elist extends UnsupportedStarStruct {
 
 	public int size;
-	public List<ST_Agedge_s> list;
+	public CArrayOfStar<ST_Agedge_s> list;
 
-	public ST_elist() {
-		this(null);
-	}
 
-	public ST_elist(StarStruct parent) {
-	}
-
-	@Override
-	public void copyDataFrom(__struct__ other) {
-		ST_elist other2 = (ST_elist) other;
-		this.size = other2.size;
-		this.list = other2.list;
-	}
-
-	@Override
-	public void setStruct(__struct__ value) {
-		copyDataFrom(value);
-	}
 
 	@Override
 	public void ___(__struct__ other) {
@@ -93,51 +76,6 @@ public class ST_elist extends UnsupportedStructAndPtr implements HardcodedStruct
 		return result;
 	}
 
-	public boolean listNotNull() {
-		return list != null;
-	}
 
-	public void mallocEmpty(int nb) {
-		list = new ArrayList<ST_Agedge_s>();
-		while (list.size() < nb) {
-			list.add(null);
-		}
-	}
-
-
-	public void realloc(int nb) {
-		if (list == null) {
-			list = new ArrayList<ST_Agedge_s>();
-		}
-		while (list.size() < nb) {
-			list.add(null);
-		}
-	}
-
-
-	public void free() {
-		list = null;
-	}
-
-	public void setInList(int idx, Object value) {
-		list.set(idx, (ST_Agedge_s) value);
-	}
-
-	public __ptr__ getFromList(int i) {
-		return (__ptr__) list.get(i);
-	}
-
-
-	// public static List<String> DEFINITION = Arrays.asList(
-	// "typedef struct elist",
-	// "{",
-	// "edge_t **list",
-	// "int size",
-	// "}",
-	// "elist");
 }
 
-// typedef struct elist {
-// edge_t **list;
-// int size;
-// } elist;

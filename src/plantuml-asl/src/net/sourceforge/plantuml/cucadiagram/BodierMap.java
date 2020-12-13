@@ -41,6 +41,7 @@ import java.util.regex.Pattern;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.style.Style;
 
 public class BodierMap implements Bodier {
 
@@ -96,7 +97,7 @@ public class BodierMap implements Bodier {
 	}
 
 	public TextBlock getBody(FontParam fontParam, ISkinParam skinParam, final boolean showMethods,
-			final boolean showFields, Stereotype stereotype) {
+			final boolean showFields, Stereotype stereotype, Style style) {
 		return new TextBlockMap(fontParam, skinParam, map);
 	}
 

@@ -12,7 +12,7 @@
  * This file is part of Smetana.
  * Smetana is a partial translation of Graphviz/Dot sources from C to Java.
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2022, Arnaud Roques
  *
  * This translation is distributed under the same Licence as the original C program:
  * 
@@ -46,9 +46,12 @@
 package gen.lib.cdt;
 import static gen.lib.cdt.dtdisc__c.dtdisc;
 import static smetana.core.JUtils.sizeof;
-import static smetana.core.JUtilsDebug.ENTERING;
-import static smetana.core.JUtilsDebug.LEAVING;
 import static smetana.core.Macro.N;
+import static smetana.core.debug.SmetanaDebug.ENTERING;
+import static smetana.core.debug.SmetanaDebug.LEAVING;
+
+import gen.annotation.Original;
+import gen.annotation.Unused;
 import h.ST_dt_s;
 import h.ST_dtdata_s;
 import h.ST_dtdisc_s;
@@ -128,6 +131,8 @@ public class dtopen__c {
 
 //3 34nbfbdgwe34hb4vmfr5p6kbh
 // Dt_t* dtopen(Dtdisc_t* disc, Dtmethod_t* meth)      
+@Unused
+@Original(version="2.38.0", path="lib/cdt/dtopen.c", name="dtopen", key="34nbfbdgwe34hb4vmfr5p6kbh", definition="Dt_t* dtopen(Dtdisc_t* disc, Dtmethod_t* meth)")
 public static ST_dt_s dtopen(ST_dtdisc_s disc, ST_dtmethod_s meth) {
 ENTERING("34nbfbdgwe34hb4vmfr5p6kbh","dtopen");
 try {
@@ -140,15 +145,15 @@ try {
 	if(N(dt = new ST_dt_s()))
 		return null;
 //	/* initialize all absolutely private data */
-	dt.setPtr("searchf", null);
-	dt.setPtr("meth", null);
-	dt.setPtr("disc", null);
+	dt.searchf = null;
+	dt.meth = null;
+	dt.disc = null;
 	dtdisc(dt,disc,0);
-	dt.setInt("type", 0);
-	dt.setInt("nview", 0);
-	dt.setPtr("view", null);
-	dt.setPtr("walk", null);
-	dt.setPtr("user", null);
+	dt.type = 0;
+	dt.nview = 0;
+	dt.view = null;
+	dt.walk = null;
+	dt.user = null;
 	if(disc.eventf!=null)
 	{	/* if shared/persistent dictionary, get existing data */
 		throw new UnsupportedOperationException();

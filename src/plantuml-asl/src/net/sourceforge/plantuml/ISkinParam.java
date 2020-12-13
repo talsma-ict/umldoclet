@@ -183,4 +183,6 @@ public interface ISkinParam extends ISkinSimple {
 
 	public ActorStyle actorStyle();
 
+	public void setSvgSize(String origin, String sizeToUse);
+
 }

@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.SkinParam;
+import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.activitydiagram3.LinkRendering;
 import net.sourceforge.plantuml.activitydiagram3.ftile.AbstractConnection;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Arrows;
@@ -74,7 +74,7 @@ public class ParallelBuilderSplit extends AbstractParallelFtilesBuilder {
 		Ftile result = inner;
 		final List<Connection> conns = new ArrayList<Connection>();
 		final Rainbow thinColor;
-		if (SkinParam.USE_STYLES()) {
+		if (UseStyle.useBetaStyle()) {
 			Style style = getDefaultStyleDefinition().getMergedStyle(skinParam().getCurrentStyleBuilder());
 			thinColor = Rainbow.build(style, skinParam().getIHtmlColorSet());
 		} else {
@@ -93,7 +93,7 @@ public class ParallelBuilderSplit extends AbstractParallelFtilesBuilder {
 
 			final LinkRendering inLinkRendering = tmp.getInLinkRendering();
 			final Rainbow rainbow;
-			if (SkinParam.USE_STYLES()) {
+			if (UseStyle.useBetaStyle()) {
 				Style style = getDefaultStyleDefinition().getMergedStyle(skinParam().getCurrentStyleBuilder());
 				rainbow = inLinkRendering.getRainbow(Rainbow.build(style, skinParam().getIHtmlColorSet()));
 			} else {
@@ -121,7 +121,7 @@ public class ParallelBuilderSplit extends AbstractParallelFtilesBuilder {
 		for (Ftile tmp : list99) {
 			final Rainbow rainbow;
 			final LinkRendering inLinkRendering = tmp.getInLinkRendering();
-			if (SkinParam.USE_STYLES()) {
+			if (UseStyle.useBetaStyle()) {
 				Style style = getDefaultStyleDefinition().getMergedStyle(skinParam().getCurrentStyleBuilder());
 				rainbow = inLinkRendering.getRainbow(Rainbow.build(style, skinParam().getIHtmlColorSet()));
 			} else {
@@ -154,7 +154,7 @@ public class ParallelBuilderSplit extends AbstractParallelFtilesBuilder {
 
 		final Rainbow thinColor;
 		final LinkRendering inLinkRendering = result.getInLinkRendering();
-		if (SkinParam.USE_STYLES()) {
+		if (UseStyle.useBetaStyle()) {
 			Style style = getDefaultStyleDefinition().getMergedStyle(skinParam().getCurrentStyleBuilder());
 			thinColor = inLinkRendering.getRainbow(Rainbow.build(style, skinParam().getIHtmlColorSet()));
 		} else {
@@ -179,7 +179,7 @@ public class ParallelBuilderSplit extends AbstractParallelFtilesBuilder {
 
 			final Rainbow rainbow;
 			final LinkRendering outLinkRendering = tmp.getOutLinkRendering();
-			if (SkinParam.USE_STYLES()) {
+			if (UseStyle.useBetaStyle()) {
 				Style style = getDefaultStyleDefinition().getMergedStyle(skinParam().getCurrentStyleBuilder());
 				rainbow = outLinkRendering.getRainbow(Rainbow.build(style, skinParam().getIHtmlColorSet()));
 			} else {

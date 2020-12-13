@@ -34,8 +34,8 @@ import java.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.LineBreakStrategy;
-import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.Url;
+import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.activitydiagram3.Branch;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Diamond;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
@@ -47,6 +47,7 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.FtileWithUrl;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.FtileIfDown;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileDiamond;
+import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileDiamondSquare;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileDiamondInside;
 import net.sourceforge.plantuml.creole.CreoleMode;
 import net.sourceforge.plantuml.creole.Parser;
@@ -99,7 +100,7 @@ public class ConditionalBuilder {
 			FtileFactory ftileFactory, ConditionStyle conditionStyle, ConditionEndStyle conditionEndStyle,
 			Branch branch1, Branch branch2, ISkinParam skinParam, StringBounder stringBounder,
 			FontConfiguration fontArrow, FontConfiguration fontTest, Url url) {
-		if (SkinParam.USE_STYLES()) {
+		if (UseStyle.useBetaStyle()) {
 			final Style styleArrow = getDefaultStyleDefinitionArrow()
 					.getMergedStyle(skinParam.getCurrentStyleBuilder());
 			final Style styleDiamond = getDefaultStyleDefinitionDiamond()
@@ -169,20 +170,18 @@ public class ConditionalBuilder {
 		final Ftile diamond2 = getDiamond2(branch1, branch2, true);
 		if (branch2.isOnlySingleStopOrSpot()) {
 			return FtileIfDown.create(diamond1, diamond2, swimlane, FtileUtils.addHorizontalMargin(tile1, 10),
-					arrowColor, conditionEndStyle, ftileFactory, branch2.getFtile(),
-					branch2.getInlinkRenderingColorAndStyle());
+					arrowColor, conditionEndStyle, ftileFactory, branch2.getFtile(), branch2.getOut());
 		}
 		if (branch1.isOnlySingleStopOrSpot()) {
 			return FtileIfDown.create(diamond1, diamond2, swimlane, FtileUtils.addHorizontalMargin(tile2, 10),
-					arrowColor, conditionEndStyle, ftileFactory, branch1.getFtile(),
-					branch1.getInlinkRenderingColorAndStyle());
+					arrowColor, conditionEndStyle, ftileFactory, branch1.getFtile(), branch1.getOut());
 		}
 		if (branch1.isEmpty()) {
 			return FtileIfDown.create(diamond1, diamond2, swimlane, FtileUtils.addHorizontalMargin(tile2, 10),
 					arrowColor, conditionEndStyle, ftileFactory, null, null);
 		}
 		return FtileIfDown.create(diamond1, diamond2, swimlane, FtileUtils.addHorizontalMargin(tile1, 10), arrowColor,
-				conditionEndStyle, ftileFactory, null, branch2.getInlinkRenderingColorAndStyle());
+				conditionEndStyle, ftileFactory, null, branch2.getOut());
 	}
 
 	private Ftile createNude() {
@@ -239,7 +238,7 @@ public class ConditionalBuilder {
 		final TextBlock tbTest = new SheetBlock2(sheetBlock1, Diamond.asStencil(sheetBlock1), tile1.getThickness());
 
 		final Ftile diamond1;
-		if (conditionStyle == ConditionStyle.INSIDE) {
+		if (conditionStyle == ConditionStyle.INSIDE_HEXAGON) {
 			if (eastWest) {
 				diamond1 = new FtileDiamondInside(tile1.skinParam(), backColor, borderColor, swimlane, tbTest)
 						.withWestAndEast(tb1, tb2);
@@ -247,12 +246,20 @@ public class ConditionalBuilder {
 				diamond1 = new FtileDiamondInside(tile1.skinParam(), backColor, borderColor, swimlane, tbTest)
 						.withSouth(tb1).withEast(tb2);
 			}
-		} else if (conditionStyle == ConditionStyle.DIAMOND) {
+		} else if (conditionStyle == ConditionStyle.EMPTY_DIAMOND) {
 			if (eastWest) {
 				diamond1 = new FtileDiamond(tile1.skinParam(), backColor, borderColor, swimlane).withNorth(tbTest)
 						.withWestAndEast(tb1, tb2);
 			} else {
 				diamond1 = new FtileDiamond(tile1.skinParam(), backColor, borderColor, swimlane).withNorth(tbTest)
+						.withSouth(tb1).withEast(tb2);
+			}
+		} else if (conditionStyle == ConditionStyle.INSIDE_DIAMOND) {
+			if (eastWest) {
+				diamond1 = new FtileDiamondSquare(tile1.skinParam(), backColor, borderColor, swimlane, tbTest)
+						.withWestAndEast(tb1, tb2);
+			} else {
+				diamond1 = new FtileDiamondSquare(tile1.skinParam(), backColor, borderColor, swimlane, tbTest)
 						.withSouth(tb1).withEast(tb2);
 			}
 		} else {

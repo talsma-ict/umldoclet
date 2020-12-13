@@ -55,15 +55,16 @@ import h.ST_Agnode_s;
 import h.ST_Agnodeinfo_t;
 import h.ST_Agraph_s;
 import h.ST_Agraphinfo_t;
+import h.ST_Agrec_s;
 import h.ST_GVC_s;
 import h.ST_boxf;
 import net.sourceforge.plantuml.AnnotatedWorker;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagram;
+import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.api.ImageDataSimple;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
@@ -102,15 +103,16 @@ import net.sourceforge.plantuml.svek.IEntityImage;
 import net.sourceforge.plantuml.svek.Node;
 import net.sourceforge.plantuml.svek.TextBlockBackcolored;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
+import net.sourceforge.plantuml.ugraphic.ImageParameter;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import smetana.core.CString;
 import smetana.core.JUtils;
-import smetana.core.JUtilsDebug;
 import smetana.core.Macro;
 import smetana.core.Z;
+import smetana.core.debug.SmetanaDebug;
 
 public class CucaDiagramFileMakerJDot implements CucaDiagramFileMaker {
 
@@ -168,7 +170,7 @@ public class CucaDiagramFileMakerJDot implements CucaDiagramFileMaker {
 		}
 
 		private Point2D getCorner(ST_Agnode_s n) {
-			final ST_Agnodeinfo_t data = (ST_Agnodeinfo_t) Macro.AGDATA(n).castTo(ST_Agnodeinfo_t.class);
+			final ST_Agnodeinfo_t data = (ST_Agnodeinfo_t) Macro.AGDATA(n);
 			final double width = data.width * 72;
 			final double height = data.height * 72;
 			final double x = data.coord.x;
@@ -198,25 +200,30 @@ public class CucaDiagramFileMakerJDot implements CucaDiagramFileMaker {
 
 	public void drawGroup(UGraphic ug, YMirror ymirror, IGroup group, ST_Agraph_s gr) {
 		JUtils.LOG2("drawGroup");
-		final ST_Agraphinfo_t data = (ST_Agraphinfo_t) Macro.AGDATA(gr).castTo(ST_Agraphinfo_t.class);
-		final ST_boxf bb = (ST_boxf) data.bb;
-		final double llx = bb.LL.x;
-		double lly = bb.LL.y;
-		final double urx = bb.UR.x;
-		double ury = bb.UR.y;
-		if (ymirror != null) {
-			final double tmpUry = ury;
-			ury = ymirror.getMirrored(lly);
-			lly = ymirror.getMirrored(tmpUry);
-		}
+		try {
+			final ST_Agrec_s tmp1 = Macro.AGDATA(gr);
+			final ST_Agraphinfo_t data = (ST_Agraphinfo_t) tmp1;
+			final ST_boxf bb = (ST_boxf) data.bb;
+			final double llx = bb.LL.x;
+			double lly = bb.LL.y;
+			final double urx = bb.UR.x;
+			double ury = bb.UR.y;
+			if (ymirror != null) {
+				final double tmpUry = ury;
+				ury = ymirror.getMirrored(lly);
+				lly = ymirror.getMirrored(tmpUry);
+			}
 
-		final Cluster cluster = dotStringFactory.getBibliotekon().getCluster(group);
-		cluster.setPosition(llx, lly, urx, ury);
-		JUtils.LOG2("cluster=" + cluster);
-		// ug.apply(new UTranslate(llx, lly)).apply(new
-		// UChangeColor(HtmlColorUtils.BLUE))
-		// .draw(new URectangle(urx - llx, ury - lly));
-		cluster.drawU(ug, new UStroke(1.5), diagram.getUmlDiagramType(), diagram.getSkinParam());
+			final Cluster cluster = dotStringFactory.getBibliotekon().getCluster(group);
+			cluster.setPosition(llx, lly, urx, ury);
+			JUtils.LOG2("cluster=" + cluster);
+			// ug.apply(new UTranslate(llx, lly)).apply(new
+			// UChangeColor(HtmlColorUtils.BLUE))
+			// .draw(new URectangle(urx - llx, ury - lly));
+			cluster.drawU(ug, new UStroke(1.5), diagram.getUmlDiagramType(), diagram.getSkinParam());
+		} catch (Exception e) {
+			System.err.println("CANNOT DRAW GROUP");
+		}
 	}
 
 	private void printGroups(IGroup parent) {
@@ -253,7 +260,7 @@ public class CucaDiagramFileMakerJDot implements CucaDiagramFileMaker {
 				attribute = new TextBlockEmpty();
 			} else {
 				attribute = new MethodsOrFieldsArea(members, FontParam.STATE_ATTRIBUTE, diagram.getSkinParam(),
-						g.getStereotype(), null, SName.stateDiagram);
+						g.getStereotype(), null, getStyle(FontParam.STATE_ATTRIBUTE));
 			}
 			final Dimension2D dimAttribute = attribute.calculateDimension(stringBounder);
 			final double attributeHeight = dimAttribute.getHeight();
@@ -276,6 +283,11 @@ public class CucaDiagramFileMakerJDot implements CucaDiagramFileMaker {
 		dotStringFactory.closeCluster();
 	}
 
+	private Style getStyle(FontParam fontParam) {
+		return fontParam.getStyleDefinition(SName.stateDiagram)
+				.getMergedStyle(diagram.getSkinParam().getCurrentStyleBuilder());
+	}
+
 	private void printEntities(Collection<ILeaf> entities2) {
 		for (ILeaf ent : entities2) {
 			if (ent.isRemoved()) {
@@ -296,6 +308,10 @@ public class CucaDiagramFileMakerJDot implements CucaDiagramFileMaker {
 
 	private void exportEntity(ST_Agraph_s g, ILeaf leaf) {
 		final Node node = dotStringFactory.getBibliotekon().getNode(leaf);
+		if (node == null) {
+			System.err.println("CANNOT FIND NODE");
+			return;
+		}
 		// System.err.println("exportEntity " + leaf);
 		final ST_Agnode_s agnode = agnode(g, new CString(node.getUid()), true);
 		agsafeset(agnode, new CString("shape"), new CString("box"), new CString(""));
@@ -425,9 +441,9 @@ public class CucaDiagramFileMakerJDot implements CucaDiagramFileMaker {
 			}
 
 			final ST_GVC_s gvc = gvContext();
-			JUtilsDebug.reset();
+			SmetanaDebug.reset();
 			gvLayoutJobs(gvc, g);
-			JUtilsDebug.printMe();
+			SmetanaDebug.printMe();
 
 			// for (Agedge_s e : edges.values()) {
 			// DebugUtils.printDebugEdge(e);
@@ -436,30 +452,33 @@ public class CucaDiagramFileMakerJDot implements CucaDiagramFileMaker {
 			final double scale = 1;
 
 			final ClockwiseTopRightBottomLeft margins;
-			if (SkinParam.USE_STYLES()) {
+			if (UseStyle.useBetaStyle()) {
 				final Style style = StyleSignature.of(SName.root, SName.document)
 						.getMergedStyle(diagram.getSkinParam().getCurrentStyleBuilder());
 				margins = style.getMargin();
 			} else {
 				margins = ClockwiseTopRightBottomLeft.topRightBottomLeft(0, 5, 5, 0);
 			}
+			ISkinParam skinParam = diagram.getSkinParam();
+			final HColor backcolor = skinParam.getBackgroundColor(false);
+			final String metadata = fileFormatOption.isWithMetadata() ? diagram.getMetadata() : null;
+			final ImageParameter imageParameter = new ImageParameter(skinParam, diagram.getAnimation(), scale, metadata,
+					null, margins, backcolor);
 
-			final ImageBuilder imageBuilder = ImageBuilder.buildD(diagram.getSkinParam(), margins,
-					diagram.getAnimation(), fileFormatOption.isWithMetadata() ? diagram.getMetadata() : null, null,
-					scale);
+			final ImageBuilder imageBuilder = ImageBuilder.build(imageParameter);
 
 			imageBuilder.setUDrawable(new Drawing(null, null));
 			final Dimension2D dim = imageBuilder.getFinalDimension(stringBounder);
 
 			final AnnotatedWorker annotatedWorker = new AnnotatedWorker(diagram, diagram.getSkinParam(),
-					fileFormatOption.getDefaultStringBounder());
+					fileFormatOption.getDefaultStringBounder(diagram.getSkinParam()));
 
 			// imageBuilder.setUDrawable(new Drawing(new YMirror(dim.getHeight())));
 			imageBuilder.setUDrawable(annotatedWorker.addAdd(new Drawing(new YMirror(dim.getHeight()), dim)));
 
 			return imageBuilder.writeImageTOBEMOVED(fileFormatOption, diagram.seed(), os);
 		} catch (Throwable e) {
-			JUtilsDebug.printMe();
+			SmetanaDebug.printMe();
 			UmlDiagram.exportDiagramError(os, e, fileFormatOption, diagram.seed(), diagram.getMetadata(),
 					diagram.getFlashData(), getFailureText3(e));
 			return ImageDataSimple.error();
@@ -536,11 +555,15 @@ public class CucaDiagramFileMakerJDot implements CucaDiagramFileMaker {
 		if (n != null) {
 			return n;
 		}
-		final String id = getBibliotekon().getNodeUid((ILeaf) entity);
-		for (Map.Entry<ILeaf, ST_Agnode_s> ent : nodes.entrySet()) {
-			if (id.equals(getBibliotekon().getNodeUid(ent.getKey()))) {
-				return ent.getValue();
+		try {
+			final String id = getBibliotekon().getNodeUid((ILeaf) entity);
+			for (Map.Entry<ILeaf, ST_Agnode_s> ent : nodes.entrySet()) {
+				if (id.equals(getBibliotekon().getNodeUid(ent.getKey()))) {
+					return ent.getValue();
+				}
 			}
+		} catch (IllegalStateException e) {
+			System.err.println("UNKNOWN ENTITY");
 		}
 		return null;
 
@@ -618,7 +641,8 @@ public class CucaDiagramFileMakerJDot implements CucaDiagramFileMaker {
 
 	private void printEntityNew(ILeaf ent) {
 		if (ent.isRemoved()) {
-			throw new IllegalStateException();
+			System.err.println("Jdot STRANGE: entity is removed");
+			return;
 		}
 		final IEntityImage image = printEntityInternal(ent);
 		final Node shape = getBibliotekon().createNode(ent, image, dotStringFactory.getColorSequence(), stringBounder);
@@ -636,7 +660,8 @@ public class CucaDiagramFileMakerJDot implements CucaDiagramFileMaker {
 		if (ent.getSvekImage() == null) {
 			ISkinParam skinParam = diagram.getSkinParam();
 			if (skinParam.sameClassWidth()) {
-				throw new UnsupportedOperationException();
+				System.err.println("NOT YET IMPLEMENED");
+//				throw new UnsupportedOperationException();
 				// final double width = getMaxWidth();
 				// skinParam = new SkinParamSameClassWidth(dotData.getSkinParam(), width);
 			}

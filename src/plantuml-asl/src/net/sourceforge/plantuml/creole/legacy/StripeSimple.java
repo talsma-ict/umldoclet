@@ -168,7 +168,7 @@ public class StripeSimple implements Stripe {
 
 	public List<Atom> getAtoms() {
 		if (atoms.size() == 0) {
-			atoms.add(AtomText.create(" ", fontConfiguration));
+			atoms.add(AtomTextUtils.createLegacy(" ", fontConfiguration));
 		}
 		return Collections.unmodifiableList(atoms);
 	}
@@ -225,7 +225,7 @@ public class StripeSimple implements Stripe {
 	}
 
 	public void addUrl(Url url) {
-		atoms.add(AtomText.createUrl(url, fontConfiguration, skinParam));
+		atoms.add(AtomTextUtils.createUrl(url, fontConfiguration, skinParam));
 	}
 
 	public void addSprite(String src, double scale, HColor color) {
@@ -267,7 +267,7 @@ public class StripeSimple implements Stripe {
 		if (pending.length() == 0) {
 			return;
 		}
-		atoms.add(AtomText.create(pending.toString(), fontConfiguration));
+		atoms.add(AtomTextUtils.createLegacy(pending.toString(), fontConfiguration));
 		pending.setLength(0);
 	}
 

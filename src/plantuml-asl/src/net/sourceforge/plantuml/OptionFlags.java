@@ -55,7 +55,6 @@ public class OptionFlags {
 	}
 
 	static public void setMaxPixel(int max) {
-		ImageBuilder.setMaxPixel(max);
 	}
 
 	static public final boolean USE_HECTOR = false;

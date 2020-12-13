@@ -12,7 +12,7 @@
  * This file is part of Smetana.
  * Smetana is a partial translation of Graphviz/Dot sources from C to Java.
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2022, Arnaud Roques
  *
  * This translation is distributed under the same Licence as the original C program:
  * 
@@ -45,50 +45,20 @@
  */
 package h;
 
-import smetana.core.UnsupportedStructAndPtr;
-import smetana.core.amiga.StarStruct;
+import smetana.core.UnsupportedStarStruct;
 
-public class ST_aspect_t extends UnsupportedStructAndPtr {
+final public class ST_aspect_t extends UnsupportedStarStruct {
 
-	private final StarStruct parent;
 
-	public ST_aspect_t() {
-		this(null);
-	}
-
-	public ST_aspect_t(StarStruct parent) {
-		this.parent = parent;
-	}
-
-	// "typedef struct aspect_t",
-	// "{",
-	// "double targetAR",
-	// "double combiAR",
 	public int prevIterations;
 	public int curIterations;
 	public int nextIter;
 	public int nPasses;
 	public int badGraph;
 
-	// "}",
-	// "aspect_t");
 
-	@Override
-	public void setInt(String fieldName, int data) {
-		if (fieldName.equals("nextIter")) {
-			this.nextIter = data;
-			return;
-		}
-		if (fieldName.equals("badGraph")) {
-			this.badGraph = data;
-			return;
-		}
-		if (fieldName.equals("nPasses")) {
-			this.nPasses = data;
-			return;
-		}
-		super.setInt(fieldName, data);
-	}
+
+
 
 }
 

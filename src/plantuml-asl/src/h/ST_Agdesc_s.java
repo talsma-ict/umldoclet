@@ -12,7 +12,7 @@
  * This file is part of Smetana.
  * Smetana is a partial translation of Graphviz/Dot sources from C to Java.
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2022, Arnaud Roques
  *
  * This translation is distributed under the same Licence as the original C program:
  * 
@@ -45,16 +45,10 @@
  */
 package h;
 
-import smetana.core.HardcodedStruct;
 import smetana.core.UnsupportedStarStruct;
-import smetana.core.UnsupportedStructAndPtr;
 import smetana.core.__struct__;
-import smetana.core.amiga.Area;
-import smetana.core.amiga.AreaInt;
-import smetana.core.amiga.InternalData;
-import smetana.core.amiga.StarStruct;
 
-public class ST_Agdesc_s extends UnsupportedStructAndPtr implements HardcodedStruct {
+final public class ST_Agdesc_s extends UnsupportedStarStruct {
 	public int directed; /* if edges are asymmetric */
 	public int strict; /* if multi-edges forbidden */
 	public int no_loop; /* if no loops */
@@ -64,11 +58,17 @@ public class ST_Agdesc_s extends UnsupportedStructAndPtr implements HardcodedStr
 	public int has_attrs; /* if string attr tables should be initialized */
 	public int has_cmpnd; /* if may contain collapsed nodes */
 
-	public ST_Agdesc_s() {
-		this(null);
-	}
-
-	public ST_Agdesc_s(StarStruct parent) {
+	@Override
+	public void ___(__struct__ other) {
+		ST_Agdesc_s other2 = (ST_Agdesc_s) other;
+		directed = other2.directed;
+		strict = other2.strict;
+		no_loop = other2.no_loop;
+		maingraph = other2.maingraph;
+		flatlock = other2.flatlock;
+		no_write = other2.no_write;
+		has_attrs = other2.has_attrs;
+		has_cmpnd = other2.has_cmpnd;
 	}
 
 	@Override
@@ -85,65 +85,6 @@ public class ST_Agdesc_s extends UnsupportedStructAndPtr implements HardcodedStr
 		return result;
 	}
 	
-	@Override
-	public void copyDataFrom(__struct__ other) {
-		ST_Agdesc_s other2 = (ST_Agdesc_s) other;
-		directed = other2.directed;
-		strict = other2.strict;
-		no_loop = other2.no_loop;
-		maingraph = other2.maingraph;
-		flatlock = other2.flatlock;
-		no_write = other2.no_write;
-		has_attrs = other2.has_attrs;
-		has_cmpnd = other2.has_cmpnd;
-	}
-
-	public class MyInternalData extends UnsupportedStarStruct implements InternalData {
-
-		@Override
-		public Area getArea(String name) {
-			final AreaInt result = new AreaInt();
-			if (name.equals("directed")) {
-				result.setInternal(directed);
-				return result;
-			}
-			if (name.equals("strict")) {
-				result.setInternal(strict);
-				return result;
-			}
-			if (name.equals("no_loop")) {
-				result.setInternal(no_loop);
-				return result;
-			}
-			if (name.equals("maingraph")) {
-				result.setInternal(maingraph);
-				return result;
-			}
-			if (name.equals("flatlock")) {
-				result.setInternal(flatlock);
-				return result;
-			}
-			if (name.equals("no_write")) {
-				result.setInternal(no_write);
-				return result;
-			}
-			if (name.equals("has_attrs")) {
-				result.setInternal(has_attrs);
-				return result;
-			}
-			if (name.equals("has_cmpnd")) {
-				result.setInternal(has_cmpnd);
-				return result;
-			}
-			return super.getArea(name);
-		}
-
-	}
-
-	@Override
-	public StarStruct getInternalData() {
-		return new MyInternalData();
-	}
 
 }
 

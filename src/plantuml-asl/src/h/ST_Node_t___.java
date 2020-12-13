@@ -12,7 +12,7 @@
  * This file is part of Smetana.
  * Smetana is a partial translation of Graphviz/Dot sources from C to Java.
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2022, Arnaud Roques
  *
  * This translation is distributed under the same Licence as the original C program:
  * 
@@ -45,14 +45,10 @@
  */
 package h;
 
-import smetana.core.UnsupportedArrayOfStruct;
-import smetana.core.UnsupportedStructAndPtr;
-import smetana.core.__struct__;
-import smetana.core.amiga.StarStruct;
+import smetana.core.UnsupportedStarStruct;
 
-public class ST_Node_t___ extends UnsupportedStructAndPtr implements ST_Node_t___or_object_t {
+final public class ST_Node_t___ extends UnsupportedStarStruct implements ST_Node_t___or_object_t {
 
-	private final StarStruct parent;
 	public int count;
 	public int level;
 	// Sorry guys :-)
@@ -71,59 +67,6 @@ public class ST_Node_t___ extends UnsupportedStructAndPtr implements ST_Node_t__
 			new ST_Branch_t(), new ST_Branch_t(), new ST_Branch_t(), new ST_Branch_t(), new ST_Branch_t(),
 			new ST_Branch_t() };
 
-	public ST_Node_t___() {
-		this(null);
-	}
-
-	public ST_Node_t___(StarStruct parent) {
-		this.parent = parent;
-	}
-
-	class ArrayOfSixtyFor extends UnsupportedArrayOfStruct {
-
-		final private int pos;
-
-		public ArrayOfSixtyFor(int pos) {
-			this.pos = pos;
-		}
-
-		public ArrayOfSixtyFor plus(int delta) {
-			return new ArrayOfSixtyFor(pos + delta);
-		}
-
-		@Override
-		public __struct__ getStruct() {
-			return branch[pos];
-		}
-
-		@Override
-		public void setStruct(__struct__ value) {
-			branch[pos].copyDataFrom(value);
-		}
-
-	}
-
-	@Override
-	public void setInt(String fieldName, int data) {
-		if (fieldName.equals("count")) {
-			this.count = data;
-			return;
-		}
-		if (fieldName.equals("level")) {
-			this.level = data;
-			return;
-		}
-		super.setInt(fieldName, data);
-	}
-
-
-	// "typedef struct Node",
-	// "{",
-	// "int count",
-	// "int level",
-	// "struct Branch branch[64]",
-	// "}",
-	// "Node_t");
 }
 
 // typedef struct Node {
