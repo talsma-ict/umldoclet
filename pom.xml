@@ -151,8 +151,7 @@
                         <exclude>.gitignore</exclude>
                         <exclude>.codebeatignore</exclude>
                         <exclude>.codacy.yml</exclude>
-                        <exclude>.travis/**</exclude>
-                        <exclude>.travis.yml</exclude>
+                        <exclude>.github/**</exclude>
                         <exclude>.mvn/**</exclude>
                         <exclude>mvnw*</exclude>
                         <exclude>lib/**</exclude>
@@ -434,6 +433,8 @@
                                 <configuration>
                                     <gpgArguments>
                                         <gpgArgument>--batch</gpgArgument>
+                                        <gpgArgument>--pinentry-mode</gpgArgument>
+                                        <gpgArgument>loopback</gpgArgument>
                                     </gpgArguments>
                                 </configuration>
                             </execution>
