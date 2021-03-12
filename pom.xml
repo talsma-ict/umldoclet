@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright 2016-2019 Talsma ICT
+    Copyright 2016-2021 Talsma ICT
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -154,8 +154,7 @@
                     </mapping>
                     <excludes>
                         <exclude>.gitignore</exclude>
-                        <exclude>.travis/**</exclude>
-                        <exclude>.travis.yml</exclude>
+                        <exclude>.github/**</exclude>
                         <exclude>.mvn/**</exclude>
                         <exclude>mvnw*</exclude>
                         <exclude>lib/**</exclude>
@@ -450,6 +449,8 @@
                                 <configuration>
                                     <gpgArguments>
                                         <gpgArgument>--batch</gpgArgument>
+                                        <gpgArgument>--pinentry-mode</gpgArgument>
+                                        <gpgArgument>loopback</gpgArgument>
                                     </gpgArguments>
                                 </configuration>
                             </execution>
