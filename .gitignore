@@ -7,7 +7,7 @@ dependency-reduced-pom.xml
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
-# Package FileUtils #
+# Package Files
 *.jar
 *.war
 *.ear
@@ -18,3 +18,4 @@ hs_err_pid*
 # IntelliJ project files
 .idea/
 *.iml
+
