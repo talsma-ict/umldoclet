@@ -7,7 +7,7 @@ dependency-reduced-pom.xml
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
-# Package FileUtils #
+# Package Files
 *.jar
 *.war
 *.ear
