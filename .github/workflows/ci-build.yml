@@ -39,7 +39,7 @@ jobs:
       shell: bash
       env:
         JAVA_8_HOME: ${{ steps.setup-java-8.outputs.path }}
-        MAVEN_CLI_OPTS: --settings .github/mvn-settings.xml
+        MAVEN_CLI_OPTS: --settings .github/mvn-settings.xml --global-toolchains .github/mvn-toolchains.xml
         GPG_EXECUTABLE: /usr/bin/gpg
         GPG_KEYNAME: ${{ secrets.GPG_KEYNAME }}
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
