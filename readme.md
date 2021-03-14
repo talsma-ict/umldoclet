@@ -1,4 +1,4 @@
-[![Build Status][ci-img]][ci]
+[![CI build][ci-img]][ci]
 [![Maven Version][maven-img]][maven]
 [![Javadoc][javadoc-img]][javadoc]
 
@@ -85,8 +85,8 @@ or on [github](https://github.com/talsma-ict/umldoclet/releases).
 
 - [Apache 2.0 license](./LICENSE)
 
-  [ci-img]: <https://travis-ci.org/talsma-ict/umldoclet.svg?branch=develop>
-  [ci]: <https://travis-ci.org/talsma-ict/umldoclet>
+  [ci-img]: https://github.com/talsma-ict/umldoclet/actions/workflows/ci-build.yml/badge.svg
+  [ci]: https://github.com/talsma-ict/umldoclet/actions/workflows/ci-build.yml
   [coveralls-img]: <https://coveralls.io/repos/github/talsma-ict/umldoclet/badge.svg>
   [coveralls]: <https://coveralls.io/github/talsma-ict/umldoclet>
   [codacy-img]: <https://api.codacy.com/project/badge/Grade/b191c058492e466cb7044c1d53123d9a>
