@@ -63,6 +63,7 @@ import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
 
 public class CommandCreateClassMultilines extends CommandMultilines2<ClassDiagram> {
 
@@ -86,7 +87,7 @@ public class CommandCreateClassMultilines extends CommandMultilines2<ClassDiagra
 	private static IRegex getRegexConcat() {
 		return RegexConcat.build(CommandCreateClassMultilines.class.getName(), RegexLeaf.start(), //
 				new RegexLeaf("VISIBILITY", "(" + VisibilityModifier.regexForVisibilityCharacterInClassName() + ")?"), //
-				new RegexLeaf("TYPE", "(interface|enum|abstract[%s]+class|abstract|class|entity)"), //
+				new RegexLeaf("TYPE", "(interface|enum|annotation|abstract[%s]+class|abstract|class|entity)"), //
 				RegexLeaf.spaceOneOrMore(), //
 				new RegexOr(//
 						new RegexConcat(//
@@ -137,7 +138,7 @@ public class CommandCreateClassMultilines extends CommandMultilines2<ClassDiagra
 	}
 
 	@Override
-	protected CommandExecutionResult executeNow(ClassDiagram diagram, BlocLines lines) {
+	protected CommandExecutionResult executeNow(ClassDiagram diagram, BlocLines lines) throws NoSuchColorException {
 		lines = lines.trimSmart(1);
 		final RegexResult line0 = getStartingPattern().matcher(lines.getFirst().getTrimmed().getString());
 		final IEntity entity = executeArg0(diagram, line0);
@@ -215,7 +216,7 @@ public class CommandCreateClassMultilines extends CommandMultilines2<ClassDiagra
 		}
 	}
 
-	private IEntity executeArg0(ClassDiagram diagram, RegexResult arg) {
+	private IEntity executeArg0(ClassDiagram diagram, RegexResult arg) throws NoSuchColorException {
 
 		final LeafType type = LeafType.getLeafType(StringUtils.goUpperCase(arg.get("TYPE", 0)));
 		final String visibilityString = arg.get("VISIBILITY", 0);
@@ -271,8 +272,9 @@ public class CommandCreateClassMultilines extends CommandMultilines2<ClassDiagra
 		}
 
 		Colors colors = color().getColor(arg, diagram.getSkinParam().getIHtmlColorSet());
+		final String s = arg.get("LINECOLOR", 1);
 
-		final HColor lineColor = diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("LINECOLOR", 1));
+		final HColor lineColor = s == null ? null : diagram.getSkinParam().getIHtmlColorSet().getColor(s);
 		if (lineColor != null) {
 			colors = colors.add(ColorType.LINE, lineColor);
 		}

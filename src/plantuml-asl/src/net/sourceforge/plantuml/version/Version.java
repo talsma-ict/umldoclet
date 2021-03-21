@@ -39,7 +39,7 @@ public class Version {
 	private static final int MAJOR_SEPARATOR = 1000000;
 
 	public static int version() {
-		return 1202022;
+		return 1202102;
 	}
 
 	public static int versionPatched() {
@@ -63,7 +63,7 @@ public class Version {
 	private static String dotted(int nb) {
 		final String minor = "" + nb % MAJOR_SEPARATOR;
 		final String major = "" + nb / MAJOR_SEPARATOR;
-		return major + "." + minor.substring(0, 4) + "." + minor.substring(4);
+		return major + "." + minor.substring(0, 4) + "." + Integer.parseInt(minor.substring(4));
 	}
 
 	public static String versionString(int size) {
@@ -88,7 +88,7 @@ public class Version {
 	}
 
 	public static long compileTime() {
-		return 1607247387732L;
+		return 1615115427842L;
 	}
 
 	public static String compileTimeString() {

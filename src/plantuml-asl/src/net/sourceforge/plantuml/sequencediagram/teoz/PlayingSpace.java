@@ -74,8 +74,8 @@ public class PlayingSpace implements Bordered {
 		tiles.addAll(TileBuilder.buildSeveral(diagram.events().iterator(), tileArguments, null));
 
 		for (Tile tile : tiles) {
-			min2.add(tile.getMinX(tileArguments.getStringBounder()));
-			max2.add(tile.getMaxX(tileArguments.getStringBounder()));
+			min2.add(tile.getMinX());
+			max2.add(tile.getMaxX());
 		}
 
 		for (LivingSpace livingSpace : livingSpaces.values()) {
@@ -90,10 +90,6 @@ public class PlayingSpace implements Bordered {
 	}
 
 	public void drawBackground(UGraphic ug) {
-		final StringBounder stringBounder = ug.getStringBounder();
-		final LiveBoxFinder liveBoxFinder = new LiveBoxFinder(stringBounder);
-
-		drawUInternal(liveBoxFinder, false);
 		final UGraphicInterceptorTile interceptor = new UGraphicInterceptorTile(ug, true);
 		drawUInternal(interceptor, false);
 	}
@@ -141,9 +137,9 @@ public class PlayingSpace implements Bordered {
 		return result;
 	}
 
-	public void addConstraints(StringBounder stringBounder) {
+	public void addConstraints() {
 		for (Tile tile : tiles) {
-			tile.addConstraints(stringBounder);
+			tile.addConstraints();
 		}
 	}
 

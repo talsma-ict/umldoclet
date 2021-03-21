@@ -35,6 +35,7 @@ import java.awt.geom.PathIterator;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,13 +60,15 @@ import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import net.sourceforge.plantuml.FileUtils;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.SignatureUtils;
-import net.sourceforge.plantuml.SvgString;
 import net.sourceforge.plantuml.code.Base64Coder;
 import net.sourceforge.plantuml.security.ImageIO;
 import net.sourceforge.plantuml.security.SecurityUtils;
 import net.sourceforge.plantuml.tikz.TikzGraphics;
+import net.sourceforge.plantuml.ugraphic.UGroupType;
+import net.sourceforge.plantuml.ugraphic.UImageSvg;
 import net.sourceforge.plantuml.ugraphic.UPath;
 import net.sourceforge.plantuml.ugraphic.USegment;
 import net.sourceforge.plantuml.ugraphic.USegmentType;
@@ -113,6 +116,9 @@ public class SvgGraphics {
 	private final String shadowId;
 	private final String gradientId;
 	private final boolean svgDimensionStyle;
+	private final LengthAdjust lengthAdjust;
+
+	private final boolean INTERACTIVE = false;
 
 	final protected void ensureVisible(double x, double y) {
 		if (x > maxX) {
@@ -124,13 +130,14 @@ public class SvgGraphics {
 	}
 
 	public SvgGraphics(boolean svgDimensionStyle, Dimension2D minDim, double scale, String hover, long seed,
-			String preserveAspectRatio) {
-		this(svgDimensionStyle, minDim, null, scale, hover, seed, preserveAspectRatio);
+			String preserveAspectRatio, LengthAdjust lengthAdjust) {
+		this(svgDimensionStyle, minDim, null, scale, hover, seed, preserveAspectRatio, lengthAdjust);
 	}
 
 	public SvgGraphics(boolean svgDimensionStyle, Dimension2D minDim, String backcolor, double scale, String hover,
-			long seed, String preserveAspectRatio) {
+			long seed, String preserveAspectRatio, LengthAdjust lengthAdjust) {
 		try {
+			this.lengthAdjust = lengthAdjust;
 			this.svgDimensionStyle = svgDimensionStyle;
 			this.scale = scale;
 			this.document = getDocument();
@@ -151,9 +158,52 @@ public class SvgGraphics {
 			if (hover != null) {
 				defs.appendChild(getPathHover(hover));
 			}
+
+			if (INTERACTIVE) {
+				final Element styles = getStylesForInteractiveMode();
+				if (styles != null) {
+					defs.appendChild(styles);
+				}
+				final Element script = getScriptForInteractiveMode();
+				if (script != null) {
+					defs.appendChild(script);
+				}
+			}
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 			throw new IllegalStateException(e);
+		}
+	}
+
+	private Element getStylesForInteractiveMode() {
+		final Element style = simpleElement("style");
+		final String text = getData("default.css");
+		if (text == null) {
+			return null;
+		}
+		final CDATASection cdata = document.createCDATASection(text);
+		style.setAttribute("type", "text/css");
+		style.appendChild(cdata);
+		return style;
+	}
+
+	private Element getScriptForInteractiveMode() {
+		final Element script = document.createElement("script");
+		final String text = getData("default.js");
+		if (text == null) {
+			return null;
+		}
+		script.setTextContent(text);
+		return script;
+	}
+
+	private static String getData(final String name) {
+		try {
+			final InputStream is = SvgGraphics.class.getResourceAsStream("/svg/" + name);
+			return FileUtils.readText(is);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 
@@ -431,8 +481,15 @@ public class SvgGraphics {
 			fillMe(elt);
 			elt.setAttribute("font-size", format(fontSize));
 			// elt.setAttribute("text-anchor", "middle");
-			elt.setAttribute("lengthAdjust", "spacingAndGlyphs");
-			elt.setAttribute("textLength", format(textLength));
+
+			if (lengthAdjust == LengthAdjust.SPACING) {
+				elt.setAttribute("lengthAdjust", "spacing");
+				elt.setAttribute("textLength", format(textLength));
+			} else if (lengthAdjust == LengthAdjust.SPACING_AND_GLYPHS) {
+				elt.setAttribute("lengthAdjust", "spacingAndGlyphs");
+				elt.setAttribute("textLength", format(textLength));
+			}
+
 			if (fontWeight != null) {
 				elt.setAttribute("font-weight", fontWeight);
 			}
@@ -763,7 +820,7 @@ public class SvgGraphics {
 
 	private final Map<String, String> images = new HashMap<String, String>();
 
-	public void svgImage(SvgString image, double x, double y) {
+	public void svgImage(UImageSvg image, double x, double y) {
 		if (hidden == false) {
 			String svg = manageScale(image);
 			final String pos = "<svg x=\"" + format(x) + "\" y=\"" + format(y) + "\">";
@@ -777,14 +834,22 @@ public class SvgGraphics {
 		ensureVisible(x + image.getData("width"), y + image.getData("height"));
 	}
 
-	private String manageScale(SvgString svg) {
-		final double svgScale = svg.getScale();
+	private String manageScale(UImageSvg svgImage) {
+		final double svgScale = svgImage.getScale();
+		String svg = svgImage.getSvg(false);
 		if (svgScale * scale == 1) {
-			return svg.getSvg(false);
+			return svg;
 		}
+		final String svg2 = svg.replace('\n', ' ').replace('\r', ' ');
+		if (svg2.contains("<g ") == false && svg2.contains("<g>") == false) {
+			svg = svg.replaceFirst("\\<svg\\>", "<svg><g>");
+			svg = svg.replaceFirst("\\</svg\\>", "</g></svg>");
+		}
+		final String factor = format(svgScale);
 		final String s1 = "\\<g\\b";
-		final String s2 = "<g transform=\"scale(" + format(svgScale) + "," + format(svgScale) + ")\" ";
-		return svg.getSvg(false).replaceFirst(s1, s2);
+		final String s2 = "<g transform=\"scale(" + factor + "," + factor + ")\" ";
+		svg = svg.replaceFirst(s1, s2);
+		return svg;
 	}
 
 	private String toBase64(BufferedImage image) throws IOException {
@@ -905,9 +970,14 @@ public class SvgGraphics {
 		}
 	}
 
-	public void startGroup(String groupId) {
-		pendingAction.add(0, (Element) document.createElement("g"));
-		pendingAction.get(0).setAttribute("id", groupId);
+	public void startGroup(UGroupType type, String ident) {
+		if (type == UGroupType.ID) {
+			pendingAction.add(0, (Element) document.createElement("g"));
+			pendingAction.get(0).setAttribute("id", ident);
+		} else if (INTERACTIVE && type == UGroupType.CLASS) {
+			pendingAction.add(0, (Element) document.createElement("g"));
+			pendingAction.get(0).setAttribute("class", ident);
+		}
 	}
 
 	public void closeGroup() {

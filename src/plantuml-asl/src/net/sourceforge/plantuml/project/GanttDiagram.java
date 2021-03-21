@@ -86,6 +86,10 @@ import net.sourceforge.plantuml.project.time.Day;
 import net.sourceforge.plantuml.project.time.DayOfWeek;
 import net.sourceforge.plantuml.project.timescale.TimeScale;
 import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
+import net.sourceforge.plantuml.style.PName;
+import net.sourceforge.plantuml.style.SName;
+import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.svek.TextBlockBackcolored;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
 import net.sourceforge.plantuml.ugraphic.ImageParameter;
@@ -109,6 +113,7 @@ public class GanttDiagram extends TitledDiagram implements ToTaskDraw, WithSprit
 
 	private final Map<String, Resource> resources = new LinkedHashMap<String, Resource>();
 	private final Map<Day, HColor> colorDays = new HashMap<Day, HColor>();
+	private final Map<DayOfWeek, HColor> colorDaysOfWeek = new HashMap<DayOfWeek, HColor>();
 	private final Map<Day, String> nameDays = new HashMap<Day, String>();
 
 	private PrintScale printScale = PrintScale.DAILY;
@@ -120,15 +125,14 @@ public class GanttDiagram extends TitledDiagram implements ToTaskDraw, WithSprit
 	private Day printStart;
 	private Day printEnd;
 
-	private HColor linksColor = HColorUtils.RED_DARK;
+	private HColor linksColor = null;
 
 	public DiagramDescription getDescription() {
 		return new DiagramDescription("(Project)");
 	}
 
-	@Override
-	public UmlDiagramType getUmlDiagramType() {
-		return UmlDiagramType.GANTT;
+	public GanttDiagram() {
+		super(UmlDiagramType.GANTT);
 	}
 
 	private int horizontalPages = 1;
@@ -251,12 +255,14 @@ public class GanttDiagram extends TitledDiagram implements ToTaskDraw, WithSprit
 		if (openClose.getCalendar() == null) {
 			return new TimeHeaderSimple(min, max);
 		} else if (printScale == PrintScale.WEEKLY) {
-			return new TimeHeaderWeekly(openClose.getCalendar(), min, max, openClose, colorDays, nameDays);
+			return new TimeHeaderWeekly(openClose.getCalendar(), min, max, openClose, colorDays, colorDaysOfWeek,
+					nameDays);
 		} else if (printScale == PrintScale.MONTHLY) {
-			return new TimeHeaderMonthly(openClose.getCalendar(), min, max, openClose, colorDays, nameDays);
+			return new TimeHeaderMonthly(openClose.getCalendar(), min, max, openClose, colorDays, colorDaysOfWeek,
+					nameDays);
 		} else {
-			return new TimeHeaderDaily(openClose.getCalendar(), min, max, openClose, colorDays, nameDays, printStart,
-					printEnd);
+			return new TimeHeaderDaily(openClose.getCalendar(), min, max, openClose, colorDays, colorDaysOfWeek,
+					nameDays, printStart, printEnd);
 		}
 	}
 
@@ -283,8 +289,21 @@ public class GanttDiagram extends TitledDiagram implements ToTaskDraw, WithSprit
 			if (printStart != null && constraint.isHidden(min, max)) {
 				continue;
 			}
-			constraint.getUDrawable(timeScale, linksColor, this).drawU(ug);
+			constraint.getUDrawable(timeScale, getLinkColor(), this).drawU(ug);
 		}
+
+	}
+
+	private HColor getLinkColor() {
+		if (linksColor == null) {
+			final Style styleArrow = getDefaultStyleDefinitionArrow().getMergedStyle(getCurrentStyleBuilder());
+			return styleArrow.value(PName.LineColor).asColor(colorSet);
+		}
+		return linksColor;
+	}
+
+	public StyleSignature getDefaultStyleDefinitionArrow() {
+		return StyleSignature.of(SName.root, SName.element, SName.ganttDiagram, SName.arrow);
 	}
 
 	private void drawTasksTitle(final UGraphic ug1) {
@@ -400,12 +419,13 @@ public class GanttDiagram extends TitledDiagram implements ToTaskDraw, WithSprit
 			first = first.getTrueRow();
 		}
 		for (TaskDraw td : draws.values()) {
-			if (td == first)
+			if (td == first) {
 				skipping = false;
-			if (skipping)
+			}
+			if (skipping) {
 				continue;
+			}
 			td.pushMe(deltaY + 1);
-
 		}
 
 	}
@@ -570,7 +590,7 @@ public class GanttDiagram extends TitledDiagram implements ToTaskDraw, WithSprit
 		return openClose.getLoadAt(day) > 0;
 	}
 
-	public void affectResource(Task result, String description) {
+	public boolean affectResource(Task result, String description) {
 		final Pattern p = Pattern.compile("([^:]+)(:(\\d+))?");
 		final Matcher m = p.matcher(description);
 		if (m.find() == false) {
@@ -581,7 +601,11 @@ public class GanttDiagram extends TitledDiagram implements ToTaskDraw, WithSprit
 		if (m.group(3) != null) {
 			percentage = Integer.parseInt(m.group(3));
 		}
+		if (percentage == 0) {
+			return false;
+		}
 		result.addResource(resource, percentage);
+		return true;
 	}
 
 	public Resource getResource(String resourceName) {
@@ -646,6 +670,10 @@ public class GanttDiagram extends TitledDiagram implements ToTaskDraw, WithSprit
 
 	public void colorDay(Day day, HColor color) {
 		colorDays.put(day, color);
+	}
+
+	public void colorDay(DayOfWeek day, HColor color) {
+		colorDaysOfWeek.put(day, color);
 	}
 
 	public void nameDay(Day day, String name) {

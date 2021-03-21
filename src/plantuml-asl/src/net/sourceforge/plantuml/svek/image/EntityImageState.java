@@ -42,7 +42,6 @@ import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.creole.CreoleMode;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
-import net.sourceforge.plantuml.cucadiagram.Member;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
@@ -54,6 +53,7 @@ import net.sourceforge.plantuml.svek.ShapeType;
 import net.sourceforge.plantuml.ugraphic.Shadowable;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
+import net.sourceforge.plantuml.ugraphic.UGroupType;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UStroke;
@@ -87,10 +87,11 @@ public class EntityImageState extends AbstractEntityImage {
 		this.desc = entity.getDisplay().create8(new FontConfiguration(getSkinParam(), FontParam.STATE, stereotype),
 				HorizontalAlignment.CENTER, skinParam, CreoleMode.FULL, skinParam.wrapWidth());
 
-		Display list = Display.empty();
-		for (Member att : entity.getBodier().getFieldsToDisplay()) {
-			list = list.addAll(Display.getWithNewlines(att.getDisplay(true)));
-		}
+//		Display list = Display.empty();
+//		for (Member att : entity.getBodier().getFieldsToDisplay()) {
+//			list = list.addAll(Display.getWithNewlines(att.getDisplay(true)));
+//		}
+		final Display list = Display.create(entity.getBodier().getRawBody());
 
 		this.url = entity.getUrl99();
 
@@ -111,7 +112,7 @@ public class EntityImageState extends AbstractEntityImage {
 	}
 
 	final public void drawU(UGraphic ug) {
-		ug.startGroup(getEntity().getIdent().toString("."));
+		ug.startGroup(UGroupType.ID, getEntity().getIdent().toString("."));
 		if (url != null) {
 			ug.startUrl(url);
 		}

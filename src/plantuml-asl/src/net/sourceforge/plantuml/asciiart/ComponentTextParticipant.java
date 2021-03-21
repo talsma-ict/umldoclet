@@ -48,8 +48,7 @@ public class ComponentTextParticipant extends AbstractComponentText {
 	private final Display stringsToDisplay;
 	private final FileFormat fileFormat;
 
-	public ComponentTextParticipant(ComponentType type, Display stringsToDisplay,
-			FileFormat fileFormat) {
+	public ComponentTextParticipant(ComponentType type, Display stringsToDisplay, FileFormat fileFormat) {
 		this.type = type;
 		this.stringsToDisplay = stringsToDisplay;
 		this.fileFormat = fileFormat;
@@ -78,7 +77,11 @@ public class ComponentTextParticipant extends AbstractComponentText {
 				charArea.drawChar('+', (width - 1) / 2, height - 1);
 			}
 		}
-		charArea.drawStringsLR(stringsToDisplay.as(), 1, 1);
+		if (fileFormat == FileFormat.UTXT) {
+			charArea.drawStringsLRUnicode(stringsToDisplay.asList(), 1, 1);
+		} else {
+			charArea.drawStringsLRSimple(stringsToDisplay.asList(), 1, 1);
+		}
 	}
 
 	public double getPreferredHeight(StringBounder stringBounder) {

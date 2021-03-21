@@ -214,7 +214,7 @@ public abstract class PSystemError extends AbstractPSystem {
 		if (fileFormat.getFileFormat() == FileFormat.ATXT || fileFormat.getFileFormat() == FileFormat.UTXT) {
 			final UGraphicTxt ugt = new UGraphicTxt();
 			final UmlCharArea area = ugt.getCharArea();
-			area.drawStringsLR(getPureAsciiFormatted(), 0, 0);
+			area.drawStringsLRSimple(getPureAsciiFormatted(), 0, 0);
 			area.print(SecurityUtils.createPrintStream(os));
 			return new ImageDataSimple(1, 1);
 
@@ -323,7 +323,7 @@ public abstract class PSystemError extends AbstractPSystem {
 
 	private TextBlockBackcolored getMessageDedication() {
 		final FlashCodeUtils utils = FlashCodeFactory.getFlashCodeUtils();
-		final HColorSimple backColor = (HColorSimple) HColorSet.instance().getColorIfValid("#eae2c9");
+		final HColorSimple backColor = (HColorSimple) HColorSet.instance().getColorOrWhite("#eae2c9");
 
 		final BufferedImage qrcode = smaller(
 				utils.exportFlashcode("http://plantuml.com/dedication", Color.BLACK, backColor.getColor999()));
@@ -346,7 +346,7 @@ public abstract class PSystemError extends AbstractPSystem {
 	}
 
 	private TextBlockBackcolored getMessageAdopt() {
-		final HColorSimple backColor = (HColorSimple) HColorSet.instance().getColorIfValid("#eff4d2");
+		final HColorSimple backColor = (HColorSimple) HColorSet.instance().getColorOrWhite("#eff4d2");
 
 		final Display disp = Display.create("<b>Adopt-a-Word and put your message here!", " ",
 				"Details on <i>[[http://plantuml.com/adopt]]", " ");
@@ -454,8 +454,9 @@ public abstract class PSystemError extends AbstractPSystem {
 
 	}
 
-	public int size() {
-		return trace.size();
+	public int score() {
+		final int result = trace.size() * 10 + singleError.score();
+		return result;
 	}
 
 	private BufferedImage smaller(BufferedImage im) {

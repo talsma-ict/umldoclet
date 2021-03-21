@@ -47,7 +47,7 @@ public class CommandProperty extends SingleLineCommand2<NwDiagram> {
 	static IRegex getRegexConcat() {
 		return RegexConcat.build(CommandProperty.class.getName(), RegexLeaf.start(), //
 				RegexLeaf.spaceZeroOrMore(), //
-				new RegexLeaf("NAME", "(address|color|width)"), //
+				new RegexLeaf("NAME", "(address|color|width|description)"), //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("="), //
 				RegexLeaf.spaceZeroOrMore(), //

@@ -53,7 +53,7 @@ public class StateDiagram extends AbstractEntityDiagram {
 	private static final String CONCURRENT_PREFIX = "CONC";
 
 	public StateDiagram(ISkinSimple skinParam) {
-		super(skinParam);
+		super(UmlDiagramType.STATE, skinParam);
 		// setNamespaceSeparator(null);
 	}
 
@@ -254,11 +254,6 @@ public class StateDiagram extends AbstractEntityDiagram {
 			super.endGroup();
 		}
 		super.endGroup();
-	}
-
-	@Override
-	public UmlDiagramType getUmlDiagramType() {
-		return UmlDiagramType.STATE;
 	}
 
 	private boolean hideEmptyDescription = false;

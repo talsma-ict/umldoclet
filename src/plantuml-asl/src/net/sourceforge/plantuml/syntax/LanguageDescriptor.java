@@ -131,6 +131,7 @@ public class LanguageDescriptor {
 		keyword.add("up");
 		keyword.add("down");
 		keyword.add("if");
+		keyword.add("then");
 		keyword.add("else");
 		keyword.add("elseif");
 		keyword.add("endif");

@@ -602,7 +602,7 @@ final public class EntityImpl implements ILeaf, IGroup {
 	}
 
 	public SingleStrategy getSingleStrategy() {
-		return SingleStrategy.SQUARRE;
+		return SingleStrategy.SQUARE;
 	}
 
 	public boolean isHidden() {

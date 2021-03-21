@@ -100,7 +100,7 @@ public class PSystemColors extends AbstractPSystem implements UDrawable {
 	}
 
 	public void drawU(UGraphic ug) {
-		if (colors.getColorIfValid(paletteCentralColor) instanceof HColorSimple) {
+		if (paletteCentralColor != null && colors.getColorOrWhite(paletteCentralColor) instanceof HColorSimple) {
 			drawPalette(ug);
 		} else {
 			drawFull(ug);
@@ -151,7 +151,7 @@ public class PSystemColors extends AbstractPSystem implements UDrawable {
 	}
 
 	private void drawOneHexa(UGraphic ug, String colorName, int i, int j, UPolygon hexa) {
-		final HColorSimple color = (HColorSimple) colors.getColorIfValid(colorName);
+		final HColorSimple color = (HColorSimple) colors.getColorOrWhite(colorName);
 		ug = applyColor(ug, color);
 		ug = ug.apply(new UTranslate(centerHexa(i, j)));
 		ug.draw(hexa);
@@ -232,11 +232,11 @@ public class PSystemColors extends AbstractPSystem implements UDrawable {
 	}
 
 	private Comparator<String> closeComparator(String center) {
-		final HColorSimple centerColor = (HColorSimple) colors.getColorIfValid(center);
+		final HColorSimple centerColor = (HColorSimple) colors.getColorOrWhite(center);
 		return new Comparator<String>() {
 			public int compare(String col1, String col2) {
-				final double dist1 = centerColor.distance((HColorSimple) colors.getColorIfValid(col1));
-				final double dist2 = centerColor.distance((HColorSimple) colors.getColorIfValid(col2));
+				final double dist1 = centerColor.distance((HColorSimple) colors.getColorOrWhite(col1));
+				final double dist2 = centerColor.distance((HColorSimple) colors.getColorOrWhite(col2));
 				return (int) Math.signum(dist1 - dist2);
 			}
 		};
@@ -250,7 +250,7 @@ public class PSystemColors extends AbstractPSystem implements UDrawable {
 		int j = 0;
 		for (String name : colors.names()) {
 			UGraphic tmp = getPositioned(ug, i, j);
-			final HColorSimple color = (HColorSimple) colors.getColorIfValid(name);
+			final HColorSimple color = (HColorSimple) colors.getColorOrWhite(name);
 			applyColor(tmp, color).draw(new URectangle(rectangleWidth, rectangleHeight));
 			final TextBlock tt = getTextName(font, name, color);
 			final Dimension2D dimText = tt.calculateDimension(ug.getStringBounder());

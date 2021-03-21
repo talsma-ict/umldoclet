@@ -49,7 +49,7 @@ import net.sourceforge.plantuml.svek.extremity.ExtremityFactoryLineCrowfoot;
 import net.sourceforge.plantuml.svek.extremity.ExtremityFactoryNotNavigable;
 import net.sourceforge.plantuml.svek.extremity.ExtremityFactoryParenthesis;
 import net.sourceforge.plantuml.svek.extremity.ExtremityFactoryPlus;
-import net.sourceforge.plantuml.svek.extremity.ExtremityFactorySquarre;
+import net.sourceforge.plantuml.svek.extremity.ExtremityFactorySquare;
 import net.sourceforge.plantuml.svek.extremity.ExtremityFactoryTriangle;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 
@@ -68,7 +68,7 @@ public enum LinkDecor {
 	CIRCLE(0, false, 0.5), CIRCLE_FILL(0, false, 0.5), CIRCLE_CONNECT(0, false, 0.5),
 	PARENTHESIS(0, false, OptionFlags.USE_INTERFACE_EYE2 ? 0.5 : 1.0), SQUARE(0, false, 0.5),
 
-	CIRCLE_CROSS(0, false, 0.5), PLUS(0, false, 1.5), HALF_ARROW(0, false, 1.5), SQUARRE_toberemoved(30, false, 0);
+	CIRCLE_CROSS(0, false, 0.5), PLUS(0, false, 1.5), HALF_ARROW(0, false, 1.5), SQUARE_toberemoved(30, false, 0);
 
 	private final double arrowSize;
 	private final int margin;
@@ -106,7 +106,7 @@ public enum LinkDecor {
 	public ExtremityFactory getExtremityFactory(HColor backgroundColor) {
 		switch (this) {
 		case PLUS:
-			return new ExtremityFactoryPlus();
+			return new ExtremityFactoryPlus(backgroundColor);
 		case REDEFINES:
 			return new ExtremityFactoryExtendsLike(backgroundColor, false);
 		case DEFINEDBY:
@@ -126,11 +126,11 @@ public enum LinkDecor {
 		case DOUBLE_LINE:
 			return new ExtremityFactoryDoubleLine();
 		case CIRCLE_CROSS:
-			return new ExtremityFactoryCircleCross();
+			return new ExtremityFactoryCircleCross(backgroundColor);
 		case ARROW:
 			return new ExtremityFactoryArrow();
 		case ARROW_AND_CIRCLE:
-			return new ExtremityFactoryArrowAndCircle();
+			return new ExtremityFactoryArrowAndCircle(backgroundColor);
 		case NOT_NAVIGABLE:
 			return new ExtremityFactoryNotNavigable();
 		case AGREGATION:
@@ -138,15 +138,15 @@ public enum LinkDecor {
 		case COMPOSITION:
 			return new ExtremityFactoryDiamond(true, backgroundColor);
 		case CIRCLE:
-			return new ExtremityFactoryCircle(false);
+			return new ExtremityFactoryCircle(false, backgroundColor);
 		case CIRCLE_FILL:
-			return new ExtremityFactoryCircle(true);
+			return new ExtremityFactoryCircle(true, backgroundColor);
 		case SQUARE:
-			return new ExtremityFactorySquarre();
+			return new ExtremityFactorySquare(backgroundColor);
 		case PARENTHESIS:
 			return new ExtremityFactoryParenthesis();
 		case CIRCLE_CONNECT:
-			return new ExtremityFactoryCircleConnect();
+			return new ExtremityFactoryCircleConnect(backgroundColor);
 		default:
 			return null;
 		}

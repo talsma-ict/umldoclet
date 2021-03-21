@@ -48,12 +48,12 @@ import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorMiddle;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class FtileCircleStop extends AbstractFtile {
 
 	private static final int SIZE = 22;
 
+	private final HColor borderColor;
 	private final HColor backColor;
 	private final Swimlane swimlane;
 	private double shadowing;
@@ -63,8 +63,9 @@ public class FtileCircleStop extends AbstractFtile {
 		return Collections.emptyList();
 	}
 
-	public FtileCircleStop(ISkinParam skinParam, HColor backColor, Swimlane swimlane, Style style) {
+	public FtileCircleStop(ISkinParam skinParam, HColor backColor, HColor borderColor, Swimlane swimlane, Style style) {
 		super(skinParam);
+		this.borderColor = borderColor;
 		this.backColor = backColor;
 		this.swimlane = swimlane;
 		if (UseStyle.useBetaStyle()) {
@@ -94,15 +95,16 @@ public class FtileCircleStop extends AbstractFtile {
 	public void drawU(UGraphic ug) {
 		final UEllipse circle = new UEllipse(SIZE, SIZE);
 		circle.setDeltaShadow(shadowing);
-		ug.apply(backColor).apply(HColorUtils.WHITE.bg()).draw(circle);
+
+		ug.apply(borderColor).apply(backColor.bg()).draw(circle);
 
 		final double delta = 5;
 		final UEllipse circleSmall = new UEllipse(SIZE - delta * 2, SIZE - delta * 2);
 		// if (skinParam().shadowing(null)) {
 		// circleSmall.setDeltaShadow(3);
 		// }
-		ug.apply(new HColorMiddle(backColor, HColorUtils.WHITE))
-				.apply(backColor.bg()).apply(new UTranslate(delta, delta)).draw(circleSmall);
+		ug.apply(new HColorMiddle(borderColor, backColor)).apply(borderColor.bg()).apply(new UTranslate(delta, delta))
+				.draw(circleSmall);
 	}
 
 	@Override

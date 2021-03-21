@@ -39,9 +39,7 @@ import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.SkinParamUtils;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.creole.CreoleMode;
-import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
-import net.sourceforge.plantuml.cucadiagram.Member;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
@@ -72,10 +70,11 @@ public class EntityImageStateEmptyDescription extends AbstractEntityImage {
 		this.desc = entity.getDisplay().create8(new FontConfiguration(getSkinParam(), FontParam.STATE, stereotype),
 				HorizontalAlignment.CENTER, skinParam, CreoleMode.FULL, skinParam.wrapWidth());
 
-		Display list = Display.empty();
-		for (Member att : entity.getBodier().getFieldsToDisplay()) {
-			list = list.addAll(Display.getWithNewlines(att.getDisplay(true)));
-		}
+//		Display list = Display.empty();
+//		for (Member att : entity.getBodier().getFieldsToDisplay()) {
+//			list = list.addAll(Display.getWithNewlines(att.getDisplay(true)));
+//		}
+//		final Display list = Display.create(entity.getBodier().getRawBody());
 
 		this.url = entity.getUrl99();
 

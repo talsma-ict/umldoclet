@@ -353,6 +353,8 @@ public class TikzGraphics {
 		text = text.replaceAll("&", "\\\\&");
 		text = text.replaceAll("%", "\\\\%");
 		text = text.replace("$", "\\$");
+		text = text.replace("{", "\\{");
+		text = text.replace("}", "\\}");
 		// text = text.replaceAll("~", "\\\\~{}");
 		text = text.replace("~", "{\\raise.35ex\\hbox{$\\scriptstyle\\mathtt{\\sim}$}}");
 		// {\raise.35ex\hbox{$\scriptstyle\mathtt{\sim}$}}

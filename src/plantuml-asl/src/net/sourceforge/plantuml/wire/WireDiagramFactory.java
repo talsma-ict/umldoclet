@@ -49,12 +49,12 @@ public class WireDiagramFactory extends PSystemCommandFactory {
 		final List<Command> cmds = new ArrayList<Command>();
 		addCommonCommands1(cmds);
 		cmds.add(new CommandComponent());
-		cmds.add(new CommandContainer());
-		cmds.add(new CommandContainerEnd());
-		cmds.add(new CommandPin());
-		cmds.add(new CommandPinSpace());
-		cmds.add(new CommandVspace());
+		cmds.add(new CommandSpot());
+		cmds.add(new CommandGoto());
+		cmds.add(new CommandMove());
+		cmds.add(new CommandWLink());
 		cmds.add(new CommandNewColumn());
+		cmds.add(new CommandPrint());
 
 		return cmds;
 	}

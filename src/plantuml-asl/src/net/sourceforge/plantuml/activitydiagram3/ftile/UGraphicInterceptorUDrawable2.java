@@ -42,6 +42,7 @@ import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class UGraphicInterceptorUDrawable2 extends UGraphicDelegator {
@@ -80,10 +81,11 @@ public class UGraphicInterceptorUDrawable2 extends UGraphicDelegator {
 	}
 
 	private void drawGoto(FtileGoto ftile) {
+		final HColor gotoColor = HColorUtils.MY_RED;
+
 		final FtileGeometry geom = ftile.calculateDimension(getStringBounder());
 		final Point2D pt = geom.getPointIn();
-		UGraphic ugGoto = getUg().apply(HColorUtils.GREEN).apply(
-				HColorUtils.GREEN.bg());
+		UGraphic ugGoto = getUg().apply(gotoColor).apply(gotoColor.bg());
 		ugGoto = ugGoto.apply(new UTranslate(pt));
 		final UTranslate posNow = getPosition();
 		final UTranslate dest = positions.get(ftile.getName());

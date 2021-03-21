@@ -47,7 +47,8 @@ class ColorChange implements FontChange {
 		if (matcherColor.find() == false) {
 			throw new IllegalArgumentException();
 		}
-		this.color = HColorSet.instance().getColorIfValid(matcherColor.group(1));
+		final String s1 = matcherColor.group(1);
+		this.color = HColorSet.instance().getColorOrWhite(s1);
 	}
 
 	HColor getColor() {

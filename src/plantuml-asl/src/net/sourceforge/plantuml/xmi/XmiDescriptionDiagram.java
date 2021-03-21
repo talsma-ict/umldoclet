@@ -53,7 +53,6 @@ import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.IGroup;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
-import net.sourceforge.plantuml.cucadiagram.Member;
 import net.sourceforge.plantuml.descdiagram.DescriptionDiagram;
 import net.sourceforge.plantuml.utils.UniqueSequence;
 import net.sourceforge.plantuml.version.Version;
@@ -205,19 +204,19 @@ public class XmiDescriptionDiagram implements IXmiClassDiagram {
 		final Element feature = document.createElement("UML:Classifier.feature");
 		cla.appendChild(feature);
 
-		for (Member m : entity.getBodier().getFieldsToDisplay()) {
-			final Element attribute = document.createElement("UML:Attribute");
-			attribute.setAttribute("xmi.id", "att" + UniqueSequence.getValue());
-			attribute.setAttribute("name", m.getDisplay(false));
-			feature.appendChild(attribute);
-		}
-
-		for (Member m : entity.getBodier().getMethodsToDisplay()) {
-			final Element operation = document.createElement("UML:Operation");
-			operation.setAttribute("xmi.id", "att" + UniqueSequence.getValue());
-			operation.setAttribute("name", m.getDisplay(false));
-			feature.appendChild(operation);
-		}
+//		for (Member m : entity.getBodier().getFieldsToDisplay()) {
+//			final Element attribute = document.createElement("UML:Attribute");
+//			attribute.setAttribute("xmi.id", "att" + UniqueSequence.getValue());
+//			attribute.setAttribute("name", m.getDisplay(false));
+//			feature.appendChild(attribute);
+//		}
+//
+//		for (Member m : entity.getBodier().getMethodsToDisplay()) {
+//			final Element operation = document.createElement("UML:Operation");
+//			operation.setAttribute("xmi.id", "att" + UniqueSequence.getValue());
+//			operation.setAttribute("name", m.getDisplay(false));
+//			feature.appendChild(operation);
+//		}
 		return cla;
 	}
 

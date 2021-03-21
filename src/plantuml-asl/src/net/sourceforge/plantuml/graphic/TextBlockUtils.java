@@ -102,6 +102,9 @@ public class TextBlockUtils {
 	}
 
 	public static TextBlock withMargin(TextBlock textBlock, double marginX, double marginY) {
+		if (marginX == 0 && marginY == 0) {
+			return textBlock;
+		}
 		return new TextBlockMarged(textBlock, marginY, marginX, marginY, marginX);
 	}
 
@@ -127,6 +130,11 @@ public class TextBlockUtils {
 			public Dimension2D calculateDimension(StringBounder stringBounder) {
 				return new Dimension2DDouble(width, height);
 			}
+			
+			public Rectangle2D getInnerPosition(String member, StringBounder stringBounder, InnerStrategy strategy) {
+				return null;
+			}
+
 		};
 	}
 
@@ -219,6 +227,8 @@ public class TextBlockUtils {
 				}
 				return null;
 			}
+			
+			
 
 		};
 	}

@@ -46,7 +46,7 @@ import net.sourceforge.plantuml.SkinParamUtils;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.creole.Stencil;
-import net.sourceforge.plantuml.cucadiagram.BodyEnhanced2;
+import net.sourceforge.plantuml.cucadiagram.BodyFactory;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.ILeaf;
@@ -67,10 +67,11 @@ import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.svek.AbstractEntityImage;
 import net.sourceforge.plantuml.svek.Line;
-import net.sourceforge.plantuml.svek.Node;
 import net.sourceforge.plantuml.svek.ShapeType;
+import net.sourceforge.plantuml.svek.SvekNode;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UGraphicStencil;
+import net.sourceforge.plantuml.ugraphic.UGroupType;
 import net.sourceforge.plantuml.ugraphic.UPath;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
@@ -120,9 +121,9 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 		if (strings.size() == 1 && strings.get(0).length() == 0) {
 			textBlock = new TextBlockEmpty();
 		} else {
-			textBlock = new BodyEnhanced2(strings, FontParam.NOTE, getSkinParam(), HorizontalAlignment.LEFT,
-					new FontConfiguration(getSkinParam(), FontParam.NOTE, null), getSkinParam().wrapWidth(),
-					getSkinParam().minClassWidth());
+			final FontConfiguration fc = new FontConfiguration(getSkinParam(), FontParam.NOTE, null);
+			textBlock = BodyFactory.create3(strings, FontParam.NOTE, getSkinParam(), HorizontalAlignment.LEFT, fc,
+					getSkinParam().wrapWidth());
 		}
 	}
 
@@ -196,6 +197,9 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 
 	final public void drawU(UGraphic ug) {
 		final Url url = getEntity().getUrl99();
+
+		ug.startGroup(UGroupType.CLASS, "elem " + getEntity().getCode() + " selected");
+
 		if (url != null) {
 			ug.startUrl(url);
 		}
@@ -231,6 +235,8 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 		if (url != null) {
 			ug.closeUrl();
 		}
+
+		ug.closeGroup();
 	}
 
 	private double getRoundCorner() {
@@ -290,10 +296,10 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 	}
 
 	private Line opaleLine;
-	private Node node;
-	private Node other;
+	private SvekNode node;
+	private SvekNode other;
 
-	public void setOpaleLine(Line line, Node node, Node other) {
+	public void setOpaleLine(Line line, SvekNode node, SvekNode other) {
 		if (other == null) {
 			throw new IllegalArgumentException();
 		}

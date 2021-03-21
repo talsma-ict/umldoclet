@@ -45,6 +45,7 @@ import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorSet;
+import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
 
 public class Colors {
 
@@ -75,7 +76,7 @@ public class Colors {
 	private Colors() {
 	}
 
-	public Colors(String data, HColorSet set, ColorType mainType) {
+	public Colors(String data, HColorSet set, ColorType mainType) throws NoSuchColorException {
 		data = StringUtils.goLowerCase(data);
 
 		for (final StringTokenizer st = new StringTokenizer(data, "#;"); st.hasMoreTokens();) {
@@ -83,7 +84,7 @@ public class Colors {
 			final int x = s.indexOf(':');
 			if (x == -1) {
 				if (s.contains(".") == false) {
-					map.put(mainType, set.getColorIfValid(s));
+					map.put(mainType, set.getColor(s));
 				}
 			} else {
 				final String name = s.substring(0, x);
@@ -92,7 +93,7 @@ public class Colors {
 					this.shadowing = value.equalsIgnoreCase("true");
 				} else {
 					final ColorType key = ColorType.getType(name);
-					final HColor color = set.getColorIfValid(value);
+					final HColor color = set.getColor(value);
 					map.put(key, color);
 				}
 			}
@@ -180,7 +181,7 @@ public class Colors {
 		return ug.apply(colors.lineStyle.getStroke3());
 	}
 
-	public Colors applyStereotype(Stereotype stereotype, ISkinParam skinParam, ColorParam param) {
+	public Colors applyStereotype(Stereotype stereotype, ISkinParam skinParam, ColorParam param) throws NoSuchColorException {
 		if (stereotype == null) {
 			throw new IllegalArgumentException();
 		}
@@ -214,7 +215,7 @@ public class Colors {
 	}
 
 	public Colors applyStereotypeForNote(Stereotype stereotype, ISkinParam skinParam, FontParam fontParam,
-			ColorParam... params) {
+			ColorParam... params) throws NoSuchColorException {
 		if (stereotype == null) {
 			throw new IllegalArgumentException();
 		}
