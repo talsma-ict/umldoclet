@@ -38,6 +38,7 @@ import net.sourceforge.plantuml.SvgCharSizeHack;
 import net.sourceforge.plantuml.anim.Animation;
 import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
+import net.sourceforge.plantuml.svg.LengthAdjust;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 
@@ -53,6 +54,7 @@ public class ImageParameter {
 	private final HColor backcolor;
 	private final boolean svgDimensionStyle;
 	private final SvgCharSizeHack svgCharSizeHack;
+	private final LengthAdjust lengthAdjust;
 
 	private final UStroke borderStroke;
 	private final HColor borderColor;
@@ -74,6 +76,7 @@ public class ImageParameter {
 		this.borderCorner = 0;
 		this.borderStroke = null;
 		this.svgCharSizeHack = SvgCharSizeHack.NO_HACK;
+		this.lengthAdjust = LengthAdjust.defaultValue();
 	}
 
 	public ImageParameter(ISkinParam skinParam, Animation animation, double dpiFactor, String metadata,
@@ -99,6 +102,7 @@ public class ImageParameter {
 		}
 
 		this.svgCharSizeHack = skinParam;
+		this.lengthAdjust = skinParam.getlengthAdjust();
 
 	}
 
@@ -152,6 +156,10 @@ public class ImageParameter {
 
 	public final SvgCharSizeHack getSvgCharSizeHack() {
 		return svgCharSizeHack;
+	}
+
+	public final LengthAdjust getlengthAdjust() {
+		return lengthAdjust;
 	}
 
 }

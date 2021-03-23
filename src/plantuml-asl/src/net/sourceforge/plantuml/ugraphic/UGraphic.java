@@ -50,7 +50,7 @@ public interface UGraphic {
 
 	public void closeUrl();
 
-	public void startGroup(String id);
+	public void startGroup(UGroupType type, String ident);
 
 	public void closeGroup();
 

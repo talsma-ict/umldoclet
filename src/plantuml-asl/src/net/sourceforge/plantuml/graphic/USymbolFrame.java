@@ -174,9 +174,4 @@ class USymbolFrame extends USymbol {
 //
 //	}
 
-	@Override
-	public boolean manageHorizontalLine() {
-		return true;
-	}
-
 }

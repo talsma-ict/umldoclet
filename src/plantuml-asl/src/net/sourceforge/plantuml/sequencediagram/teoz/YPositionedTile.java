@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.sequencediagram.teoz;
 
-import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 
@@ -39,16 +38,10 @@ public class YPositionedTile {
 	private final Tile tile;
 	private final double y;
 
-	public boolean inArea(double ymin, double ymax) {
-		return y >= ymin && y < ymax;
-	}
-
 	public YPositionedTile(Tile tile, double y) {
 		this.tile = tile;
 		this.y = y;
-		if (tile instanceof TileWithCallbackY) {
-			((TileWithCallbackY) tile).callbackY(y);
-		}
+		tile.callbackY(y);
 	}
 
 	@Override
@@ -58,7 +51,7 @@ public class YPositionedTile {
 
 	public void drawInArea(UGraphic ug) {
 		// System.err.println("YPositionedTile::drawU y=" + y + " " + tile);
-		ug.apply(UTranslate.dy(y)).draw(tile);
+		tile.drawU(ug.apply(UTranslate.dy(y)));
 	}
 
 	public boolean matchAnchorV2(String anchor) {
@@ -66,14 +59,13 @@ public class YPositionedTile {
 		return result;
 	}
 
-	public final double getY(StringBounder stringBounder) {
-		final TileWithUpdateStairs communicationTile = (TileWithUpdateStairs) tile;
-		return y + communicationTile.getYPoint(stringBounder);
+	public final double getY() {
+		return y + tile.getContactPointRelative();
 	}
 
-	public double getMiddleX(StringBounder stringBounder) {
-		final double max = tile.getMaxX(stringBounder).getCurrentValue();
-		final double min = tile.getMinX(stringBounder).getCurrentValue();
+	public double getMiddleX() {
+		final double max = tile.getMaxX().getCurrentValue();
+		final double min = tile.getMinX().getCurrentValue();
 		return (min + max) / 2;
 	}
 

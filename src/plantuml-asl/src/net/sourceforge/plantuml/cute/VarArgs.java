@@ -89,7 +89,7 @@ public class VarArgs {
 		if (value == null) {
 			return HColorUtils.BLACK;
 		}
-		final HColor result = HColorSet.instance().getColorIfValid(value);
+		final HColor result = HColorSet.instance().getColorOrWhite(value);
 		if (result == null) {
 			return HColorUtils.BLACK;
 		}

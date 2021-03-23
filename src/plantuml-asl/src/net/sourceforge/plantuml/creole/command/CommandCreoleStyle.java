@@ -45,7 +45,7 @@ public class CommandCreoleStyle implements Command {
 	private final FontStyle style;
 	private final boolean tryExtendedColor;
 
-	public static CommandCreoleStyle createCreole(FontStyle style) {
+	public static Command createCreole(FontStyle style) {
 		return new CommandCreoleStyle("^(" + style.getCreoleSyntax() + "(.+?)" + style.getCreoleSyntax() + ")", style,
 				false);
 	}

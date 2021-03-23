@@ -70,7 +70,7 @@ public class SFile implements Comparable<SFile> {
 
 	public static char separatorChar = File.separatorChar;
 
-	public final File internal;
+	private final File internal;
 
 	@Override
 	public String toString() {
@@ -310,7 +310,7 @@ public class SFile implements Comparable<SFile> {
 		return null;
 	}
 
-	public File conv() throws FileNotFoundException {
+	public File conv() {
 		return internal;
 	}
 

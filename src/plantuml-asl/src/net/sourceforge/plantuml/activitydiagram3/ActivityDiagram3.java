@@ -77,7 +77,7 @@ public class ActivityDiagram3 extends UmlDiagram {
 	private final Swimlanes swinlanes = new Swimlanes(getSkinParam(), getPragma());
 
 	public ActivityDiagram3(ISkinSimple skinParam) {
-		super(skinParam);
+		super(UmlDiagramType.ACTIVITY, skinParam);
 	}
 
 	private void manageSwimlaneStrategy() {
@@ -192,11 +192,6 @@ public class ActivityDiagram3 extends UmlDiagram {
 
 	public DiagramDescription getDescription() {
 		return new DiagramDescription("activity3");
-	}
-
-	@Override
-	public UmlDiagramType getUmlDiagramType() {
-		return UmlDiagramType.ACTIVITY;
 	}
 
 	@Override

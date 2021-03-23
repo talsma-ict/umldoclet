@@ -38,6 +38,9 @@ import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.command.regex.RegexOptional;
 import net.sourceforge.plantuml.command.regex.RegexResult;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorSet;
+import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
 
 public class CommandComponent extends SingleLineCommand2<WireDiagram> {
 
@@ -47,9 +50,9 @@ public class CommandComponent extends SingleLineCommand2<WireDiagram> {
 
 	static IRegex getRegexConcat() {
 		return RegexConcat.build(CommandComponent.class.getName(), RegexLeaf.start(), //
+				new RegexLeaf("INDENT", "([\\s\\t]*)"), //
+				new RegexLeaf("\\*"), //
 				RegexLeaf.spaceZeroOrMore(), //
-				new RegexLeaf("TYPE", "component"), //
-				RegexLeaf.spaceOneOrMore(), //
 				new RegexLeaf("NAME", "([\\w]+)"), //
 				new RegexOptional(new RegexConcat( //
 						RegexLeaf.spaceOneOrMore(), //
@@ -59,19 +62,34 @@ public class CommandComponent extends SingleLineCommand2<WireDiagram> {
 						new RegexLeaf("HEIGHT", "([\\d]+)"), //
 						new RegexLeaf("\\]")) //
 				), //
+				new RegexOptional(new RegexConcat( //
+						RegexLeaf.spaceZeroOrMore(), //
+						new RegexLeaf("COLOR", "(#\\w+)?"))), //
+				RegexLeaf.spaceZeroOrMore(), //
 				RegexLeaf.end());
 	}
 
 	@Override
-	protected CommandExecutionResult executeArg(WireDiagram diagram, LineLocation location, RegexResult arg) {
+	protected CommandExecutionResult executeArg(WireDiagram diagram, LineLocation location, RegexResult arg) throws NoSuchColorException {
+		final String indent = arg.get("INDENT", 0);
 		final String name = arg.get("NAME", 0);
-		final String width = arg.get("WIDTH", 0);
-		final String height = arg.get("HEIGHT", 0);
-		if (width != null) {
-			return diagram.addComponent(name, Integer.parseInt(width), Integer.parseInt(height));
-		} else {
-			return diagram.addComponent(name);
+
+		int width = 0;
+		int height = 0;
+		final String widthString = arg.get("WIDTH", 0);
+		final String heightString = arg.get("HEIGHT", 0);
+		if (widthString != null) {
+			width = Integer.parseInt(widthString);
+			height = Integer.parseInt(heightString);
 		}
+
+		final String stringColor = arg.get("COLOR", 0);
+		HColor color = null;
+		if (stringColor != null) {
+			color = HColorSet.instance().getColor(stringColor);
+		}
+
+		return diagram.addComponent(indent, name, width, height, color);
 	}
 
 }

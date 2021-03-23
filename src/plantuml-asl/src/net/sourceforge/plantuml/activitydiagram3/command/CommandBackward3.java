@@ -45,6 +45,7 @@ import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.descdiagram.command.CommandLinkElement;
 import net.sourceforge.plantuml.graphic.Rainbow;
+import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
 
 public class CommandBackward3 extends SingleLineCommand2<ActivityDiagram3> {
 
@@ -80,7 +81,7 @@ public class CommandBackward3 extends SingleLineCommand2<ActivityDiagram3> {
 	}
 
 	@Override
-	protected CommandExecutionResult executeArg(ActivityDiagram3 diagram, LineLocation location, RegexResult arg) {
+	protected CommandExecutionResult executeArg(ActivityDiagram3 diagram, LineLocation location, RegexResult arg) throws NoSuchColorException {
 		final BoxStyle boxStyle;
 		final String styleString = arg.get("STYLE", 0);
 
@@ -98,7 +99,7 @@ public class CommandBackward3 extends SingleLineCommand2<ActivityDiagram3> {
 		return diagram.backward(label, boxStyle, in, out);
 	}
 
-	static public LinkRendering getBackRendering(ActivityDiagram3 diagram, RegexResult arg, String name) {
+	static public LinkRendering getBackRendering(ActivityDiagram3 diagram, RegexResult arg, String name) throws NoSuchColorException {
 		final LinkRendering in;
 		final Rainbow incomingColor = getRainbow(name + "_COLOR", diagram, arg);
 		if (incomingColor == null)
@@ -109,7 +110,7 @@ public class CommandBackward3 extends SingleLineCommand2<ActivityDiagram3> {
 		return in.withDisplay(Display.getWithNewlines(label));
 	}
 
-	static private Rainbow getRainbow(String key, ActivityDiagram3 diagram, RegexResult arg) {
+	static private Rainbow getRainbow(String key, ActivityDiagram3 diagram, RegexResult arg) throws NoSuchColorException {
 		final String colorString = arg.get(key, 0);
 		if (colorString == null) {
 			return null;

@@ -49,6 +49,7 @@ import net.sourceforge.plantuml.creole.atom.AbstractAtom;
 import net.sourceforge.plantuml.creole.atom.Atom;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UText;
@@ -70,12 +71,24 @@ public final class AtomText extends AbstractAtom implements Atom {
 	private final DelayedDouble marginRight;
 	private final Url url;
 	private final boolean manageSpecialChars;
+	private TextBlock visibility;
 
 	protected AtomText(String text, FontConfiguration style, Url url, DelayedDouble marginLeft,
 			DelayedDouble marginRight, boolean manageSpecialChars) {
 		if (text.contains("" + BackSlash.hiddenNewLine())) {
 			throw new IllegalArgumentException(text);
 		}
+
+//		if (text.length() > 0) {
+//			final VisibilityModifier visibilityModifier = VisibilityModifier.getByUnicode(text.charAt(0));
+//			if (visibilityModifier != null) {
+//				final HColor back = HColorUtils.GREEN;
+//				final HColor fore = HColorUtils.RED;
+//				visibility = visibilityModifier.getUBlock(11, fore, back, url != null);
+//				text = text.substring(1);
+//			}
+//		}
+
 		this.marginLeft = marginLeft;
 		this.marginRight = marginRight;
 		String s = CharHidder.unhide(text);
@@ -104,9 +117,12 @@ public final class AtomText extends AbstractAtom implements Atom {
 		if (h < 10) {
 			h = 10;
 		}
-		final double width = text.indexOf("\t") == -1 ? rect.getWidth() : getWidth(stringBounder, text);
+		double width = text.indexOf("\t") == -1 ? rect.getWidth() : getWidth(stringBounder, text);
 		final double left = marginLeft.getDouble(stringBounder);
 		final double right = marginRight.getDouble(stringBounder);
+		if (visibility != null) {
+			width += visibility.calculateDimension(stringBounder).getWidth();
+		}
 
 		return new Dimension2DDouble(width + left + right, h);
 	}
@@ -118,6 +134,11 @@ public final class AtomText extends AbstractAtom implements Atom {
 		if (ug.matchesProperty("SPECIALTXT")) {
 			ug.draw(this);
 		} else {
+			if (visibility != null) {
+				visibility.drawU(ug.apply(UTranslate.dy(2)));
+				final double width = visibility.calculateDimension(ug.getStringBounder()).getWidth();
+				ug = ug.apply(UTranslate.dx(width));
+			}
 			HColor textColor = fontConfiguration.getColor();
 			FontConfiguration useFontConfiguration = fontConfiguration;
 			if (textColor instanceof HColorAutomatic && ug.getParam().getBackcolor() != null) {
@@ -256,7 +277,7 @@ public final class AtomText extends AbstractAtom implements Atom {
 		}
 		return Collections.singletonList((Atom) this);
 	}
-	
+
 	private boolean isOfWord(char ch) {
 		return Character.isWhitespace(ch) == false;
 	}
@@ -264,7 +285,7 @@ public final class AtomText extends AbstractAtom implements Atom {
 	public final String getText() {
 		return text;
 	}
-	
+
 	public double getStartingAltitude(StringBounder stringBounder) {
 		return fontConfiguration.getSpace();
 	}

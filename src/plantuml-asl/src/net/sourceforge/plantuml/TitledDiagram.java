@@ -44,7 +44,7 @@ import net.sourceforge.plantuml.style.StyleBuilder;
 
 public abstract class TitledDiagram extends AbstractPSystem implements Diagram, Annotated {
 
-	public static final boolean FORCE_JDOT = false;
+	public static final boolean FORCE_SMETANA = false;
 
 	private DisplayPositionned title = DisplayPositionned.none(HorizontalAlignment.CENTER, VerticalAlignment.TOP);
 
@@ -53,6 +53,7 @@ public abstract class TitledDiagram extends AbstractPSystem implements Diagram, 
 	private final DisplaySection header = DisplaySection.none();
 	private final DisplaySection footer = DisplaySection.none();
 	private Display mainFrame;
+	private final UmlDiagramType type;
 
 	private final SkinParam skinParam;
 
@@ -62,22 +63,25 @@ public abstract class TitledDiagram extends AbstractPSystem implements Diagram, 
 		return pragma;
 	}
 
-	public TitledDiagram() {
-		this.skinParam = SkinParam.create(getUmlDiagramType());
+	public TitledDiagram(UmlDiagramType type) {
+		this.type = type;
+		this.skinParam = SkinParam.create(type);
 	}
 
 	public final StyleBuilder getCurrentStyleBuilder() {
 		return skinParam.getCurrentStyleBuilder();
 	}
 
-	public TitledDiagram(ISkinSimple orig) {
-		this();
+	public TitledDiagram(UmlDiagramType type, ISkinSimple orig) {
+		this(type);
 		if (orig != null) {
 			this.skinParam.copyAllFrom(orig);
 		}
 	}
 
-	abstract public UmlDiagramType getUmlDiagramType();
+	final public UmlDiagramType getUmlDiagramType() {
+		return type;
+	}
 
 	public final ISkinParam getSkinParam() {
 		return skinParam;
@@ -184,16 +188,16 @@ public abstract class TitledDiagram extends AbstractPSystem implements Diagram, 
 		return mainFrame;
 	}
 
-	private boolean useJDot;
+	private boolean useSmetana;
 
-	public void setUseJDot(boolean useJDot) {
-		this.useJDot = useJDot;
+	public void setUseSmetana(boolean useSmetana) {
+		this.useSmetana = useSmetana;
 	}
 
-	public boolean isUseJDot() {
-		if (FORCE_JDOT)
+	public boolean isUseSmetana() {
+		if (FORCE_SMETANA)
 			return true;
-		return useJDot;
+		return useSmetana;
 	}
 
 	public final double getScaleCoef(FileFormatOption fileFormatOption) {

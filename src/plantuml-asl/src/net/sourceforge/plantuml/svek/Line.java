@@ -60,6 +60,7 @@ import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkMiddleDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.cucadiagram.NoteLinkStrategy;
+import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.cucadiagram.dot.GraphvizVersion;
 import net.sourceforge.plantuml.descdiagram.command.StringWithArrow;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
@@ -79,12 +80,14 @@ import net.sourceforge.plantuml.posimo.Positionable;
 import net.sourceforge.plantuml.posimo.PositionableUtils;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
 import net.sourceforge.plantuml.skin.rose.Rose;
+import net.sourceforge.plantuml.style.StyleBuilder;
 import net.sourceforge.plantuml.svek.extremity.Extremity;
 import net.sourceforge.plantuml.svek.extremity.ExtremityFactory;
 import net.sourceforge.plantuml.svek.extremity.ExtremityFactoryExtends;
 import net.sourceforge.plantuml.svek.extremity.ExtremityOther;
 import net.sourceforge.plantuml.svek.image.EntityImageNoteLink;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
+import net.sourceforge.plantuml.ugraphic.UGroupType;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.UStroke;
@@ -452,7 +455,7 @@ public class Line implements Moveable, Hideable, GuideLine {
 	}
 
 	private UDrawable getExtremity(LinkDecor decor, PointListIterator pointListIterator, final Point2D center,
-			double angle, Cluster cluster, Node nodeContact) {
+			double angle, Cluster cluster, SvekNode nodeContact) {
 		final ExtremityFactory extremityFactory = decor.getExtremityFactory(backgroundColor);
 
 		if (cluster != null) {
@@ -614,11 +617,13 @@ public class Line implements Moveable, Hideable, GuideLine {
 
 	}
 
-	public void drawU(UGraphic ug, HColor color, Set<String> ids) {
+	public void drawU(UGraphic ug, UStroke suggestedStroke, HColor color, Set<String> ids) {
 		if (opale) {
 			return;
 		}
 		ug.draw(link.commentForSvg());
+		ug.startGroup(UGroupType.CLASS,
+				"link " + link.getEntity1().getCode() + " " + link.getEntity2().getCode() + " selected");
 		double x = 0;
 		double y = 0;
 		final Url url = link.getUrl();
@@ -653,7 +658,9 @@ public class Line implements Moveable, Hideable, GuideLine {
 
 		ug = ug.apply(new HColorNone().bg()).apply(color);
 		final LinkType linkType = link.getType();
-		UStroke stroke = linkType.getStroke3(defaultThickness);
+		UStroke stroke = suggestedStroke == null || linkType.getStyle().isNormal() == false
+				? linkType.getStroke3(defaultThickness)
+				: suggestedStroke;
 		if (link.getColors() != null && link.getColors().getSpecificLineStroke() != null) {
 			stroke = link.getColors().getSpecificLineStroke();
 		}
@@ -716,7 +723,7 @@ public class Line implements Moveable, Hideable, GuideLine {
 			final PointAndAngle middle = dotPath.getMiddle();
 			final double angleRad = middle.getAngle();
 			final double angleDeg = -angleRad * 180.0 / Math.PI;
-			final UDrawable mi = linkType.getMiddleDecor().getMiddleFactory(arrowLollipopColor)
+			final UDrawable mi = linkType.getMiddleDecor().getMiddleFactory(arrowLollipopColor, backgroundColor)
 					.createUDrawable(angleDeg - 45);
 			mi.drawU(ug.apply(new UTranslate(x + middle.getX(), y + middle.getY())));
 		}
@@ -745,6 +752,8 @@ public class Line implements Moveable, Hideable, GuideLine {
 			link.getLinkConstraint().setPosition(link, minPt);
 			link.getLinkConstraint().drawMe(ug, skinParam);
 		}
+
+		ug.closeGroup();
 	}
 
 	private List<Point2D> getSquare(double x, double y) {
@@ -865,9 +874,9 @@ public class Line implements Moveable, Hideable, GuideLine {
 		return strategy.getResult() + getDecorDzeta();
 	}
 
-	public void manageCollision(Collection<Node> allNodes) {
+	public void manageCollision(Collection<SvekNode> allNodes) {
 
-		for (Node sh : allNodes) {
+		for (SvekNode sh : allNodes) {
 			final Positionable cl = PositionableUtils.addMargin(sh, 8, 8);
 			if (startTailText != null && startTailLabelXY != null
 					&& PositionableUtils.intersect(cl, startTailLabelXY)) {
@@ -898,7 +907,7 @@ public class Line implements Moveable, Hideable, GuideLine {
 
 	}
 
-	private void avoid(Point2D.Double move, Positionable pos, Node sh) {
+	private void avoid(Point2D.Double move, Positionable pos, SvekNode sh) {
 		final Oscillator oscillator = new Oscillator();
 		final Point2D.Double orig = new Point2D.Double(move.x, move.y);
 		while (cut(pos, sh)) {
@@ -907,7 +916,7 @@ public class Line implements Moveable, Hideable, GuideLine {
 		}
 	}
 
-	private boolean cut(Positionable pos, Node sh) {
+	private boolean cut(Positionable pos, SvekNode sh) {
 		return BezierUtils.intersect(pos, sh) || tooClose(pos);
 	}
 
@@ -1011,6 +1020,14 @@ public class Line implements Moveable, Hideable, GuideLine {
 			return link.getOther(entity);
 		}
 		return null;
+	}
+
+	public StyleBuilder getCurrentStyleBuilder() {
+		return link.getStyleBuilder();
+	}
+
+	public Stereotype getStereotype() {
+		return link.getStereotype();
 	}
 
 }

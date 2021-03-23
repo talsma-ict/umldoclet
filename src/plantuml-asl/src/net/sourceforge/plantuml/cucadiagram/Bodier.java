@@ -36,21 +36,22 @@ import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
 
 public interface Bodier {
 
 	public void setLeaf(ILeaf leaf);
 
-	public List<Member> getFieldsToDisplay();
+	public Display getFieldsToDisplay();
 
-	public List<Member> getMethodsToDisplay();
+	public Display getMethodsToDisplay();
 
-	public void addFieldOrMethod(String s);
+	public void addFieldOrMethod(String s) throws NoSuchColorException;
 
 	public TextBlock getBody(FontParam fontParam, ISkinParam skinParam, boolean showMethods, boolean showFields,
 			Stereotype stereotype, Style style);
 
-	public List<String> getRawBody();
+	public List<CharSequence> getRawBody();
 
 	public void muteClassToObject();
 

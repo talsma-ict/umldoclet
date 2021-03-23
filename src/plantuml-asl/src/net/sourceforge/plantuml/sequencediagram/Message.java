@@ -30,6 +30,9 @@
  */
 package net.sourceforge.plantuml.sequencediagram;
 
+import java.util.Collections;
+import java.util.List;
+
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.skin.ArrowConfiguration;
 import net.sourceforge.plantuml.style.StyleBuilder;
@@ -72,6 +75,16 @@ public final class Message extends AbstractMessage {
 
 	public boolean isSelfMessage() {
 		return p1 == p2;
+	}
+
+	private List<Participant> multicast = Collections.emptyList();
+
+	public void setMulticast(List<Participant> multicast) {
+		this.multicast = multicast;
+	}
+
+	public List<Participant> getMulticast() {
+		return multicast;
 	}
 
 }

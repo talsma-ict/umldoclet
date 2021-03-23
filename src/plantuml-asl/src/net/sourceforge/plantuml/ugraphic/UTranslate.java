@@ -111,4 +111,8 @@ public class UTranslate implements UChange {
 		return new UTranslate(dy, dx);
 	}
 
+	public Point2D getPosition() {
+		return new Point2D.Double(dx, dy);
+	}
+
 }

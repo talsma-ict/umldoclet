@@ -33,7 +33,7 @@ package net.sourceforge.plantuml.svek;
 
 public enum SingleStrategy {
 
-	SQUARRE, HLINE, VLINE;
+	SQUARE, HLINE, VLINE;
 
 //	private Collection<Link> generateLinks(List<ILeaf> standalones) {
 //		return putInSquare(standalones);

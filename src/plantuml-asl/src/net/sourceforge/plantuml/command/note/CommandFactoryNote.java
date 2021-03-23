@@ -50,6 +50,7 @@ import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.Stereotag;
 import net.sourceforge.plantuml.graphic.color.ColorParser;
 import net.sourceforge.plantuml.graphic.color.ColorType;
+import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
 
 public final class CommandFactoryNote implements SingleMultiFactoryCommand<AbstractEntityDiagram> {
 
@@ -65,7 +66,7 @@ public final class CommandFactoryNote implements SingleMultiFactoryCommand<Abstr
 				RegexLeaf.spaceZeroOrMore(), //
 				ColorParser.exp1(), //
 				RegexLeaf.end() //
-				);
+		);
 	}
 
 	private IRegex getRegexConcatSingleLine() {
@@ -84,7 +85,7 @@ public final class CommandFactoryNote implements SingleMultiFactoryCommand<Abstr
 				RegexLeaf.spaceZeroOrMore(), //
 				ColorParser.exp1(), //
 				RegexLeaf.end() //
-				);
+		);
 
 	}
 
@@ -93,7 +94,7 @@ public final class CommandFactoryNote implements SingleMultiFactoryCommand<Abstr
 
 			@Override
 			protected CommandExecutionResult executeArg(final AbstractEntityDiagram system, LineLocation location,
-					RegexResult arg) {
+					RegexResult arg) throws NoSuchColorException {
 				final String display = arg.get("DISPLAY", 0);
 				return executeInternal(system, arg, BlocLines.getWithNewlines(display));
 			}
@@ -110,7 +111,7 @@ public final class CommandFactoryNote implements SingleMultiFactoryCommand<Abstr
 				return "(?i)^[%s]*end[%s]?note$";
 			}
 
-			protected CommandExecutionResult executeNow(final AbstractEntityDiagram system, BlocLines lines) {
+			protected CommandExecutionResult executeNow(final AbstractEntityDiagram system, BlocLines lines) throws NoSuchColorException {
 				// StringUtils.trim(lines, false);
 				final RegexResult line0 = getStartingPattern().matcher(lines.getFirst().getTrimmed().getString());
 				lines = lines.subExtract(1, 1);
@@ -120,7 +121,7 @@ public final class CommandFactoryNote implements SingleMultiFactoryCommand<Abstr
 		};
 	}
 
-	private CommandExecutionResult executeInternal(AbstractEntityDiagram diagram, RegexResult arg, BlocLines display) {
+	private CommandExecutionResult executeInternal(AbstractEntityDiagram diagram, RegexResult arg, BlocLines display) throws NoSuchColorException {
 		final String idShort = arg.get("CODE", 0);
 		final Ident ident = diagram.buildLeafIdent(idShort);
 		final Code code = diagram.V1972() ? ident : diagram.buildCode(idShort);
@@ -130,8 +131,9 @@ public final class CommandFactoryNote implements SingleMultiFactoryCommand<Abstr
 		}
 		final IEntity entity = diagram.createLeaf(ident, code, display.toDisplay(), LeafType.NOTE, null);
 		assert entity != null;
+		final String s = arg.get("COLOR", 0);
 		entity.setSpecificColorTOBEREMOVED(ColorType.BACK,
-				diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("COLOR", 0)));
+				s == null ? null : diagram.getSkinParam().getIHtmlColorSet().getColor(s));
 		CommandCreateClassMultilines.addTags(entity, arg.get("TAGS", 0));
 		return CommandExecutionResult.ok();
 	}

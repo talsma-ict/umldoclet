@@ -41,7 +41,7 @@ import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.Scale;
 import net.sourceforge.plantuml.SkinParam;
-import net.sourceforge.plantuml.UmlDiagram;
+import net.sourceforge.plantuml.TitledDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.core.DiagramDescription;
@@ -65,13 +65,14 @@ import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 
-public class JsonDiagram extends UmlDiagram {
+public class JsonDiagram extends TitledDiagram {
 
 	private final JsonValue root;
 	private final List<String> highlighted;
 
-	public JsonDiagram(JsonValue json, List<String> highlighted) {
-		if (json.isString() || json.isBoolean() || json.isNumber()) {
+	public JsonDiagram(UmlDiagramType type, JsonValue json, List<String> highlighted) {
+		super(type);
+		if (json != null && (json.isString() || json.isBoolean() || json.isNumber())) {
 			this.root = new JsonArray();
 			((JsonArray) this.root).add(json);
 		} else {
@@ -81,16 +82,14 @@ public class JsonDiagram extends UmlDiagram {
 	}
 
 	public DiagramDescription getDescription() {
+		if (getUmlDiagramType() == UmlDiagramType.YAML) {
+			return new DiagramDescription("(Yaml)");
+		}
 		return new DiagramDescription("(Json)");
 	}
 
 	@Override
-	public UmlDiagramType getUmlDiagramType() {
-		return UmlDiagramType.JSON;
-	}
-
-	@Override
-	protected ImageData exportDiagramInternal(OutputStream os, int index, FileFormatOption fileFormatOption)
+	protected ImageData exportDiagramNow(OutputStream os, int index, FileFormatOption fileFormatOption, long seed)
 			throws IOException {
 		final Scale scale = getScale();
 
@@ -106,8 +105,9 @@ public class JsonDiagram extends UmlDiagram {
 			margin2 = 10;
 		}
 		final ClockwiseTopRightBottomLeft margins = ClockwiseTopRightBottomLeft.margin1margin2(margin1, margin2);
-		final ImageParameter imageParameter = new ImageParameter(new ColorMapperIdentity(), false, null, dpiFactor, "",
-				"", margins, null);
+		final String metadata = fileFormatOption.isWithMetadata() ? getMetadata() : null;
+		final ImageParameter imageParameter = new ImageParameter(new ColorMapperIdentity(), false, null, dpiFactor,
+				metadata, "", margins, null);
 		final ImageBuilder imageBuilder = ImageBuilder.build(imageParameter);
 		TextBlock result = getTextBlock();
 		result = new AnnotatedWorker(this, skinParam, fileFormatOption.getDefaultStringBounder(getSkinParam()))
@@ -119,7 +119,8 @@ public class JsonDiagram extends UmlDiagram {
 
 	private void drawInternal(UGraphic ug) {
 		if (root == null) {
-			final Display display = Display.getWithNewlines("Your data does not sound like JSON data");
+			final Display display = Display
+					.getWithNewlines("Your data does not sound like " + getUmlDiagramType() + " data");
 			final FontConfiguration fontConfiguration = FontConfiguration.blackBlueTrue(UFont.courier(14));
 			TextBlock result = display.create(fontConfiguration, HorizontalAlignment.LEFT, getSkinParam());
 			result = TextBlockUtils.withMargin(result, 5, 2);

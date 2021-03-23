@@ -33,6 +33,7 @@ package net.sourceforge.plantuml.graphic.color;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.ugraphic.color.HColorSet;
+import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
 
 public class ColorParser {
 
@@ -51,7 +52,7 @@ public class ColorParser {
 		this.mainType = mainType;
 	}
 
-	public Colors getColor(RegexResult arg, HColorSet set) {
+	public Colors getColor(RegexResult arg, HColorSet set) throws NoSuchColorException {
 		if (mainType == null) {
 			throw new IllegalStateException();
 		}

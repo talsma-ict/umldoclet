@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.descdiagram;
 
-import net.sourceforge.plantuml.ComponentStyle;
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagramType;
@@ -44,7 +43,7 @@ import net.sourceforge.plantuml.graphic.USymbol;
 public class DescriptionDiagram extends AbstractEntityDiagram {
 
 	public DescriptionDiagram(ISkinSimple skinParam) {
-		super(skinParam);
+		super(UmlDiagramType.DESCRIPTION, skinParam);
 	}
 
 	@Override
@@ -70,7 +69,7 @@ public class DescriptionDiagram extends AbstractEntityDiagram {
 		if (type == null) {
 			String codeString = code.getName();
 			if (codeString.startsWith("[") && codeString.endsWith("]")) {
-				final USymbol sym = getSkinParam().componentStyle().toUSymbol() ;
+				final USymbol sym = getSkinParam().componentStyle().toUSymbol();
 				final Ident idNewLong = ident.eventuallyRemoveStartingAndEndingDoubleQuote("\"([:");
 				return getOrCreateLeafDefault(idNewLong, idNewLong.toCode(this), LeafType.DESCRIPTION, sym);
 			}
@@ -121,11 +120,6 @@ public class DescriptionDiagram extends AbstractEntityDiagram {
 	public String checkFinalError() {
 		this.applySingleStrategy();
 		return super.checkFinalError();
-	}
-
-	@Override
-	public UmlDiagramType getUmlDiagramType() {
-		return UmlDiagramType.DESCRIPTION;
 	}
 
 }

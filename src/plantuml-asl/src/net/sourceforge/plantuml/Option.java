@@ -74,6 +74,7 @@ public class Option {
 	private boolean textProgressBar = false;
 	private int nbThreads = 0;
 	private int ftpPort = -1;
+	private String picowebBindAddress = null;
 	private int picowebPort = -1;
 	private boolean hideMetadata = false;
 	private boolean checkMetadata = false;
@@ -365,12 +366,9 @@ public class Option {
 					this.ftpPort = Integer.parseInt(s.substring(x + 1));
 				}
 			} else if (StringUtils.goLowerCase(s).startsWith("-picoweb")) {
-				final int x = s.indexOf(':');
-				if (x == -1) {
-					this.picowebPort = 8080;
-				} else {
-					this.picowebPort = Integer.parseInt(s.substring(x + 1));
-				}
+				final String[] parts = s.split(":");
+				this.picowebPort = parts.length > 1 ? Integer.parseInt(parts[1]) : 8080;
+				this.picowebBindAddress = parts.length > 2 ? parts[2] : null;
 			} else if (s.startsWith("-c")) {
 				s = s.substring(2);
 				config.add(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(s));
@@ -396,6 +394,10 @@ public class Option {
 
 	public int getFtpPort() {
 		return ftpPort;
+	}
+
+	public String getPicowebBindAddress() {
+		return picowebBindAddress;
 	}
 
 	public int getPicowebPort() {

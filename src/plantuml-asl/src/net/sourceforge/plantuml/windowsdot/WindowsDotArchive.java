@@ -39,9 +39,25 @@ import java.io.OutputStream;
 
 import net.sourceforge.plantuml.brotli.BrotliInputStream;
 
-public class WindowsDotArchive {
+public final class WindowsDotArchive {
 
-	final public String readString(InputStream is) throws IOException {
+	private static WindowsDotArchive singleton = null;
+
+	private Boolean isThereArchive;
+	private File exe;
+
+	private WindowsDotArchive() {
+
+	}
+
+	public final synchronized static WindowsDotArchive getInstance() {
+		if (singleton == null) {
+			singleton = new WindowsDotArchive();
+		}
+		return singleton;
+	}
+
+	final static public String readString(InputStream is) throws IOException {
 		int len = readByte(is);
 		final StringBuilder sb = new StringBuilder(len);
 		for (int i = 0; i < len; i++) {
@@ -51,19 +67,19 @@ public class WindowsDotArchive {
 		return sb.toString();
 	}
 
-	final public int readNumber(InputStream is) throws IOException {
+	final static public int readNumber(InputStream is) throws IOException {
 		int result = readByte(is);
 		result = result * 256 + readByte(is);
 		result = result * 256 + readByte(is);
 		return result;
 	}
 
-	private int readByte(InputStream is) throws IOException {
+	private static int readByte(InputStream is) throws IOException {
 		return is.read();
 	}
 
-	private void extract(File dir) throws IOException {
-		final InputStream raw = getClass().getResourceAsStream("graphviz.dat");
+	private static void extract(File dir) throws IOException {
+		final InputStream raw = WindowsDotArchive.class.getResourceAsStream("graphviz.dat");
 		final BrotliInputStream is = new BrotliInputStream(raw);
 
 		while (true) {
@@ -80,11 +96,32 @@ public class WindowsDotArchive {
 		is.close();
 	}
 
-	public File getWindowsExeLite() throws IOException {
-		final File tmp = new File(System.getProperty("java.io.tmpdir"), "_graphviz");
-		tmp.mkdirs();
-		extract(tmp);
-		return new File(tmp, "dot.exe");
+	public synchronized boolean isThereArchive() {
+		if (isThereArchive == null)
+			try {
+				final InputStream raw = WindowsDotArchive.class.getResourceAsStream("graphviz.dat");
+				isThereArchive = raw != null;
+				raw.close();
+			} catch (Exception e) {
+				isThereArchive = false;
+			}
+		return isThereArchive;
+	}
+
+	public synchronized File getWindowsExeLite() {
+		if (isThereArchive() == false) {
+			return null;
+		}
+		if (exe == null)
+			try {
+				final File tmp = new File(System.getProperty("java.io.tmpdir"), "_graphviz");
+				tmp.mkdirs();
+				extract(tmp);
+				exe = new File(tmp, "dot.exe");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		return exe;
 	}
 
 }

@@ -64,7 +64,8 @@ public class EventsHistory {
 
 	public int getLevelAt(Event event, EventsHistoryMode mode) {
 		final int result = getLevelAtInternal(event, mode);
-		// System.err.println("EventsHistory::getLevelAt " + mode + " " + result + " " + event);
+		// System.err.println("EventsHistory::getLevelAt " + mode + " " + result + " " +
+		// event);
 		return result;
 	}
 
@@ -176,7 +177,8 @@ public class EventsHistory {
 		int value = 0;
 		for (Event event : events) {
 			final Double position = ys3.get(event);
-			// System.err.println("EventsHistory::getStairs event=" + event + " position=" + position);
+			// System.err.println("EventsHistory::getStairs event=" + event + " position=" +
+			// position);
 			if (position != null) {
 				assert position <= totalHeight : "position=" + position + " totalHeight=" + totalHeight;
 				value = getLevelAt(event, EventsHistoryMode.CONSIDERE_FUTURE_DEACTIVATE);
@@ -185,7 +187,8 @@ public class EventsHistory {
 						activateColor);
 			}
 		}
-		// System.err.println("EventsHistory::getStairs finishing totalHeight=" + totalHeight);
+		// System.err.println("EventsHistory::getStairs finishing totalHeight=" +
+		// totalHeight);
 		result.addStep(new StairsPosition(totalHeight, false), value, null);
 		// System.err.println("EventsHistory::getStairs " + p + " result=" + result);
 		return result;

@@ -53,7 +53,7 @@ import net.sourceforge.plantuml.creole.CreoleMode;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramTxtMaker;
 import net.sourceforge.plantuml.cucadiagram.entity.EntityFactory;
 import net.sourceforge.plantuml.graphic.USymbol;
-import net.sourceforge.plantuml.jdot.CucaDiagramFileMakerJDot;
+import net.sourceforge.plantuml.sdot.CucaDiagramFileMakerSmetana;
 import net.sourceforge.plantuml.security.SecurityUtils;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
 import net.sourceforge.plantuml.statediagram.StateDiagram;
@@ -113,8 +113,8 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		return ident;
 	}
 
-	public CucaDiagram(ISkinSimple orig) {
-		super(orig);
+	public CucaDiagram(UmlDiagramType type, ISkinSimple orig) {
+		super(type, orig);
 		this.stacks2.add(Ident.empty());
 	}
 
@@ -220,7 +220,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 	private Ident buildLeafIdentSpecialUnused(String id) {
 //		if (namespaceSeparator != null) {
 //			if (id.contains(namespaceSeparator)) {
-				return Ident.empty().add(id, ".");
+		return Ident.empty().add(id, ".");
 //			}
 //		}
 //		return getLastID().add(id, namespaceSeparator);
@@ -592,8 +592,9 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 				result.add(s);
 			}
 		}
-		final String aspect = getPragma().getValue("aspect");
+		String aspect = getPragma().getValue("aspect");
 		if (aspect != null) {
+			aspect = aspect.replace(',', '.');
 			result.add("aspect=" + aspect + ";");
 		}
 		final String ratio = getPragma().getValue("ratio");
@@ -643,8 +644,8 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 
 		entityFactory.buildSuperGroups();
 
-		final CucaDiagramFileMaker maker = this.isUseJDot()
-				? new CucaDiagramFileMakerJDot(this, fileFormatOption.getDefaultStringBounder(getSkinParam()))
+		final CucaDiagramFileMaker maker = this.isUseSmetana()
+				? new CucaDiagramFileMakerSmetana(this, fileFormatOption.getDefaultStringBounder(getSkinParam()))
 				: new CucaDiagramFileMakerSvek(this);
 		final ImageData result = maker.createFile(os, getDotStrings(), fileFormatOption);
 

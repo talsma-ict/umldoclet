@@ -93,12 +93,12 @@ public abstract class UmlDiagram extends TitledDiagram implements Diagram, Annot
 
 	private Animation animation;
 
-	public UmlDiagram() {
-		super();
+	public UmlDiagram(UmlDiagramType type) {
+		super(type);
 	}
 
-	public UmlDiagram(ISkinSimple orig) {
-		super(orig);
+	public UmlDiagram(UmlDiagramType type, ISkinSimple orig) {
+		super(type, orig);
 	}
 
 	final public int getMinwidth() {
@@ -177,11 +177,8 @@ public abstract class UmlDiagram extends TitledDiagram implements Diagram, Annot
 		} catch (UnparsableGraphvizException e) {
 			e.printStackTrace();
 			exportDiagramError(os, e.getCause(), fileFormatOption, seed, e.getGraphvizVersion());
-		} catch (Exception e) {
-			e.printStackTrace();
-			exportDiagramError(os, e, fileFormatOption, seed, null);
-		} catch (Error e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			//e.printStackTrace();
 			exportDiagramError(os, e, fileFormatOption, seed, null);
 		}
 		return ImageDataSimple.error();

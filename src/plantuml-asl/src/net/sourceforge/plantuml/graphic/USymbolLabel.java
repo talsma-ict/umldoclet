@@ -112,9 +112,4 @@ class USymbolLabel extends USymbol {
 		};
 	}
 
-	@Override
-	public boolean manageHorizontalLine() {
-		return true;
-	}
-
 }

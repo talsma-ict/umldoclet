@@ -58,9 +58,6 @@ public class PSystemWelcome extends AbstractPSystem {
 		this.position = position;
 		strings.add("<b>Welcome to PlantUML!");
 		strings.add(" ");
-		strings.add("If you use this software, you accept its license.");
-		strings.add("(details by typing \"\"license\"\" keyword)");
-		strings.add(" ");
 		strings.add("You can start with a simple UML Diagram like:");
 		strings.add(" ");
 		strings.add("\"\"Bob->Alice: Hello\"\"");
@@ -70,6 +67,10 @@ public class PSystemWelcome extends AbstractPSystem {
 		strings.add("\"\"class Example\"\"");
 		strings.add(" ");
 		strings.add("You will find more information about PlantUML syntax on <u>https://plantuml.com</u>");
+		strings.add(" ");
+		strings.add("(If you use this software, you accept its license)");
+		strings.add("(Details by typing \"\"license\"\" keyword)");
+		strings.add(" ");
 		if (position == GraphicPosition.BACKGROUND_CORNER_BOTTOM_RIGHT) {
 			strings.add(" ");
 			strings.add(" ");

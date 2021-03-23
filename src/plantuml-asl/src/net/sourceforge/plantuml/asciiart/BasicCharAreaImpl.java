@@ -35,6 +35,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import net.sourceforge.plantuml.StringUtils;
+
 public class BasicCharAreaImpl implements BasicCharArea {
 
 	private int charSize1 = 160;
@@ -136,7 +138,7 @@ public class BasicCharAreaImpl implements BasicCharArea {
 		for (int x = 0; x < width; x++) {
 			final char c = chars[x][line];
 			if (c != '\0') {
-				sb.append(c);
+				StringUtils.appendInternalToRealBoldNumber(sb, c);
 			}
 		}
 		return sb.toString();

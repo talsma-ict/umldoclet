@@ -35,6 +35,7 @@ import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.Direction;
 import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand2;
 import net.sourceforge.plantuml.command.regex.IRegex;
@@ -56,6 +57,7 @@ import net.sourceforge.plantuml.descdiagram.DescriptionDiagram;
 import net.sourceforge.plantuml.graphic.USymbol;
 import net.sourceforge.plantuml.graphic.color.ColorParser;
 import net.sourceforge.plantuml.graphic.color.ColorType;
+import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
 
 public class CommandLinkElement extends SingleLineCommand2<DescriptionDiagram> {
 
@@ -222,7 +224,8 @@ public class CommandLinkElement extends SingleLineCommand2<DescriptionDiagram> {
 	}
 
 	@Override
-	protected CommandExecutionResult executeArg(DescriptionDiagram diagram, LineLocation location, RegexResult arg) {
+	protected CommandExecutionResult executeArg(DescriptionDiagram diagram, LineLocation location, RegexResult arg)
+			throws NoSuchColorException {
 		final String ent1String = arg.get("ENT1", 0);
 		final String ent2String = arg.get("ENT2", 0);
 		final Ident ident1 = diagram.buildFullyQualified(ent1String);
@@ -264,7 +267,11 @@ public class CommandLinkElement extends SingleLineCommand2<DescriptionDiagram> {
 		link.applyStyle(arg.getLazzy("ARROW_STYLE", 0));
 		if (arg.get("STEREOTYPE", 0) != null) {
 			final Stereotype stereotype = new Stereotype(arg.get("STEREOTYPE", 0));
-			link.setColors(link.getColors().applyStereotype(stereotype, diagram.getSkinParam(), ColorParam.arrow));
+			if (UseStyle.useBetaStyle()) {
+				link.setStereotype(stereotype);
+			} else {
+				link.setColors(link.getColors().applyStereotype(stereotype, diagram.getSkinParam(), ColorParam.arrow));
+			}
 		}
 		diagram.addLink(link);
 		return CommandExecutionResult.ok();

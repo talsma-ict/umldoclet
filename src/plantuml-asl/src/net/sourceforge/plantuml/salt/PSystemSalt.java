@@ -91,6 +91,7 @@ import net.sourceforge.plantuml.ugraphic.MinMax;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
+import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
 
 public class PSystemSalt extends TitledDiagram implements WithSprite {
 
@@ -99,6 +100,7 @@ public class PSystemSalt extends TitledDiagram implements WithSprite {
 
 	@Deprecated
 	public PSystemSalt(List<String> data) {
+		super(UmlDiagramType.SALT);
 		this.data = data;
 	}
 
@@ -211,7 +213,10 @@ public class PSystemSalt extends TitledDiagram implements WithSprite {
 					s = it.next();
 					bloc = bloc.addString(s);
 				} while (s.equals("}") == false);
-				final CommandExecutionResult cmdResult = cmd.execute(this, bloc);
+				try {
+					final CommandExecutionResult cmdResult = cmd.execute(this, bloc);
+				} catch (NoSuchColorException e) {
+				}
 			} else {
 				result.add(s);
 			}
@@ -273,11 +278,6 @@ public class PSystemSalt extends TitledDiagram implements WithSprite {
 
 	public void setIamSalt(boolean iamSalt) {
 		this.iamSalt = true;
-	}
-
-	@Override
-	public UmlDiagramType getUmlDiagramType() {
-		return UmlDiagramType.SALT;
 	}
 
 	public final boolean isIamSalt() {

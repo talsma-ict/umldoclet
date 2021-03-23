@@ -46,7 +46,6 @@ import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.StringLocated;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.json.Json;
-import net.sourceforge.plantuml.json.JsonObject;
 import net.sourceforge.plantuml.json.JsonValue;
 import net.sourceforge.plantuml.preproc.Defines;
 import net.sourceforge.plantuml.preproc.FileWithSuffix;
@@ -191,17 +190,6 @@ public class TContext {
 		} catch (Exception e) {
 			return TValue.fromString(result);
 		}
-	}
-
-	private TValue fromJsonOld(TMemory memory, String name) {
-		final int x = name.indexOf('.');
-		final TValue data = memory.getVariable(name.substring(0, x));
-		if (data == null) {
-			return null;
-		}
-		final JsonObject json = (JsonObject) data.toJson();
-		final JsonValue result = json.get(name.substring(x + 1));
-		return TValue.fromJson(result);
 	}
 
 	private CodeIterator buildCodeIterator(TMemory memory, List<StringLocated> body) {
@@ -383,7 +371,7 @@ public class TContext {
 
 	private String pendingAdd = null;
 
-	public String applyFunctionsAndVariables(TMemory memory, LineLocation location, String str)
+	public String applyFunctionsAndVariables(TMemory memory, LineLocation location, final String str)
 			throws EaterException, EaterExceptionLocated {
 		// https://en.wikipedia.org/wiki/Boyer%E2%80%93Moore%E2%80%93Horspool_algorithm
 		// https://stackoverflow.com/questions/1326682/java-replacing-multiple-different-substring-in-a-string-at-once-or-in-the-most
@@ -410,12 +398,17 @@ public class TContext {
 				}
 				if (function.getFunctionType() == TFunctionType.PROCEDURE) {
 					this.pendingAdd = result.toString();
-					executeVoid3(location, memory, sub, function);
+					executeVoid3(location, memory, sub, function, call);
+					i += call.getCurrentPosition();
+					final String remaining = str.substring(i);
+					if (remaining.length() > 0) {
+						appendToLastResult(remaining);
+					}
 					return null;
 				}
 				if (function.getFunctionType() == TFunctionType.LEGACY_DEFINELONG) {
 					this.pendingAdd = str.substring(0, i);
-					executeVoid3(location, memory, sub, function);
+					executeVoid3(location, memory, sub, function, call);
 					return null;
 				}
 				assert function.getFunctionType() == TFunctionType.RETURN_FUNCTION
@@ -433,9 +426,16 @@ public class TContext {
 		return result.toString();
 	}
 
-	private void executeVoid3(LineLocation location, TMemory memory, String s, TFunction function)
-			throws EaterException, EaterExceptionLocated {
-		function.executeProcedure(this, memory, location, s);
+	private void appendToLastResult(String remaining) {
+		final StringLocated last = this.resultList.get(this.resultList.size() - 1);
+		this.resultList.set(this.resultList.size() - 1, last.append(remaining));
+	}
+
+	private void executeVoid3(LineLocation location, TMemory memory, String s, TFunction function,
+			EaterFunctionCall call) throws EaterException, EaterExceptionLocated {
+		function.executeProcedureInternal(this, memory, call.getValues(), call.getNamedArguments());
+		// function.executeProcedure(this, memory, location, s, call.getValues(),
+		// call.getNamedArguments());
 	}
 
 	private void executeImport(TMemory memory, StringLocated s) throws EaterException, EaterExceptionLocated {
@@ -482,9 +482,13 @@ public class TContext {
 						if (reader == null) {
 							throw EaterException.located("cannot include " + location);
 						}
-						ReadLine readerline = ReadLineReader.create(reader, location, s.getLocation());
-						readerline = new UncommentReadLine(readerline);
-						sub = Sub.fromFile(readerline, blocname, this, memory);
+						try {
+							ReadLine readerline = ReadLineReader.create(reader, location, s.getLocation());
+							readerline = new UncommentReadLine(readerline);
+							sub = Sub.fromFile(readerline, blocname, this, memory);
+						} finally {
+							reader.close();
+						}
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -510,7 +514,7 @@ public class TContext {
 		include.analyze(this, memory);
 		final String definitionName = include.getLocation();
 		final List<String> definition = definitionsContainer.getDefinition(definitionName);
-		ReadLine reader2 = new ReadLineList(definition, s.getLocation());
+		final ReadLine reader2 = new ReadLineList(definition, s.getLocation());
 
 		try {
 			final List<StringLocated> body = new ArrayList<StringLocated>();
@@ -525,6 +529,12 @@ public class TContext {
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw EaterException.located("" + e);
+		} finally {
+			try {
+				reader2.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -549,9 +559,7 @@ public class TContext {
 					throw EaterException.located("Cannot open URL");
 				}
 				reader2 = PreprocessorUtils.getReaderIncludeUrl2(url, s, suf, charset);
-
-			}
-			if (location.startsWith("<") && location.endsWith(">")) {
+			} else if (location.startsWith("<") && location.endsWith(">")) {
 				reader2 = PreprocessorUtils.getReaderStdlibInclude(s, location.substring(1, location.length() - 1));
 			} else {
 				final FileWithSuffix f2 = importedFiles.getFile(location, suf);
@@ -598,6 +606,14 @@ public class TContext {
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw EaterException.located("cannot include " + e);
+		} finally {
+			if (reader2 != null) {
+				try {
+					reader2.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 
 		throw EaterException.located("cannot include " + location);

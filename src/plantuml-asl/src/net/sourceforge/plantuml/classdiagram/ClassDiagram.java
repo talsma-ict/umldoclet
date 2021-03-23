@@ -62,7 +62,7 @@ import net.sourceforge.plantuml.ugraphic.color.HColor;
 public class ClassDiagram extends AbstractClassOrObjectDiagram {
 
 	public ClassDiagram(ISkinSimple skinParam) {
-		super(skinParam);
+		super(UmlDiagramType.CLASS, skinParam);
 	}
 
 	private Code getShortName1972(Code code) {
@@ -163,11 +163,6 @@ public class ClassDiagram extends AbstractClassOrObjectDiagram {
 			return super.leafExist(code);
 		}
 		return super.leafExist(getFullyQualifiedCode1972(code));
-	}
-
-	@Override
-	public UmlDiagramType getUmlDiagramType() {
-		return UmlDiagramType.CLASS;
 	}
 
 	private boolean allowMixing;

@@ -44,6 +44,8 @@ public interface ArrowComponent extends Component {
 	double getPaddingY();
 	
 	public double getYPoint(StringBounder stringBounder);
+	
+	public double getPosArrow(StringBounder stringBounder);
 
 
 }

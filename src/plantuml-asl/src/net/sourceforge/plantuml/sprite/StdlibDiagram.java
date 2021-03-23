@@ -65,6 +65,7 @@ import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
+import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
 
 public class StdlibDiagram extends UmlDiagram {
 
@@ -72,16 +73,11 @@ public class StdlibDiagram extends UmlDiagram {
 	private String name;
 
 	public StdlibDiagram(ISkinSimple skinParam) {
-		super(skinParam);
+		super(UmlDiagramType.HELP, skinParam);
 	}
 
 	public DiagramDescription getDescription() {
 		return new DiagramDescription("(Sprites)");
-	}
-
-	@Override
-	public UmlDiagramType getUmlDiagramType() {
-		return UmlDiagramType.HELP;
 	}
 
 	@Override
@@ -148,7 +144,11 @@ public class StdlibDiagram extends UmlDiagram {
 		for (String s : all) {
 			// System.err.println("s="+s);
 			final BlocLines bloc = BlocLines.fromArray(s.split("\n"));
-			cmd.execute(this, bloc);
+			try {
+				cmd.execute(this, bloc);
+			} catch (NoSuchColorException e) {
+				e.printStackTrace();
+			}
 //			System.err.println("nb=" + nb);
 			nb++;
 		}
