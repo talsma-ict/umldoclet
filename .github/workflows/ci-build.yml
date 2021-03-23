@@ -3,10 +3,10 @@ name: CI build
 # Run this workflow every time a new commit pushed to your repository
 on:
   push:
-    branches:
-      - '**'
-    tags-ignore:
-      - '**'
+    branches: [ '**' ]
+    tags-ignore: [ '**' ]
+  pull_request:
+    types: [ opened, synchronize, reopened ]
 
 jobs:
   build:
@@ -18,9 +18,13 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup GPG
+        if: env.GPG_SECRET_KEYS != null && env.GPG_OWNERTRUST != null
         run: |
-          cat <(echo -e "${{ secrets.GPG_SECRET_KEYS }}") | base64 --decode | gpg --batch --import
-          cat <(echo -e "${{ secrets.GPG_OWNERTRUST }}") | base64 --decode | gpg --batch --import-ownertrust
+          cat <(echo -e "${{ env.GPG_SECRET_KEYS }}") | base64 --decode | gpg --batch --import
+          cat <(echo -e "${{ env.GPG_OWNERTRUST }}") | base64 --decode | gpg --batch --import-ownertrust
+        env:
+          GPG_SECRET_KEYS: ${{ secrets.GPG_SECRET_KEYS }}
+          GPG_OWNERTRUST: ${{ secrets.GPG_OWNERTRUST }}
       - name: Setup Graphviz
         run: sudo apt-get install graphviz
       - name: Set up JDK 8 for compiling Java 5 compatible bytecode
@@ -52,33 +56,43 @@ jobs:
           SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
       - name: Publish test coverage
-        run: ./mvnw --batch-mode -DrepoToken=${{ secrets.COVERALLS_REPO_TOKEN }} jacoco:report coveralls:report
+        if: env.COVERALLS_REPO_TOKEN != null
+        run: ./mvnw --batch-mode -DrepoToken=${{ env.COVERALLS_REPO_TOKEN }} jacoco:report coveralls:report
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
 
   release:
     name: "Release"
     runs-on: ubuntu-latest
     needs: build
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
     steps:
       - name: Check out code
+        if: env.GH_TOKEN != null
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ env.GH_TOKEN }}
       - name: Set up CI git user
+        if: env.GH_TOKEN != null
         run: |
           git config user.name "Talsma CI"
           git config user.email "ci-user@talsma-ict.nl"
       - name: Set up JDK
+        if: env.GH_TOKEN != null
         uses: actions/setup-java@v1
         with:
           java-version: 11
       - name: Set up maven cache
+        if: env.GH_TOKEN != null
         uses: actions/cache@v2
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-m2-repo-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2-repo-
       - name: Perform optional release
+        if: env.GH_TOKEN != null
         run: .github/scripts/release.sh
         shell: bash
         env:
