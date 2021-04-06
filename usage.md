@@ -58,19 +58,19 @@ as part of the rest of your build:
                     <goals>
                         <goal>jar</goal>
                     </goals>
-                    <configuration>
-                        <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
-                        <docletArtifact>
-                            <groupId>nl.talsmasoftware</groupId>
-                            <artifactId>umldoclet</artifactId>
-                            <version>2.x</version>
-                        </docletArtifact>
-                        <additionalOptions>
-                            <!--<additionalOption>...</additionalOption>-->
-                        </additionalOptions>
-                    </configuration>
                 </execution>
             </executions>
+            <configuration>
+                <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
+                <docletArtifact>
+                    <groupId>nl.talsmasoftware</groupId>
+                    <artifactId>umldoclet</artifactId>
+                    <version>2.x</version>
+                </docletArtifact>
+                <additionalOptions>
+                    <!--<additionalOption>...</additionalOption>-->
+                </additionalOptions>
+            </configuration>
         </plugin>
     </plugins>
 </build>
