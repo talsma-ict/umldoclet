@@ -210,9 +210,9 @@
                         <phase>compile</phase>
                         <configuration>
                             <jdkToolchain>
-                                <version>9</version>
+                                <version>16</version>
                             </jdkToolchain>
-                            <release>9</release>
+                            <release>16</release>
                         </configuration>
                     </execution>
                     <execution>
@@ -223,9 +223,9 @@
                         <phase>test-compile</phase>
                         <configuration>
                             <jdkToolchain>
-                                <version>9</version>
+                                <version>16</version>
                             </jdkToolchain>
-                            <release>9</release>
+                            <release>16</release>
                         </configuration>
                     </execution>
                 </executions>
@@ -310,7 +310,7 @@
                                 <version>${project.version}</version>
                             </docletArtifact>
                             <jdkToolchain>
-                                <version>9</version>
+                                <version>16</version>
                             </jdkToolchain>
                             <sourcepath>${project.build.sourceDirectory}:${plantuml-asl.directory}/src</sourcepath>
                             <excludePackageNames>gen.*:h:net.sourceforge.*:smetana.*</excludePackageNames>
