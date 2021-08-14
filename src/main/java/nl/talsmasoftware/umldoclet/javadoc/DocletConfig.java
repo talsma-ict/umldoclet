@@ -135,7 +135,7 @@ public class DocletConfig implements Configuration {
         this.reporter = new LocalizedReporter(this, reporter, locale);
     }
 
-    public Set<Doclet.Option> mergeOptionsWith(Set<Doclet.Option> standardOptions) {
+    public Set<Doclet.Option> mergeOptionsWith(Set<? extends Doclet.Option> standardOptions) {
         return options.mergeWith(standardOptions);
     }
 

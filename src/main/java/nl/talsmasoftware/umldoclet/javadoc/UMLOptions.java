@@ -21,6 +21,7 @@ import net.sourceforge.plantuml.OptionFlags;
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.MissingResourceException;
 import java.util.Optional;
@@ -57,9 +58,9 @@ final class UMLOptions {
         this(config, null);
     }
 
-    private UMLOptions(DocletConfig config, Set<Doclet.Option> standardOptions) {
+    private UMLOptions(DocletConfig config, Set<? extends Doclet.Option> standardOptions) {
         this.config = requireNonNull(config, "Configuration is <null>.");
-        this.standardOptions = standardOptions;
+        this.standardOptions = standardOptions == null ? null : new LinkedHashSet<>(standardOptions);
         this.options = new TreeSet<>(comparing(o -> o.getNames().get(0), String::compareTo));
 
         // Options from Standard doclet that we also support
@@ -98,7 +99,7 @@ final class UMLOptions {
         this.options.add(new Option("--uml-timeout -umlTimeout", 1, Kind.STANDARD, this::setTimeout));
     }
 
-    Set<Doclet.Option> mergeWith(final Set<Doclet.Option> standardOptions) {
+    Set<Doclet.Option> mergeWith(final Set<? extends Doclet.Option> standardOptions) {
         if (standardOptions == null || standardOptions.isEmpty()) return this.options;
         Set<Doclet.Option> copy = new UMLOptions(config, standardOptions).options;
         copy.addAll(standardOptions);
