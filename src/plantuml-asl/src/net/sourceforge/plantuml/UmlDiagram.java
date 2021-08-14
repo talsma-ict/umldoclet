@@ -30,6 +30,8 @@
  */
 package net.sourceforge.plantuml;
 
+import static net.sourceforge.plantuml.ugraphic.ImageBuilder.plainImageBuilder;
+
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
@@ -45,10 +47,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.List;
 
-import javax.script.ScriptException;
-
-import net.sourceforge.plantuml.anim.Animation;
-import net.sourceforge.plantuml.anim.AnimationDecoder;
 import net.sourceforge.plantuml.api.ImageDataSimple;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.core.Diagram;
@@ -67,21 +65,15 @@ import net.sourceforge.plantuml.pdf.PdfConverter;
 import net.sourceforge.plantuml.security.ImageIO;
 import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.security.SecurityUtils;
-import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
 import net.sourceforge.plantuml.style.NoStyleAvailableException;
 import net.sourceforge.plantuml.svek.EmptySvgException;
 import net.sourceforge.plantuml.svek.GraphvizCrash;
 import net.sourceforge.plantuml.svek.TextBlockBackcolored;
 import net.sourceforge.plantuml.ugraphic.AffineTransformType;
-import net.sourceforge.plantuml.ugraphic.ImageBuilder;
-import net.sourceforge.plantuml.ugraphic.ImageParameter;
 import net.sourceforge.plantuml.ugraphic.PixelImage;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UImage;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 import net.sourceforge.plantuml.version.Version;
 
 public abstract class UmlDiagram extends TitledDiagram implements Diagram, Annotated, WithSprite {
@@ -91,14 +83,12 @@ public abstract class UmlDiagram extends TitledDiagram implements Diagram, Annot
 
 	private int minwidth = Integer.MAX_VALUE;
 
-	private Animation animation;
-
-	public UmlDiagram(UmlDiagramType type) {
-		super(type);
+	public UmlDiagram(UmlSource source, UmlDiagramType type) {
+		super(source, type);
 	}
 
-	public UmlDiagram(UmlDiagramType type, ISkinSimple orig) {
-		super(type, orig);
+	public UmlDiagram(UmlSource source, UmlDiagramType type, ISkinSimple orig) {
+		super(source, type, orig);
 	}
 
 	final public int getMinwidth() {
@@ -127,20 +117,6 @@ public abstract class UmlDiagram extends TitledDiagram implements Diagram, Annot
 		throw new IllegalArgumentException();
 	}
 
-	final public void setAnimation(Iterable<CharSequence> animationData) {
-		try {
-			final AnimationDecoder animationDecoder = new AnimationDecoder(animationData);
-			this.animation = Animation.create(animationDecoder.decode());
-		} catch (ScriptException e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	final public Animation getAnimation() {
-		return animation;
-	}
-
 	public final boolean isHideUnlinkedData() {
 		return hideUnlinkedData;
 	}
@@ -150,18 +126,10 @@ public abstract class UmlDiagram extends TitledDiagram implements Diagram, Annot
 	}
 
 	@Override
-	final protected ImageData exportDiagramNow(OutputStream os, int index, FileFormatOption fileFormatOption, long seed)
+	final protected ImageData exportDiagramNow(OutputStream os, int index, FileFormatOption fileFormatOption)
 			throws IOException {
 
-		final HColor hover = getSkinParam().hoverPathColor();
-		if (fileFormatOption.getSvgLinkTarget() == null || fileFormatOption.getSvgLinkTarget().equals("_top")) {
-			fileFormatOption = fileFormatOption.withSvgLinkTarget(getSkinParam().getSvgLinkTarget());
-		}
-		fileFormatOption = fileFormatOption.withPreserveAspectRatio(getSkinParam().getPreserveAspectRatio());
 		fileFormatOption = fileFormatOption.withTikzFontDistortion(getSkinParam().getTikzFontDistortion());
-		if (hover != null) {
-			fileFormatOption = fileFormatOption.withHoverColor(getSkinParam().getColorMapper().toRGB(hover));
-		}
 
 		if (fileFormatOption.getFileFormat() == FileFormat.PDF) {
 			return exportDiagramInternalPdf(os, index);
@@ -173,20 +141,20 @@ public abstract class UmlDiagram extends TitledDiagram implements Diagram, Annot
 			return imageData;
 		} catch (NoStyleAvailableException e) {
 			// e.printStackTrace();
-			exportDiagramError(os, e, fileFormatOption, seed, null);
+			exportDiagramError(os, e, fileFormatOption, null);
 		} catch (UnparsableGraphvizException e) {
 			e.printStackTrace();
-			exportDiagramError(os, e.getCause(), fileFormatOption, seed, e.getGraphvizVersion());
+			exportDiagramError(os, e.getCause(), fileFormatOption, e.getGraphvizVersion());
 		} catch (Throwable e) {
 			//e.printStackTrace();
-			exportDiagramError(os, e, fileFormatOption, seed, null);
+			exportDiagramError(os, e, fileFormatOption, null);
 		}
 		return ImageDataSimple.error();
 	}
 
-	private void exportDiagramError(OutputStream os, Throwable exception, FileFormatOption fileFormat, long seed,
+	private void exportDiagramError(OutputStream os, Throwable exception, FileFormatOption fileFormat,
 			String graphvizVersion) throws IOException {
-		exportDiagramError(os, exception, fileFormat, seed, getMetadata(), getFlashData(),
+		exportDiagramError(os, exception, fileFormat, seed(), getMetadata(), getFlashData(),
 				getFailureText1(exception, graphvizVersion, getFlashData()));
 	}
 
@@ -199,11 +167,6 @@ public abstract class UmlDiagram extends TitledDiagram implements Diagram, Annot
 		}
 
 		strings.addAll(CommandExecutionResult.getStackTrace(exception));
-		HColor backcolor = HColorUtils.WHITE;
-		final ImageParameter imageParameter = new ImageParameter(new ColorMapperIdentity(), false, null, 1.0, metadata,
-				null, ClockwiseTopRightBottomLeft.none(), backcolor);
-
-		final ImageBuilder imageBuilder = ImageBuilder.build(imageParameter);
 
 		BufferedImage im2 = null;
 		if (flash != null) {
@@ -222,19 +185,19 @@ public abstract class UmlDiagram extends TitledDiagram implements Diagram, Annot
 		final TextBlockBackcolored graphicStrings = GraphicStrings.createBlackOnWhite(strings, IconLoader.getRandom(),
 				GraphicPosition.BACKGROUND_CORNER_TOP_RIGHT);
 
-		if (im == null) {
-			imageBuilder.setUDrawable(graphicStrings);
-		} else {
-			imageBuilder.setUDrawable(new UDrawable() {
+		final UDrawable drawable = (im == null) ? graphicStrings : new UDrawable() {
 				public void drawU(UGraphic ug) {
 					graphicStrings.drawU(ug);
 					final double height = graphicStrings.calculateDimension(ug.getStringBounder()).getHeight();
 					ug = ug.apply(UTranslate.dy(height));
 					ug.draw(new UImage(new PixelImage(im, AffineTransformType.TYPE_NEAREST_NEIGHBOR)).scale(3));
 				}
-			});
-		}
-		imageBuilder.writeImageTOBEMOVED(fileFormat, seed, os);
+			};
+
+		plainImageBuilder(drawable, fileFormat)
+				.metadata(metadata)
+				.seed(seed)
+				.write(os);
 	}
 
 	private static void exportDiagramErrorText(OutputStream os, Throwable exception, List<String> strings) {

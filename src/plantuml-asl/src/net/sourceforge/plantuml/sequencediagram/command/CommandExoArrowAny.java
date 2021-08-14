@@ -55,12 +55,16 @@ import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
 
 abstract class CommandExoArrowAny extends SingleLineCommand2<SequenceDiagram> {
 
+	protected static final String ARROW_SUPPCIRCLE1 = "ARROW_SUPPCIRCLE1";
+	protected static final String ARROW_SUPPCIRCLE2 = "ARROW_SUPPCIRCLE2";
+
 	public CommandExoArrowAny(IRegex pattern) {
 		super(pattern);
 	}
 
 	@Override
-	final protected CommandExecutionResult executeArg(SequenceDiagram diagram, LineLocation location, RegexResult arg) throws NoSuchColorException {
+	final protected CommandExecutionResult executeArg(SequenceDiagram diagram, LineLocation location, RegexResult arg)
+			throws NoSuchColorException {
 		final String body = arg.getLazzy("ARROW_BODYA", 0) + arg.getLazzy("ARROW_BODYB", 0);
 		final String dressing = arg.getLazzy("ARROW_DRESSING", 0);
 		final Participant p = diagram.getOrCreateParticipant(
@@ -89,7 +93,8 @@ abstract class CommandExoArrowAny extends SingleLineCommand2<SequenceDiagram> {
 		final MessageExoType messageExoType = getMessageExoType(arg);
 
 		config = config.withPart(getArrowPart(dressing, messageExoType));
-		config = CommandArrow.applyStyle(arg.getLazzy("ARROW_STYLE", 0), config);
+		config = CommandArrow.applyStyle(diagram.getSkinParam().getThemeStyle(), arg.getLazzy("ARROW_STYLE", 0),
+				config);
 
 		final String activationSpec = arg.get("ACTIVATION", 0);
 
@@ -98,33 +103,32 @@ abstract class CommandExoArrowAny extends SingleLineCommand2<SequenceDiagram> {
 		}
 
 		if (messageExoType == MessageExoType.TO_RIGHT || messageExoType == MessageExoType.TO_LEFT) {
-			if (containsSymbolExterior(arg, "o")) {
+			if (containsSymbol(ARROW_SUPPCIRCLE1, arg, "o")) {
+				config = config.withDecoration1(ArrowDecoration.CIRCLE);
+			}
+			if (containsSymbol(ARROW_SUPPCIRCLE1, arg, "x")) {
+				config = config.withHead1(ArrowHead.CROSSX);
+			}
+			if (containsSymbol(ARROW_SUPPCIRCLE2, arg, "o")) {
 				config = config.withDecoration2(ArrowDecoration.CIRCLE);
 			}
-			if (containsSymbol(arg, "o")) {
-				config = config.withDecoration1(ArrowDecoration.CIRCLE);
+			if (containsSymbol(ARROW_SUPPCIRCLE2, arg, "x")) {
+				config = config.withHead2(ArrowHead.CROSSX);
 			}
 		} else {
-			if (containsSymbolExterior(arg, "o")) {
+			if (containsSymbol(ARROW_SUPPCIRCLE2, arg, "o")) {
 				config = config.withDecoration1(ArrowDecoration.CIRCLE);
 			}
-			if (containsSymbol(arg, "o")) {
+			if (containsSymbol(ARROW_SUPPCIRCLE2, arg, "x")) {
+				config = config.withHead1(ArrowHead.CROSSX);
+			}
+			if (containsSymbol(ARROW_SUPPCIRCLE1, arg, "o")) {
 				config = config.withDecoration2(ArrowDecoration.CIRCLE);
 			}
+			if (containsSymbol(ARROW_SUPPCIRCLE1, arg, "x")) {
+				config = config.withHead2(ArrowHead.CROSSX);
+			}
 		}
-
-		if (containsSymbolExterior(arg, "x") || containsSymbol(arg, "x")) {
-			config = config.withHead2(ArrowHead.CROSSX);
-		}
-		// if (messageExoType.getDirection() == 1) {
-		// if (containsSymbolExterior(arg2, "x") || containsSymbol(arg2, "x")) {
-		// config = config.withHead2(ArrowHead.CROSSX);
-		// }
-		// } else {
-		// if (containsSymbolExterior(arg2, "x") || containsSymbol(arg2, "x")) {
-		// config = config.withHead2(ArrowHead.CROSSX);
-		// }
-		// }
 
 		final MessageExo msg = new MessageExo(diagram.getSkinParam().getCurrentStyleBuilder(), p, messageExoType,
 				labels, config, diagram.getNextMessageNumber(), isShortArrow(arg));
@@ -149,7 +153,7 @@ abstract class CommandExoArrowAny extends SingleLineCommand2<SequenceDiagram> {
 		final String s = arg.get("LIFECOLOR", 0);
 
 		final HColor activationColor = s == null ? null
-				: diagram.getSkinParam().getIHtmlColorSet().getColor(s);
+				: diagram.getSkinParam().getIHtmlColorSet().getColor(diagram.getSkinParam().getThemeStyle(), s);
 
 		if (activationSpec != null) {
 			switch (activationSpec.charAt(0)) {
@@ -197,23 +201,15 @@ abstract class CommandExoArrowAny extends SingleLineCommand2<SequenceDiagram> {
 	abstract MessageExoType getMessageExoType(RegexResult arg2);
 
 	private boolean isShortArrow(RegexResult arg2) {
-		final String s = arg2.get("SHORT", 0);
+		final String s = arg2.get(ARROW_SUPPCIRCLE2, 0);
 		if (s != null && s.contains("?")) {
 			return true;
 		}
 		return false;
 	}
 
-	private boolean containsSymbolExterior(RegexResult arg2, String symbol) {
-		final String s = arg2.get("SHORT", 0);
-		if (s != null && s.contains(symbol)) {
-			return true;
-		}
-		return false;
-	}
-
-	private boolean containsSymbol(RegexResult arg2, String symbol) {
-		final String s = arg2.get("ARROW_SUPPCIRCLE", 0);
+	private boolean containsSymbol(String suppCircle, RegexResult arg2, String symbol) {
+		final String s = arg2.get(suppCircle, 0);
 		if (s != null && s.contains(symbol)) {
 			return true;
 		}

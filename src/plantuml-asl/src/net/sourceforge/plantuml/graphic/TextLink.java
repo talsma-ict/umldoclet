@@ -30,6 +30,8 @@
  */
 package net.sourceforge.plantuml.graphic;
 
+import java.util.Objects;
+
 import net.sourceforge.plantuml.Url;
 
 public class TextLink implements HtmlCommand {
@@ -37,10 +39,7 @@ public class TextLink implements HtmlCommand {
 	private final Url url;
 
 	TextLink(Url url) {
-		if (url == null) {
-			throw new IllegalArgumentException();
-		}
-		this.url = url;
+		this.url = Objects.requireNonNull(url);
 	}
 
 	public String getText() {

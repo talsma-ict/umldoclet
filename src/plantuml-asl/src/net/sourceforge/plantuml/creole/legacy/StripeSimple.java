@@ -33,6 +33,7 @@ package net.sourceforge.plantuml.creole.legacy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import net.sourceforge.plantuml.BackSlash;
 import net.sourceforge.plantuml.ISkinSimple;
@@ -83,8 +84,8 @@ public class StripeSimple implements Stripe {
 
 	final private Atom header;
 
-	final private List<Atom> atoms = new ArrayList<Atom>();
-	final private List<Command> commands = new ArrayList<Command>();
+	final private List<Atom> atoms = new ArrayList<>();
+	final private List<Command> commands = new ArrayList<>();
 	private HorizontalAlignment align = HorizontalAlignment.LEFT;
 
 	public void setCellAlignment(HorizontalAlignment align) {
@@ -148,18 +149,18 @@ public class StripeSimple implements Stripe {
 		this.commands.add(CommandCreoleStyle.createLegacyEol(FontStyle.BACKCOLOR));
 		this.commands.add(CommandCreoleSizeChange.create());
 		this.commands.add(CommandCreoleSizeChange.createEol());
-		this.commands.add(CommandCreoleColorChange.create());
-		this.commands.add(CommandCreoleColorChange.createEol());
-		this.commands.add(CommandCreoleColorAndSizeChange.create());
-		this.commands.add(CommandCreoleColorAndSizeChange.createEol());
+		this.commands.add(CommandCreoleColorChange.create(skinParam.getThemeStyle()));
+		this.commands.add(CommandCreoleColorChange.createEol(skinParam.getThemeStyle()));
+		this.commands.add(CommandCreoleColorAndSizeChange.create(skinParam.getThemeStyle()));
+		this.commands.add(CommandCreoleColorAndSizeChange.createEol(skinParam.getThemeStyle()));
 		this.commands.add(CommandCreoleExposantChange.create(FontPosition.EXPOSANT));
 		this.commands.add(CommandCreoleExposantChange.create(FontPosition.INDICE));
 		this.commands.add(CommandCreoleImg.create());
 		this.commands.add(CommandCreoleQrcode.create());
-		this.commands.add(CommandCreoleOpenIcon.create(skinParam.getIHtmlColorSet()));
+		this.commands.add(CommandCreoleOpenIcon.create(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet()));
 		this.commands.add(CommandCreoleMath.create());
 		this.commands.add(CommandCreoleLatex.create());
-		this.commands.add(CommandCreoleSprite.create(skinParam.getIHtmlColorSet()));
+		this.commands.add(CommandCreoleSprite.create(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet()));
 		this.commands.add(CommandCreoleSpace.create());
 		this.commands.add(CommandCreoleFontFamilyChange.create());
 		this.commands.add(CommandCreoleFontFamilyChange.createEol());
@@ -192,10 +193,7 @@ public class StripeSimple implements Stripe {
 	}
 
 	public void analyzeAndAdd(String line) {
-		if (line == null) {
-			throw new IllegalArgumentException();
-		}
-		if (line.contains("" + BackSlash.hiddenNewLine())) {
+		if (Objects.requireNonNull(line).contains("" + BackSlash.hiddenNewLine())) {
 			throw new IllegalArgumentException(line);
 		}
 		line = CharHidder.hide(line);

@@ -51,8 +51,8 @@ public class Cypher {
 
 	private final SecureRandom rnd = new SecureRandom();
 	private final Map<String, String> convert = new HashMap<String, String>();
-	private final Set<String> except = new HashSet<String>();
-	private final List<String> words = new ArrayList<String>();
+	private final Set<String> except = new HashSet<>();
+	private final List<String> words = new ArrayList<>();
 
 	public Cypher() {
 		final InputStream is = Cypher.class.getResourceAsStream("words.txt");
@@ -126,7 +126,7 @@ public class Cypher {
 	public void addException(String word) {
 		word = word.toLowerCase();
 		if (words.contains(word)) {
-			System.err.println("Warning:" + word);
+			System.err.println("CypherWarning:" + word);
 			words.remove(word);
 		}
 		except.add(word);

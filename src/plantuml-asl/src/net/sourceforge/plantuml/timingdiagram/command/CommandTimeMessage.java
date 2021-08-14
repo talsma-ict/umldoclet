@@ -46,7 +46,7 @@ import net.sourceforge.plantuml.timingdiagram.TimingDiagram;
 
 public class CommandTimeMessage extends SingleLineCommand2<TimingDiagram> {
 
-	public static final String PLAYER_CODE = "([\\p{L}_][\\p{L}0-9_.]*)";
+	public static final String PLAYER_CODE = "([\\p{L}_][%pLN_.]*)";
 
 	public CommandTimeMessage() {
 		super(getRegexConcat());
@@ -86,7 +86,7 @@ public class CommandTimeMessage extends SingleLineCommand2<TimingDiagram> {
 		final TimeTick tick1 = TimeTickBuilder.parseTimeTick("TIME1", arg, diagram);
 		final TimeTick tick2 = TimeTickBuilder.parseTimeTick("TIME2", arg, diagram);
 		final TimeMessage result = diagram.createTimeMessage(player1, tick1, player2, tick2, arg.get("MESSAGE", 0));
-		result.applyStyle(arg.getLazzy("ARROW_STYLE", 0));
+		result.applyStyle(diagram.getSkinParam().getThemeStyle(), arg.getLazzy("ARROW_STYLE", 0));
 		return CommandExecutionResult.ok();
 	}
 

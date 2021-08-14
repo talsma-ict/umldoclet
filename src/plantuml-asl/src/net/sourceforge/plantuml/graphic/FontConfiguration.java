@@ -32,6 +32,7 @@ package net.sourceforge.plantuml.graphic;
 
 import java.util.EnumSet;
 import java.util.Map;
+import java.util.Objects;
 
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
@@ -60,6 +61,10 @@ public class FontConfiguration {
 	private final boolean useUnderlineForHyperlink;
 	private final int tabSize;
 
+	public String toStringDebug() {
+		return getFont().toStringDebug() + " " + styles.toString();
+	}
+
 	public FontConfiguration(UFont font, HColor color, HColor hyperlinkColor, boolean useUnderlineForHyperlink) {
 		this(font, color, hyperlinkColor, useUnderlineForHyperlink, 8);
 	}
@@ -82,7 +87,8 @@ public class FontConfiguration {
 
 	public FontConfiguration(ISkinParam skinParam, Style style) {
 		// User getStyle().getFontConfiguration(skinParam.getIHtmlColorSet()) instead ?
-		this(style.getUFont(), style.value(PName.FontColor).asColor(skinParam.getIHtmlColorSet()),
+		this(style.getUFont(),
+				style.value(PName.FontColor).asColor(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet()),
 				skinParam.getHyperlinkColor(), skinParam.useUnderlineForHyperlink(), skinParam.getTabSize());
 	}
 
@@ -165,10 +171,7 @@ public class FontConfiguration {
 	}
 
 	public FontConfiguration mute(Colors colors) {
-		if (colors == null) {
-			throw new IllegalArgumentException();
-		}
-		final HColor color = colors.getColor(ColorType.TEXT);
+		final HColor color = Objects.requireNonNull(colors).getColor(ColorType.TEXT);
 		if (color == null) {
 			return this;
 		}

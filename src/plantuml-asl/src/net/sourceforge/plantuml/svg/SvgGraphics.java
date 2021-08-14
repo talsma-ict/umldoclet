@@ -41,7 +41,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -129,12 +131,7 @@ public class SvgGraphics {
 		}
 	}
 
-	public SvgGraphics(boolean svgDimensionStyle, Dimension2D minDim, double scale, String hover, long seed,
-			String preserveAspectRatio, LengthAdjust lengthAdjust) {
-		this(svgDimensionStyle, minDim, null, scale, hover, seed, preserveAspectRatio, lengthAdjust);
-	}
-
-	public SvgGraphics(boolean svgDimensionStyle, Dimension2D minDim, String backcolor, double scale, String hover,
+	public SvgGraphics(String backcolor, boolean svgDimensionStyle, Dimension2D minDim, double scale, String hover,
 			long seed, String preserveAspectRatio, LengthAdjust lengthAdjust) {
 		try {
 			this.lengthAdjust = lengthAdjust;
@@ -355,7 +352,7 @@ public class SvgGraphics {
 		this.strokeDasharray = strokeDasharray;
 	}
 
-	private final List<Element> pendingAction = new ArrayList<Element>();
+	private final List<Element> pendingAction = new ArrayList<>();
 
 	public final Element getG() {
 		if (pendingAction.size() == 0) {
@@ -708,7 +705,14 @@ public class SvgGraphics {
 	}
 
 	private void fillMe(Element elt) {
-		if (fill.equals("#00000000") == false) {
+		if (fill.equals("#00000000")) {
+			return;
+		}
+		if (fill.matches("#[0-9A-Fa-f]{8}")) {
+			elt.setAttribute("fill", fill.substring(0, 7));
+			final double opacity = Integer.parseInt(fill.substring(7), 16) / 255.0;
+			elt.setAttribute("fill-opacity", String.format(Locale.US, "%1.5f", opacity));
+		} else {
 			elt.setAttribute("fill", fill);
 		}
 	}
@@ -915,9 +919,8 @@ public class SvgGraphics {
 	}
 
 	public void openLink(String url, String title, String target) {
-		if (url == null) {
-			throw new IllegalArgumentException();
-		}
+		Objects.requireNonNull(url);
+
 		// javascript: security issue
 		if (SecurityUtils.getJavascriptUnsecure() == false && url.toLowerCase().startsWith("javascript")) {
 			return;

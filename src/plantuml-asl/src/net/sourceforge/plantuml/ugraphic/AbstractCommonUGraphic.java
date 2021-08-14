@@ -30,6 +30,8 @@
  */
 package net.sourceforge.plantuml.ugraphic;
 
+import java.util.Objects;
+
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapperTransparentWrapper;
@@ -51,14 +53,19 @@ public abstract class AbstractCommonUGraphic implements UGraphic {
 	private UClip clip;
 	private double scale = 1;
 
+	private final HColor defaultBackground;
+
+	@Override
+	public HColor getDefaultBackground() {
+		return defaultBackground;
+	}
+
 	public double dpiFactor() {
 		return 1;
 	}
 
 	public UGraphic apply(UChange change) {
-		if (change == null) {
-			throw new IllegalArgumentException();
-		}
+		Objects.requireNonNull(change);
 		final AbstractCommonUGraphic copy = copyUGraphic();
 		if (change instanceof UTranslate) {
 			copy.translate = ((UTranslate) change).scaled(scale).compose(copy.translate);
@@ -95,11 +102,13 @@ public abstract class AbstractCommonUGraphic implements UGraphic {
 		this.enlargeClip = true;
 	}
 
-	public AbstractCommonUGraphic(ColorMapper colorMapper) {
+	public AbstractCommonUGraphic(HColor defaultBackground, ColorMapper colorMapper) {
 		this.colorMapper = colorMapper;
+		this.defaultBackground = defaultBackground;
 	}
 
 	protected AbstractCommonUGraphic(AbstractCommonUGraphic other) {
+		this.defaultBackground = other.defaultBackground;
 		this.enlargeClip = other.enlargeClip;
 		this.colorMapper = other.colorMapper;
 		this.translate = other.translate;

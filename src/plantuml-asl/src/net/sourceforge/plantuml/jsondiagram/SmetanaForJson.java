@@ -76,8 +76,8 @@ public class SmetanaForJson {
 	private ST_Agraph_s g;
 	private StringBounder stringBounder;
 
-	private final List<InternalNode> nodes = new ArrayList<InternalNode>();
-	private final List<ST_Agedge_s> edges = new ArrayList<ST_Agedge_s>();
+	private final List<InternalNode> nodes = new ArrayList<>();
+	private final List<ST_Agedge_s> edges = new ArrayList<>();
 	private Mirror xMirror;
 
 	static class InternalNode {
@@ -106,7 +106,7 @@ public class SmetanaForJson {
 	}
 
 	private UGraphic getUgFor(SName name) {
-		return getStyle(name).applyStrokeAndLineColor(ug, skinParam.getIHtmlColorSet());
+		return getStyle(name).applyStrokeAndLineColor(ug, skinParam.getIHtmlColorSet(), skinParam.getThemeStyle());
 	}
 
 	private SName getDiagramType() {
@@ -144,7 +144,7 @@ public class SmetanaForJson {
 	}
 
 	private List<String> removeOneLevel(String key, List<String> list) {
-		final List<String> result = new ArrayList<String>();
+		final List<String> result = new ArrayList<>();
 		for (String tmp : list) {
 			if (tmp.startsWith("\"" + key + "\"") == false) {
 				continue;
@@ -169,7 +169,8 @@ public class SmetanaForJson {
 		for (InternalNode node : nodes) {
 			node.block.drawU(getUgFor(SName.node).apply(getPosition(node.node)));
 		}
-		final HColor color = getStyle(SName.arrow).value(PName.LineColor).asColor(skinParam.getIHtmlColorSet());
+		final HColor color = getStyle(SName.arrow).value(PName.LineColor).asColor(skinParam.getThemeStyle(),
+				skinParam.getIHtmlColorSet());
 
 		for (ST_Agedge_s edge : edges) {
 			final JsonCurve curve = getCurve(edge, 13);

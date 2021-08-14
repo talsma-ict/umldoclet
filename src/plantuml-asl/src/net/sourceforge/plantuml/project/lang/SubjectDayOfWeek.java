@@ -88,5 +88,5 @@ public class SubjectDayOfWeek implements Subject {
 		}
 
 	}
-	
+
 }

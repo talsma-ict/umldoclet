@@ -49,7 +49,7 @@ public class CommandTicks extends SingleLineCommand2<TimingDiagram> {
 
 	private static IRegex getRegexConcat() {
 		return RegexConcat.build(CommandTicks.class.getName(), RegexLeaf.start(), //
-				new RegexLeaf("PLAYER", "([\\p{L}0-9_.@]+)"), //
+				new RegexLeaf("PLAYER", "([%pLN_.@]+)"), //
 				RegexLeaf.spaceOneOrMore(), //
 				new RegexLeaf("ticks"), //
 				RegexLeaf.spaceOneOrMore(), //

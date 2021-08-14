@@ -32,6 +32,7 @@ package net.sourceforge.plantuml.creole.legacy;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import net.sourceforge.plantuml.EmbeddedDiagram;
 import net.sourceforge.plantuml.ISkinSimple;
@@ -65,10 +66,7 @@ public class CreoleParser implements SheetBuilder {
 		this.stereotype = stereotype;
 		this.creoleMode = creoleMode;
 		this.fontConfiguration = fontConfiguration;
-		this.skinParam = skinParam;
-		if (skinParam == null) {
-			throw new IllegalArgumentException();
-		}
+		this.skinParam = Objects.requireNonNull(skinParam);
 		this.horizontalAlignment = horizontalAlignment;
 	}
 

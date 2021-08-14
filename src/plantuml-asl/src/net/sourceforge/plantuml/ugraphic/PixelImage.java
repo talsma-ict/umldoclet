@@ -34,8 +34,9 @@ import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.util.Objects;
 
-import net.sourceforge.plantuml.ugraphic.color.ColorChangerMonochrome;
+import net.sourceforge.plantuml.ugraphic.color.ColorUtils;
 
 public class PixelImage implements MutableImage {
 
@@ -49,12 +50,9 @@ public class PixelImage implements MutableImage {
 	}
 
 	private PixelImage(BufferedImage bufferedImage, AffineTransformType type, double scale) {
-		if (type == null) {
-			throw new IllegalArgumentException();
-		}
 		this.bufferedImageScale1 = bufferedImage;
 		this.scale = scale;
-		this.type = type;
+		this.type = Objects.requireNonNull(type);
 	}
 
 	public MutableImage withScale(double scale) {
@@ -126,8 +124,8 @@ public class PixelImage implements MutableImage {
 				// if (isTransparent(color)) {
 				// continue;
 				// }
-				final int grey = ColorChangerMonochrome.getGrayScale(rgb);
-				if (darkerRgb == -1 || grey < ColorChangerMonochrome.getGrayScale(darkerRgb)) {
+				final int grey = ColorUtils.getGrayScale(rgb);
+				if (darkerRgb == -1 || grey < ColorUtils.getGrayScale(darkerRgb)) {
 					darkerRgb = rgb;
 				}
 			}

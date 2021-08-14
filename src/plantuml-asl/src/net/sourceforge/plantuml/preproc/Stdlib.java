@@ -137,7 +137,7 @@ public class Stdlib {
 					if (s.equals(SEPARATOR)) {
 						if (found != null) {
 							final String result = found.toString();
-							cache.put(file.toLowerCase(), new SoftReference<String>(result));
+							cache.put(file.toLowerCase(), new SoftReference<>(result));
 							return result;
 						}
 						break;
@@ -257,7 +257,7 @@ public class Stdlib {
 	}
 
 	private static Collection<String> getAll() throws IOException {
-		final Set<String> result = new TreeSet<String>();
+		final Set<String> result = new TreeSet<>();
 		final InputStream home = getInternalInputStream("home", ".repx");
 		final BufferedReader br = new BufferedReader(new InputStreamReader(home));
 		String name;
@@ -311,7 +311,7 @@ public class Stdlib {
 	}
 
 	public List<String> extractAllSprites() throws IOException {
-		final List<String> result = new ArrayList<String>();
+		final List<String> result = new ArrayList<>();
 		final DataInputStream dataStream = getDataStream();
 		if (dataStream == null) {
 			return Collections.unmodifiableList(result);
@@ -378,7 +378,7 @@ public class Stdlib {
 	}
 
 	public static void printStdLib() {
-		final List<String> print = new ArrayList<String>();
+		final List<String> print = new ArrayList<>();
 		addInfoVersion(print, true);
 		for (String s : print) {
 			System.out.println(s.replace("<b>", ""));

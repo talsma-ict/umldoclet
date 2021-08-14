@@ -30,6 +30,8 @@
  */
 package net.sourceforge.plantuml.skin;
 
+import java.util.Objects;
+
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
@@ -51,16 +53,13 @@ public class ArrowConfiguration {
 	private final boolean reverseDefine;
 
 	private ArrowConfiguration(ArrowBody body, ArrowDressing dressing1, ArrowDressing dressing2,
-			ArrowDecoration decoration1, ArrowDecoration decoration2, HColor color, boolean isSelf,
-			double thickness, boolean reverseDefine) {
-		if (body == null || dressing1 == null || dressing2 == null) {
-			throw new IllegalArgumentException();
-		}
+			ArrowDecoration decoration1, ArrowDecoration decoration2, HColor color, boolean isSelf, double thickness,
+			boolean reverseDefine) {
 		this.reverseDefine = reverseDefine;
 		this.thickness = thickness;
-		this.body = body;
-		this.dressing1 = dressing1;
-		this.dressing2 = dressing2;
+		this.body = Objects.requireNonNull(body);
+		this.dressing1 = Objects.requireNonNull(dressing1);
+		this.dressing2 = Objects.requireNonNull(dressing2);
 		this.decoration1 = decoration1;
 		this.decoration2 = decoration2;
 		this.color = color;
@@ -78,8 +77,9 @@ public class ArrowConfiguration {
 	}
 
 	public static ArrowConfiguration withDirectionNormal() {
-		return new ArrowConfiguration(ArrowBody.NORMAL, ArrowDressing.create(), ArrowDressing.create().withHead(
-				ArrowHead.NORMAL), ArrowDecoration.NONE, ArrowDecoration.NONE, null, false, 1, false);
+		return new ArrowConfiguration(ArrowBody.NORMAL, ArrowDressing.create(),
+				ArrowDressing.create().withHead(ArrowHead.NORMAL), ArrowDecoration.NONE, ArrowDecoration.NONE, null,
+				false, 1, false);
 	}
 
 	public static ArrowConfiguration withDirectionBoth() {
@@ -88,10 +88,10 @@ public class ArrowConfiguration {
 				false, 1, false);
 	}
 
-	public static ArrowConfiguration withDirectionSelf() {
-		return new ArrowConfiguration(ArrowBody.NORMAL, ArrowDressing.create().withHead(ArrowHead.NORMAL),
+	public static ArrowConfiguration withDirectionSelf(boolean reverseDefine) {
+		return new ArrowConfiguration(ArrowBody.NORMAL, ArrowDressing.create(),
 				ArrowDressing.create().withHead(ArrowHead.NORMAL), ArrowDecoration.NONE, ArrowDecoration.NONE, null,
-				true, 1, false);
+				true, 1, reverseDefine);
 	}
 
 	public static ArrowConfiguration withDirectionReverse() {

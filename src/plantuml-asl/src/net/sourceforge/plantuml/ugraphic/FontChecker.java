@@ -30,6 +30,8 @@
  */
 package net.sourceforge.plantuml.ugraphic;
 
+import static net.sourceforge.plantuml.ugraphic.ImageBuilder.plainPngBuilder;
+
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.Shape;
@@ -47,23 +49,19 @@ import java.util.Set;
 import javax.xml.transform.TransformerException;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
-import net.sourceforge.plantuml.FileFormat;
-import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.UDrawable;
 import net.sourceforge.plantuml.security.ImageIO;
 import net.sourceforge.plantuml.security.SFile;
-import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
 import net.sourceforge.plantuml.svg.LengthAdjust;
 import net.sourceforge.plantuml.svg.SvgGraphics;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
 import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class FontChecker {
 
 	final private UFont font;
-	private static final Set<String> SQUARE = new HashSet<String>(
+	private static final Set<String> SQUARE = new HashSet<>(
 			Arrays.asList("MI=I=XM=I=IX", "MI=I=XM=I=IXMI=I=XM=I=IX"));
 
 	public FontChecker(UFont font) {
@@ -100,7 +98,7 @@ public class FontChecker {
 	}
 
 	public String getCharDesc(char c) {
-		final TextLayout t = new TextLayout("" + c, font.getFont(), TextBlockUtils.getFontRenderContext());
+		final TextLayout t = new TextLayout("" + c, font.getUnderlayingFont(), TextBlockUtils.getFontRenderContext());
 		final Shape sh = t.getOutline(null);
 		final double current[] = new double[6];
 		final PathIterator it = sh.getPathIterator(null);
@@ -118,7 +116,7 @@ public class FontChecker {
 	}
 
 	public String getCharDescVerbose(char c) {
-		final TextLayout t = new TextLayout("" + c, font.getFont(), TextBlockUtils.getFontRenderContext());
+		final TextLayout t = new TextLayout("" + c, font.getUnderlayingFont(), TextBlockUtils.getFontRenderContext());
 		final Shape sh = t.getOutline(null);
 		final double current[] = new double[6];
 		final PathIterator it = sh.getPathIterator(null);
@@ -155,7 +153,7 @@ public class FontChecker {
 	}
 
 	private String getSvgImage(char c) throws IOException, TransformerException {
-		final SvgGraphics svg = new SvgGraphics(true, new Dimension2DDouble(0, 0), 1.0, null, 42, "none",
+		final SvgGraphics svg = new SvgGraphics(null, true, new Dimension2DDouble(0, 0), 1.0, null, 42, "none",
 				LengthAdjust.defaultValue());
 		svg.setStrokeColor("black");
 		svg.svgImage(getBufferedImage(c), 0, 0);
@@ -167,11 +165,9 @@ public class FontChecker {
 
 	public BufferedImage getBufferedImage(final char c) throws IOException {
 		assert c != '\t';
-		final ImageParameter imageParameter = new ImageParameter(new ColorMapperIdentity(), false, null, 1.0, null,
-				null, ClockwiseTopRightBottomLeft.none(), null);
-		final ImageBuilder imageBuilder = ImageBuilder.build(imageParameter);
+
 		final double dim = 20;
-		imageBuilder.setUDrawable(new UDrawable() {
+		final UDrawable drawable = new UDrawable() {
 			public void drawU(UGraphic ug) {
 				ug = ug.apply(HColorUtils.BLACK);
 				ug.draw(new URectangle(dim - 1, dim - 1));
@@ -181,11 +177,9 @@ public class FontChecker {
 					ug.draw(text);
 				}
 			}
-		});
-		final ByteArrayOutputStream os = new ByteArrayOutputStream();
-		imageBuilder.writeImageTOBEMOVED(new FileFormatOption(FileFormat.PNG), 42, os);
-		os.close();
-		return ImageIO.read(new ByteArrayInputStream(os.toByteArray()));
+		};
+		final byte[] bytes = plainPngBuilder(drawable).writeByteArray();
+		return ImageIO.read(new ByteArrayInputStream(bytes));
 	}
 
 	// public BufferedImage getBufferedImageOld(char c) throws IOException {

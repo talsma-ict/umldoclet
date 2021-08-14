@@ -39,7 +39,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.plantuml.FileFormat;
-import net.sourceforge.plantuml.TikzFontDistortion;
 import net.sourceforge.plantuml.eps.EpsGraphics;
 import net.sourceforge.plantuml.eps.EpsGraphicsMacroAndText;
 import net.sourceforge.plantuml.eps.EpsStrategy;
@@ -57,6 +56,7 @@ import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.UText;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class DriverTextEps implements UDriver<EpsGraphics> {
 
@@ -66,7 +66,7 @@ public class DriverTextEps implements UDriver<EpsGraphics> {
 	private final EpsStrategy strategy;
 
 	public DriverTextEps(ClipContainer clipContainer, EpsStrategy strategy) {
-		this.stringBounder = FileFormat.PNG.getDefaultStringBounder(TikzFontDistortion.getDefault());
+		this.stringBounder = FileFormat.PNG.getDefaultStringBounder();
 		this.clipContainer = clipContainer;
 		this.fontRenderContext = TextBlockUtils.getFontRenderContext();
 		this.strategy = strategy;
@@ -81,15 +81,19 @@ public class DriverTextEps implements UDriver<EpsGraphics> {
 
 		final UText shape = (UText) ushape;
 
+		final FontConfiguration fontConfiguration = shape.getFontConfiguration();
+		if (HColorUtils.isTransparent(fontConfiguration.getColor())) {
+			return;
+		}
+
 		if (strategy == EpsStrategy.WITH_MACRO_AND_TEXT) {
 			drawAsText(shape, x, y, param, eps, mapper);
 			return;
 		}
 
-		final FontConfiguration fontConfiguration = shape.getFontConfiguration();
 		final UFont font = fontConfiguration.getFont();
 
-		final TextLayout textLayout = new TextLayout(shape.getText(), font.getFont(), fontRenderContext);
+		final TextLayout textLayout = new TextLayout(shape.getText(), font.getUnderlayingFont(), fontRenderContext);
 		// System.err.println("text=" + shape.getText());
 
 		MinMax dim = null;
@@ -161,7 +165,8 @@ public class DriverTextEps implements UDriver<EpsGraphics> {
 
 	private void drawAsText(UText shape, double x, double y, UParam param, EpsGraphics eps, ColorMapper mapper) {
 		final FontConfiguration fontConfiguration = shape.getFontConfiguration();
-		// final FontMetrics fm = g2dummy.getFontMetrics(fontConfiguration.getFont().getFont());
+		// final FontMetrics fm =
+		// g2dummy.getFontMetrics(fontConfiguration.getFont().getFont());
 		// final double ypos = y - fm.getDescent() + 0.5;
 		final double ypos = y - 1;
 
@@ -217,7 +222,7 @@ public class DriverTextEps implements UDriver<EpsGraphics> {
 	private static List<Integer> analyze(Shape shape) {
 		int count = PathIteratorLimited.count(shape);
 		final List<Integer> closings = getClosings(shape.getPathIterator(null));
-		final List<Integer> result = new ArrayList<Integer>();
+		final List<Integer> result = new ArrayList<>();
 		for (Integer cl : closings) {
 			if (cl + 2 >= count) {
 				break;
@@ -234,7 +239,7 @@ public class DriverTextEps implements UDriver<EpsGraphics> {
 	}
 
 	private static List<Integer> getClosings(PathIterator path) {
-		final List<Integer> result = new ArrayList<Integer>();
+		final List<Integer> result = new ArrayList<>();
 		int current = 0;
 		final double coord[] = new double[6];
 		while (path.isDone() == false) {

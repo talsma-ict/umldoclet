@@ -53,7 +53,7 @@ public final class CommandFactorySprite implements SingleMultiFactoryCommand<Wit
 				new RegexLeaf("sprite"), //
 				RegexLeaf.spaceOneOrMore(), //
 				new RegexLeaf("\\$?"), //
-				new RegexLeaf("NAME", "([-.\\p{L}0-9_]+)"), //
+				new RegexLeaf("NAME", "([-.%pLN_]+)"), //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexOptional(new RegexLeaf("DIM", "\\[(\\d+)x(\\d+)/(?:(\\d+)(z)?|(color))\\]")), //
 				RegexLeaf.spaceZeroOrMore(), //
@@ -65,7 +65,7 @@ public final class CommandFactorySprite implements SingleMultiFactoryCommand<Wit
 				new RegexLeaf("sprite"), //
 				RegexLeaf.spaceOneOrMore(), //
 				new RegexLeaf("\\$?"), //
-				new RegexLeaf("NAME", "([-.\\p{L}0-9_]+)"), //
+				new RegexLeaf("NAME", "([-.%pLN_]+)"), //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexOptional(new RegexLeaf("DIM", "\\[(\\d+)x(\\d+)/(?:(\\d+)(z)|(color))\\]")), //
 				RegexLeaf.spaceOneOrMore(), //
@@ -89,7 +89,7 @@ public final class CommandFactorySprite implements SingleMultiFactoryCommand<Wit
 
 			@Override
 			public String getPatternEnd() {
-				return "(?i)^end[%s]?sprite|\\}$";
+				return "^end[%s]?sprite|\\}$";
 			}
 
 			protected CommandExecutionResult executeNow(final WithSprite system, BlocLines lines) {

@@ -34,7 +34,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import net.sourceforge.plantuml.FileFormat;
-import net.sourceforge.plantuml.TikzFontDistortion;
 import net.sourceforge.plantuml.creole.legacy.AtomText;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.posimo.DotPath;
@@ -52,6 +51,7 @@ import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UText;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class UGraphicVdx extends AbstractUGraphic<VisioGraphics> implements ClipContainer, UGraphic2 {
 
@@ -61,15 +61,15 @@ public class UGraphicVdx extends AbstractUGraphic<VisioGraphics> implements Clip
 		return 1;
 	}
 
-	private UGraphicVdx(ColorMapper colorMapper, VisioGraphics visio) {
-		super(colorMapper, visio);
-		this.stringBounder = FileFormat.PNG.getDefaultStringBounder(TikzFontDistortion.getDefault());
+	private UGraphicVdx(HColor defaultBackground, ColorMapper colorMapper, VisioGraphics visio) {
+		super(defaultBackground, colorMapper, visio);
+		this.stringBounder = FileFormat.PNG.getDefaultStringBounder();
 		register();
 
 	}
 
-	public UGraphicVdx(ColorMapper colorMapper) {
-		this(colorMapper, new VisioGraphics());
+	public UGraphicVdx(HColor defaultBackground, ColorMapper colorMapper) {
+		this(defaultBackground, colorMapper, new VisioGraphics());
 
 	}
 

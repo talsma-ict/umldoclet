@@ -42,6 +42,7 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.FtileEmpty;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactory;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
 import net.sourceforge.plantuml.activitydiagram3.ftile.WeldingPoint;
+import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
@@ -49,7 +50,7 @@ import net.sourceforge.plantuml.sequencediagram.NoteType;
 
 public class InstructionList extends WithNote implements Instruction, InstructionCollection {
 
-	private final List<Instruction> all = new ArrayList<Instruction>();
+	private final List<Instruction> all = new ArrayList<>();
 	private final Swimlane defaultSwimlane;
 
 	public boolean containsBreak() {
@@ -83,15 +84,16 @@ public class InstructionList extends WithNote implements Instruction, Instructio
 		this.defaultSwimlane = defaultSwimlane;
 	}
 
-	public void add(Instruction ins) {
+	public CommandExecutionResult add(Instruction ins) {
 		all.add(ins);
+		return CommandExecutionResult.ok();
 	}
 
 	public Ftile createFtile(FtileFactory factory) {
 		if (all.size() == 0) {
 			return new FtileEmpty(factory.skinParam(), defaultSwimlane);
 		}
-		final List<WeldingPoint> breaks = new ArrayList<WeldingPoint>();
+		final List<WeldingPoint> breaks = new ArrayList<>();
 		Ftile result = eventuallyAddNote(factory, null, getSwimlaneIn());
 		for (Instruction ins : all) {
 			Ftile cur = ins.createFtile(factory);
@@ -164,7 +166,7 @@ public class InstructionList extends WithNote implements Instruction, Instructio
 	}
 
 	public static Set<Swimlane> getSwimlanes2(List<? extends Instruction> list) {
-		final Set<Swimlane> result = new HashSet<Swimlane>();
+		final Set<Swimlane> result = new HashSet<>();
 		for (Instruction ins : list) {
 			result.addAll(ins.getSwimlanes());
 		}

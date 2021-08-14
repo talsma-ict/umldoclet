@@ -31,6 +31,7 @@
 package net.sourceforge.plantuml.graphic;
 
 import java.awt.geom.Dimension2D;
+import java.util.Objects;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -42,9 +43,7 @@ abstract class USymbolSimpleAbstract extends USymbol {
 	@Override
 	public TextBlock asSmall(TextBlock name, final TextBlock label, final TextBlock stereotype,
 			final SymbolContext symbolContext, final HorizontalAlignment stereoAlignment) {
-		if (stereotype == null) {
-			throw new IllegalArgumentException();
-		}
+		Objects.requireNonNull(stereotype);
 		final TextBlock stickman = getDrawing(symbolContext);
 		return new AbstractTextBlock() {
 

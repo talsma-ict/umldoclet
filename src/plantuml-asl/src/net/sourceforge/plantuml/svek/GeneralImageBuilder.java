@@ -137,6 +137,15 @@ public final class GeneralImageBuilder {
 	public static IEntityImage createEntityImageBlock(ILeaf leaf, ISkinParam skinParam,
 			boolean isHideEmptyDescriptionForState, PortionShower portionShower, Bibliotekon bibliotekon,
 			GraphvizVersion graphvizVersion, UmlDiagramType umlDiagramType, Collection<Link> links) {
+		final IEntityImage result = createEntityImageBlockInternal(leaf, skinParam, isHideEmptyDescriptionForState,
+				portionShower, bibliotekon, graphvizVersion, umlDiagramType, links);
+		// System.err.println("leaf " + leaf + " " + result.getClass());
+		return result;
+	}
+
+	private static IEntityImage createEntityImageBlockInternal(ILeaf leaf, ISkinParam skinParam,
+			boolean isHideEmptyDescriptionForState, PortionShower portionShower, Bibliotekon bibliotekon,
+			GraphvizVersion graphvizVersion, UmlDiagramType umlDiagramType, Collection<Link> links) {
 		if (leaf.isRemoved()) {
 			throw new IllegalStateException();
 		}
@@ -379,7 +388,8 @@ public final class GeneralImageBuilder {
 		if (UseStyle.useBetaStyle()) {
 			final Style style = StyleSignature.of(SName.root, SName.document)
 					.getMergedStyle(dotData.getSkinParam().getCurrentStyleBuilder());
-			return style.value(PName.BackGroundColor).asColor(dotData.getSkinParam().getIHtmlColorSet());
+			return style.value(PName.BackGroundColor).asColor(dotData.getSkinParam().getThemeStyle(),
+					dotData.getSkinParam().getIHtmlColorSet());
 		}
 		return dotData.getSkinParam().getBackgroundColor(false);
 	}
@@ -410,17 +420,10 @@ public final class GeneralImageBuilder {
 			}
 			try {
 				final ISkinParam skinParam = dotData.getSkinParam();
-				final FontConfiguration labelFont;
-				if (UseStyle.useBetaStyle()) {
-					final Style style = getDefaultStyleDefinitionArrow(link.getStereotype())
-							.getMergedStyle(link.getStyleBuilder());
-					labelFont = style.getFontConfiguration(skinParam.getIHtmlColorSet());
-				} else {
-					labelFont = new FontConfiguration(skinParam, FontParam.ARROW, null);
-				}
+				final FontConfiguration labelFont = getFontForLink(link, skinParam);
 
-				final Line line = new Line(link, dotStringFactory.getColorSequence(), skinParam, stringBounder,
-						labelFont, dotStringFactory.getBibliotekon(), dotData.getPragma());
+				final SvekLine line = new SvekLine(link, dotStringFactory.getColorSequence(), skinParam, stringBounder,
+						labelFont, dotStringFactory.getBibliotekon(), pragma);
 
 				dotStringFactory.getBibliotekon().addLine(line);
 
@@ -475,6 +478,18 @@ public final class GeneralImageBuilder {
 
 	}
 
+	private FontConfiguration getFontForLink(Link link, final ISkinParam skinParam) {
+		final FontConfiguration labelFont;
+		if (UseStyle.useBetaStyle()) {
+			final Style style = getDefaultStyleDefinitionArrow(link.getStereotype())
+					.getMergedStyle(link.getStyleBuilder());
+			labelFont = style.getFontConfiguration(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet());
+		} else {
+			labelFont = new FontConfiguration(skinParam, FontParam.ARROW, null);
+		}
+		return labelFont;
+	}
+
 	private boolean isSvekTrace() {
 		final String value = pragma.getValue("svek_trace");
 		return "true".equalsIgnoreCase(value) || "on".equalsIgnoreCase(value);
@@ -507,7 +522,7 @@ public final class GeneralImageBuilder {
 
 	private IEntityImage error(File dotExe) {
 
-		final List<String> msg = new ArrayList<String>();
+		final List<String> msg = new ArrayList<>();
 		msg.add("Dot Executable: " + dotExe);
 		final ExeState exeState = ExeState.checkFile(dotExe);
 		msg.add(exeState.getTextMessage());
@@ -578,7 +593,7 @@ public final class GeneralImageBuilder {
 	}
 
 	private Collection<ILeaf> getUnpackagedEntities() {
-		final List<ILeaf> result = new ArrayList<ILeaf>();
+		final List<ILeaf> result = new ArrayList<>();
 		for (ILeaf ent : dotData.getLeafs()) {
 			if (dotData.getTopParent() == ent.getParentContainer()) {
 				result.add(ent);

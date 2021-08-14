@@ -273,9 +273,36 @@ milestone {
 }
 
 ganttDiagram {
+	arrow {
+	  LineThickness 1.5
+	}
 	note {
 	  FontSize 9
       Shadowing 0.0
+	}
+	separator {
+	  FontSize 11
+	  FontStyle plain
+	  BackGroundColor transparent
+	  Margin 5
+	  Padding 5
+	}
+	timeline {
+	    BackgroundColor transparent
+	    LineColor #C0C0C0
+	}
+	closed {
+        BackGroundColor #E0E8E8
+        FontColor #909898
+    }
+	task {
+		RoundCorner 0
+        Margin 2 2 2 2
+        Padding 0
+	}
+	milestone {
+        Margin 2
+        Padding 3
 	}
 }
 
@@ -296,6 +323,9 @@ yamlDiagram {
       LineThickness 1
       LineColor #A80036
   	}
+    highlight {
+	  BackGroundColor #ccff02
+    }
   }
 }
 

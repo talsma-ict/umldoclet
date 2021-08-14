@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.regex.Pattern;
 
 import net.sourceforge.plantuml.StringLocated;
 
@@ -53,13 +52,13 @@ public abstract class RegexComposed implements IRegex {
 
 	abstract protected String getFullSlow();
 
-	private final AtomicReference<Pattern2> fullCached = new AtomicReference<Pattern2>();
+	private final AtomicReference<Pattern2> fullCached = new AtomicReference<>();
 
 	private Pattern2 getPattern2() {
 		Pattern2 result = fullCached.get();
 		if (result == null) {
 			final String fullSlow = getFullSlow();
-			result = MyPattern.cmpile(fullSlow, Pattern.CASE_INSENSITIVE);
+			result = MyPattern.cmpile(fullSlow);
 			fullCached.set(result);
 		}
 		return result;

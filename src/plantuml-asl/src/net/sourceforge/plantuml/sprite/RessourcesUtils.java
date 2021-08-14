@@ -81,7 +81,7 @@ public class RessourcesUtils {
 
 	private static Set<String> listFiles(JarFile jarFile, String path) {
 		final Enumeration<JarEntry> entries = jarFile.entries();
-		final Set<String> result = new TreeSet<String>();
+		final Set<String> result = new TreeSet<>();
 		while (entries.hasMoreElements()) {
 			final String name = entries.nextElement().getName();
 			if (name.startsWith(path)) {
@@ -93,7 +93,7 @@ public class RessourcesUtils {
 
 	private static Set<String> listFolders(JarFile jarFile, String path) {
 		final Enumeration<JarEntry> entries = jarFile.entries();
-		final Set<String> result = new TreeSet<String>();
+		final Set<String> result = new TreeSet<>();
 		while (entries.hasMoreElements()) {
 			final String name = entries.nextElement().getName();
 			if (name.startsWith(path)) {
@@ -108,7 +108,7 @@ public class RessourcesUtils {
 	}
 
 	private static Set<String> listEntry(SFile dir) {
-		final Set<String> result = new TreeSet<String>();
+		final Set<String> result = new TreeSet<>();
 		for (String n : dir.list()) {
 			result.add(n);
 		}

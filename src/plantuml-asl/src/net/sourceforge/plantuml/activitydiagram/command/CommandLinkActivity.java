@@ -75,9 +75,9 @@ public class CommandLinkActivity extends SingleLineCommand2<ActivityDiagram> {
 				new RegexOptional(//
 						new RegexOr("FIRST", //
 								new RegexLeaf("STAR", "(\\(\\*(top)?\\))"), //
-								new RegexLeaf("CODE", "([\\p{L}0-9][\\p{L}0-9_.]*)"), //
-								new RegexLeaf("BAR", "(?:==+)[%s]*([\\p{L}0-9_.]+)[%s]*(?:==+)"), //
-								new RegexLeaf("QUOTED", "[%g]([^%g]+)[%g](?:[%s]+as[%s]+([\\p{L}0-9_.]+))?"))), //
+								new RegexLeaf("CODE", "([%pLN][%pLN_.]*)"), //
+								new RegexLeaf("BAR", "(?:==+)[%s]*([%pLN_.]+)[%s]*(?:==+)"), //
+								new RegexLeaf("QUOTED", "[%g]([^%g]+)[%g](?:[%s]+as[%s]+([%pLN_.]+))?"))), //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("STEREOTYPE", "(\\<\\<.*\\>\\>)?"), //
 				RegexLeaf.spaceZeroOrMore(), //
@@ -98,9 +98,9 @@ public class CommandLinkActivity extends SingleLineCommand2<ActivityDiagram> {
 				new RegexOr("FIRST2", //
 						new RegexLeaf("STAR2", "(\\(\\*(top|\\d+)?\\))"), //
 						new RegexLeaf("OPENBRACKET2", "(\\{)"), //
-						new RegexLeaf("CODE2", "([\\p{L}0-9][\\p{L}0-9_.]*)"), //
-						new RegexLeaf("BAR2", "(?:==+)[%s]*([\\p{L}0-9_.]+)[%s]*(?:==+)"), //
-						new RegexLeaf("QUOTED2", "[%g]([^%g]+)[%g](?:[%s]+as[%s]+([\\p{L}0-9][\\p{L}0-9_.]*))?"), //
+						new RegexLeaf("CODE2", "([%pLN][%pLN_.]*)"), //
+						new RegexLeaf("BAR2", "(?:==+)[%s]*([%pLN_.]+)[%s]*(?:==+)"), //
+						new RegexLeaf("QUOTED2", "[%g]([^%g]+)[%g](?:[%s]+as[%s]+([%pLN][%pLN_.]*))?"), //
 						new RegexLeaf("QUOTED_INVISIBLE2", "(\\w.*?)")), //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("STEREOTYPE2", "(\\<\\<.*\\>\\>)?"), //
@@ -117,7 +117,8 @@ public class CommandLinkActivity extends SingleLineCommand2<ActivityDiagram> {
 	}
 
 	@Override
-	protected CommandExecutionResult executeArg(ActivityDiagram diagram, LineLocation location, RegexResult arg) throws NoSuchColorException {
+	protected CommandExecutionResult executeArg(ActivityDiagram diagram, LineLocation location, RegexResult arg)
+			throws NoSuchColorException {
 		final IEntity entity1 = getEntity(diagram, arg, true);
 		if (entity1 == null) {
 			return CommandExecutionResult.error("No such activity");
@@ -128,7 +129,7 @@ public class CommandLinkActivity extends SingleLineCommand2<ActivityDiagram> {
 		if (arg.get("BACKCOLOR", 0) != null) {
 			String s = arg.get("BACKCOLOR", 0);
 			entity1.setSpecificColorTOBEREMOVED(ColorType.BACK,
-					diagram.getSkinParam().getIHtmlColorSet().getColor(s));
+					diagram.getSkinParam().getIHtmlColorSet().getColor(diagram.getSkinParam().getThemeStyle(), s));
 		}
 
 		final IEntity entity2 = getEntity(diagram, arg, false);
@@ -138,7 +139,7 @@ public class CommandLinkActivity extends SingleLineCommand2<ActivityDiagram> {
 		if (arg.get("BACKCOLOR2", 0) != null) {
 			String s = arg.get("BACKCOLOR2", 0);
 			entity2.setSpecificColorTOBEREMOVED(ColorType.BACK,
-					diagram.getSkinParam().getIHtmlColorSet().getColor(s));
+					diagram.getSkinParam().getIHtmlColorSet().getColor(diagram.getSkinParam().getThemeStyle(), s));
 		}
 		if (arg.get("STEREOTYPE2", 0) != null) {
 			entity2.setStereotype(new Stereotype(arg.get("STEREOTYPE2", 0)));
@@ -176,7 +177,7 @@ public class CommandLinkActivity extends SingleLineCommand2<ActivityDiagram> {
 			link.setUrl(urlLink);
 		}
 
-		link.applyStyle(arg.getLazzy("ARROW_STYLE", 0));
+		link.applyStyle(diagram.getSkinParam().getThemeStyle(), arg.getLazzy("ARROW_STYLE", 0));
 		diagram.addLink(link);
 
 		return CommandExecutionResult.ok();

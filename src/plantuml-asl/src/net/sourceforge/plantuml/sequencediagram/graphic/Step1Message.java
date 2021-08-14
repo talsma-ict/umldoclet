@@ -69,9 +69,9 @@ class Step1Message extends Step1Abstract {
 			final ArrowComponent comp = drawingSet.getSkin().createComponentArrow(message.getUsedStyles(), getConfig(),
 					drawingSet.getSkinParam(), message.getLabelNumbered());
 			final Component compAliveBox = drawingSet.getSkin().createComponent(
-					new Style[] { ComponentType.ALIVE_BOX_OPEN_OPEN.getDefaultStyleDefinition().getMergedStyle(
-							drawingSet.getSkinParam().getCurrentStyleBuilder()) }, ComponentType.ALIVE_BOX_OPEN_OPEN,
-					null, drawingSet.getSkinParam(), null);
+					new Style[] { ComponentType.ALIVE_BOX_OPEN_OPEN.getDefaultStyleDefinition()
+							.getMergedStyle(drawingSet.getSkinParam().getCurrentStyleBuilder()) },
+					ComponentType.ALIVE_BOX_OPEN_OPEN, null, drawingSet.getSkinParam(), null);
 
 			this.messageArrow = new MessageArrow(freeY.getFreeY(range), drawingSet.getSkin(), comp,
 					getLivingParticipantBox1(), getLivingParticipantBox2(), message.getUrl(), compAliveBox);
@@ -80,8 +80,8 @@ class Step1Message extends Step1Abstract {
 		final List<Note> noteOnMessages = message.getNoteOnMessages();
 		for (Note noteOnMessage : noteOnMessages) {
 			final ISkinParam skinParam = noteOnMessage.getSkinParamBackcolored(drawingSet.getSkinParam());
-			addNote(drawingSet.getSkin().createComponent(noteOnMessage.getUsedStyles(),
-					noteOnMessage.getNoteStyle().getNoteComponentType(), null, skinParam, noteOnMessage.getStrings()));
+			addNote(drawingSet.getSkin().createComponentNote(noteOnMessage.getUsedStyles(),
+					noteOnMessage.getNoteStyle().getNoteComponentType(), skinParam, noteOnMessage.getStrings()));
 		}
 
 	}
@@ -97,9 +97,8 @@ class Step1Message extends Step1Abstract {
 
 		final double length;
 		if (isSelfMessage()) {
-			length = graphic.getArrowOnlyWidth(getStringBounder())
-					+ getLivingParticipantBox1().getLiveThicknessAt(getStringBounder(), arrowYStartLevel).getSegment()
-							.getLength();
+			length = graphic.getArrowOnlyWidth(getStringBounder()) + getLivingParticipantBox1()
+					.getLiveThicknessAt(getStringBounder(), arrowYStartLevel).getSegment().getLength();
 		} else {
 			length = graphic.getArrowOnlyWidth(getStringBounder())
 					+ getLivingParticipantBox(NotePosition.LEFT).getLifeLine().getRightShift(arrowYStartLevel)
@@ -115,7 +114,11 @@ class Step1Message extends Step1Abstract {
 		getDrawingSet().addEvent(getMessage(), graphic);
 
 		if (isSelfMessage()) {
-			constraintSet.getConstraintAfter(getParticipantBox1()).ensureValue(length);
+			if (this.getConfig().isReverseDefine()) {
+				constraintSet.getConstraintBefore(getParticipantBox1()).ensureValue(length);
+			} else {
+				constraintSet.getConstraintAfter(getParticipantBox1()).ensureValue(length);
+			}
 		} else {
 			constraintSet.getConstraint(getParticipantBox1(), getParticipantBox2()).ensureValue(length);
 		}
@@ -168,7 +171,7 @@ class Step1Message extends Step1Abstract {
 		}
 		if (getMessage().getNoteOnMessages().size() > 0 && isSelfMessage()) {
 			final MessageSelfArrow messageSelfArrow = createMessageSelfArrow();
-			final List<NoteBox> noteBoxes = new ArrayList<NoteBox>();
+			final List<NoteBox> noteBoxes = new ArrayList<>();
 			for (int i = 0; i < getNotes().size(); i++) {
 				final Component note = getNotes().get(i);
 				final Note noteOnMessage = getMessage().getNoteOnMessages().get(i);
@@ -177,7 +180,7 @@ class Step1Message extends Step1Abstract {
 			}
 			return new ArrowAndNoteBox(getStringBounder(), messageSelfArrow, noteBoxes);
 		} else if (getMessage().getNoteOnMessages().size() > 0) {
-			final List<NoteBox> noteBoxes = new ArrayList<NoteBox>();
+			final List<NoteBox> noteBoxes = new ArrayList<>();
 			for (int i = 0; i < getNotes().size(); i++) {
 				final Component note = getNotes().get(i);
 				final Note noteOnMessage = getMessage().getNoteOnMessages().get(i);
@@ -214,11 +217,10 @@ class Step1Message extends Step1Abstract {
 	}
 
 	private double getHalfLifeWidth() {
-		return getDrawingSet()
-				.getSkin()
+		return getDrawingSet().getSkin()
 				.createComponent(
-						new Style[] { ComponentType.ALIVE_BOX_OPEN_OPEN.getDefaultStyleDefinition().getMergedStyle(
-								getDrawingSet().getSkinParam().getCurrentStyleBuilder()) },
+						new Style[] { ComponentType.ALIVE_BOX_OPEN_OPEN.getDefaultStyleDefinition()
+								.getMergedStyle(getDrawingSet().getSkinParam().getCurrentStyleBuilder()) },
 						ComponentType.ALIVE_BOX_OPEN_OPEN, null, getDrawingSet().getSkinParam(), Display.create(""))
 				.getPreferredWidth(null) / 2;
 	}
@@ -227,10 +229,10 @@ class Step1Message extends Step1Abstract {
 		if (messageArrow == null) {
 			throw new IllegalStateException();
 		}
-		Arrow result = new ArrowAndParticipant(getStringBounder(), messageArrow, getParticipantBox2(), getDrawingSet()
-				.getSkinParam().getPadding(PaddingParam.PARTICIPANT));
+		Arrow result = new ArrowAndParticipant(getStringBounder(), messageArrow, getParticipantBox2(),
+				getDrawingSet().getSkinParam().getPadding(PaddingParam.PARTICIPANT));
 		if (getMessage().getNoteOnMessages().size() > 0) {
-			final List<NoteBox> noteBoxes = new ArrayList<NoteBox>();
+			final List<NoteBox> noteBoxes = new ArrayList<>();
 			for (int i = 0; i < getNotes().size(); i++) {
 				final Component note = getNotes().get(i);
 				final Note noteOnMessage = getMessage().getNoteOnMessages().get(i);
@@ -242,14 +244,13 @@ class Step1Message extends Step1Abstract {
 			}
 			result = new ArrowAndNoteBox(getStringBounder(), result, noteBoxes);
 		}
-		getLivingParticipantBox2().create(
-				getFreeY().getFreeY(getParticipantRange()) + result.getPreferredHeight(getStringBounder()) / 2);
+		getLivingParticipantBox2()
+				.create(getFreeY().getFreeY(getParticipantRange()) + result.getPreferredHeight(getStringBounder()) / 2);
 		return result;
 	}
 
 	private ArrowConfiguration getSelfArrowType(Message m) {
-		// return m.getArrowConfiguration().self();
-		ArrowConfiguration result = ArrowConfiguration.withDirectionSelf();
+		ArrowConfiguration result = ArrowConfiguration.withDirectionSelf(m.getArrowConfiguration().isReverseDefine());
 		if (m.getArrowConfiguration().isDotted()) {
 			result = result.withBody(ArrowBody.DOTTED);
 		}
@@ -259,12 +260,8 @@ class Step1Message extends Step1Abstract {
 		if (m.getArrowConfiguration().isAsync()) {
 			result = result.withHead(ArrowHead.ASYNC);
 		}
-		if (m.getArrowConfiguration().getDressing2().getHead() == ArrowHead.CROSSX) {
-			result = result.withHead2(m.getArrowConfiguration().getDressing2().getHead());
-			// System.err.println("WARNING : CROSSX");
-			// Thread.dumpStack();
-			// assert false;
-		}
+		result = result.withHead1(m.getArrowConfiguration().getDressing1().getHead());
+		result = result.withHead2(m.getArrowConfiguration().getDressing2().getHead());
 		result = result.withPart(m.getArrowConfiguration().getPart());
 		result = result.withColor(m.getArrowConfiguration().getColor());
 		result = result.withDecoration1(m.getArrowConfiguration().getDecoration1());

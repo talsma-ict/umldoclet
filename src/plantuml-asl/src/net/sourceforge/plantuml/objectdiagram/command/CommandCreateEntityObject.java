@@ -62,7 +62,7 @@ public class CommandCreateEntityObject extends SingleLineCommand2<AbstractClassO
 		return RegexConcat.build(CommandCreateEntityObject.class.getName(), RegexLeaf.start(), //
 				new RegexLeaf("TYPE", "object"), //
 				RegexLeaf.spaceOneOrMore(), //
-				new RegexLeaf("NAME", "(?:[%g]([^%g]+)[%g][%s]+as[%s]+)?([\\p{L}0-9_.]+)"), //
+				new RegexLeaf("NAME", "(?:[%g]([^%g]+)[%g][%s]+as[%s]+)?([%pLN_.]+)"), //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("STEREO", "(\\<\\<.+\\>\\>)?"), //
 				RegexLeaf.spaceZeroOrMore(), //
@@ -96,8 +96,8 @@ public class CommandCreateEntityObject extends SingleLineCommand2<AbstractClassO
 			entity.addUrl(url);
 		}
 		final String s = arg.get("COLOR", 0);
-		entity.setSpecificColorTOBEREMOVED(ColorType.BACK,
-				s == null ? null : diagram.getSkinParam().getIHtmlColorSet().getColor(s));
+		entity.setSpecificColorTOBEREMOVED(ColorType.BACK, s == null ? null
+				: diagram.getSkinParam().getIHtmlColorSet().getColor(diagram.getSkinParam().getThemeStyle(), s));
 		return CommandExecutionResult.ok();
 	}
 }

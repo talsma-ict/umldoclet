@@ -33,6 +33,7 @@ package net.sourceforge.plantuml.activitydiagram3.ftile.vertical;
 import java.awt.geom.Dimension2D;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
 import net.sourceforge.plantuml.ISkinParam;
@@ -70,10 +71,7 @@ public class FtileBlackBlock extends AbstractFtile {
 	}
 
 	public void setLabel(TextBlock label) {
-		if (label == null) {
-			throw new IllegalArgumentException();
-		}
-		this.label = label;
+		this.label = Objects.requireNonNull(label);
 	}
 
 	@Override
@@ -106,7 +104,7 @@ public class FtileBlackBlock extends AbstractFtile {
 	public Swimlane getSwimlaneOut() {
 		return swimlane;
 	}
-	
+
 	@Override
 	public Collection<Ftile> getMyChildren() {
 		return Collections.emptyList();

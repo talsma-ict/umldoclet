@@ -40,6 +40,7 @@ import java.util.TreeSet;
 
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
+import net.sourceforge.plantuml.ThemeStyle;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
@@ -55,7 +56,7 @@ import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class TimingRuler {
 
-	private final SortedSet<TimeTick> times = new TreeSet<TimeTick>();
+	private final SortedSet<TimeTick> times = new TreeSet<>();
 
 	private final ISkinParam skinParam;
 
@@ -66,7 +67,7 @@ public class TimingRuler {
 
 	static UGraphic applyForVLines(UGraphic ug) {
 		final UStroke stroke = new UStroke(3, 5, 0.5);
-		final HColor color = HColorSet.instance().getColorOrWhite("#AAA");
+		final HColor color = HColorSet.instance().getColorOrWhite(ThemeStyle.LIGHT, "#AAA");
 		return ug.apply(stroke).apply(color);
 	}
 
@@ -118,7 +119,7 @@ public class TimingRuler {
 	}
 
 	private Set<Long> getAbsolutesTicks() {
-		final Set<Long> result = new TreeSet<Long>(new Comparator<Long>() {
+		final Set<Long> result = new TreeSet<>(new Comparator<Long>() {
 			public int compare(Long o1, Long o2) {
 				return o2.compareTo(o1);
 			}
@@ -205,7 +206,7 @@ public class TimingRuler {
 	}
 
 	private Collection<Long> roundValues() {
-		final SortedSet<Long> result = new TreeSet<Long>();
+		final SortedSet<Long> result = new TreeSet<>();
 		if (tickUnitary == 0) {
 			for (TimeTick tick : times) {
 				final long round = tick.getTime().longValue();

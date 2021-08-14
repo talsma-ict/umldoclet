@@ -63,7 +63,7 @@ public class StringUtils {
 	public static final char PACKAGE_PRIVATE_METHOD = '\uEEF5';
 	public static final char PUBLIC_METHOD = '\uEEF4';
 	public static final char IE_MANDATORY = '\uEEF3';
-	
+
 	public static final char BOLD_START = '\uEEF2';
 	public static final char BOLD_END = '\uEEF1';
 
@@ -107,7 +107,7 @@ public class StringUtils {
 		if (m.find() == false) {
 			return null;
 		}
-		final List<String> result = new ArrayList<String>();
+		final List<String> result = new ArrayList<>();
 		for (int i = 1; i <= m.groupCount(); i++) {
 			result.add(m.group(i));
 		}
@@ -415,13 +415,8 @@ public class StringUtils {
 
 	public static List<String> splitComma(String s) {
 		s = trin(s);
-		// if
-		// (s.matches("([\\p{L}0-9_.]+|[%g][^%g]+[%g])(\\s*,\\s*([\\p{L}0-9_.]+|[%g][^%g]+[%g]))*")
-		// == false) {
-		// throw new IllegalArgumentException();
-		// }
-		final List<String> result = new ArrayList<String>();
-		final Pattern2 p = MyPattern.cmpile("([\\p{L}0-9_.]+|[%g][^%g]+[%g])");
+		final List<String> result = new ArrayList<>();
+		final Pattern2 p = MyPattern.cmpile("([%pLN_.]+|[%g][^%g]+[%g])");
 		final Matcher2 m = p.matcher(s);
 		while (m.find()) {
 			result.add(eventuallyRemoveStartingAndEndingDoubleQuote(m.group(0)));
@@ -434,7 +429,7 @@ public class StringUtils {
 	}
 
 	public static <O> List<O> merge(List<O> l1, List<O> l2) {
-		final List<O> result = new ArrayList<O>(l1);
+		final List<O> result = new ArrayList<>(l1);
 		result.addAll(l2);
 		return Collections.unmodifiableList(result);
 	}
@@ -534,6 +529,16 @@ public class StringUtils {
 
 	public static String manageEscapedTabs(String s) {
 		return s.replace("\\t", "\t");
+	}
+
+	public static long seed(String string) {
+		long h = 1125899906842597L; // prime
+		final int len = string.length();
+
+		for (int i = 0; i < len; i++) {
+			h = 31 * h + string.charAt(i);
+		}
+		return h;
 	}
 
 	// http://docs.oracle.com/javase/tutorial/i18n/format/dateFormat.html

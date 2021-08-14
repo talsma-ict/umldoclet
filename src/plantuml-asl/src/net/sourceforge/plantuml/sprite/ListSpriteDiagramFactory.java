@@ -36,19 +36,14 @@ import java.util.List;
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.PSystemCommandFactory;
+import net.sourceforge.plantuml.core.UmlSource;
 
 public class ListSpriteDiagramFactory extends PSystemCommandFactory {
-
-	private final ISkinSimple skinParam;
-
-	public ListSpriteDiagramFactory(ISkinSimple skinParam) {
-		this.skinParam = skinParam;
-	}
 
 	@Override
 	protected List<Command> createCommands() {
 
-		final List<Command> cmds = new ArrayList<Command>();
+		final List<Command> cmds = new ArrayList<>();
 		addCommonCommands1(cmds);
 		addCommonCommands2(cmds);
 		cmds.add(new CommandListSprite());
@@ -56,8 +51,8 @@ public class ListSpriteDiagramFactory extends PSystemCommandFactory {
 	}
 
 	@Override
-	public ListSpriteDiagram createEmptyDiagram() {
-		return new ListSpriteDiagram(skinParam);
+	public ListSpriteDiagram createEmptyDiagram(UmlSource source, ISkinSimple skinParam) {
+		return new ListSpriteDiagram(source, skinParam);
 	}
 
 }

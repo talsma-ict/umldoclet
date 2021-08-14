@@ -80,7 +80,7 @@ public class FtileIfDown extends AbstractFtile {
 	}
 
 	public Set<Swimlane> getSwimlanes() {
-		final Set<Swimlane> result = new HashSet<Swimlane>(thenBlock.getSwimlanes());
+		final Set<Swimlane> result = new HashSet<>(thenBlock.getSwimlanes());
 		result.add(getSwimlaneIn());
 		return result;
 	}
@@ -114,7 +114,7 @@ public class FtileIfDown extends AbstractFtile {
 				optionalStop == null ? diamond2 : new FtileEmpty(ftileFactory.skinParam()), optionalStop,
 				conditionEndStyle);
 
-		final List<Connection> conns = new ArrayList<Connection>();
+		final List<Connection> conns = new ArrayList<>();
 		conns.add(result.new ConnectionIn(thenBlock.getInLinkRendering().getRainbow(arrowColor)));
 		final boolean hasPointOut1 = thenBlock.calculateDimension(ftileFactory.getStringBounder()).hasPointOut();
 		if (optionalStop == null) {

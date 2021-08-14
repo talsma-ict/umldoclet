@@ -35,10 +35,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
 import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.ThemeStyle;
 import net.sourceforge.plantuml.command.regex.Matcher2;
 import net.sourceforge.plantuml.command.regex.MyPattern;
 
@@ -47,7 +49,7 @@ public class HColorSet {
 	private final static HColorSet singleton = new HColorSet();
 
 	private final Map<String, String> htmlNames = new HashMap<String, String>();
-	private final Set<String> names = new TreeSet<String>();
+	private final Set<String> names = new TreeSet<>();
 
 	public static HColorSet instance() {
 		return singleton;
@@ -233,17 +235,44 @@ public class HColorSet {
 			this.s2 = s2;
 		}
 
-		boolean isGradientValid() {
+		boolean isValid() {
 			return isColorValid(s1) && isColorValid(s2);
 		}
 
-		HColorGradient buildGradient(HColor background) {
+		HColorGradient buildInternal(HColor background) {
 			return new HColorGradient(build(s1, background), build(s2, background), sep);
 		}
 
 	}
 
-	private Gradient fromString(String s) {
+	class Automatic {
+		private final String[] colors;
+
+		public Automatic(String[] colors) {
+			this.colors = colors;
+		}
+
+		boolean isValid() {
+			for (String color : colors) {
+				if (isColorValid(color) == false) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		HColorAutomatic buildInternal(ThemeStyle themeStyle, HColor background) {
+			if (colors.length == 2) {
+				return new HColorAutomatic(themeStyle, build(colors[0], background), build(colors[1], background),
+						null);
+			}
+			return new HColorAutomatic(themeStyle, build(colors[0], background), build(colors[1], background),
+					build(colors[2], background));
+		}
+
+	}
+
+	private Gradient gradientFromString(String s) {
 		final Matcher2 m = MyPattern.cmpile("[-\\\\|/]").matcher(s);
 		if (m.find()) {
 			final char sep = m.group(0).charAt(0);
@@ -255,39 +284,59 @@ public class HColorSet {
 		return null;
 	}
 
-	public HColor getColorOrWhite(String s) {
-		return getColorOrWhite(s, null);
+	private Automatic automaticFromString(String s) {
+		if (s.startsWith("#")) {
+			s = s.substring(1);
+		}
+		if (s.startsWith("?") == false) {
+			return null;
+		}
+		final int idx = s.indexOf(':');
+		if (idx != -1) {
+			return new Automatic(s.substring(1).split(":"));
+		}
+		return null;
 	}
 
-	public HColor getColorOrWhite(String s, HColor background) {
-		if (s == null) {
-			throw new IllegalArgumentException();
-		}
-		if (isColorValid(s) == false) {
+	public HColor getColorOrWhite(String s) {
+		return getColorOrWhite(ThemeStyle.LIGHT, s, null);
+	}
+
+	public HColor getColorOrWhite(ThemeStyle themeStyle, String s) {
+		return getColorOrWhite(themeStyle, s, null);
+	}
+
+	public HColor getColorOrWhite(ThemeStyle themeStyle, String s, HColor background) {
+		if (isColorValid(Objects.requireNonNull(s)) == false) {
 			return HColorUtils.WHITE;
 		}
 		try {
-			return getColor(s, background);
+			return getColor(themeStyle, s, background);
 		} catch (NoSuchColorException e) {
 			assert false;
 			return HColorUtils.WHITE;
 		}
 	}
 
-	public HColor getColor(String s) throws NoSuchColorException {
-		return getColor(s, null);
+	public HColor getColor(ThemeStyle themeStyle, String s) throws NoSuchColorException {
+		return getColor(themeStyle, s, null);
 	}
 
-	public HColor getColor(String s, HColor background) throws NoSuchColorException {
-		if (s == null) {
-			throw new IllegalArgumentException();
-		}
-		if (isColorValid(s) == false) {
+	public HColor getColorLEGACY(String s) throws NoSuchColorException {
+		return getColor(ThemeStyle.LIGHT, s, null);
+	}
+
+	public HColor getColor(ThemeStyle themeStyle, String s, HColor background) throws NoSuchColorException {
+		if (isColorValid(Objects.requireNonNull(s)) == false) {
 			throw new NoSuchColorException();
 		}
-		final Gradient gradient = fromString(s);
+		final Automatic automatic = automaticFromString(s);
+		if (automatic != null) {
+			return automatic.buildInternal(themeStyle, background);
+		}
+		final Gradient gradient = gradientFromString(s);
 		if (gradient != null) {
-			return gradient.buildGradient(background);
+			return gradient.buildInternal(background);
 		}
 		if (background == null && (s.equalsIgnoreCase("#transparent") || s.equalsIgnoreCase("transparent")))
 			s = "#00000000";
@@ -296,9 +345,13 @@ public class HColorSet {
 
 	private boolean isColorValid(String s) {
 		s = removeFirstDieseAndgoLowerCase(s);
-		final Gradient gradient = fromString(s);
+		final Automatic automatic = automaticFromString(s);
+		if (automatic != null) {
+			return automatic.isValid();
+		}
+		final Gradient gradient = gradientFromString(s);
 		if (gradient != null) {
-			return gradient.isGradientValid();
+			return gradient.isValid();
 		}
 		if (s.matches("[0-9A-Fa-f]{3}")) {
 			return true;
@@ -328,7 +381,7 @@ public class HColorSet {
 		if (s.equalsIgnoreCase("transparent") || s.equalsIgnoreCase("background")) {
 			return new HColorBackground(background);
 		} else if (s.equalsIgnoreCase("automatic")) {
-			return new HColorAutomatic();
+			return new HColorAutomaticLegacy();
 		} else if (s.matches("[0-9A-Fa-f]{3}")) {
 			s = "" + s.charAt(0) + s.charAt(0) + s.charAt(1) + s.charAt(1) + s.charAt(2) + s.charAt(2);
 			color = new Color(Integer.parseInt(s, 16));
@@ -337,10 +390,7 @@ public class HColorSet {
 		} else if (s.matches("[0-9A-Fa-f]{8}")) {
 			color = fromRGBa(s);
 		} else {
-			final String value = htmlNames.get(s);
-			if (value == null) {
-				throw new IllegalArgumentException(s);
-			}
+			final String value = Objects.requireNonNull(htmlNames.get(s));
 			color = new Color(Integer.parseInt(value.substring(1), 16));
 		}
 		return new HColorSimple(color, false);

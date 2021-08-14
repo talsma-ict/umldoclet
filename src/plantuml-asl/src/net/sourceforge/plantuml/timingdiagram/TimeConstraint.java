@@ -33,6 +33,7 @@ package net.sourceforge.plantuml.timingdiagram;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.util.List;
+import java.util.Objects;
 
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.cucadiagram.Display;
@@ -56,8 +57,8 @@ public class TimeConstraint {
 	private final ISkinParam skinParam;
 
 	public TimeConstraint(TimeTick tick1, TimeTick tick2, String label, ISkinParam skinParam) {
-		this.tick1 = tick1;
-		this.tick2 = tick2;
+		this.tick1 = Objects.requireNonNull(tick1);
+		this.tick2 = Objects.requireNonNull(tick2);
 		this.label = Display.getWithNewlines(label);
 		this.skinParam = skinParam;
 	}

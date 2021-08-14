@@ -48,24 +48,18 @@ import net.sourceforge.plantuml.command.CommandRankDir;
 import net.sourceforge.plantuml.command.PSystemCommandFactory;
 import net.sourceforge.plantuml.command.note.CommandFactoryNoteActivity;
 import net.sourceforge.plantuml.command.note.CommandFactoryNoteOnLink;
+import net.sourceforge.plantuml.core.UmlSource;
 
 public class ActivityDiagramFactory extends PSystemCommandFactory {
 
-	private final ISkinSimple skinParam;
-
-	public ActivityDiagramFactory(ISkinSimple skinParam) {
-		this.skinParam = skinParam;
-	}
-
-
 	@Override
-	public ActivityDiagram createEmptyDiagram() {
-		return new ActivityDiagram(skinParam);
+	public ActivityDiagram createEmptyDiagram(UmlSource source, ISkinSimple skinParam) {
+		return new ActivityDiagram(source, skinParam);
 	}
 
 	@Override
 	protected List<Command> createCommands() {
-		final List<Command> cmds = new ArrayList<Command>();
+		final List<Command> cmds = new ArrayList<>();
 		cmds.add(new CommandFootboxIgnored());
 		addCommonCommands1(cmds);
 		cmds.add(new CommandRankDir());

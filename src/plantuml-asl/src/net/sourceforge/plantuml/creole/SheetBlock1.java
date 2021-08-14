@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.LineBreakStrategy;
@@ -67,11 +68,8 @@ public class SheetBlock1 extends AbstractTextBlock implements TextBlock, Atom, S
 
 	public SheetBlock1(Sheet sheet, LineBreakStrategy maxWidth, double padding) {
 		this.sheet = sheet;
-		this.maxWidth = maxWidth;
+		this.maxWidth = Objects.requireNonNull(maxWidth);
 		this.padding = padding;
-		if (maxWidth == null) {
-			throw new IllegalArgumentException();
-		}
 	}
 
 	@Override
@@ -94,7 +92,7 @@ public class SheetBlock1 extends AbstractTextBlock implements TextBlock, Atom, S
 		if (positions != null) {
 			return;
 		}
-		stripes = new ArrayList<Stripe>();
+		stripes = new ArrayList<>();
 		for (Stripe stripe : sheet) {
 			stripes.addAll(new Fission(stripe, maxWidth).getSplitted(stringBounder));
 		}

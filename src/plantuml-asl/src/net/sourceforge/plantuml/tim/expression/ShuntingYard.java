@@ -41,7 +41,7 @@ import net.sourceforge.plantuml.tim.EaterExceptionLocated;
 public class ShuntingYard {
 
 	final private TokenStack ouputQueue = new TokenStack();
-	final private Deque<Token> operatorStack = new ArrayDeque<Token>();
+	final private Deque<Token> operatorStack = new ArrayDeque<>();
 
 	private static final boolean TRACE = false;
 
@@ -72,7 +72,7 @@ public class ShuntingYard {
 					if (isVariableName(name) == false) {
 						throw EaterException.unlocated("Parsing syntax error about " + name);
 					}
-					ouputQueue.add(new Token("undefined", TokenType.QUOTED_STRING, null));
+					ouputQueue.add(new Token(name, TokenType.QUOTED_STRING, null));
 				} else {
 					ouputQueue.add(variable.toToken());
 				}

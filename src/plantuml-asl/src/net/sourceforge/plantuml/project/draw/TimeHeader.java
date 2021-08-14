@@ -30,13 +30,18 @@
  */
 package net.sourceforge.plantuml.project.draw;
 
+import java.util.Objects;
+
 import net.sourceforge.plantuml.SpriteContainerEmpty;
+import net.sourceforge.plantuml.ThemeStyle;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.project.time.Day;
 import net.sourceforge.plantuml.project.timescale.TimeScale;
+import net.sourceforge.plantuml.style.PName;
+import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
@@ -57,20 +62,44 @@ public abstract class TimeHeader {
 		return 28;
 	}
 
-	protected final HColor veryLightGray = HColorSet.instance().getColorOrWhite("#E0E8E8");
-	protected final HColor lightGray = HColorSet.instance().getColorOrWhite("#909898");
-
 	private final TimeScale timeScale;
+	private final Style closedStyle;
+	private final Style timelineStyle;
+
+	private final HColorSet colorSet;
+	private final ThemeStyle themeStyle;
+
 	protected final Day min;
 	protected final Day max;
 
-	public TimeHeader(Day min, Day max, TimeScale timeScale) {
+	public TimeHeader(Style timelineStyle, Style closedStyle, Day min, Day max, TimeScale timeScale, HColorSet colorSet,
+			ThemeStyle themeStyle) {
 		this.timeScale = timeScale;
 		this.min = min;
 		this.max = max;
+		this.closedStyle = Objects.requireNonNull(closedStyle);
+		this.timelineStyle = Objects.requireNonNull(timelineStyle);
+		this.colorSet = colorSet;
+		this.themeStyle = themeStyle;
 	}
 
-	protected abstract double getTimeHeaderHeight();
+	protected final HColor closedBackgroundColor() {
+		return closedStyle.value(PName.BackGroundColor).asColor(themeStyle, colorSet);
+	}
+
+	protected final HColor closedFontColor() {
+		return closedStyle.value(PName.FontColor).asColor(themeStyle, colorSet);
+	}
+
+	protected final HColor openFontColor() {
+		return timelineStyle.value(PName.FontColor).asColor(themeStyle, colorSet);
+	}
+
+	protected final HColor getBarColor() {
+		return timelineStyle.value(PName.LineColor).asColor(themeStyle, colorSet);
+	}
+
+	public abstract double getTimeHeaderHeight();
 
 	public abstract double getTimeFooterHeight();
 
@@ -84,7 +113,12 @@ public abstract class TimeHeader {
 		final double xmin = getTimeScale().getStartingPosition(min);
 		final double xmax = getTimeScale().getEndingPosition(max);
 		final ULine hline = ULine.hline(xmax - xmin);
-		ug.apply(HColorUtils.LIGHT_GRAY).apply(UTranslate.dy(y)).draw(hline);
+		ug.apply(getBarColor()).apply(UTranslate.dy(y)).draw(hline);
+	}
+
+	protected final void drawVbar(UGraphic ug, double x, double y1, double y2) {
+		final ULine vbar = ULine.vline(y2 - y1);
+		ug.apply(getBarColor()).apply(new UTranslate(x, y1)).draw(vbar);
 	}
 
 	final protected FontConfiguration getFontConfiguration(int size, boolean bold, HColor color) {
@@ -111,12 +145,13 @@ public abstract class TimeHeader {
 		text.drawU(ug.apply(UTranslate.dx(start + diff / 2)));
 	}
 
-	protected final void printCentered(UGraphic ug, double start, double end, TextBlock... texts) {
+	protected final void printCentered(UGraphic ug, boolean hideIfTooBig, double start, double end,
+			TextBlock... texts) {
 		final double available = end - start;
 		for (int i = texts.length - 1; i >= 0; i--) {
 			final TextBlock text = texts[i];
 			final double width = text.calculateDimension(ug.getStringBounder()).getWidth();
-			if (i == 0 || width <= available) {
+			if ((i == 0 && hideIfTooBig == false) || width <= available) {
 				final double diff = Math.max(0, available - width);
 				text.drawU(ug.apply(UTranslate.dx(start + diff / 2)));
 				return;

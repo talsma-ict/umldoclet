@@ -50,6 +50,7 @@ import net.sourceforge.plantuml.ugraphic.UImage;
 import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.UText;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
+import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class UGraphicTxt extends AbstractCommonUGraphic implements ClipContainer, UGraphic2 {
 
@@ -66,7 +67,7 @@ public class UGraphicTxt extends AbstractCommonUGraphic implements ClipContainer
 	}
 
 	public UGraphicTxt() {
-		super(new ColorMapperIdentity());
+		super(HColorUtils.BLACK, new ColorMapperIdentity());
 		this.charArea = new UmlCharAreaImpl();
 	}
 
@@ -78,7 +79,7 @@ public class UGraphicTxt extends AbstractCommonUGraphic implements ClipContainer
 		// final UClip clip = getClip();
 		if (shape instanceof UText) {
 			final UText txt = (UText) shape;
-			final int y = ((int) (getTranslateY() + txt.getDescent())) / 10;
+			final int y = ((int) (getTranslateY() + txt.getDescent(getStringBounder()))) / 10;
 			if (txt.getFontConfiguration().containsStyle(FontStyle.WAVE)) {
 				charArea.drawHLine('^', y, getDx(), txt.getText().length());
 				charArea.drawStringLR(txt.getText(), getDx(), y + 1);

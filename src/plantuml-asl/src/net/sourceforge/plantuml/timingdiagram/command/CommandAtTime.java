@@ -55,7 +55,7 @@ public class CommandAtTime extends SingleLineCommand2<TimingDiagram> {
 						new RegexLeaf("as"), //
 						RegexLeaf.spaceOneOrMore(), //
 						new RegexLeaf(":"), //
-						new RegexLeaf("CODE", "([\\p{L}0-9_.]+)") //
+						new RegexLeaf("CODE", "([%pLN_.]+)") //
 				)), //
 				RegexLeaf.spaceZeroOrMore(), //
 				RegexLeaf.end());

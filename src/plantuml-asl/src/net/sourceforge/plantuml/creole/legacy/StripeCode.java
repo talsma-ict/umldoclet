@@ -49,7 +49,7 @@ import net.sourceforge.plantuml.ugraphic.UTranslate;
 public class StripeCode implements Stripe, Atom {
 
 	final private FontConfiguration fontConfiguration;
-	private final List<String> raw = new ArrayList<String>();
+	private final List<String> raw = new ArrayList<>();
 
 	private boolean terminated;
 
@@ -98,9 +98,10 @@ public class StripeCode implements Stripe, Atom {
 		double y = 0;
 		for (String s : raw) {
 			final UText shape = new UText(s, fontConfiguration);
-			final Dimension2D dim = ug.getStringBounder().calculateDimension(fontConfiguration.getFont(), s);
+			final StringBounder stringBounder = ug.getStringBounder();
+			final Dimension2D dim = stringBounder.calculateDimension(fontConfiguration.getFont(), s);
 			y += dim.getHeight();
-			ug.apply(UTranslate.dy(y - shape.getDescent())).draw(shape);
+			ug.apply(UTranslate.dy(y - shape.getDescent(stringBounder))).draw(shape);
 		}
 	}
 

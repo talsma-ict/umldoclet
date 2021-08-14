@@ -40,6 +40,7 @@ import net.sourceforge.plantuml.compositediagram.command.CommandCreateBlock;
 import net.sourceforge.plantuml.compositediagram.command.CommandCreatePackageBlock;
 import net.sourceforge.plantuml.compositediagram.command.CommandEndPackageBlock;
 import net.sourceforge.plantuml.compositediagram.command.CommandLinkBlock;
+import net.sourceforge.plantuml.core.UmlSource;
 
 public class CompositeDiagramFactory extends PSystemCommandFactory {
 
@@ -51,7 +52,7 @@ public class CompositeDiagramFactory extends PSystemCommandFactory {
 
 	@Override
 	protected List<Command> createCommands() {
-		final List<Command> cmds = new ArrayList<Command>();
+		final List<Command> cmds = new ArrayList<>();
 		cmds.add(new CommandCreateBlock());
 		cmds.add(new CommandLinkBlock());
 		cmds.add(new CommandCreatePackageBlock());
@@ -62,7 +63,7 @@ public class CompositeDiagramFactory extends PSystemCommandFactory {
 	}
 
 	@Override
-	public CompositeDiagram createEmptyDiagram() {
-		return new CompositeDiagram(skinParam);
+	public CompositeDiagram createEmptyDiagram(UmlSource source, ISkinSimple skinParam) {
+		return new CompositeDiagram(source, skinParam);
 	}
 }

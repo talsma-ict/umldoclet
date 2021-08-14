@@ -30,6 +30,8 @@
  */
 package net.sourceforge.plantuml.tim;
 
+import java.util.Objects;
+
 import net.sourceforge.plantuml.StringLocated;
 
 public class EaterExceptionLocated extends Exception {
@@ -43,10 +45,7 @@ public class EaterExceptionLocated extends Exception {
 	}
 
 	public static EaterExceptionLocated located(String message, StringLocated location) {
-		if (location == null) {
-			throw new IllegalArgumentException();
-		}
-		return new EaterExceptionLocated(message, location);
+		return new EaterExceptionLocated(message, Objects.requireNonNull(location));
 	}
 
 	public final String getMessage() {

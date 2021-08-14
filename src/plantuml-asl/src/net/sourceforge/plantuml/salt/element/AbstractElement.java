@@ -30,6 +30,12 @@
  */
 package net.sourceforge.plantuml.salt.element;
 
+import net.sourceforge.plantuml.ThemeStyle;
+
 public abstract class AbstractElement implements Element {
+
+	final protected ThemeStyle getThemeStyle() {
+		return ThemeStyle.LIGHT;
+	}
 
 }

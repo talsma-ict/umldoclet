@@ -30,6 +30,7 @@
  */
 package net.sourceforge.plantuml.creole.command;
 
+import net.sourceforge.plantuml.ThemeStyle;
 import net.sourceforge.plantuml.command.regex.Matcher2;
 import net.sourceforge.plantuml.command.regex.MyPattern;
 import net.sourceforge.plantuml.command.regex.Pattern2;
@@ -42,25 +43,30 @@ import net.sourceforge.plantuml.ugraphic.color.NoSuchColorRuntimeException;
 
 public class CommandCreoleColorAndSizeChange implements Command {
 
-	private final Pattern2 pattern;
+	private final Pattern2 mypattern;
+	private final ThemeStyle themeStyle;
 
 	public static final String fontPattern = "\\<font(?:[%s]+size[%s]*=[%s]*[%g]?(\\d+)[%g]?|[%s]+color[%s]*=[%s]*[%g]?(#[0-9a-fA-F]{6}|\\w+)[%g]?)+[%s]*\\>";
 
-	public static Command create() {
-		return new CommandCreoleColorAndSizeChange("^(?i)(" + fontPattern + "(.*?)\\</font\\>)");
+	private static final Pattern2 pattern = MyPattern.cmpile("^(" + fontPattern + "(.*?)\\</font\\>)");
+
+	private static final Pattern2 patternEol = MyPattern.cmpile("^(" + fontPattern + "(.*))$");
+
+	public static Command create(ThemeStyle themeStyle) {
+		return new CommandCreoleColorAndSizeChange(themeStyle, pattern);
 	}
 
-	public static Command createEol() {
-		return new CommandCreoleColorAndSizeChange("^(?i)(" + fontPattern + "(.*))$");
+	public static Command createEol(ThemeStyle themeStyle) {
+		return new CommandCreoleColorAndSizeChange(themeStyle, patternEol);
 	}
 
-	private CommandCreoleColorAndSizeChange(String p) {
-		this.pattern = MyPattern.cmpile(p);
-
+	private CommandCreoleColorAndSizeChange(ThemeStyle themeStyle, Pattern2 pattern) {
+		this.mypattern = pattern;
+		this.themeStyle = themeStyle;
 	}
 
 	public int matchingSize(String line) {
-		final Matcher2 m = pattern.matcher(line);
+		final Matcher2 m = mypattern.matcher(line);
 		if (m.find() == false) {
 			return 0;
 		}
@@ -68,7 +74,7 @@ public class CommandCreoleColorAndSizeChange implements Command {
 	}
 
 	public String executeAndGetRemaining(String line, StripeSimple stripe) throws NoSuchColorRuntimeException {
-		final Matcher2 m = pattern.matcher(line);
+		final Matcher2 m = mypattern.matcher(line);
 		if (m.find() == false) {
 			throw new IllegalStateException();
 		}
@@ -84,7 +90,7 @@ public class CommandCreoleColorAndSizeChange implements Command {
 		try {
 			if (m.group(3) != null) {
 				final String s = m.group(3);
-				final HColor color = HColorSet.instance().getColor(s);
+				final HColor color = HColorSet.instance().getColor(themeStyle, s);
 				fc2 = fc2.changeColor(color);
 			}
 

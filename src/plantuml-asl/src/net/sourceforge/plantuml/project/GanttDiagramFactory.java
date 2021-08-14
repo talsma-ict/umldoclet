@@ -35,19 +35,24 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.CommandNope;
 import net.sourceforge.plantuml.command.PSystemCommandFactory;
 import net.sourceforge.plantuml.core.DiagramType;
+import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.project.command.CommandColorTask;
 import net.sourceforge.plantuml.project.command.CommandFootbox;
 import net.sourceforge.plantuml.project.command.CommandGanttArrow;
 import net.sourceforge.plantuml.project.command.CommandGanttArrow2;
+import net.sourceforge.plantuml.project.command.CommandLabelOnColumn;
+import net.sourceforge.plantuml.project.command.CommandLanguage;
 import net.sourceforge.plantuml.project.command.CommandNoteBottom;
 import net.sourceforge.plantuml.project.command.CommandPage;
 import net.sourceforge.plantuml.project.command.CommandPrintBetween;
 import net.sourceforge.plantuml.project.command.CommandPrintScale;
 import net.sourceforge.plantuml.project.command.CommandSeparator;
+import net.sourceforge.plantuml.project.command.CommandWeekNumberStrategy;
 import net.sourceforge.plantuml.project.command.NaturalCommand;
 import net.sourceforge.plantuml.project.lang.SentenceAnd;
 import net.sourceforge.plantuml.project.lang.SentenceAndAnd;
@@ -56,7 +61,6 @@ import net.sourceforge.plantuml.project.lang.Subject;
 import net.sourceforge.plantuml.project.lang.SubjectDayAsDate;
 import net.sourceforge.plantuml.project.lang.SubjectDayOfWeek;
 import net.sourceforge.plantuml.project.lang.SubjectDaysAsDates;
-import net.sourceforge.plantuml.project.lang.SubjectLinks;
 import net.sourceforge.plantuml.project.lang.SubjectProject;
 import net.sourceforge.plantuml.project.lang.SubjectResource;
 import net.sourceforge.plantuml.project.lang.SubjectTask;
@@ -68,8 +72,7 @@ public class GanttDiagramFactory extends PSystemCommandFactory {
 
 	static private final List<Subject> subjects() {
 		return Arrays.<Subject>asList(new SubjectTask(), new SubjectProject(), new SubjectDayOfWeek(),
-				new SubjectDayAsDate(), new SubjectDaysAsDates(), new SubjectResource(), new SubjectToday(),
-				new SubjectLinks());
+				new SubjectDayAsDate(), new SubjectDaysAsDates(), new SubjectResource(), new SubjectToday());
 	}
 
 	public GanttDiagramFactory(DiagramType type) {
@@ -78,7 +81,7 @@ public class GanttDiagramFactory extends PSystemCommandFactory {
 
 	@Override
 	protected List<Command> createCommands() {
-		final List<Command> cmds = new ArrayList<Command>();
+		final List<Command> cmds = new ArrayList<>();
 		addTitleCommands(cmds);
 		addCommonCommands2(cmds);
 
@@ -94,12 +97,15 @@ public class GanttDiagramFactory extends PSystemCommandFactory {
 		cmds.add(new CommandGanttArrow2());
 		cmds.add(new CommandColorTask());
 		cmds.add(new CommandSeparator());
+		cmds.add(new CommandWeekNumberStrategy());
 
+		cmds.add(new CommandLanguage());
 		cmds.add(new CommandPrintScale());
 		cmds.add(new CommandPrintBetween());
 		cmds.add(new CommandPage());
 		cmds.add(new CommandNoteBottom());
 		cmds.add(new CommandFootbox());
+		cmds.add(new CommandLabelOnColumn());
 
 		// cmds.add(new CommandScaleWidthAndHeight());
 		// cmds.add(new CommandScaleWidthOrHeight());
@@ -110,9 +116,14 @@ public class GanttDiagramFactory extends PSystemCommandFactory {
 		return cmds;
 	}
 
-	static private final Collection<Command> cache = new ArrayList<Command>();
+	static private final Collection<Command> cache = new ArrayList<>();
+
+	public static void clearCache() {
+		cache.clear();
+	}
 
 	private static Collection<Command> getLanguageCommands() {
+		// Useless synchronized now
 		synchronized (cache) {
 			if (cache.size() == 0) {
 
@@ -147,8 +158,8 @@ public class GanttDiagramFactory extends PSystemCommandFactory {
 	}
 
 	@Override
-	public GanttDiagram createEmptyDiagram() {
-		return new GanttDiagram();
+	public GanttDiagram createEmptyDiagram(UmlSource source, ISkinSimple skinParam) {
+		return new GanttDiagram(source);
 	}
 
 }

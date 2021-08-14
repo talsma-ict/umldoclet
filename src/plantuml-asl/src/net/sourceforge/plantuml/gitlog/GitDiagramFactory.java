@@ -32,6 +32,7 @@ package net.sourceforge.plantuml.gitlog;
 
 import java.util.Iterator;
 
+import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.StringLocated;
 import net.sourceforge.plantuml.command.PSystemAbstractFactory;
 import net.sourceforge.plantuml.core.Diagram;
@@ -44,7 +45,8 @@ public class GitDiagramFactory extends PSystemAbstractFactory {
 		super(DiagramType.GIT);
 	}
 
-	public Diagram createSystem(UmlSource source) {
+	@Override
+	public Diagram createSystem(UmlSource source, ISkinSimple skinParam) {
 		final GitTextArea textArea = new GitTextArea();
 
 		final Iterator<StringLocated> it = source.iterator2();
@@ -56,7 +58,7 @@ public class GitDiagramFactory extends PSystemAbstractFactory {
 			}
 			textArea.add(line);
 		}
-		return new GitDiagram(textArea);
+		return new GitDiagram(source, textArea);
 	}
 
 }

@@ -36,6 +36,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.graphic.UDrawable;
 import net.sourceforge.plantuml.real.Real;
 import net.sourceforge.plantuml.real.RealUtils;
 import net.sourceforge.plantuml.sequencediagram.Event;
@@ -48,10 +49,10 @@ public class TileParallel extends CommonTile {
 		super(stringBounder);
 	}
 
-	private final List<Tile> tiles = new ArrayList<Tile>();
+	private final List<Tile> tiles = new ArrayList<>();
 
 	@Override
-	public void callbackY_internal(double y) {
+	final protected void callbackY_internal(double y) {
 		for (Tile tile : tiles) {
 			tile.callbackY(y);
 		}
@@ -65,7 +66,7 @@ public class TileParallel extends CommonTile {
 		final double yPointAll = getContactPointRelative();
 		for (Tile tile : tiles) {
 			final double yPoint = tile.getContactPointRelative();
-			tile.drawU(ug.apply(UTranslate.dy(yPointAll - yPoint)));
+			((UDrawable) tile).drawU(ug.apply(UTranslate.dy(yPointAll - yPoint)));
 		}
 	}
 
@@ -151,9 +152,9 @@ public class TileParallel extends CommonTile {
 		return null;
 	}
 
-	public boolean matchAnchorV1(String anchor) {
+	public boolean matchAnchor(String anchor) {
 		for (Tile tile : tiles) {
-			if (tile.matchAnchorV1(anchor)) {
+			if (tile.matchAnchor(anchor)) {
 				return true;
 			}
 		}

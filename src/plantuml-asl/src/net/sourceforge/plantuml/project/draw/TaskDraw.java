@@ -35,8 +35,11 @@ import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.UDrawable;
+import net.sourceforge.plantuml.project.LabelStrategy;
 import net.sourceforge.plantuml.project.core.Task;
+import net.sourceforge.plantuml.project.core.TaskAttribute;
 import net.sourceforge.plantuml.project.lang.CenterBorderColor;
+import net.sourceforge.plantuml.real.Real;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 
 public interface TaskDraw extends UDrawable {
@@ -45,23 +48,26 @@ public interface TaskDraw extends UDrawable {
 
 	public void setColorsAndCompletion(CenterBorderColor colors, int completion, Url url, Display note);
 
-	public double getY();
+	public Real getY(StringBounder stringBounder);
 
-	public double getY(Direction direction);
+	public double getY(StringBounder stringBounder, Direction direction);
 
-	public void pushMe(double deltaY);
-	
-	public void drawTitle(UGraphic ug);
+	public void drawTitle(UGraphic ug, LabelStrategy labelStrategy, double colTitles, double colBars);
 
-	public double getHeightTask();
+	public double getTitleWidth(StringBounder stringBounder);
+
+	public double getFullHeightTask(StringBounder stringBounder);
 
 	public double getHeightMax(StringBounder stringBounder);
 
 	public Task getTask();
 
-	public FingerPrint getFingerPrint();
+	public FingerPrint getFingerPrint(StringBounder stringBounder);
 
 	public FingerPrint getFingerPrintNote(StringBounder stringBounder);
 
+	public double getX1(TaskAttribute taskAttribute);
+
+	public double getX2(TaskAttribute taskAttribute);
 
 }

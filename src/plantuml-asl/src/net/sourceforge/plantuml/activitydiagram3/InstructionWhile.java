@@ -30,6 +30,7 @@
  */
 package net.sourceforge.plantuml.activitydiagram3;
 
+import java.util.Objects;
 import java.util.Set;
 
 import net.sourceforge.plantuml.ISkinParam;
@@ -39,6 +40,7 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactory;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileKilled;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.FtileWithNoteOpale;
+import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.Rainbow;
 import net.sourceforge.plantuml.graphic.color.Colors;
@@ -78,26 +80,17 @@ public class InstructionWhile extends WithNote implements Instruction, Instructi
 
 	public InstructionWhile(Swimlane swimlane, Instruction parent, Display test, LinkRendering nextLinkRenderer,
 			Display yes, HColor color, ISkinParam skinParam) {
-		if (test == null) {
-			throw new IllegalArgumentException();
-		}
-		if (yes == null) {
-			throw new IllegalArgumentException();
-		}
 		this.parent = parent;
-		this.test = test;
-		this.nextLinkRenderer = nextLinkRenderer;
-		if (nextLinkRenderer == null) {
-			throw new IllegalArgumentException();
-		}
-		this.yes = yes;
+		this.test = Objects.requireNonNull(test);
+		this.nextLinkRenderer = Objects.requireNonNull(nextLinkRenderer);
+		this.yes = Objects.requireNonNull(yes);
 		this.swimlane = swimlane;
 		this.color = color;
 		this.skinParam = skinParam;
 	}
 
-	public void add(Instruction ins) {
-		repeatList.add(ins);
+	public CommandExecutionResult add(Instruction ins) {
+		return repeatList.add(ins);
 	}
 
 	public Ftile createFtile(FtileFactory factory) {
@@ -131,10 +124,7 @@ public class InstructionWhile extends WithNote implements Instruction, Instructi
 	}
 
 	public void outDisplay(Display out) {
-		if (out == null) {
-			throw new IllegalArgumentException();
-		}
-		this.outColor = outColor.withDisplay(out);
+		this.outColor = outColor.withDisplay(Objects.requireNonNull(out));
 	}
 
 	public void outColor(Rainbow rainbow) {

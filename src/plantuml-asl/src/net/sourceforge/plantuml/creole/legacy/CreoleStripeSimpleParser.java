@@ -30,6 +30,8 @@
  */
 package net.sourceforge.plantuml.creole.legacy;
 
+import java.util.Objects;
+
 import net.sourceforge.plantuml.BackSlash;
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.StringUtils;
@@ -60,10 +62,7 @@ public class CreoleStripeSimpleParser {
 		}
 		this.fontConfiguration = fontConfiguration;
 		this.modeSimpleLine = mode;
-		this.skinParam = skinParam;
-		if (skinParam == null) {
-			throw new IllegalArgumentException();
-		}
+		this.skinParam = Objects.requireNonNull(skinParam);
 
 		if (mode == CreoleMode.NO_CREOLE) {
 			this.line = line;

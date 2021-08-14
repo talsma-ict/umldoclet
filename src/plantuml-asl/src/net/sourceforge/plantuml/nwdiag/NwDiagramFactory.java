@@ -33,20 +33,27 @@ package net.sourceforge.plantuml.nwdiag;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.PSystemCommandFactory;
+import net.sourceforge.plantuml.core.DiagramType;
+import net.sourceforge.plantuml.core.UmlSource;
 
 public class NwDiagramFactory extends PSystemCommandFactory {
 
+	public NwDiagramFactory(DiagramType type) {
+		super(type);
+	}
+
 	@Override
-	public NwDiagram createEmptyDiagram() {
-		return new NwDiagram();
+	public NwDiagram createEmptyDiagram(UmlSource source, ISkinSimple skinParam) {
+		return new NwDiagram(source);
 	}
 
 	@Override
 	protected List<Command> createCommands() {
 
-		final List<Command> cmds = new ArrayList<Command>();
+		final List<Command> cmds = new ArrayList<>();
 		addCommonCommands1(cmds);
 		cmds.add(new CommandNwDiagInit());
 		cmds.add(new CommandComment());

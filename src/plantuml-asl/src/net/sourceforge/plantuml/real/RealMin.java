@@ -36,7 +36,7 @@ import java.util.List;
 
 class RealMin extends AbstractReal implements Real {
 
-	private final List<Real> all = new ArrayList<Real>();
+	private final List<Real> all = new ArrayList<>();
 
 	RealMin(Collection<Real> reals) {
 		super(RealMax.line(reals));

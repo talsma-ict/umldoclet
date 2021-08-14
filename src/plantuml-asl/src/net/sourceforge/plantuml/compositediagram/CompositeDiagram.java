@@ -30,9 +30,12 @@
  */
 package net.sourceforge.plantuml.compositediagram;
 
+import java.util.Objects;
+
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
+import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.cucadiagram.Code;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Ident;
@@ -41,13 +44,13 @@ import net.sourceforge.plantuml.graphic.USymbol;
 
 public class CompositeDiagram extends AbstractEntityDiagram {
 
-	public CompositeDiagram(ISkinSimple skinParam) {
-		super(UmlDiagramType.COMPOSITE, skinParam);
+	public CompositeDiagram(UmlSource source, ISkinSimple skinParam) {
+		super(source, UmlDiagramType.COMPOSITE, skinParam);
 	}
 
 	@Override
 	public IEntity getOrCreateLeaf(Ident ident, Code code, LeafType type, USymbol symbol) {
-		checkNotNull(ident);
+		Objects.requireNonNull(ident);
 		// final Ident idNewLong = buildLeafIdent(id);
 		if (type == null) {
 			if (isGroup(code)) {

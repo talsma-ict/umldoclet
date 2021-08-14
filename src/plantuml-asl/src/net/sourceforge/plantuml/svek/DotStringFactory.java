@@ -67,7 +67,7 @@ public class DotStringFactory implements Moveable {
 
 	private final Bibliotekon bibliotekon = new Bibliotekon();
 
-	final private Set<String> rankMin = new HashSet<String>();
+	final private Set<String> rankMin = new HashSet<>();
 
 	private final ColorSequence colorSequence;
 	private final Cluster root;
@@ -120,7 +120,7 @@ public class DotStringFactory implements Moveable {
 
 	private double getHorizontalDzeta() {
 		double max = 0;
-		for (Line l : bibliotekon.allLines()) {
+		for (SvekLine l : bibliotekon.allLines()) {
 			final double c = l.getHorizontalDzeta(stringBounder);
 			if (c > max) {
 				max = c;
@@ -131,7 +131,7 @@ public class DotStringFactory implements Moveable {
 
 	private double getVerticalDzeta() {
 		double max = 0;
-		for (Line l : bibliotekon.allLines()) {
+		for (SvekLine l : bibliotekon.allLines()) {
 			final double c = l.getVerticalDzeta(stringBounder);
 			if (c > max) {
 				max = c;
@@ -202,14 +202,14 @@ public class DotStringFactory implements Moveable {
 		manageMinMaxCluster(sb);
 
 		root.printCluster1(sb, bibliotekon.allLines(), stringBounder);
-		for (Line line : bibliotekon.lines0()) {
+		for (SvekLine line : bibliotekon.lines0()) {
 			line.appendLine(getGraphvizVersion(), sb, dotMode);
 		}
 		root.fillRankMin(rankMin);
 		root.printCluster2(sb, bibliotekon.allLines(), stringBounder, dotMode, getGraphvizVersion(), umlDiagramType);
 		printMinRanking(sb);
 
-		for (Line line : bibliotekon.lines1()) {
+		for (SvekLine line : bibliotekon.lines1()) {
 			line.appendLine(getGraphvizVersion(), sb, dotMode);
 		}
 		SvekUtils.println(sb);
@@ -219,8 +219,8 @@ public class DotStringFactory implements Moveable {
 	}
 
 	private void manageMinMaxCluster(final StringBuilder sb) {
-		final List<String> minPointCluster = new ArrayList<String>();
-		final List<String> maxPointCluster = new ArrayList<String>();
+		final List<String> minPointCluster = new ArrayList<>();
+		final List<String> maxPointCluster = new ArrayList<>();
 		for (Cluster cluster : bibliotekon.allCluster()) {
 			final String minPoint = cluster.getMinPoint(umlDiagramType);
 			if (minPoint != null) {
@@ -437,11 +437,11 @@ public class DotStringFactory implements Moveable {
 			cluster.setTitlePosition(minXtitle, minYtitle);
 		}
 
-		for (Line line : bibliotekon.allLines()) {
+		for (SvekLine line : bibliotekon.allLines()) {
 			line.solveLine(svgResult);
 		}
 
-		for (Line line : bibliotekon.allLines()) {
+		for (SvekLine line : bibliotekon.allLines()) {
 			line.manageCollision(bibliotekon.allNodes());
 		}
 		// corner1.manage(0, 0);
@@ -488,7 +488,7 @@ public class DotStringFactory implements Moveable {
 		for (SvekNode sh : bibliotekon.allNodes()) {
 			sh.moveSvek(deltaX, deltaY);
 		}
-		for (Line line : bibliotekon.allLines()) {
+		for (SvekLine line : bibliotekon.allLines()) {
 			line.moveSvek(deltaX, deltaY);
 		}
 		for (Cluster cl : bibliotekon.allCluster()) {

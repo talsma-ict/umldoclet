@@ -126,13 +126,6 @@ public class CommandCreateElementParenthesis extends SingleLineCommand2<ClassDia
 		return ColorParser.simpleColor(ColorType.BACK, "COLOR2");
 	}
 
-//	private static final String CODE_CORE = "[\\p{L}0-9_.]+|\\(\\)[%s]*[\\p{L}0-9_.]+|\\(\\)[%s]*[%g][^%g]+[%g]|:[^:]+:|\\([^()]+\\)|\\[[^\\[\\]]+\\]";
-//	public static final String CODE = "(" + CODE_CORE + ")";
-//	public static final String CODE_WITH_QUOTE = "(" + CODE_CORE + "|[%g].+?[%g])";
-//
-//	private static final String DISPLAY_CORE = "[%g].+?[%g]|:[^:]+:|\\([^()]+\\)|\\[[^\\[\\]]+\\]";
-//	public static final String DISPLAY = "(" + DISPLAY_CORE + ")";
-//	public static final String DISPLAY_WITHOUT_QUOTE = "(" + DISPLAY_CORE + "|[\\p{L}0-9_.]+)";
 
 	@Override
 	final protected boolean isForbidden(CharSequence line) {
@@ -143,7 +136,8 @@ public class CommandCreateElementParenthesis extends SingleLineCommand2<ClassDia
 	}
 
 	@Override
-	protected CommandExecutionResult executeArg(ClassDiagram diagram, LineLocation location, RegexResult arg) throws NoSuchColorException {
+	protected CommandExecutionResult executeArg(ClassDiagram diagram, LineLocation location, RegexResult arg)
+			throws NoSuchColorException {
 		String codeRaw = arg.getLazzy("CODE", 0);
 		final String displayRaw = arg.getLazzy("DISPLAY", 0);
 		final String symbol = "interface";
@@ -187,10 +181,12 @@ public class CommandCreateElementParenthesis extends SingleLineCommand2<ClassDia
 			entity.addUrl(url);
 		}
 
-		Colors colors = color().getColor(arg, diagram.getSkinParam().getIHtmlColorSet());
+		Colors colors = color().getColor(diagram.getSkinParam().getThemeStyle(), arg,
+				diagram.getSkinParam().getIHtmlColorSet());
 		final String s = arg.get("LINECOLOR", 1);
 
-		final HColor lineColor = s == null ? null : diagram.getSkinParam().getIHtmlColorSet().getColor(s);
+		final HColor lineColor = s == null ? null
+				: diagram.getSkinParam().getIHtmlColorSet().getColor(diagram.getSkinParam().getThemeStyle(), s);
 		if (lineColor != null) {
 			colors = colors.add(ColorType.LINE, lineColor);
 		}

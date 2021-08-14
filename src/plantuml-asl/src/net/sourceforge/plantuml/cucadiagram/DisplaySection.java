@@ -37,6 +37,7 @@ import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.style.Style;
 
 public class DisplaySection {
 
@@ -80,7 +81,7 @@ public class DisplaySection {
 		return Display.isNull(display);
 	}
 
-	public TextBlock createRibbon(FontConfiguration fontConfiguration, ISkinSimple spriteContainer) {
+	public TextBlock createRibbon(FontConfiguration fontConfiguration, ISkinSimple spriteContainer, Style style) {
 		if (map.size() == 0) {
 			return null;
 		}
@@ -88,9 +89,9 @@ public class DisplaySection {
 		if (Display.isNull(display) || display.size() == 0) {
 			return null;
 		}
-		// if (UseStyle.USE_STYLES()) {
-		// throw new UnsupportedOperationException();
-		// }
+		if (style != null) {
+			return style.createTextBlockBordered(display, spriteContainer.getIHtmlColorSet(), spriteContainer);
+		}
 		return display.create(fontConfiguration, getHorizontalAlignment(), spriteContainer);
 	}
 

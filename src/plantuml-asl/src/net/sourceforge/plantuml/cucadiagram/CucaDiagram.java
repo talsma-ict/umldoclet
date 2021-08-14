@@ -37,6 +37,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import net.sourceforge.plantuml.BackSlash;
@@ -49,14 +50,17 @@ import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.api.ImageDataSimple;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.core.ImageData;
+import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.creole.CreoleMode;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramTxtMaker;
 import net.sourceforge.plantuml.cucadiagram.entity.EntityFactory;
+import net.sourceforge.plantuml.elk.CucaDiagramFileMakerElk;
 import net.sourceforge.plantuml.graphic.USymbol;
 import net.sourceforge.plantuml.sdot.CucaDiagramFileMakerSmetana;
 import net.sourceforge.plantuml.security.SecurityUtils;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
 import net.sourceforge.plantuml.statediagram.StateDiagram;
+import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
 import net.sourceforge.plantuml.svek.CucaDiagramFileMaker;
 import net.sourceforge.plantuml.svek.CucaDiagramFileMakerSvek;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
@@ -98,12 +102,12 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 	private int horizontalPages = 1;
 	private int verticalPages = 1;
 
-	private final List<HideOrShow2> hides2 = new ArrayList<HideOrShow2>();
-	private final List<HideOrShow2> removed = new ArrayList<HideOrShow2>();
+	private final List<HideOrShow2> hides2 = new ArrayList<>();
+	private final List<HideOrShow2> removed = new ArrayList<>();
 	protected final EntityFactory entityFactory = new EntityFactory(hides2, removed, this);
 	private IGroup currentGroup = entityFactory.getRootGroup();
-	private List<Ident> stacks2 = new ArrayList<Ident>();
-	private List<IGroup> stacks = new ArrayList<IGroup>();
+	private List<Ident> stacks2 = new ArrayList<>();
+	private List<IGroup> stacks = new ArrayList<>();
 
 	private boolean visibilityModifierPresent;
 
@@ -113,8 +117,8 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		return ident;
 	}
 
-	public CucaDiagram(UmlDiagramType type, ISkinSimple orig) {
-		super(type, orig);
+	public CucaDiagram(UmlSource source, UmlDiagramType type, ISkinSimple orig) {
+		super(source, type, orig);
 		this.stacks2.add(Ident.empty());
 	}
 
@@ -164,10 +168,8 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 	}
 
 	final protected ILeaf getOrCreateLeafDefault(Ident idNewLong, Code code, LeafType type, USymbol symbol) {
-		checkNotNull(idNewLong);
-		if (type == null) {
-			throw new IllegalArgumentException();
-		}
+		Objects.requireNonNull(idNewLong);
+		Objects.requireNonNull(type);
 		ILeaf result;
 		if (this.V1972())
 			result = entityFactory.getLeafStrict(idNewLong);
@@ -187,7 +189,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 	}
 
 	public ILeaf createLeaf(Ident idNewLong, Code code, Display display, LeafType type, USymbol symbol) {
-		checkNotNull(idNewLong);
+		Objects.requireNonNull(idNewLong);
 		if (entityFactory.getLeafStrict(idNewLong) != null) {
 			return null;
 			// throw new IllegalArgumentException("Already known: " + code);
@@ -197,7 +199,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 
 	final protected ILeaf createLeafInternal(Ident newIdent, Code code, Display display, LeafType type,
 			USymbol symbol) {
-		checkNotNull(newIdent);
+		Objects.requireNonNull(newIdent);
 		if (Display.isNull(display)) {
 			display = Display.getWithNewlines(code).withCreoleMode(CreoleMode.SIMPLE_LINE);
 		}
@@ -236,12 +238,6 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		return CodeImpl.of(s);
 	}
 
-	protected final void checkNotNull(Object id) {
-		if (id == null) {
-			throw new IllegalArgumentException();
-		}
-	}
-
 	public boolean leafExist(Code code) {
 		if (this.V1972())
 			throw new UnsupportedOperationException();
@@ -259,7 +255,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 	final public Collection<IGroup> getChildrenGroups(IGroup parent) {
 		if (this.V1972())
 			return getChildrenGroupsIdent1972(parent);
-		final Collection<IGroup> result = new ArrayList<IGroup>();
+		final Collection<IGroup> result = new ArrayList<>();
 		for (IGroup gg : getGroups(false)) {
 			if (gg.getParentContainer() == parent) {
 				result.add(gg);
@@ -269,7 +265,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 	}
 
 	private Collection<IGroup> getChildrenGroupsIdent1972(IGroup parent) {
-		final Collection<IGroup> result = new ArrayList<IGroup>();
+		final Collection<IGroup> result = new ArrayList<>();
 		for (IGroup gg : entityFactory.groups2()) {
 			if (gg.getIdent().parent().equals(parent.getIdent())) {
 				result.add(gg);
@@ -301,9 +297,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 
 	protected final String getNamespace1972(Code fullyCode, String separator) {
 		String name = fullyCode.getName();
-		if (separator == null) {
-			throw new IllegalArgumentException(toString());
-		}
+		Objects.requireNonNull(separator);
 		do {
 			final int x = name.lastIndexOf(separator);
 			if (x == -1) {
@@ -434,10 +428,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 	}
 
 	final protected Code getFullyQualifiedCode1972(Code code) {
-		final String separator = getNamespaceSeparator();
-		if (separator == null) {
-			throw new IllegalArgumentException();
-		}
+		final String separator = Objects.requireNonNull(getNamespaceSeparator());
 		final String full = code.getName();
 		if (full.startsWith(separator)) {
 			return buildCode(full.substring(separator.length()));
@@ -461,33 +452,21 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 
 	public final IGroup getGroup(Code code) {
 		final IGroup p = entityFactory.getGroup(code);
-		if (p == null) {
-			throw new IllegalArgumentException();
-			// return null;
-		}
-		return p;
+		return Objects.requireNonNull(p);
 	}
 
 	public final IGroup getGroupStrict(Ident ident) {
 		if (!this.V1972())
 			throw new UnsupportedOperationException();
 		final IGroup p = entityFactory.getGroupStrict(ident);
-		if (p == null) {
-			throw new IllegalArgumentException();
-			// return null;
-		}
-		return p;
+		return Objects.requireNonNull(p);
 	}
 
 	public final IGroup getGroupVerySmart(Ident ident) {
 		if (!this.V1972())
 			throw new UnsupportedOperationException();
 		final IGroup p = entityFactory.getGroupVerySmart(ident);
-		if (p == null) {
-			throw new IllegalArgumentException();
-			// return null;
-		}
-		return p;
+		return Objects.requireNonNull(p);
 	}
 
 	public final boolean isGroup(Code code) {
@@ -512,7 +491,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		if (withRootGroup == false) {
 			return entityFactory.groups();
 		}
-		final Collection<IGroup> result = new ArrayList<IGroup>();
+		final Collection<IGroup> result = new ArrayList<>();
 		result.add(getRootGroup());
 		result.addAll(entityFactory.groups());
 		return Collections.unmodifiableCollection(result);
@@ -586,7 +565,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 	abstract protected List<String> getDotStrings();
 
 	final public String[] getDotStringSkek() {
-		final List<String> result = new ArrayList<String>();
+		final List<String> result = new ArrayList<>();
 		for (String s : getDotStrings()) {
 			if (s.startsWith("nodesep") || s.startsWith("ranksep")) {
 				result.add(s);
@@ -644,9 +623,14 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 
 		entityFactory.buildSuperGroups();
 
-		final CucaDiagramFileMaker maker = this.isUseSmetana()
-				? new CucaDiagramFileMakerSmetana(this, fileFormatOption.getDefaultStringBounder(getSkinParam()))
-				: new CucaDiagramFileMakerSvek(this);
+		final CucaDiagramFileMaker maker;
+		if (this.isUseElk()) {
+			maker = new CucaDiagramFileMakerElk(this, fileFormatOption.getDefaultStringBounder(getSkinParam()));
+		} else if (this.isUseSmetana()) {
+			maker = new CucaDiagramFileMakerSmetana(this, fileFormatOption.getDefaultStringBounder(getSkinParam()));
+		} else {
+			maker = new CucaDiagramFileMakerSvek(this);
+		}
 		final ImageData result = maker.createFile(os, getDotStrings(), fileFormatOption);
 
 		if (result == null) {
@@ -802,8 +786,8 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		this.removed.add(new HideOrShow2(what, show));
 	}
 
-	private final List<HideOrShow> hideOrShows = new ArrayList<HideOrShow>();
-	private final Set<VisibilityModifier> hides = new HashSet<VisibilityModifier>();
+	private final List<HideOrShow> hideOrShows = new ArrayList<>();
+	private final Set<VisibilityModifier> hides = new HashSet<>();
 
 	static class HideOrShow {
 		private final EntityGender gender;
@@ -846,7 +830,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 	}
 
 	final public List<Link> getTwoLastLinks() {
-		final List<Link> result = new ArrayList<Link>();
+		final List<Link> result = new ArrayList<>();
 		final List<Link> links = getLinks();
 		for (int i = links.size() - 1; i >= 0; i--) {
 			final Link link = links.get(i);
@@ -874,7 +858,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		final MagmaList magmaList = new MagmaList();
 
 		for (IGroup g : getGroups(true)) {
-			final List<ILeaf> standalones = new ArrayList<ILeaf>();
+			final List<ILeaf> standalones = new ArrayList<>();
 
 			for (ILeaf ent : g.getLeafsDirect()) {
 				if (isStandalone(ent)) {
@@ -914,4 +898,9 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		return CommandExecutionResult.ok();
 	}
 
+	@Override
+	public ClockwiseTopRightBottomLeft getDefaultMargins() {
+		// Strange numbers here for backwards compatibility
+		return ClockwiseTopRightBottomLeft.topRightBottomLeft(0, 5, 5, 0);
+	}
 }

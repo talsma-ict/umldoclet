@@ -31,30 +31,31 @@
 package net.sourceforge.plantuml.ugraphic;
 
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
-import java.awt.font.FontRenderContext;
-import java.awt.font.LineMetrics;
 import java.util.HashSet;
 import java.util.Set;
 
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.TextBlockUtils;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class UFont {
 
 	private final Font font;
 	private final String family;
 
-	private static final Set<String> names = new HashSet<String>();
+	private static final Set<String> names = new HashSet<>();
 
 	static {
 		for (String name : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
 			names.add(name.toLowerCase());
 		}
+	}
+
+	public String toStringDebug() {
+		final StringBuilder sb = new StringBuilder();
+		sb.append(font.getFontName());
+		sb.append("/");
+		sb.append(font.getSize());
+		return sb.toString();
 	}
 
 	public UFont(String fontFamily, int fontStyle, int fontSize) {
@@ -106,14 +107,8 @@ public class UFont {
 		this.family = family;
 	}
 
-	public final Font getFont() {
+	public final Font getUnderlayingFont() {
 		return font;
-	}
-
-	@Deprecated
-	public FontConfiguration toFont2(HColor color, boolean useUnderlineForHyperlink, HColor hyperlinkColor,
-			int tabSize) {
-		return new FontConfiguration(this, color, hyperlinkColor, useUnderlineForHyperlink, tabSize);
 	}
 
 	public UFont scaled(double scale) {
@@ -192,15 +187,6 @@ public class UFont {
 			return false;
 		}
 		return this.font.equals(((UFont) obj).font);
-	}
-
-	public LineMetrics getLineMetrics(Graphics2D gg, String text) {
-		final FontRenderContext frc = gg.getFontRenderContext();
-		return font.getLineMetrics(text, frc);
-	}
-
-	public FontMetrics getFontMetrics() {
-		return TextBlockUtils.getFontMetrics(getFont());
 	}
 
 }

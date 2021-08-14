@@ -108,7 +108,8 @@ public class CommandActivity3 extends SingleLineCommand2<ActivityDiagram3> {
 			url = urlBuilder.getUrl(arg.get("URL", 0));
 		}
 
-		Colors colors = color().getColor(arg, diagram.getSkinParam().getIHtmlColorSet());
+		Colors colors = color().getColor(diagram.getSkinParam().getThemeStyle(), arg,
+				diagram.getSkinParam().getIHtmlColorSet());
 		final String stereo = arg.get("STEREO", 0);
 		Stereotype stereotype = null;
 		if (stereo != null) {
@@ -117,8 +118,7 @@ public class CommandActivity3 extends SingleLineCommand2<ActivityDiagram3> {
 		}
 		final BoxStyle style = BoxStyle.fromChar(arg.get("STYLE", 0).charAt(0));
 		final Display display = Display.getWithNewlines2(arg.get("LABEL", 0));
-		diagram.addActivity(display, style, url, colors, stereotype);
-		return CommandExecutionResult.ok();
+		return diagram.addActivity(display, style, url, colors, stereotype);
 	}
 
 }

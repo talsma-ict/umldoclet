@@ -49,6 +49,7 @@ public enum SName {
 	class_, //
 	clickable, //
 	cloud, //
+	closed, //
 	collection, //
 	collections, //
 	component, //
@@ -68,6 +69,7 @@ public enum SName {
 	ganttDiagram, //
 	group, //
 	groupHeader, //
+	hexagon, //
 	highlight, //
 	header, //
 	interface_, //
@@ -85,6 +87,7 @@ public enum SName {
 	package_, //
 	participant, //
 	partition, //
+	person, //
 	queue, //
 	rectangle, //
 	reference, //
@@ -100,6 +103,7 @@ public enum SName {
 	storage, //
 	swimlane, //
 	task, //
+	timeline, //
 	title, //
 	usecase, //
 	wbsDiagram, //

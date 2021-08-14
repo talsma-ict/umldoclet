@@ -30,6 +30,7 @@
  */
 package net.sourceforge.plantuml.braille;
 
+import net.sourceforge.plantuml.ThemeStyle;
 import net.sourceforge.plantuml.graphic.UDrawable;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -49,14 +50,14 @@ public class BrailleDrawer implements UDrawable {
 	}
 
 	public void drawU(UGraphic ug) {
-		ug = ug.apply(HColorSet.instance().getColorOrWhite("#F0F0F0"));
+		ug = ug.apply(HColorSet.instance().getColorOrWhite(ThemeStyle.LIGHT, "#F0F0F0"));
 		for (int x = grid.getMinX(); x <= grid.getMaxX(); x++) {
-			ug.apply(UTranslate.dx(x * step + spotSize + 1)).draw(
-					ULine.vline((grid.getMaxY() - grid.getMinY()) * step));
+			ug.apply(UTranslate.dx(x * step + spotSize + 1))
+					.draw(ULine.vline((grid.getMaxY() - grid.getMinY()) * step));
 		}
 		for (int y = grid.getMinY(); y <= grid.getMaxY(); y++) {
-			ug.apply(UTranslate.dy(y * step + spotSize + 1)).draw(
-					ULine.hline((grid.getMaxX() - grid.getMinX()) * step));
+			ug.apply(UTranslate.dy(y * step + spotSize + 1))
+					.draw(ULine.hline((grid.getMaxX() - grid.getMinX()) * step));
 		}
 		ug = ug.apply(HColorUtils.BLACK).apply(HColorUtils.BLACK.bg());
 		for (int x = grid.getMinX(); x <= grid.getMaxX(); x++) {

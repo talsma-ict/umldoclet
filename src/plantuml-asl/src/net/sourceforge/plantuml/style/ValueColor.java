@@ -30,6 +30,7 @@
  */
 package net.sourceforge.plantuml.style;
 
+import net.sourceforge.plantuml.ThemeStyle;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
@@ -43,7 +44,8 @@ public class ValueColor extends ValueAbstract {
 		this.priority = priority;
 	}
 
-	public HColor asColor(HColorSet set) {
+	@Override
+	public HColor asColor(ThemeStyle themeStyle, HColorSet set) {
 		return color;
 	}
 

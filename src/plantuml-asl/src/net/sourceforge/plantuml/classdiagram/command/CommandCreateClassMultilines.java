@@ -67,8 +67,8 @@ import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
 
 public class CommandCreateClassMultilines extends CommandMultilines2<ClassDiagram> {
 
-	private static final String CODE = CommandLinkClass.getSeparator() + "?[\\p{L}0-9_]+" + "(?:"
-			+ CommandLinkClass.getSeparator() + "[\\p{L}0-9_]+)*";
+	private static final String CODE = CommandLinkClass.getSeparator() + "?[%pLN_]+" + "(?:"
+			+ CommandLinkClass.getSeparator() + "[%pLN_]+)*";
 	public static final String CODES = CODE + "(?:\\s*,\\s*" + CODE + ")*";
 
 	enum Mode {
@@ -81,7 +81,7 @@ public class CommandCreateClassMultilines extends CommandMultilines2<ClassDiagra
 
 	@Override
 	public String getPatternEnd() {
-		return "(?i)^[%s]*\\}[%s]*$";
+		return "^[%s]*\\}[%s]*$";
 	}
 
 	private static IRegex getRegexConcat() {
@@ -271,10 +271,12 @@ public class CommandCreateClassMultilines extends CommandMultilines2<ClassDiagra
 			result.addUrl(url);
 		}
 
-		Colors colors = color().getColor(arg, diagram.getSkinParam().getIHtmlColorSet());
+		Colors colors = color().getColor(diagram.getSkinParam().getThemeStyle(), arg,
+				diagram.getSkinParam().getIHtmlColorSet());
 		final String s = arg.get("LINECOLOR", 1);
 
-		final HColor lineColor = s == null ? null : diagram.getSkinParam().getIHtmlColorSet().getColor(s);
+		final HColor lineColor = s == null ? null
+				: diagram.getSkinParam().getIHtmlColorSet().getColor(diagram.getSkinParam().getThemeStyle(), s);
 		if (lineColor != null) {
 			colors = colors.add(ColorType.LINE, lineColor);
 		}

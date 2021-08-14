@@ -51,11 +51,12 @@ import net.sourceforge.plantuml.project.solver.Solver;
 import net.sourceforge.plantuml.project.solver.SolverImpl;
 import net.sourceforge.plantuml.project.time.Day;
 import net.sourceforge.plantuml.project.time.DayOfWeek;
+import net.sourceforge.plantuml.style.StyleBuilder;
 
 public class TaskImpl extends AbstractTask implements Task, LoadPlanable {
 
-	private final SortedSet<Day> pausedDay = new TreeSet<Day>();
-	private final Set<DayOfWeek> pausedDayOfWeek = new HashSet<DayOfWeek>();
+	private final SortedSet<Day> pausedDay = new TreeSet<>();
+	private final Set<DayOfWeek> pausedDayOfWeek = new HashSet<>();
 	private final Solver solver;
 	private final Map<Resource, Integer> resources = new LinkedHashMap<Resource, Integer>();
 	private final LoadPlanable defaultPlan;
@@ -65,14 +66,14 @@ public class TaskImpl extends AbstractTask implements Task, LoadPlanable {
 	private Display note;
 
 	private Url url;
-	private CenterBorderColor colors;
+	private CenterBorderColor[] colors;
 
 	public void setUrl(Url url) {
 		this.url = url;
 	}
 
-	public TaskImpl(TaskCode code, OpenClose openClose) {
-		super(code);
+	public TaskImpl(StyleBuilder styleBuilder, TaskCode code, OpenClose openClose) {
+		super(styleBuilder, code);
 		this.defaultPlan = openClose;
 		this.solver = new SolverImpl(this);
 		if (openClose.getCalendar() == null) {
@@ -148,7 +149,7 @@ public class TaskImpl extends AbstractTask implements Task, LoadPlanable {
 
 	public String getPrettyDisplay() {
 		if (resources.size() > 0) {
-			final StringBuilder result = new StringBuilder(code.getSimpleDisplay());
+			final StringBuilder result = new StringBuilder(getCode().getSimpleDisplay());
 			result.append(" ");
 			for (Iterator<Map.Entry<Resource, Integer>> it = resources.entrySet().iterator(); it.hasNext();) {
 				final Map.Entry<Resource, Integer> ent = it.next();
@@ -165,20 +166,16 @@ public class TaskImpl extends AbstractTask implements Task, LoadPlanable {
 			}
 			return result.toString();
 		}
-		return code.getSimpleDisplay();
+		return getCode().getSimpleDisplay();
 	}
 
 	@Override
 	public String toString() {
-		return code.toString();
+		return getCode().toString();
 	}
 
 	public String debug() {
 		return "" + getStart() + " ---> " + getEnd() + "   [" + getLoad() + "]";
-	}
-
-	public TaskCode getCode() {
-		return code;
 	}
 
 	public Day getStart() {
@@ -209,7 +206,7 @@ public class TaskImpl extends AbstractTask implements Task, LoadPlanable {
 		solver.setData(TaskAttribute.END, end);
 	}
 
-	public void setColors(CenterBorderColor colors) {
+	public void setColors(CenterBorderColor... colors) {
 		this.colors = colors;
 	}
 
@@ -234,7 +231,13 @@ public class TaskImpl extends AbstractTask implements Task, LoadPlanable {
 	}
 
 	public final CenterBorderColor getColors() {
-		return colors;
+		if (colors == null) {
+			return null;
+		}
+		if (colors.length == 1) {
+			return colors[0];
+		}
+		return colors[0].linearTo(colors[1], completion);
 	}
 
 	public final int getCompletion() {
@@ -242,7 +245,7 @@ public class TaskImpl extends AbstractTask implements Task, LoadPlanable {
 	}
 
 	public final Collection<Day> getAllPaused() {
-		final SortedSet<Day> result = new TreeSet<Day>(pausedDay);
+		final SortedSet<Day> result = new TreeSet<>(pausedDay);
 		for (DayOfWeek dayOfWeek : pausedDayOfWeek) {
 			addAll(result, dayOfWeek);
 		}

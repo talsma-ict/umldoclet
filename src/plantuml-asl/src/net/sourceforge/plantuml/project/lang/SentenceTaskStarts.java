@@ -52,7 +52,8 @@ public class SentenceTaskStarts extends SentenceSimple {
 		when = (TaskInstant) complement;
 		task.setStart(when.getInstantPrecise());
 		if (when.isTask()) {
-			project.addContraint(new GanttConstraint(when, new TaskInstant(task, TaskAttribute.START), color));
+			project.addContraint(new GanttConstraint(project.getIHtmlColorSet(), project.getCurrentStyleBuilder(), when,
+					new TaskInstant(task, TaskAttribute.START), color));
 		}
 		return CommandExecutionResult.ok();
 

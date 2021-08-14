@@ -31,6 +31,7 @@
 package net.sourceforge.plantuml.skin.rose;
 
 import java.awt.geom.Dimension2D;
+import java.util.Objects;
 
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.LineBreakStrategy;
@@ -65,19 +66,21 @@ public class ComponentRoseGroupingHeader extends AbstractTextualComponent {
 	private final SymbolContext symbolContextCorner;
 	private final double roundCorner;
 
-	public ComponentRoseGroupingHeader(Style style, Style styleHeader, HColor background,
-			SymbolContext symbolContext, FontConfiguration bigFont, FontConfiguration smallFont2, Display strings,
-			ISkinSimple spriteContainer, double roundCorner) {
+	public ComponentRoseGroupingHeader(Style style, Style styleHeader, HColor background, SymbolContext symbolContext,
+			FontConfiguration bigFont, FontConfiguration smallFont2, Display strings, ISkinSimple spriteContainer,
+			double roundCorner) {
 		super(styleHeader, LineBreakStrategy.NONE, strings.get(0), bigFont, HorizontalAlignment.LEFT, 15, 30, 1,
 				spriteContainer, null, null);
 
 		if (UseStyle.useBetaStyle()) {
 			this.roundCorner = style.value(PName.RoundCorner).asInt();
-			this.background = style.value(PName.BackGroundColor).asColor(getIHtmlColorSet());
-			this.symbolContext = style.getSymbolContext(getIHtmlColorSet());
-			this.symbolContextCorner = styleHeader.getSymbolContext(getIHtmlColorSet());
-			bigFont = style.getFontConfiguration(getIHtmlColorSet());
-			smallFont2 = style.getFontConfiguration(getIHtmlColorSet());
+			this.background = style.value(PName.BackGroundColor).asColor(spriteContainer.getThemeStyle(),
+					getIHtmlColorSet());
+			this.symbolContext = style.getSymbolContext(spriteContainer.getThemeStyle(), getIHtmlColorSet());
+			this.symbolContextCorner = styleHeader.getSymbolContext(spriteContainer.getThemeStyle(),
+					getIHtmlColorSet());
+			bigFont = style.getFontConfiguration(spriteContainer.getThemeStyle(), getIHtmlColorSet());
+			smallFont2 = style.getFontConfiguration(spriteContainer.getThemeStyle(), getIHtmlColorSet());
 		} else {
 			this.roundCorner = roundCorner;
 			this.background = background;
@@ -91,9 +94,7 @@ public class ComponentRoseGroupingHeader extends AbstractTextualComponent {
 			// final FontConfiguration smallFont2 = bigFont.forceFont(smallFont, null);
 			this.commentTextBlock = display.create(smallFont2, HorizontalAlignment.LEFT, spriteContainer);
 		}
-		if (this.background == null) {
-			throw new IllegalArgumentException();
-		}
+		Objects.requireNonNull(this.background);
 	}
 
 	// new FontConfiguration(smallFont, bigFont.getColor(),

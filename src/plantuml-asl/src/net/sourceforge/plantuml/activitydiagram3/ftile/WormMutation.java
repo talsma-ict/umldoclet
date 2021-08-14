@@ -32,12 +32,13 @@ package net.sourceforge.plantuml.activitydiagram3.ftile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 
 public class WormMutation {
 
-	private final List<UTranslate> translations = new ArrayList<UTranslate>();
+	private final List<UTranslate> translations = new ArrayList<>();
 
 	private WormMutation() {
 
@@ -118,10 +119,7 @@ public class WormMutation {
 	}
 
 	private WormMutation(String definition, double delta) {
-		if (definition == null) {
-			throw new IllegalArgumentException();
-		}
-		for (int i = 0; i < definition.length(); i++) {
+		for (int i = 0; i < Objects.requireNonNull(definition).length(); i++) {
 			this.translations.add(translation(Integer.parseInt(definition.substring(i, i + 1)), delta));
 		}
 

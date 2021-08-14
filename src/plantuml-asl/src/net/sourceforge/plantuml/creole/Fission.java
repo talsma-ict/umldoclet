@@ -36,6 +36,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import net.sourceforge.plantuml.LineBreakStrategy;
 import net.sourceforge.plantuml.creole.atom.AbstractAtom;
@@ -51,10 +52,7 @@ public class Fission {
 
 	public Fission(Stripe stripe, LineBreakStrategy maxWidth) {
 		this.stripe = stripe;
-		this.maxWidth = maxWidth;
-		if (maxWidth == null) {
-			throw new IllegalArgumentException();
-		}
+		this.maxWidth = Objects.requireNonNull(maxWidth);
 	}
 
 	public List<Stripe> getSplitted(StringBounder stringBounder) {
@@ -62,7 +60,7 @@ public class Fission {
 		if (valueMaxWidth == 0) {
 			return Arrays.asList(stripe);
 		}
-		final List<Stripe> result = new ArrayList<Stripe>();
+		final List<Stripe> result = new ArrayList<>();
 		StripeSimpleInternal current = new StripeSimpleInternal(stripe.getLHeader());
 		double remainingSpace = valueMaxWidth;
 		for (Atom atom : noHeader()) {
@@ -132,7 +130,7 @@ public class Fission {
 
 	static class StripeSimpleInternal implements Stripe {
 
-		private final List<Atom> atoms = new ArrayList<Atom>();
+		private final List<Atom> atoms = new ArrayList<>();
 		private double totalWidth;
 
 		private StripeSimpleInternal(Atom header) {

@@ -58,13 +58,11 @@ import h.ST_Agraphinfo_t;
 import h.ST_Agrec_s;
 import h.ST_GVC_s;
 import h.ST_boxf;
-import net.sourceforge.plantuml.AnnotatedWorker;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagram;
-import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.api.ImageDataSimple;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
@@ -85,10 +83,8 @@ import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.USymbol;
-import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.svek.Bibliotekon;
 import net.sourceforge.plantuml.svek.Cluster;
 import net.sourceforge.plantuml.svek.CucaDiagramFileMaker;
@@ -98,8 +94,7 @@ import net.sourceforge.plantuml.svek.GraphvizCrash;
 import net.sourceforge.plantuml.svek.IEntityImage;
 import net.sourceforge.plantuml.svek.SvekNode;
 import net.sourceforge.plantuml.svek.TextBlockBackcolored;
-import net.sourceforge.plantuml.ugraphic.ImageBuilder;
-import net.sourceforge.plantuml.ugraphic.ImageParameter;
+import net.sourceforge.plantuml.ugraphic.MinMax;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
@@ -124,14 +119,19 @@ public class CucaDiagramFileMakerSmetana implements CucaDiagramFileMaker {
 	class Drawing extends AbstractTextBlock implements TextBlockBackcolored {
 
 		private final YMirror ymirror;
-		private final Dimension2D dim;
+		private final MinMax minMax;
 
-		public Drawing(YMirror ymirror, Dimension2D dim) {
+		public Drawing(YMirror ymirror, MinMax minMax) {
 			this.ymirror = ymirror;
-			this.dim = dim;
+			this.minMax = minMax;
 		}
 
 		public void drawU(UGraphic ug) {
+			if (minMax != null) {
+				// Matches the adjustment in SvekResult.calculateDimension() except no need to adjust for minY because
+				// mirroring takes care of that
+				ug = ug.apply(new UTranslate(6 - minMax.getMinX(), 6));
+			}
 
 			for (Map.Entry<IGroup, ST_Agraph_s> ent : clusters.entrySet()) {
 				drawGroup(ug, ymirror, ent.getKey(), ent.getValue());
@@ -159,10 +159,10 @@ public class CucaDiagramFileMakerSmetana implements CucaDiagramFileMaker {
 		}
 
 		public Dimension2D calculateDimension(StringBounder stringBounder) {
-			if (dim == null) {
+			if (minMax == null) {
 				throw new UnsupportedOperationException();
 			}
-			return dim;
+			return minMax.getDimension();
 		}
 
 		private Point2D getCorner(ST_Agnode_s n) {
@@ -189,7 +189,7 @@ public class CucaDiagramFileMakerSmetana implements CucaDiagramFileMaker {
 		this.stringBounder = stringBounder;
 		this.dotStringFactory = new DotStringFactory(stringBounder, diagram);
 
-		printGroups(diagram.getRootGroup());
+		printAllSubgroups(diagram.getRootGroup());
 		printEntities(getUnpackagedEntities());
 
 	}
@@ -222,7 +222,7 @@ public class CucaDiagramFileMakerSmetana implements CucaDiagramFileMaker {
 		}
 	}
 
-	private void printGroups(IGroup parent) {
+	private void printAllSubgroups(IGroup parent) {
 		for (IGroup g : diagram.getChildrenGroups(parent)) {
 			if (g.isRemoved()) {
 				continue;
@@ -233,12 +233,12 @@ public class CucaDiagramFileMakerSmetana implements CucaDiagramFileMaker {
 				final ILeaf folder = entityFactory.createLeafForEmptyGroup(g, skinParam);
 				printEntityNew(folder);
 			} else {
-				printGroup(g);
+				printSingleGroup(g);
 			}
 		}
 	}
 
-	private void printGroup(IGroup g) {
+	private void printSingleGroup(IGroup g) {
 		if (g.getGroupType() == GroupType.CONCURRENT_STATE) {
 			return;
 		}
@@ -269,7 +269,7 @@ public class CucaDiagramFileMakerSmetana implements CucaDiagramFileMaker {
 		dotStringFactory.openCluster(titleAndAttributeWidth, titleAndAttributeHeight, title, stereo, g);
 		this.printEntities(g.getLeafsDirect());
 
-		printGroups(g);
+		printAllSubgroups(g);
 
 		dotStringFactory.closeCluster();
 	}
@@ -279,8 +279,8 @@ public class CucaDiagramFileMakerSmetana implements CucaDiagramFileMaker {
 				.getMergedStyle(diagram.getSkinParam().getCurrentStyleBuilder());
 	}
 
-	private void printEntities(Collection<ILeaf> entities2) {
-		for (ILeaf ent : entities2) {
+	private void printEntities(Collection<ILeaf> entities) {
+		for (ILeaf ent : entities) {
 			if (ent.isRemoved()) {
 				continue;
 			}
@@ -288,8 +288,8 @@ public class CucaDiagramFileMakerSmetana implements CucaDiagramFileMaker {
 		}
 	}
 
-	private void exportEntities(ST_Agraph_s g, Collection<ILeaf> entities2) {
-		for (ILeaf ent : entities2) {
+	private void exportEntities(ST_Agraph_s g, Collection<ILeaf> entities) {
+		for (ILeaf ent : entities) {
 			if (ent.isRemoved()) {
 				continue;
 			}
@@ -358,7 +358,7 @@ public class CucaDiagramFileMakerSmetana implements CucaDiagramFileMaker {
 	}
 
 	private Collection<ILeaf> getUnpackagedEntities() {
-		final List<ILeaf> result = new ArrayList<ILeaf>();
+		final List<ILeaf> result = new ArrayList<>();
 		for (ILeaf ent : diagram.getLeafsvalues()) {
 			if (diagram.getEntityFactory().getRootGroup() == ent.getParentContainer()) {
 				result.add(ent);
@@ -440,34 +440,13 @@ public class CucaDiagramFileMakerSmetana implements CucaDiagramFileMaker {
 			// DebugUtils.printDebugEdge(e);
 			// }
 
-			final double scale = 1;
-
-			final ClockwiseTopRightBottomLeft margins;
-			if (UseStyle.useBetaStyle()) {
-				final Style style = StyleSignature.of(SName.root, SName.document)
-						.getMergedStyle(diagram.getSkinParam().getCurrentStyleBuilder());
-				margins = style.getMargin();
-			} else {
-				margins = ClockwiseTopRightBottomLeft.topRightBottomLeft(0, 5, 5, 0);
-			}
-			ISkinParam skinParam = diagram.getSkinParam();
-			final HColor backcolor = skinParam.getBackgroundColor(false);
-			final String metadata = fileFormatOption.isWithMetadata() ? diagram.getMetadata() : null;
-			final ImageParameter imageParameter = new ImageParameter(skinParam, diagram.getAnimation(), scale, metadata,
-					null, margins, backcolor);
-
-			final ImageBuilder imageBuilder = ImageBuilder.build(imageParameter);
-
-			imageBuilder.setUDrawable(new Drawing(null, null));
-			final Dimension2D dim = imageBuilder.getFinalDimension(stringBounder);
-
-			final AnnotatedWorker annotatedWorker = new AnnotatedWorker(diagram, diagram.getSkinParam(),
-					fileFormatOption.getDefaultStringBounder(diagram.getSkinParam()));
+			final MinMax minMax = TextBlockUtils.getMinMax(new Drawing(null, null), stringBounder, false);
 
 			// imageBuilder.setUDrawable(new Drawing(new YMirror(dim.getHeight())));
-			imageBuilder.setUDrawable(annotatedWorker.addAdd(new Drawing(new YMirror(dim.getHeight()), dim)));
-
-			return imageBuilder.writeImageTOBEMOVED(fileFormatOption, diagram.seed(), os);
+			final TextBlock drawable = new Drawing(new YMirror(minMax.getMaxY()), minMax);
+			return diagram.createImageBuilder(fileFormatOption)
+					.drawable(drawable)
+					.write(os);
 		} catch (Throwable e) {
 			SmetanaDebug.printMe();
 			UmlDiagram.exportDiagramError(os, e, fileFormatOption, diagram.seed(), diagram.getMetadata(),
@@ -615,7 +594,7 @@ public class CucaDiagramFileMakerSmetana implements CucaDiagramFileMaker {
 
 	static private List<String> getFailureText3(Throwable exception) {
 		exception.printStackTrace();
-		final List<String> strings = new ArrayList<String>();
+		final List<String> strings = new ArrayList<>();
 		strings.add("An error has occured : " + exception);
 		final String quote = StringUtils.rot(QuoteUtils.getSomeQuote());
 		strings.add("<i>" + quote);

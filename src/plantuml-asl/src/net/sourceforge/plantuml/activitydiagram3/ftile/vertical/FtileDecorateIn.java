@@ -30,6 +30,8 @@
  */
 package net.sourceforge.plantuml.activitydiagram3.ftile.vertical;
 
+import java.util.Objects;
+
 import net.sourceforge.plantuml.activitydiagram3.LinkRendering;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 
@@ -39,10 +41,7 @@ public class FtileDecorateIn extends FtileDecorate {
 
 	public FtileDecorateIn(final Ftile ftile, final LinkRendering linkRendering) {
 		super(ftile);
-		this.linkRendering = linkRendering;
-		if (linkRendering == null) {
-			throw new IllegalArgumentException();
-		}
+		this.linkRendering = Objects.requireNonNull(linkRendering);
 	}
 
 	public LinkRendering getInLinkRendering() {

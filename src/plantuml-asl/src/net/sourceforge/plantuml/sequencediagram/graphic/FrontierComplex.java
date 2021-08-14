@@ -31,6 +31,7 @@
 package net.sourceforge.plantuml.sequencediagram.graphic;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 class FrontierComplex implements Frontier {
 
@@ -56,9 +57,7 @@ class FrontierComplex implements Frontier {
 	}
 
 	public double getFreeY(ParticipantRange range) {
-		if (range == null) {
-			throw new IllegalArgumentException();
-		}
+		Objects.requireNonNull(range);
 		double result = freeY[range.start()];
 		for (int i = range.start(); i <= range.end(); i++) {
 			if (freeY[i] > result) {
@@ -74,10 +73,7 @@ class FrontierComplex implements Frontier {
 	}
 
 	public FrontierComplex add(double delta, ParticipantRange range) {
-		if (range == null) {
-			throw new IllegalArgumentException();
-		}
-		return new FrontierComplex(freeY, delta, range);
+		return new FrontierComplex(freeY, delta, Objects.requireNonNull(range));
 	}
 
 	FrontierComplex copy() {

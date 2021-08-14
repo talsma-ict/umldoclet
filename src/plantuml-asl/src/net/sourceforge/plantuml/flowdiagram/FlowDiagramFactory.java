@@ -33,9 +33,11 @@ package net.sourceforge.plantuml.flowdiagram;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.PSystemCommandFactory;
 import net.sourceforge.plantuml.core.DiagramType;
+import net.sourceforge.plantuml.core.UmlSource;
 
 public class FlowDiagramFactory extends PSystemCommandFactory {
 
@@ -44,13 +46,13 @@ public class FlowDiagramFactory extends PSystemCommandFactory {
 	}
 
 	@Override
-	public FlowDiagram createEmptyDiagram() {
-		return new FlowDiagram();
+	public FlowDiagram createEmptyDiagram(UmlSource source, ISkinSimple skinParam) {
+		return new FlowDiagram(source);
 	}
 
 	@Override
 	protected List<Command> createCommands() {
-		final List<Command> cmds = new ArrayList<Command>();
+		final List<Command> cmds = new ArrayList<>();
 		cmds.add(new CommandLineSimple());
 		cmds.add(new CommandLink());
 		return cmds;

@@ -31,16 +31,14 @@
 package net.sourceforge.plantuml.ugraphic.color;
 
 import java.awt.Color;
+import java.util.Objects;
 
 public class ColorMapperTransparentWrapper extends AbstractColorMapper implements ColorMapper {
 
 	private final ColorMapper mapper;
 
 	public ColorMapperTransparentWrapper(ColorMapper mapper) {
-		if (mapper == null) {
-			throw new IllegalArgumentException();
-		}
-		this.mapper = mapper;
+		this.mapper = Objects.requireNonNull(mapper);
 	}
 
 	public Color toColor(HColor color) {

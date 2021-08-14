@@ -64,6 +64,7 @@ public class CommandHelp extends SingleLineCommand2<Help> {
 		diagram.add("* help colors");
 		diagram.add("* help font");
 		diagram.add("* help skinparams");
+		diagram.add("* help themes");
 
 		return CommandExecutionResult.ok();
 	}

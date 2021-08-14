@@ -38,7 +38,7 @@ import java.util.List;
 import net.sourceforge.plantuml.Direction;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.SkinParamColors;
-import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileBox;
+import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileBoxOld;
 import net.sourceforge.plantuml.creole.CreoleMode;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.StringBounder;
@@ -74,7 +74,7 @@ public class FingerImpl implements Finger, UDrawable {
 	private double marginTop = 10;
 	private double marginBottom = 10;
 
-	private final List<FingerImpl> nail = new ArrayList<FingerImpl>();
+	private final List<FingerImpl> nail = new ArrayList<>();
 	private Tetris tetris = null;
 
 	private StyleSignature getDefaultStyleDefinitionNode() {
@@ -163,7 +163,7 @@ public class FingerImpl implements Finger, UDrawable {
 
 	private HColor getLinkColor() {
 		final Style styleArrow = getDefaultStyleDefinitionArrow().getMergedStyle(styleBuilder);
-		return styleArrow.value(PName.LineColor).asColor(skinParam.getIHtmlColorSet());
+		return styleArrow.value(PName.LineColor).asColor(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet());
 	}
 
 	private UStroke getUStroke() {
@@ -232,13 +232,14 @@ public class FingerImpl implements Finger, UDrawable {
 		}
 		if (shape == IdeaShape.BOX) {
 			final ISkinParam foo = new SkinParamColors(skinParam, Colors.empty().add(ColorType.BACK, backColor));
-			final FtileBox box = FtileBox.createMindMap(styleBuilder, foo, label, getDefaultStyleDefinitionNode());
+			final TextBlock box = FtileBoxOld.createMindMap(styleBuilder, foo, label, getDefaultStyleDefinitionNode());
 			return TextBlockUtils.withMargin(box, 0, 0, marginTop, marginBottom);
 		}
 
 		assert shape == IdeaShape.NONE;
 		final Style styleNode = getDefaultStyleDefinitionNode().getMergedStyle(styleBuilder);
-		final TextBlock text = label.create0(styleNode.getFontConfiguration(skinParam.getIHtmlColorSet()),
+		final TextBlock text = label.create0(
+				styleNode.getFontConfiguration(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet()),
 				styleNode.getHorizontalAlignment(), skinParam, styleNode.wrapWidth(), CreoleMode.FULL, null, null);
 		if (direction == Direction.RIGHT) {
 			return TextBlockUtils.withMargin(text, 3, 0, 1, 1);

@@ -44,7 +44,6 @@ import java.util.List;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.EnsureVisible;
 import net.sourceforge.plantuml.FileFormat;
-import net.sourceforge.plantuml.TikzFontDistortion;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.FontStyle;
 import net.sourceforge.plantuml.graphic.StringBounder;
@@ -57,6 +56,7 @@ import net.sourceforge.plantuml.ugraphic.UText;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorGradient;
+import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class DriverTextG2d implements UDriver<Graphics2D> {
 
@@ -69,6 +69,10 @@ public class DriverTextG2d implements UDriver<Graphics2D> {
 	public void draw(UShape ushape, double x, double y, ColorMapper mapper, UParam param, Graphics2D g2d) {
 		final UText shape = (UText) ushape;
 		final FontConfiguration fontConfiguration = shape.getFontConfiguration();
+
+		if (HColorUtils.isTransparent(fontConfiguration.getColor())) {
+			return;
+		}
 		final String text = shape.getText();
 
 		final List<StyledString> strings = StyledString.build(text);
@@ -78,8 +82,7 @@ public class DriverTextG2d implements UDriver<Graphics2D> {
 		for (StyledString styledString : strings) {
 			final FontConfiguration fc = styledString.getStyle() == FontStyle.BOLD ? fontConfiguration.bold()
 					: fontConfiguration;
-			final Dimension2D dim = calculateDimension(
-					FileFormat.PNG.getDefaultStringBounder(TikzFontDistortion.getDefault()), fc.getFont(),
+			final Dimension2D dim = calculateDimension(FileFormat.PNG.getDefaultStringBounder(), fc.getFont(),
 					styledString.getText());
 			printSingleText(g2d, fc, styledString.getText(), x, y, mapper, param);
 			x += dim.getWidth();
@@ -95,7 +98,7 @@ public class DriverTextG2d implements UDriver<Graphics2D> {
 
 		if (orientation == 90) {
 			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-			g2d.setFont(font.getFont());
+			g2d.setFont(font.getUnderlayingFont());
 			g2d.setColor(mapper.toColor(fontConfiguration.getColor()));
 			final AffineTransform orig = g2d.getTransform();
 			g2d.translate(x, y);
@@ -105,8 +108,7 @@ public class DriverTextG2d implements UDriver<Graphics2D> {
 
 		} else if (orientation == 0) {
 
-			final Dimension2D dimBack = calculateDimension(
-					FileFormat.PNG.getDefaultStringBounder(TikzFontDistortion.getDefault()), font, text);
+			final Dimension2D dimBack = calculateDimension(FileFormat.PNG.getDefaultStringBounder(), font, text);
 			if (fontConfiguration.containsStyle(FontStyle.BACKCOLOR)) {
 				final Rectangle2D.Double area = new Rectangle2D.Double(x, y - dimBack.getHeight() + 1.5,
 						dimBack.getWidth(), dimBack.getHeight());
@@ -128,7 +130,7 @@ public class DriverTextG2d implements UDriver<Graphics2D> {
 			visible.ensureVisible(x + dimBack.getWidth(), y + 1.5);
 
 			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-			g2d.setFont(font.getFont());
+			g2d.setFont(font.getUnderlayingFont());
 			g2d.setColor(mapper.toColor(fontConfiguration.getColor()));
 			g2d.drawString(text, (float) x, (float) y);
 
@@ -136,16 +138,14 @@ public class DriverTextG2d implements UDriver<Graphics2D> {
 				if (extended != null) {
 					g2d.setColor(mapper.toColor(extended));
 				}
-				final Dimension2D dim = calculateDimension(
-						FileFormat.PNG.getDefaultStringBounder(TikzFontDistortion.getDefault()), font, text);
+				final Dimension2D dim = calculateDimension(FileFormat.PNG.getDefaultStringBounder(), font, text);
 				final int ypos = (int) (y + 2.5);
 				g2d.setStroke(new BasicStroke((float) 1));
 				g2d.drawLine((int) x, ypos, (int) (x + dim.getWidth()), ypos);
 				g2d.setStroke(new BasicStroke());
 			}
 			if (fontConfiguration.containsStyle(FontStyle.WAVE)) {
-				final Dimension2D dim = calculateDimension(
-						FileFormat.PNG.getDefaultStringBounder(TikzFontDistortion.getDefault()), font, text);
+				final Dimension2D dim = calculateDimension(FileFormat.PNG.getDefaultStringBounder(), font, text);
 				final int ypos = (int) (y + 2.5) - 1;
 				if (extended != null) {
 					g2d.setColor(mapper.toColor(extended));
@@ -156,9 +156,8 @@ public class DriverTextG2d implements UDriver<Graphics2D> {
 				}
 			}
 			if (fontConfiguration.containsStyle(FontStyle.STRIKE)) {
-				final Dimension2D dim = calculateDimension(
-						FileFormat.PNG.getDefaultStringBounder(TikzFontDistortion.getDefault()), font, text);
-				final FontMetrics fm = g2d.getFontMetrics(font.getFont());
+				final Dimension2D dim = calculateDimension(FileFormat.PNG.getDefaultStringBounder(), font, text);
+				final FontMetrics fm = g2d.getFontMetrics(font.getUnderlayingFont());
 				final int ypos = (int) (y - fm.getDescent() - 0.5);
 				if (extended != null) {
 					g2d.setColor(mapper.toColor(extended));

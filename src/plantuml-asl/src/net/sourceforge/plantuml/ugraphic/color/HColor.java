@@ -37,4 +37,16 @@ public interface HColor extends UChange {
 
 	public UBackground bg();
 
+	public HColor darken(int ratio);
+
+	public HColor lighten(int ratio);
+
+	public String asString();
+
+	public boolean isDark();
+
+	public HColor reverseHsluv();
+
+	public HColor reverse();
+
 }

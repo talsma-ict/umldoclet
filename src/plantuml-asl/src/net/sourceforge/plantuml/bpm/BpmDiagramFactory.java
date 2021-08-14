@@ -34,9 +34,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.plantuml.AbstractPSystem;
+import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.PSystemCommandFactory;
 import net.sourceforge.plantuml.core.DiagramType;
+import net.sourceforge.plantuml.core.UmlSource;
 
 public class BpmDiagramFactory extends PSystemCommandFactory {
 
@@ -46,7 +48,7 @@ public class BpmDiagramFactory extends PSystemCommandFactory {
 
 	@Override
 	protected List<Command> createCommands() {
-		final List<Command> result = new ArrayList<Command>();
+		final List<Command> result = new ArrayList<>();
 		result.add(new CommandDockedEvent());
 		result.add(new CommandMerge());
 		result.add(new CommandResume());
@@ -58,8 +60,8 @@ public class BpmDiagramFactory extends PSystemCommandFactory {
 	}
 
 	@Override
-	public AbstractPSystem createEmptyDiagram() {
-		return new BpmDiagram();
+	public AbstractPSystem createEmptyDiagram(UmlSource source, ISkinSimple skinParam) {
+		return new BpmDiagram(source);
 	}
 
 }

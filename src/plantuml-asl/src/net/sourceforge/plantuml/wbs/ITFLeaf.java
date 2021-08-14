@@ -34,7 +34,7 @@ import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileBox;
+import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileBoxOld;
 import net.sourceforge.plantuml.creole.CreoleMode;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
@@ -51,9 +51,10 @@ class ITFLeaf extends AbstractTextBlock implements ITF {
 
 	public ITFLeaf(Style style, ISkinParam skinParam, Display label, IdeaShape shape) {
 		if (shape == IdeaShape.BOX) {
-			this.box = FtileBox.createWbs(style, skinParam, label);
+			this.box = FtileBoxOld.createWbs(style, skinParam, label);
 		} else {
-			final TextBlock text = label.create0(style.getFontConfiguration(skinParam.getIHtmlColorSet()),
+			final TextBlock text = label.create0(
+					style.getFontConfiguration(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet()),
 					style.getHorizontalAlignment(), skinParam, style.wrapWidth(), CreoleMode.FULL, null, null);
 			this.box = TextBlockUtils.withMargin(text, 0, 3, 1, 1);
 		}

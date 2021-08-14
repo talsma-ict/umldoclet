@@ -62,6 +62,7 @@ import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.error.PSystemError;
 import net.sourceforge.plantuml.error.PSystemErrorUtils;
 import net.sourceforge.plantuml.graphic.QuoteUtils;
+import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.version.Version;
 
 public class PicoWebServer implements Runnable {
@@ -168,13 +169,20 @@ public class PicoWebServer implements Runnable {
 		} catch (Exception e) {
 			throw new BadRequest400("Error parsing request json: " + e.getMessage(), e);
 		}
+		
+		handleRenderRequest(renderRequest, out);
+	}
+	
+	public void handleRenderRequest(RenderRequest renderRequest, BufferedOutputStream out) throws Exception {
 
 		final Option option = new Option(renderRequest.getOptions());
 
 		final String source = renderRequest.getSource().startsWith("@start") ? renderRequest.getSource()
 				: "@startuml\n" + renderRequest.getSource() + "\n@enduml";
 
-		final SourceStringReader ssr = new SourceStringReader(option.getDefaultDefines(), source, option.getConfig());
+		final SFile newCurrentDir = option.getFileDir() == null ? null : new SFile(option.getFileDir());
+		final SourceStringReader ssr = new SourceStringReader(option.getDefaultDefines(), source, "UTF-8",
+				option.getConfig(), newCurrentDir);
 		final ByteArrayOutputStream os = new ByteArrayOutputStream();
 		final Diagram system;
 		final ImageData imageData;
@@ -183,7 +191,7 @@ public class PicoWebServer implements Runnable {
 			system = PSystemErrorUtils.buildV2(null,
 					new ErrorUml(SYNTAX_ERROR, "No @startuml/@enduml found", 0, new LineLocationImpl("", null)), null,
 					Collections.<StringLocated>emptyList());
-			imageData = ssr.noStartumlFound(os, option.getFileFormatOption(), 42);
+			imageData = ssr.noStartumlFound(os, option.getFileFormatOption());
 		} else {
 			system = ssr.getBlocks().get(0).getDiagram();
 			imageData = system.exportDiagram(os, 0, option.getFileFormatOption());
