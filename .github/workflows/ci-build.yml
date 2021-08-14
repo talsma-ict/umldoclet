@@ -37,6 +37,11 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 9
+      - name: Set up JDK 16 to support jigsaw module system
+        id: setup-java-16
+        uses: actions/setup-java@v1
+        with:
+          java-version: 16
       - name: Setup maven cache
         uses: actions/cache@v2
         with:
@@ -49,6 +54,7 @@ jobs:
         env:
           JAVA_8_HOME: ${{ steps.setup-java-8.outputs.path }}
           JAVA_9_HOME: ${{ steps.setup-java-9.outputs.path }}
+          JAVA_16_HOME: ${{ steps.setup-java-16.outputs.path }}
           MAVEN_CLI_OPTS: --settings .github/mvn-settings.xml --global-toolchains .github/mvn-toolchains.xml
           GPG_EXECUTABLE: /usr/bin/gpg
           GPG_KEYNAME: ${{ secrets.GPG_KEYNAME }}
