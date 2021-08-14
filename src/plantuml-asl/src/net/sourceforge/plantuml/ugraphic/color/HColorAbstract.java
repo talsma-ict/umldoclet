@@ -34,12 +34,42 @@ import net.sourceforge.plantuml.ugraphic.UBackground;
 
 abstract class HColorAbstract implements HColor {
 
-	final public UBackground bg() {
+	public UBackground bg() {
 		return new UBackground() {
 			public HColor getBackColor() {
 				return HColorAbstract.this;
 			}
 		};
+	}
+
+	@Override
+	public HColor lighten(int ratio) {
+		return this;
+	}
+
+	@Override
+	public HColor darken(int ratio) {
+		return this;
+	}
+
+	@Override
+	public HColor reverseHsluv() {
+		return this;
+	}
+
+	@Override
+	public HColor reverse() {
+		return this;
+	}
+
+	@Override
+	public boolean isDark() {
+		return true;
+	}
+
+	@Override
+	public String asString() {
+		return "?" + getClass().getSimpleName();
 	}
 
 }

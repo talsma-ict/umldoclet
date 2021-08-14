@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.svek;
 
-import java.awt.geom.Dimension2D;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -39,12 +38,8 @@ import java.util.List;
 import net.sourceforge.plantuml.AnnotatedWorker;
 import net.sourceforge.plantuml.BaseFile;
 import net.sourceforge.plantuml.FileFormatOption;
-import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.NamedOutputStream;
-import net.sourceforge.plantuml.Scale;
 import net.sourceforge.plantuml.UmlDiagramType;
-import net.sourceforge.plantuml.UseStyle;
-import net.sourceforge.plantuml.api.ImageDataAbstract;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
 import net.sourceforge.plantuml.cucadiagram.Link;
@@ -52,13 +47,6 @@ import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramSimplifierActivity;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramSimplifierState;
 import net.sourceforge.plantuml.cucadiagram.dot.DotData;
 import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
-import net.sourceforge.plantuml.style.SName;
-import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.style.StyleSignature;
-import net.sourceforge.plantuml.ugraphic.ImageBuilder;
-import net.sourceforge.plantuml.ugraphic.ImageParameter;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public final class CucaDiagramFileMakerSvek implements CucaDiagramFileMaker {
 
@@ -111,43 +99,30 @@ public final class CucaDiagramFileMakerSvek implements CucaDiagramFileMaker {
 			svek2 = createDotDataImageBuilder(DotMode.NO_LEFT_RIGHT_AND_XLABEL, stringBounder);
 			result = svek2.buildImage(basefile, diagram.getDotStringSkek());
 		}
-		final boolean isGraphvizCrash = result instanceof GraphvizCrash;
+		// TODO There is something strange with the left margin of mainframe, I think because AnnotatedWorker is used here
+		//      It can be looked at in another PR
 		result = new AnnotatedWorker(diagram, diagram.getSkinParam(), stringBounder).addAdd(result);
 
+		// TODO UmlDiagram.getWarningOrError() looks similar so this might be simplified? - will leave for a separate PR
 		final String widthwarning = diagram.getSkinParam().getValue("widthwarning");
 		String warningOrError = null;
 		if (widthwarning != null && widthwarning.matches("\\d+")) {
 			warningOrError = svek2.getWarningOrError(Integer.parseInt(widthwarning));
 		}
-		final Dimension2D dim = result.calculateDimension(stringBounder);
-		final double scale = getScale(fileFormatOption, dim);
+		
+		// Sorry about this hack. There is a side effect in SvekResult::calculateDimension()
+		result.calculateDimension(stringBounder);  // Ensure text near the margins is not cut off
 
-		final HColor backcolor = result.getBackcolor();
-		final ClockwiseTopRightBottomLeft margins;
-		if (UseStyle.useBetaStyle()) {
-			final Style style = StyleSignature.of(SName.root, SName.document)
-					.getMergedStyle(diagram.getSkinParam().getCurrentStyleBuilder());
-			margins = style.getMargin();
-		} else {
-			margins = ClockwiseTopRightBottomLeft.topRightBottomLeft(0, 5, 5, 0);
-		}
-		final String metadata = fileFormatOption.isWithMetadata() ? diagram.getMetadata() : null;
-
-		final ISkinParam skinParam = diagram.getSkinParam();
-		final ImageParameter imageParameter = new ImageParameter(skinParam, diagram.getAnimation(), scale, metadata,
-				warningOrError, margins, backcolor);
-
-		final ImageBuilder imageBuilder = ImageBuilder.build(imageParameter);
-		imageBuilder.setUDrawable(result);
-		final ImageData imageData = imageBuilder.writeImageTOBEMOVED(fileFormatOption, diagram.seed(), os);
-		if (isGraphvizCrash) {
-			((ImageDataAbstract) imageData).setStatus(503);
-		}
-		return imageData;
+		return diagram.createImageBuilder(fileFormatOption)
+				.annotations(false)  // backwards compatibility (AnnotatedWorker is used above)
+				.drawable(result)
+				.status(result instanceof GraphvizCrash ? 503 : 0)
+				.warningOrError(warningOrError)
+				.write(os);
 	}
 
 	private List<Link> getOrderedLinks() {
-		final List<Link> result = new ArrayList<Link>();
+		final List<Link> result = new ArrayList<>();
 		for (Link l : diagram.getLinks()) {
 			addLinkNew(result, l);
 		}
@@ -170,17 +145,6 @@ public final class CucaDiagramFileMakerSvek implements CucaDiagramFileMaker {
 			}
 		}
 		result.add(link);
-	}
-
-	private double getScale(FileFormatOption fileFormatOption, final Dimension2D dim) {
-		final double scale;
-		final Scale diagScale = diagram.getScale();
-		if (diagScale == null) {
-			scale = diagram.getScaleCoef(fileFormatOption);
-		} else {
-			scale = diagScale.getScale(dim.getWidth(), dim.getHeight());
-		}
-		return scale;
 	}
 
 }

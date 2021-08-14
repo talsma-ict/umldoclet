@@ -31,51 +31,59 @@
 package net.sourceforge.plantuml.dedication;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.util.Objects;
 
-import net.sourceforge.plantuml.AbstractPSystem;
+import javax.imageio.stream.ImageInputStream;
+
 import net.sourceforge.plantuml.FileFormatOption;
+import net.sourceforge.plantuml.PlainDiagram;
 import net.sourceforge.plantuml.core.DiagramDescription;
-import net.sourceforge.plantuml.core.ImageData;
+import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.graphic.UDrawable;
-import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
+import net.sourceforge.plantuml.security.ImageIO;
 import net.sourceforge.plantuml.ugraphic.AffineTransformType;
-import net.sourceforge.plantuml.ugraphic.ImageBuilder;
-import net.sourceforge.plantuml.ugraphic.ImageParameter;
 import net.sourceforge.plantuml.ugraphic.PixelImage;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UImage;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
-public class PSystemDedication extends AbstractPSystem {
+public class PSystemDedication extends PlainDiagram {
 
-	private final Dedication dedication;
-	private final String keepLetter;
+	private final BufferedImage img;
 
-	public PSystemDedication(Dedication dedication, String keepLetter) {
-		this.dedication = dedication;
-		this.keepLetter = keepLetter;
+	public PSystemDedication(UmlSource source, BufferedImage img) {
+		super(source);
+		this.img = Objects.requireNonNull(img);
 	}
 
 	@Override
-	final protected ImageData exportDiagramNow(OutputStream os, int num, FileFormatOption fileFormat, long seed)
-			throws IOException {
-		HColor backcolor = HColorUtils.WHITE;
-		final ImageParameter imageParameter = new ImageParameter(new ColorMapperIdentity(), false, null, 1.0,
-				getMetadata(), null, ClockwiseTopRightBottomLeft.none(), backcolor);
-		final ImageBuilder imageBuilder = ImageBuilder.build(imageParameter);
-		imageBuilder.setUDrawable(new UDrawable() {
+	protected UDrawable getRootDrawable(FileFormatOption fileFormatOption) {
+		return new UDrawable() {
 			public void drawU(UGraphic ug) {
-				final BufferedImage bufferedImage = dedication.getBufferedImage(keepLetter);
-				if (bufferedImage != null) {
-					ug.draw(new UImage(new PixelImage(bufferedImage, AffineTransformType.TYPE_BILINEAR)));
-				}
+				ug.draw(new UImage(new PixelImage(img, AffineTransformType.TYPE_BILINEAR)));
 			}
-		});
-		return imageBuilder.writeImageTOBEMOVED(fileFormat, seed, os);
+		};
+	}
+
+	public static BufferedImage getBufferedImage(InputStream is) {
+		try {
+			final Class<?> clVP8Decoder = Class.forName("net.sourceforge.plantuml.webp.VP8Decoder");
+			final Object vp8Decoder = clVP8Decoder.newInstance();
+			// final VP8Decoder vp8Decoder = new VP8Decoder();
+			final Method decodeFrame = clVP8Decoder.getMethod("decodeFrame", ImageInputStream.class);
+			final ImageInputStream iis = ImageIO.createImageInputStream(is);
+			decodeFrame.invoke(vp8Decoder, iis);
+			// vp8Decoder.decodeFrame(iis);
+			iis.close();
+			final Object frame = clVP8Decoder.getMethod("getFrame").invoke(vp8Decoder);
+			return (BufferedImage) frame.getClass().getMethod("getBufferedImage").invoke(frame);
+			// final VP8Frame frame = vp8Decoder.getFrame();
+			// return frame.getBufferedImage();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public DiagramDescription getDescription() {

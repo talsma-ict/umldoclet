@@ -30,10 +30,13 @@
  */
 package net.sourceforge.plantuml.activitydiagram3;
 
+import java.util.Objects;
+
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactory;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileKilled;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
+import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class InstructionSpot extends MonoSwimable implements Instruction {
@@ -50,11 +53,8 @@ public class InstructionSpot extends MonoSwimable implements Instruction {
 	public InstructionSpot(String spot, HColor color, LinkRendering inlinkRendering, Swimlane swimlane) {
 		super(swimlane);
 		this.spot = spot;
-		this.inlinkRendering = inlinkRendering;
+		this.inlinkRendering = Objects.requireNonNull(inlinkRendering);
 		this.color = color;
-		if (inlinkRendering == null) {
-			throw new IllegalArgumentException();
-		}
 	}
 
 	public Ftile createFtile(FtileFactory factory) {
@@ -66,7 +66,7 @@ public class InstructionSpot extends MonoSwimable implements Instruction {
 		return result;
 	}
 
-	public void add(Instruction other) {
+	public CommandExecutionResult add(Instruction other) {
 		throw new UnsupportedOperationException();
 	}
 

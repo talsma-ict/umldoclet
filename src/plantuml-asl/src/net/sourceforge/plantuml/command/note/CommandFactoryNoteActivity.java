@@ -91,10 +91,11 @@ public final class CommandFactoryNoteActivity implements SingleMultiFactoryComma
 
 			@Override
 			public String getPatternEnd() {
-				return "(?i)^[%s]*end[%s]?note$";
+				return "^[%s]*end[%s]?note$";
 			}
 
-			public final CommandExecutionResult executeNow(final ActivityDiagram diagram, BlocLines lines) throws NoSuchColorException {
+			public final CommandExecutionResult executeNow(final ActivityDiagram diagram, BlocLines lines)
+					throws NoSuchColorException {
 				// StringUtils.trim(lines, true);
 				final RegexResult arg = getStartingPattern().matcher(lines.getFirst().getTrimmed().getString());
 				lines = lines.subExtract(1, 1);
@@ -141,11 +142,12 @@ public final class CommandFactoryNoteActivity implements SingleMultiFactoryComma
 		};
 	}
 
-	private CommandExecutionResult executeInternal(ActivityDiagram diagram, RegexResult arg, IEntity note) throws NoSuchColorException {
+	private CommandExecutionResult executeInternal(ActivityDiagram diagram, RegexResult arg, IEntity note)
+			throws NoSuchColorException {
 
 		final String s = arg.get("COLOR", 0);
-		note.setSpecificColorTOBEREMOVED(ColorType.BACK,
-				s == null ? null : diagram.getSkinParam().getIHtmlColorSet().getColor(s));
+		note.setSpecificColorTOBEREMOVED(ColorType.BACK, s == null ? null
+				: diagram.getSkinParam().getIHtmlColorSet().getColor(diagram.getSkinParam().getThemeStyle(), s));
 
 		IEntity activity = diagram.getLastEntityConsulted();
 		if (activity == null) {

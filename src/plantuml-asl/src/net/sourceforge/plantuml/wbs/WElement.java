@@ -56,8 +56,8 @@ final class WElement {
 	private final String stereotype;
 	private final WElement parent;
 	private final StyleBuilder styleBuilder;
-	private final List<WElement> childrenLeft = new ArrayList<WElement>();
-	private final List<WElement> childrenRight = new ArrayList<WElement>();
+	private final List<WElement> childrenLeft = new ArrayList<>();
+	private final List<WElement> childrenRight = new ArrayList<>();
 	private final IdeaShape shape;
 
 	private StyleSignature getDefaultStyleDefinitionNode(int level) {
@@ -99,8 +99,8 @@ final class WElement {
 		return result;
 	}
 
-	public WElement(HColor backColor, Display label, String stereotype, StyleBuilder styleBuilder) {
-		this(backColor, 0, label, stereotype, null, IdeaShape.BOX, styleBuilder);
+	public WElement(HColor backColor, Display label, String stereotype, StyleBuilder styleBuilder, IdeaShape shape) {
+		this(backColor, 0, label, stereotype, null, shape, styleBuilder);
 	}
 
 	private WElement(HColor backColor, int level, Display label, String stereotype, WElement parent, IdeaShape shape,

@@ -192,10 +192,8 @@ public enum License {
 		text.add("or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public");
 		text.add("License for more details.");
 		text.add(" ");
-		text.add("You should have received a copy of the GNU General Public");
-		text.add("License along with this library; if not, write to the Free Software");
-		text.add("Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,");
-		text.add("USA.");
+		text.add("You should have received a copy of the GNU General Public License");
+		text.add("along with this library.  If not, see <https://www.gnu.org/licenses/>.");
 		text.add(" ");
 		addSupplementary(licenseInfo, text);
 		text.add("the GPL license.");
@@ -220,10 +218,8 @@ public enum License {
 		text.add("or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public");
 		text.add("License for more details.");
 		text.add(" ");
-		text.add("You should have received a copy of the GNU General Public");
-		text.add("License along with this library; if not, write to the Free Software");
-		text.add("Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,");
-		text.add("USA.");
+		text.add("You should have received a copy of the GNU General Public License");
+		text.add("along with this library.  If not, see <https://www.gnu.org/licenses/>.");
 		text.add(" ");
 		addSupplementary(licenseInfo, text);
 		text.add("the GPL license.");
@@ -248,10 +244,8 @@ public enum License {
 		text.add("or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public");
 		text.add("License for more details.");
 		text.add(" ");
-		text.add("You should have received a copy of the GNU Lesser General Public");
-		text.add("License along with this library; if not, write to the Free Software");
-		text.add("Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,");
-		text.add("USA.");
+		text.add("You should have received a copy of the GNU Lesser General Public License");
+		text.add("along with this library.  If not, see <https://www.gnu.org/licenses/>.");
 		text.add(" ");
 		addSupplementary(licenseInfo, text);
 		text.add("the LGPL license.");
@@ -338,7 +332,7 @@ public enum License {
 	}
 
 	public List<String> getJavaHeader(List<String> contributors) {
-		final List<String> h = new ArrayList<String>();
+		final List<String> h = new ArrayList<>();
 		h.add("/* ========================================================================");
 		h.add(" * PlantUML : a free UML diagram generator");
 		h.add(" * ========================================================================");
@@ -365,10 +359,8 @@ public enum License {
 			h.add(" * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public");
 			h.add(" * License for more details.");
 			h.add(" *");
-			h.add(" * You should have received a copy of the GNU Lesser General Public");
-			h.add(" * License along with this library; if not, write to the Free Software");
-			h.add(" * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,");
-			h.add(" * USA.");
+			h.add(" * You should have received a copy of the GNU General Public License");
+			h.add(" * along with this library.  If not, see <https://www.gnu.org/licenses/>.");
 			h.add(" *");
 		} else if (this == License.GPLV2) {
 			h.add(" * PlantUML is free software; you can redistribute it and/or modify it");
@@ -381,10 +373,8 @@ public enum License {
 			h.add(" * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public");
 			h.add(" * License for more details.");
 			h.add(" *");
-			h.add(" * You should have received a copy of the GNU General Public");
-			h.add(" * License along with this library; if not, write to the Free Software");
-			h.add(" * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,");
-			h.add(" * USA.");
+			h.add(" * You should have received a copy of the GNU General Public License");
+			h.add(" * along with this library.  If not, see <https://www.gnu.org/licenses/>.");
 			h.add(" *");
 		} else if (this == License.APACHE) {
 			h.add(" * Licensed under the Apache License, Version 2.0 (the \"License\");");
@@ -474,7 +464,7 @@ public enum License {
 
 	public List<String> getTextFull() {
 		final LicenseInfo licenseInfo = LicenseInfo.retrieveQuick();
-		final List<String> text = new ArrayList<String>();
+		final List<String> text = new ArrayList<>();
 		header1(text, licenseInfo);
 		header2(text, licenseInfo, false);
 		end3(text, licenseInfo);
@@ -482,13 +472,13 @@ public enum License {
 	}
 
 	public List<String> getText1(LicenseInfo licenseInfo) {
-		final List<String> text = new ArrayList<String>();
+		final List<String> text = new ArrayList<>();
 		header1(text, licenseInfo);
 		return text;
 	}
 
 	public List<String> getText2(LicenseInfo licenseInfo) {
-		final List<String> text = new ArrayList<String>();
+		final List<String> text = new ArrayList<>();
 		header2(text, licenseInfo, true);
 		end3(text, licenseInfo);
 		return text;
@@ -535,6 +525,7 @@ public enum License {
 		text.add("ASCIIMathML (c) David Lippman http://www.pierce.ctc.edu/dlippman");
 		text.add("CafeUndZopfli ported by Eugene Klyuchnikov https://github.com/eustas/CafeUndZopfli");
 		text.add("Brotli (c) by the Brotli Authors https://github.com/google/brotli");
+		text.add("Themes (c) by Brett Schwarz https://github.com/bschwarz/puml-themes");
 		text.add(" ");
 	}
 }

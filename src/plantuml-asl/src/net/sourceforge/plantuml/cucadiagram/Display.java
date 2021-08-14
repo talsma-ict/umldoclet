@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -90,7 +91,7 @@ public class Display implements Iterable<CharSequence> {
 		if (showStereotype) {
 			return this;
 		}
-		final List<CharSequence> copy = new ArrayList<CharSequence>(displayData);
+		final List<CharSequence> copy = new ArrayList<>(displayData);
 		final Display result = new Display(naturalHorizontalAlignment, isNull, defaultCreoleMode);
 		for (Iterator<CharSequence> it = copy.iterator(); it.hasNext();) {
 			final CharSequence cs = it.next();
@@ -124,7 +125,7 @@ public class Display implements Iterable<CharSequence> {
 	}
 
 	public Display replace(String src, String dest) {
-		final List<CharSequence> newDisplay = new ArrayList<CharSequence>();
+		final List<CharSequence> newDisplay = new ArrayList<>();
 		for (CharSequence cs : displayData) {
 			if (cs.toString().contains(src)) {
 				cs = cs.toString().replace(src, dest);
@@ -148,7 +149,7 @@ public class Display implements Iterable<CharSequence> {
 	}
 
 	public static Display createFoo(List<StringLocated> data) throws NoSuchColorException {
-		final List<CharSequence> tmp = new ArrayList<CharSequence>();
+		final List<CharSequence> tmp = new ArrayList<>();
 		for (StringLocated s : data) {
 			tmp.add(s.getString());
 		}
@@ -176,7 +177,7 @@ public class Display implements Iterable<CharSequence> {
 			// Thread.dumpStack();
 			return NULL;
 		}
-		final List<String> result = new ArrayList<String>();
+		final List<String> result = new ArrayList<>();
 		final StringBuilder current = new StringBuilder();
 		HorizontalAlignment naturalHorizontalAlignment = null;
 		boolean rawMode = false;
@@ -239,13 +240,13 @@ public class Display implements Iterable<CharSequence> {
 	}
 
 	private static List<CharSequence> manageEmbeddedDiagrams(final Collection<? extends CharSequence> strings) {
-		final List<CharSequence> result = new ArrayList<CharSequence>();
+		final List<CharSequence> result = new ArrayList<>();
 		final Iterator<? extends CharSequence> it = strings.iterator();
 		while (it.hasNext()) {
 			CharSequence s = it.next();
 			final String type = EmbeddedDiagram.getEmbeddedType(s);
 			if (type != null) {
-				final List<CharSequence> other = new ArrayList<CharSequence>();
+				final List<CharSequence> other = new ArrayList<>();
 				other.add("@start" + type);
 				while (it.hasNext()) {
 					final CharSequence s2 = it.next();
@@ -263,7 +264,7 @@ public class Display implements Iterable<CharSequence> {
 	}
 
 	public Display manageGuillemet() {
-		final List<CharSequence> result = new ArrayList<CharSequence>();
+		final List<CharSequence> result = new ArrayList<>();
 		boolean first = true;
 		for (CharSequence line : displayData) {
 			if (line instanceof EmbeddedDiagram) {
@@ -285,7 +286,7 @@ public class Display implements Iterable<CharSequence> {
 		if (displayData == null) {
 			return this;
 		}
-		final List<CharSequence> result = new ArrayList<CharSequence>();
+		final List<CharSequence> result = new ArrayList<>();
 		for (CharSequence line : displayData) {
 			line = line.toString().replace("%page%", "" + page);
 			line = line.toString().replace("%lastpage%", "" + lastpage);
@@ -297,7 +298,7 @@ public class Display implements Iterable<CharSequence> {
 	public Display removeEndingStereotype() {
 		final Matcher2 m = patternStereotype.matcher(displayData.get(displayData.size() - 1));
 		if (m.matches()) {
-			final List<CharSequence> result = new ArrayList<CharSequence>(this.displayData);
+			final List<CharSequence> result = new ArrayList<>(this.displayData);
 			result.set(result.size() - 1, m.group(1));
 			return new Display(result, this.naturalHorizontalAlignment, this.isNull, this.defaultCreoleMode);
 		}
@@ -315,7 +316,7 @@ public class Display implements Iterable<CharSequence> {
 	}
 
 	public Display underlined() {
-		final List<CharSequence> result = new ArrayList<CharSequence>();
+		final List<CharSequence> result = new ArrayList<>();
 		for (CharSequence line : displayData) {
 			result.add("<u>" + line);
 		}
@@ -324,7 +325,7 @@ public class Display implements Iterable<CharSequence> {
 
 	public Display underlinedName() {
 		final Pattern p = Pattern.compile("^([^:]+?)(\\s*:.+)$");
-		final List<CharSequence> result = new ArrayList<CharSequence>();
+		final List<CharSequence> result = new ArrayList<>();
 		for (CharSequence line : displayData) {
 			if (result.size() == 0) {
 				final Matcher m = p.matcher(line);
@@ -418,7 +419,7 @@ public class Display implements Iterable<CharSequence> {
 	}
 
 	public List<StringLocated> as2() {
-		final List<StringLocated> result = new ArrayList<StringLocated>();
+		final List<StringLocated> result = new ArrayList<>();
 		LineLocationImpl location = new LineLocationImpl("inner", null);
 		for (CharSequence cs : displayData) {
 			location = location.oneLineRead();
@@ -442,7 +443,7 @@ public class Display implements Iterable<CharSequence> {
 	}
 
 	public List<Display> splitMultiline(Pattern2 separator) {
-		final List<Display> result = new ArrayList<Display>();
+		final List<Display> result = new ArrayList<>();
 		Display pending = new Display(this.naturalHorizontalAlignment, this.isNull, this.defaultCreoleMode);
 		result.add(pending);
 		for (CharSequence line : displayData) {
@@ -464,9 +465,7 @@ public class Display implements Iterable<CharSequence> {
 	// ------
 
 	public static boolean isNull(Display display) {
-		// if (display == null) {
-		// throw new IllegalArgumentException();
-		// }
+		// Objects.requireNonNull(display);
 		return display == null || display.isNull;
 	}
 
@@ -501,9 +500,7 @@ public class Display implements Iterable<CharSequence> {
 	public TextBlock create0(FontConfiguration fontConfiguration, HorizontalAlignment horizontalAlignment,
 			ISkinSimple spriteContainer, LineBreakStrategy maxMessageSize, CreoleMode creoleMode,
 			UFont fontForStereotype, HColor htmlColorForStereotype) {
-		if (maxMessageSize == null) {
-			throw new IllegalArgumentException();
-		}
+		Objects.requireNonNull(maxMessageSize);
 		if (getNaturalHorizontalAlignment() != null) {
 			horizontalAlignment = getNaturalHorizontalAlignment();
 		}

@@ -35,6 +35,7 @@ import java.util.List;
 
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.FontParam;
+import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.activitydiagram3.Branch;
 import net.sourceforge.plantuml.activitydiagram3.LinkRendering;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
@@ -53,6 +54,7 @@ import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.Rainbow;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
+import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class FtileFactoryDelegatorSwitch extends FtileFactoryDelegator {
@@ -70,7 +72,7 @@ public class FtileFactoryDelegatorSwitch extends FtileFactoryDelegator {
 	}
 
 	private Ftile createNude(Swimlane swimlane, List<Branch> branches) {
-		final List<Ftile> ftiles = new ArrayList<Ftile>();
+		final List<Ftile> ftiles = new ArrayList<>();
 		for (Branch branch : branches) {
 			ftiles.add(new FtileMinWidthCentered(branch.getFtile(), 30));
 		}
@@ -78,7 +80,7 @@ public class FtileFactoryDelegatorSwitch extends FtileFactoryDelegator {
 	}
 
 	private Ftile createWithDiamonds(Swimlane swimlane, List<Branch> branches, Display labelTest) {
-		final List<Ftile> ftiles = new ArrayList<Ftile>();
+		final List<Ftile> ftiles = new ArrayList<>();
 		for (Branch branch : branches) {
 			ftiles.add(new FtileMinWidthCentered(branch.getFtile(), 30));
 		}
@@ -89,43 +91,53 @@ public class FtileFactoryDelegatorSwitch extends FtileFactoryDelegator {
 	}
 
 	private Ftile createWithLinks(Swimlane swimlane, List<Branch> branches, Display labelTest) {
-		final List<Ftile> ftiles = new ArrayList<Ftile>();
+		final List<Ftile> ftiles = new ArrayList<>();
 		final Ftile diamond1 = getDiamond1(swimlane, branches.get(0), labelTest);
 		final Ftile diamond2 = getDiamond2(swimlane, branches.get(0));
 		for (Branch branch : branches) {
 			ftiles.add(new FtileMinWidthCentered(branch.getFtile(), 30));
 		}
-		final Rainbow arrowColor = Rainbow.build(skinParam());
+		final Rainbow arrowColor;
+		if (UseStyle.useBetaStyle()) {
+			final Style style = getDefaultStyleDefinitionArrow().getMergedStyle(skinParam().getCurrentStyleBuilder());
+			arrowColor = Rainbow.build(style, skinParam().getIHtmlColorSet(), skinParam().getThemeStyle());
+		} else {
+			arrowColor = Rainbow.build(skinParam());
+		}
 		if (ftiles.size() == 1) {
 			final FtileSwitchWithOneLink result = new FtileSwitchWithOneLink(ftiles, branches, swimlane, diamond1,
 					diamond2, getStringBounder(), arrowColor);
-			return result.addLinks();
+			return result.addLinks(getStringBounder());
 		}
 		final FtileSwitchWithManyLinks result = new FtileSwitchWithManyLinks(ftiles, branches, swimlane, diamond1,
 				diamond2, getStringBounder(), arrowColor);
-		return result.addLinks();
+		return result.addLinks(getStringBounder());
 
 	}
 
 	private Ftile getDiamond1(Swimlane swimlane, Branch branch0, Display test) {
 		final HColor borderColor = getRose().getHtmlColor(skinParam(), ColorParam.activityDiamondBorder);
-		final HColor backColor = branch0.getColor() == null ? getRose().getHtmlColor(skinParam(),
-				ColorParam.activityDiamondBackground) : branch0.getColor();
+		final HColor backColor = branch0.getColor() == null
+				? getRose().getHtmlColor(skinParam(), ColorParam.activityDiamondBackground)
+				: branch0.getColor();
 
 		final FontConfiguration fcDiamond = new FontConfiguration(skinParam(), FontParam.ACTIVITY_DIAMOND, null);
 
-		final TextBlock tbTest = (Display.isNull(test) || test.isWhite()) ? TextBlockUtils.empty(0, 0) : test.create(
-				fcDiamond, branch0.skinParam().getDefaultTextAlignment(HorizontalAlignment.LEFT), branch0.skinParam());
+		final TextBlock tbTest = (Display.isNull(test) || test.isWhite()) ? TextBlockUtils.empty(0, 0)
+				: test.create(fcDiamond, branch0.skinParam().getDefaultTextAlignment(HorizontalAlignment.LEFT),
+						branch0.skinParam());
 
 		return new FtileDiamondInside(branch0.skinParam(), backColor, borderColor, swimlane, tbTest);
 	}
 
 	private Ftile getDiamond2(Swimlane swimlane, Branch branch0) {
 		final HColor borderColor = getRose().getHtmlColor(skinParam(), ColorParam.activityDiamondBorder);
-		final HColor backColor = branch0.getColor() == null ? getRose().getHtmlColor(skinParam(),
-				ColorParam.activityDiamondBackground) : branch0.getColor();
+		final HColor backColor = branch0.getColor() == null
+				? getRose().getHtmlColor(skinParam(), ColorParam.activityDiamondBackground)
+				: branch0.getColor();
 
-		return new FtileDiamondInside(branch0.skinParam(), backColor, borderColor, swimlane, TextBlockUtils.empty(0, 0));
+		return new FtileDiamondInside(branch0.skinParam(), backColor, borderColor, swimlane,
+				TextBlockUtils.empty(0, 0));
 	}
 
 	private HColor fontColor(FontParam param) {

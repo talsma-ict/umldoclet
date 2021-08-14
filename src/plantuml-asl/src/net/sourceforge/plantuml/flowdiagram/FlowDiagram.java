@@ -30,6 +30,8 @@
  */
 package net.sourceforge.plantuml.flowdiagram;
 
+import static net.sourceforge.plantuml.ugraphic.ImageBuilder.imageBuilder;
+
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -42,9 +44,9 @@ import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
-import net.sourceforge.plantuml.api.ImageDataSimple;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
+import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.golem.MinMaxGolem;
 import net.sourceforge.plantuml.golem.Path;
 import net.sourceforge.plantuml.golem.Position;
@@ -55,14 +57,14 @@ import net.sourceforge.plantuml.golem.TilesField;
 import net.sourceforge.plantuml.graphic.InnerStrategy;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
+import net.sourceforge.plantuml.ugraphic.ImageBuilder;
 import net.sourceforge.plantuml.ugraphic.MinMax;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UGraphicUtils;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
 import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class FlowDiagram extends UmlDiagram implements TextBlock {
@@ -82,8 +84,8 @@ public class FlowDiagram extends UmlDiagram implements TextBlock {
 		return new DiagramDescription("Flow Diagram");
 	}
 
-	public FlowDiagram() {
-		super(UmlDiagramType.FLOW);
+	public FlowDiagram(UmlSource source) {
+		super(source, UmlDiagramType.FLOW);
 	}
 
 	public void lineSimple(TileGeometry orientation, String idDest, String label) {
@@ -116,11 +118,21 @@ public class FlowDiagram extends UmlDiagram implements TextBlock {
 	}
 
 	@Override
+	public ImageBuilder createImageBuilder(FileFormatOption fileFormatOption) throws IOException {
+		return imageBuilder(fileFormatOption)
+				.dimension(calculateDimension(fileFormatOption.getDefaultStringBounder(getSkinParam())))
+				.margin(getDefaultMargins())
+				.metadata(fileFormatOption.isWithMetadata() ? getMetadata() : null)
+				.seed(seed());
+	}
+
+	@Override
 	protected ImageData exportDiagramInternal(OutputStream os, int index, FileFormatOption fileFormatOption)
 			throws IOException {
-		UGraphicUtils.writeImage(os, null, fileFormatOption, seed(), new ColorMapperIdentity(), HColorUtils.WHITE,
-				this);
-		return ImageDataSimple.ok();
+
+		return createImageBuilder(fileFormatOption)
+				.drawable(this)
+				.write(os);
 	}
 
 	public void drawU(UGraphic ug) {
@@ -207,4 +219,8 @@ public class FlowDiagram extends UmlDiagram implements TextBlock {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
+	public ClockwiseTopRightBottomLeft getDefaultMargins() {
+		return ClockwiseTopRightBottomLeft.same(0);
+	}
 }

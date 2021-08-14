@@ -72,8 +72,8 @@ public class NotesTile extends AbstractTile implements Tile {
 	}
 
 	private Component getComponent(StringBounder stringBounder, Note note) {
-		final Component comp = skin.createComponent(note.getUsedStyles(), getNoteComponentType(note.getNoteStyle()),
-				null, note.getSkinParamBackcolored(skinParam), note.getStrings());
+		final Component comp = skin.createComponentNote(note.getUsedStyles(), getNoteComponentType(note.getNoteStyle()),
+				note.getSkinParamBackcolored(skinParam), note.getStrings(), note.getPosition());
 		return comp;
 	}
 
@@ -165,7 +165,7 @@ public class NotesTile extends AbstractTile implements Tile {
 	}
 
 	public Real getMinX() {
-		final List<Real> reals = new ArrayList<Real>();
+		final List<Real> reals = new ArrayList<>();
 		for (Note note : notes) {
 			reals.add(getX(getStringBounder(), note));
 		}
@@ -177,7 +177,7 @@ public class NotesTile extends AbstractTile implements Tile {
 	}
 
 	public Real getMaxX() {
-		final List<Real> reals = new ArrayList<Real>();
+		final List<Real> reals = new ArrayList<>();
 		for (Note note : notes) {
 			reals.add(getX2(getStringBounder(), note));
 		}

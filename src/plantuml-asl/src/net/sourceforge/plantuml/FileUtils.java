@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sourceforge.plantuml.security.SFile;
@@ -57,9 +58,7 @@ public class FileUtils {
 		if (suffix.startsWith(".") == false) {
 			throw new IllegalArgumentException();
 		}
-		if (prefix == null) {
-			throw new IllegalArgumentException();
-		}
+		Objects.requireNonNull(prefix);
 		final File f;
 		if (counter == null) {
 			f = File.createTempFile(prefix, suffix);
@@ -76,9 +75,7 @@ public class FileUtils {
 		if (suffix.startsWith(".") == false) {
 			throw new IllegalArgumentException();
 		}
-		if (prefix == null) {
-			throw new IllegalArgumentException();
-		}
+		Objects.requireNonNull(prefix);
 		final SFile f;
 		if (counter == null) {
 			f = SFile.createTempFile(prefix, suffix);

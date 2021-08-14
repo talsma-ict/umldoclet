@@ -74,13 +74,13 @@ public class CommunicationTileSelfNoteRight extends AbstractTile {
 	}
 
 	@Override
-	public void callbackY_internal(double y) {
+	final protected void callbackY_internal(double y) {
 		tile.callbackY(y);
 	}
 
 	private Component getComponent(StringBounder stringBounder) {
-		final Component comp = skin.createComponent(null, ComponentType.NOTE, null,
-				noteOnMessage.getSkinParamBackcolored(skinParam), noteOnMessage.getStrings());
+		final Component comp = skin.createComponentNote(null, ComponentType.NOTE, noteOnMessage.getSkinParamBackcolored(skinParam),
+				noteOnMessage.getStrings());
 		return comp;
 	}
 

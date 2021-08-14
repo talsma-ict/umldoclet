@@ -31,17 +31,14 @@
 package net.sourceforge.plantuml.creole.command;
 
 import net.sourceforge.plantuml.command.regex.Matcher2;
-import net.sourceforge.plantuml.command.regex.MyPattern;
-import net.sourceforge.plantuml.command.regex.Pattern2;
 import net.sourceforge.plantuml.creole.legacy.StripeSimple;
 import net.sourceforge.plantuml.graphic.AddStyle;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.FontStyle;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 
-public class CommandCreoleStyle implements Command {
+public class CommandCreoleStyle extends CommandCreoleCache implements Command {
 
-	private final Pattern2 p;
 	private final FontStyle style;
 	private final boolean tryExtendedColor;
 
@@ -62,7 +59,7 @@ public class CommandCreoleStyle implements Command {
 	}
 
 	private CommandCreoleStyle(String p, FontStyle style, boolean tryExtendedColor) {
-		this.p = MyPattern.cmpile(p);
+		super(p);
 		this.style = style;
 		this.tryExtendedColor = tryExtendedColor;
 	}
@@ -75,7 +72,7 @@ public class CommandCreoleStyle implements Command {
 	}
 
 	public String executeAndGetRemaining(final String line, StripeSimple stripe) {
-		final Matcher2 m = p.matcher(line);
+		final Matcher2 m = mypattern.matcher(line);
 		if (m.find() == false) {
 			throw new IllegalStateException();
 		}
@@ -89,7 +86,7 @@ public class CommandCreoleStyle implements Command {
 	}
 
 	public int matchingSize(String line) {
-		final Matcher2 m = p.matcher(line);
+		final Matcher2 m = mypattern.matcher(line);
 		if (m.find() == false) {
 			return 0;
 		}

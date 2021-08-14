@@ -55,7 +55,7 @@ public class CommandActivate extends SingleLineCommand2<SequenceDiagram> {
 		return RegexConcat.build(CommandActivate.class.getName(), RegexLeaf.start(), //
 				new RegexLeaf("TYPE", "(activate|deactivate|destroy|create)"), //
 				RegexLeaf.spaceOneOrMore(), //
-				new RegexLeaf("WHO", "([\\p{L}0-9_.@]+|[%g][^%g]+[%g])"), //
+				new RegexLeaf("WHO", "([%pLN_.@]+|[%g][^%g]+[%g])"), //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("BACK", "(#\\w+)?"), //
 				new RegexOptional( //
@@ -66,14 +66,17 @@ public class CommandActivate extends SingleLineCommand2<SequenceDiagram> {
 	}
 
 	@Override
-	protected CommandExecutionResult executeArg(SequenceDiagram diagram, LineLocation location, RegexResult arg) throws NoSuchColorException {
+	protected CommandExecutionResult executeArg(SequenceDiagram diagram, LineLocation location, RegexResult arg)
+			throws NoSuchColorException {
 		final LifeEventType type = LifeEventType.valueOf(StringUtils.goUpperCase(arg.get("TYPE", 0)));
-		final Participant p = diagram.getOrCreateParticipant(StringUtils
-				.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("WHO", 0)));
+		final Participant p = diagram
+				.getOrCreateParticipant(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("WHO", 0)));
 		String s = arg.get("BACK", 0);
-		final HColor backColor = s == null ? null : diagram.getSkinParam().getIHtmlColorSet().getColor(s);
+		final HColor backColor = s == null ? null
+				: diagram.getSkinParam().getIHtmlColorSet().getColor(diagram.getSkinParam().getThemeStyle(), s);
 		String s1 = arg.get("LINE", 0);
-		final HColor lineColor = s1 == null ? null : diagram.getSkinParam().getIHtmlColorSet().getColor(s1);
+		final HColor lineColor = s1 == null ? null
+				: diagram.getSkinParam().getIHtmlColorSet().getColor(diagram.getSkinParam().getThemeStyle(), s1);
 		final String error = diagram.activate(p, type, backColor, lineColor);
 		if (error == null) {
 			return CommandExecutionResult.ok();

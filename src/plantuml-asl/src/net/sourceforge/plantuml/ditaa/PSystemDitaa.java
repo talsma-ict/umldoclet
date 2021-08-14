@@ -46,6 +46,7 @@ import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.api.ImageDataSimple;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
+import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.security.ImageIO;
 import net.sourceforge.plantuml.svek.GraphvizCrash;
 
@@ -58,7 +59,8 @@ public class PSystemDitaa extends AbstractPSystem {
 	private final float scale;
 	private final boolean performSeparationOfCommonEdges;
 
-	public PSystemDitaa(String data, boolean performSeparationOfCommonEdges, boolean dropShadows, float scale) {
+	public PSystemDitaa(UmlSource source, String data, boolean performSeparationOfCommonEdges, boolean dropShadows, float scale) {
+		super(source);
 		this.data = data;
 		this.dropShadows = dropShadows;
 		this.performSeparationOfCommonEdges = performSeparationOfCommonEdges;
@@ -76,7 +78,7 @@ public class PSystemDitaa extends AbstractPSystem {
 	}
 
 	PSystemDitaa add(String line) {
-		return new PSystemDitaa(data + line + BackSlash.NEWLINE, performSeparationOfCommonEdges, dropShadows, scale);
+		return new PSystemDitaa(getSource(), data + line + BackSlash.NEWLINE, performSeparationOfCommonEdges, dropShadows, scale);
 	}
 
 	public DiagramDescription getDescription() {
@@ -84,7 +86,7 @@ public class PSystemDitaa extends AbstractPSystem {
 	}
 
 	@Override
-	final protected ImageData exportDiagramNow(OutputStream os, int num, FileFormatOption fileFormat, long seed)
+	final protected ImageData exportDiagramNow(OutputStream os, int num, FileFormatOption fileFormat)
 			throws IOException {
 		if (fileFormat.getFileFormat() == FileFormat.ATXT) {
 			os.write(getSource().getPlainString().getBytes());
@@ -140,7 +142,7 @@ public class PSystemDitaa extends AbstractPSystem {
 			final int height = image.getHeight();
 			return new ImageDataSimple(width, height);
 		} catch (Throwable e) {
-			final List<String> strings = new ArrayList<String>();
+			final List<String> strings = new ArrayList<>();
 			strings.add("DITAA has crashed");
 			strings.add(" ");
 			GraphvizCrash.youShouldSendThisDiagram(strings);

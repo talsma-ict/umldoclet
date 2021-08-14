@@ -130,7 +130,7 @@ public class TextBlockUtils {
 			public Dimension2D calculateDimension(StringBounder stringBounder) {
 				return new Dimension2DDouble(width, height);
 			}
-			
+
 			public Rectangle2D getInnerPosition(String member, StringBounder stringBounder, InnerStrategy strategy) {
 				return null;
 			}
@@ -197,14 +197,6 @@ public class TextBlockUtils {
 		return FileFormat.gg.getFontRenderContext();
 	}
 
-	public static LineMetrics getLineMetrics(UFont font, String text) {
-		return font.getLineMetrics(FileFormat.gg, text);
-	}
-
-	public static FontMetrics getFontMetrics(Font font) {
-		return FileFormat.gg.getFontMetrics(font);
-	}
-
 	public static TextBlock fullInnerPosition(final TextBlock bloc, final String display) {
 		return new TextBlock() {
 
@@ -227,8 +219,6 @@ public class TextBlockUtils {
 				}
 				return null;
 			}
-			
-			
 
 		};
 	}

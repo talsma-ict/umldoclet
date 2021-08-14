@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.command.PSystemAbstractFactory;
 import net.sourceforge.plantuml.core.Diagram;
@@ -49,11 +50,13 @@ public class YamlDiagramFactory extends PSystemAbstractFactory {
 		super(DiagramType.YAML);
 	}
 
-	public Diagram createSystem(UmlSource source) {
+	@Override
+	public Diagram createSystem(UmlSource source, ISkinSimple skinParam) {
+		final List<String> highlighted = new ArrayList<>();
 		JsonValue yaml = null;
 		StyleExtractor styleExtractor = null;
 		try {
-			final List<String> list = new ArrayList<String>();
+			final List<String> list = new ArrayList<>();
 			styleExtractor = new StyleExtractor(source.iterator2());
 			final Iterator<String> it = styleExtractor.getIterator();
 			it.next();
@@ -62,17 +65,20 @@ public class YamlDiagramFactory extends PSystemAbstractFactory {
 				if (it.hasNext() == false) {
 					break;
 				}
+				if (line.startsWith("#highlight ")) {
+					highlighted.add(line.substring("#highlight ".length()).trim());
+					continue;
+				}
 				list.add(line);
 			}
 			yaml = new SimpleYamlParser().parse(list);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		final JsonDiagram result = new JsonDiagram(UmlDiagramType.YAML, yaml, new ArrayList<String>());
+		final JsonDiagram result = new JsonDiagram(source, UmlDiagramType.YAML, yaml, highlighted);
 		if (styleExtractor != null) {
 			styleExtractor.applyStyles(result.getSkinParam());
 		}
-		result.setSource(source);
 		return result;
 	}
 

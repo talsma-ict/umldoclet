@@ -30,9 +30,12 @@
  */
 package net.sourceforge.plantuml.activitydiagram3;
 
+import java.util.Objects;
+
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactory;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
+import net.sourceforge.plantuml.command.CommandExecutionResult;
 
 public class InstructionStart extends MonoSwimable implements Instruction {
 
@@ -40,10 +43,7 @@ public class InstructionStart extends MonoSwimable implements Instruction {
 
 	public InstructionStart(Swimlane swimlane, LinkRendering inlinkRendering) {
 		super(swimlane);
-		this.inlinkRendering = inlinkRendering;
-		if (inlinkRendering == null) {
-			throw new IllegalArgumentException();
-		}
+		this.inlinkRendering = Objects.requireNonNull(inlinkRendering);
 	}
 	
 	public boolean containsBreak() {
@@ -57,7 +57,7 @@ public class InstructionStart extends MonoSwimable implements Instruction {
 		return result;
 	}
 
-	public void add(Instruction other) {
+	public CommandExecutionResult add(Instruction other) {
 		throw new UnsupportedOperationException();
 	}
 

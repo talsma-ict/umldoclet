@@ -34,7 +34,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import net.sourceforge.plantuml.FileFormat;
-import net.sourceforge.plantuml.TikzFontDistortion;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.ugraphic.AbstractCommonUGraphic;
 import net.sourceforge.plantuml.ugraphic.AbstractUGraphic;
@@ -45,6 +44,7 @@ import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UText;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class UGraphicHtml5 extends AbstractUGraphic<Html5Drawer> implements ClipContainer, UGraphic2 {
 
@@ -55,9 +55,9 @@ public class UGraphicHtml5 extends AbstractUGraphic<Html5Drawer> implements Clip
 		return this;
 	}
 
-	public UGraphicHtml5(ColorMapper colorMapper) {
-		super(colorMapper, new Html5Drawer());
-		stringBounder = FileFormat.PNG.getDefaultStringBounder(TikzFontDistortion.getDefault());
+	public UGraphicHtml5(HColor defaultBackground, ColorMapper colorMapper) {
+		super(defaultBackground, colorMapper, new Html5Drawer());
+		stringBounder = FileFormat.PNG.getDefaultStringBounder();
 		registerDriver(URectangle.class, new DriverRectangleHtml5(this));
 		// registerDriver(UText.class, new DriverTextEps(imDummy, this, strategy));
 		registerDriver(UText.class, new DriverNopHtml5());

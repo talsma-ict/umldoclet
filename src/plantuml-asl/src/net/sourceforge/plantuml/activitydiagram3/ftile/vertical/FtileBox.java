@@ -64,6 +64,7 @@ import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.UDrawable;
 import net.sourceforge.plantuml.graphic.color.Colors;
+import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
@@ -77,10 +78,9 @@ import net.sourceforge.plantuml.ugraphic.color.HColorNone;
 
 public class FtileBox extends AbstractFtile {
 
-	private double padding1 = 10;
-	private double padding2 = 10;
-	private double paddingTop = 10;
-	private double paddingBottom = 10;
+	private final ClockwiseTopRightBottomLeft padding;
+	private final ClockwiseTopRightBottomLeft margin;
+
 	private final TextBlock tb;
 	private double roundCorner = 25;
 	private final double shadowing;
@@ -125,12 +125,12 @@ public class FtileBox extends AbstractFtile {
 	class MyStencil implements Stencil {
 
 		public double getStartingX(StringBounder stringBounder, double y) {
-			return -padding1;
+			return -padding.getLeft();
 		}
 
 		public double getEndingX(StringBounder stringBounder, double y) {
 			final Dimension2D dim = calculateDimension(stringBounder);
-			return dim.getWidth() - padding2;
+			return dim.getWidth() - padding.getRight();
 		}
 
 	}
@@ -147,31 +147,31 @@ public class FtileBox extends AbstractFtile {
 		return new FtileBox(skinParam, label, swimlane, boxStyle, style, styleArrow);
 	}
 
-	public static FtileBox createWbs(StyleBuilder styleBuilder, ISkinParam skinParam, Display label,
-			StyleSignature styleDefinition) {
-		Style style = null;
-		Style styleArrow = null;
-		if (UseStyle.useBetaStyle()) {
-			style = styleDefinition.getMergedStyle(styleBuilder);
-			styleArrow = style;
-		}
-		return new FtileBox(skinParam, label, null, BoxStyle.PLAIN, style, styleArrow);
-	}
-
-	public static FtileBox createWbs(Style style, ISkinParam skinParam, Display label) {
-		Style styleArrow = null;
-		if (UseStyle.useBetaStyle()) {
-			styleArrow = style;
-		}
-		return new FtileBox(skinParam, label, null, BoxStyle.PLAIN, style, styleArrow);
-	}
-
-	public static FtileBox createMindMap(StyleBuilder styleBuilder, ISkinParam skinParam, Display label,
-			StyleSignature styleDefinition) {
-		final Style style = styleDefinition.getMergedStyle(styleBuilder);
-		final Style styleArrow = style;
-		return new FtileBox(skinParam, label, null, BoxStyle.PLAIN, style, styleArrow);
-	}
+//	public static TextBlock createWbs(StyleBuilder styleBuilder, ISkinParam skinParam, Display label,
+//			StyleSignature styleDefinition) {
+//		Style style = null;
+//		Style styleArrow = null;
+//		if (UseStyle.useBetaStyle()) {
+//			style = styleDefinition.getMergedStyle(styleBuilder);
+//			styleArrow = style;
+//		}
+//		return new FtileBox(skinParam, label, null, BoxStyle.PLAIN, style, styleArrow);
+//	}
+//
+//	public static TextBlock createWbs(Style style, ISkinParam skinParam, Display label) {
+//		Style styleArrow = null;
+//		if (UseStyle.useBetaStyle()) {
+//			styleArrow = style;
+//		}
+//		return new FtileBox(skinParam, label, null, BoxStyle.PLAIN, style, styleArrow);
+//	}
+//
+//	public static TextBlock createMindMap(StyleBuilder styleBuilder, ISkinParam skinParam, Display label,
+//			StyleSignature styleDefinition) {
+//		final Style style = styleDefinition.getMergedStyle(styleBuilder);
+//		final Style styleArrow = style;
+//		return new FtileBox(skinParam, label, null, BoxStyle.PLAIN, style, styleArrow);
+//	}
 
 	private FtileBox(ISkinParam skinParam, Display label, Swimlane swimlane, BoxStyle boxStyle, Style style,
 			Style styleArrow) {
@@ -182,30 +182,31 @@ public class FtileBox extends AbstractFtile {
 		final FontConfiguration fc;
 		final LineBreakStrategy wrapWidth;
 		if (UseStyle.useBetaStyle()) {
-			this.inRendering = new LinkRendering(Rainbow.build(styleArrow, getIHtmlColorSet()));
+			this.inRendering = new LinkRendering(
+					Rainbow.build(styleArrow, getIHtmlColorSet(), skinParam.getThemeStyle()));
 			Colors specBack = null;
 			if (skinParam instanceof SkinParamColors) {
 				specBack = ((SkinParamColors) skinParam).getColors();
 			}
 			style = style.eventuallyOverride(specBack);
-			this.borderColor = style.value(PName.LineColor).asColor(getIHtmlColorSet());
-			this.backColor = style.value(PName.BackGroundColor).asColor(getIHtmlColorSet());
-			fc = style.getFontConfiguration(getIHtmlColorSet());
-			horizontalAlignment = style.getHorizontalAlignment();
-			this.padding1 = style.getPadding().getLeft();
-			this.padding2 = style.getPadding().getRight();
-			this.paddingTop = style.getPadding().getTop();
-			this.paddingBottom = style.getPadding().getBottom();
+			this.borderColor = style.value(PName.LineColor).asColor(skinParam.getThemeStyle(), getIHtmlColorSet());
+			this.backColor = style.value(PName.BackGroundColor).asColor(skinParam.getThemeStyle(), getIHtmlColorSet());
+			fc = style.getFontConfiguration(skinParam.getThemeStyle(), getIHtmlColorSet());
+			this.horizontalAlignment = style.getHorizontalAlignment();
+			this.padding = style.getPadding();
+			this.margin = style.getMargin();
 			this.roundCorner = style.value(PName.RoundCorner).asDouble();
 			this.shadowing = style.value(PName.Shadowing).asDouble();
 			wrapWidth = style.wrapWidth();
 			this.minimumWidth = style.value(PName.MinimumWidth).asDouble();
 		} else {
+			this.padding = ClockwiseTopRightBottomLeft.same(10);
+			this.margin = ClockwiseTopRightBottomLeft.same(0);
 			this.inRendering = new LinkRendering(Rainbow.build(skinParam));
 			this.borderColor = SkinParamUtils.getColor(skinParam(), null, ColorParam.activityBorder);
 			this.backColor = SkinParamUtils.getColor(skinParam(), null, ColorParam.activityBackground);
 			fc = new FontConfiguration(skinParam, FontParam.ACTIVITY, null);
-			horizontalAlignment = HorizontalAlignment.LEFT;
+			this.horizontalAlignment = HorizontalAlignment.LEFT;
 			this.shadowing = skinParam().shadowing(null) ? 3.0 : 0.0;
 			wrapWidth = skinParam.wrapWidth();
 
@@ -254,23 +255,25 @@ public class FtileBox extends AbstractFtile {
 		shape.drawU(ug);
 
 		if (horizontalAlignment == HorizontalAlignment.LEFT) {
-			tb.drawU(ug.apply(new UTranslate(padding1, paddingTop)));
+			tb.drawU(ug.apply(new UTranslate(padding.getLeft(), padding.getTop())));
 		} else if (horizontalAlignment == HorizontalAlignment.RIGHT) {
 			final Dimension2D dimTb = tb.calculateDimension(ug.getStringBounder());
-			tb.drawU(ug.apply(new UTranslate(dimTotal.getWidth() - dimTb.getWidth() - padding2, paddingBottom)));
+			tb.drawU(ug.apply(
+					new UTranslate(dimTotal.getWidth() - dimTb.getWidth() - padding.getRight(), padding.getBottom())));
 		} else if (horizontalAlignment == HorizontalAlignment.CENTER) {
 			final Dimension2D dimTb = tb.calculateDimension(ug.getStringBounder());
-			tb.drawU(ug.apply(new UTranslate((dimTotal.getWidth() - dimTb.getWidth()) / 2, paddingBottom)));
+			tb.drawU(ug.apply(new UTranslate((dimTotal.getWidth() - dimTb.getWidth()) / 2, padding.getBottom())));
 		}
 	}
 
 	@Override
 	protected FtileGeometry calculateDimensionFtile(StringBounder stringBounder) {
-		Dimension2D dim = tb.calculateDimension(stringBounder);
-		dim = Dimension2DDouble.delta(dim, padding1 + padding2, paddingBottom + paddingTop);
-		dim = Dimension2DDouble.atLeast(dim, minimumWidth, 0);
-		return new FtileGeometry(dim.getWidth() + boxStyle.getShield(), dim.getHeight(), dim.getWidth() / 2, 0,
-				dim.getHeight());
+		Dimension2D dimRaw = tb.calculateDimension(stringBounder);
+		dimRaw = Dimension2DDouble.delta(dimRaw, padding.getLeft() + padding.getRight(),
+				padding.getBottom() + padding.getTop());
+		dimRaw = Dimension2DDouble.atLeast(dimRaw, minimumWidth, 0);
+		return new FtileGeometry(dimRaw.getWidth() + boxStyle.getShield(), dimRaw.getHeight(), dimRaw.getWidth() / 2, 0,
+				dimRaw.getHeight());
 	}
 
 	public Collection<Ftile> getMyChildren() {

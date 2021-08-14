@@ -35,30 +35,37 @@ import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
+import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.project.ToTaskDraw;
 import net.sourceforge.plantuml.project.core.Task;
 import net.sourceforge.plantuml.project.lang.CenterBorderColor;
 import net.sourceforge.plantuml.project.time.Day;
 import net.sourceforge.plantuml.project.timescale.TimeScale;
+import net.sourceforge.plantuml.real.Real;
+import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.style.StyleBuilder;
+import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public abstract class AbstractTaskDraw implements TaskDraw {
 
-	protected CenterBorderColor colors;
+	private CenterBorderColor colors;
+
 	protected int completion = 100;
 	protected Url url;
 	protected Display note;
 	protected final TimeScale timeScale;
-	private double y;
+	private Real y;
 	protected final String prettyDisplay;
 	protected final Day start;
-	protected final ISkinParam skinParam;
+	private final StyleBuilder styleBuilder;
+	private final HColorSet colorSet;
 	private final Task task;
 	private final ToTaskDraw toTaskDraw;
-
-	protected final double margin = 2;
 
 	@Override
 	final public String toString() {
@@ -72,68 +79,98 @@ public abstract class AbstractTaskDraw implements TaskDraw {
 		this.note = note;
 	}
 
-	public AbstractTaskDraw(TimeScale timeScale, double y, String prettyDisplay, Day start, ISkinParam skinParam,
-			Task task, ToTaskDraw toTaskDraw) {
+	public AbstractTaskDraw(TimeScale timeScale, Real y, String prettyDisplay, Day start, ISkinParam skinParam,
+			Task task, ToTaskDraw toTaskDraw, StyleBuilder styleBuilder, HColorSet colorSet) {
 		this.y = y;
+		this.colorSet = colorSet;
+		this.styleBuilder = styleBuilder;
 		this.toTaskDraw = toTaskDraw;
 		this.start = start;
 		this.prettyDisplay = prettyDisplay;
 		this.timeScale = timeScale;
-		this.skinParam = skinParam;
 		this.task = task;
 	}
 
+	abstract StyleSignature getStyleSignature();
+
 	final protected HColor getLineColor() {
-		return getStyle().value(PName.LineColor).asColor(skinParam.getIHtmlColorSet());
+		return getStyle().value(PName.LineColor).asColor(getStyleBuilder().getSkinParam().getThemeStyle(), colorSet);
 	}
 
 	final protected HColor getBackgroundColor() {
-		return getStyle().value(PName.BackGroundColor).asColor(skinParam.getIHtmlColorSet());
+		return getStyle().value(PName.BackGroundColor).asColor(getStyleBuilder().getSkinParam().getThemeStyle(),
+				colorSet);
 	}
 
 	final protected FontConfiguration getFontConfiguration() {
-		return getStyle().getFontConfiguration(skinParam.getIHtmlColorSet());
+		return getStyle().getFontConfiguration(styleBuilder.getSkinParam().getThemeStyle(), colorSet);
 	}
 
-	abstract protected Style getStyle();
-
-	final protected double getShapeHeight() {
-		return getHeightTask() - 2 * margin;
+	final protected Style getStyle() {
+		return getStyleSignature().getMergedStyle(styleBuilder);
 	}
 
-	final public double getHeightTask() {
-		return getFontConfiguration().getFont().getSize2D() + 5;
+	final public double getTitleWidth(StringBounder stringBounder) {
+		final Style style = getStyleSignature().getMergedStyle(getStyleBuilder());
+		final ClockwiseTopRightBottomLeft margin = style.getMargin();
+		return margin.getLeft() + getTitle().calculateDimension(stringBounder).getWidth() + margin.getRight();
+	}
+
+	protected abstract TextBlock getTitle();
+
+	abstract protected double getShapeHeight(StringBounder stringBounder);
+
+	final public double getFullHeightTask(StringBounder stringBounder) {
+		final Style style = getStyle();
+		final ClockwiseTopRightBottomLeft margin = style.getMargin();
+		return margin.getTop() + getShapeHeight(stringBounder) + margin.getBottom();
 	}
 
 	public TaskDraw getTrueRow() {
 		return toTaskDraw.getTaskDraw(task.getRow());
 	}
 
-	final public double getY() {
+	@Override
+	final public Real getY(StringBounder stringBounder) {
 		if (task.getRow() == null) {
 			return y;
 		}
-		return getTrueRow().getY();
-	}
-
-	public void pushMe(double deltaY) {
-		if (task.getRow() == null) {
-			this.y += deltaY;
-		}
+		return getTrueRow().getY(stringBounder);
 	}
 
 	public final Task getTask() {
 		return task;
 	}
 
-	public final double getY(Direction direction) {
+	@Override
+	public final double getY(StringBounder stringBounder, Direction direction) {
+		final Style style = getStyle();
+		final ClockwiseTopRightBottomLeft margin = style.getMargin();
+		final ClockwiseTopRightBottomLeft padding = style.getPadding();
+
+		final double y1 = margin.getTop() + getY(stringBounder).getCurrentValue();
+		final double y2 = y1 + getShapeHeight(stringBounder);
+
 		if (direction == Direction.UP) {
-			return getY();
+			return y1;
 		}
 		if (direction == Direction.DOWN) {
-			return getY() + getHeightTask();
+			return y2;
 		}
-		return getY() + getHeightTask() / 2;
+		return (y1 + y2) / 2;
+
+	}
+
+	protected final StyleBuilder getStyleBuilder() {
+		return styleBuilder;
+	}
+
+	protected final HColorSet getColorSet() {
+		return colorSet;
+	}
+
+	protected CenterBorderColor getColors() {
+		return colors;
 	}
 
 }

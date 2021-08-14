@@ -50,14 +50,14 @@ public class CommandGanttArrow extends SingleLineCommand2<GanttDiagram> {
 
 	static IRegex getRegexConcat() {
 		return RegexConcat.build(CommandGanttArrow.class.getName(), RegexLeaf.start(), //
-				new RegexLeaf("CODE1", "([\\p{L}0-9_.]+)"), //
+				new RegexLeaf("CODE1", "([%pLN_.]+)"), //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("(-+)"), //
 				new RegexLeaf("ARROW_STYLE", "(?:\\[(" + CommandLinkElement.LINE_STYLE + ")\\])?"), //
 				new RegexLeaf("(-*)"), //
 				new RegexLeaf("\\>"), //
 				RegexLeaf.spaceZeroOrMore(), //
-				new RegexLeaf("CODE2", "([\\p{L}0-9_.]+)"), //
+				new RegexLeaf("CODE2", "([%pLN_.]+)"), //
 				RegexLeaf.spaceZeroOrMore(), RegexLeaf.end());
 	}
 
@@ -76,7 +76,7 @@ public class CommandGanttArrow extends SingleLineCommand2<GanttDiagram> {
 		}
 
 		final GanttConstraint link = diagram.forceTaskOrder(task1, task2);
-		link.applyStyle(arg.get("ARROW_STYLE", 0));
+		link.applyStyle(diagram.getSkinParam().getThemeStyle(), arg.get("ARROW_STYLE", 0));
 
 		return CommandExecutionResult.ok();
 	}

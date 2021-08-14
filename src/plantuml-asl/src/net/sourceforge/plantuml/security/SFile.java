@@ -109,7 +109,7 @@ public class SFile implements Comparable<SFile> {
 	}
 
 	public boolean exists() {
-		if (isFileOk())
+		if (internal != null && isFileOk())
 			return internal.exists();
 		return false;
 	}
@@ -119,11 +119,11 @@ public class SFile implements Comparable<SFile> {
 	}
 
 	public boolean isAbsolute() {
-		return internal.isAbsolute();
+		return internal != null && internal.isAbsolute();
 	}
 
 	public boolean isDirectory() {
-		return internal.exists() && internal.isDirectory();
+		return internal != null && internal.exists() && internal.isDirectory();
 	}
 
 	public String getName() {
@@ -131,7 +131,7 @@ public class SFile implements Comparable<SFile> {
 	}
 
 	public boolean isFile() {
-		return internal.isFile();
+		return internal != null && internal.isFile();
 	}
 
 	public long lastModified() {
@@ -164,7 +164,7 @@ public class SFile implements Comparable<SFile> {
 
 	public Collection<SFile> listFiles() {
 		final File[] tmp = internal.listFiles();
-		final List<SFile> result = new ArrayList<SFile>(tmp.length);
+		final List<SFile> result = new ArrayList<>(tmp.length);
 		for (File f : tmp) {
 			result.add(new SFile(f));
 		}

@@ -30,16 +30,19 @@
  */
 package net.sourceforge.plantuml.dedication;
 
+import java.awt.image.BufferedImage;
+
 import net.sourceforge.plantuml.AbstractPSystem;
 import net.sourceforge.plantuml.command.PSystemSingleLineFactory;
+import net.sourceforge.plantuml.core.UmlSource;
 
 public class PSystemDedicationFactory extends PSystemSingleLineFactory {
 
 	@Override
-	protected AbstractPSystem executeLine(String line) {
-		final Dedication dedication = Dedications.get(line);
+	protected AbstractPSystem executeLine(UmlSource source, String line) {
+		final BufferedImage dedication = Dedications.get(line);
 		if (dedication != null) {
-			return new PSystemDedication(dedication, Dedications.keepLetter(line));
+			return new PSystemDedication(source, dedication);
 		}
 		return null;
 	}

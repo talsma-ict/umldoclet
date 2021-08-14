@@ -30,6 +30,8 @@
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
 
+import java.util.Objects;
+
 public class Constraint {
 
 	private final Pushable p1;
@@ -37,11 +39,8 @@ public class Constraint {
 	private double value;
 
 	public Constraint(Pushable p1, Pushable p2) {
-		if (p1 == null || p2 == null) {
-			throw new IllegalArgumentException();
-		}
-		this.p1 = p1;
-		this.p2 = p2;
+		this.p1 = Objects.requireNonNull(p1);
+		this.p2 = Objects.requireNonNull(p2);
 	}
 
 	public final Pushable getParticipant1() {

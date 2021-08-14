@@ -35,31 +35,24 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import net.sourceforge.plantuml.AnnotatedWorker;
 import net.sourceforge.plantuml.Direction;
 import net.sourceforge.plantuml.FileFormatOption;
-import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.Scale;
-import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
-import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.regex.Matcher2;
 import net.sourceforge.plantuml.command.regex.MyPattern;
 import net.sourceforge.plantuml.command.regex.Pattern2;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
+import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.InnerStrategy;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.mindmap.IdeaShape;
-import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
 import net.sourceforge.plantuml.style.NoStyleAvailableException;
 import net.sourceforge.plantuml.svek.TextBlockBackcolored;
-import net.sourceforge.plantuml.ugraphic.ImageBuilder;
-import net.sourceforge.plantuml.ugraphic.ImageParameter;
 import net.sourceforge.plantuml.ugraphic.MinMax;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
@@ -70,40 +63,15 @@ public class WBSDiagram extends UmlDiagram {
 		return new DiagramDescription("Work Breakdown Structure");
 	}
 
-	public WBSDiagram() {
-		super(UmlDiagramType.WBS);
+	public WBSDiagram(UmlSource source) {
+		super(source, UmlDiagramType.WBS);
 	}
 
 	@Override
 	protected ImageData exportDiagramInternal(OutputStream os, int index, FileFormatOption fileFormatOption)
 			throws IOException {
-		final Scale scale = getScale();
 
-		final double dpiFactor = scale == null ? getScaleCoef(fileFormatOption) : scale.getScale(100, 100);
-		final ISkinParam skinParam = getSkinParam();
-		final double margin1;
-		final double margin2;
-		if (UseStyle.useBetaStyle()) {
-			margin1 = SkinParam.zeroMargin(10);
-			margin2 = SkinParam.zeroMargin(10);
-		} else {
-			margin1 = 10;
-			margin2 = 10;
-		}
-		HColor backcolor = skinParam.getBackgroundColor(false);
-		final ClockwiseTopRightBottomLeft margins = ClockwiseTopRightBottomLeft.margin1margin2(margin1, margin2);
-		final String metadata = fileFormatOption.isWithMetadata() ? getMetadata() : null;
-		final ImageParameter imageParameter = new ImageParameter(skinParam.getColorMapper(), skinParam.handwritten(),
-				null, dpiFactor, metadata, "", margins, backcolor);
-
-		final ImageBuilder imageBuilder = ImageBuilder.build(imageParameter);
-		TextBlock result = getTextBlock();
-
-		result = new AnnotatedWorker(this, skinParam, fileFormatOption.getDefaultStringBounder(getSkinParam()))
-				.addAdd(result);
-		imageBuilder.setUDrawable(result);
-
-		return imageBuilder.writeImageTOBEMOVED(fileFormatOption, seed(), os);
+		return createImageBuilder(fileFormatOption).drawable(getTextBlock()).write(os);
 	}
 
 	private TextBlockBackcolored getTextBlock() {
@@ -146,21 +114,27 @@ public class WBSDiagram extends UmlDiagram {
 
 	public CommandExecutionResult addIdea(HColor backColor, int level, String label, Direction direction,
 			IdeaShape shape) {
+		final Matcher2 m = patternStereotype.matcher(label);
+		String stereotype = null;
+		if (m.matches()) {
+			label = m.group(1);
+			stereotype = m.group(2);
+		}
+		final Display display = Display.getWithNewlines(label);
+		return addIdea(backColor, level, display, stereotype, direction, shape);
+	}
+
+	public CommandExecutionResult addIdea(HColor backColor, int level, Display display, String stereotype,
+			Direction direction, IdeaShape shape) {
 		try {
-			final Matcher2 m = patternStereotype.matcher(label);
-			String stereotype = null;
-			if (m.matches()) {
-				label = m.group(1);
-				stereotype = m.group(2);
-			}
 			if (level == 0) {
 				if (root != null) {
 					return CommandExecutionResult.error("Error 44");
 				}
-				initRoot(backColor, label, stereotype);
+				initRoot(backColor, display, stereotype, shape);
 				return CommandExecutionResult.ok();
 			}
-			return add(backColor, level, label, stereotype, direction, shape);
+			return add(backColor, level, display, stereotype, direction, shape);
 		} catch (NoStyleAvailableException e) {
 			// e.printStackTrace();
 			return CommandExecutionResult.error("General failure: no style available.");
@@ -169,10 +143,10 @@ public class WBSDiagram extends UmlDiagram {
 
 	private WElement root;
 	private WElement last;
+	private String first;
 
-	private void initRoot(HColor backColor, String label, String stereotype) {
-		root = new WElement(backColor, Display.getWithNewlines(label), stereotype,
-				getSkinParam().getCurrentStyleBuilder());
+	private void initRoot(HColor backColor, Display display, String stereotype, IdeaShape shape) {
+		root = new WElement(backColor, display, stereotype, getSkinParam().getCurrentStyleBuilder(), shape);
 		last = root;
 	}
 
@@ -184,24 +158,45 @@ public class WBSDiagram extends UmlDiagram {
 		return result;
 	}
 
-	private CommandExecutionResult add(HColor backColor, int level, String label, String stereotype,
+	public int getSmartLevel(String type) {
+		if (root == null) {
+			assert first == null;
+			first = type;
+			return 0;
+		}
+		type = type.replace('\t', ' ');
+		if (type.contains(" ") == false) {
+			return type.length() - 1;
+		}
+		if (type.endsWith(first)) {
+			return type.length() - first.length();
+		}
+		if (type.trim().length() == 1) {
+			return type.length() - 1;
+		}
+		if (type.startsWith(first)) {
+			return type.length() - first.length();
+		}
+		throw new UnsupportedOperationException("type=<" + type + ">[" + first + "]");
+	}
+
+	private CommandExecutionResult add(HColor backColor, int level, Display display, String stereotype,
 			Direction direction, IdeaShape shape) {
 		try {
 			if (level == last.getLevel() + 1) {
-				final WElement newIdea = last.createElement(backColor, level, Display.getWithNewlines(label),
-						stereotype, direction, shape, getSkinParam().getCurrentStyleBuilder());
+				final WElement newIdea = last.createElement(backColor, level, display, stereotype, direction, shape,
+						getSkinParam().getCurrentStyleBuilder());
 				last = newIdea;
 				return CommandExecutionResult.ok();
 			}
 			if (level <= last.getLevel()) {
 				final int diff = last.getLevel() - level + 1;
-				final WElement newIdea = getParentOfLast(diff).createElement(backColor, level,
-						Display.getWithNewlines(label), stereotype, direction, shape,
-						getSkinParam().getCurrentStyleBuilder());
+				final WElement newIdea = getParentOfLast(diff).createElement(backColor, level, display, stereotype,
+						direction, shape, getSkinParam().getCurrentStyleBuilder());
 				last = newIdea;
 				return CommandExecutionResult.ok();
 			}
-			return CommandExecutionResult.error("error42L");
+			return CommandExecutionResult.error("Bad tree structure");
 		} catch (NoStyleAvailableException e) {
 			// e.printStackTrace();
 			return CommandExecutionResult.error("General failure: no style available.");

@@ -75,7 +75,7 @@ public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram>
 
 	@Override
 	public String getPatternEnd() {
-		return "(?i)^[%s]*([^%g]*)[%g](?:[%s]+as[%s]+([\\p{L}0-9][\\p{L}0-9_.]*))?[%s]*(\\<\\<.*\\>\\>)?[%s]*(?:in[%s]+([%g][^%g]+[%g]|\\S+))?[%s]*(#\\w+)?$";
+		return "^[%s]*([^%g]*)[%g](?:[%s]+as[%s]+([%pLN][%pLN_.]*))?[%s]*(\\<\\<.*\\>\\>)?[%s]*(?:in[%s]+([%g][^%g]+[%g]|\\S+))?[%s]*(#\\w+)?$";
 	}
 
 	static IRegex getRegexConcat() {
@@ -83,9 +83,9 @@ public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram>
 				new RegexOptional(//
 						new RegexOr("FIRST", //
 								new RegexLeaf("STAR", "(\\(\\*(top)?\\))"), //
-								new RegexLeaf("CODE", "([\\p{L}0-9][\\p{L}0-9_.]*)"), //
-								new RegexLeaf("BAR", "(?:==+)[%s]*([\\p{L}0-9_.]+)[%s]*(?:==+)"), //
-								new RegexLeaf("QUOTED", "[%g]([^%g]+)[%g](?:[%s]+as[%s]+([\\p{L}0-9_.]+))?"))), //
+								new RegexLeaf("CODE", "([%pLN][%pLN_.]*)"), //
+								new RegexLeaf("BAR", "(?:==+)[%s]*([%pLN_.]+)[%s]*(?:==+)"), //
+								new RegexLeaf("QUOTED", "[%g]([^%g]+)[%g](?:[%s]+as[%s]+([%pLN_.]+))?"))), //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("STEREOTYPE", "(\\<\\<.*\\>\\>)?"), //
 				RegexLeaf.spaceZeroOrMore(), //
@@ -110,7 +110,8 @@ public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram>
 	}
 
 	@Override
-	protected CommandExecutionResult executeNow(final ActivityDiagram diagram, BlocLines lines) throws NoSuchColorException {
+	protected CommandExecutionResult executeNow(final ActivityDiagram diagram, BlocLines lines)
+			throws NoSuchColorException {
 		lines = lines.trim();
 		final RegexResult line0 = getStartingPattern().matcher(lines.getFirst().getTrimmed().getString());
 
@@ -124,8 +125,8 @@ public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram>
 		}
 		final String stringColor = line0.get("BACKCOLOR", 0);
 		if (stringColor != null) {
-			entity1.setSpecificColorTOBEREMOVED(ColorType.BACK,
-					diagram.getSkinParam().getIHtmlColorSet().getColor(stringColor));
+			entity1.setSpecificColorTOBEREMOVED(ColorType.BACK, diagram.getSkinParam().getIHtmlColorSet()
+					.getColor(diagram.getSkinParam().getThemeStyle(), stringColor));
 		}
 		final StringBuilder sb = new StringBuilder();
 
@@ -195,7 +196,7 @@ public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram>
 		if (lineLast.get(4) != null) {
 			String s = lineLast.get(4);
 			entity2.setSpecificColorTOBEREMOVED(ColorType.BACK,
-					diagram.getSkinParam().getIHtmlColorSet().getColor(s));
+					diagram.getSkinParam().getIHtmlColorSet().getColor(diagram.getSkinParam().getThemeStyle(), s));
 		}
 
 		final String arrowBody1 = CommandLinkClass.notNull(line0.get("ARROW_BODY1", 0));
@@ -225,7 +226,7 @@ public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram>
 			link.setUrl(urlLink);
 		}
 
-		link.applyStyle(line0.getLazzy("ARROW_STYLE", 0));
+		link.applyStyle(diagram.getSkinParam().getThemeStyle(), line0.getLazzy("ARROW_STYLE", 0));
 		diagram.addLink(link);
 
 		return CommandExecutionResult.ok();

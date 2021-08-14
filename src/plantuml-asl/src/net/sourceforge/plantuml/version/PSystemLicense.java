@@ -32,41 +32,35 @@ package net.sourceforge.plantuml.version;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.plantuml.AbstractPSystem;
 import net.sourceforge.plantuml.FileFormatOption;
+import net.sourceforge.plantuml.PlainDiagram;
 import net.sourceforge.plantuml.core.DiagramDescription;
-import net.sourceforge.plantuml.core.ImageData;
+import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.graphic.GraphicStrings;
 import net.sourceforge.plantuml.graphic.UDrawable;
-import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
 import net.sourceforge.plantuml.svek.TextBlockBackcolored;
 import net.sourceforge.plantuml.ugraphic.AffineTransformType;
-import net.sourceforge.plantuml.ugraphic.ImageBuilder;
-import net.sourceforge.plantuml.ugraphic.ImageParameter;
 import net.sourceforge.plantuml.ugraphic.PixelImage;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UImage;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
 
-public class PSystemLicense extends AbstractPSystem implements UDrawable {
+public class PSystemLicense extends PlainDiagram implements UDrawable {
 
 	@Override
-	final protected ImageData exportDiagramNow(OutputStream os, int num, FileFormatOption fileFormat, long seed)
-			throws IOException {
-		final ImageParameter imageParameter = new ImageParameter(new ColorMapperIdentity(), false, null, 1.0,
-				getMetadata(), null, ClockwiseTopRightBottomLeft.none(), null);
-		final ImageBuilder imageBuilder = ImageBuilder.build(imageParameter);
-		imageBuilder.setUDrawable(this);
-		return imageBuilder.writeImageTOBEMOVED(fileFormat, seed, os);
+	protected UDrawable getRootDrawable(FileFormatOption fileFormatOption) {
+		return this;
 	}
 
-	public static PSystemLicense create() throws IOException {
-		return new PSystemLicense();
+	public static PSystemLicense create(UmlSource source) throws IOException {
+		return new PSystemLicense(source);
+	}
+
+	public PSystemLicense(UmlSource source) {
+		super(source);
 	}
 
 	private TextBlockBackcolored getGraphicStrings(List<String> strings) {
@@ -83,13 +77,13 @@ public class PSystemLicense extends AbstractPSystem implements UDrawable {
 		final BufferedImage logo = LicenseInfo.retrieveDistributorImage(licenseInfo);
 
 		if (logo == null) {
-			final List<String> strings = new ArrayList<String>();
+			final List<String> strings = new ArrayList<>();
 			strings.addAll(License.getCurrent().getText1(licenseInfo));
 			strings.addAll(License.getCurrent().getText2(licenseInfo));
 			getGraphicStrings(strings).drawU(ug);
 		} else {
-			final List<String> strings1 = new ArrayList<String>();
-			final List<String> strings2 = new ArrayList<String>();
+			final List<String> strings1 = new ArrayList<>();
+			final List<String> strings2 = new ArrayList<>();
 
 			strings1.addAll(License.getCurrent().getText1(licenseInfo));
 			strings2.addAll(License.getCurrent().getText2(licenseInfo));

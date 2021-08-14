@@ -30,24 +30,25 @@
  */
 package net.sourceforge.plantuml.project.draw;
 
+import java.util.Locale;
 import java.util.Map;
 
+import net.sourceforge.plantuml.ThemeStyle;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.project.LoadPlanable;
-import net.sourceforge.plantuml.project.core.PrintScale;
 import net.sourceforge.plantuml.project.time.Day;
 import net.sourceforge.plantuml.project.time.DayOfWeek;
 import net.sourceforge.plantuml.project.time.MonthYear;
 import net.sourceforge.plantuml.project.timescale.TimeScaleCompressed;
+import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
+import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
-public class TimeHeaderMonthly extends TimeHeader {
+public class TimeHeaderMonthly extends TimeHeaderCalendar {
 
-	protected double getTimeHeaderHeight() {
+	public double getTimeHeaderHeight() {
 		return 16 + 13;
 	}
 
@@ -55,13 +56,16 @@ public class TimeHeaderMonthly extends TimeHeader {
 		return 16 + 13 - 1;
 	}
 
-	public TimeHeaderMonthly(Day calendar, Day min, Day max, LoadPlanable defaultPlan, Map<Day, HColor> colorDays,
-			Map<DayOfWeek, HColor> colorDaysOfWeek, Map<Day, String> nameDays) {
-		super(min, max, new TimeScaleCompressed(calendar, PrintScale.MONTHLY.getCompress()));
+	public TimeHeaderMonthly(Locale locale, Style timelineStyle, Style closedStyle, double scale, Day calendar, Day min,
+			Day max, LoadPlanable defaultPlan, Map<Day, HColor> colorDays, Map<DayOfWeek, HColor> colorDaysOfWeek,
+			HColorSet colorSet, ThemeStyle themeStyle) {
+		super(locale, timelineStyle, closedStyle, calendar, min, max, defaultPlan, colorDays, colorDaysOfWeek,
+				new TimeScaleCompressed(calendar, scale), colorSet, themeStyle);
 	}
 
 	@Override
 	public void drawTimeHeader(final UGraphic ug, double totalHeightWithoutFooter) {
+		drawTextsBackground(ug, totalHeightWithoutFooter);
 		drawYears(ug);
 		drawMonths(ug.apply(UTranslate.dy(16)));
 		drawHline(ug, 0);
@@ -122,19 +126,14 @@ public class TimeHeaderMonthly extends TimeHeader {
 	}
 
 	private void printYear(UGraphic ug, MonthYear monthYear, double start, double end) {
-		final TextBlock small = getTextBlock("" + monthYear.year(), 12, true, HColorUtils.BLACK);
-		printCentered(ug, start, end, small);
+		final TextBlock small = getTextBlock("" + monthYear.year(), 12, true, openFontColor());
+		printCentered(ug, false, start, end, small);
 	}
 
 	private void printMonth(UGraphic ug, MonthYear monthYear, double start, double end) {
-		final TextBlock small = getTextBlock(monthYear.shortName(), 10, false, HColorUtils.BLACK);
-		final TextBlock big = getTextBlock(monthYear.longName(), 10, false, HColorUtils.BLACK);
-		printCentered(ug, start, end, small, big);
-	}
-
-	private void drawVbar(UGraphic ug, double x, double y1, double y2) {
-		final ULine vbar = ULine.vline(y2 - y1);
-		ug.apply(HColorUtils.LIGHT_GRAY).apply(new UTranslate(x, y1)).draw(vbar);
+		final TextBlock small = getTextBlock(monthYear.shortName(locale), 10, false, openFontColor());
+		final TextBlock big = getTextBlock(monthYear.longName(locale), 10, false, openFontColor());
+		printCentered(ug, false, start, end, small, big);
 	}
 
 	private void printLeft(UGraphic ug, TextBlock text, double start) {

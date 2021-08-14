@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.plantuml.BackSlash;
+import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.command.PSystemAbstractFactory;
 import net.sourceforge.plantuml.core.Diagram;
@@ -50,8 +51,9 @@ public class JsonDiagramFactory extends PSystemAbstractFactory {
 		super(DiagramType.JSON);
 	}
 
-	public Diagram createSystem(UmlSource source) {
-		final List<String> highlighted = new ArrayList<String>();
+	@Override
+	public Diagram createSystem(UmlSource source, ISkinSimple skinParam) {
+		final List<String> highlighted = new ArrayList<>();
 		StyleExtractor styleExtractor = null;
 		JsonValue json;
 		try {
@@ -78,11 +80,10 @@ public class JsonDiagramFactory extends PSystemAbstractFactory {
 		} catch (ParseException e) {
 			json = null;
 		}
-		final JsonDiagram result = new JsonDiagram(UmlDiagramType.JSON, json, highlighted);
+		final JsonDiagram result = new JsonDiagram(source, UmlDiagramType.JSON, json, highlighted);
 		if (styleExtractor != null) {
 			styleExtractor.applyStyles(result.getSkinParam());
 		}
-		result.setSource(source);
 		return result;
 	}
 

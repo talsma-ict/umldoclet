@@ -68,14 +68,14 @@ public class CommandCreateState extends SingleLineCommand2<StateDiagram> {
 
 				new RegexOr(//
 						new RegexConcat(//
-								new RegexLeaf("CODE1", "([\\p{L}0-9_.]+)"), //
+								new RegexLeaf("CODE1", "([%pLN_.]+)"), //
 								RegexLeaf.spaceOneOrMore(), new RegexLeaf("as"), RegexLeaf.spaceOneOrMore(), //
 								new RegexLeaf("DISPLAY1", "[%g]([^%g]+)[%g]")), //
 						new RegexConcat(//
 								new RegexLeaf("DISPLAY2", "[%g]([^%g]+)[%g]"), //
 								RegexLeaf.spaceOneOrMore(), new RegexLeaf("as"), RegexLeaf.spaceOneOrMore(), //
-								new RegexLeaf("CODE2", "([\\p{L}0-9_.]+)")), //
-						new RegexLeaf("CODE3", "([\\p{L}0-9_.]+)"), //
+								new RegexLeaf("CODE2", "([%pLN_.]+)")), //
+						new RegexLeaf("CODE3", "([%pLN_.]+)"), //
 						new RegexLeaf("CODE4", "[%g]([^%g]+)[%g]")), //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("STEREOTYPE", "(\\<\\<.*\\>\\>)?"), //
@@ -99,7 +99,8 @@ public class CommandCreateState extends SingleLineCommand2<StateDiagram> {
 	}
 
 	@Override
-	protected CommandExecutionResult executeArg(StateDiagram diagram, LineLocation location, RegexResult arg) throws NoSuchColorException {
+	protected CommandExecutionResult executeArg(StateDiagram diagram, LineLocation location, RegexResult arg)
+			throws NoSuchColorException {
 		final String idShort = arg.getLazzy("CODE", 0);
 		final Ident ident = diagram.buildLeafIdent(idShort);
 		final Code code = diagram.V1972() ? ident : diagram.buildCode(idShort);
@@ -126,10 +127,12 @@ public class CommandCreateState extends SingleLineCommand2<StateDiagram> {
 			ent.addUrl(url);
 		}
 
-		Colors colors = color().getColor(arg, diagram.getSkinParam().getIHtmlColorSet());
+		Colors colors = color().getColor(diagram.getSkinParam().getThemeStyle(), arg,
+				diagram.getSkinParam().getIHtmlColorSet());
 		final String s = arg.get("LINECOLOR", 1);
 
-		final HColor lineColor = s == null ? null : diagram.getSkinParam().getIHtmlColorSet().getColor(s);
+		final HColor lineColor = s == null ? null
+				: diagram.getSkinParam().getIHtmlColorSet().getColor(diagram.getSkinParam().getThemeStyle(), s);
 		if (lineColor != null) {
 			colors = colors.add(ColorType.LINE, lineColor);
 		}

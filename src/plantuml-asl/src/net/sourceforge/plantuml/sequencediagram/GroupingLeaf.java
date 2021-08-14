@@ -32,6 +32,7 @@ package net.sourceforge.plantuml.sequencediagram;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.style.StyleBuilder;
@@ -45,11 +46,8 @@ final public class GroupingLeaf extends Grouping implements EventWithDeactivate 
 	public GroupingLeaf(String title, String comment, GroupingType type, HColor backColorGeneral,
 			HColor backColorElement, GroupingStart start, StyleBuilder styleBuilder) {
 		super(title, comment, type, backColorElement, styleBuilder);
-		if (start == null) {
-			throw new IllegalArgumentException();
-		}
 		this.backColorGeneral = backColorGeneral;
-		this.start = start;
+		this.start = Objects.requireNonNull(start);
 		start.addChildren(this);
 	}
 
@@ -112,7 +110,7 @@ final public class GroupingLeaf extends Grouping implements EventWithDeactivate 
 		return true;
 	}
 
-	private List<Note> noteOnMessages = new ArrayList<Note>();
+	private List<Note> noteOnMessages = new ArrayList<>();
 
 	public final void setNote(Note note) {
 		if (note.getPosition() != NotePosition.LEFT && note.getPosition() != NotePosition.RIGHT) {

@@ -32,9 +32,11 @@ package net.sourceforge.plantuml.ugraphic;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import net.sourceforge.plantuml.graphic.SpecialText;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public abstract class AbstractUGraphic<O> extends AbstractCommonUGraphic {
 
@@ -42,8 +44,8 @@ public abstract class AbstractUGraphic<O> extends AbstractCommonUGraphic {
 
 	private final Map<Class<? extends UShape>, UDriver<O>> drivers = new HashMap<Class<? extends UShape>, UDriver<O>>();
 
-	public AbstractUGraphic(ColorMapper colorMapper, O graphic) {
-		super(colorMapper);
+	public AbstractUGraphic(HColor defaultBackground, ColorMapper colorMapper, O graphic) {
+		super(Objects.requireNonNull(defaultBackground), colorMapper);
 		this.graphic = graphic;
 	}
 

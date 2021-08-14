@@ -30,6 +30,7 @@
  */
 package net.sourceforge.plantuml.creole.command;
 
+import net.sourceforge.plantuml.ThemeStyle;
 import net.sourceforge.plantuml.command.regex.Matcher2;
 import net.sourceforge.plantuml.command.regex.MyPattern;
 import net.sourceforge.plantuml.command.regex.Pattern2;
@@ -43,23 +44,30 @@ import net.sourceforge.plantuml.ugraphic.color.NoSuchColorRuntimeException;
 
 public class CommandCreoleColorChange implements Command {
 
-	private final Pattern2 pattern;
+	private static final Pattern2 pattern = MyPattern
+			.cmpile("^(" + Splitter.fontColorPattern2 + "(.*?)\\</color\\>)");
 
-	public static Command create() {
-		return new CommandCreoleColorChange("^(?i)(" + Splitter.fontColorPattern2 + "(.*?)\\</color\\>)");
+	private static final Pattern2 patternEol = MyPattern.cmpile("^(" + Splitter.fontColorPattern2 + "(.*)$)");
+
+	private final Pattern2 mypattern;
+	private final ThemeStyle themeStyle;
+
+	public static Command create(ThemeStyle themeStyle) {
+		return new CommandCreoleColorChange(themeStyle, pattern);
 	}
 
-	public static Command createEol() {
-		return new CommandCreoleColorChange("^(?i)(" + Splitter.fontColorPattern2 + "(.*)$)");
+	public static Command createEol(ThemeStyle themeStyle) {
+		return new CommandCreoleColorChange(themeStyle, patternEol);
 	}
 
-	private CommandCreoleColorChange(String p) {
-		this.pattern = MyPattern.cmpile(p);
+	private CommandCreoleColorChange(ThemeStyle themeStyle, Pattern2 pattern) {
+		this.mypattern = pattern;
+		this.themeStyle = themeStyle;
 
 	}
 
 	public int matchingSize(String line) {
-		final Matcher2 m = pattern.matcher(line);
+		final Matcher2 m = mypattern.matcher(line);
 		if (m.find() == false) {
 			return 0;
 		}
@@ -67,14 +75,14 @@ public class CommandCreoleColorChange implements Command {
 	}
 
 	public String executeAndGetRemaining(String line, StripeSimple stripe) throws NoSuchColorRuntimeException {
-		final Matcher2 m = pattern.matcher(line);
+		final Matcher2 m = mypattern.matcher(line);
 		if (m.find() == false) {
 			throw new IllegalStateException();
 		}
 		final FontConfiguration fc1 = stripe.getActualFontConfiguration();
 		final String s = m.group(2);
 		try {
-			final HColor color = HColorSet.instance().getColor(s);
+			final HColor color = HColorSet.instance().getColor(themeStyle, s);
 			final FontConfiguration fc2 = fc1.changeColor(color);
 			stripe.setActualFontConfiguration(fc2);
 			stripe.analyzeAndAdd(m.group(3));

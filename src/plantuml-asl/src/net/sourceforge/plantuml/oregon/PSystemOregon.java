@@ -30,31 +30,28 @@
  */
 package net.sourceforge.plantuml.oregon;
 
+import static net.sourceforge.plantuml.graphic.GraphicStrings.createGreenOnBlackMonospaced;
+
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.plantuml.AbstractPSystem;
 import net.sourceforge.plantuml.FileFormatOption;
+import net.sourceforge.plantuml.PlainDiagram;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.core.DiagramDescription;
-import net.sourceforge.plantuml.core.ImageData;
-import net.sourceforge.plantuml.graphic.GraphicStrings;
-import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
-import net.sourceforge.plantuml.svek.TextBlockBackcolored;
+import net.sourceforge.plantuml.core.UmlSource;
+import net.sourceforge.plantuml.graphic.UDrawable;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
-import net.sourceforge.plantuml.ugraphic.ImageParameter;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
-public class PSystemOregon extends AbstractPSystem {
+public class PSystemOregon extends PlainDiagram {
 
 	private Screen screen;
 	private List<String> inputs;
 
 	@Deprecated
-	public PSystemOregon(Keyboard keyboard) {
+	public PSystemOregon(UmlSource source, Keyboard keyboard) {
+		super(source);
 		final BasicGame game = new OregonBasicGame();
 		try {
 			game.run(keyboard);
@@ -66,8 +63,14 @@ public class PSystemOregon extends AbstractPSystem {
 		}
 	}
 
-	public PSystemOregon() {
-		this.inputs = new ArrayList<String>();
+	@Override
+	public ImageBuilder createImageBuilder(FileFormatOption fileFormatOption) throws IOException {
+		return super.createImageBuilder(fileFormatOption).blackBackcolor();
+	}
+
+	public PSystemOregon(UmlSource source) {
+		super(source);
+		this.inputs = new ArrayList<>();
 	}
 
 	public void add(String line) {
@@ -93,19 +96,8 @@ public class PSystemOregon extends AbstractPSystem {
 	}
 
 	@Override
-	final protected ImageData exportDiagramNow(OutputStream os, int num, FileFormatOption fileFormat, long seed)
-			throws IOException {
-		final TextBlockBackcolored result = getGraphicStrings();
-		HColor backcolor = result.getBackcolor();
-		final ImageParameter imageParameter = new ImageParameter(new ColorMapperIdentity(), false, null, 1.0,
-		getMetadata(), null, ClockwiseTopRightBottomLeft.none(), backcolor);
-		final ImageBuilder imageBuilder = ImageBuilder.build(imageParameter);
-		imageBuilder.setUDrawable(result);
-		return imageBuilder.writeImageTOBEMOVED(fileFormat, seed, os);
-	}
-
-	private TextBlockBackcolored getGraphicStrings() throws IOException {
-		return GraphicStrings.createGreenOnBlackMonospaced(getScreen().getLines());
+	protected UDrawable getRootDrawable(FileFormatOption fileFormatOption) throws IOException {
+		return createGreenOnBlackMonospaced(getScreen().getLines());
 	}
 
 	public DiagramDescription getDescription() {

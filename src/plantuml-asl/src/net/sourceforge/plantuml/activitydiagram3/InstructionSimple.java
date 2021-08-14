@@ -30,12 +30,15 @@
  */
 package net.sourceforge.plantuml.activitydiagram3;
 
+import java.util.Objects;
+
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.activitydiagram3.ftile.BoxStyle;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactory;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileKilled;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
+import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.color.Colors;
@@ -57,18 +60,12 @@ public class InstructionSimple extends MonoSwimable implements Instruction {
 	public InstructionSimple(Display label, LinkRendering inlinkRendering, Swimlane swimlane, BoxStyle style, Url url,
 			Colors colors, Stereotype stereotype) {
 		super(swimlane);
-		if (colors == null) {
-			throw new IllegalArgumentException();
-		}
 		this.stereotype = stereotype;
 		this.url = url;
 		this.style = style;
 		this.label = label;
-		this.inlinkRendering = inlinkRendering;
-		if (inlinkRendering == null) {
-			throw new IllegalArgumentException();
-		}
-		this.colors = colors;
+		this.inlinkRendering = Objects.requireNonNull(inlinkRendering);
+		this.colors = Objects.requireNonNull(colors);
 	}
 
 	public Ftile createFtile(FtileFactory factory) {
@@ -83,7 +80,7 @@ public class InstructionSimple extends MonoSwimable implements Instruction {
 		return result;
 	}
 
-	public void add(Instruction other) {
+	public CommandExecutionResult add(Instruction other) {
 		throw new UnsupportedOperationException();
 	}
 

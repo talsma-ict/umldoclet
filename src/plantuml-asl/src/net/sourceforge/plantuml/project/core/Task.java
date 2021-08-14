@@ -36,6 +36,7 @@ import net.sourceforge.plantuml.project.Load;
 import net.sourceforge.plantuml.project.lang.CenterBorderColor;
 import net.sourceforge.plantuml.project.time.Day;
 import net.sourceforge.plantuml.project.time.DayOfWeek;
+import net.sourceforge.plantuml.style.StyleBuilder;
 
 public interface Task extends Moment {
 
@@ -49,7 +50,7 @@ public interface Task extends Moment {
 
 	public void setEnd(Day end);
 
-	public void setColors(CenterBorderColor colors);
+	public void setColors(CenterBorderColor... colors);
 
 	public void addResource(Resource resource, int percentage);
 
@@ -70,5 +71,7 @@ public interface Task extends Moment {
 	public void addPause(DayOfWeek pause);
 
 	public void setNote(Display note);
+
+	public StyleBuilder getStyleBuilder();
 
 }

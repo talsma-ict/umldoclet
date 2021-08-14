@@ -30,9 +30,12 @@
  */
 package net.sourceforge.plantuml.graphic;
 
+import java.awt.font.FontRenderContext;
+import java.awt.font.LineMetrics;
 import java.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.text.RichText;
 import net.sourceforge.plantuml.text.StyledString;
 import net.sourceforge.plantuml.ugraphic.UFont;
@@ -55,5 +58,12 @@ public abstract class StringBounderRaw implements StringBounder {
 	}
 
 	protected abstract Dimension2D calculateDimensionInternal(UFont font, String text);
+
+	public double getDescent(UFont font, String text) {
+		final FontRenderContext frc = FileFormat.gg.getFontRenderContext();
+		final LineMetrics lineMetrics = font.getUnderlayingFont().getLineMetrics(text, frc);
+		final double descent = lineMetrics.getDescent();
+		return descent;
+	}
 
 }

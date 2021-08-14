@@ -40,6 +40,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -104,9 +105,7 @@ public class Defines implements Truth {
 	}
 
 	public static Defines createWithFileName(SFile file) {
-		if (file == null) {
-			throw new IllegalArgumentException();
-		}
+		Objects.requireNonNull(file);
 		final Defines result = createEmpty();
 		result.overrideFilename(file.getName());
 		result.environment.put("filedate", new Date(file.lastModified()).toString());
@@ -118,9 +117,7 @@ public class Defines implements Truth {
 	}
 
 	public static Defines createWithFileName(java.io.File file) {
-		if (file == null) {
-			throw new IllegalArgumentException();
-		}
+		Objects.requireNonNull(file);
 		final Defines result = createEmpty();
 		result.overrideFilename(file.getName());
 		result.environment.put("filedate", new Date(file.lastModified()).toString());
@@ -201,7 +198,7 @@ public class Defines implements Truth {
 		for (Define def : values.values()) {
 			Collection<Define> tmp = result.get(def.getFunctionName());
 			if (tmp == null) {
-				tmp = new ArrayList<Define>();
+				tmp = new ArrayList<>();
 				result.put(def.getFunctionName(), tmp);
 			}
 			tmp.add(def);
@@ -233,7 +230,7 @@ public class Defines implements Truth {
 		final String ID = "[A-Za-z_][A-Za-z_0-9]*";
 		Pattern p = Pattern.compile(ID);
 		Matcher m = p.matcher(line);
-		final Set<String> words = new HashSet<String>();
+		final Set<String> words = new HashSet<>();
 		while (m.find()) {
 			words.add(m.group(0));
 		}

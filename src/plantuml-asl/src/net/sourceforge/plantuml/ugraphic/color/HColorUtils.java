@@ -141,7 +141,17 @@ public class HColorUtils {
 		if (back instanceof HColorBackground && ((HColorBackground) back).getBack() == TRANSPARENT) {
 			return true;
 		}
+		if (back instanceof HColorSimple && ((HColorSimple) back).isTransparent()) {
+			return true;
+		}
 		return false;
+	}
+
+	public static HColor linear(HColor color1, HColor color2, int completion) {
+		if (color1 instanceof HColorSimple && color2 instanceof HColorSimple) {
+			return HColorSimple.linear((HColorSimple) color1, (HColorSimple) color2, completion);
+		}
+		return color1;
 	}
 
 }

@@ -35,7 +35,7 @@ import java.util.Set;
 
 public class SuperGroup {
 
-	private final Set<IGroup> groups = new HashSet<IGroup>();
+	private final Set<IGroup> groups = new HashSet<>();
 
 	public SuperGroup(IGroup g) {
 		this.groups.add(g);

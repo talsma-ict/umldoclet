@@ -64,6 +64,7 @@ public abstract class AbstractTextualComponent extends AbstractComponent {
 
 	private final UFont font;
 	private final HColor fontColor;
+	private final HorizontalAlignment alignment;
 
 	public AbstractTextualComponent(Style style, LineBreakStrategy maxMessageSize, CharSequence label,
 			FontConfiguration font, HorizontalAlignment horizontalAlignment, int marginX1, int marginX2, int marginY,
@@ -86,12 +87,13 @@ public abstract class AbstractTextualComponent extends AbstractComponent {
 		super(style);
 		this.spriteContainer = spriteContainer;
 		if (UseStyle.useBetaStyle()) {
-			fc = style.getFontConfiguration(getIHtmlColorSet());
+			fc = style.getFontConfiguration(spriteContainer.getThemeStyle(), getIHtmlColorSet());
 			this.font = style.getUFont();
-			this.fontColor = style.value(PName.FontColor).asColor(getIHtmlColorSet());
+			this.fontColor = style.value(PName.FontColor).asColor(spriteContainer.getThemeStyle(), getIHtmlColorSet());
 			horizontalAlignment = style.getHorizontalAlignment();
 			fontForStereotype = stereo.getUFont();
-			htmlColorForStereotype = stereo.value(PName.FontColor).asColor(getIHtmlColorSet());
+			htmlColorForStereotype = stereo.value(PName.FontColor).asColor(spriteContainer.getThemeStyle(),
+					getIHtmlColorSet());
 			this.display = display.withoutStereotypeIfNeeded(style);
 		} else {
 			this.font = fc.getFont();
@@ -112,6 +114,7 @@ public abstract class AbstractTextualComponent extends AbstractComponent {
 			textBlock = this.display.create0(fc, horizontalAlignment, spriteContainer, maxMessageSize, CreoleMode.FULL,
 					fontForStereotype, htmlColorForStereotype);
 		}
+		this.alignment = horizontalAlignment;
 	}
 
 	protected HColorSet getIHtmlColorSet() {
@@ -160,6 +163,10 @@ public abstract class AbstractTextualComponent extends AbstractComponent {
 
 	protected final ISkinSimple getISkinSimple() {
 		return spriteContainer;
+	}
+
+	public final HorizontalAlignment getHorizontalAlignment() {
+		return alignment;
 	}
 
 }

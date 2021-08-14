@@ -32,11 +32,13 @@ package net.sourceforge.plantuml.salt;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import net.sourceforge.plantuml.Guillemet;
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.LineBreakStrategy;
 import net.sourceforge.plantuml.SpriteContainer;
+import net.sourceforge.plantuml.ThemeStyle;
 import net.sourceforge.plantuml.creole.Parser;
 import net.sourceforge.plantuml.salt.element.Element;
 import net.sourceforge.plantuml.salt.element.WrappedElement;
@@ -54,10 +56,7 @@ public class Dictionary implements SpriteContainer, ISkinSimple {
 	}
 
 	public Element get(String name) {
-		final Element result = data.get(name);
-		if (result == null) {
-			throw new IllegalArgumentException();
-		}
+		final Element result = Objects.requireNonNull(data.get(Objects.requireNonNull(name)));
 		return new WrappedElement(result);
 	}
 
@@ -122,6 +121,10 @@ public class Dictionary implements SpriteContainer, ISkinSimple {
 
 	public String transformStringForSizeHack(String s) {
 		return s;
+	}
+
+	public ThemeStyle getThemeStyle() {
+		return ThemeStyle.LIGHT;
 	}
 
 }

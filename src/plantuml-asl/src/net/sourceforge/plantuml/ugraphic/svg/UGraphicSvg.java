@@ -57,10 +57,12 @@ import net.sourceforge.plantuml.ugraphic.UImage;
 import net.sourceforge.plantuml.ugraphic.UImageSvg;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UPath;
+import net.sourceforge.plantuml.ugraphic.UPixel;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UText;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorGradient;
 
 public class UGraphicSvg extends AbstractUGraphic<SvgGraphics> implements ClipContainer, UGraphic2 {
@@ -86,30 +88,16 @@ public class UGraphicSvg extends AbstractUGraphic<SvgGraphics> implements ClipCo
 		register();
 	}
 
-	public UGraphicSvg(boolean svgDimensionStyle, Dimension2D minDim, ColorMapper colorMapper, String backcolor,
+	public UGraphicSvg(HColor defaultBackground, boolean svgDimensionStyle, Dimension2D minDim, ColorMapper colorMapper,
 			boolean textAsPath, double scale, String linkTarget, String hover, long seed, String preserveAspectRatio,
 			SvgCharSizeHack charSizeHack, LengthAdjust lengthAdjust) {
-		this(minDim, colorMapper, new SvgGraphics(svgDimensionStyle, minDim, backcolor, scale, hover, seed,
-				preserveAspectRatio, lengthAdjust), textAsPath, linkTarget, charSizeHack);
-	}
-
-	public UGraphicSvg(boolean svgDimensionStyle, Dimension2D minDim, ColorMapper colorMapper, boolean textAsPath,
-			double scale, String linkTarget, String hover, long seed, String preserveAspectRatio,
-			SvgCharSizeHack charSizeHack, LengthAdjust lengthAdjust) {
-		this(minDim, colorMapper,
-				new SvgGraphics(svgDimensionStyle, minDim, scale, hover, seed, preserveAspectRatio, lengthAdjust),
-				textAsPath, linkTarget, charSizeHack);
-	}
-
-	public UGraphicSvg(boolean svgDimensionStyle, Dimension2D minDim, ColorMapper mapper, HColorGradient gr,
-			boolean textAsPath, double scale, String linkTarget, String hover, long seed, String preserveAspectRatio,
-			SvgCharSizeHack charSizeHack, LengthAdjust lengthAdjust) {
-		this(minDim, mapper,
-				new SvgGraphics(svgDimensionStyle, minDim, scale, hover, seed, preserveAspectRatio, lengthAdjust),
-				textAsPath, linkTarget, charSizeHack);
-
-		final SvgGraphics svg = getGraphicObject();
-		svg.paintBackcolorGradient(mapper, gr);
+		this(defaultBackground, minDim, colorMapper, new SvgGraphics(colorMapper.toSvg(defaultBackground),
+				svgDimensionStyle, minDim, scale, hover, seed, preserveAspectRatio, lengthAdjust), textAsPath,
+				linkTarget, charSizeHack);
+		if (defaultBackground instanceof HColorGradient) {
+			final SvgGraphics svg = getGraphicObject();
+			svg.paintBackcolorGradient(colorMapper, (HColorGradient) defaultBackground);
+		}
 	}
 
 	@Override
@@ -127,9 +115,9 @@ public class UGraphicSvg extends AbstractUGraphic<SvgGraphics> implements ClipCo
 		getGraphicObject().setHidden(false);
 	}
 
-	private UGraphicSvg(Dimension2D minDim, ColorMapper colorMapper, SvgGraphics svg, boolean textAsPath,
-			String linkTarget, SvgCharSizeHack charSizeHack) {
-		super(colorMapper, svg);
+	private UGraphicSvg(HColor defaultBackground, Dimension2D minDim, ColorMapper colorMapper, SvgGraphics svg,
+			boolean textAsPath, String linkTarget, SvgCharSizeHack charSizeHack) {
+		super(defaultBackground, colorMapper, svg);
 		this.stringBounder = FileFormat.SVG.getDefaultStringBounder(TikzFontDistortion.getDefault(), charSizeHack);
 		this.textAsPath2 = textAsPath;
 		this.target = linkTarget;
@@ -144,6 +132,7 @@ public class UGraphicSvg extends AbstractUGraphic<SvgGraphics> implements ClipCo
 			registerDriver(UText.class, new DriverTextSvg(getStringBounder(), this));
 		}
 		registerDriver(ULine.class, new DriverLineSvg(this));
+		registerDriver(UPixel.class, new DriverPixelSvg());
 		registerDriver(UPolygon.class, new DriverPolygonSvg(this));
 		registerDriver(UEllipse.class, new DriverEllipseSvg(this));
 		registerDriver(UImage.class, new DriverImagePng(this));
@@ -176,7 +165,6 @@ public class UGraphicSvg extends AbstractUGraphic<SvgGraphics> implements ClipCo
 	public void startGroup(UGroupType type, String ident) {
 		getGraphicObject().startGroup(type, ident);
 	}
-	
 
 	@Override
 	public void closeGroup() {

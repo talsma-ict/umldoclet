@@ -34,11 +34,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.List;
+import java.util.Objects;
 
 public class ChainImpl<O> implements Chain<O> {
 
-	private final List<O> positive = new ArrayList<O>();
-	private final List<O> negative = new ArrayList<O>();
+	private final List<O> positive = new ArrayList<>();
+	private final List<O> negative = new ArrayList<>();
 	private int currentVersion;
 
 	public boolean remove(O data) {
@@ -51,7 +52,7 @@ public class ChainImpl<O> implements Chain<O> {
 	}
 
 	public ChainImpl<O> cloneMe() {
-		final ChainImpl<O> result = new ChainImpl<O>();
+		final ChainImpl<O> result = new ChainImpl<>();
 		result.currentVersion = this.currentVersion;
 		result.positive.addAll(this.positive);
 		result.negative.addAll(this.negative);
@@ -82,7 +83,7 @@ public class ChainImpl<O> implements Chain<O> {
 	}
 
 	public List<O> toList() {
-		final List<O> result = new ArrayList<O>();
+		final List<O> result = new ArrayList<>();
 		for (O element : negative) {
 			if (element != null) {
 				result.add(0, element);
@@ -100,10 +101,7 @@ public class ChainImpl<O> implements Chain<O> {
 	}
 
 	public ChainImpl(O root) {
-		if (root == null) {
-			throw new IllegalArgumentException();
-		}
-		this.positive.add(root);
+		this.positive.add(Objects.requireNonNull(root));
 	}
 
 	private int updateStructuralVersion() {
@@ -112,9 +110,7 @@ public class ChainImpl<O> implements Chain<O> {
 	}
 
 	public boolean contains(O data) {
-		if (data == null) {
-			throw new IllegalArgumentException();
-		}
+		Objects.requireNonNull(data);
 		for (int i = 0; i < Math.max(positive.size(), negative.size()); i++) {
 			if (i < positive.size() && data == positive.get(i)) {
 				return true;
@@ -127,9 +123,7 @@ public class ChainImpl<O> implements Chain<O> {
 	}
 
 	public Navigator<O> navigator(O data) {
-		if (data == null) {
-			throw new IllegalArgumentException();
-		}
+		Objects.requireNonNull(data);
 		for (int i = 0; i < Math.max(positive.size(), negative.size()); i++) {
 			if (i < positive.size() && data == positive.get(i)) {
 				final InternalNavigator result = new InternalNavigator(i, currentVersion);
@@ -155,9 +149,7 @@ public class ChainImpl<O> implements Chain<O> {
 	}
 
 	private void setInternal(int position, O data) {
-		if (data == null) {
-			throw new IllegalArgumentException();
-		}
+		Objects.requireNonNull(data);
 		ensure(position);
 		if (position >= 0) {
 			positive.set(position, data);
@@ -167,9 +159,7 @@ public class ChainImpl<O> implements Chain<O> {
 	}
 
 	private void insertInternal(int position, O data) {
-		if (data == null) {
-			throw new IllegalArgumentException();
-		}
+		Objects.requireNonNull(data);
 		ensure(position);
 		if (position >= 0) {
 			positive.add(position, data);

@@ -37,6 +37,7 @@ import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
+import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.cucadiagram.Code;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.DisplayPositionned;
@@ -53,8 +54,8 @@ import net.sourceforge.plantuml.utils.UniqueSequence;
 
 public abstract class AbstractClassOrObjectDiagram extends AbstractEntityDiagram {
 
-	public AbstractClassOrObjectDiagram(UmlDiagramType type, ISkinSimple orig) {
-		super(type, orig);
+	public AbstractClassOrObjectDiagram(UmlSource source, UmlDiagramType type, ISkinSimple orig) {
+		super(source, type, orig);
 	}
 
 	@Override
@@ -108,7 +109,7 @@ public abstract class AbstractClassOrObjectDiagram extends AbstractEntityDiagram
 		return result;
 	}
 
-	private final List<Association> associations = new ArrayList<Association>();
+	private final List<Association> associations = new ArrayList<>();
 
 	public CommandExecutionResult associationClass(String name1A, String name1B, String name2A, String name2B,
 			LinkType linkType, Display label) {
@@ -211,7 +212,7 @@ public abstract class AbstractClassOrObjectDiagram extends AbstractEntityDiagram
 	}
 
 	private List<Association> getExistingAssociatedPoints(final IEntity entity1, final IEntity entity2) {
-		final List<Association> same = new ArrayList<Association>();
+		final List<Association> same = new ArrayList<>();
 		for (Association existing : associations) {
 			if (existing.sameCouple(entity1, entity2)) {
 				same.add(existing);

@@ -30,25 +30,21 @@
  */
 package net.sourceforge.plantuml.activitydiagram3;
 
-import java.awt.geom.Dimension2D;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Objects;
 
-import net.sourceforge.plantuml.AnnotatedWorker;
-import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.FileFormatOption;
-import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.ISkinSimple;
-import net.sourceforge.plantuml.Scale;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.activitydiagram3.ftile.BoxStyle;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlanes;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
+import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.Rainbow;
@@ -59,9 +55,6 @@ import net.sourceforge.plantuml.graphic.USymbol;
 import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
 import net.sourceforge.plantuml.sequencediagram.NoteType;
-import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
-import net.sourceforge.plantuml.ugraphic.ImageBuilder;
-import net.sourceforge.plantuml.ugraphic.ImageParameter;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.comp.CompressionMode;
 import net.sourceforge.plantuml.ugraphic.comp.CompressionXorYBuilder;
@@ -76,8 +69,8 @@ public class ActivityDiagram3 extends UmlDiagram {
 
 	private final Swimlanes swinlanes = new Swimlanes(getSkinParam(), getPragma());
 
-	public ActivityDiagram3(ISkinSimple skinParam) {
-		super(UmlDiagramType.ACTIVITY, skinParam);
+	public ActivityDiagram3(UmlSource source, ISkinSimple skinParam) {
+		super(source, UmlDiagramType.ACTIVITY, skinParam);
 	}
 
 	private void manageSwimlaneStrategy() {
@@ -110,16 +103,22 @@ public class ActivityDiagram3 extends UmlDiagram {
 		return swinlanes.nextLinkRenderer();
 	}
 
-	public void addActivity(Display activity, BoxStyle style, Url url, Colors colors, Stereotype stereotype) {
+	public CommandExecutionResult addActivity(Display activity, BoxStyle style, Url url, Colors colors,
+			Stereotype stereotype) {
 		manageSwimlaneStrategy();
 		final InstructionSimple ins = new InstructionSimple(activity, nextLinkRenderer(),
 				swinlanes.getCurrentSwimlane(), style, url, colors, stereotype);
-		current().add(ins);
+		final CommandExecutionResult added = current().add(ins);
+		if (added.isOk() == false) {
+			return added;
+		}
 		setNextLinkRendererInternal(LinkRendering.none());
 		manageHasUrl(activity);
 		if (url != null) {
 			hasUrl = true;
 		}
+		return CommandExecutionResult.ok();
+
 	}
 
 	public void addSpot(String spot, HColor color) {
@@ -207,41 +206,7 @@ public class ActivityDiagram3 extends UmlDiagram {
 		result = CompressionXorYBuilder.build(CompressionMode.ON_Y, result, stringBounder);
 
 		result = new TextBlockRecentred(result);
-		final ISkinParam skinParam = getSkinParam();
-		result = new AnnotatedWorker(this, skinParam, stringBounder).addAdd(result);
-
-		final Dimension2D dim = result.getMinMax(stringBounder).getDimension();
-		final ClockwiseTopRightBottomLeft margins;
-		if (UseStyle.useBetaStyle()) {
-			margins = ClockwiseTopRightBottomLeft.marginForDocument(skinParam.getCurrentStyleBuilder());
-		} else {
-			margins = ClockwiseTopRightBottomLeft.margin1margin2(10, 10);
-		}
-
-		final double dpiFactor = getDpiFactor(fileFormatOption,
-				Dimension2DDouble.delta(dim, margins.getLeft() + margins.getRight(), 0));
-
-		final HColor backcolor = skinParam.getBackgroundColor(false);
-		final String metadata = fileFormatOption.isWithMetadata() ? getMetadata() : null;
-		final ImageParameter imageParameter = new ImageParameter(skinParam, getAnimation(), dpiFactor, metadata,
-				getWarningOrError(), margins, backcolor);
-
-		final ImageBuilder imageBuilder = ImageBuilder.build(imageParameter);
-		imageBuilder.setUDrawable(result);
-
-		return imageBuilder.writeImageTOBEMOVED(fileFormatOption, seed(), os);
-
-	}
-
-	private final double getDpiFactor(FileFormatOption fileFormatOption, final Dimension2D dim) {
-		final double dpiFactor;
-		final Scale scale = getScale();
-		if (scale == null) {
-			dpiFactor = getScaleCoef(fileFormatOption);
-		} else {
-			dpiFactor = scale.getScale(dim.getWidth(), dim.getHeight());
-		}
-		return dpiFactor;
+		return createImageBuilder(fileFormatOption).drawable(result).write(os);
 	}
 
 	public void fork() {
@@ -465,17 +430,12 @@ public class ActivityDiagram3 extends UmlDiagram {
 	}
 
 	private void setNextLinkRendererInternal(LinkRendering link) {
-		if (link == null) {
-			throw new IllegalArgumentException();
-		}
 		// System.err.println("setNextLinkRendererInternal=" + link);
-		swinlanes.setNextLinkRenderer(link);
+		swinlanes.setNextLinkRenderer(Objects.requireNonNull(link));
 	}
 
 	private void setNextLink(LinkRendering linkRenderer) {
-		if (linkRenderer == null) {
-			throw new IllegalArgumentException();
-		}
+		Objects.requireNonNull(linkRenderer);
 		// System.err.println("setNextLink=" + linkRenderer);
 		if (current() instanceof InstructionCollection) {
 			final Instruction last = ((InstructionCollection) current()).getLast();

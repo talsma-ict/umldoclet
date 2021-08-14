@@ -30,6 +30,9 @@
  */
 package net.sourceforge.plantuml.project.time;
 
+import java.time.format.TextStyle;
+import java.util.Locale;
+
 import net.sourceforge.plantuml.StringUtils;
 
 public enum Month {
@@ -43,12 +46,21 @@ public enum Month {
 		this.daysPerMonth = daysPerMonth;
 	}
 
-	public String shortName() {
-		return longName().substring(0, 3);
+	public String shortName(Locale locale) {
+		if (locale == Locale.ENGLISH)
+			return longName(locale).substring(0, 3);
+
+		return StringUtils.capitalize(
+				java.time.Month.valueOf(this.toString()).getDisplayName(TextStyle.SHORT_STANDALONE, locale));
+
 	}
 
-	public String longName() {
-		return StringUtils.capitalize(name());
+	public String longName(Locale locale) {
+		if (locale == Locale.ENGLISH)
+			return StringUtils.capitalize(name());
+
+		return StringUtils
+				.capitalize(java.time.Month.valueOf(this.toString()).getDisplayName(TextStyle.FULL_STANDALONE, locale));
 	}
 
 	static public String getRegexString() {

@@ -33,7 +33,8 @@ package net.sourceforge.plantuml.tim;
 public enum TLineType {
 
 	PLAIN, AFFECTATION_DEFINE, AFFECTATION, ASSERT, IF, IFDEF, UNDEF, IFNDEF, ELSE, ELSEIF, ENDIF, WHILE, ENDWHILE,
-	FOREACH, ENDFOREACH, DECLARE_RETURN_FUNCTION, DECLARE_PROCEDURE, END_FUNCTION, RETURN, LEGACY_DEFINE, LEGACY_DEFINELONG, INCLUDE, INCLUDE_DEF,
+	FOREACH, ENDFOREACH, DECLARE_RETURN_FUNCTION, DECLARE_PROCEDURE, END_FUNCTION, RETURN, LEGACY_DEFINE, LEGACY_DEFINELONG, 
+	THEME, INCLUDE, INCLUDE_DEF,
 	IMPORT, STARTSUB, ENDSUB, INCLUDESUB, LOG, DUMP_MEMORY, COMMENT_SIMPLE, COMMENT_LONG_START;
 
 //	private boolean elseLike() {
@@ -58,7 +59,7 @@ public enum TLineType {
 		if (s.matches("^\\s*!define\\s+[\\p{L}_][\\p{L}_0-9]*\\b.*")) {
 			return AFFECTATION_DEFINE;
 		}
-		if (s.matches("^\\s*!\\s*(local|global)?\\s*\\$?[\\p{L}_][\\p{L}_0-9]*\\s*=.*")) {
+		if (s.matches("^\\s*!\\s*(local|global)?\\s*\\$?[\\p{L}_][\\p{L}_0-9]*\\s*\\??=.*")) {
 			return AFFECTATION;
 		}
 		if (s.matches("^\\s*'.*")) {
@@ -117,6 +118,9 @@ public enum TLineType {
 		}
 		if (s.matches("^\\s*!return\\b.*")) {
 			return RETURN;
+		}
+		if (s.matches("^\\s*!theme\\b.*")) {
+			return THEME;
 		}
 		if (s.matches("^\\s*!(include|includeurl|include_many|include_once)\\b.*")) {
 			return INCLUDE;

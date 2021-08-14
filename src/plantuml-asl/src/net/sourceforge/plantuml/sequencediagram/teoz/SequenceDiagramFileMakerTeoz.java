@@ -60,12 +60,9 @@ import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 import net.sourceforge.plantuml.sequencediagram.graphic.FileMaker;
 import net.sourceforge.plantuml.skin.SimpleContext2D;
 import net.sourceforge.plantuml.skin.rose.Rose;
-import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleSignature;
-import net.sourceforge.plantuml.ugraphic.ImageBuilder;
-import net.sourceforge.plantuml.ugraphic.ImageParameter;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
@@ -131,41 +128,13 @@ public class SequenceDiagramFileMakerTeoz implements FileMaker {
 	private final double heightEnglober1;
 	private final double heightEnglober2;
 
-	private double oneOf(double a, double b) {
-		if (a == 1) {
-			return b;
-		}
-		return a;
-	}
-
 	public ImageData createOne(OutputStream os, final int index, boolean isWithMetadata) throws IOException {
 		if (this.index != index) {
 			throw new IllegalStateException();
 		}
-		final double dpiFactor = diagram.getDpiFactor(fileFormatOption, dimTotal);
-
-		final double scale = 1;
-		final String metadata = fileFormatOption.isWithMetadata() ? diagram.getMetadata() : null;
-
-		final ClockwiseTopRightBottomLeft margins;
-		if (UseStyle.useBetaStyle()) {
-			final Style style = StyleSignature.of(SName.root, SName.document)
-					.getMergedStyle(diagram.getSkinParam().getCurrentStyleBuilder());
-			margins = style.getMargin();
-		} else {
-			margins = ClockwiseTopRightBottomLeft.topRightBottomLeft(5, 5, 5, 5);
-		}
-		ISkinParam skinParam = diagram.getSkinParam();
-		final HColor backcolor = skinParam.getBackgroundColor(false);
-		final double factor = oneOf(scale, dpiFactor);
-		final ImageParameter imageParameter = new ImageParameter(skinParam, diagram.getAnimation(), factor, metadata,
-				null, margins, backcolor);
-
-		final ImageBuilder imageBuilder = ImageBuilder.build(imageParameter);
-
-		imageBuilder.setUDrawable(new Foo(index));
-		return imageBuilder.writeImageTOBEMOVED(fileFormatOption, diagram.seed(), os);
-
+		return diagram.createImageBuilder(fileFormatOption)
+				.drawable(new Foo(index))
+				.write(os);
 	}
 
 	class Foo implements UDrawable {
@@ -239,7 +208,7 @@ public class SequenceDiagramFileMakerTeoz implements FileMaker {
 		}
 		final TextBlock compTitle;
 		if (UseStyle.useBetaStyle()) {
-			final Style style = StyleSignature.of(SName.root, SName.title)
+			final Style style = StyleSignature.of(SName.root, SName.document, SName.title)
 					.getMergedStyle(diagram.getSkinParam().getCurrentStyleBuilder());
 			compTitle = style.createTextBlockBordered(diagram.getTitle().getDisplay(),
 					diagram.getSkinParam().getIHtmlColorSet(), diagram.getSkinParam());

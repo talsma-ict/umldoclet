@@ -46,7 +46,7 @@ import net.sourceforge.plantuml.ugraphic.color.HColor;
 public class AtomTree extends AbstractAtom implements Atom {
 
 	private final HColor lineColor;
-	private final List<Atom> cells = new ArrayList<Atom>();
+	private final List<Atom> cells = new ArrayList<>();
 	private final Map<Atom, Integer> levels = new HashMap<Atom, Integer>();
 	private final double margin = 2;
 

@@ -41,7 +41,7 @@ import net.sourceforge.plantuml.command.regex.Pattern2;
 
 public class FileGroup {
 
-	private final List<File> result = new ArrayList<File>();
+	private final List<File> result = new ArrayList<>();
 	private final String pattern;
 	private final List<String> excluded;
 	private final Option option;

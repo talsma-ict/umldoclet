@@ -32,6 +32,7 @@ package net.sourceforge.plantuml.svek;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import net.sourceforge.plantuml.SignatureUtils;
 
@@ -61,10 +62,7 @@ public class Ports {
 	}
 
 	public void add(String portName, double position, double height) {
-		if (portName == null) {
-			throw new IllegalArgumentException();
-		}
-		final String id = encodePortNameToId(portName);
+		final String id = encodePortNameToId(Objects.requireNonNull(portName));
 		ids.put(id, new PortGeometry(position, height));
 	}
 

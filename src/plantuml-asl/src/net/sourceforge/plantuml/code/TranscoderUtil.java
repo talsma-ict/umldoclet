@@ -40,8 +40,9 @@ public class TranscoderUtil {
 		return new TranscoderSmartProtected();
 	}
 
+	@Deprecated
 	public static Transcoder getDefaultTranscoderProtectedPure() {
-		return new TranscoderSmartProtectedPure();
+		return getDefaultTranscoderProtected();
 	}
 
 }

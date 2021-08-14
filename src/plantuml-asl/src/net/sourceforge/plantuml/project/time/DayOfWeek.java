@@ -31,6 +31,7 @@
 package net.sourceforge.plantuml.project.time;
 
 import java.text.SimpleDateFormat;
+import java.time.format.TextStyle;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -39,12 +40,23 @@ import net.sourceforge.plantuml.StringUtils;
 
 public enum DayOfWeek {
 
-	MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY;
+	MONDAY(Calendar.MONDAY), TUESDAY(Calendar.TUESDAY), WEDNESDAY(Calendar.WEDNESDAY), THURSDAY(Calendar.THURSDAY),
+	FRIDAY(Calendar.FRIDAY), SATURDAY(Calendar.SATURDAY), SUNDAY(Calendar.SUNDAY);
 
 	static final private Calendar gmt = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 	static final private SimpleDateFormat dateFormatGmt = new SimpleDateFormat("dd MMM yyyy HH:mm:ss.SSS", Locale.US);
 	static {
 		dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
+	}
+
+	private final int legacy;
+
+	private DayOfWeek(int legacy) {
+		this.legacy = legacy;
+	}
+
+	public int getLegacyJavaValue() {
+		return legacy;
 	}
 
 	public static synchronized DayOfWeek fromTime(long time) {
@@ -56,10 +68,10 @@ public enum DayOfWeek {
 		return DayOfWeek.values()[result - 2];
 	}
 
-	public static synchronized String timeToString(long value) {
-		gmt.setTimeInMillis(value);
-		return fromTime(value).shortName() + " " + dateFormatGmt.format(gmt.getTime());
-	}
+//	private static synchronized String timeToString(Locale locale, long value) {
+//		gmt.setTimeInMillis(value);
+//		return fromTime(value).shortName(locale) + " " + dateFormatGmt.format(gmt.getTime());
+//	}
 
 	static public String getRegexString() {
 		final StringBuilder sb = new StringBuilder();
@@ -90,7 +102,13 @@ public enum DayOfWeek {
 		return DayOfWeek.values()[(h + 5) % 7];
 	}
 
-	public String shortName() {
-		return StringUtils.capitalize(name().substring(0, 2));
+	public String shortName(Locale locale) {
+		if (locale == Locale.ENGLISH)
+			return StringUtils.capitalize(name().substring(0, 2));
+		final String s = StringUtils.capitalize(
+				java.time.DayOfWeek.valueOf(this.toString()).getDisplayName(TextStyle.SHORT_STANDALONE, locale));
+		if (s.length() > 2)
+			return s.substring(0, 2);
+		return s;
 	}
 }

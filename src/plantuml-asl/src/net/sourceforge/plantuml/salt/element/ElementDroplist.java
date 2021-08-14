@@ -58,7 +58,7 @@ public class ElementDroplist extends AbstractElementText implements Element {
 	public ElementDroplist(String text, UFont font, ISkinSimple spriteContainer) {
 		super(extract(text), font, true, spriteContainer);
 		final StringTokenizer st = new StringTokenizer(text, "^");
-		final List<String> drop = new ArrayList<String>();
+		final List<String> drop = new ArrayList<>();
 		while (st.hasMoreTokens()) {
 			drop.add(st.nextToken());
 		}
@@ -88,7 +88,7 @@ public class ElementDroplist extends AbstractElementText implements Element {
 	public void drawU(UGraphic ug, int zIndex, Dimension2D dimToUse) {
 		final Dimension2D dim = getPreferredDimension(ug.getStringBounder(), 0, 0);
 		if (zIndex == 0) {
-			ug.apply(HColorSet.instance().getColorOrWhite("#EEEEEE").bg())
+			ug.apply(HColorSet.instance().getColorOrWhite(getThemeStyle(), "#EEEEEE").bg())
 					.draw(new URectangle(dim.getWidth() - 1, dim.getHeight() - 1));
 			drawText(ug, 2, 2);
 			final double xline = dim.getWidth() - box;
@@ -107,7 +107,7 @@ public class ElementDroplist extends AbstractElementText implements Element {
 			final Dimension2D dimOpen = Dimension2DDouble.atLeast(openDrop.calculateDimension(ug.getStringBounder()),
 					dim.getWidth() - 1, 0);
 			ug = ug.apply(UTranslate.dy(dim.getHeight() - 1));
-			ug.apply(HColorSet.instance().getColorOrWhite("#EEEEEE").bg())
+			ug.apply(HColorSet.instance().getColorOrWhite(getThemeStyle(), "#EEEEEE").bg())
 					.draw(new URectangle(dimOpen.getWidth() - 1, dimOpen.getHeight() - 1));
 			openDrop.drawU(ug);
 		}

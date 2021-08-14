@@ -30,6 +30,7 @@
  */
 package net.sourceforge.plantuml.creole.command;
 
+import net.sourceforge.plantuml.ThemeStyle;
 import net.sourceforge.plantuml.command.regex.Matcher2;
 import net.sourceforge.plantuml.command.regex.MyPattern;
 import net.sourceforge.plantuml.command.regex.Pattern2;
@@ -41,16 +42,18 @@ import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public class CommandCreoleOpenIcon implements Command {
 
-	private final Pattern2 pattern;
-	private final HColorSet colorSet;
+	private static final Pattern2 pattern = MyPattern.cmpile("^(" + Splitter.openiconPattern + ")");
 
-	private CommandCreoleOpenIcon(HColorSet colorSet, String p) {
-		this.pattern = MyPattern.cmpile(p);
+	private final HColorSet colorSet;
+	private final ThemeStyle themeStyle;
+
+	private CommandCreoleOpenIcon(ThemeStyle themeStyle, HColorSet colorSet) {
 		this.colorSet = colorSet;
+		this.themeStyle = themeStyle;
 	}
 
-	public static Command create(HColorSet colorSet) {
-		return new CommandCreoleOpenIcon(colorSet, "^(?i)(" + Splitter.openiconPattern + ")");
+	public static Command create(ThemeStyle themeStyle, HColorSet colorSet) {
+		return new CommandCreoleOpenIcon(themeStyle, colorSet);
 	}
 
 	public int matchingSize(String line) {
@@ -71,7 +74,7 @@ public class CommandCreoleOpenIcon implements Command {
 		final String colorName = Parser.getColor(m.group(3));
 		HColor color = null;
 		if (colorName != null) {
-			color = colorSet.getColorOrWhite(colorName);
+			color = colorSet.getColorOrWhite(themeStyle, colorName);
 		}
 		stripe.addOpenIcon(src, scale, color);
 		return line.substring(m.group(1).length());

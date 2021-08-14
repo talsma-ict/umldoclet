@@ -49,6 +49,7 @@ import net.sourceforge.plantuml.svek.AbstractEntityImage;
 import net.sourceforge.plantuml.svek.ShapeType;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
+import net.sourceforge.plantuml.ugraphic.UGroupType;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 
@@ -88,7 +89,10 @@ public class EntityImageLollipopInterface extends AbstractEntityImage {
 		if (url != null) {
 			ug.startUrl(url);
 		}
+
+		ug.startGroup(UGroupType.CLASS, "elem " + getEntity().getCode() + " selected");
 		ug.apply(new UStroke(1.5)).draw(circle);
+		ug.closeGroup();
 
 		final Dimension2D dimDesc = desc.calculateDimension(ug.getStringBounder());
 		final double widthDesc = dimDesc.getWidth();

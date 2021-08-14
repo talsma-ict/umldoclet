@@ -129,7 +129,8 @@ public class CommandPackageWithUSymbol extends SingleLineCommand2<AbstractEntity
 	}
 
 	@Override
-	protected CommandExecutionResult executeArg(AbstractEntityDiagram diagram, LineLocation location, RegexResult arg) throws NoSuchColorException {
+	protected CommandExecutionResult executeArg(AbstractEntityDiagram diagram, LineLocation location, RegexResult arg)
+			throws NoSuchColorException {
 		final String codeRaw = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.getLazzy("CODE", 0));
 		final String displayRaw = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.getLazzy("DISPLAY", 0));
 		final String display;
@@ -169,7 +170,8 @@ public class CommandPackageWithUSymbol extends SingleLineCommand2<AbstractEntity
 			p.addUrl(url);
 		}
 		CommandCreateClassMultilines.addTags(p, arg.get("TAGS", 0));
-		final Colors colors = color().getColor(arg, diagram.getSkinParam().getIHtmlColorSet());
+		final Colors colors = color().getColor(diagram.getSkinParam().getThemeStyle(), arg,
+				diagram.getSkinParam().getIHtmlColorSet());
 		p.setColors(colors);
 		return CommandExecutionResult.ok();
 	}

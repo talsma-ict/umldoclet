@@ -31,6 +31,7 @@
 package net.sourceforge.plantuml.project.draw;
 
 import java.awt.geom.Dimension2D;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.TreeSet;
 
@@ -47,14 +48,21 @@ import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.project.GanttConstraint;
+import net.sourceforge.plantuml.project.LabelStrategy;
 import net.sourceforge.plantuml.project.ToTaskDraw;
 import net.sourceforge.plantuml.project.core.Task;
+import net.sourceforge.plantuml.project.core.TaskAttribute;
 import net.sourceforge.plantuml.project.core.TaskImpl;
+import net.sourceforge.plantuml.project.lang.CenterBorderColor;
 import net.sourceforge.plantuml.project.time.Day;
 import net.sourceforge.plantuml.project.timescale.TimeScale;
+import net.sourceforge.plantuml.real.Real;
+import net.sourceforge.plantuml.sequencediagram.graphic.Segment;
+import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.style.StyleBuilder;
 import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.svek.image.Opale;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -64,6 +72,7 @@ import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorNone;
+import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class TaskDrawRegular extends AbstractTaskDraw {
@@ -73,18 +82,20 @@ public class TaskDrawRegular extends AbstractTaskDraw {
 	private final boolean oddEnd;
 	private final Collection<Day> paused;
 	private final Collection<GanttConstraint> constraints;
+	private final ISkinParam skinParam;
 
-	private final double margin = 2;
+	// private final double margin = 2;
 
-	public TaskDrawRegular(TimeScale timeScale, double y, String prettyDisplay, Day start, Day end, boolean oddStart,
+	public TaskDrawRegular(TimeScale timeScale, Real y, String prettyDisplay, Day start, Day end, boolean oddStart,
 			boolean oddEnd, ISkinParam skinParam, Task task, ToTaskDraw toTaskDraw,
-			Collection<GanttConstraint> constraints) {
-		super(timeScale, y, prettyDisplay, start, skinParam, task, toTaskDraw);
+			Collection<GanttConstraint> constraints, StyleBuilder styleBuilder, HColorSet colorSet) {
+		super(timeScale, y, prettyDisplay, start, skinParam, task, toTaskDraw, styleBuilder, colorSet);
+		this.skinParam = skinParam;
 		this.constraints = constraints;
 		this.end = end;
 		this.oddStart = oddStart;
 		this.oddEnd = oddEnd;
-		this.paused = new TreeSet<Day>(((TaskImpl) task).getAllPaused());
+		this.paused = new TreeSet<>(((TaskImpl) task).getAllPaused());
 		for (Day tmp = start; tmp.compareTo(end) <= 0; tmp = tmp.increment()) {
 			final int load = toTaskDraw.getDefaultPlan().getLoadAt(tmp);
 			if (load == 0) {
@@ -94,11 +105,36 @@ public class TaskDrawRegular extends AbstractTaskDraw {
 		}
 	}
 
-	public void drawTitle(UGraphic ug) {
-		final TextBlock title = Display.getWithNewlines(prettyDisplay).create(getFontConfiguration(),
-				HorizontalAlignment.LEFT, new SpriteContainerEmpty());
-		final Dimension2D dim = title.calculateDimension(ug.getStringBounder());
-		final double h = (margin + getShapeHeight() - dim.getHeight()) / 2;
+	@Override
+	protected double getShapeHeight(StringBounder stringBounder) {
+		final Style style = getStyle();
+		final ClockwiseTopRightBottomLeft padding = style.getPadding();
+		return padding.getTop() + getTitle().calculateDimension(stringBounder).getHeight() + padding.getBottom();
+	}
+
+	@Override
+	public void drawTitle(UGraphic ug, LabelStrategy labelStrategy, double colTitles, double colBars) {
+		final TextBlock title = getTitle();
+		final StringBounder stringBounder = ug.getStringBounder();
+		final Dimension2D dim = title.calculateDimension(stringBounder);
+
+		final Style style = getStyleSignature().getMergedStyle(getStyleBuilder());
+		final ClockwiseTopRightBottomLeft margin = style.getMargin();
+		final ClockwiseTopRightBottomLeft padding = style.getPadding();
+
+		ug = ug.apply(UTranslate.dy(margin.getTop() + padding.getTop()));
+
+		if (labelStrategy.titleInFirstColumn()) {
+			if (labelStrategy.rightAligned())
+				title.drawU(ug.apply(UTranslate.dx(colTitles - dim.getWidth() - margin.getRight())));
+			else
+				title.drawU(ug.apply(UTranslate.dx(margin.getLeft())));
+			return;
+		} else if (labelStrategy.titleInLastColumn()) {
+			title.drawU(ug.apply(UTranslate.dx(colBars + margin.getLeft())));
+			return;
+		}
+
 		final double pos1 = timeScale.getStartingPosition(start) + 6;
 		final double pos2 = timeScale.getEndingPosition(end) - 6;
 		final double pos;
@@ -106,7 +142,13 @@ public class TaskDrawRegular extends AbstractTaskDraw {
 			pos = pos1;
 		else
 			pos = getOutPosition(pos2);
-		title.drawU(ug.apply(new UTranslate(pos, h)));
+		title.drawU(ug.apply(UTranslate.dx(pos)));
+	}
+
+	@Override
+	protected TextBlock getTitle() {
+		return Display.getWithNewlines(prettyDisplay).create(getFontConfiguration(), HorizontalAlignment.LEFT,
+				new SpriteContainerEmpty());
 	}
 
 	private double getOutPosition(double pos2) {
@@ -125,26 +167,23 @@ public class TaskDrawRegular extends AbstractTaskDraw {
 		return false;
 	}
 
-//		final UFont font = UFont.serif(11);
-//		return new FontConfiguration(font, HColorUtils.BLACK, HColorUtils.BLACK, false);
-
 	@Override
-	protected Style getStyle() {
-		final Style style = StyleSignature.of(SName.root, SName.element, SName.ganttDiagram, SName.task)
-				.getMergedStyle(skinParam.getCurrentStyleBuilder());
-		return style;
+	StyleSignature getStyleSignature() {
+		return StyleSignature.of(SName.root, SName.element, SName.ganttDiagram, SName.task);
 	}
 
 	public void drawU(UGraphic ug) {
 		final double startPos = timeScale.getStartingPosition(start);
-		drawNote(ug.apply((new UTranslate(startPos + margin, getYNotePosition()))));
+		drawNote(ug.apply((new UTranslate(startPos, getYNotePosition(ug.getStringBounder())))));
 
-		ug = applyColors(ug).apply(new UTranslate(margin, margin));
+		ug = applyColors(ug);
 		drawShape(ug);
 	}
 
-	private double getYNotePosition() {
-		return getShapeHeight() + margin * 3;
+	private double getYNotePosition(StringBounder stringBounder) {
+		final Style style = getStyle();
+		final ClockwiseTopRightBottomLeft margin = style.getMargin();
+		return margin.getTop() + getShapeHeight(stringBounder) + margin.getBottom();
 	}
 
 	private void drawNote(UGraphic ug) {
@@ -157,34 +196,35 @@ public class TaskDrawRegular extends AbstractTaskDraw {
 
 	public double getHeightMax(StringBounder stringBounder) {
 		if (note == null) {
-			return getHeightTask();
+			return getFullHeightTask(stringBounder);
 		}
-		return getYNotePosition() + getOpaleNote().calculateDimension(stringBounder).getHeight();
+		return getYNotePosition(stringBounder) + getOpaleNote().calculateDimension(stringBounder).getHeight();
 	}
 
 	private Opale getOpaleNote() {
 		final Style style = StyleSignature.of(SName.root, SName.element, SName.ganttDiagram, SName.note)
-				.getMergedStyle(skinParam.getCurrentStyleBuilder());
-		FontConfiguration fc = new FontConfiguration(skinParam, style);
+				.getMergedStyle(getStyleBuilder());
 
-		final Sheet sheet = Parser
-				.build(fc, skinParam.getDefaultTextAlignment(HorizontalAlignment.LEFT), skinParam, CreoleMode.FULL)
-				.createSheet(note);
-		final SheetBlock1 sheet1 = new SheetBlock1(sheet, LineBreakStrategy.NONE, skinParam.getPadding());
+		final FontConfiguration fc = style.getFontConfiguration(skinParam.getThemeStyle(), getColorSet());
 
-		final HColor noteBackgroundColor = style.value(PName.BackGroundColor).asColor(skinParam.getIHtmlColorSet());
-		final HColor borderColor = style.value(PName.LineColor).asColor(skinParam.getIHtmlColorSet());
+		final HorizontalAlignment horizontalAlignment = style.value(PName.HorizontalAlignment).asHorizontalAlignment();
+		final Sheet sheet = Parser.build(fc, horizontalAlignment, skinParam, CreoleMode.FULL).createSheet(note);
+		final double padding = style.value(PName.Padding).asDouble();
+		final SheetBlock1 sheet1 = new SheetBlock1(sheet, LineBreakStrategy.NONE, padding);
+
+		final HColor noteBackgroundColor = style.value(PName.BackGroundColor).asColor(skinParam.getThemeStyle(),
+				getColorSet());
+		final HColor borderColor = style.value(PName.LineColor).asColor(skinParam.getThemeStyle(), getColorSet());
 		final double shadowing = style.value(PName.Shadowing).asDouble();
 
-		Opale opale = new Opale(shadowing, borderColor, noteBackgroundColor, sheet1, false);
-		return opale;
+		return new Opale(shadowing, borderColor, noteBackgroundColor, sheet1, false);
 	}
 
-	public FingerPrint getFingerPrint() {
-		final double h = getHeightTask();
+	public FingerPrint getFingerPrint(StringBounder stringBounder) {
+		final double h = getFullHeightTask(stringBounder);
 		final double startPos = timeScale.getStartingPosition(start);
 		final double endPos = timeScale.getEndingPosition(end);
-		return new FingerPrint(startPos, getY(), endPos - startPos, h);
+		return new FingerPrint(startPos, getY(stringBounder).getCurrentValue(), endPos - startPos, h);
 	}
 
 	public FingerPrint getFingerPrintNote(StringBounder stringBounder) {
@@ -194,46 +234,114 @@ public class TaskDrawRegular extends AbstractTaskDraw {
 		final Dimension2D dim = getOpaleNote().calculateDimension(stringBounder);
 		final double startPos = timeScale.getStartingPosition(start);
 		// final double endPos = timeScale.getEndingPosition(end);
-		return new FingerPrint(startPos, getY() + getYNotePosition(), dim.getWidth(), dim.getHeight());
+		return new FingerPrint(startPos, getY(stringBounder).getCurrentValue() + getYNotePosition(stringBounder),
+				dim.getWidth(), dim.getHeight());
 	}
 
 	private UGraphic applyColors(UGraphic ug) {
-		if (colors != null && colors.isOk()) {
-			return colors.apply(ug);
+		final CenterBorderColor col = this.getColors();
+		if (col != null && col.isOk()) {
+			return col.apply(ug);
 		}
 		return ug.apply(getLineColor()).apply(getBackgroundColor().bg());
 	}
 
-	private void drawShape(UGraphic ug) {
-		final double startPos = timeScale.getStartingPosition(start);
-		final double endPos = timeScale.getEndingPosition(end);
+	public double getX1(TaskAttribute taskAttribute) {
+		final Style style = getStyleSignature().getMergedStyle(getStyleBuilder());
+		final ClockwiseTopRightBottomLeft margin = style.getMargin();
+		final double startPos = taskAttribute == TaskAttribute.START ? timeScale.getStartingPosition(start)
+				: timeScale.getStartingPosition(end) + margin.getLeft();
+		return startPos;
+	}
 
-		double fullLength = endPos - startPos - 2 * margin;
+	public double getX2(TaskAttribute taskAttribute) {
+		final Style style = getStyleSignature().getMergedStyle(getStyleBuilder());
+		final ClockwiseTopRightBottomLeft margin = style.getMargin();
+		final double endPos = taskAttribute == TaskAttribute.START ? timeScale.getEndingPosition(start)
+				: timeScale.getEndingPosition(end) - margin.getLeft();
+		return endPos;
+	}
+
+	private void drawShape(UGraphic ug) {
+		final Style style = getStyleSignature().getMergedStyle(getStyleBuilder());
+		final ClockwiseTopRightBottomLeft margin = style.getMargin();
+
+		final double startPos = timeScale.getStartingPosition(start) + margin.getLeft();
+		final double endPos = timeScale.getEndingPosition(end) - margin.getRight();
+
+		if (url != null) {
+			ug.startUrl(url);
+		}
+
+		ug = ug.apply(UTranslate.dy(margin.getTop()));
+
+		final StringBounder stringBounder = ug.getStringBounder();
+
+		final double round = style.value(PName.RoundCorner).asDouble();
+
+		final Collection<Segment> off = new ArrayList<>();
+		for (Day pause : paused) {
+			final double x1 = timeScale.getStartingPosition(pause);
+			final double x2 = timeScale.getEndingPosition(pause);
+			off.add(new Segment(x1, x2));
+		}
+
+		final HColor back2 = StyleSignature.of(SName.root, SName.document, SName.ganttDiagram)
+				.getMergedStyle(getStyleBuilder()).value(PName.BackGroundColor)
+				.asColor(skinParam.getThemeStyle(), getColorSet());
+
+		final RectangleTask rectangleTask = new RectangleTask(startPos, endPos, round, completion, off);
+
+		rectangleTask.draw(ug, getShapeHeight(stringBounder), back2, oddStart, oddEnd);
+
+		if (url != null) {
+			ug.closeUrl();
+		}
+
+	}
+
+	private void drawShapeOld(UGraphic ug) {
+		final Style style = getStyleSignature().getMergedStyle(getStyleBuilder());
+		final ClockwiseTopRightBottomLeft margin = style.getMargin();
+
+		final double startPos = timeScale.getStartingPosition(start) + margin.getLeft();
+		final double endPos = timeScale.getEndingPosition(end) - margin.getRight();
+
+		double fullLength = endPos - startPos;
 		if (fullLength < 3) {
 			fullLength = 3;
 		}
 		if (url != null) {
 			ug.startUrl(url);
 		}
+
+		ug = ug.apply(UTranslate.dy(margin.getTop()));
+
+		final StringBounder stringBounder = ug.getStringBounder();
+
+		final double round = style.value(PName.RoundCorner).asDouble();
+
 		if (oddStart && !oddEnd) {
-			ug.apply(UTranslate.dx(startPos)).draw(PathUtils.UtoRight(fullLength, getShapeHeight()));
+			ug.apply(UTranslate.dx(startPos))
+					.draw(PathUtils.UtoRight(fullLength, getShapeHeight(stringBounder), round));
 		} else if (!oddStart && oddEnd) {
-			ug.apply(UTranslate.dx(startPos)).draw(PathUtils.UtoLeft(fullLength, getShapeHeight()));
+			ug.apply(UTranslate.dx(startPos)).draw(PathUtils.UtoLeft(fullLength, getShapeHeight(stringBounder), round));
 		} else {
-			final URectangle full = new URectangle(fullLength, getShapeHeight()).rounded(8);
+			final URectangle full = new URectangle(fullLength, getShapeHeight(stringBounder)).rounded(round);
 			if (completion == 100) {
 				ug.apply(UTranslate.dx(startPos)).draw(full);
 			} else {
 				final double partialLength = fullLength * completion / 100.;
 				ug.apply(UTranslate.dx(startPos)).apply(HColorUtils.WHITE).apply(HColorUtils.WHITE.bg()).draw(full);
 				if (partialLength > 2) {
-					final URectangle partial = new URectangle(partialLength, getShapeHeight()).rounded(8);
+					final URectangle partial = new URectangle(partialLength, getShapeHeight(stringBounder))
+							.rounded(round);
 					ug.apply(UTranslate.dx(startPos)).apply(new HColorNone()).draw(partial);
 				}
 				if (partialLength > 10 && partialLength < fullLength - 10) {
-					final URectangle patch = new URectangle(8, getShapeHeight());
-					ug.apply(UTranslate.dx(startPos)).apply(new HColorNone()).apply(UTranslate.dx(partialLength - 8))
-							.draw(patch);
+					final URectangle patch = new URectangle(round, getShapeHeight(stringBounder));
+					ug.apply(UTranslate.dx(startPos)).apply(new HColorNone())
+							.apply(UTranslate.dx(partialLength - round)).draw(patch);
 				}
 				ug.apply(UTranslate.dx(startPos)).apply(new HColorNone().bg()).draw(full);
 			}
@@ -259,13 +367,14 @@ public class TaskDrawRegular extends AbstractTaskDraw {
 	private void drawPause(UGraphic ug, Day start1, Day end) {
 		final double x1 = timeScale.getStartingPosition(start1);
 		final double x2 = timeScale.getEndingPosition(end);
-		final URectangle small = new URectangle(x2 - x1 - 1, getShapeHeight() + 1);
+		final StringBounder stringBounder = ug.getStringBounder();
+		final URectangle small = new URectangle(x2 - x1 - 1, getShapeHeight(stringBounder) + 1);
 		final ULine line = ULine.hline(x2 - x1 - 1);
 		ug = ug.apply(UTranslate.dx(x1 - 1));
 		ug.apply(HColorUtils.WHITE).apply(HColorUtils.WHITE.bg()).draw(small);
 		final UGraphic ugLine = ug.apply(new UStroke(2, 3, 1));
 		ugLine.draw(line);
-		ugLine.apply(UTranslate.dy(getShapeHeight())).draw(line);
+		ugLine.apply(UTranslate.dy(getShapeHeight(stringBounder))).draw(line);
 	}
 
 }

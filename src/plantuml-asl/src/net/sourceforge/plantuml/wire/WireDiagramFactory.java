@@ -33,9 +33,11 @@ package net.sourceforge.plantuml.wire;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.PSystemCommandFactory;
 import net.sourceforge.plantuml.core.DiagramType;
+import net.sourceforge.plantuml.core.UmlSource;
 
 public class WireDiagramFactory extends PSystemCommandFactory {
 
@@ -46,7 +48,7 @@ public class WireDiagramFactory extends PSystemCommandFactory {
 	@Override
 	protected List<Command> createCommands() {
 
-		final List<Command> cmds = new ArrayList<Command>();
+		final List<Command> cmds = new ArrayList<>();
 		addCommonCommands1(cmds);
 		cmds.add(new CommandComponent());
 		cmds.add(new CommandSpot());
@@ -60,8 +62,8 @@ public class WireDiagramFactory extends PSystemCommandFactory {
 	}
 
 	@Override
-	public WireDiagram createEmptyDiagram() {
-		return new WireDiagram();
+	public WireDiagram createEmptyDiagram(UmlSource source, ISkinSimple skinParam) {
+		return new WireDiagram(source);
 	}
 
 }

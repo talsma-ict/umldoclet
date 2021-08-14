@@ -37,28 +37,17 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.plantuml.AnnotatedWorker;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.FileFormatOption;
-import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.Scale;
-import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
+import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.graphic.InnerStrategy;
 import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
-import net.sourceforge.plantuml.style.PName;
-import net.sourceforge.plantuml.style.SName;
-import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.svek.TextBlockBackcolored;
-import net.sourceforge.plantuml.ugraphic.ImageBuilder;
-import net.sourceforge.plantuml.ugraphic.ImageParameter;
 import net.sourceforge.plantuml.ugraphic.MinMax;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
@@ -69,48 +58,23 @@ import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class BoardDiagram extends UmlDiagram {
 
-	private final List<Activity> activities = new ArrayList<Activity>();
+	private final List<Activity> activities = new ArrayList<>();
 
 	public DiagramDescription getDescription() {
 		return new DiagramDescription("Board");
 	}
 
-	public BoardDiagram() {
-		super(UmlDiagramType.BOARD);
+	public BoardDiagram(UmlSource source) {
+		super(source, UmlDiagramType.BOARD);
 	}
 
 	@Override
 	protected ImageData exportDiagramInternal(OutputStream os, int index, FileFormatOption fileFormatOption)
 			throws IOException {
-		final Scale scale = getScale();
 
-		final double dpiFactor = scale == null ? getScaleCoef(fileFormatOption) : scale.getScale(100, 100);
-		final ISkinParam skinParam = getSkinParam();
-		final int margin1 = SkinParam.zeroMargin(10);
-		final int margin2 = SkinParam.zeroMargin(10);
-		final Style style = StyleSignature.of(SName.root, SName.document, SName.mindmapDiagram)
-				.getMergedStyle(skinParam.getCurrentStyleBuilder());
-
-		HColor backgroundColor = style.value(PName.BackGroundColor).asColor(skinParam.getIHtmlColorSet());
-		if (backgroundColor == null) {
-			backgroundColor = HColorUtils.transparent();
-		}
-
-		final ClockwiseTopRightBottomLeft margins = ClockwiseTopRightBottomLeft.margin1margin2(margin1, margin2);
-		final String metadata = fileFormatOption.isWithMetadata() ? getMetadata() : null;
-
-		final ImageParameter imageParameter = new ImageParameter(skinParam.getColorMapper(), skinParam.handwritten(),
-				null, dpiFactor, metadata, "", margins, backgroundColor);
-
-		final ImageBuilder imageBuilder = ImageBuilder.build(imageParameter);
-
-		TextBlock result = getTextBlock();
-
-		result = new AnnotatedWorker(this, skinParam, fileFormatOption.getDefaultStringBounder(getSkinParam()))
-				.addAdd(result);
-		imageBuilder.setUDrawable(result);
-
-		return imageBuilder.writeImageTOBEMOVED(fileFormatOption, seed(), os);
+		return createImageBuilder(fileFormatOption)
+				.drawable(getTextBlock())
+				.write(os);
 	}
 
 	private TextBlockBackcolored getTextBlock() {

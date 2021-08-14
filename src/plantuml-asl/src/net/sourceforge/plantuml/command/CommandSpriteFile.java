@@ -62,7 +62,7 @@ public class CommandSpriteFile extends SingleLineCommand2<TitledDiagram> {
 				new RegexLeaf("sprite"), //
 				RegexLeaf.spaceOneOrMore(), //
 				new RegexLeaf("\\$?"), //
-				new RegexLeaf("NAME", "([-\\p{L}0-9_]+)"), //
+				new RegexLeaf("NAME", "([-%pLN_]+)"), //
 				RegexLeaf.spaceOneOrMore(), //
 				new RegexLeaf("FILE", "(.*)"), RegexLeaf.end());
 	}

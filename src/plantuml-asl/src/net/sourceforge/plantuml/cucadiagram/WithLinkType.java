@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import net.sourceforge.plantuml.ThemeStyle;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
@@ -48,7 +49,7 @@ public abstract class WithLinkType {
 
 	private Colors colors = Colors.empty();
 
-	private List<Colors> supplementary = new ArrayList<Colors>();
+	private List<Colors> supplementary = new ArrayList<>();
 
 	public final HColor getSpecificColor() {
 		return colors.getColor(ColorType.LINE);
@@ -108,7 +109,7 @@ public abstract class WithLinkType {
 		return single;
 	}
 
-	public void applyStyle(String arrowStyle) {
+	public void applyStyle(ThemeStyle themeStyle, String arrowStyle) {
 		if (arrowStyle == null) {
 			return;
 		}
@@ -116,12 +117,12 @@ public abstract class WithLinkType {
 		int i = 0;
 		while (st.hasMoreTokens()) {
 			final String s = st.nextToken();
-			applyOneStyle(s, i);
+			applyOneStyle(themeStyle, s, i);
 			i++;
 		}
 	}
 
-	private void applyOneStyle(String arrowStyle, int i) {
+	private void applyOneStyle(ThemeStyle themeStyle, String arrowStyle, int i) {
 		final StringTokenizer st = new StringTokenizer(arrowStyle, ",");
 		while (st.hasMoreTokens()) {
 			final String s = st.nextToken();
@@ -142,7 +143,7 @@ public abstract class WithLinkType {
 			} else if (s.startsWith("thickness=")) {
 				this.goThickness(Double.parseDouble(s.substring("thickness=".length())));
 			} else {
-				final HColor tmp = HColorSet.instance().getColorOrWhite(s);
+				final HColor tmp = HColorSet.instance().getColorOrWhite(themeStyle, s);
 				setSpecificColor(tmp, i);
 			}
 		}

@@ -36,6 +36,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import net.sourceforge.plantuml.graphic.StringBounder;
 
@@ -45,7 +46,7 @@ public class ConstraintSet {
 
 	private final ParticipantBoxSimple lastborder;
 
-	final private List<Pushable> participantList = new ArrayList<Pushable>();
+	final private List<Pushable> participantList = new ArrayList<>();
 	final private Map<List<Pushable>, Constraint> constraints = new HashMap<List<Pushable>, Constraint>();
 
 	public ConstraintSet(Collection<? extends Pushable> all, double freeX) {
@@ -85,17 +86,11 @@ public class ConstraintSet {
 	}
 
 	public Constraint getConstraintAfter(Pushable p1) {
-		if (p1 == null) {
-			throw new IllegalArgumentException();
-		}
-		return getConstraint(p1, getNext(p1));
+		return getConstraint(Objects.requireNonNull(p1), getNext(p1));
 	}
 
 	public Constraint getConstraintBefore(Pushable p1) {
-		if (p1 == null) {
-			throw new IllegalArgumentException();
-		}
-		return getConstraint(p1, getPrevious(p1));
+		return getConstraint(Objects.requireNonNull(p1), getPrevious(p1));
 	}
 
 	public Pushable getPrevious(Pushable p) {
@@ -133,9 +128,7 @@ public class ConstraintSet {
 		if (deltaX <= 0) {
 			throw new IllegalArgumentException();
 		}
-		if (firstToChange == null) {
-			throw new IllegalArgumentException();
-		}
+		Objects.requireNonNull(firstToChange);
 		// freeX += deltaX;
 		boolean founded = false;
 		for (Pushable box : participantList) {

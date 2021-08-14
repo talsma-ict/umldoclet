@@ -1,0 +1,4 @@
+# PlantUML sources are not ours and shouldn't be inspected.
+ignoreFiles = """\
+  src/test\
+  src/plantuml-asl"""

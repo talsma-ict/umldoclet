@@ -32,19 +32,31 @@ package net.sourceforge.plantuml;
 
 import java.io.IOException;
 
+import net.sourceforge.plantuml.anim.Animation;
+import net.sourceforge.plantuml.anim.AnimationDecoder;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.core.Diagram;
+import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.DisplayPositionned;
 import net.sourceforge.plantuml.cucadiagram.DisplaySection;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.VerticalAlignment;
 import net.sourceforge.plantuml.sprite.Sprite;
+import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
+import net.sourceforge.plantuml.style.PName;
+import net.sourceforge.plantuml.style.SName;
+import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleBuilder;
+import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.ugraphic.ImageBuilder;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public abstract class TitledDiagram extends AbstractPSystem implements Diagram, Annotated {
 
-	public static final boolean FORCE_SMETANA = false;
+	public static boolean FORCE_SMETANA = false;
+	public static boolean FORCE_ELK = false;
 
 	private DisplayPositionned title = DisplayPositionned.none(HorizontalAlignment.CENTER, VerticalAlignment.TOP);
 
@@ -57,13 +69,16 @@ public abstract class TitledDiagram extends AbstractPSystem implements Diagram, 
 
 	private final SkinParam skinParam;
 
+	private Animation animation;
+
 	private final Pragma pragma = new Pragma();
 
 	public Pragma getPragma() {
 		return pragma;
 	}
 
-	public TitledDiagram(UmlDiagramType type) {
+	public TitledDiagram(UmlSource source, UmlDiagramType type) {
+		super(source);
 		this.type = type;
 		this.skinParam = SkinParam.create(type);
 	}
@@ -72,8 +87,8 @@ public abstract class TitledDiagram extends AbstractPSystem implements Diagram, 
 		return skinParam.getCurrentStyleBuilder();
 	}
 
-	public TitledDiagram(UmlDiagramType type, ISkinSimple orig) {
-		this(type);
+	public TitledDiagram(UmlSource source, UmlDiagramType type, ISkinSimple orig) {
+		this(source, type);
 		if (orig != null) {
 			this.skinParam.copyAllFrom(orig);
 		}
@@ -189,9 +204,20 @@ public abstract class TitledDiagram extends AbstractPSystem implements Diagram, 
 	}
 
 	private boolean useSmetana;
+	private boolean useElk;
 
 	public void setUseSmetana(boolean useSmetana) {
 		this.useSmetana = useSmetana;
+	}
+
+	public void setUseElk(boolean useElk) {
+		this.useElk = useElk;
+	}
+
+	public boolean isUseElk() {
+		if (FORCE_ELK)
+			return true;
+		return this.useElk;
 	}
 
 	public boolean isUseSmetana() {
@@ -200,11 +226,43 @@ public abstract class TitledDiagram extends AbstractPSystem implements Diagram, 
 		return useSmetana;
 	}
 
-	public final double getScaleCoef(FileFormatOption fileFormatOption) {
-		if (getSkinParam().getDpi() == 96) {
-			return fileFormatOption.getScaleCoef();
+	@Override
+	public ClockwiseTopRightBottomLeft getDefaultMargins() {
+		return ClockwiseTopRightBottomLeft.same(10);
+	}
+
+	final public void setAnimation(Iterable<CharSequence> animationData) {
+//		try {
+		final AnimationDecoder animationDecoder = new AnimationDecoder(animationData);
+		this.animation = Animation.create(animationDecoder.decode());
+//		} catch (ScriptException e) {
+//			e.printStackTrace();
+//		}
+	}
+
+	final public Animation getAnimation() {
+		return animation;
+	}
+
+	@Override
+	public ImageBuilder createImageBuilder(FileFormatOption fileFormatOption) throws IOException {
+		return super.createImageBuilder(fileFormatOption).styled(this);
+	}
+
+	public HColor calculateBackColor() {
+		if (UseStyle.useBetaStyle()) {
+			final Style style = StyleSignature.of(SName.root, SName.document, this.getUmlDiagramType().getStyleName())
+					.getMergedStyle(this.getSkinParam().getCurrentStyleBuilder());
+
+			HColor backgroundColor = style.value(PName.BackGroundColor).asColor(this.getSkinParam().getThemeStyle(),
+					this.getSkinParam().getIHtmlColorSet());
+			if (backgroundColor == null) {
+				backgroundColor = HColorUtils.transparent();
+			}
+			return backgroundColor;
+
 		}
-		return getSkinParam().getDpi() * fileFormatOption.getScaleCoef() / 96.0;
+		return this.getSkinParam().getBackgroundColor(false);
 	}
 
 }

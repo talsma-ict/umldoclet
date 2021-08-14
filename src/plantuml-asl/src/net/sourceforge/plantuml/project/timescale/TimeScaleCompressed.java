@@ -35,24 +35,22 @@ import net.sourceforge.plantuml.project.time.DayOfWeek;
 
 public class TimeScaleCompressed implements TimeScale {
 
-	private final int compress;
 	private final TimeScale daily;
 
-	public TimeScaleCompressed(Day calendar, int compress) {
-		this.daily = new TimeScaleDaily(calendar, null);
-		this.compress = compress;
+	public TimeScaleCompressed(Day calendar, double scale) {
+		this.daily = new TimeScaleDaily(scale, calendar, null);
 	}
 
 	public double getStartingPosition(Day instant) {
-		return daily.getStartingPosition(instant) / compress;
+		return daily.getStartingPosition(instant);
 	}
 
 	public double getEndingPosition(Day instant) {
-		return daily.getEndingPosition(instant) / compress;
+		return daily.getEndingPosition(instant);
 	}
 
 	public double getWidth(Day instant) {
-		return daily.getWidth(instant) / compress;
+		return daily.getWidth(instant);
 	}
 
 	public boolean isBreaking(Day instant) {

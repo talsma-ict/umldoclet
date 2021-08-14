@@ -45,7 +45,7 @@ import net.sourceforge.plantuml.ugraphic.UTranslate;
 class Fork extends WBSTextBlock {
 
 	private final TextBlock main;
-	private final List<ITF> right = new ArrayList<ITF>();
+	private final List<ITF> right = new ArrayList<>();
 
 	public Fork(ISkinParam skinParam, WElement idea) {
 		super(idea.withBackColor(skinParam), idea.getStyleBuilder(), idea.getLevel());
@@ -54,7 +54,7 @@ class Fork extends WBSTextBlock {
 		}
 		this.main = buildMain(idea);
 		for (WElement child : idea.getChildren(Direction.RIGHT)) {
-			this.right.add(ITFComposed.build2(child.withBackColor(skinParam), child));
+			this.right.add(ITFComposed.build2(skinParam, child));
 		}
 	}
 

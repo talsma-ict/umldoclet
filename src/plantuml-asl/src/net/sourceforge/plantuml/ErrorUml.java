@@ -30,6 +30,8 @@
  */
 package net.sourceforge.plantuml;
 
+import java.util.Objects;
+
 public class ErrorUml {
 
 	private final String error;
@@ -38,12 +40,9 @@ public class ErrorUml {
 	private final int score;
 
 	public ErrorUml(ErrorUmlType type, String error, int score, LineLocation lineLocation) {
-		if (error == null || type == null) {
-			throw new IllegalArgumentException();
-		}
 		this.score = score;
-		this.error = error;
-		this.type = type;
+		this.error = Objects.requireNonNull(error);
+		this.type = Objects.requireNonNull(type);
 		this.lineLocation = lineLocation;
 	}
 

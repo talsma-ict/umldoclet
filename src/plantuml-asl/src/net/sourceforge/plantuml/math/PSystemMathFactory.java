@@ -32,6 +32,7 @@ package net.sourceforge.plantuml.math;
 
 import net.sourceforge.plantuml.command.PSystemBasicFactory;
 import net.sourceforge.plantuml.core.DiagramType;
+import net.sourceforge.plantuml.core.UmlSource;
 
 public class PSystemMathFactory extends PSystemBasicFactory<PSystemMath> {
 
@@ -39,16 +40,17 @@ public class PSystemMathFactory extends PSystemBasicFactory<PSystemMath> {
 		super(type);
 	}
 
-	public PSystemMath init(String startLine) {
+	@Override
+	public PSystemMath initDiagram(UmlSource source, String startLine) {
 		if (getDiagramType() == DiagramType.MATH) {
-			return new PSystemMath();
+			return new PSystemMath(source);
 		}
 
 		return null;
 	}
 
 	@Override
-	public PSystemMath executeLine(PSystemMath system, String line) {
+	public PSystemMath executeLine(UmlSource source, PSystemMath system, String line) {
 		system.doCommandLine(line);
 		return system;
 	}

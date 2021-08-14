@@ -47,9 +47,15 @@ public class StyleBuilder implements AutomaticCounter {
 	private final SkinParam skinParam;
 	private int counter;
 
+	public void printMe() {
+		for (Entry<StyleSignature, Style> ent : styles.entrySet()) {
+			ent.getValue().printMe();
+		}
+	}
+
 	private StyleBuilder(SkinParam skinParam, Set<StyleSignature> printedForLog) {
 		this.skinParam = skinParam;
-		this.printedForLog = new LinkedHashSet<StyleSignature>();
+		this.printedForLog = new LinkedHashSet<>();
 	}
 
 	public StyleBuilder(SkinParam skinParam) {

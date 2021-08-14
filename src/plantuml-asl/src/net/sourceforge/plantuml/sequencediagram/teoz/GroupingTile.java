@@ -39,6 +39,7 @@ import java.util.List;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.graphic.UDrawable;
 import net.sourceforge.plantuml.real.Real;
 import net.sourceforge.plantuml.real.RealUtils;
 import net.sourceforge.plantuml.sequencediagram.Event;
@@ -61,7 +62,7 @@ public class GroupingTile extends AbstractTile {
 	private static final int MARGINX = 16;
 	// private static final int MARGINY = 10;
 	private static final int MARGINY_MAGIC = 20;
-	private List<Tile> tiles = new ArrayList<Tile>();
+	private List<Tile> tiles = new ArrayList<>();
 	private final Real min;
 	private final Real max;
 	private final GroupingStart start;
@@ -94,10 +95,10 @@ public class GroupingTile extends AbstractTile {
 		// this.skinParam = tileArgumentsOriginal.getSkinParam();
 		this.skinParam = tileArgumentsBackColorChanged.getSkinParam();
 
-		final List<Real> min2 = new ArrayList<Real>();
-		final List<Real> max2 = new ArrayList<Real>();
+		final List<Real> min2 = new ArrayList<>();
+		final List<Real> max2 = new ArrayList<>();
 
-		final List<Tile> allElses = new ArrayList<Tile>();
+		final List<Tile> allElses = new ArrayList<>();
 		final Dimension2D dim1 = getPreferredDimensionIfEmpty(stringBounder);
 
 		while (it.hasNext()) {
@@ -158,7 +159,7 @@ public class GroupingTile extends AbstractTile {
 
 		double h = dim1.getHeight() + MARGINY_MAGIC / 2;
 		for (Tile tile : tiles) {
-			tile.drawU(ug.apply(UTranslate.dy(h)));
+			((UDrawable) tile).drawU(ug.apply(UTranslate.dy(h)));
 			final double preferredHeight = tile.getPreferredHeight();
 			h += preferredHeight;
 		}
@@ -173,11 +174,11 @@ public class GroupingTile extends AbstractTile {
 		final StringBounder stringBounder = ug.getStringBounder();
 		final double totalHeight = getTotalHeight(stringBounder);
 
-		final List<Double> ys = new ArrayList<Double>();
+		final List<Double> ys = new ArrayList<>();
 		for (Tile tile : tiles) {
 			if (tile instanceof ElseTile) {
 				final ElseTile elseTile = (ElseTile) tile;
-				ys.add(elseTile.getCallbackY() - y + MARGINY_MAGIC / 2);
+				ys.add(elseTile.getY() - getY() + MARGINY_MAGIC / 2);
 			}
 		}
 		ys.add(totalHeight);
@@ -212,23 +213,16 @@ public class GroupingTile extends AbstractTile {
 		return max.addFixed(EXTERNAL_MARGINX2);
 	}
 
-	private double y;
-
-	@Override
-	public void callbackY_internal(double y) {
-		this.y = y;
-	}
-
 	public static double fillPositionelTiles(StringBounder stringBounder, double y, List<Tile> tiles,
-			final List<YPositionedTile> local, List<YPositionedTile> full) {
+			final List<CommonTile> local, List<CommonTile> full) {
 		for (Tile tile : mergeParallel(stringBounder, tiles)) {
-			final YPositionedTile ytile = new YPositionedTile(tile, y);
-			local.add(ytile);
-			full.add(ytile);
+			tile.callbackY(y);
+			local.add((CommonTile) tile);
+			full.add((CommonTile) tile);
 			if (tile instanceof GroupingTile) {
 				final GroupingTile groupingTile = (GroupingTile) tile;
 				final double headerHeight = groupingTile.getHeaderHeight(stringBounder);
-				final ArrayList<YPositionedTile> local2 = new ArrayList<YPositionedTile>();
+				final ArrayList<CommonTile> local2 = new ArrayList<>();
 				fillPositionelTiles(stringBounder, y + headerHeight, groupingTile.tiles, local2, full);
 			}
 			y += tile.getPreferredHeight();
@@ -244,7 +238,7 @@ public class GroupingTile extends AbstractTile {
 	private static List<Tile> mergeParallel(StringBounder stringBounder, List<Tile> tiles) {
 		TileParallel pending = null;
 		tiles = removeEmptyCloseToParallel(tiles);
-		final List<Tile> result = new ArrayList<Tile>();
+		final List<Tile> result = new ArrayList<>();
 		for (Tile tile : tiles) {
 			if (isParallel(tile)) {
 				if (pending == null) {
@@ -271,7 +265,7 @@ public class GroupingTile extends AbstractTile {
 	}
 
 	private static List<Tile> removeEmptyCloseToParallel(List<Tile> tiles) {
-		final List<Tile> result = new ArrayList<Tile>();
+		final List<Tile> result = new ArrayList<>();
 		for (Tile tile : tiles) {
 			if (isParallel(tile)) {
 				removeHeadEmpty(result);
@@ -298,7 +292,7 @@ public class GroupingTile extends AbstractTile {
 				((GroupingTile) tile).addYNewPages(yNewPages);
 			}
 			if (tile instanceof NewpageTile) {
-				final double y = ((NewpageTile) tile).getCallbackY();
+				final double y = ((NewpageTile) tile).getY();
 				yNewPages.add(y);
 			}
 		}

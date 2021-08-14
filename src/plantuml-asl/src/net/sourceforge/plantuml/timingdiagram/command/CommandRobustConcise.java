@@ -61,7 +61,7 @@ public class CommandRobustConcise extends SingleLineCommand2<TimingDiagram> {
 								RegexLeaf.spaceOneOrMore(), //
 								new RegexLeaf("as"), //
 								RegexLeaf.spaceOneOrMore())), //
-				new RegexLeaf("CODE", "([\\p{L}0-9_.@]+)"), //
+				new RegexLeaf("CODE", "([%pLN_.@]+)"), //
 				RegexLeaf.end());
 	}
 

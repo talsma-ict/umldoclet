@@ -69,7 +69,7 @@ public abstract class AbstractMessage implements EventWithDeactivate, WithStyle 
 	private boolean parallel = false;
 	private final StyleBuilder styleBuilder;
 
-	private List<Note> noteOnMessages = new ArrayList<Note>();
+	private List<Note> noteOnMessages = new ArrayList<>();
 
 	public AbstractMessage(StyleBuilder styleBuilder, Display label, ArrowConfiguration arrowConfiguration,
 			String messageNumber) {
@@ -116,7 +116,7 @@ public abstract class AbstractMessage implements EventWithDeactivate, WithStyle 
 	}
 
 	private boolean firstIsActivate = false;
-	private final Set<Participant> noActivationAuthorized2 = new HashSet<Participant>();
+	private final Set<Participant> noActivationAuthorized2 = new HashSet<>();
 
 	public final boolean addLifeEvent(LifeEvent lifeEvent) {
 		lifeEvent.setMessage(this);
@@ -188,11 +188,11 @@ public abstract class AbstractMessage implements EventWithDeactivate, WithStyle 
 				&& note.getPosition() != NotePosition.BOTTOM && note.getPosition() != NotePosition.TOP) {
 			throw new IllegalArgumentException();
 		}
-		note = note.withPosition(overideNotePosition(note.getPosition()));
+		note = note.withPosition(overrideNotePosition(note.getPosition()));
 		this.noteOnMessages.add(note);
 	}
 
-	protected NotePosition overideNotePosition(NotePosition notePosition) {
+	protected NotePosition overrideNotePosition(NotePosition notePosition) {
 		return notePosition;
 	}
 

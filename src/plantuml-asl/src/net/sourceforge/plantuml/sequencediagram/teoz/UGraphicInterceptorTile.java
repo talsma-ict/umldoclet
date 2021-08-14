@@ -30,6 +30,7 @@
  */
 package net.sourceforge.plantuml.sequencediagram.teoz;
 
+import net.sourceforge.plantuml.graphic.UDrawable;
 import net.sourceforge.plantuml.graphic.UGraphicDelegator;
 import net.sourceforge.plantuml.skin.Context2D;
 import net.sourceforge.plantuml.ugraphic.UChange;
@@ -47,7 +48,7 @@ public class UGraphicInterceptorTile extends UGraphicDelegator implements Contex
 
 	public void draw(UShape shape) {
 		if (shape instanceof Tile) {
-			final Tile drawable = (Tile) shape;
+			final UDrawable drawable = (UDrawable) shape;
 			drawable.drawU(this);
 		} else {
 			getUg().draw(shape);

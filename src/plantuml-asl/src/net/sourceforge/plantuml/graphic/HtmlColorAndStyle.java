@@ -30,6 +30,8 @@
  */
 package net.sourceforge.plantuml.graphic;
 
+import java.util.Objects;
+
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.cucadiagram.LinkStyle;
@@ -57,10 +59,7 @@ public class HtmlColorAndStyle {
 	}
 
 	public HtmlColorAndStyle(HColor arrowColor, LinkStyle style, HColor arrowHeadColor) {
-		if (arrowColor == null) {
-			throw new IllegalArgumentException();
-		}
-		this.arrowColor = arrowColor;
+		this.arrowColor = Objects.requireNonNull(arrowColor);
 		this.arrowHeadColor = arrowHeadColor == null ? arrowColor : arrowHeadColor;
 		this.style = style;
 	}
@@ -86,7 +85,7 @@ public class HtmlColorAndStyle {
 		HColor arrowHeadColor = null;
 		if (UseStyle.useBetaStyle()) {
 			final Style style = getDefaultStyleDefinitionArrow().getMergedStyle(skinParam.getCurrentStyleBuilder());
-			arrowColor = style.value(PName.LineColor).asColor(skinParam.getIHtmlColorSet());
+			arrowColor = style.value(PName.LineColor).asColor(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet());
 		} else {
 			arrowColor = Rainbow.build(skinParam).getColors().get(0).arrowColor;
 			arrowColor = Rainbow.build(skinParam).getColors().get(0).arrowHeadColor;
@@ -99,7 +98,7 @@ public class HtmlColorAndStyle {
 				style = tmpStyle;
 				continue;
 			}
-			final HColor tmpColor = s == null ? null : set.getColor(s);
+			final HColor tmpColor = s == null ? null : set.getColor(skinParam.getThemeStyle(), s);
 			if (tmpColor != null) {
 				arrowColor = tmpColor;
 			}

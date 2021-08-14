@@ -35,10 +35,12 @@ import java.awt.geom.Point2D;
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.UseStyle;
-import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileBox;
+import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileBoxOld;
+import net.sourceforge.plantuml.creole.CreoleMode;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
 import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.mindmap.IdeaShape;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
@@ -64,8 +66,8 @@ abstract class WBSTextBlock extends AbstractTextBlock {
 	final protected void drawLine(UGraphic ug, Point2D p1, Point2D p2) {
 		final ULine line = new ULine(p1, p2);
 		if (UseStyle.useBetaStyle()) {
-			getStyleUsed().applyStrokeAndLineColor(ug.apply(new UTranslate(p1)), skinParam.getIHtmlColorSet())
-					.draw(line);
+			getStyleUsed().applyStrokeAndLineColor(ug.apply(new UTranslate(p1)), skinParam.getIHtmlColorSet(),
+					skinParam.getThemeStyle()).draw(line);
 		} else {
 			final HColor color = ColorParam.activityBorder.getDefaultValue();
 			ug.apply(new UTranslate(p1)).apply(color).draw(line);
@@ -88,10 +90,12 @@ abstract class WBSTextBlock extends AbstractTextBlock {
 		final Display label = idea.getLabel();
 		final Style style = idea.getStyle();
 		if (idea.getShape() == IdeaShape.BOX) {
-			final FtileBox box = FtileBox.createWbs(style, idea.withBackColor(skinParam), label);
-			return box;
+			return FtileBoxOld.createWbs(style, idea.withBackColor(skinParam), label);
 		}
-		throw new UnsupportedOperationException();
+		final TextBlock text = label.create0(
+				style.getFontConfiguration(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet()),
+				style.getHorizontalAlignment(), skinParam, style.wrapWidth(), CreoleMode.FULL, null, null);
+		return TextBlockUtils.withMargin(text, 0, 3, 1, 1);
 	}
 
 }
