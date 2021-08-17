@@ -67,6 +67,12 @@ final class PackageDiagramInserter extends DiagramFile {
                     inserted = true;
                     return line.substring(0, idx) + getImageTag() + System.lineSeparator() + line.substring(idx);
                 }
+                idx = line.indexOf("<section class=\"summary\">");
+                if (idx >= 0) {
+                    inserted = true;
+                    idx = line.indexOf('>', idx) + 1;
+                    return line.substring(0, idx) + System.lineSeparator() + getImageTag() + System.lineSeparator() + line.substring(idx);
+                }
             }
             return line;
         }
