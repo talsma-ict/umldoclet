@@ -14,10 +14,10 @@
     <toolchain>
         <type>jdk</type>
         <provides>
-            <version>9</version>
+            <version>15</version>
         </provides>
         <configuration>
-            <jdkHome>${env.JAVA_9_HOME}</jdkHome>
+            <jdkHome>${env.JAVA_15_HOME}</jdkHome>
         </configuration>
     </toolchain>
     <toolchain>
