@@ -212,7 +212,7 @@
                             <jdkToolchain>
                                 <version>16</version>
                             </jdkToolchain>
-                            <release>16</release>
+                            <release>9</release>
                         </configuration>
                     </execution>
                     <execution>
@@ -225,7 +225,7 @@
                             <jdkToolchain>
                                 <version>16</version>
                             </jdkToolchain>
-                            <release>16</release>
+                            <release>9</release>
                         </configuration>
                     </execution>
                 </executions>
