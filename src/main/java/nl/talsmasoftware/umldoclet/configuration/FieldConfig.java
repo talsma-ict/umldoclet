@@ -22,8 +22,22 @@ package nl.talsmasoftware.umldoclet.configuration;
  */
 public interface FieldConfig {
 
+    /**
+     * How to display the type of the field in the UML diagram (if {@link #include(Visibility) included}).
+     * Possible values how to display field types are summarized in the {@link TypeDisplay} description.
+     *
+     * @return the configured way of displaying the types for fields in the UML diagram.
+     */
     TypeDisplay typeDisplay();
 
+    /**
+     * Return whether to include fields with the specified {@link Visibility} into
+     * the UML diagram.
+     *
+     * @param fieldVisibility The disibility of the field evaluated for inclusion in the UML diagram.
+     * @return {@code true} if fields with the requested visibility should be included in the UML diagram
+     * or {@code false} otherwise.
+     */
     boolean include(Visibility fieldVisibility);
 
 }
