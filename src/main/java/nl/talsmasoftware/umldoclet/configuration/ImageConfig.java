@@ -28,7 +28,36 @@ public interface ImageConfig {
      * Supported image formats.
      */
     enum Format {
-        SVG, PNG, EPS
+        /**
+         * Value to indicate UML diagrams must be rendered as SVG
+         * (<a href="https://wikipedia.org/wiki/Scalable_Vector_Graphics">scalable vector graphics</a>) images.
+         * <p>
+         * This format is the default and recommended format, as they have the following advantages over the other
+         * formats:
+         * <ul>
+         * <li>Size. UML diagrams can be represented as compact SVG images.
+         * <li>Scalability. SVG images can be scaled almost without limits.
+         * <li>Links. SVG images allow us to embed links in the UML diagrams.
+         * </ul>
+         */
+        SVG,
+
+        /**
+         * Value to indicate UML diagrams must be rendered as PNG
+         * (<a href="https://wikipedia.org/wiki/Portable_Network_Graphics">Portable Network Graphics</a>) images.
+         * <p>
+         * This is a raster-graphics format that supports lossless compression. This format is usually only used if
+         * {@link #SVG} is not an option.
+         */
+        PNG,
+
+        /**
+         * Value to indicate UML diagrams must be rendered as EPS
+         * (<a href="https://wikipedia.org/wiki/Encapsulated_PostScript">Encapsulated Postscript</a>) images.
+         * <p>
+         * This format is most appropriate for print.
+         */
+        EPS
     }
 
     /**
