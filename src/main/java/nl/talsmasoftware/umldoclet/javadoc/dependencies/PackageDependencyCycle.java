@@ -34,11 +34,22 @@ import static java.util.stream.Collectors.joining;
  * initial package. For example if you have three packages {@code a}, {@code b} and {@code c} and the following
  * dependencies: {@code a -> b}, {@code b -> c}, they will form a cycle if you somehow create a dependency back to
  * {@code a}, e.g. {@code b -> a} or {@code c -> a}.
+ *
+ * @author Sjoerd Talsma
  */
 public class PackageDependencyCycle extends AbstractList<PackageDependency> implements RandomAccess {
 
     private final PackageDependency[] cycle;
 
+    /**
+     * Create a new dependency cycle object.
+     *
+     * <p>
+     * This constructor validates that the specified package dependencies actually form a cycle and will throw
+     * an {@link IllegalArgumentException} if they do not form an actual cycle.
+     *
+     * @param dependencies The package dependencies that form a cycle.
+     */
     public PackageDependencyCycle(PackageDependency... dependencies) {
         if (dependencies.length < 1) {
             throw new IllegalArgumentException("A dependency cycle may not be empty.");
@@ -54,12 +65,22 @@ public class PackageDependencyCycle extends AbstractList<PackageDependency> impl
         }
     }
 
+    /**
+     * Detect cycles in a collection of dependencies.
+     *
+     * <p>
+     * First the collection of dependencies is converted to a list of dependency <em>chains</em>.
+     * Next, the dependency chains are selected from all chains and returned as a new set.
+     *
+     * @param dependencies The package dependencies to detect dependency cycles from.
+     * @return A set with all found dependency cycles.
+     */
     public static Set<PackageDependencyCycle> detectCycles(Iterable<PackageDependency> dependencies) {
         List<PackageDependency[]> chains = new LinkedList<>();
         for (PackageDependency dependency : dependencies) {
             List<PackageDependency[]> newChains = new ArrayList<>();
             for (PackageDependency[] chain : chains) {
-                if (dependency.fromPackage.equals(last(chain))) {
+                if (dependency.fromPackage.equals(lastPackageName(chain))) {
                     PackageDependency[] longerChain = growChain(chain, dependency);
                     if (longerChain != null) newChains.add(longerChain);
                 }
@@ -70,14 +91,14 @@ public class PackageDependencyCycle extends AbstractList<PackageDependency> impl
         Set<PackageDependencyCycle> cycles = new LinkedHashSet<>();
         for (Iterator<PackageDependency[]> it = chains.iterator(); it.hasNext(); it.remove()) {
             PackageDependency[] chain = it.next();
-            if (chain.length > 1 && chain[0].fromPackage.equals(last(chain))) {
+            if (chain.length > 1 && chain[0].fromPackage.equals(lastPackageName(chain))) {
                 cycles.add(new PackageDependencyCycle(chain));
             }
         }
         return cycles;
     }
 
-    private static String last(PackageDependency[] chain) {
+    private static String lastPackageName(PackageDependency[] chain) {
         return chain.length == 0 ? null : chain[chain.length - 1].toPackage;
     }
 
