@@ -45,6 +45,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -351,6 +352,10 @@ public class SFile implements Comparable<SFile> {
 
 	public PrintStream createPrintStream(String charset) throws FileNotFoundException, UnsupportedEncodingException {
 		return new PrintStream(internal, charset);
+	}
+
+	public PrintStream createPrintStream(Charset charset) throws FileNotFoundException, UnsupportedEncodingException {
+		return new PrintStream(internal, charset.name());
 	}
 
 }

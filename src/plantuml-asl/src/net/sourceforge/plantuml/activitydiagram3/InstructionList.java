@@ -36,14 +36,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileDecorateWelding;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileEmpty;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactory;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
 import net.sourceforge.plantuml.activitydiagram3.ftile.WeldingPoint;
+import net.sourceforge.plantuml.activitydiagram3.gtile.Gtile;
+import net.sourceforge.plantuml.activitydiagram3.gtile.GtileAssembly;
+import net.sourceforge.plantuml.activitydiagram3.gtile.GtileEmpty;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.cucadiagram.Display;
+import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
 import net.sourceforge.plantuml.sequencediagram.NoteType;
@@ -53,6 +58,7 @@ public class InstructionList extends WithNote implements Instruction, Instructio
 	private final List<Instruction> all = new ArrayList<>();
 	private final Swimlane defaultSwimlane;
 
+	@Override
 	public boolean containsBreak() {
 		for (Instruction ins : all) {
 			if (ins.containsBreak()) {
@@ -84,11 +90,31 @@ public class InstructionList extends WithNote implements Instruction, Instructio
 		this.defaultSwimlane = defaultSwimlane;
 	}
 
+	@Override
 	public CommandExecutionResult add(Instruction ins) {
 		all.add(ins);
 		return CommandExecutionResult.ok();
 	}
 
+	@Override
+	public Gtile createGtile(ISkinParam skinParam, StringBounder stringBounder) {
+		if (all.size() == 0) {
+			return new GtileEmpty(stringBounder, skinParam, defaultSwimlane);
+		}
+		Gtile result = null;
+		for (Instruction ins : all) {
+			final Gtile cur = ins.createGtile(skinParam, stringBounder);
+
+			if (result == null) {
+				result = cur;
+			} else {
+				result = new GtileAssembly(result, cur, ins.getInLinkRendering());
+			}
+		}
+		return result;
+	}
+
+	@Override
 	public Ftile createFtile(FtileFactory factory) {
 		if (all.size() == 0) {
 			return new FtileEmpty(factory.skinParam(), defaultSwimlane);
@@ -121,6 +147,7 @@ public class InstructionList extends WithNote implements Instruction, Instructio
 		return result;
 	}
 
+	@Override
 	final public boolean kill() {
 		if (all.size() == 0) {
 			return false;
@@ -128,10 +155,12 @@ public class InstructionList extends WithNote implements Instruction, Instructio
 		return getLast().kill();
 	}
 
+	@Override
 	public LinkRendering getInLinkRendering() {
 		return all.iterator().next().getInLinkRendering();
 	}
 
+	@Override
 	public Instruction getLast() {
 		if (all.size() == 0) {
 			return null;
@@ -139,6 +168,7 @@ public class InstructionList extends WithNote implements Instruction, Instructio
 		return all.get(all.size() - 1);
 	}
 
+	@Override
 	public boolean addNote(Display note, NotePosition position, NoteType type, Colors colors, Swimlane swimlaneNote) {
 		if (getLast() == null) {
 			return super.addNote(note, position, type, colors, swimlaneNote);
@@ -146,14 +176,17 @@ public class InstructionList extends WithNote implements Instruction, Instructio
 		return getLast().addNote(note, position, type, colors, swimlaneNote);
 	}
 
+	@Override
 	public Set<Swimlane> getSwimlanes() {
 		return getSwimlanes2(all);
 	}
 
+	@Override
 	public Swimlane getSwimlaneIn() {
 		return defaultSwimlane;
 	}
 
+	@Override
 	public Swimlane getSwimlaneOut() {
 		final Set<Swimlane> swimlanes = getSwimlanes();
 		if (swimlanes.size() == 0) {

@@ -43,6 +43,4 @@ public interface UParam {
 	public boolean isHidden();
 
 	public UPattern getPattern();
-	
-	public double getScale();
 }

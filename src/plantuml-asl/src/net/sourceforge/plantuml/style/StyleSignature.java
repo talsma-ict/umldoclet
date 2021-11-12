@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.sourceforge.plantuml.Url;
+import net.sourceforge.plantuml.cucadiagram.Stereostyles;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 
 public class StyleSignature {
@@ -148,7 +149,7 @@ public class StyleSignature {
 		return new StyleSignature(result);
 	}
 
-	public StyleSignature withStereotype(Stereotype stereotype) {
+	public StyleSignature forStereotypeItself(Stereotype stereotype) {
 		final List<String> result = new ArrayList<>(names);
 		if (stereotype != null) {
 			for (String name : stereotype.getStyleNames()) {
@@ -165,6 +166,16 @@ public class StyleSignature {
 			for (String name : stereotype.getStyleNames()) {
 				result.add(clean(name));
 			}
+		}
+		return new StyleSignature(result);
+	}
+
+	public StyleSignature with(Stereostyles stereostyles) {
+		if (stereostyles.isEmpty())
+			return this;
+		final List<String> result = new ArrayList<>(names);
+		for (String name : stereostyles.getStyleNames()) {
+			result.add(clean(name));
 		}
 		return new StyleSignature(result);
 	}

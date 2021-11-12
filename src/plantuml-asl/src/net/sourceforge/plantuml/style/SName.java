@@ -54,6 +54,7 @@ public enum SName {
 	collections, //
 	component, //
 	componentDiagram, //
+	constraintArrow, //
 	control, //
 	database, //
 	delay, //
@@ -69,9 +70,9 @@ public enum SName {
 	ganttDiagram, //
 	group, //
 	groupHeader, //
+	header, //
 	hexagon, //
 	highlight, //
-	header, //
 	interface_, //
 	jsonDiagram, //
 	gitDiagram, //
@@ -79,11 +80,15 @@ public enum SName {
 	leafNode, //
 	legend, //
 	lifeLine, //
+	map, //
 	milestone, //
 	mindmapDiagram, //
+	network, //
 	node, //
 	note, //
+	nwdiagDiagram, //
 	objectDiagram, //
+	object, //
 	package_, //
 	participant, //
 	partition, //
@@ -97,14 +102,18 @@ public enum SName {
 	saltDiagram, //
 	separator, //
 	sequenceDiagram, //
+	server, //
 	stack, //
 	stateDiagram, //
+	state, //
 	stereotype, //
 	storage, //
 	swimlane, //
 	task, //
 	timeline, //
+	timingDiagram, //
 	title, //
+	unstartedTask, //
 	usecase, //
 	wbsDiagram, //
 	yamlDiagram; //

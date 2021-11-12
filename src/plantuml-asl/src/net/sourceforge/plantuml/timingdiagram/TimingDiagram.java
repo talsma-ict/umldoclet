@@ -93,9 +93,7 @@ public class TimingDiagram extends UmlDiagram implements Clocks {
 	protected ImageData exportDiagramInternal(OutputStream os, int index, FileFormatOption fileFormatOption)
 			throws IOException {
 
-		return createImageBuilder(fileFormatOption)
-				.drawable(getTextBlock())
-				.write(os);
+		return createImageBuilder(fileFormatOption).drawable(getTextBlock()).write(os);
 	}
 
 	private TextBlockBackcolored getTextBlock() {
@@ -284,8 +282,10 @@ public class TimingDiagram extends UmlDiagram implements Clocks {
 		return CommandExecutionResult.ok();
 	}
 
-	public CommandExecutionResult createClock(String code, String full, int period, int pulse, boolean compact) {
-		final PlayerClock player = new PlayerClock(getSkinParam(), ruler, period, pulse, compactByDefault);
+	public CommandExecutionResult createClock(String code, String full, int period, int pulse, int offset,
+			boolean compact) {
+		final PlayerClock player = new PlayerClock(full, getSkinParam(), ruler, period, pulse, offset,
+				compactByDefault);
 		players.put(code, player);
 		clocks.put(code, player);
 		final TimeTick tick = new TimeTick(new BigDecimal(period), TimingFormat.DECIMAL);
@@ -307,7 +307,7 @@ public class TimingDiagram extends UmlDiagram implements Clocks {
 
 	public TimeMessage createTimeMessage(Player player1, TimeTick time1, Player player2, TimeTick time2, String label) {
 		final TimeMessage message = new TimeMessage(new TickInPlayer(player1, time1), new TickInPlayer(player2, time2),
-				label);
+				label, getSkinParam());
 		messages.add(message);
 		return message;
 	}

@@ -30,6 +30,8 @@
  */
 package net.sourceforge.plantuml.posimo;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.io.ByteArrayOutputStream;
@@ -100,7 +102,7 @@ public class GraphvizSolverB {
 			throw new IllegalStateException("Timeout2 " + state);
 		}
 		final byte[] result = baos.toByteArray();
-		final String s = new String(result, "UTF-8");
+		final String s = new String(result, UTF_8);
 		// Log.println("result=" + s);
 
 		// if (OptionFlags.getInstance().isKeepTmpFiles()) {
@@ -217,11 +219,11 @@ public class GraphvizSolverB {
 
 	private void exportPng(final String dotString, SFile f) throws IOException {
 		final Graphviz graphviz = GraphvizUtils.create(null, dotString, "png");
-		final OutputStream os = f.createBufferedOutputStream();
-		final ProcessState state = graphviz.createFile3(os);
-		os.close();
-		if (state.differs(ProcessState.TERMINATED_OK())) {
-			throw new IllegalStateException("Timeout3 " + state);
+		try (OutputStream os = f.createBufferedOutputStream()) {
+			final ProcessState state = graphviz.createFile3(os);
+			if (state.differs(ProcessState.TERMINATED_OK())) {
+				throw new IllegalStateException("Timeout3 " + state);
+			}
 		}
 	}
 

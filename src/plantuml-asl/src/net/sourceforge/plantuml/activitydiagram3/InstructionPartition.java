@@ -41,7 +41,7 @@ import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
 import net.sourceforge.plantuml.sequencediagram.NoteType;
 
-public class InstructionPartition implements Instruction {
+public class InstructionPartition extends AbstractInstruction implements Instruction {
 
 	private final InstructionList list = new InstructionList();
 	private final Instruction parent;
@@ -49,7 +49,7 @@ public class InstructionPartition implements Instruction {
 	public InstructionPartition(Instruction parent, String partitionTitle) {
 		this.parent = parent;
 	}
-	
+
 	public Instruction getParent() {
 		return parent;
 	}

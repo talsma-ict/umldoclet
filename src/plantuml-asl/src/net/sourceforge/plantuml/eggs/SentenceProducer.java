@@ -30,6 +30,8 @@
  */
 package net.sourceforge.plantuml.eggs;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.UnsupportedEncodingException;
 
 public class SentenceProducer {
@@ -38,7 +40,7 @@ public class SentenceProducer {
 
 	public SentenceProducer(String sentence1, String sentence2) throws UnsupportedEncodingException {
 		final byte[] key = EggUtils.fromSecretSentence(sentence1).toByteArray();
-		final byte[] sen2 = sentence2.getBytes("UTF-8");
+		final byte[] sen2 = sentence2.getBytes(UTF_8);
 		final byte[] crypted = EggUtils.xor(sen2, key);
 		this.secret = EggUtils.fromByteArrays(crypted);
 	}

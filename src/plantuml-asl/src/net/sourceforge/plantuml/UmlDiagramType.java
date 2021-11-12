@@ -76,6 +76,12 @@ public enum UmlDiagramType {
 		if (this == JSON) {
 			return SName.jsonDiagram;
 		}
+		if (this == TIMING) {
+			return SName.timingDiagram;
+		}
+		if (this == NWDIAG) {
+			return SName.nwdiagDiagram;
+		}
 		return SName.activityDiagram;
 	}
 }

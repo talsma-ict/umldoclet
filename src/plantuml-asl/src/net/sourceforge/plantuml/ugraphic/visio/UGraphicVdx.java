@@ -33,7 +33,6 @@ package net.sourceforge.plantuml.ugraphic.visio;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.creole.legacy.AtomText;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.posimo.DotPath;
@@ -42,7 +41,6 @@ import net.sourceforge.plantuml.ugraphic.AbstractUGraphic;
 import net.sourceforge.plantuml.ugraphic.ClipContainer;
 import net.sourceforge.plantuml.ugraphic.UCenteredCharacter;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
-import net.sourceforge.plantuml.ugraphic.UGraphic2;
 import net.sourceforge.plantuml.ugraphic.UImage;
 import net.sourceforge.plantuml.ugraphic.UImageSvg;
 import net.sourceforge.plantuml.ugraphic.ULine;
@@ -53,24 +51,15 @@ import net.sourceforge.plantuml.ugraphic.UText;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 
-public class UGraphicVdx extends AbstractUGraphic<VisioGraphics> implements ClipContainer, UGraphic2 {
-
-	private final StringBounder stringBounder;
+public class UGraphicVdx extends AbstractUGraphic<VisioGraphics> implements ClipContainer {
 
 	public double dpiFactor() {
 		return 1;
 	}
 
-	private UGraphicVdx(HColor defaultBackground, ColorMapper colorMapper, VisioGraphics visio) {
-		super(defaultBackground, colorMapper, visio);
-		this.stringBounder = FileFormat.PNG.getDefaultStringBounder();
+	public UGraphicVdx(HColor defaultBackground, ColorMapper colorMapper, StringBounder stringBounder) {
+		super(defaultBackground, colorMapper, stringBounder, new VisioGraphics());
 		register();
-
-	}
-
-	public UGraphicVdx(HColor defaultBackground, ColorMapper colorMapper) {
-		this(defaultBackground, colorMapper, new VisioGraphics());
-
 	}
 
 	@Override
@@ -80,33 +69,25 @@ public class UGraphicVdx extends AbstractUGraphic<VisioGraphics> implements Clip
 
 	private UGraphicVdx(UGraphicVdx other) {
 		super(other);
-		this.stringBounder = other.stringBounder;
 		register();
 	}
 
 	private void register() {
 		registerDriver(URectangle.class, new DriverRectangleVdx());
-		registerDriver(UText.class, new DriverTextVdx(stringBounder));
-		registerDriver(AtomText.class, new DriverNoneVdx());
+		registerDriver(UText.class, new DriverTextVdx(getStringBounder()));
+		ignoreShape(AtomText.class);
 		registerDriver(ULine.class, new DriverLineVdx());
 		registerDriver(UPolygon.class, new DriverPolygonVdx());
-		registerDriver(UEllipse.class, new DriverNoneVdx());
-		registerDriver(UImage.class, new DriverNoneVdx());
-		registerDriver(UImageSvg.class, new DriverNoneVdx());
-		registerDriver(UPath.class, new DriverUPathVdx());
+		ignoreShape(UEllipse.class);
+		ignoreShape(UImage.class);
+		ignoreShape(UImageSvg.class);
+		registerDriver(UPath.class, new DriverPathVdx());
 		registerDriver(DotPath.class, new DriverDotPathVdx());
-		registerDriver(UCenteredCharacter.class, new DriverNoneVdx());
+		ignoreShape(UCenteredCharacter.class);
 	}
 
-	public StringBounder getStringBounder() {
-		return stringBounder;
-	}
-
-	public void writeImageTOBEMOVED(OutputStream os, String metadata, int dpi) throws IOException {
-		createVsd(os);
-	}
-
-	public void createVsd(OutputStream os) throws IOException {
+	@Override
+	public void writeToStream(OutputStream os, String metadata, int dpi) throws IOException {
 		getGraphicObject().createVsd(os);
 	}
 

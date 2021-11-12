@@ -62,6 +62,7 @@ import net.sourceforge.plantuml.cucadiagram.ILeaf;
 import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.Link;
+import net.sourceforge.plantuml.cucadiagram.Stereostyles;
 import net.sourceforge.plantuml.cucadiagram.Stereotag;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.cucadiagram.dot.Neighborhood;
@@ -94,6 +95,7 @@ final public class EntityImpl implements ILeaf, IGroup {
 
 	private LeafType leafType;
 	private Stereotype stereotype;
+	private Stereostyles stereostyles = Stereostyles.NONE;
 	private String generic;
 	private IGroup parentContainer;
 
@@ -151,7 +153,8 @@ final public class EntityImpl implements ILeaf, IGroup {
 
 	EntityImpl(Ident ident, Code code, EntityFactory entityFactory, Bodier bodier, IGroup parentContainer,
 			LeafType leafType, String namespaceSeparator, int rawLayout) {
-		this(Objects.requireNonNull(ident), entityFactory, code, bodier, parentContainer, namespaceSeparator, rawLayout);
+		this(Objects.requireNonNull(ident), entityFactory, code, bodier, parentContainer, namespaceSeparator,
+				rawLayout);
 		// System.err.println("ID for leaf=" + code + " " + ident);
 		// ident.checkSameAs(code, namespaceSeparator);
 		this.leafType = leafType;
@@ -159,7 +162,8 @@ final public class EntityImpl implements ILeaf, IGroup {
 
 	EntityImpl(Ident ident, Code code, EntityFactory entityFactory, Bodier bodier, IGroup parentContainer,
 			GroupType groupType, Code namespace, String namespaceSeparator, int rawLayout) {
-		this(Objects.requireNonNull(ident), entityFactory, code, bodier, parentContainer, namespaceSeparator, rawLayout);
+		this(Objects.requireNonNull(ident), entityFactory, code, bodier, parentContainer, namespaceSeparator,
+				rawLayout);
 		// System.err.println("ID for group=" + code + " " + ident);
 		ident.checkSameAs(code, namespaceSeparator, entityFactory.namespaceSeparator);
 		this.groupType = groupType;
@@ -626,7 +630,7 @@ final public class EntityImpl implements ILeaf, IGroup {
 			if (entityFactory.isRemoved(this)) {
 				return true;
 			}
-			if (getLeafsDirect().size() == 0) {
+			if (getLeafsDirect().size() == 0 && getChildren().size() == 0) {
 				return false;
 			}
 			for (ILeaf leaf : getLeafsDirect()) {
@@ -654,19 +658,6 @@ final public class EntityImpl implements ILeaf, IGroup {
 			}
 		}
 		return true;
-	}
-
-	private int layer;
-
-	public int getHectorLayer() {
-		return layer;
-	}
-
-	public void setHectorLayer(int layer) {
-		this.layer = layer;
-		if (layer > 1000) {
-			throw new IllegalArgumentException();
-		}
 	}
 
 	private FontParam getTitleFontParam() {
@@ -796,6 +787,16 @@ final public class EntityImpl implements ILeaf, IGroup {
 
 	public void setCodeLine(LineLocation codeLine) {
 		this.codeLine = codeLine;
+	}
+
+	@Override
+	public void setStereostyle(String stereo) {
+		this.stereostyles = Stereostyles.build(stereo);
+	}
+
+	@Override
+	public Stereostyles getStereostyles() {
+		return stereostyles;
 	}
 
 }

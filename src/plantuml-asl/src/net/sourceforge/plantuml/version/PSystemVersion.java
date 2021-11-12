@@ -43,14 +43,13 @@ import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.OptionPrint;
 import net.sourceforge.plantuml.PlainStringsDiagram;
 import net.sourceforge.plantuml.Run;
-import net.sourceforge.plantuml.StringLocated;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.cucadiagram.dot.GraphvizUtils;
 import net.sourceforge.plantuml.dedication.PSystemDedication;
 import net.sourceforge.plantuml.preproc.Stdlib;
 import net.sourceforge.plantuml.preproc2.PreprocessorUtils;
-import net.sourceforge.plantuml.security.ImageIO;
+import net.sourceforge.plantuml.security.SImageIO;
 import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.security.SecurityProfile;
 import net.sourceforge.plantuml.security.SecurityUtils;
@@ -113,7 +112,7 @@ public class PSystemVersion extends PlainStringsDiagram {
 	private static BufferedImage getImage(final String name) {
 		try {
 			final InputStream is = PSystemVersion.class.getResourceAsStream(name);
-			final BufferedImage image = ImageIO.read(is);
+			final BufferedImage image = SImageIO.read(is);
 			is.close();
 			return image;
 		} catch (IOException e) {
@@ -123,11 +122,8 @@ public class PSystemVersion extends PlainStringsDiagram {
 	}
 
 	private static BufferedImage getImageWebp(final String name) {
-		try {
-			final InputStream is = PSystemVersion.class.getResourceAsStream(name);
-			final BufferedImage image = PSystemDedication.getBufferedImage(is);
-			is.close();
-			return image;
+		try (InputStream is = PSystemVersion.class.getResourceAsStream(name)) {
+			return PSystemDedication.getBufferedImage(is);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -30,15 +30,13 @@
  */
 package net.sourceforge.plantuml.eggs;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import net.sourceforge.plantuml.PlainStringsDiagram;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.graphic.GraphicPosition;
-import net.sourceforge.plantuml.security.ImageIO;
+import net.sourceforge.plantuml.security.SImageIO;
 
 public class PSystemRIP extends PlainStringsDiagram {
 
@@ -55,10 +53,7 @@ public class PSystemRIP extends PlainStringsDiagram {
 		strings.add("         <b>Requiescat In Pace");
 		strings.add(" ");
 
-		final InputStream is = new ByteArrayInputStream(imm);
-		image = ImageIO.read(is);
-		is.close();
-
+		image = SImageIO.read(imm);
 		imagePosition = GraphicPosition.BOTTOM;
 	}
 

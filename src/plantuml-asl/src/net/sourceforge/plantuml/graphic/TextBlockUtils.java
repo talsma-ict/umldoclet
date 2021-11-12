@@ -30,10 +30,8 @@
  */
 package net.sourceforge.plantuml.graphic;
 
-import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.font.FontRenderContext;
-import java.awt.font.LineMetrics;
+import java.awt.font.TextLayout;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -57,6 +55,7 @@ import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UImage;
 import net.sourceforge.plantuml.ugraphic.UStroke;
+import net.sourceforge.plantuml.ugraphic.UText;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
@@ -195,6 +194,14 @@ public class TextBlockUtils {
 
 	public static FontRenderContext getFontRenderContext() {
 		return FileFormat.gg.getFontRenderContext();
+	}
+
+	public static TextLayout createTextLayout(UText shape) {
+		return createTextLayout(shape.getFontConfiguration().getFont(), shape.getText());
+	}
+
+	public static TextLayout createTextLayout(UFont font, String string) {
+		return new TextLayout(string, font.getUnderlayingFont(), getFontRenderContext());
 	}
 
 	public static TextBlock fullInnerPosition(final TextBlock bloc, final String display) {

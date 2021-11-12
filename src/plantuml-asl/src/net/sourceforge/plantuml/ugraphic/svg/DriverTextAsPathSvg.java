@@ -30,42 +30,33 @@
  */
 package net.sourceforge.plantuml.ugraphic.svg;
 
-import java.awt.font.FontRenderContext;
+import static net.sourceforge.plantuml.graphic.TextBlockUtils.createTextLayout;
+
 import java.awt.font.TextLayout;
 
-import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.svg.SvgGraphics;
 import net.sourceforge.plantuml.ugraphic.ClipContainer;
 import net.sourceforge.plantuml.ugraphic.UClip;
 import net.sourceforge.plantuml.ugraphic.UDriver;
-import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UParam;
-import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.UText;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 
-public class DriverTextAsPathSvg implements UDriver<SvgGraphics> {
+public class DriverTextAsPathSvg implements UDriver<UText, SvgGraphics> {
 
-	private final FontRenderContext fontRenderContext;
 	private final ClipContainer clipContainer;
 
-	public DriverTextAsPathSvg(FontRenderContext fontRenderContext, ClipContainer clipContainer) {
-		this.fontRenderContext = fontRenderContext;
+	public DriverTextAsPathSvg(ClipContainer clipContainer) {
 		this.clipContainer = clipContainer;
 	}
 
-	public void draw(UShape ushape, double x, double y, ColorMapper mapper, UParam param, SvgGraphics svg) {
-
+	public void draw(UText ushape, double x, double y, ColorMapper mapper, UParam param, SvgGraphics svg) {
 		final UClip clip = clipContainer.getClip();
 		if (clip != null && clip.isInside(x, y) == false) {
 			return;
 		}
 
-		final UText shape = (UText) ushape;
-		final FontConfiguration fontConfiguration = shape.getFontConfiguration();
-		final UFont font = fontConfiguration.getFont();
-
-		final TextLayout t = new TextLayout(shape.getText(), font.getUnderlayingFont(), fontRenderContext);
+		final TextLayout t = createTextLayout(ushape);
 		svg.drawPathIterator(x, y, t.getOutline(null).getPathIterator(null));
 	}
 

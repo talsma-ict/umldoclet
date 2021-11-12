@@ -30,22 +30,21 @@
  */
 package net.sourceforge.plantuml.ugraphic.eps;
 
+import static net.sourceforge.plantuml.graphic.TextBlockUtils.createTextLayout;
+
 import java.awt.font.TextLayout;
 
 import net.sourceforge.plantuml.eps.EpsGraphics;
-import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.UnusedSpace;
 import net.sourceforge.plantuml.ugraphic.UCenteredCharacter;
 import net.sourceforge.plantuml.ugraphic.UDriver;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UParam;
-import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 
-public class DriverCenteredCharacterEps implements UDriver<EpsGraphics> {
+public class DriverCenteredCharacterEps implements UDriver<UCenteredCharacter, EpsGraphics> {
 
-	public void draw(UShape ushape, double x, double y, ColorMapper mapper, UParam param, EpsGraphics eps) {
-		final UCenteredCharacter centeredCharacter = (UCenteredCharacter) ushape;
+	public void draw(UCenteredCharacter centeredCharacter, double x, double y, ColorMapper mapper, UParam param, EpsGraphics eps) {
 		final char c = centeredCharacter.getChar();
 		final UFont font = centeredCharacter.getFont();
 		final UnusedSpace unusedSpace = UnusedSpace.getUnusedSpace(font, c);
@@ -53,10 +52,9 @@ public class DriverCenteredCharacterEps implements UDriver<EpsGraphics> {
 		final double xpos = x - unusedSpace.getCenterX() - 0.5;
 		final double ypos = y - unusedSpace.getCenterY() - 0.5;
 
-		final TextLayout t = new TextLayout("" + c, font.getUnderlayingFont(), TextBlockUtils.getFontRenderContext());
+		final TextLayout t = createTextLayout(font, "" + c);
 		eps.setStrokeColor(mapper.toColor(param.getColor()));
 		DriverTextEps.drawPathIterator(eps, xpos, ypos, t.getOutline(null));
-
 	}
 
 }

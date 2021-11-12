@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.zip.ZipEntry;
@@ -62,7 +63,7 @@ public class FileWithSuffix {
 		return file.toString();
 	}
 
-	public Reader getReader(String charset) throws IOException {
+	public Reader getReader(Charset charset) throws IOException {
 		if (file == null) {
 			return null;
 		}
@@ -71,22 +72,12 @@ public class FileWithSuffix {
 			return null;
 		}
 		if (entry == null) {
-			if (charset == null) {
-				Log.info("Using default charset");
-				return new InputStreamReader(tmp);
-			}
-			Log.info("Using charset " + charset);
 			return new InputStreamReader(tmp, charset);
 		}
 		final InputStream is = getDataFromZip(tmp, entry);
 		if (is == null) {
 			return null;
 		}
-		if (charset == null) {
-			Log.info("Using default charset");
-			return new InputStreamReader(is);
-		}
-		Log.info("Using charset " + charset);
 		return new InputStreamReader(is, charset);
 	}
 

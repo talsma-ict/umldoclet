@@ -62,6 +62,7 @@ import net.sourceforge.plantuml.cucadiagram.LinkMiddleDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.cucadiagram.NoteLinkStrategy;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
+import net.sourceforge.plantuml.cucadiagram.dot.DotSplines;
 import net.sourceforge.plantuml.cucadiagram.dot.GraphvizVersion;
 import net.sourceforge.plantuml.descdiagram.command.StringWithArrow;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
@@ -333,7 +334,7 @@ public class SvekLine implements Moveable, Hideable, GuideLine {
 		return link.getLinkArrow();
 	}
 
-	public void appendLine(GraphvizVersion graphvizVersion, StringBuilder sb, DotMode dotMode) {
+	public void appendLine(GraphvizVersion graphvizVersion, StringBuilder sb, DotMode dotMode, DotSplines dotSplines) {
 		// Log.println("inverted=" + isInverted());
 		// if (isInverted()) {
 		// sb.append(endUid);
@@ -370,7 +371,8 @@ public class SvekLine implements Moveable, Hideable, GuideLine {
 		sb.append("color=\"" + DotStringFactory.sharp000000(lineColor) + "\"");
 		if (hasNoteLabelText() || link.getLinkConstraint() != null) {
 			sb.append(",");
-			if (graphvizVersion.useXLabelInsteadOfLabel() || dotMode == DotMode.NO_LEFT_RIGHT_AND_XLABEL) {
+			if (graphvizVersion.useXLabelInsteadOfLabel() || dotMode == DotMode.NO_LEFT_RIGHT_AND_XLABEL
+					|| dotSplines == DotSplines.ORTHO) {
 				sb.append("xlabel=<");
 			} else {
 				sb.append("label=<");

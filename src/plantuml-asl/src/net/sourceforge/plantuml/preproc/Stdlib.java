@@ -30,6 +30,8 @@
  */
 package net.sourceforge.plantuml.preproc;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -79,7 +81,7 @@ public class Stdlib {
 			if (data == null) {
 				return null;
 			}
-			return new ByteArrayInputStream(data.getBytes("UTF-8"));
+			return new ByteArrayInputStream(data.getBytes(UTF_8));
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;

@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import net.sourceforge.plantuml.graphic.SpecialText;
+import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 
@@ -42,10 +43,13 @@ public abstract class AbstractUGraphic<O> extends AbstractCommonUGraphic {
 
 	private final O graphic;
 
-	private final Map<Class<? extends UShape>, UDriver<O>> drivers = new HashMap<Class<? extends UShape>, UDriver<O>>();
+	// It would be nice to do something like this but not sure how:
+	//     Map<Class<SHAPE>, UDriver<SHAPE, O>>
+	// See https://stackoverflow.com/questions/416540/java-map-with-values-limited-by-keys-type-parameter
+	private final Map<Class<? extends UShape>, UDriver<?, O>> drivers = new HashMap<>();
 
-	public AbstractUGraphic(HColor defaultBackground, ColorMapper colorMapper, O graphic) {
-		super(Objects.requireNonNull(defaultBackground), colorMapper);
+	public AbstractUGraphic(HColor defaultBackground, ColorMapper colorMapper, StringBounder stringBounder, O graphic) {
+		super(Objects.requireNonNull(defaultBackground), colorMapper, stringBounder);
 		this.graphic = graphic;
 	}
 
@@ -63,11 +67,22 @@ public abstract class AbstractUGraphic<O> extends AbstractCommonUGraphic {
 		return true;
 	}
 
-	final protected void registerDriver(Class<? extends UShape> cl, UDriver<O> driver) {
+	final protected <SHAPE extends UShape> void registerDriver(Class<SHAPE> cl, UDriver<SHAPE, O> driver) {
 		this.drivers.put(cl, driver);
 	}
 
-	public final void draw(UShape shape) {
+	private static final UDriver<?,?> NOOP_DRIVER = new UDriver<UShape, Object>() {
+		@Override
+		public void draw(UShape shape, double x, double y, ColorMapper mapper, UParam param, Object object) {
+		}
+	};
+	
+	@SuppressWarnings("unchecked")
+	final protected <SHAPE extends UShape> void ignoreShape(Class<SHAPE> cl) {
+		registerDriver(cl, (UDriver<SHAPE, O>) NOOP_DRIVER);
+	}
+	
+	public final <SHAPE extends UShape> void draw(SHAPE shape) {
 		if (shape instanceof SpecialText) {
 			((SpecialText) shape).getTitle().drawU(this);
 			return;
@@ -79,7 +94,10 @@ public abstract class AbstractUGraphic<O> extends AbstractCommonUGraphic {
 			drawComment((UComment) shape);
 			return;
 		}
-		final UDriver<O> driver = drivers.get(shape.getClass());
+
+		@SuppressWarnings("unchecked")
+		final UDriver<SHAPE, O> driver = (UDriver<SHAPE, O>) drivers.get(shape.getClass());
+
 		if (driver == null) {
 			throw new UnsupportedOperationException(shape.getClass().toString() + " " + this.getClass());
 		}
@@ -87,13 +105,7 @@ public abstract class AbstractUGraphic<O> extends AbstractCommonUGraphic {
 			return;
 		}
 		beforeDraw();
-		if (shape instanceof Scalable) {
-			final double scale = getParam().getScale();
-			shape = ((Scalable) shape).getScaled(scale);
-			driver.draw(shape, getTranslateX(), getTranslateY(), getColorMapper(), getParam(), graphic);
-		} else {
-			driver.draw(shape, getTranslateX(), getTranslateY(), getColorMapper(), getParam(), graphic);
-		}
+		driver.draw(shape, getTranslateX(), getTranslateY(), getColorMapper(), getParam(), graphic);
 		afterDraw();
 	}
 

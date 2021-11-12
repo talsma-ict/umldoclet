@@ -15,88 +15,100 @@ root {
 
 document {
   BackGroundColor White
+  header {
+    HorizontalAlignment right
+    FontSize 10
+    FontColor #888888
+    BackGroundColor none
+    LineColor none
+  }
+  title {
+    HorizontalAlignment center
+    FontSize 14
+    FontStyle bold
+    Padding 5
+    Margin 5
+    LineColor none
+    BackGroundColor none
+  }
+  footer {
+    HorizontalAlignment center
+    FontSize 10
+    FontColor #888888
+    BackGroundColor none
+    LineColor none
+  }
+  legend {
+    LineColor black
+    BackGroundColor #DDDDDD
+    FontSize 14
+    RoundCorner 15
+    Padding 6
+    Margin 8
+  }
+  caption {
+    HorizontalAlignment center
+    FontSize 14
+    Padding 0
+    Margin 1
+    LineColor none
+    BackGroundColor none
+  }
 }
 
 stereotype {
   FontStyle italic
 }
 
-title {
-  HorizontalAlignment center
-  FontSize 14
-  FontStyle bold
-  Padding 5
-  Margin 5
-  LineColor none
-  BackGroundColor none
-}
-
-header {
-  HorizontalAlignment right
-  FontSize 10
-  FontColor #888888
-  BackGroundColor none
-  LineColor none
-}
-
-footer {
-  HorizontalAlignment center
-  FontSize 10
-  FontColor #888888
-  BackGroundColor none
-  LineColor none
-}
-
-legend {
-  LineColor black
-  BackGroundColor #DDDDDD
-  FontSize 14
-  RoundCorner 15
-  Padding 6
-  Margin 8
-}
-
-caption {
-  HorizontalAlignment center
-  FontSize 14
-  Padding 0
-  Margin 1
-  LineColor none
-  BackGroundColor none
-}
 
 
 element {
   Shadowing 4.0
+  title {
+    FontStyle bold
+  }
+}
+
+group {
+    BackGroundColor white
 }
 
 sequenceDiagram {
+  group {
+    LineColor black
+    LineThickness 2.0
+    FontSize 11
+    FontStyle bold
+  }
+
+  groupHeader {
+    BackGroundColor #EEEEEE
+    LineColor black
+    FontSize 13
+    FontStyle bold
+  }
+
+  lifeLine {
+    BackGroundColor white
+  }
+
 }
 
 classDiagram {
 }
 
 
-group {
-  BackGroundColor white
-  LineColor black
-  LineThickness 2.0
-  FontSize 11
-  
-  FontStyle bold
+stateDiagram {
+  state {
+    RoundCorner 25
+  }
+  element {
+	title {
+	  FontStyle plain
+	}
+  }
 }
 
-groupHeader {
-  BackGroundColor #EEEEEE
-  LineColor black
-
-  FontSize 13
-  FontStyle bold
-}
-
-lifeLine {
-  BackGroundColor white
-}
 
 destroy {
 }
@@ -348,3 +360,28 @@ jsonDiagram {
 }
 
 
+timingDiagram {
+	arrow {
+	    LineThickness 1.5
+	}
+	constraintArrow {
+	    LineThickness 1.5
+	}
+}
+
+nwdiagDiagram {
+	network {
+		FontSize 12
+		Shadowing 1.0
+	}
+	server {
+		FontSize 12
+	}
+	group {
+		FontSize 12
+		BackGroundColor #ddd
+	}
+	arrow {
+		FontSize 11
+	}
+}

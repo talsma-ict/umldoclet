@@ -53,10 +53,4 @@ public class UParamNull implements UParam {
 	public UPattern getPattern() {
 		return UPattern.FULL;
 	}
-
-	public double getScale() {
-		return 1;
-	}
-
-
 }

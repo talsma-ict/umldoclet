@@ -30,6 +30,8 @@
  */
 package net.sourceforge.plantuml.svek;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.awt.geom.Point2D;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -76,6 +78,7 @@ public class DotStringFactory implements Moveable {
 	private final UmlDiagramType umlDiagramType;
 	private final ISkinParam skinParam;
 	private final DotMode dotMode;
+	private DotSplines dotSplines;
 
 	private final StringBounder stringBounder;
 
@@ -185,12 +188,13 @@ public class DotStringFactory implements Moveable {
 		// SvekUtils.println(sb);
 		// }
 
-		final DotSplines dotSplines = skinParam.getDotSplines();
+		dotSplines = skinParam.getDotSplines();
 		if (dotSplines == DotSplines.POLYLINE) {
 			sb.append("splines=polyline;");
 			SvekUtils.println(sb);
 		} else if (dotSplines == DotSplines.ORTHO) {
 			sb.append("splines=ortho;");
+			sb.append("forcelabels=true;");
 			SvekUtils.println(sb);
 		}
 
@@ -203,14 +207,14 @@ public class DotStringFactory implements Moveable {
 
 		root.printCluster1(sb, bibliotekon.allLines(), stringBounder);
 		for (SvekLine line : bibliotekon.lines0()) {
-			line.appendLine(getGraphvizVersion(), sb, dotMode);
+			line.appendLine(getGraphvizVersion(), sb, dotMode, dotSplines);
 		}
 		root.fillRankMin(rankMin);
 		root.printCluster2(sb, bibliotekon.allLines(), stringBounder, dotMode, getGraphvizVersion(), umlDiagramType);
 		printMinRanking(sb);
 
 		for (SvekLine line : bibliotekon.lines1()) {
-			line.appendLine(getGraphvizVersion(), sb, dotMode);
+			line.appendLine(getGraphvizVersion(), sb, dotMode, dotSplines);
 		}
 		SvekUtils.println(sb);
 		sb.append("}");
@@ -316,7 +320,7 @@ public class DotStringFactory implements Moveable {
 			}
 		}
 		final byte[] result = baos.toByteArray();
-		final String s = new String(result, "UTF-8");
+		final String s = new String(result, UTF_8);
 
 		if (basefile != null) {
 			final SFile f = basefile.getTraceFile("svek.svg");
