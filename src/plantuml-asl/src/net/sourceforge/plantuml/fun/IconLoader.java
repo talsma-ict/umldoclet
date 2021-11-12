@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import net.sourceforge.plantuml.security.ImageIO;
+import net.sourceforge.plantuml.security.SImageIO;
 
 public class IconLoader {
 
@@ -85,7 +85,7 @@ public class IconLoader {
 			if (is == null) {
 				return null;
 			}
-			final BufferedImage image = ImageIO.read(is);
+			final BufferedImage image = SImageIO.read(is);
 			is.close();
 			return image;
 		} catch (IOException e) {

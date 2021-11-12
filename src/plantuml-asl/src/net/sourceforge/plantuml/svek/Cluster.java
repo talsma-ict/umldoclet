@@ -290,7 +290,16 @@ public class Cluster implements Moveable {
 	}
 
 	static public StyleSignature getDefaultStyleDefinition(SName styleName) {
+		if (styleName == SName.stateDiagram)
+			return StyleSignature.of(SName.root, SName.element, SName.stateDiagram, SName.state, SName.group);
 		return StyleSignature.of(SName.root, SName.element, styleName, SName.group);
+	}
+
+	static public StyleSignature getDefaultStyleDefinitionStateGroup(Stereotype stereotype) {
+		if (stereotype == null)
+			return StyleSignature.of(SName.root, SName.element, SName.stateDiagram, SName.state, SName.group);
+		return StyleSignature.of(SName.root, SName.element, SName.stateDiagram, SName.state, SName.group)
+				.with(stereotype);
 	}
 
 	public void drawU(UGraphic ug, UStroke strokeForState, UmlDiagramType umlDiagramType, ISkinParam skinParam2) {
@@ -302,13 +311,27 @@ public class Cluster implements Moveable {
 			ug.draw(new UComment("cluster " + fullName));
 		}
 		HColor borderColor;
+		Style style = null;
+		final double rounded;
+		final double shadowing;
 		if (UseStyle.useBetaStyle()) {
-			final Style style = getDefaultStyleDefinition(umlDiagramType.getStyleName())
+			style = getDefaultStyleDefinition(umlDiagramType.getStyleName())
 					.getMergedStyle(skinParam.getCurrentStyleBuilder());
+			shadowing = style.value(PName.Shadowing).asDouble();
 			borderColor = style.value(PName.LineColor).asColor(skinParam2.getThemeStyle(),
 					skinParam2.getIHtmlColorSet());
+			if (umlDiagramType == UmlDiagramType.STATE)
+				rounded = style.value(PName.RoundCorner).asDouble();
+			else
+				rounded = IEntityImage.CORNER;
 
 		} else {
+			if (group.getUSymbol() == null) {
+				shadowing = skinParam2.shadowing2(group.getStereotype(), USymbol.PACKAGE.getSkinParameter()) ? 3 : 0;
+			} else {
+				shadowing = skinParam2.shadowing2(group.getStereotype(), group.getUSymbol().getSkinParameter()) ? 3 : 0;
+			}
+			rounded = IEntityImage.CORNER;
 			if (umlDiagramType == UmlDiagramType.STATE) {
 				borderColor = getColor(ColorParam.stateBorder, skinParam, group.getStereotype());
 			} else if (umlDiagramType == UmlDiagramType.ACTIVITY) {
@@ -338,7 +361,7 @@ public class Cluster implements Moveable {
 				if (group.getColors(skinParam).getColor(ColorType.LINE) != null) {
 					borderColor = group.getColors(skinParam).getColor(ColorType.LINE);
 				}
-				drawUState(ug, borderColor, skinParam2, strokeForState, umlDiagramType);
+				drawUState(ug, borderColor, skinParam2, strokeForState, umlDiagramType, rounded, shadowing);
 				return;
 			}
 			PackageStyle packageStyle = group.getPackageStyle();
@@ -352,24 +375,13 @@ public class Cluster implements Moveable {
 				}
 			}
 
-			final double shadowing;
 			final UStroke stroke;
 			if (UseStyle.useBetaStyle()) {
-				final Style style = getDefaultStyleDefinition(umlDiagramType.getStyleName())
-						.getMergedStyle(skinParam.getCurrentStyleBuilder());
-				shadowing = style.value(PName.Shadowing).asDouble();
 				stroke = style.getStroke();
 			} else {
-				if (group.getUSymbol() == null) {
-					shadowing = skinParam2.shadowing2(group.getStereotype(), USymbol.PACKAGE.getSkinParameter()) ? 3
-							: 0;
-				} else {
-					shadowing = skinParam2.shadowing2(group.getStereotype(), group.getUSymbol().getSkinParameter()) ? 3
-							: 0;
-				}
 				stroke = getStrokeInternal(group, skinParam2);
 			}
-			HColor backColor = getBackColor(umlDiagramType);
+			HColor backColor = getBackColor(umlDiagramType, style);
 			backColor = getBackColor(backColor, skinParam2, group.getStereotype(), umlDiagramType.getStyleName());
 			if (ztitle != null || zstereo != null) {
 				final double roundCorner = group.getUSymbol() == null ? 0
@@ -404,11 +416,6 @@ public class Cluster implements Moveable {
 			return group.getUSymbol().getSkinParameter().getStroke(skinParam, group.getStereotype());
 		}
 		return GeneralImageBuilder.getForcedStroke(group.getStereotype(), skinParam);
-//		UStroke stroke = skinParam.getThickness(LineParam.packageBorder, group.getStereotype());
-//		if (stroke == null) {
-//			stroke = new UStroke(1.5);
-//		}
-//		return stroke;
 	}
 
 	public void manageEntryExitPoint(StringBounder stringBounder) {
@@ -450,12 +457,12 @@ public class Cluster implements Moveable {
 
 	}
 
-	private HColor getColor(ISkinParam skinParam, ColorParam colorParam, Stereotype stereo) {
+	private HColor getColorLegacy(ISkinParam skinParam, ColorParam colorParam, Stereotype stereo) {
 		return new Rose().getHtmlColor(skinParam, stereo, colorParam);
 	}
 
 	private void drawUState(UGraphic ug, HColor borderColor, ISkinParam skinParam2, UStroke stroke,
-			UmlDiagramType umlDiagramType) {
+			UmlDiagramType umlDiagramType, double rounded, double shadowing) {
 		final Dimension2D total = new Dimension2DDouble(maxX - minX, maxY - minY);
 		final double suppY;
 		if (ztitle == null) {
@@ -465,13 +472,18 @@ public class Cluster implements Moveable {
 					+ IEntityImage.MARGIN_LINE;
 		}
 
-		HColor stateBack = getBackColor(umlDiagramType);
+		final Style styleGroup = getDefaultStyleDefinitionStateGroup(group.getStereotype())
+				.getMergedStyle(skinParam.getCurrentStyleBuilder());
+
+		HColor stateBack = getBackColor(umlDiagramType, styleGroup);
 		if (stateBack == null) {
-			stateBack = getColor(skinParam2, ColorParam.stateBackground, group.getStereotype());
+			stateBack = getColorLegacy(skinParam2, ColorParam.stateBackground, group.getStereotype());
 		}
-		final HColor background = getColor(skinParam2, ColorParam.background, null);
-		final Style style = getStyle(FontParam.STATE_ATTRIBUTE, skinParam2);
-		final TextBlock attribute = GeneralImageBuilder.stateHeader(group, style, skinParam2);
+		final HColor background = getColorLegacy(skinParam2, ColorParam.background, null);
+
+		// final Style style = getStyle(FontParam.STATE_ATTRIBUTE, skinParam2);
+
+		final TextBlock attribute = GeneralImageBuilder.stateHeader(group, styleGroup, skinParam2);
 		final double attributeHeight = attribute.calculateDimension(ug.getStringBounder()).getHeight();
 		if (total.getWidth() == 0) {
 			System.err.println("Cluster::drawUState issue");
@@ -479,8 +491,8 @@ public class Cluster implements Moveable {
 		}
 		final RoundedContainer r = new RoundedContainer(total, suppY,
 				attributeHeight + (attributeHeight > 0 ? IEntityImage.MARGIN : 0), borderColor, stateBack, background,
-				stroke);
-		r.drawU(ug.apply(new UTranslate(minX, minY)), skinParam2.shadowing(group.getStereotype()));
+				stroke, rounded, shadowing);
+		r.drawU(ug.apply(new UTranslate(minX, minY)));
 
 		if (ztitle != null) {
 			ztitle.drawU(ug.apply(new UTranslate(xTitle, yTitle)));
@@ -887,7 +899,7 @@ public class Cluster implements Moveable {
 		return colorTitle;
 	}
 
-	private final HColor getBackColor(final UmlDiagramType umlDiagramType) {
+	private final HColor getBackColor(UmlDiagramType umlDiagramType, Style style) {
 		if (EntityUtils.groupRoot(group)) {
 			return null;
 		}
@@ -896,6 +908,11 @@ public class Cluster implements Moveable {
 			return result;
 		}
 		final Stereotype stereo = group.getStereotype();
+
+		if (UseStyle.useBetaStyle()) {
+			return style.value(PName.BackGroundColor).asColor(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet());
+		}
+
 		final USymbol sym = group.getUSymbol() == null ? USymbol.PACKAGE : group.getUSymbol();
 		final ColorParam backparam = umlDiagramType == UmlDiagramType.ACTIVITY ? ColorParam.partitionBackground
 				: sym.getColorParamBack();
@@ -906,7 +923,7 @@ public class Cluster implements Moveable {
 		if (parentCluster == null) {
 			return null;
 		}
-		return parentCluster.getBackColor(umlDiagramType);
+		return parentCluster.getBackColor(umlDiagramType, style);
 	}
 
 	public boolean isClusterOf(IEntity ent) {

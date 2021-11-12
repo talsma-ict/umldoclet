@@ -58,6 +58,8 @@ public abstract class AbstractPSystem implements Diagram {
 
 	private final UmlSource source;
 	private Scale scale;
+	private int splitPagesHorizontal = 1;
+	private int splitPagesVertical = 1;
 
 	public AbstractPSystem(UmlSource source) {
 		this.source = Objects.requireNonNull(source);
@@ -101,6 +103,24 @@ public abstract class AbstractPSystem implements Diagram {
 
 	public int getNbImages() {
 		return 1;
+	}
+
+	@Override
+	public int getSplitPagesHorizontal() {
+		return splitPagesHorizontal;
+	}
+
+	public void setSplitPagesHorizontal(int splitPagesHorizontal) {
+		this.splitPagesHorizontal = splitPagesHorizontal;
+	}
+
+	@Override
+	public int getSplitPagesVertical() {
+		return splitPagesVertical;
+	}
+
+	public void setSplitPagesVertical(int splitPagesVertical) {
+		this.splitPagesVertical = splitPagesVertical;
 	}
 
 	public DisplayPositionned getTitle() {

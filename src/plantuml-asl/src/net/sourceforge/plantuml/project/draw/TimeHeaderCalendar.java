@@ -60,6 +60,7 @@ public abstract class TimeHeaderCalendar extends TimeHeader {
 		this.colorDaysOfWeek = colorDaysOfWeek;
 	}
 
+	// Duplicate in TimeHeaderSimple
 	class Pending {
 		final double x1;
 		double x2;

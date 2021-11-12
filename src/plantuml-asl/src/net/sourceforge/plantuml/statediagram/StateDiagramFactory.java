@@ -54,6 +54,7 @@ import net.sourceforge.plantuml.statediagram.command.CommandCreatePackageState;
 import net.sourceforge.plantuml.statediagram.command.CommandCreateState;
 import net.sourceforge.plantuml.statediagram.command.CommandEndState;
 import net.sourceforge.plantuml.statediagram.command.CommandLinkState;
+import net.sourceforge.plantuml.statediagram.command.CommandLinkStateReverse;
 
 public class StateDiagramFactory extends PSystemCommandFactory {
 
@@ -70,6 +71,7 @@ public class StateDiagramFactory extends PSystemCommandFactory {
 		cmds.add(new CommandRemoveRestore());
 		cmds.add(new CommandCreateState());
 		cmds.add(new CommandLinkState());
+		cmds.add(new CommandLinkStateReverse());
 		cmds.add(new CommandCreatePackageState());
 		cmds.add(new CommandEndState());
 		cmds.add(new CommandAddField());

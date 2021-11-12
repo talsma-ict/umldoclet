@@ -30,6 +30,8 @@
  */
 package net.sourceforge.plantuml.code;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.IOException;
 
 public class TranscoderImpl implements Transcoder {
@@ -63,7 +65,7 @@ public class TranscoderImpl implements Transcoder {
 		final String stringAnnoted = stringCompressor.compress(text);
 		final byte[] data;
 		if (format == Format.UTF8)
-			data = stringAnnoted.getBytes("UTF-8");
+			data = stringAnnoted.getBytes(UTF_8);
 		else
 			data = Upf9Encoder.getBytes(stringAnnoted);
 

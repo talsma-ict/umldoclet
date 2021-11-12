@@ -54,6 +54,11 @@ public class CommandClock extends SingleLineCommand2<TimingDiagram> {
 								RegexLeaf.spaceOneOrMore())), //
 				new RegexLeaf("TYPE", "clock"), //
 				RegexLeaf.spaceOneOrMore(), //
+				new RegexOptional(new RegexConcat( //
+						new RegexLeaf("FULL", "[%g]([^%g]+)[%g]"), //
+						RegexLeaf.spaceOneOrMore(), //
+						new RegexLeaf("as"), //
+						RegexLeaf.spaceOneOrMore())), //
 				new RegexLeaf("CODE", "([%pLN_.@]+)"), //
 				RegexLeaf.spaceOneOrMore(), //
 				new RegexLeaf("with"), //
@@ -66,7 +71,14 @@ public class CommandClock extends SingleLineCommand2<TimingDiagram> {
 						new RegexLeaf("pulse"), //
 						RegexLeaf.spaceOneOrMore(), //
 						new RegexLeaf("PULSE", "([0-9]+)") //
-				)), RegexLeaf.end());
+				)), //
+				new RegexOptional(new RegexConcat( //
+						RegexLeaf.spaceOneOrMore(), //
+						new RegexLeaf("offset"), //
+						RegexLeaf.spaceOneOrMore(), //
+						new RegexLeaf("OFFSET", "([0-9]+)") //
+				)), //
+				RegexLeaf.end());
 	}
 
 	@Override
@@ -74,12 +86,18 @@ public class CommandClock extends SingleLineCommand2<TimingDiagram> {
 		final String compact = arg.get("COMPACT", 0);
 		final String code = arg.get("CODE", 0);
 		final int period = Integer.parseInt(arg.get("PERIOD", 0));
-		final String pulseString = arg.get("PULSE", 0);
-		int pulse = 0;
-		if (pulseString != null) {
-			pulse = Integer.parseInt(pulseString);
-		}
-		return diagram.createClock(code, code, period, pulse, compact != null);
+		final int pulse = getInt(arg.get("PULSE", 0));
+		final int offset = getInt(arg.get("OFFSET", 0));
+		String full = arg.get("FULL", 0);
+		if (full == null)
+			full = "";
+		return diagram.createClock(code, full, period, pulse, offset, compact != null);
+	}
+
+	private int getInt(String value) {
+		if (value == null)
+			return 0;
+		return Integer.parseInt(value);
 	}
 
 }

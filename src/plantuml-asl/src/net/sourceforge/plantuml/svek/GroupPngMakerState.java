@@ -38,6 +38,7 @@ import java.util.Set;
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
+import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.EntityUtils;
@@ -57,7 +58,10 @@ import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.skin.rose.Rose;
+import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
+import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.svek.image.EntityImageState;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
@@ -114,11 +118,37 @@ public final class GroupPngMakerState {
 		return result;
 	}
 
+	private Style getStyleStateHeader() {
+		return StyleSignature.of(SName.root, SName.element, SName.stateDiagram, SName.state, SName.header)
+				.with(group.getStereotype()).getMergedStyle(diagram.getSkinParam().getCurrentStyleBuilder());
+	}
+
+	private Style getStyleState() {
+		return StyleSignature.of(SName.root, SName.element, SName.stateDiagram, SName.state).with(group.getStereotype())
+				.getMergedStyle(diagram.getSkinParam().getCurrentStyleBuilder());
+	}
+
 	public IEntityImage getImage() {
 		final Display display = group.getDisplay();
 		final ISkinParam skinParam = diagram.getSkinParam();
-		final TextBlock title = display.create(new FontConfiguration(skinParam, FontParam.STATE, group.getStereotype()),
-				HorizontalAlignment.CENTER, diagram.getSkinParam());
+
+		final FontConfiguration fontConfiguration;
+		final double rounded;
+		double shadowing = 0;
+
+		if (UseStyle.useBetaStyle()) {
+			rounded = getStyleState().value(PName.RoundCorner).asDouble();
+			shadowing = getStyleState().value(PName.Shadowing).asDouble();
+			fontConfiguration = getStyleStateHeader().getFontConfiguration(skinParam.getThemeStyle(),
+					skinParam.getIHtmlColorSet());
+		} else {
+			rounded = IEntityImage.CORNER;
+			fontConfiguration = new FontConfiguration(skinParam, FontParam.STATE, group.getStereotype());
+			if (skinParam.shadowing(group.getStereotype()))
+				shadowing = 3.0;
+		}
+
+		final TextBlock title = display.create(fontConfiguration, HorizontalAlignment.CENTER, diagram.getSkinParam());
 
 		if (group.size() == 0 && group.getChildren().size() == 0) {
 			return new EntityImageState(group, diagram.getSkinParam());
@@ -144,12 +174,26 @@ public final class GroupPngMakerState {
 
 		HColor borderColor = group.getColors(skinParam).getColor(ColorType.LINE);
 		if (borderColor == null) {
-			borderColor = getColor(ColorParam.stateBorder, group.getStereotype());
+			if (UseStyle.useBetaStyle())
+				borderColor = getStyleState().value(PName.LineColor).asColor(skinParam.getThemeStyle(),
+						skinParam.getIHtmlColorSet());
+			else
+				borderColor = getColor(ColorParam.stateBorder, group.getStereotype());
 		}
 		final Stereotype stereo = group.getStereotype();
-		final HColor backColor = group.getColors(skinParam).getColor(ColorType.BACK) == null
-				? getColor(ColorParam.stateBackground, stereo)
-				: group.getColors(skinParam).getColor(ColorType.BACK);
+		final HColor tmp = group.getColors(skinParam).getColor(ColorType.BACK);
+		final HColor backColor;
+		if (tmp == null)
+			if (UseStyle.useBetaStyle())
+				backColor =
+
+						getStyleState().value(PName.BackGroundColor).asColor(skinParam.getThemeStyle(),
+								skinParam.getIHtmlColorSet());
+			else
+				backColor = getColor(ColorParam.stateBackground, stereo);
+		else
+			backColor = tmp;
+
 		final TextBlock attribute = GeneralImageBuilder.stateHeader((IEntity) group, null, skinParam);
 
 		final Stereotype stereotype = group.getStereotype();
@@ -162,8 +206,8 @@ public final class GroupPngMakerState {
 		if (stroke == null) {
 			stroke = new UStroke(1.5);
 		}
-		return new InnerStateAutonom(image, title, attribute, borderColor, backColor,
-				skinParam.shadowing(group.getStereotype()), group.getUrl99(), withSymbol, stroke);
+		return new InnerStateAutonom(image, title, attribute, borderColor, backColor, group.getUrl99(), withSymbol,
+				stroke, rounded, shadowing);
 
 	}
 

@@ -30,22 +30,21 @@
  */
 package net.sourceforge.plantuml.ugraphic.svg;
 
+import static net.sourceforge.plantuml.graphic.TextBlockUtils.createTextLayout;
+
 import java.awt.font.TextLayout;
 
-import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.UnusedSpace;
 import net.sourceforge.plantuml.svg.SvgGraphics;
 import net.sourceforge.plantuml.ugraphic.UCenteredCharacter;
 import net.sourceforge.plantuml.ugraphic.UDriver;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UParam;
-import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 
-public class DriverCenteredCharacterSvg implements UDriver<SvgGraphics> {
+public class DriverCenteredCharacterSvg implements UDriver<UCenteredCharacter, SvgGraphics> {
 
-	public void draw(UShape ushape, double x, double y, ColorMapper mapper, UParam param, SvgGraphics svg) {
-		final UCenteredCharacter characterCircled = (UCenteredCharacter) ushape;
+	public void draw(UCenteredCharacter characterCircled, double x, double y, ColorMapper mapper, UParam param, SvgGraphics svg) {
 		final char c = characterCircled.getChar();
 		final UFont font = characterCircled.getFont();
 		final UnusedSpace unusedSpace = UnusedSpace.getUnusedSpace(font, c);
@@ -53,9 +52,8 @@ public class DriverCenteredCharacterSvg implements UDriver<SvgGraphics> {
 		final double xpos = x - unusedSpace.getCenterX() - 0.5;
 		final double ypos = y - unusedSpace.getCenterY() - 0.5;
 
-		final TextLayout t = new TextLayout("" + c, font.getUnderlayingFont(), TextBlockUtils.getFontRenderContext());
+		final TextLayout t = createTextLayout(font, "" + c);
 		svg.setFillColor(mapper.toRGB(param.getColor()));
 		svg.drawPathIterator(xpos, ypos, t.getOutline(null).getPathIterator(null));
-
 	}
 }

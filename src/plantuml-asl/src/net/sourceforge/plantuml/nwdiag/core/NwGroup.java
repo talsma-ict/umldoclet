@@ -30,23 +30,30 @@
  */
 package net.sourceforge.plantuml.nwdiag.core;
 
+import java.awt.geom.Dimension2D;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.nwdiag.legacy.NServerLegacy;
+import net.sourceforge.plantuml.ISkinParam;
+import net.sourceforge.plantuml.cucadiagram.Display;
+import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.nwdiag.next.NBox;
-import net.sourceforge.plantuml.ugraphic.UFont;
+import net.sourceforge.plantuml.style.PName;
+import net.sourceforge.plantuml.style.SName;
+import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.style.StyleBuilder;
+import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.ugraphic.MinMax;
+import net.sourceforge.plantuml.ugraphic.UGraphic;
+import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
-public class NwGroup {
-
-	public static final HColorSet colors = HColorSet.instance();
+public class NwGroup implements NStackable {
 
 	private final Set<String> names = new HashSet<>();
 
@@ -55,10 +62,17 @@ public class NwGroup {
 	private String description;
 	private NBox nbox;
 
-	public final NBox getNbox(Map<String, NServerLegacy> servers) {
+	public NBox getNboxInternal() {
 		if (nbox == null) {
 			nbox = new NBox();
-			for (Entry<String, NServerLegacy> ent : servers.entrySet()) {
+		}
+		return nbox;
+	}
+
+	public final NBox getNbox(Map<String, ? extends NServer> servers) {
+		if (nbox == null) {
+			nbox = new NBox();
+			for (Entry<String, ? extends NServer> ent : servers.entrySet()) {
 				if (names.contains(ent.getKey())) {
 					nbox.add(ent.getValue().getBar());
 				}
@@ -73,7 +87,7 @@ public class NwGroup {
 
 	@Override
 	public String toString() {
-		return name;
+		return "NwGroup:" + name + " " + names + " " + nbox;
 	}
 
 	public NwGroup(String name) {
@@ -88,17 +102,14 @@ public class NwGroup {
 		return color;
 	}
 
+	@Override
 	public final void setColor(HColor color) {
 		this.color = color;
 	}
 
+	@Override
 	public final void setDescription(String value) {
 		this.description = value;
-	}
-
-	public final FontConfiguration getGroupDescriptionFontConfiguration() {
-		final UFont font = UFont.serif(11);
-		return new FontConfiguration(font, HColorUtils.BLACK, HColorUtils.BLACK, false);
 	}
 
 	protected final String getDescription() {
@@ -107,6 +118,55 @@ public class NwGroup {
 
 	public final Set<String> names() {
 		return Collections.unmodifiableSet(names);
+	}
+
+	public boolean contains(NServer server) {
+		return names.contains(server.getName());
+	}
+
+	public double getTopHeaderHeight(StringBounder stringBounder, ISkinParam skinParam) {
+		final TextBlock block = buildHeaderName(skinParam);
+		if (block == null) {
+			return 0;
+		}
+		final Dimension2D blockDim = block.calculateDimension(stringBounder);
+		return blockDim.getHeight();
+	}
+
+	private StyleSignature getStyleDefinition() {
+		return StyleSignature.of(SName.root, SName.element, SName.nwdiagDiagram, SName.group);
+	}
+
+	public void drawGroup(UGraphic ug, MinMax size, ISkinParam skinParam) {
+		final StyleBuilder styleBuilder = skinParam.getCurrentStyleBuilder();
+		final Style style = getStyleDefinition().getMergedStyle(styleBuilder);
+		final TextBlock block = buildHeaderName(skinParam);
+		if (block != null) {
+			final Dimension2D blockDim = block.calculateDimension(ug.getStringBounder());
+			final double dy = size.getMinY() - blockDim.getHeight();
+			size = size.addPoint(size.getMinX(), dy);
+		}
+		HColor color = getColor();
+		if (color == null) {
+			color = style.value(PName.BackGroundColor).asColor(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet());
+
+		}
+		size.draw(ug, color);
+
+		if (block != null) {
+			block.drawU(ug.apply(new UTranslate(size.getMinX() + 5, size.getMinY())));
+		}
+	}
+
+	private TextBlock buildHeaderName(ISkinParam skinParam) {
+		if (getDescription() == null) {
+			return null;
+		}
+		final StyleBuilder styleBuilder = skinParam.getCurrentStyleBuilder();
+		final Style style = getStyleDefinition().getMergedStyle(styleBuilder);
+		return Display.getWithNewlines(getDescription()).create(
+				style.getFontConfiguration(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet()),
+				HorizontalAlignment.LEFT, skinParam);
 	}
 
 }

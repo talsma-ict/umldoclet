@@ -35,13 +35,16 @@ import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 public interface UGraphic {
 
 	public StringBounder getStringBounder();
 
 	public UParam getParam();
 
-	public void draw(UShape shape);
+	public <SHAPE extends UShape> void draw(SHAPE shape);
 
 	public UGraphic apply(UChange change);
 
@@ -61,4 +64,5 @@ public interface UGraphic {
 
 	public HColor getDefaultBackground();
 
+	public void writeToStream(OutputStream os, String metadata, int dpi) throws IOException;
 }

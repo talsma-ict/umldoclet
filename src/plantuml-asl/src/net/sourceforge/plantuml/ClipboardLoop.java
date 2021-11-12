@@ -36,12 +36,11 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import net.sourceforge.plantuml.core.DiagramDescription;
-import net.sourceforge.plantuml.security.ImageIO;
+import net.sourceforge.plantuml.security.SImageIO;
 
 public class ClipboardLoop {
 
@@ -83,12 +82,9 @@ public class ClipboardLoop {
 			Log.info("No image generated");
 		} else {
 			Log.info("Image ok " + desc.getDescription());
-			final byte[] data = baos.toByteArray();
 			baos.close();
-			final ByteArrayInputStream bais = new ByteArrayInputStream(data);
-			final BufferedImage image = ImageIO.read(bais);
+			final BufferedImage image = SImageIO.read(baos.toByteArray());
 			setClipboardImage(image);
-			bais.close();
 			Log.info("Image copied in clipboard");
 		}
 	}

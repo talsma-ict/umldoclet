@@ -40,15 +40,12 @@ public class NBox implements Staged {
 	private final NTetris<NBar> tetris = new NTetris<>();
 
 	public void add(NBar bar) {
+		if (this.bars.contains(bar)) {
+			return;
+		}
 		this.bars.add(bar);
 		this.tetris.add(bar);
 	}
-
-//	public void addAll(NBox other) {
-//		for (NBar bar : other.bars) {
-//			add(bar);
-//		}
-//	}
 
 	@Override
 	public NStage getStart() {

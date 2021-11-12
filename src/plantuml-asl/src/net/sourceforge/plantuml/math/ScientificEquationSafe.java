@@ -35,7 +35,6 @@ import static net.sourceforge.plantuml.ugraphic.ImageBuilder.plainPngBuilder;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -48,7 +47,7 @@ import net.sourceforge.plantuml.api.ImageDataSimple;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.eps.EpsGraphics;
 import net.sourceforge.plantuml.graphic.GraphicStrings;
-import net.sourceforge.plantuml.security.ImageIO;
+import net.sourceforge.plantuml.security.SImageIO;
 import net.sourceforge.plantuml.svek.TextBlockBackcolored;
 import net.sourceforge.plantuml.ugraphic.AffineTransformType;
 import net.sourceforge.plantuml.ugraphic.MutableImage;
@@ -114,7 +113,7 @@ public class ScientificEquationSafe {
 			}
 		try {
 			final byte[] bytes = plainPngBuilder(getRollback()).writeByteArray();
-			return new PixelImage(ImageIO.read(new ByteArrayInputStream(bytes)), AffineTransformType.TYPE_BILINEAR);
+			return new PixelImage(SImageIO.read(bytes), AffineTransformType.TYPE_BILINEAR);
 		} catch (IOException e1) {
 			return null;
 		}
@@ -136,7 +135,7 @@ public class ScientificEquationSafe {
 			Color backgroundColor) throws IOException {
 		if (fileFormat.getFileFormat() == FileFormat.PNG) {
 			final BufferedImage image = getImage(foregroundColor, backgroundColor).withScale(scale).getImage();
-			ImageIO.write(image, "png", os);
+			SImageIO.write(image, "png", os);
 			return new ImageDataSimple(image.getWidth(), image.getHeight());
 		}
 		if (fileFormat.getFileFormat() == FileFormat.SVG) {

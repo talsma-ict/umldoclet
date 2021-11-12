@@ -30,6 +30,8 @@
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -153,7 +155,7 @@ public final class CucaDiagramTxtMaker {
 
 	public List<SFile> createFiles(SFile suggestedFile) throws IOException {
 		if (fileFormat == FileFormat.UTXT) {
-			globalUg.getCharArea().print(suggestedFile.createPrintStream("UTF-8"));
+			globalUg.getCharArea().print(suggestedFile.createPrintStream(UTF_8));
 		} else {
 			globalUg.getCharArea().print(suggestedFile.createPrintStream());
 		}

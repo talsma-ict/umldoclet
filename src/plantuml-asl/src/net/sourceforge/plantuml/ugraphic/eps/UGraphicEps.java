@@ -45,7 +45,6 @@ import net.sourceforge.plantuml.ugraphic.AbstractUGraphic;
 import net.sourceforge.plantuml.ugraphic.ClipContainer;
 import net.sourceforge.plantuml.ugraphic.UCenteredCharacter;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
-import net.sourceforge.plantuml.ugraphic.UGraphic2;
 import net.sourceforge.plantuml.ugraphic.UImage;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UPath;
@@ -55,9 +54,7 @@ import net.sourceforge.plantuml.ugraphic.UText;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 
-public class UGraphicEps extends AbstractUGraphic<EpsGraphics> implements ClipContainer, UGraphic2 {
-
-	private final StringBounder stringBounder;
+public class UGraphicEps extends AbstractUGraphic<EpsGraphics> implements ClipContainer {
 
 	private final EpsStrategy strategyTOBEREMOVED;
 
@@ -68,25 +65,19 @@ public class UGraphicEps extends AbstractUGraphic<EpsGraphics> implements ClipCo
 
 	protected UGraphicEps(UGraphicEps other) {
 		super(other);
-		this.stringBounder = other.stringBounder;
 		this.strategyTOBEREMOVED = other.strategyTOBEREMOVED;
-		register(strategyTOBEREMOVED);
+		register();
 	}
 
-	public UGraphicEps(HColor defaultBackground, ColorMapper colorMapper, EpsStrategy strategy) {
-		this(defaultBackground, colorMapper, strategy, strategy.creatEpsGraphics());
-	}
-
-	private UGraphicEps(HColor defaultBackground, ColorMapper colorMapper, EpsStrategy strategy, EpsGraphics eps) {
-		super(defaultBackground, colorMapper, eps);
+	public UGraphicEps(HColor defaultBackground, ColorMapper colorMapper, StringBounder stringBounder, EpsStrategy strategy) {
+		super(defaultBackground, colorMapper, stringBounder, strategy.creatEpsGraphics());
 		this.strategyTOBEREMOVED = strategy;
-		this.stringBounder = FileFormat.PNG.getDefaultStringBounder();
-		register(strategy);
+		register();
 	}
 
-	private void register(EpsStrategy strategy) {
+	private void register() {
 		registerDriver(URectangle.class, new DriverRectangleEps(this));
-		registerDriver(UText.class, new DriverTextEps(this, strategy));
+		registerDriver(UText.class, new DriverTextEps(this, strategyTOBEREMOVED));
 		registerDriver(ULine.class, new DriverLineEps(this));
 		registerDriver(UPolygon.class, new DriverPolygonEps(this));
 		registerDriver(UEllipse.class, new DriverEllipseEps(this));
@@ -108,17 +99,13 @@ public class UGraphicEps extends AbstractUGraphic<EpsGraphics> implements ClipCo
 		return this.getGraphicObject();
 	}
 
-	public StringBounder getStringBounder() {
-		return stringBounder;
-	}
-
 	public void drawEps(String eps, double x, double y) {
 		this.getGraphicObject().drawEps(eps, x, y);
 	}
 
 	static public String getEpsString(HColor defaultBackground, ColorMapper colorMapper, EpsStrategy epsStrategy,
 			UDrawable udrawable) throws IOException {
-		final UGraphicEps ug = new UGraphicEps(defaultBackground, colorMapper, epsStrategy);
+		final UGraphicEps ug = new UGraphicEps(defaultBackground, colorMapper, FileFormat.EPS_TEXT.getDefaultStringBounder(), epsStrategy);
 		udrawable.drawU(ug);
 		return ug.getEPSCode();
 	}
@@ -131,7 +118,8 @@ public class UGraphicEps extends AbstractUGraphic<EpsGraphics> implements ClipCo
 		getGraphicObject().closeLink();
 	}
 
-	public void writeImageTOBEMOVED(OutputStream os, String metadata, int dpi) throws IOException {
+	@Override
+	public void writeToStream(OutputStream os, String metadata, int dpi) throws IOException {
 		os.write(getEPSCode().getBytes());
 	}
 

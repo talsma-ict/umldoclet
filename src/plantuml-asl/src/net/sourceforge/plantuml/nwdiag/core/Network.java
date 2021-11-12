@@ -33,14 +33,17 @@ package net.sourceforge.plantuml.nwdiag.core;
 import net.sourceforge.plantuml.nwdiag.next.NStage;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 
-public class Network {
+public class Network implements NStackable {
 
 	private final String name;
+	private String description;
 	private HColor color;
 	private boolean visible = true;
 	private String ownAdress;
 	private double y;
 	private boolean fullWidth;
+	private final NStage up;
+
 	private final NStage nstage;
 
 	@Override
@@ -48,7 +51,25 @@ public class Network {
 		return name;
 	}
 
-	public Network(NStage nstage, String name) {
+	private boolean isEven() {
+		return nstage.getNumber() % 2 == 0;
+	}
+
+	public double magicDelta() {
+		if (isVisible() == false)
+			return 0;
+		if (isEven())
+			return 2;
+		else
+			return -2;
+	}
+
+	public NStage getUp() {
+		return up;
+	}
+
+	public Network(NStage up, NStage nstage, String name) {
+		this.up = up;
 		this.name = name;
 		this.nstage = nstage;
 	}
@@ -61,14 +82,23 @@ public class Network {
 		this.ownAdress = ownAdress;
 	}
 
-	public final String getName() {
-		return name;
+	public final String getDisplayName() {
+		if (this.description == null) {
+			return name;
+		}
+		return this.description;
+	}
+
+	@Override
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public final HColor getColor() {
 		return color;
 	}
 
+	@Override
 	public final void setColor(HColor color) {
 		this.color = color;
 	}
@@ -99,6 +129,22 @@ public class Network {
 
 	public final NStage getNstage() {
 		return nstage;
+	}
+
+	private double xmin;
+	private double xmax;
+
+	public void setMinMax(double xmin, double xmax) {
+		this.xmin = xmin;
+		this.xmax = xmax;
+	}
+
+	public final double getXmin() {
+		return xmin;
+	}
+
+	public final double getXmax() {
+		return xmax;
 	}
 
 }

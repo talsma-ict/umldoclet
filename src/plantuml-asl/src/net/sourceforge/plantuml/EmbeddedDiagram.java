@@ -32,9 +32,9 @@ package net.sourceforge.plantuml;
 
 import java.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import net.sourceforge.plantuml.core.Diagram;
@@ -45,7 +45,7 @@ import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.Line;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.preproc.Defines;
-import net.sourceforge.plantuml.security.ImageIO;
+import net.sourceforge.plantuml.security.SImageIO;
 import net.sourceforge.plantuml.ugraphic.AffineTransformType;
 import net.sourceforge.plantuml.ugraphic.PixelImage;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -114,7 +114,7 @@ public class EmbeddedDiagram implements CharSequence {
 		private final ISkinSimple skinParam;
 
 		public List<Atom> splitInTwo(StringBounder stringBounder, double width) {
-			throw new UnsupportedOperationException(getClass().toString());
+			return Arrays.asList((Atom) this);
 		}
 
 		private Draw(ISkinSimple skinParam) {
@@ -181,10 +181,7 @@ public class EmbeddedDiagram implements CharSequence {
 			final ByteArrayOutputStream os = new ByteArrayOutputStream();
 			system.exportDiagram(os, 0, new FileFormatOption(FileFormat.PNG));
 			os.close();
-			final ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
-			final BufferedImage im = ImageIO.read(is);
-			is.close();
-			return im;
+			return SImageIO.read(os.toByteArray());
 		}
 
 		public HorizontalAlignment getHorizontalAlignment() {
@@ -192,7 +189,7 @@ public class EmbeddedDiagram implements CharSequence {
 		}
 
 		private Diagram getSystem() throws IOException, InterruptedException {
-			final BlockUml blockUml = new BlockUml(system.as2(), Defines.createEmpty(), skinParam, null);
+			final BlockUml blockUml = new BlockUml(system.as2(), Defines.createEmpty(), skinParam, null, null);
 			return blockUml.getDiagram();
 
 		}

@@ -30,56 +30,45 @@
  */
 package net.sourceforge.plantuml.ugraphic.eps;
 
+import static net.sourceforge.plantuml.graphic.TextBlockUtils.createTextLayout;
+
 import java.awt.Color;
 import java.awt.Shape;
-import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.PathIterator;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.eps.EpsGraphics;
 import net.sourceforge.plantuml.eps.EpsGraphicsMacroAndText;
 import net.sourceforge.plantuml.eps.EpsStrategy;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.FontStyle;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.ugraphic.ClipContainer;
 import net.sourceforge.plantuml.ugraphic.MinMax;
 import net.sourceforge.plantuml.ugraphic.UClip;
 import net.sourceforge.plantuml.ugraphic.UDriver;
-import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UParam;
-import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.UText;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
-public class DriverTextEps implements UDriver<EpsGraphics> {
+public class DriverTextEps implements UDriver<UText, EpsGraphics> {
 
-	private final StringBounder stringBounder;
 	private final ClipContainer clipContainer;
-	private final FontRenderContext fontRenderContext;
 	private final EpsStrategy strategy;
 
 	public DriverTextEps(ClipContainer clipContainer, EpsStrategy strategy) {
-		this.stringBounder = FileFormat.PNG.getDefaultStringBounder();
 		this.clipContainer = clipContainer;
-		this.fontRenderContext = TextBlockUtils.getFontRenderContext();
 		this.strategy = strategy;
 	}
 
-	public void draw(UShape ushape, double x, double y, ColorMapper mapper, UParam param, EpsGraphics eps) {
-
+	public void draw(UText shape, double x, double y, ColorMapper mapper, UParam param, EpsGraphics eps) {
 		final UClip clip = clipContainer.getClip();
 		if (clip != null && clip.isInside(x, y) == false) {
 			return;
 		}
-
-		final UText shape = (UText) ushape;
 
 		final FontConfiguration fontConfiguration = shape.getFontConfiguration();
 		if (HColorUtils.isTransparent(fontConfiguration.getColor())) {
@@ -91,10 +80,7 @@ public class DriverTextEps implements UDriver<EpsGraphics> {
 			return;
 		}
 
-		final UFont font = fontConfiguration.getFont();
-
-		final TextLayout textLayout = new TextLayout(shape.getText(), font.getUnderlayingFont(), fontRenderContext);
-		// System.err.println("text=" + shape.getText());
+		final TextLayout textLayout = createTextLayout(shape);
 
 		MinMax dim = null;
 

@@ -30,6 +30,8 @@
  */
 package net.sourceforge.plantuml.ugraphic.txt;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.awt.geom.Dimension2D;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -41,18 +43,16 @@ import net.sourceforge.plantuml.asciiart.TranslatedCharArea;
 import net.sourceforge.plantuml.asciiart.UmlCharArea;
 import net.sourceforge.plantuml.asciiart.UmlCharAreaImpl;
 import net.sourceforge.plantuml.graphic.FontStyle;
-import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.security.SecurityUtils;
 import net.sourceforge.plantuml.ugraphic.AbstractCommonUGraphic;
 import net.sourceforge.plantuml.ugraphic.ClipContainer;
-import net.sourceforge.plantuml.ugraphic.UGraphic2;
 import net.sourceforge.plantuml.ugraphic.UImage;
 import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.UText;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
 import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
-public class UGraphicTxt extends AbstractCommonUGraphic implements ClipContainer, UGraphic2 {
+public class UGraphicTxt extends AbstractCommonUGraphic implements ClipContainer {
 
 	private final UmlCharArea charArea;
 
@@ -67,12 +67,8 @@ public class UGraphicTxt extends AbstractCommonUGraphic implements ClipContainer
 	}
 
 	public UGraphicTxt() {
-		super(HColorUtils.BLACK, new ColorMapperIdentity());
+		super(HColorUtils.BLACK, new ColorMapperIdentity(), new TextStringBounder());
 		this.charArea = new UmlCharAreaImpl();
-	}
-
-	public StringBounder getStringBounder() {
-		return new TextStringBounder();
 	}
 
 	public void draw(UShape shape) {
@@ -110,8 +106,9 @@ public class UGraphicTxt extends AbstractCommonUGraphic implements ClipContainer
 		return new Dimension2DDouble(0, 0);
 	}
 
-	public void writeImageTOBEMOVED(OutputStream os, String metadata, int dpi) throws IOException {
-		final PrintStream ps = SecurityUtils.createPrintStream(os, true, "UTF-8");
+	@Override
+	public void writeToStream(OutputStream os, String metadata, int dpi) throws IOException {
+		final PrintStream ps = SecurityUtils.createPrintStream(os, true, UTF_8);
 		getCharArea().print(ps);
 	}
 
