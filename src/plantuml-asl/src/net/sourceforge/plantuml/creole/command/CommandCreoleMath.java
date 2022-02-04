@@ -39,6 +39,11 @@ import net.sourceforge.plantuml.math.ScientificEquationSafe;
 
 public class CommandCreoleMath implements Command {
 
+	@Override
+	public String startingChars() {
+		return "<";
+	}
+
 	private static final Pattern2 pattern = MyPattern.cmpile("^(" + Splitter.mathPattern + ")");
 
 	private CommandCreoleMath() {

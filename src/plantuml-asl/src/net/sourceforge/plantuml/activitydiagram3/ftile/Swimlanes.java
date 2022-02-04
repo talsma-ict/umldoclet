@@ -56,6 +56,7 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.FtileFactoryDele
 import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.FtileFactoryDelegatorWhile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.UGraphicInterceptorOneSwimlane;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.VCompactFactory;
+import net.sourceforge.plantuml.activitydiagram3.gtile.GConnection;
 import net.sourceforge.plantuml.activitydiagram3.gtile.Gtile;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
@@ -190,6 +191,15 @@ public class Swimlanes extends AbstractTextBlock implements TextBlock, Styleable
 					final ConnectionCross connectionCross = new ConnectionCross(connection);
 					connectionCross.drawU(getUg());
 				}
+			} else if (shape instanceof Gtile) {
+				final Gtile tile = (Gtile) shape;
+				tile.drawU(this);
+			} else if (shape instanceof GConnection) {
+				final GConnection connection = (GConnection) shape;
+				System.err.println("CROSS IN SWIMLANES");
+				connection.drawTranslatable(getUg());
+				// connection.drawU(this);
+				// throw new UnsupportedOperationException();
 			}
 		}
 
@@ -231,9 +241,13 @@ public class Swimlanes extends AbstractTextBlock implements TextBlock, Styleable
 		TextBlock full = root.createGtile(skinParam, ug.getStringBounder());
 
 		ug = new UGraphicForSnake(ug);
-		full = new TextBlockInterceptorUDrawable(full);
-		full.drawU(ug);
-		ug.flushUg();
+		if (swimlanes().size() > 1) {
+			drawWhenSwimlanes(ug, full);
+		} else {
+			full = new TextBlockInterceptorUDrawable(full);
+			full.drawU(ug);
+			ug.flushUg();
+		}
 
 	}
 
@@ -287,7 +301,7 @@ public class Swimlanes extends AbstractTextBlock implements TextBlock, Styleable
 			final LaneDivider divider1 = dividers.get(i);
 
 			final double xpos = swimlane.getTranslate().getDx() + swimlane.getMinMax().getMinX();
-			final HColor back = swimlane.getColors(skinParam).getColor(ColorType.BACK);
+			final HColor back = swimlane.getColors().getColor(ColorType.BACK);
 			if (back != null) {
 				final LaneDivider divider2 = dividers.get(i + 1);
 				final UGraphic background = ug.apply(back.bg()).apply(back)

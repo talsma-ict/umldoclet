@@ -76,11 +76,11 @@ public final class ConcurrentStateImage extends AbstractTextBlock implements IEn
 
 		Dimension2D add(Dimension2D orig, Dimension2D other) {
 			if (this == VERTICAL) {
-				return new Dimension2DDouble(orig.getWidth() + other.getWidth(), Math.max(orig.getHeight(),
-						other.getHeight()));
+				return new Dimension2DDouble(orig.getWidth() + other.getWidth(),
+						Math.max(orig.getHeight(), other.getHeight()));
 			}
-			return new Dimension2DDouble(Math.max(orig.getWidth(), other.getWidth()), orig.getHeight()
-					+ other.getHeight());
+			return new Dimension2DDouble(Math.max(orig.getWidth(), other.getWidth()),
+					orig.getHeight() + other.getHeight());
 		}
 
 		void drawSeparator(UGraphic ug, Dimension2D dimTotal) {
@@ -104,7 +104,7 @@ public final class ConcurrentStateImage extends AbstractTextBlock implements IEn
 			HColor backColor) {
 		this.separator = Separator.fromChar(concurrentSeparator);
 		this.skinParam = skinParam;
-		this.backColor = skinParam.getBackgroundColor(false);
+		this.backColor = skinParam.getBackgroundColor();
 		this.inners.addAll(images);
 	}
 
@@ -150,7 +150,7 @@ public final class ConcurrentStateImage extends AbstractTextBlock implements IEn
 	public ShapeType getShapeType() {
 		return ShapeType.RECTANGLE;
 	}
-	
+
 	public double getOverscanX(StringBounder stringBounder) {
 		return 0;
 	}

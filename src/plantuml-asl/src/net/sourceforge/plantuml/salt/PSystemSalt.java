@@ -145,7 +145,7 @@ public class PSystemSalt extends TitledDiagram implements WithSprite {
 			}
 
 			public HColor getBackcolor() {
-				return getSkinParam().getBackgroundColor(false);
+				return getSkinParam().getBackgroundColor();
 			}
 		};
 	}

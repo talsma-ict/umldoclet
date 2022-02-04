@@ -50,7 +50,7 @@ import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.graphic.InnerStrategy;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.sequencediagram.Englober;
+import net.sourceforge.plantuml.sequencediagram.Doll;
 import net.sourceforge.plantuml.sequencediagram.Event;
 import net.sourceforge.plantuml.sequencediagram.Newpage;
 import net.sourceforge.plantuml.sequencediagram.Participant;
@@ -111,9 +111,9 @@ public class DrawableSet {
 
 	public Collection<GraphicalElement> getAllGraphicalElements() {
 		final Collection<GraphicalElement> result = new ArrayList<>();
-		for (Event ev : eventsList) {
+		for (Event ev : eventsList)
 			result.add(events.get(ev));
-		}
+
 		return Collections.unmodifiableCollection(result);
 	}
 
@@ -137,19 +137,19 @@ public class DrawableSet {
 	public double getHeadAndEngloberHeight(Participant p, StringBounder stringBounder) {
 		final LivingParticipantBox box = participants.get(p);
 		final double height = box.getParticipantBox().getHeadHeight(stringBounder);
-		final Englober englober = getParticipantEnglober(p, stringBounder);
-		if (englober == null) {
+		final Doll doll = getParticipantEnglober(p, stringBounder);
+		if (doll == null)
 			return height;
-		}
-		final Component comp = skin.createComponent(englober.getUsedStyles(), ComponentType.ENGLOBER, null, skinParam,
-				englober.getParticipantEnglober().getTitle());
+
+		final Component comp = skin.createComponent(doll.getUsedStyles(), ComponentType.ENGLOBER, null, skinParam,
+				doll.getParticipantEnglober().getTitle());
 		final double heightEnglober = comp.getPreferredHeight(stringBounder);
 		return height + heightEnglober;
 	}
 
-	public List<Englober> getExistingParticipantEnglober(StringBounder stringBounder) {
-		final List<Englober> result = new ArrayList<>();
-		Englober pending = null;
+	public List<Doll> getExistingParticipantEnglober(StringBounder stringBounder) {
+		final List<Doll> result = new ArrayList<>();
+		Doll pending = null;
 		for (Map.Entry<Participant, ParticipantEnglober> ent : participantEnglobers2.entrySet()) {
 			final ParticipantEnglober englober = ent.getValue();
 			if (englober == null) {
@@ -158,10 +158,10 @@ public class DrawableSet {
 			}
 			assert englober != null;
 			if (pending != null && englober == pending.getParticipantEnglober()) {
-				pending.add(ent.getKey());
+				pending.addParticipant(ent.getKey());
 				continue;
 			}
-			pending = Englober.createPuma(englober, ent.getKey(), getSkinParam(), skin, stringBounder,
+			pending = Doll.createPuma(englober, ent.getKey(), getSkinParam(), skin, stringBounder,
 					skinParam.getCurrentStyleBuilder());
 			result.add(pending);
 		}
@@ -170,13 +170,13 @@ public class DrawableSet {
 
 	public double getOffsetForEnglobers(StringBounder stringBounder) {
 		double result = 0;
-		for (Englober englober : getExistingParticipantEnglober(stringBounder)) {
-			final Component comp = skin.createComponent(null, ComponentType.ENGLOBER, null, skinParam, englober
-					.getParticipantEnglober().getTitle());
+		for (Doll englober : getExistingParticipantEnglober(stringBounder)) {
+			final Component comp = skin.createComponent(null, ComponentType.ENGLOBER, null, skinParam,
+					englober.getParticipantEnglober().getTitle());
 			final double height = comp.getPreferredHeight(stringBounder);
-			if (height > result) {
+			if (height > result)
 				result = height;
-			}
+
 		}
 		return result;
 	}
@@ -185,12 +185,13 @@ public class DrawableSet {
 	static private final int MARGIN_FOR_ENGLOBERS1 = 2;
 
 	public double getTailHeight(StringBounder stringBounder, boolean showTail) {
-		final double marginForEnglobers = getExistingParticipantEnglober(stringBounder).size() > 0 ? MARGIN_FOR_ENGLOBERS
+		final double marginForEnglobers = getExistingParticipantEnglober(stringBounder).size() > 0
+				? MARGIN_FOR_ENGLOBERS
 				: 0;
 
-		if (showTail == false) {
+		if (showTail == false)
 			return 1 + marginForEnglobers;
-		}
+
 		double r = 0;
 		for (LivingParticipantBox livingParticipantBox : participants.values()) {
 			final double y = livingParticipantBox.getParticipantBox().getTailHeight(stringBounder);
@@ -205,33 +206,33 @@ public class DrawableSet {
 	}
 
 	public void setLivingParticipantBox(Participant p, LivingParticipantBox box) {
-		if (participants.containsKey(p) == false) {
+		if (participants.containsKey(p) == false)
 			throw new IllegalArgumentException();
-		}
+
 		participants.put(p, box);
 	}
 
 	public void addEvent(Event event, GraphicalElement object) {
-		if (events.keySet().contains(event) == false) {
+		if (events.keySet().contains(event) == false)
 			eventsList.add(event);
-		}
+
 		events.put(event, object);
 	}
 
 	public void addEvent(Newpage newpage, GraphicalNewpage object, Event justBefore) {
 		final int idx = eventsList.indexOf(justBefore);
-		if (idx == -1) {
+		if (idx == -1)
 			throw new IllegalArgumentException();
-		}
+
 		eventsList.add(idx, newpage);
 		events.put(newpage, object);
 		assert events.size() == eventsList.size();
 	}
 
 	void setDimension(Dimension2D dim) {
-		if (dimension != null) {
+		if (dimension != null)
 			throw new IllegalStateException();
-		}
+
 		this.dimension = dim;
 	}
 
@@ -268,7 +269,7 @@ public class DrawableSet {
 
 		final UGraphic ugTranslated = clipAndTranslate2(delta, width, page, ug);
 		final SimpleContext2D context = new SimpleContext2D(true);
-		this.drawEnglobers(ug, height - MARGIN_FOR_ENGLOBERS1, context);
+		this.drawDolls(ug, height - MARGIN_FOR_ENGLOBERS1, context);
 		this.drawPlaygroundU(ugTranslated, context);
 
 		this.drawLineU22(ug, showTail, page);
@@ -284,9 +285,9 @@ public class DrawableSet {
 	}
 
 	private UTranslate getTranslate4(final double delta) {
-		if (delta > 0) {
+		if (delta > 0)
 			return UTranslate.dy(-delta);
-		}
+
 		return new UTranslate();
 	}
 
@@ -299,15 +300,14 @@ public class DrawableSet {
 			final double endMax = startMin + page.getBodyHeight() + 2 * box.magicMargin(ug.getStringBounder());
 			double start = startMin;
 			if (create > 0) {
-				if (create > page.getNewpage2()) {
+				if (create > page.getNewpage2())
 					continue;
-				}
+
 				if (create >= page.getNewpage1() && create < page.getNewpage2()) {
-					if (isTxt) {
+					if (isTxt)
 						start = (int) create;
-					} else {
+					else
 						start += create - page.getNewpage1() + 2 * box.magicMargin(ug.getStringBounder());
-					}
 				}
 			}
 			final double myDelta = page.getNewpage1() - page.getHeaderHeight();
@@ -322,21 +322,21 @@ public class DrawableSet {
 			final double create = box.getCreate();
 			boolean showHead = true;
 			if (create > 0) {
-				if (create > page.getNewpage2()) {
+				if (create > page.getNewpage2())
 					continue;
-				}
-				if (create >= page.getNewpage1() && create < page.getNewpage2()) {
+
+				if (create >= page.getNewpage1() && create < page.getNewpage2())
 					showHead = false;
-				}
+
 			}
 			final Url url = p.getUrl();
-			if (url != null) {
+			if (url != null)
 				ug.startUrl(url);
-			}
+
 			box.getParticipantBox().drawHeadTailU(ug, topStartingY, showHead, positionTail);
-			if (url != null) {
+			if (url != null)
 				ug.closeUrl();
-			}
+
 		}
 	}
 
@@ -349,24 +349,23 @@ public class DrawableSet {
 	}
 
 	private void drawPlaygroundU(UGraphic ug, Context2D context) {
-		for (Participant p : getAllParticipants()) {
+		for (Participant p : getAllParticipants())
 			drawLifeLineU(ug, p);
-		}
 
-		for (GraphicalElement element : getAllGraphicalElements()) {
+		for (GraphicalElement element : getAllGraphicalElements())
 			element.drawU(ug, getMaxX(), context);
-		}
+
 	}
 
-	private void drawEnglobers(UGraphic ug, double height, Context2D context) {
-		for (Englober englober : getExistingParticipantEnglober(ug.getStringBounder())) {
-			double x1 = getX1(englober);
-			final double x2 = getX2(ug.getStringBounder(), englober);
+	private void drawDolls(UGraphic ug, double height, Context2D context) {
+		for (Doll doll : getExistingParticipantEnglober(ug.getStringBounder())) {
+			double x1 = getX1(doll);
+			final double x2 = getX2(ug.getStringBounder(), doll);
 
-			final Component comp = getEngloberComponent(englober);
+			final Component comp = getEngloberComponent(doll);
 
 			final double width = x2 - x1;
-			final double preferedWidth = getEngloberPreferedWidth(ug.getStringBounder(), englober);
+			final double preferedWidth = getEngloberPreferedWidth(ug.getStringBounder(), doll);
 			if (preferedWidth > width) {
 				// if (englober.getFirst2() == englober.getLast2()) {
 				x1 -= (preferedWidth - width) / 2;
@@ -380,26 +379,26 @@ public class DrawableSet {
 		}
 	}
 
-	public double getEngloberPreferedWidth(StringBounder stringBounder, Englober englober) {
-		return getEngloberComponent(englober).getPreferredWidth(stringBounder);
+	public double getEngloberPreferedWidth(StringBounder stringBounder, Doll doll) {
+		return getEngloberComponent(doll).getPreferredWidth(stringBounder);
 	}
 
-	private Component getEngloberComponent(Englober englober) {
-		final ParticipantEnglober participantEnglober = englober.getParticipantEnglober();
-		final ISkinParam s = participantEnglober.getBoxColor() == null ? skinParam : new SkinParamBackcolored(
-				skinParam, participantEnglober.getBoxColor());
-		return skin.createComponent(englober.getUsedStyles(), ComponentType.ENGLOBER, null, s,
+	private Component getEngloberComponent(Doll doll) {
+		final ParticipantEnglober participantEnglober = doll.getParticipantEnglober();
+		final ISkinParam s = participantEnglober.getBoxColor() == null ? skinParam
+				: new SkinParamBackcolored(skinParam, participantEnglober.getBoxColor());
+		return skin.createComponent(doll.getUsedStyles(), ComponentType.ENGLOBER, null, s,
 				participantEnglober.getTitle());
 	}
 
-	public double getX1(Englober englober) {
-		final Participant first = englober.getFirst2TOBEPRIVATE();
+	public double getX1(Doll doll) {
+		final Participant first = doll.getFirst2TOBEPRIVATE();
 		final ParticipantBox firstBox = participants.get(first).getParticipantBox();
 		return firstBox.getStartingX() + 1;
 	}
 
-	public double getX2(StringBounder stringBounder, Englober englober) {
-		final Participant last = englober.getLast2TOBEPRIVATE();
+	public double getX2(StringBounder stringBounder, Doll doll) {
+		final Participant last = doll.getLast2TOBEPRIVATE();
 		final ParticipantBox lastBox = participants.get(last).getParticipantBox();
 		return lastBox.getMaxX(stringBounder) - 1;
 	}
@@ -411,12 +410,11 @@ public class DrawableSet {
 		line.drawU(ug, getSkin(), skinParam);
 	}
 
-	private Englober getParticipantEnglober(Participant p, StringBounder stringBounder) {
-		for (Englober pe : getExistingParticipantEnglober(stringBounder)) {
-			if (pe.contains(p)) {
+	private Doll getParticipantEnglober(Participant p, StringBounder stringBounder) {
+		for (Doll pe : getExistingParticipantEnglober(stringBounder))
+			if (pe.contains(p))
 				return pe;
-			}
-		}
+
 		return null;
 	}
 
@@ -430,9 +428,9 @@ public class DrawableSet {
 		for (Participant p : someParticipants) {
 			final int n = list.indexOf(p);
 			assert n != -1;
-			if (min == -1 || min > n) {
+			if (min == -1 || min > n)
 				min = n;
-			}
+
 		}
 		return list.get(min);
 	}
@@ -443,18 +441,18 @@ public class DrawableSet {
 		for (Participant p : someParticipants) {
 			final int n = list.indexOf(p);
 			assert n != -1;
-			if (max == -1 || max < n) {
+			if (max == -1 || max < n)
 				max = n;
-			}
+
 		}
 		return list.get(max);
 	}
 
 	public double getArrowThickness() {
 		final UStroke result = skinParam.getThickness(LineParam.sequenceArrow, null);
-		if (result == null) {
+		if (result == null)
 			return 1;
-		}
+
 		return result.getThickness();
 	}
 

@@ -168,9 +168,11 @@ public abstract class AbstractCommonUGraphic implements UGraphic {
 	final public void flushUg() {
 	}
 
+	@Override
 	public void startUrl(Url url) {
 	}
 
+	@Override
 	public void closeUrl() {
 	}
 

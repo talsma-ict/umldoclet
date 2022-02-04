@@ -38,6 +38,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -117,6 +118,9 @@ public class SkinParam implements ISkinParam {
 		if (type == UmlDiagramType.YAML) {
 			UseStyle.setBetaStyle(true);
 		}
+		if (type == UmlDiagramType.HCL) {
+			UseStyle.setBetaStyle(true);
+		}
 		if (type == UmlDiagramType.NWDIAG) {
 			UseStyle.setBetaStyle(true);
 		}
@@ -142,9 +146,8 @@ public class SkinParam implements ISkinParam {
 	}
 
 	public void muteStyle(Style modifiedStyle) {
-		if (UseStyle.useBetaStyle()) {
+		if (UseStyle.useBetaStyle())
 			styleBuilder = getCurrentStyleBuilder().muteStyle(modifiedStyle);
-		}
 	}
 
 	public String getDefaultSkin() {
@@ -161,7 +164,6 @@ public class SkinParam implements ISkinParam {
 		if (result == null) {
 			result = tmp.loadSkin("plantuml.skin");
 		}
-
 		return result;
 	}
 
@@ -173,6 +175,7 @@ public class SkinParam implements ISkinParam {
 	private static final Pattern2 stereoPattern = MyPattern.cmpile(stereoPatternString);
 
 	private final Map<String, String> params = new HashMap<String, String>();
+	private final Map<String, String> paramsPendingForStyleMigration = new LinkedHashMap<String, String>();
 	private final Map<String, String> svgCharSizes = new HashMap<String, String>();
 	private Rankdir rankdir = Rankdir.TOP_TO_BOTTOM;
 	private final UmlDiagramType type;
@@ -189,15 +192,17 @@ public class SkinParam implements ISkinParam {
 	public void setParam(String key, String value) {
 		for (String key2 : cleanForKey(key)) {
 			params.put(key2, StringUtils.trin(value));
-			if (key2.startsWith("usebetastyle")) {
-				final boolean betastyle = "true".equalsIgnoreCase(value);
-				UseStyle.setBetaStyle(betastyle);
-			}
+			if (key2.startsWith("usebetastyle") && "true".equalsIgnoreCase(value))
+				UseStyle.setBetaStyle(true);
+
 			if (UseStyle.useBetaStyle()) {
+				applyPendingStyleMigration();
 				final FromSkinparamToStyle convertor = new FromSkinparamToStyle(key2, value, getCurrentStyleBuilder());
-				for (Style style : convertor.getStyles()) {
+				for (Style style : convertor.getStyles())
 					muteStyle(style);
-				}
+
+			} else {
+				paramsPendingForStyleMigration.put(key, value);
 			}
 		}
 		if ("style".equalsIgnoreCase(key) && "strictuml".equalsIgnoreCase(value)) {
@@ -214,6 +219,16 @@ public class SkinParam implements ISkinParam {
 				}
 			}
 		}
+	}
+
+	public void applyPendingStyleMigration() {
+		for (Entry<String, String> ent : paramsPendingForStyleMigration.entrySet()) {
+			final FromSkinparamToStyle convertor = new FromSkinparamToStyle(ent.getKey(), ent.getValue(),
+					getCurrentStyleBuilder());
+			for (Style style : convertor.getStyles())
+				muteStyle(style);
+		}
+		paramsPendingForStyleMigration.clear();
 	}
 
 	public static SkinParam create(UmlDiagramType type) {
@@ -278,18 +293,14 @@ public class SkinParam implements ISkinParam {
 		return result;
 	}
 
-	public HColor getBackgroundColor(boolean replaceTransparentByWhite) {
+	public HColor getBackgroundColor() {
 		final HColor result = getHtmlColor(ColorParam.background, null, false);
-		if (result == null) {
-			return HColorUtils.WHITE;
-		}
-		if (replaceTransparentByWhite && HColorUtils.transparent().equals(result)) {
-			return HColorUtils.WHITE;
-		}
-		return result;
+		return result != null ? result : HColorUtils.WHITE;
 	}
 
 	public String getValue(String key) {
+		if (UseStyle.useBetaStyle())
+			applyPendingStyleMigration();
 		for (String key2 : cleanForKey(key)) {
 			final String result = params.get(key2);
 			if (result != null) {
@@ -351,7 +362,7 @@ public class SkinParam implements ISkinParam {
 		assert param != ColorParam.background;
 //		final boolean acceptTransparent = param == ColorParam.background
 //				|| param == ColorParam.sequenceGroupBodyBackground || param == ColorParam.sequenceBoxBackground;
-		return getIHtmlColorSet().getColorOrWhite(themeStyle, value, getBackgroundColor(false));
+		return getIHtmlColorSet().getColorOrWhite(themeStyle, value, getBackgroundColor());
 	}
 
 	public char getCircledCharacter(Stereotype stereotype) {
@@ -597,7 +608,11 @@ public class SkinParam implements ISkinParam {
 	}
 
 	public int getDpi() {
-		return getAsInt("dpi", 96);
+		final int defaultValue = 96;
+		final int dpi = getAsInt("dpi", defaultValue);
+		if (dpi <= 0)
+			return defaultValue;
+		return dpi;
 	}
 
 	public DotSplines getDotSplines() {

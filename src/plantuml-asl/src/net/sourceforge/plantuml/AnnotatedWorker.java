@@ -35,7 +35,7 @@ import java.awt.geom.Rectangle2D;
 
 import net.sourceforge.plantuml.activitydiagram3.ftile.EntityImageLegend;
 import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.cucadiagram.DisplayPositionned;
+import net.sourceforge.plantuml.cucadiagram.DisplayPositioned;
 import net.sourceforge.plantuml.cucadiagram.DisplaySection;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
@@ -133,11 +133,11 @@ public class AnnotatedWorker {
 	}
 
 	private HColor getBackgroundColor() {
-		return getSkinParam().getBackgroundColor(false);
+		return getSkinParam().getBackgroundColor();
 	}
 
 	private TextBlock addLegend(TextBlock original) {
-		final DisplayPositionned legend = annotated.getLegend();
+		final DisplayPositioned legend = annotated.getLegend();
 		if (legend.isNull()) {
 			return original;
 		}
@@ -151,7 +151,7 @@ public class AnnotatedWorker {
 	}
 
 	private TextBlock addCaption(TextBlock original) {
-		final DisplayPositionned caption = annotated.getCaption();
+		final DisplayPositioned caption = annotated.getCaption();
 		if (caption.isNull()) {
 			return original;
 		}
@@ -160,7 +160,7 @@ public class AnnotatedWorker {
 	}
 
 	public TextBlock getCaption() {
-		final DisplayPositionned caption = annotated.getCaption();
+		final DisplayPositioned caption = annotated.getCaption();
 		if (caption.isNull()) {
 			return TextBlockUtils.empty(0, 0);
 		}
@@ -174,7 +174,7 @@ public class AnnotatedWorker {
 	}
 
 	private TextBlock addTitle(TextBlock original) {
-		final DisplayPositionned title = annotated.getTitle();
+		final DisplayPositioned title = (DisplayPositioned) annotated.getTitle();
 		if (title.isNull()) {
 			return original;
 		}

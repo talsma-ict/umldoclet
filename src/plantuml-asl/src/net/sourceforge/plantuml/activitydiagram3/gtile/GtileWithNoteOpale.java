@@ -31,6 +31,7 @@
 package net.sourceforge.plantuml.activitydiagram3.gtile;
 
 import java.awt.geom.Dimension2D;
+import java.util.Set;
 
 import net.sourceforge.plantuml.AlignmentParam;
 import net.sourceforge.plantuml.ColorParam;
@@ -83,18 +84,28 @@ public class GtileWithNoteOpale extends AbstractGtile implements Stencil, Stylea
 	public StyleSignature getDefaultStyleDefinition() {
 		return StyleSignature.of(SName.root, SName.element, SName.activityDiagram, SName.note);
 	}
+	
+	@Override
+	public Swimlane getSwimlane(String point) {
+		return tile.getSwimlane(point);
+	}
+	
+	@Override
+	public Set<Swimlane> getSwimlanes() {
+		return tile.getSwimlanes();
+	}
 
 	public GtileWithNoteOpale(Gtile tile, PositionedNote note, ISkinParam skinParam, boolean withLink) {
 		super(tile.getStringBounder(), tile.skinParam());
 		this.swimlaneNote = note.getSwimlaneNote();
-		if (note.getColors() != null) {
+		if (note.getColors() != null)
 			skinParam = note.getColors().mute(skinParam);
-		}
+		
 		this.tile = tile;
 		this.notePosition = note.getNotePosition();
-		if (note.getType() == NoteType.FLOATING_NOTE) {
+		if (note.getType() == NoteType.FLOATING_NOTE)
 			withLink = false;
-		}
+		
 
 		final Rose rose = new Rose();
 
@@ -133,13 +144,19 @@ public class GtileWithNoteOpale extends AbstractGtile implements Stencil, Stylea
 
 		final Dimension2D dimTotal = calculateDimension(stringBounder);
 
-		this.positionNote = new UTranslate(0, (dimTotal.getHeight() - dimNote.getHeight()) / 2);
-		this.positionTile = new UTranslate(dimNote.getWidth() + suppSpace,
-				(dimTotal.getHeight() - dimTile.getHeight()) / 2);
+		if (note.getNotePosition() == NotePosition.LEFT) {
+			this.positionNote = new UTranslate(0, (dimTotal.getHeight() - dimNote.getHeight()) / 2);
+			this.positionTile = new UTranslate(dimNote.getWidth() + suppSpace,
+					(dimTotal.getHeight() - dimTile.getHeight()) / 2);
+		} else {
+			this.positionNote = new UTranslate(dimTile.getWidth() + suppSpace,
+					(dimTotal.getHeight() - dimNote.getHeight()) / 2);
+			this.positionTile = new UTranslate(0, (dimTotal.getHeight() - dimTile.getHeight()) / 2);
+		}
 	}
 
 	@Override
-	public UTranslate getCoord(String name) {
+	protected UTranslate getCoordImpl(String name) {
 		return tile.getCoord(name).compose(positionTile);
 	}
 
@@ -150,9 +167,9 @@ public class GtileWithNoteOpale extends AbstractGtile implements Stencil, Stylea
 	}
 
 	@Override
-	public void drawU(UGraphic ug) {
-		ug.apply(positionNote).draw(opale);
-		ug.apply(positionTile).draw(tile);
+	protected void drawUInternal(UGraphic ug) {
+		opale.drawU(ug.apply(positionNote));
+		tile.drawU(ug.apply(positionTile));
 	}
 
 	@Override

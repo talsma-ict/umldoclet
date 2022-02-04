@@ -124,8 +124,8 @@ public class PixelImage implements MutableImage {
 				// if (isTransparent(color)) {
 				// continue;
 				// }
-				final int grey = ColorUtils.getGrayScale(rgb);
-				if (darkerRgb == -1 || grey < ColorUtils.getGrayScale(darkerRgb)) {
+				final int gray = ColorUtils.getGrayScale(rgb);
+				if (darkerRgb == -1 || gray < ColorUtils.getGrayScale(darkerRgb)) {
 					darkerRgb = rgb;
 				}
 			}

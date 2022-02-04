@@ -54,6 +54,10 @@ public class ValueImpl implements Value {
 		this.priority = priority;
 	}
 
+	public Value addPriority(int delta) {
+		return new ValueImpl(value, delta + priority);
+	}
+
 	@Override
 	public String toString() {
 		return value + " (" + priority + ")";

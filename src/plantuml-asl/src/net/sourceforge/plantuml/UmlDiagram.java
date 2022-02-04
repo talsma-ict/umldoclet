@@ -78,7 +78,6 @@ import net.sourceforge.plantuml.version.Version;
 public abstract class UmlDiagram extends TitledDiagram implements Diagram, Annotated, WithSprite {
 
 	private boolean rotation;
-	private boolean hideUnlinkedData;
 
 	private int minwidth = Integer.MAX_VALUE;
 
@@ -115,15 +114,7 @@ public abstract class UmlDiagram extends TitledDiagram implements Diagram, Annot
 		}
 		throw new IllegalArgumentException();
 	}
-
-	public final boolean isHideUnlinkedData() {
-		return hideUnlinkedData;
-	}
-
-	public final void setHideUnlinkedData(boolean hideUnlinkedData) {
-		this.hideUnlinkedData = hideUnlinkedData;
-	}
-
+	
 	@Override
 	final protected ImageData exportDiagramNow(OutputStream os, int index, FileFormatOption fileFormatOption)
 			throws IOException {

@@ -57,7 +57,7 @@ public class Segment {
 
 	@Override
 	public int hashCode() {
-		return new Double(pos1).hashCode() + new Double(pos2).hashCode();
+		return Double.valueOf(pos1).hashCode() + Double.valueOf(pos2).hashCode();
 	}
 
 	final public boolean contains(double y) {
@@ -108,8 +108,8 @@ public class Segment {
 				return Collections.unmodifiableCollection(result2);
 			}
 			if (this.contains(pause)) {
-				if (pendingStart < pause.pos1)
-					result2.add(new Segment(pendingStart, pause.pos1));
+				assert pendingStart < pause.pos1;
+				result2.add(new Segment(pendingStart, pause.pos1));
 				pendingStart = pause.pos2;
 			}
 		}

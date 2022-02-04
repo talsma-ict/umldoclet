@@ -39,12 +39,15 @@ import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.CommandNope;
 import net.sourceforge.plantuml.command.PSystemCommandFactory;
+import net.sourceforge.plantuml.command.CommonCommands;
 import net.sourceforge.plantuml.core.DiagramType;
 import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.project.command.CommandColorTask;
 import net.sourceforge.plantuml.project.command.CommandFootbox;
 import net.sourceforge.plantuml.project.command.CommandGanttArrow;
 import net.sourceforge.plantuml.project.command.CommandGanttArrow2;
+import net.sourceforge.plantuml.project.command.CommandHideRessourceFootbox;
+import net.sourceforge.plantuml.project.command.CommandHideRessourceName;
 import net.sourceforge.plantuml.project.command.CommandLabelOnColumn;
 import net.sourceforge.plantuml.project.command.CommandLanguage;
 import net.sourceforge.plantuml.project.command.CommandNoteBottom;
@@ -81,8 +84,8 @@ public class GanttDiagramFactory extends PSystemCommandFactory {
 	@Override
 	protected List<Command> createCommands() {
 		final List<Command> cmds = new ArrayList<>();
-		addTitleCommands(cmds);
-		addCommonCommands2(cmds);
+		CommonCommands.addTitleCommands(cmds);
+		CommonCommands.addCommonCommands2(cmds);
 
 		cmds.add(new CommandStyleMultilinesCSS());
 		cmds.add(new CommandStyleImport());
@@ -104,6 +107,8 @@ public class GanttDiagramFactory extends PSystemCommandFactory {
 		cmds.add(new CommandNoteBottom());
 		cmds.add(new CommandFootbox());
 		cmds.add(new CommandLabelOnColumn());
+		cmds.add(new CommandHideRessourceName());
+		cmds.add(new CommandHideRessourceFootbox());
 
 		// cmds.add(new CommandScaleWidthAndHeight());
 		// cmds.add(new CommandScaleWidthOrHeight());

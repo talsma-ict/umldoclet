@@ -32,13 +32,15 @@ package net.sourceforge.plantuml.cucadiagram;
 
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Map;
+import java.util.Collection;
+import java.util.HashSet;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.EmbeddedDiagram;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.Url;
+import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.creole.CreoleMode;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
@@ -49,9 +51,13 @@ import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockLineBefore;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.TextBlockWithUrl;
+import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
 import net.sourceforge.plantuml.skin.rose.Rose;
+import net.sourceforge.plantuml.style.PName;
+import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.svek.Ports;
 import net.sourceforge.plantuml.svek.WithPorts;
 import net.sourceforge.plantuml.ugraphic.PlacementStrategy;
@@ -62,6 +68,7 @@ import net.sourceforge.plantuml.ugraphic.PlacementStrategyY1Y2Right;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULayoutGroup;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 import net.sourceforge.plantuml.utils.CharHidder;
 
 public class MethodsOrFieldsArea extends AbstractTextBlock implements TextBlock, WithPorts {
@@ -103,9 +110,9 @@ public class MethodsOrFieldsArea extends AbstractTextBlock implements TextBlock,
 			if (cs instanceof Member == false)
 				continue;
 			final Member m = (Member) cs;
-			if (m.getVisibilityModifier() != null) {
+			if (m.getVisibilityModifier() != null)
 				return true;
-			}
+
 		}
 		return false;
 	}
@@ -127,53 +134,68 @@ public class MethodsOrFieldsArea extends AbstractTextBlock implements TextBlock,
 		return new Dimension2DDouble(x, y);
 	}
 
+	@Override
 	public Ports getPorts(StringBounder stringBounder) {
 		final Ports result = new Ports();
 		double y = 0;
-		final Election election = new Election();
-		for (CharSequence cs : members) {
-			if (cs instanceof Member) {
-				final Member m = (Member) cs;
-				election.addCandidate(m.getDisplay(false), m);
-			} else {
-				election.addCandidate(cs.toString(), cs);
-			}
-		}
-		final Map<CharSequence, String> memberWithPort = election.getAllElected(leaf.getPortShortNames());
+
 		for (CharSequence cs : members) {
 			final TextBlock bloc = createTextBlock(cs);
 			final Dimension2D dim = bloc.calculateDimension(stringBounder);
-			final String port = memberWithPort.get(cs);
-			if (port != null) {
-				result.add(port, y, dim.getHeight());
-			}
+			final Elected port = getElected(leaf.getPortShortNames(), convert(cs));
+			if (port != null)
+				result.add(port.getShortName(), port.getScore(), y, dim.getHeight());
+
 			y += dim.getHeight();
 		}
 		return result;
 	}
 
+	private String convert(CharSequence cs) {
+		if (cs instanceof Member)
+			return ((Member) cs).getDisplay(false);
+		return cs.toString();
+	}
+
+	public Elected getElected(Collection<String> shortNames, String cs) {
+		for (String shortName : new HashSet<>(shortNames)) {
+			final int score = getScore(shortName, cs);
+			if (score > 0)
+				return new Elected(shortName, score);
+		}
+		return null;
+	}
+
+	private int getScore(String shortName, String cs) {
+		if (cs.matches(".*\\b" + shortName + "\\b.*"))
+			return 100;
+
+		if (cs.contains(shortName))
+			return 50;
+
+		return 0;
+	}
+
 	private TextBlock createTextBlock(CharSequence cs) {
 
 		FontConfiguration config;
-		if (style != null) {
+		if (style != null)
 			config = new FontConfiguration(skinParam, style);
-		} else {
+		else
 			config = new FontConfiguration(skinParam, fontParam, stereotype);
-		}
 
 		if (cs instanceof Member) {
 			final Member m = (Member) cs;
 			final boolean withVisibilityChar = skinParam.classAttributeIconSize() == 0;
 			String s = m.getDisplay(withVisibilityChar);
-			if (withVisibilityChar && s.startsWith("#")) {
+			if (withVisibilityChar && s.startsWith("#"))
 				s = CharHidder.addTileAtBegin(s);
-			}
-			if (m.isAbstract()) {
+
+			if (m.isAbstract())
 				config = config.italic();
-			}
-			if (m.isStatic()) {
+
+			if (m.isStatic())
 				config = config.underline();
-			}
 
 			TextBlock bloc = Display.getWithNewlines(s).create8(config, align, skinParam, CreoleMode.SIMPLE_LINE,
 					skinParam.wrapWidth());
@@ -201,13 +223,13 @@ public class MethodsOrFieldsArea extends AbstractTextBlock implements TextBlock,
 		}
 
 		public void drawU(UGraphic ug) {
-			if (url != null) {
+			if (url != null)
 				ug.startUrl(url);
-			}
+
 			bloc.drawU(ug);
-			if (url != null) {
+			if (url != null)
 				ug.closeUrl();
-			}
+
 		}
 
 		public Dimension2D calculateDimension(StringBounder stringBounder) {
@@ -240,20 +262,32 @@ public class MethodsOrFieldsArea extends AbstractTextBlock implements TextBlock,
 				}
 			};
 		}
-		final HColor back = modifier.getBackground() == null ? null
-				: rose.getHtmlColor(skinParam, modifier.getBackground());
-		final HColor fore = rose.getHtmlColor(skinParam, modifier.getForeground());
+		final HColor backColor;
+		final HColor borderColor;
+		if (UseStyle.useBetaStyle()) {
+			final Style style = modifier.getStyleSignature().getMergedStyle(skinParam.getCurrentStyleBuilder());
+			borderColor = style.value(PName.LineColor).asColor(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet());
+			final boolean isField = modifier.isField();
+			backColor = isField ? null
+					: style.value(PName.BackGroundColor).asColor(skinParam.getThemeStyle(),
+							skinParam.getIHtmlColorSet());
+		} else {
+			borderColor = rose.getHtmlColor(skinParam, modifier.getForeground());
+			backColor = modifier.getBackground() == null ? null
+					: rose.getHtmlColor(skinParam, modifier.getBackground());
+		}
 
-		final TextBlock uBlock = modifier.getUBlock(skinParam.classAttributeIconSize(), fore, back, url != null);
+		final TextBlock uBlock = modifier.getUBlock(skinParam.classAttributeIconSize(), borderColor, backColor,
+				url != null);
 		return TextBlockWithUrl.withUrl(uBlock, url);
 	}
 
 	public boolean contains(String member) {
 		for (CharSequence cs : members) {
 			final Member att = (Member) cs;
-			if (att.getDisplay(false).startsWith(member)) {
+			if (att.getDisplay(false).startsWith(member))
 				return true;
-			}
+
 		}
 		return false;
 	}
@@ -283,13 +317,13 @@ public class MethodsOrFieldsArea extends AbstractTextBlock implements TextBlock,
 			}
 		} else {
 			final PlacementStrategy placementStrategy;
-			if (align == HorizontalAlignment.LEFT) {
+			if (align == HorizontalAlignment.LEFT)
 				placementStrategy = new PlacementStrategyY1Y2Left(stringBounder);
-			} else if (align == HorizontalAlignment.CENTER) {
+			else if (align == HorizontalAlignment.CENTER)
 				placementStrategy = new PlacementStrategyY1Y2Center(stringBounder);
-			} else {
+			else
 				placementStrategy = new PlacementStrategyY1Y2Right(stringBounder);
-			}
+
 			group = new ULayoutGroup(placementStrategy);
 			for (CharSequence cs : members) {
 				final TextBlock bloc = createTextBlock(cs);

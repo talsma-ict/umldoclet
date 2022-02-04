@@ -105,6 +105,26 @@ skinparam useBetaStyle false
 !$SUCCESS_TEXT = $WHITE
 !$WARNING_TEXT = $WHITE
 !$DANGER_TEXT  = $WHITE
+!$PRIMARY_TEXT = $WHITE
+!$HEADER_TEXT  = $WHITE
+''
+!if ($PUML_OUTLINE == "true")
+	!$HEADER_TEXT  = $PRIMARY_TEXT
+	!$PRIMARY_TEXT = $PRIMARY_LIGHT
+	!$INFO_TEXT    = $INFO_LIGHT
+	!$WARNING_TEXT = $WARNING_LIGHT
+	!$DARK_BG      = $PUML_BGCOLOR
+	!$INFO_BG      = $PUML_BGCOLOR
+	!$DANGER_BG    = $PUML_BGCOLOR
+	!$WARNING_BG   = $PUML_BGCOLOR
+	!$SECONDARY_BG = $PUML_BGCOLOR
+!else
+	!$DARK_BG      = $DARK
+	!$INFO_BG      = $INFO
+	!$DANGER_BG    = $DANGER
+	!$WARNING_BG   = $WARNING
+	!$SECONDARY_BG = $SECONDARY
+!endif
 ''
 '' Called to make the text in the color of SUCCESS
 ''
@@ -153,24 +173,6 @@ skinparam useBetaStyle false
 		BackgroundColor $SECONDARY_LIGHT-$SECONDARY
 	!endif
 !endprocedure
-''
-!if ($PUML_OUTLINE == "true")
-	!$HEADER_TEXT  = $PRIMARY_TEXT
-	!$PRIMARY_TEXT = $PRIMARY_LIGHT
-	!$INFO_TEXT    = $INFO_LIGHT
-	!$WARNING_TEXT = $WARNING_LIGHT
-	!$DARK_BG      = $PUML_BGCOLOR
-	!$INFO_BG      = $PUML_BGCOLOR
-	!$DANGER_BG    = $PUML_BGCOLOR
-	!$WARNING_BG   = $PUML_BGCOLOR
-	!$SECONDARY_BG = $PUML_BGCOLOR
-!else
-	!$DARK_BG      = $DARK
-	!$INFO_BG      = $INFO
-	!$DANGER_BG    = $DANGER
-	!$WARNING_BG   = $WARNING
-	!$SECONDARY_BG = $SECONDARY
-!endif
 ''
 '' HTTP Methods
 ''
@@ -528,9 +530,127 @@ skinparam file {
 !endsub
 
 !startsub stack
-
 skinparam stack {
 	$primary_scheme()
 }
-
 !endsub
+
+
+!startsub map
+skinparam map {
+	$primary_scheme()
+}
+!endsub
+
+''
+'' When mixing skinparam and <style>, it is very important to put <style> after skinparam
+''
+'' Style settings
+''
+<style>
+wbsDiagram, mindmapDiagram {
+  root {
+    BackgroundColor $PUML_BGCOLOR
+    FontColor $PRIMARY_TEXT
+    HyperLinkColor $INFO_BG
+    LineColor $PRIMARY_DARK
+    LineThickness 1
+    Margin 10
+    Padding 6
+    Shadowing 0.0
+  }
+  node {
+    $primary_scheme()
+    Padding 15
+    RoundCorner 20
+  }
+  caption {
+    LineThickness 0
+  }
+  footer {
+    LineThickness 0
+  }
+  groupHeader {
+    BackgroundColor $SECONDARY_BG
+    FontColor $INFO_BG
+    FontStyle bold
+  }
+  header {
+    LineThickness 0
+  }
+  referenceHeader {
+    BackgroundColor $PUML_BGCOLOR
+    FontColor $DARK_BG
+    FontStyle bold
+  }
+  separator {
+    BackgroundColor $FGCOLOR
+    FontColor $PUML_BGCOLOR
+    FontStyle bold
+  }
+  title {
+	FontSize 20
+	BorderRoundCorner            8
+	BorderThickness 	         1
+	BackgroundColor  $SECONDARY_LIGHT-$SECONDARY_BG
+	FontColor $PRIMARY_TEXT
+	BorderColor $SECONDARY_BG
+  }
+}
+nwdiagDiagram {
+  network {
+    $primary_scheme()    
+    LineColor $PRIMARY_BG
+    LineThickness 1.0
+    FontColor $PRIMARY_DARK
+  }
+  server {
+    $primary_scheme()
+  }
+  arrow {
+    FontColor $PRIMARY_DARK
+    LineColor $PRIMARY_DARK
+  }
+  group {
+    BackGroundColor $LIGHT_BG
+    LineColor $LIGHT_DARK
+    LineThickness 2.0
+    Margin 5
+    Padding 5
+  }
+}
+ganttDiagram {
+  task {
+    $primary_scheme()
+	LineColor $PRIMARY_BG
+    Margin 10
+    Padding 6
+  }
+  note {
+	FontColor $INFO_TEXT
+	LineColor $INFO_DARK
+    BackGroundColor $INFO_BG
+  }
+  separator {
+	LineColor $SECONDARY_BG
+    BackGroundColor $secondary_scheme()
+    FontColor $SECONDARY_TEXT
+  }
+  milestone {
+	FontColor $INFO_BG
+	FontSize 16
+	FontStyle italic
+	BackGroundColor $DIAMOND_BG
+	LineColor $SECONDARY_DARK
+  }
+  timeline {
+    BackgroundColor $SECONDARY_BG
+    FontColor $SECONDARY_TEXT
+  }
+  closed {
+	BackgroundColor $WARNING_DARK
+	FontColor $WARNING_TEXT
+  }
+}
+</style>
+

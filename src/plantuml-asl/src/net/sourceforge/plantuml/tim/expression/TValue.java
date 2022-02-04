@@ -34,7 +34,7 @@ import java.util.Objects;
 
 import net.sourceforge.plantuml.json.JsonValue;
 
-public class TValue {
+public final class TValue {
 
 	private final int intValue;
 	private final String stringValue;
@@ -136,6 +136,10 @@ public class TValue {
 
 	public boolean isJson() {
 		return this.jsonValue != null;
+	}
+
+	public boolean isString() {
+		return this.stringValue != null;
 	}
 
 	public Token toToken() {

@@ -117,7 +117,7 @@ public class BodyEnhanced1 extends BodyEnhancedAbstract implements TextBlock, Wi
 	}
 
 	@Override
-	protected TextBlock getArea(StringBounder stringBounder) {
+	final protected TextBlock getArea(StringBounder stringBounder) {
 		if (area != null) {
 			return area;
 		}
@@ -221,6 +221,7 @@ public class BodyEnhanced1 extends BodyEnhancedAbstract implements TextBlock, Wi
 		return s;
 	}
 
+	@Override
 	public Ports getPorts(StringBounder stringBounder) {
 		final TextBlock area = getArea(stringBounder);
 		if (area instanceof WithPorts) {

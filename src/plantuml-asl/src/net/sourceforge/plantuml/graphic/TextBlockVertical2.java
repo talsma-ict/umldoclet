@@ -117,6 +117,7 @@ public class TextBlockVertical2 extends AbstractTextBlock implements TextBlock, 
 		}
 	}
 
+	@Override
 	public Ports getPorts(StringBounder stringBounder) {
 		double y = 0;
 		// final Dimension2D dimtotal = calculateDimension(stringBounder);

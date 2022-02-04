@@ -33,6 +33,7 @@ package net.sourceforge.plantuml.graphic;
 import java.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UGraphicStencil;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
@@ -44,6 +45,12 @@ class USymbolLabel extends USymbol {
 	public USymbolLabel(SkinParameter skinParameter) {
 		this.skinParameter = skinParameter;
 	}
+	
+	@Override
+	public SName getSName() {
+		return SName.label;
+	}
+
 
 	@Override
 	public SkinParameter getSkinParameter() {

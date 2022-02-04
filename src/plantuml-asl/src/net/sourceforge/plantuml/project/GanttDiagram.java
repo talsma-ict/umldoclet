@@ -233,10 +233,13 @@ public class GanttDiagram extends TitledDiagram implements ToTaskDraw, WithSprit
 					drawConstraints(ug, timeHeader.getTimeScale());
 					drawTasksRect(ug);
 					drawTasksTitle(ugOrig, getTitlesColumnWidth(ug.getStringBounder()), getBarsColumnWidth(timeHeader));
-					drawResources(ug);
-					if (showFootbox) {
+
+					if (hideRessourceFoobox == false)
+						drawResources(ug);
+
+					if (showFootbox)
 						timeHeader.drawTimeFooter(ug.apply(UTranslate.dy(totalHeightWithoutFooter)));
-					}
+
 				} catch (Throwable t) {
 					t.printStackTrace();
 					final UDrawable crash = new GraphvizCrash(getSource().getPlainString(), false, t);
@@ -400,14 +403,15 @@ public class GanttDiagram extends TitledDiagram implements ToTaskDraw, WithSprit
 						task.getStyleBuilder(), getSkinParam().getIHtmlColorSet());
 			} else {
 				final TaskImpl tmp = (TaskImpl) task;
+				final String disp = hideRessourceName ? tmp.getCode().getSimpleDisplay() : tmp.getPrettyDisplay();
 				if (tmp.isDiamond()) {
-					draw = new TaskDrawDiamond(timeScale, y, tmp.getPrettyDisplay(), getStart(tmp), getSkinParam(),
-							task, this, task.getStyleBuilder(), getSkinParam().getIHtmlColorSet());
+					draw = new TaskDrawDiamond(timeScale, y, disp, getStart(tmp), getSkinParam(), task, this,
+							task.getStyleBuilder(), getSkinParam().getIHtmlColorSet());
 				} else {
 					final boolean oddStart = printStart != null && min.compareTo(getStart(tmp)) == 0;
 					final boolean oddEnd = printStart != null && max.compareTo(getEnd(tmp)) == 0;
-					draw = new TaskDrawRegular(timeScale, y, tmp.getPrettyDisplay(), getStart(tmp), getEnd(tmp),
-							oddStart, oddEnd, getSkinParam(), task, this, getConstraints(task), task.getStyleBuilder(),
+					draw = new TaskDrawRegular(timeScale, y, disp, getStart(tmp), getEnd(tmp), oddStart, oddEnd,
+							getSkinParam(), task, this, getConstraints(task), task.getStyleBuilder(),
 							getSkinParam().getIHtmlColorSet());
 				}
 				draw.setColorsAndCompletion(tmp.getColors(), tmp.getCompletion(), tmp.getUrl(), tmp.getNote());
@@ -422,13 +426,13 @@ public class GanttDiagram extends TitledDiagram implements ToTaskDraw, WithSprit
 		double yy = lastY(stringBounder);
 		if (yy == 0) {
 			yy = headerHeight;
-		} else {
+		} else if (this.hideRessourceFoobox == false)
 			for (Resource res : resources.values()) {
 				final ResourceDraw draw = new ResourceDraw(this, res, timeScale, yy, min, max);
 				res.setTaskDraw(draw);
 				yy += draw.getHeight();
 			}
-		}
+
 		this.totalHeightWithoutFooter = yy;
 	}
 
@@ -777,7 +781,19 @@ public class GanttDiagram extends TitledDiagram implements ToTaskDraw, WithSprit
 
 	public void setWithCalendarDate(boolean withCalendarDate) {
 		this.withCalendarDate = withCalendarDate;
+	}
 
+	private boolean hideRessourceName;
+	private boolean hideRessourceFoobox;
+
+	public CommandExecutionResult hideRessourceName() {
+		this.hideRessourceName = true;
+		return CommandExecutionResult.ok();
+	}
+
+	public CommandExecutionResult hideRessourceFootbox() {
+		this.hideRessourceFoobox = true;
+		return CommandExecutionResult.ok();
 	}
 
 }

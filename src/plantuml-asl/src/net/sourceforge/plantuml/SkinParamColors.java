@@ -50,7 +50,7 @@ public class SkinParamColors extends SkinParamDelegator {
 
 	@Override
 	public String toString() {
-		return super.toString() + colors;
+		return "SkinParamColors::" + colors;
 	}
 
 	@Override

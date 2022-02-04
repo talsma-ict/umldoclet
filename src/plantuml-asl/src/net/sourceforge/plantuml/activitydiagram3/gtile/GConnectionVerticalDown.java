@@ -35,12 +35,11 @@ import java.awt.geom.Point2D;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Arrows;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Snake;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.Rainbow;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 
-public class GConnectionVerticalDown extends GAbstractConnection implements GConnectionTranslatable {
+public class GConnectionVerticalDown extends GAbstractConnection {
 
 	private final TextBlock textBlock;
 	private final UTranslate pos1;
@@ -57,55 +56,64 @@ public class GConnectionVerticalDown extends GAbstractConnection implements GCon
 
 	@Override
 	public void drawTranslate(UGraphic ug, UTranslate translate1, UTranslate translate2) {
-		throw new UnsupportedOperationException();
+		final Snake snake = Snake.create(getInLinkRenderingColor(), Arrows.asToDown()).withLabel(textBlock,
+				HorizontalAlignment.LEFT);
+		final Point2D p1 = pos1.getTranslated(gpoint1.getPoint2D());
+		final Point2D p2 = pos2.getTranslated(gpoint2.getPoint2D());
+		final Point2D mp1a = translate1.getTranslated(p1);
+		final Point2D mp2b = translate2.getTranslated(p2);
+		final double middle = (mp1a.getY() + mp2b.getY()) / 2.0;
+		snake.addPoint(mp1a);
+		snake.addPoint(mp1a.getX(), middle);
+		snake.addPoint(mp2b.getX(), middle);
+		snake.addPoint(mp2b);
+		ug.draw(snake);
 
 	}
 
 	@Override
 	public void drawU(UGraphic ug) {
-		ug.draw(getSimpleSnake());
-	}
-
-//	public double getMaxX(StringBounder stringBounder) {
-//		return getSimpleSnake().getMaxX(stringBounder);
-//	}
-
-	private Rainbow getInLinkRenderingColor() {
-		Rainbow color;
-		color = Rainbow.build(gpoint1.getGtile().skinParam());
-//		final LinkRendering linkRendering = tile.getInLinkRendering();
-//		if (linkRendering == null) {
-//			if (UseStyle.useBetaStyle()) {
-//				final Style style = getDefaultStyleDefinitionArrow()
-//						.getMergedStyle(skinParam().getCurrentStyleBuilder());
-//				return Rainbow.build(style, skinParam().getIHtmlColorSet(), skinParam().getThemeStyle());
-//			} else {
-//				color = Rainbow.build(skinParam());
-//			}
-//		} else {
-//			color = linkRendering.getRainbow();
-//		}
-//		if (color.size() == 0) {
-//			if (UseStyle.useBetaStyle()) {
-//				final Style style = getDefaultStyleDefinitionArrow()
-//						.getMergedStyle(skinParam().getCurrentStyleBuilder());
-//				return Rainbow.build(style, skinParam().getIHtmlColorSet(), skinParam().getThemeStyle());
-//			} else {
-//				color = Rainbow.build(skinParam());
-//			}
-//		}
-		return color;
-	}
-
-	private Snake getSimpleSnake() {
 		final Snake snake = Snake.create(getInLinkRenderingColor(), Arrows.asToDown()).withLabel(textBlock,
 				HorizontalAlignment.LEFT);
 		final Point2D p1 = pos1.getTranslated(gpoint1.getPoint2D());
 		final Point2D p2 = pos2.getTranslated(gpoint2.getPoint2D());
 		snake.addPoint(p1);
 		snake.addPoint(p2);
-		return snake;
+		ug.draw(snake);
 	}
+
+//	// DUPLICATE 4561
+//	private Rainbow getInLinkRenderingColor() {
+//		Rainbow color;
+//		final ISkinParam skinParam = gpoint1.getGtile().skinParam();
+//		if (UseStyle.useBetaStyle()) {
+//			final Style style = getDefaultStyleDefinitionArrow().getMergedStyle(skinParam.getCurrentStyleBuilder());
+//			color = Rainbow.build(style, skinParam.getIHtmlColorSet(), skinParam.getThemeStyle());
+//		} else
+//			color = Rainbow.build(skinParam);
+////		final LinkRendering linkRendering = tile.getInLinkRendering();
+////		if (linkRendering == null) {
+////			if (UseStyle.useBetaStyle()) {
+////				final Style style = getDefaultStyleDefinitionArrow()
+////						.getMergedStyle(skinParam().getCurrentStyleBuilder());
+////				return Rainbow.build(style, skinParam().getIHtmlColorSet(), skinParam().getThemeStyle());
+////			} else {
+////				color = Rainbow.build(skinParam());
+////			}
+////		} else {
+////			color = linkRendering.getRainbow();
+////		}
+////		if (color.size() == 0) {
+////			if (UseStyle.useBetaStyle()) {
+////				final Style style = getDefaultStyleDefinitionArrow()
+////						.getMergedStyle(skinParam().getCurrentStyleBuilder());
+////				return Rainbow.build(style, skinParam().getIHtmlColorSet(), skinParam().getThemeStyle());
+////			} else {
+////				color = Rainbow.build(skinParam());
+////			}
+////		}
+//		return color;
+//	}
 
 //	@Override
 //	public void drawTranslate(UGraphic ug, UTranslate translate1, UTranslate translate2) {

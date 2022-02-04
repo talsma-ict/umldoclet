@@ -77,6 +77,9 @@ public class JsonDiagram extends TitledDiagram {
 		if (getUmlDiagramType() == UmlDiagramType.YAML) {
 			return new DiagramDescription("(Yaml)");
 		}
+		if (getUmlDiagramType() == UmlDiagramType.HCL) {
+			return new DiagramDescription("(HCL)");
+		}
 		return new DiagramDescription("(Json)");
 	}
 
@@ -84,9 +87,7 @@ public class JsonDiagram extends TitledDiagram {
 	protected ImageData exportDiagramNow(OutputStream os, int index, FileFormatOption fileFormatOption)
 			throws IOException {
 
-		return createImageBuilder(fileFormatOption)
-				.drawable(getTextBlock())
-				.write(os);
+		return createImageBuilder(fileFormatOption).drawable(getTextBlock()).write(os);
 	}
 
 	private void drawInternal(UGraphic ug) {
@@ -118,7 +119,7 @@ public class JsonDiagram extends TitledDiagram {
 			}
 
 			public Dimension2D calculateDimension(StringBounder stringBounder) {
-				return null;
+				return TextBlockUtils.getMinMax(getTextBlock(), stringBounder, true).getDimension();
 			}
 
 			public HColor getBackcolor() {

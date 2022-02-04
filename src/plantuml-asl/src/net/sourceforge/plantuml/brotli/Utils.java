@@ -57,8 +57,8 @@ final class Utils {
    * less than 16.
    *
    * @param dest array to fill with zeroes
-   * @param offset the first byte to fill
-   * @param length number of bytes to change
+   * @param start the first byte to fill
+   * @param end the last byte to fill
    */
   static void fillBytesWithZeroes(byte[] dest, int start, int end) {
     int cursor = start;
@@ -76,8 +76,8 @@ final class Utils {
    * less than 16.
    *
    * @param dest array to fill with zeroes
-   * @param offset the first item to fill
-   * @param length number of item to change
+   * @param start the first item to fill
+   * @param end the last item to fill
    */
   static void fillIntsWithZeroes(int[] dest, int start, int end) {
     int cursor = start;

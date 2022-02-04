@@ -30,6 +30,7 @@
  */
 package net.sourceforge.plantuml.graphic;
 
+import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.svek.Control;
 
 class USymbolControl extends USymbolSimpleAbstract {
@@ -38,6 +39,12 @@ class USymbolControl extends USymbolSimpleAbstract {
 	public SkinParameter getSkinParameter() {
 		return SkinParameter.CONTROL;
 	}
+	
+	@Override
+	public SName getSName() {
+		return SName.control;
+	}
+
 
 	@Override
 	protected TextBlock getDrawing(final SymbolContext symbolContext) {

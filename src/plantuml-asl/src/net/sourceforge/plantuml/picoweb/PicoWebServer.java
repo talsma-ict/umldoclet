@@ -42,6 +42,7 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -110,6 +111,14 @@ public class PicoWebServer implements Runnable {
 					return;
 				if (request.getPath().startsWith("/plantuml/svg/") && handleGET(request, out, FileFormat.SVG))
 					return;
+				if (request.getPath().startsWith("/txt/") && handleGET(request, out, FileFormat.ATXT))
+					return;
+				if (request.getPath().startsWith("/plantuml/txt/") && handleGET(request, out, FileFormat.ATXT))
+					return;
+				if (request.getPath().startsWith("/utxt/") && handleGET(request, out, FileFormat.UTXT))
+					return;
+				if (request.getPath().startsWith("/plantuml/utxt/") && handleGET(request, out, FileFormat.UTXT))
+					return;
 			} else if (request.getMethod().equals("POST") && request.getPath().equals("/render")) {
 				handleRenderRequest(request, out);
 				return;
@@ -169,10 +178,10 @@ public class PicoWebServer implements Runnable {
 		} catch (Exception e) {
 			throw new BadRequest400("Error parsing request json: " + e.getMessage(), e);
 		}
-		
+
 		handleRenderRequest(renderRequest, out);
 	}
-	
+
 	public void handleRenderRequest(RenderRequest renderRequest, BufferedOutputStream out) throws Exception {
 
 		final Option option = new Option(renderRequest.getOptions());
@@ -220,6 +229,12 @@ public class PicoWebServer implements Runnable {
 				write(out, "X-PlantUML-Diagram-Error-Line: " + (1 + err.getLineLocation().getPosition()));
 			}
 		}
+		if (system.getTitleDisplay() != null && system.getTitleDisplay().size() == 1) {
+			final String encode = URLEncoder.encode(system.getTitleDisplay().asList().get(0).toString(), "UTF-8");
+			if (encode.length() < 256)
+				write(out, "X-PlantUML-Diagram-Title: " + encode);
+		}
+
 		write(out, "X-Patreon: Support us on https://plantuml.com/patreon");
 		write(out, "X-Donate: https://plantuml.com/paypal");
 		write(out, "X-Quote: " + StringUtils.rot(QuoteUtils.getSomeQuote()));

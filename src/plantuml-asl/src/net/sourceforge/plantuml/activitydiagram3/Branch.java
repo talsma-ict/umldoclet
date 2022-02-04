@@ -193,6 +193,8 @@ public class Branch {
 	}
 
 	public ISkinParam skinParam() {
+		if (gtile != null)
+			return gtile.skinParam();
 		return ftile.skinParam();
 	}
 
@@ -221,9 +223,11 @@ public class Branch {
 	}
 
 	public final Display getDisplayPositive() {
-		final LinkRendering in = ftile.getInLinkRendering();
-		if (in != null && Display.isNull(in.getDisplay()) == false) {
-			return in.getDisplay();
+		if (ftile != null) {
+			final LinkRendering in = ftile.getInLinkRendering();
+			if (in != null && Display.isNull(in.getDisplay()) == false) {
+				return in.getDisplay();
+			}
 		}
 		return labelPositive.getDisplay();
 	}

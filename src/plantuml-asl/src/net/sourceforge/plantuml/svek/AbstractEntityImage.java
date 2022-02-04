@@ -49,6 +49,7 @@ public abstract class AbstractEntityImage extends AbstractTextBlock implements I
 		this.skinParam = Objects.requireNonNull(skinParam);
 	}
 
+	@Override
 	public boolean isHidden() {
 		return entity.isHidden();
 	}
@@ -61,18 +62,21 @@ public abstract class AbstractEntityImage extends AbstractTextBlock implements I
 		return skinParam;
 	}
 
+	@Override
 	public final HColor getBackcolor() {
-		return skinParam.getBackgroundColor(false);
+		return skinParam.getBackgroundColor();
 	}
 
 	protected final Stereotype getStereo() {
 		return entity.getStereotype();
 	}
 
+	@Override
 	public Margins getShield(StringBounder stringBounder) {
 		return Margins.NONE;
 	}
 
+	@Override
 	public double getOverscanX(StringBounder stringBounder) {
 		return 0;
 	}

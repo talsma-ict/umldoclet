@@ -34,6 +34,7 @@ import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.ugraphic.Shadowable;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UGraphicStencil;
@@ -49,8 +50,14 @@ class USymbolFile extends USymbol {
 	public SkinParameter getSkinParameter() {
 		return SkinParameter.FILE;
 	}
+	
+	@Override
+	public SName getSName() {
+		return SName.file;
+	}
 
-	private void drawFile(UGraphic ug, double width, double height, boolean shadowing, double roundCorner) {
+
+	private void drawFile(UGraphic ug, double width, double height, double shadowing, double roundCorner) {
 		final int cornersize = 10;
 		final Shadowable out;
 		if (roundCorner == 0) {
@@ -76,9 +83,7 @@ class USymbolFile extends USymbol {
 			out = path;
 		}
 
-		if (shadowing) {
-			out.setDeltaShadow(3.0);
-		}
+		out.setDeltaShadow(shadowing);
 		ug.draw(out);
 
 		final UPath path = new UPath();
@@ -106,7 +111,7 @@ class USymbolFile extends USymbol {
 				final Dimension2D dim = calculateDimension(ug.getStringBounder());
 				ug = UGraphicStencil.create(ug, dim);
 				ug = symbolContext.apply(ug);
-				drawFile(ug, dim.getWidth(), dim.getHeight(), symbolContext.isShadowing(),
+				drawFile(ug, dim.getWidth(), dim.getHeight(), symbolContext.getDeltaShadow(),
 						symbolContext.getRoundCorner());
 				final Margin margin = getMargin();
 				final TextBlock tb = TextBlockUtils.mergeTB(stereotype, label, HorizontalAlignment.CENTER);
@@ -130,7 +135,7 @@ class USymbolFile extends USymbol {
 			public void drawU(UGraphic ug) {
 				final Dimension2D dim = calculateDimension(ug.getStringBounder());
 				ug = symbolContext.apply(ug);
-				drawFile(ug, dim.getWidth(), dim.getHeight(), symbolContext.isShadowing(),
+				drawFile(ug, dim.getWidth(), dim.getHeight(), symbolContext.getDeltaShadow(),
 						symbolContext.getRoundCorner());
 				final Dimension2D dimStereo = stereotype.calculateDimension(ug.getStringBounder());
 				final double posStereoX;

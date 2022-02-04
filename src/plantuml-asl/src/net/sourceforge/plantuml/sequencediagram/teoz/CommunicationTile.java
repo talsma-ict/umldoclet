@@ -258,7 +258,7 @@ public class CommunicationTile extends AbstractTile {
 			if (isReverse(stringBounder)) {
 				return livingSpace2.getPosD(stringBounder);
 			}
-			return livingSpace2.getPosB();
+			return livingSpace2.getPosB(stringBounder);
 		}
 		return livingSpace2.getPosC(stringBounder);
 	}

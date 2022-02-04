@@ -37,6 +37,7 @@ import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.CommandFootboxIgnored;
 import net.sourceforge.plantuml.command.PSystemCommandFactory;
+import net.sourceforge.plantuml.command.CommonCommands;
 import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.timingdiagram.command.CommandAnalog;
 import net.sourceforge.plantuml.timingdiagram.command.CommandAtPlayer;
@@ -71,7 +72,7 @@ public class TimingDiagramFactory extends PSystemCommandFactory {
 
 		final List<Command> cmds = new ArrayList<>();
 
-		addCommonCommands1(cmds);
+		CommonCommands.addCommonCommands1(cmds);
 		cmds.add(new CommandFootboxIgnored());
 		cmds.add(new CommandRobustConcise());
 		cmds.add(new CommandClock());

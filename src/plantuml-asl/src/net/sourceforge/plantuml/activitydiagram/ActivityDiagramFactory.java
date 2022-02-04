@@ -46,6 +46,7 @@ import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.CommandFootboxIgnored;
 import net.sourceforge.plantuml.command.CommandRankDir;
 import net.sourceforge.plantuml.command.PSystemCommandFactory;
+import net.sourceforge.plantuml.command.CommonCommands;
 import net.sourceforge.plantuml.command.note.CommandFactoryNoteActivity;
 import net.sourceforge.plantuml.command.note.CommandFactoryNoteOnLink;
 import net.sourceforge.plantuml.core.UmlSource;
@@ -61,7 +62,7 @@ public class ActivityDiagramFactory extends PSystemCommandFactory {
 	protected List<Command> createCommands() {
 		final List<Command> cmds = new ArrayList<>();
 		cmds.add(new CommandFootboxIgnored());
-		addCommonCommands1(cmds);
+		CommonCommands.addCommonCommands1(cmds);
 		cmds.add(new CommandRankDir());
 
 		cmds.add(new CommandPartition());

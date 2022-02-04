@@ -309,7 +309,7 @@ public class HSLColor {
 	 *
 	 * @param hsl an array containing the 3 HSL values
 	 *
-	 * @returns the RGB Color object
+	 * @return the RGB Color object
 	 */
 	public static Color toRGB(float[] hsl) {
 		return toRGB(hsl, 1.0f);
@@ -323,7 +323,7 @@ public class HSLColor {
 	 * @param hsl   an array containing the 3 HSL values
 	 * @param alpha the alpha value between 0 - 1
 	 *
-	 * @returns the RGB Color object
+	 * @return the RGB Color object
 	 */
 	public static Color toRGB(float[] hsl, float alpha) {
 		return toRGB(hsl[0], hsl[1], hsl[2], alpha);
@@ -336,7 +336,7 @@ public class HSLColor {
 	 * @param s Saturation is specified as a percentage in the range 1 - 100.
 	 * @param l Lumanance is specified as a percentage in the range 1 - 100.
 	 *
-	 * @returns the RGB Color object
+	 * @return the RGB Color object
 	 */
 	public static Color toRGB(float h, float s, float l) {
 		return toRGB(h, s, l, 1.0f);
@@ -350,23 +350,22 @@ public class HSLColor {
 	 * @param l     Lumanance is specified as a percentage in the range 1 - 100.
 	 * @param alpha the alpha value between 0 - 1
 	 *
-	 * @returns the RGB Color object
+	 * @return the RGB Color object
 	 */
 	public static Color toRGB(float h, float s, float l, float alpha) {
-		if (s < 0.0f || s > 100.0f) {
-			String message = "Color parameter outside of expected range - Saturation";
-			throw new IllegalArgumentException(message);
-		}
-
-		if (l < 0.0f || l > 100.0f) {
-			String message = "Color parameter outside of expected range - Luminance";
-			throw new IllegalArgumentException(message);
-		}
-
-		if (alpha < 0.0f || alpha > 1.0f) {
-			String message = "Color parameter outside of expected range - Alpha";
-			throw new IllegalArgumentException(message);
-		}
+		
+		if (s < 0)
+			s = 0;
+		if (s > 100)
+			s = 100;
+		if (l < 0)
+			l = 0;
+		if (l > 100)
+			l = 100;
+		if (alpha < 0)
+			alpha = 0;
+		if (alpha > 1)
+			alpha = 1;
 
 		// Formula needs all values between 0 - 1.
 
@@ -402,17 +401,14 @@ public class HSLColor {
 		if (h > 1)
 			h -= 1;
 
-		if (6 * h < 1) {
+		if (6 * h < 1)
 			return p + ((q - p) * 6 * h);
-		}
 
-		if (2 * h < 1) {
+		if (2 * h < 1)
 			return q;
-		}
 
-		if (3 * h < 2) {
+		if (3 * h < 2)
 			return p + ((q - p) * 6 * ((2.0f / 3.0f) - h));
-		}
 
 		return p;
 	}
