@@ -32,16 +32,16 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - name: Set up JDK 16
-        id: setup-java-16
+      - name: Set up JDK 11
+        id: setup-java-11
         uses: actions/setup-java@v1
         with:
-          java-version: 16
-      - name: Set up JDK 15
-        id: setup-java-15
+          java-version: 11
+      - name: Set up JDK 17
+        id: setup-java-17
         uses: actions/setup-java@v1
         with:
-          java-version: 15
+          java-version: 17
       - name: Setup maven cache
         uses: actions/cache@v2
         with:
@@ -53,8 +53,8 @@ jobs:
         shell: bash
         env:
           JAVA_8_HOME: ${{ steps.setup-java-8.outputs.path }}
-          JAVA_15_HOME: ${{ steps.setup-java-15.outputs.path }}
-          JAVA_16_HOME: ${{ steps.setup-java-16.outputs.path }}
+          JAVA_11_HOME: ${{ steps.setup-java-11.outputs.path }}
+          JAVA_17_HOME: ${{ steps.setup-java-17.outputs.path }}
           MAVEN_CLI_OPTS: --settings .github/mvn-settings.xml --global-toolchains .github/mvn-toolchains.xml
           GPG_EXECUTABLE: /usr/bin/gpg
           GPG_KEYNAME: ${{ secrets.GPG_KEYNAME }}
