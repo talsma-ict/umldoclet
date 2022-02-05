@@ -5,24 +5,6 @@
     <toolchain>
         <type>jdk</type>
         <provides>
-            <version>1.8</version>
-        </provides>
-        <configuration>
-            <jdkHome>${env.JAVA_8_HOME}</jdkHome>
-        </configuration>
-    </toolchain>
-    <toolchain>
-        <type>jdk</type>
-        <provides>
-            <version>11</version>
-        </provides>
-        <configuration>
-            <jdkHome>${env.JAVA_11_HOME}</jdkHome>
-        </configuration>
-    </toolchain>
-    <toolchain>
-        <type>jdk</type>
-        <provides>
             <version>17</version>
         </provides>
         <configuration>
