@@ -36,6 +36,7 @@ import java.util.Set;
 
 import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.OptionFlags;
+import net.sourceforge.plantuml.security.SecurityUtils;
 import net.sourceforge.plantuml.tim.EaterException;
 import net.sourceforge.plantuml.tim.EaterExceptionLocated;
 import net.sourceforge.plantuml.tim.TContext;
@@ -60,18 +61,23 @@ public class Getenv extends SimpleReturnFunction {
 		}
 		final String name = values.get(0).toString();
 		final String value = getenv(name);
-		if (value == null) {
+		if (value == null)
 			return TValue.fromString("");
-		}
+
 		return TValue.fromString(value);
 	}
 
 	private String getenv(String name) {
+		// Check, if the script requests secret information.
+		// A plantuml server should have an own SecurityManager to
+		// avoid access to properties and environment variables, but we should
+		// also stop here in other deployments.
+		if (SecurityUtils.isSecurityEnv(name))
+			return null;
 		final String env = System.getProperty(name);
-		if (env != null) {
+		if (env != null)
 			return env;
-		}
-		final String getenv = System.getenv(name);
-		return getenv;
+
+		return System.getenv(name);
 	}
 }

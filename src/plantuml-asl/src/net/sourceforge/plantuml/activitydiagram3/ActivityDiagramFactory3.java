@@ -40,6 +40,7 @@ import net.sourceforge.plantuml.activitydiagram3.command.CommandActivityLong3;
 import net.sourceforge.plantuml.activitydiagram3.command.CommandArrow3;
 import net.sourceforge.plantuml.activitydiagram3.command.CommandArrowLong3;
 import net.sourceforge.plantuml.activitydiagram3.command.CommandBackward3;
+import net.sourceforge.plantuml.activitydiagram3.command.CommandBackwardLong3;
 import net.sourceforge.plantuml.activitydiagram3.command.CommandBreak;
 import net.sourceforge.plantuml.activitydiagram3.command.CommandCase;
 import net.sourceforge.plantuml.activitydiagram3.command.CommandCircleSpot3;
@@ -82,6 +83,7 @@ import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.CommandDecoratorMultine;
 import net.sourceforge.plantuml.command.CommandFootboxIgnored;
 import net.sourceforge.plantuml.command.PSystemCommandFactory;
+import net.sourceforge.plantuml.command.CommonCommands;
 import net.sourceforge.plantuml.core.UmlSource;
 
 public class ActivityDiagramFactory3 extends PSystemCommandFactory {
@@ -92,7 +94,7 @@ public class ActivityDiagramFactory3 extends PSystemCommandFactory {
 		final List<Command> cmds = new ArrayList<>();
 		cmds.add(new CommandFootboxIgnored());
 
-		addCommonCommands1(cmds);
+		CommonCommands.addCommonCommands1(cmds);
 		cmds.add(new CommandSwimlane());
 		cmds.add(new CommandSwimlane2());
 		cmds.add(new CommandPartition3());
@@ -120,13 +122,14 @@ public class ActivityDiagramFactory3 extends PSystemCommandFactory {
 		cmds.add(new CommandRepeatWhile3());
 		cmds.add(new CommandRepeatWhile3Multilines());
 		cmds.add(new CommandBackward3());
+		cmds.add(new CommandBackwardLong3());
 		cmds.add(new CommandWhile3());
 		cmds.add(new CommandWhileEnd3());
-		
+
 		cmds.add(new CommandFork3());
 		cmds.add(new CommandForkAgain3());
 		cmds.add(new CommandForkEnd3());
-		
+
 		cmds.add(new CommandSplit3());
 		cmds.add(new CommandSplitAgain3());
 		cmds.add(new CommandSplitEnd3());

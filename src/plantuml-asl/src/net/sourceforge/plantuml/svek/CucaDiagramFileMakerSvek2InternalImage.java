@@ -75,11 +75,11 @@ public final class CucaDiagramFileMakerSvek2InternalImage extends AbstractTextBl
 
 		Dimension2D add(Dimension2D orig, Dimension2D other) {
 			if (this == VERTICAL) {
-				return new Dimension2DDouble(orig.getWidth() + other.getWidth(), Math.max(orig.getHeight(),
-						other.getHeight()));
+				return new Dimension2DDouble(orig.getWidth() + other.getWidth(),
+						Math.max(orig.getHeight(), other.getHeight()));
 			}
-			return new Dimension2DDouble(Math.max(orig.getWidth(), other.getWidth()), orig.getHeight()
-					+ other.getHeight());
+			return new Dimension2DDouble(Math.max(orig.getWidth(), other.getWidth()),
+					orig.getHeight() + other.getHeight());
 		}
 
 		void drawSeparator(UGraphic ug, Dimension2D dimTotal) {
@@ -134,9 +134,9 @@ public final class CucaDiagramFileMakerSvek2InternalImage extends AbstractTextBl
 	}
 
 	public HColor getBackcolor() {
-		return skinParam.getBackgroundColor(false);
+		return skinParam.getBackgroundColor();
 	}
-	
+
 	public double getOverscanX(StringBounder stringBounder) {
 		return 0;
 	}
@@ -152,4 +152,5 @@ public final class CucaDiagramFileMakerSvek2InternalImage extends AbstractTextBl
 	public ShapeType getShapeType() {
 		return ShapeType.RECTANGLE;
 	}
+
 }

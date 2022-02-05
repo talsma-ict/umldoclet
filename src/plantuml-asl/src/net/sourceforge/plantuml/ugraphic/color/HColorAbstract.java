@@ -71,5 +71,10 @@ abstract class HColorAbstract implements HColor {
 	public String asString() {
 		return "?" + getClass().getSimpleName();
 	}
+	
+	@Override
+	public HColor darkSchemeTheme() {
+		return this;
+	}
 
 }

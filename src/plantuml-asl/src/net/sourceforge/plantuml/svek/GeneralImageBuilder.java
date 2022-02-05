@@ -62,7 +62,7 @@ import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.activitydiagram3.ftile.EntityImageLegend;
 import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.cucadiagram.DisplayPositionned;
+import net.sourceforge.plantuml.cucadiagram.DisplayPositioned;
 import net.sourceforge.plantuml.cucadiagram.EntityPortion;
 import net.sourceforge.plantuml.cucadiagram.EntityPosition;
 import net.sourceforge.plantuml.cucadiagram.GroupRoot;
@@ -235,7 +235,7 @@ public final class GeneralImageBuilder {
 			return new EntityImageMap(leaf, skinParam, portionShower);
 		}
 		if (leaf.getLeafType() == LeafType.SYNCHRO_BAR || leaf.getLeafType() == LeafType.STATE_FORK_JOIN) {
-			return new EntityImageSynchroBar(leaf, skinParam);
+			return new EntityImageSynchroBar(leaf, skinParam, umlDiagramType.getStyleName());
 		}
 		if (leaf.getLeafType() == LeafType.ARC_CIRCLE) {
 			return new EntityImageArcCircle(leaf, skinParam);
@@ -391,12 +391,12 @@ public final class GeneralImageBuilder {
 			return style.value(PName.BackGroundColor).asColor(dotData.getSkinParam().getThemeStyle(),
 					dotData.getSkinParam().getIHtmlColorSet());
 		}
-		return dotData.getSkinParam().getBackgroundColor(false);
+		return dotData.getSkinParam().getBackgroundColor();
 	}
 
 	public IEntityImage buildImage(BaseFile basefile, String dotStrings[]) {
 		if (dotData.isDegeneratedWithFewEntities(0)) {
-			return new EntityImageSimpleEmpty(dotData.getSkinParam().getBackgroundColor(false));
+			return new EntityImageSimpleEmpty(dotData.getSkinParam().getBackgroundColor());
 		}
 		if (dotData.isDegeneratedWithFewEntities(1) && dotData.getUmlDiagramType() != UmlDiagramType.STATE) {
 			final ILeaf single = dotData.getLeafs().iterator().next();
@@ -710,7 +710,7 @@ public final class GeneralImageBuilder {
 		return label.create(fontConfiguration, alignment, dotData.getSkinParam());
 	}
 
-	private TextBlock addLegend(TextBlock original, DisplayPositionned legend) {
+	private TextBlock addLegend(TextBlock original, DisplayPositioned legend) {
 		if (legend == null || legend.isNull()) {
 			return original;
 		}
@@ -720,7 +720,7 @@ public final class GeneralImageBuilder {
 	}
 
 	private TextBlock getStereoBlock(IGroup g) {
-		final DisplayPositionned legend = g.getLegend();
+		final DisplayPositioned legend = g.getLegend();
 		return addLegend(getStereoBlockWithoutLegend(g), legend);
 	}
 

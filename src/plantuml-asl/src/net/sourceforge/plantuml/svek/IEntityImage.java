@@ -42,7 +42,7 @@ public interface IEntityImage extends Hideable, TextBlockBackcolored {
 	public ShapeType getShapeType();
 
 	public Margins getShield(StringBounder stringBounder);
-	
+
 	public double getOverscanX(StringBounder stringBounder);
 
 }

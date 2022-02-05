@@ -45,22 +45,46 @@ public class StyleExtractor {
 
 	private final List<String> list = new ArrayList<>();
 	private final List<StringLocated> style = new ArrayList<>();
+	private String title = null;
 
 	public StyleExtractor(Iterator<StringLocated> data) {
 		while (data.hasNext()) {
 			StringLocated line = data.next();
-			if (line.getString().trim().equals("<style>")) {
+			if (startStyle(line)) {
 				while (data.hasNext()) {
 					style.add(line);
-					if (line.getString().trim().equals("</style>")) {
+					if (endStyle(line))
 						break;
-					}
 					line = data.next();
+				}
+			} else if (line.getString().trim().startsWith("!assume ")) {
+				// Ignore
+			} else if (line.getString().trim().startsWith("!pragma ")) {
+				// Ignore
+			} else if (line.getString().trim().startsWith("hide ")) {
+				// Ignore
+			} else if (line.getString().trim().startsWith("title ")) {
+				this.title = line.getString().trim().substring("title ".length()).trim();
+			} else if (line.getString().trim().startsWith("skinparam ")) {
+				if (line.getString().trim().contains("{")) {
+					while (data.hasNext()) {
+						if (line.getString().trim().equals("}"))
+							break;
+						line = data.next();
+					}
 				}
 			} else {
 				list.add(line.getString());
 			}
 		}
+	}
+
+	private boolean startStyle(StringLocated line) {
+		return line.getString().trim().equals("<style>");
+	}
+
+	private boolean endStyle(StringLocated line) {
+		return line.getString().trim().equals("</style>");
 	}
 
 	public void applyStyles(ISkinParam skinParam) {
@@ -75,6 +99,10 @@ public class StyleExtractor {
 
 	public Iterator<String> getIterator() {
 		return list.iterator();
+	}
+
+	public String getTitle() {
+		return title;
 	}
 
 }

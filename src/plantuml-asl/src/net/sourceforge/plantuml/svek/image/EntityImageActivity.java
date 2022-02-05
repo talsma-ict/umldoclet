@@ -155,7 +155,7 @@ public class EntityImageActivity extends AbstractEntityImage {
 
 	private UGraphic applyColors(UGraphic ug) {
 		HColor borderColor = SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.activityBorder);
-		HColor backcolor = getEntity().getColors(getSkinParam()).getColor(ColorType.BACK);
+		HColor backcolor = getEntity().getColors().getColor(ColorType.BACK);
 		if (backcolor == null) {
 			backcolor = SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.activityBackground);
 		}
@@ -164,7 +164,7 @@ public class EntityImageActivity extends AbstractEntityImage {
 			final Style style = getDefaultStyleDefinition().getMergedStyle(getSkinParam().getCurrentStyleBuilder());
 			borderColor = style.value(PName.LineColor).asColor(getSkinParam().getThemeStyle(),
 					getSkinParam().getIHtmlColorSet());
-			backcolor = getEntity().getColors(getSkinParam()).getColor(ColorType.BACK);
+			backcolor = getEntity().getColors().getColor(ColorType.BACK);
 			if (backcolor == null) {
 				backcolor = style.value(PName.BackGroundColor).asColor(getSkinParam().getThemeStyle(),
 						getSkinParam().getIHtmlColorSet());

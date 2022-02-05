@@ -54,6 +54,7 @@ import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorBackground;
 import net.sourceforge.plantuml.ugraphic.color.HColorNone;
+import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class ComponentRoseGroupingElse extends AbstractTextualComponent {
 
@@ -68,10 +69,11 @@ public class ComponentRoseGroupingElse extends AbstractTextualComponent {
 
 		if (UseStyle.useBetaStyle()) {
 			this.roundCorner = style.value(PName.RoundCorner).asInt();
-			if (spriteContainer instanceof SkinParamBackcolored) {
-				style = style.eventuallyOverride(PName.BackGroundColor,
-						((SkinParamBackcolored) spriteContainer).getBackgroundColor(false));
-			}
+//			if (spriteContainer instanceof SkinParamBackcolored) {
+//				final HColor backgroundColor2 = ((SkinParamBackcolored) spriteContainer).getBackgroundColor();
+//				System.err.println("toto2=" + backgroundColor2);
+//				style = style.eventuallyOverride(PName.BackGroundColor, backgroundColor2);
+//			}
 			this.groupBorder = style.value(PName.LineColor).asColor(spriteContainer.getThemeStyle(),
 					getIHtmlColorSet());
 			this.backgroundColor = style.value(PName.BackGroundColor).asColor(spriteContainer.getThemeStyle(),
@@ -85,9 +87,12 @@ public class ComponentRoseGroupingElse extends AbstractTextualComponent {
 
 	@Override
 	protected void drawBackgroundInternalU(UGraphic ug, Area area) {
-		if (backgroundColor instanceof HColorBackground) {
+		if (backgroundColor instanceof HColorBackground)
 			return;
-		}
+
+		if (HColorUtils.isTransparent(backgroundColor))
+			return;
+
 		final Dimension2D dimensionToUse = area.getDimensionToUse();
 		ug = ug.apply(new HColorNone()).apply(backgroundColor.bg());
 		final double width = dimensionToUse.getWidth();

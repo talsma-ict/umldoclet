@@ -34,7 +34,6 @@ import java.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.LineConfigurable;
 import net.sourceforge.plantuml.SkinParamUtils;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.cucadiagram.BodyFactory;
@@ -69,7 +68,7 @@ public class EntityImageState2 extends AbstractEntityImage {
 
 		final USymbol symbol = USymbol.FRAME;
 
-		HColor backcolor = getEntity().getColors(getSkinParam()).getColor(ColorType.BACK);
+		HColor backcolor = getEntity().getColors().getColor(ColorType.BACK);
 		if (backcolor == null) {
 			backcolor = SkinParamUtils.getColor(getSkinParam(), getStereo(), symbol.getColorParamBack());
 		}

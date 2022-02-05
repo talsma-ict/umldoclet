@@ -40,6 +40,11 @@ import net.sourceforge.plantuml.graphic.Splitter;
 
 public class CommandCreoleImg implements Command {
 
+	@Override
+	public String startingChars() {
+		return "<";
+	}
+
 	private static final Pattern2 pattern = MyPattern.cmpile("^(" + Splitter.imgPatternNoSrcColon + ")");
 
 	private CommandCreoleImg() {

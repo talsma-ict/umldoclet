@@ -35,6 +35,7 @@ import java.awt.geom.Point2D;
 import java.util.Objects;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.ugraphic.Shadowable;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UGraphicStencil;
@@ -69,8 +70,14 @@ public class USymbolFolder extends USymbol {
 	public SkinParameter getSkinParameter() {
 		return skinParameter;
 	}
+	
+	@Override
+	public SName getSName() {
+		return SName.folder;
+	}
 
-	private void drawFolder(UGraphic ug, double width, double height, Dimension2D dimTitle, boolean shadowing,
+
+	private void drawFolder(UGraphic ug, double width, double height, Dimension2D dimTitle, double shadowing,
 			double roundCorner) {
 
 		final double wtitle;
@@ -111,9 +118,8 @@ public class USymbolFolder extends USymbol {
 			path.closePath();
 			shape = path;
 		}
-		if (shadowing) {
-			shape.setDeltaShadow(3.0);
-		}
+		shape.setDeltaShadow(shadowing);
+
 		ug.draw(shape);
 		ug.apply(UTranslate.dy(htitle)).draw(ULine.hline(wtitle + marginTitleX3));
 	}
@@ -143,7 +149,7 @@ public class USymbolFolder extends USymbol {
 				ug = UGraphicStencil.create(ug, dim);
 				ug = symbolContext.apply(ug);
 				final Dimension2D dimName = getDimName(ug.getStringBounder());
-				drawFolder(ug, dim.getWidth(), dim.getHeight(), dimName, symbolContext.isShadowing(),
+				drawFolder(ug, dim.getWidth(), dim.getHeight(), dimName, symbolContext.getDeltaShadow(),
 						symbolContext.getRoundCorner());
 				final Margin margin = getMargin();
 				final TextBlock tb = TextBlockUtils.mergeTB(stereotype, label, HorizontalAlignment.CENTER);
@@ -177,7 +183,7 @@ public class USymbolFolder extends USymbol {
 				final Dimension2D dim = calculateDimension(stringBounder);
 				ug = symbolContext.apply(ug);
 				final Dimension2D dimTitle = title.calculateDimension(stringBounder);
-				drawFolder(ug, dim.getWidth(), dim.getHeight(), dimTitle, symbolContext.isShadowing(),
+				drawFolder(ug, dim.getWidth(), dim.getHeight(), dimTitle, symbolContext.getDeltaShadow(),
 						symbolContext.getRoundCorner());
 				title.drawU(ug.apply(new UTranslate(4, 2)));
 				final Dimension2D dimStereo = stereotype.calculateDimension(stringBounder);

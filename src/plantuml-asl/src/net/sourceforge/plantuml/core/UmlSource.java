@@ -142,6 +142,10 @@ final public class UmlSource {
 		return new IteratorCounter2Impl(source);
 	}
 
+//	public Iterator<StringLocated> iteratorRaw() {
+//		return Collections.unmodifiableCollection(rawSource).iterator();
+//	}
+
 	/**
 	 * Return the source as a single String with <code>\n</code> as line separator.
 	 * 
@@ -182,8 +186,6 @@ final public class UmlSource {
 
 	/**
 	 * Return the number of line in the diagram.
-	 * 
-	 * @return
 	 */
 	public int getTotalLineCount() {
 		return source.size();
@@ -197,7 +199,7 @@ final public class UmlSource {
 	 * Check if a source diagram description is empty. Does not take comment line
 	 * into account.
 	 * 
-	 * @return <code>true<code> if the diagram does not contain information.
+	 * @return <code>true</code> if the diagram does not contain information.
 	 */
 	public boolean isEmpty() {
 		for (StringLocated s : source) {
@@ -220,8 +222,6 @@ final public class UmlSource {
 	/**
 	 * Retrieve the title, if defined in the diagram source. Never return
 	 * <code>null</code>.
-	 * 
-	 * @return
 	 */
 	public Display getTitle() {
 		final Pattern2 p = MyPattern.cmpile("^[%s]*title[%s]+(.+)$");

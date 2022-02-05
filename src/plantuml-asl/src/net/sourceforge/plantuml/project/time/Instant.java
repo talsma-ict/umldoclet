@@ -63,7 +63,7 @@ public class Instant implements Comparable<Instant>, Value {
 	}
 
 	private Long toLong() {
-		return new Long(ms);
+		return Long.valueOf(ms);
 	}
 
 	@Override

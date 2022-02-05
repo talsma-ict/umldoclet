@@ -101,49 +101,54 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 
 		final Rose rose = new Rose();
 
+		final FontConfiguration fontConfiguration;
+		final HorizontalAlignment horizontalAlignment;
 		if (UseStyle.useBetaStyle()) {
 			final Style style = getDefaultStyleDefinition(umlDiagramType.getStyleName())
 					.getMergedStyle(skinParam.getCurrentStyleBuilder());
-			if (entity.getColors(getSkinParam()).getColor(ColorType.BACK) == null) {
+			if (entity.getColors().getColor(ColorType.BACK) == null) {
 				this.noteBackgroundColor = style.value(PName.BackGroundColor).asColor(skinParam.getThemeStyle(),
 						skinParam.getIHtmlColorSet());
 			} else {
-				this.noteBackgroundColor = entity.getColors(getSkinParam()).getColor(ColorType.BACK);
+				this.noteBackgroundColor = entity.getColors().getColor(ColorType.BACK);
 			}
 			this.borderColor = style.value(PName.LineColor).asColor(skinParam.getThemeStyle(),
 					skinParam.getIHtmlColorSet());
 			this.shadowing = style.value(PName.Shadowing).asDouble();
+
+			fontConfiguration = style.getFontConfiguration(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet());
+			horizontalAlignment = style.getHorizontalAlignment();
 		} else {
 			this.shadowing = skinParam.shadowing(getEntity().getStereotype()) ? 4 : 0;
-			if (entity.getColors(getSkinParam()).getColor(ColorType.BACK) == null) {
+			if (entity.getColors().getColor(ColorType.BACK) == null) {
 				this.noteBackgroundColor = rose.getHtmlColor(getSkinParam(), ColorParam.noteBackground);
 			} else {
-				this.noteBackgroundColor = entity.getColors(getSkinParam()).getColor(ColorType.BACK);
+				this.noteBackgroundColor = entity.getColors().getColor(ColorType.BACK);
 			}
 			this.borderColor = SkinParamUtils.getColor(getSkinParam(), null, ColorParam.noteBorder);
+
+			fontConfiguration = new FontConfiguration(getSkinParam(), FontParam.NOTE, null);
+			horizontalAlignment = skinParam.getHorizontalAlignment(AlignmentParam.noteTextAlignment, null, false, null);
 		}
 
 		if (strings.size() == 1 && strings.get(0).length() == 0) {
 			textBlock = new TextBlockEmpty();
 		} else {
-			final FontConfiguration fc = new FontConfiguration(getSkinParam(), FontParam.NOTE, null);
-			final HorizontalAlignment align = skinParam.getHorizontalAlignment(AlignmentParam.noteTextAlignment, null,
-					false, null);
-			textBlock = BodyFactory.create3(strings, FontParam.NOTE, getSkinParam(), align, fc,
-					getSkinParam().wrapWidth());
+			textBlock = BodyFactory.create3(strings, FontParam.NOTE, getSkinParam(), horizontalAlignment,
+					fontConfiguration, getSkinParam().wrapWidth());
 		}
 	}
 
 	private static ISkinParam getISkinParam(ISkinParam skinParam, IEntity entity) {
-		if (entity.getColors(skinParam) != null) {
-			return entity.getColors(skinParam).mute(skinParam);
+		if (entity.getColors() != null) {
+			return entity.getColors().mute(skinParam);
 		}
 		return skinParam;
 	}
 
 	static ISkinParam getSkin(ISkinParam skinParam, IEntity entity) {
 		final Stereotype stereotype = entity.getStereotype();
-		HColor back = entity.getColors(skinParam).getColor(ColorType.BACK);
+		HColor back = entity.getColors().getColor(ColorType.BACK);
 		if (back != null) {
 			return new SkinParamBackcolored(skinParam, back);
 		}
@@ -237,7 +242,7 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 			opale.setRoundCorner(getRoundCorner());
 			opale.setOpale(strategy, pp1, projection);
 			final UGraphic stroked = applyStroke(ug2);
-			opale.drawU(Colors.applyStroke(stroked, getEntity().getColors(skinParam)));
+			opale.drawU(Colors.applyStroke(stroked, getEntity().getColors()));
 		}
 		if (url != null) {
 			ug.closeUrl();

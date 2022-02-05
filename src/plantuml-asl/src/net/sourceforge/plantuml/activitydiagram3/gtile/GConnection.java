@@ -33,10 +33,13 @@ package net.sourceforge.plantuml.activitydiagram3.gtile;
 import java.util.List;
 
 import net.sourceforge.plantuml.graphic.UDrawable;
+import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UShape;
 
 public interface GConnection extends UDrawable, UShape {
 
 	public List<GPoint> getHooks();
+
+	public void drawTranslatable(UGraphic ug);
 
 }

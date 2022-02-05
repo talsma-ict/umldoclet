@@ -64,26 +64,25 @@ public class Style {
 	}
 
 	public Style deltaPriority(int delta) {
-		if (signature.isStarred() == false) {
+		if (signature.isStarred() == false)
 			throw new UnsupportedOperationException();
-		}
+
 		final EnumMap<PName, Value> copy = new EnumMap<PName, Value>(PName.class);
-		for (Entry<PName, Value> ent : this.map.entrySet()) {
+		for (Entry<PName, Value> ent : this.map.entrySet())
 			copy.put(ent.getKey(), new ValueDeltaPriority(ent.getValue(), delta));
-		}
+
 		return new Style(this.signature, copy);
 
 	}
 
 	public void printMe() {
-		if (map.size() == 0) {
+		if (map.size() == 0)
 			return;
-		}
+
 		System.err.println(signature + " {");
-		for (Entry<PName, Value> ent : map.entrySet()) {
+		for (Entry<PName, Value> ent : map.entrySet())
 			System.err.println("  " + ent.getKey() + ": " + ent.getValue().asString());
 
-		}
 		System.err.println("}");
 
 	}
@@ -95,9 +94,27 @@ public class Style {
 
 	public Value value(PName name) {
 		final Value result = map.get(name);
-		if (result == null) {
+		if (result == null)
 			return ValueNull.NULL;
+
+		if (name == PName.BackGroundColor) {
+			final Value resultDark = map.get(PName.DARK_BackGroundColor);
+			if (resultDark != null)
+				return new ValueForDark(result, resultDark);
+		} else if (name == PName.LineColor) {
+			final Value resultDark = map.get(PName.DARK_LineColor);
+			if (resultDark != null)
+				return new ValueForDark(result, resultDark);
+		} else if (name == PName.FontColor) {
+			final Value resultDark = map.get(PName.DARK_FontColor);
+			if (resultDark != null)
+				return new ValueForDark(result, resultDark);
+		} else if (name == PName.HyperLinkColor) {
+			final Value resultDark = map.get(PName.DARK_HyperLinkColor);
+			if (resultDark != null)
+				return new ValueForDark(result, resultDark);
 		}
+
 		return result;
 	}
 
@@ -106,41 +123,26 @@ public class Style {
 	}
 
 	public Style mergeWith(Style other) {
-		if (other == null) {
+		if (other == null)
 			return this;
-		}
-		final EnumMap<PName, Value> both = new EnumMap<PName, Value>(this.map);
-		for (Entry<PName, Value> ent : other.map.entrySet()) {
-			final Value previous = this.map.get(ent.getKey());
-			if (previous == null || ent.getValue().getPriority() > previous.getPriority()) {
-				both.put(ent.getKey(), ent.getValue());
-			}
-		}
-		return new Style(this.signature.mergeWith(other.getSignature()), both);
-	}
 
-	private Style mergeIfUnknownWith(Style other) {
-		if (other == null) {
-			return this;
-		}
 		final EnumMap<PName, Value> both = new EnumMap<PName, Value>(this.map);
 		for (Entry<PName, Value> ent : other.map.entrySet()) {
 			final Value previous = this.map.get(ent.getKey());
-			if (previous == null) {
+			if (previous == null || ent.getValue().getPriority() > previous.getPriority())
 				both.put(ent.getKey(), ent.getValue());
-			}
+
 		}
 		return new Style(this.signature.mergeWith(other.getSignature()), both);
 	}
 
 	public Style eventuallyOverride(PName param, HColor color) {
-		if (color == null) {
+		if (color == null)
 			return this;
-		}
+
 		final EnumMap<PName, Value> result = new EnumMap<PName, Value>(this.map);
 		final Value old = result.get(param);
 		result.put(param, new ValueColor(color, old.getPriority()));
-		// return new Style(kind, name + "-" + color, result);
 		return new Style(this.signature, result);
 	}
 
@@ -158,17 +160,17 @@ public class Style {
 		Style result = this;
 		if (colors != null) {
 			final HColor back = colors.getColor(ColorType.BACK);
-			if (back != null) {
+			if (back != null)
 				result = result.eventuallyOverride(PName.BackGroundColor, back);
-			}
+
 			final HColor line = colors.getColor(ColorType.LINE);
-			if (line != null) {
+			if (line != null)
 				result = result.eventuallyOverride(PName.LineColor, line);
-			}
+
 			final HColor text = colors.getColor(ColorType.TEXT);
-			if (text != null) {
+			if (text != null)
 				result = result.eventuallyOverride(PName.FontColor, text);
-			}
+
 		}
 		return result;
 	}
@@ -177,9 +179,9 @@ public class Style {
 		Style result = this;
 		if (symbolContext != null) {
 			final HColor back = symbolContext.getBackColor();
-			if (back != null) {
+			if (back != null)
 				result = result.eventuallyOverride(PName.BackGroundColor, back);
-			}
+
 		}
 		return result;
 	}
@@ -210,9 +212,9 @@ public class Style {
 	}
 
 	public Style eventuallyOverride(UStroke stroke) {
-		if (stroke == null) {
+		if (stroke == null)
 			return this;
-		}
+
 		Style result = this.eventuallyOverride(PName.LineThickness, stroke.getThickness());
 		final double space = stroke.getDashSpace();
 		final double visible = stroke.getDashVisible();
@@ -223,16 +225,16 @@ public class Style {
 	public UStroke getStroke() {
 		final double thickness = value(PName.LineThickness).asDouble();
 		final String dash = value(PName.LineStyle).asString();
-		if (dash.length() == 0) {
+		if (dash.length() == 0)
 			return new UStroke(thickness);
-		}
+
 		try {
 			final StringTokenizer st = new StringTokenizer(dash, "-;,");
 			final double dashVisible = Double.parseDouble(st.nextToken().trim());
 			double dashSpace = dashVisible;
-			if (st.hasMoreTokens()) {
+			if (st.hasMoreTokens())
 				dashSpace = Double.parseDouble(st.nextToken().trim());
-			}
+
 			return new UStroke(dashVisible, dashSpace, thickness);
 		} catch (Exception e) {
 			return new UStroke(thickness);
@@ -241,9 +243,9 @@ public class Style {
 
 	public UStroke getStroke(Colors colors) {
 		final UStroke stroke = colors.getSpecificLineStroke();
-		if (stroke == null) {
+		if (stroke == null)
 			return getStroke();
-		}
+
 		return stroke;
 	}
 
@@ -289,11 +291,11 @@ public class Style {
 
 	public UGraphic applyStrokeAndLineColor(UGraphic ug, HColorSet colorSet, ThemeStyle themeStyle) {
 		final HColor color = value(PName.LineColor).asColor(themeStyle, colorSet);
-		if (color == null) {
+		if (color == null)
 			ug = ug.apply(new HColorNone());
-		} else {
+		else
 			ug = ug.apply(color);
-		}
+
 		ug = ug.apply(getStroke());
 		return ug;
 	}

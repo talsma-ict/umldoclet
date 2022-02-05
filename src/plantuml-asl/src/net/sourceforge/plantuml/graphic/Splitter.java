@@ -41,6 +41,7 @@ import net.sourceforge.plantuml.ThemeStyle;
 import net.sourceforge.plantuml.command.regex.Matcher2;
 import net.sourceforge.plantuml.command.regex.MyPattern;
 import net.sourceforge.plantuml.command.regex.Pattern2;
+import net.sourceforge.plantuml.emoji.Emoji;
 import net.sourceforge.plantuml.sprite.SpriteUtils;
 
 public class Splitter {
@@ -66,6 +67,7 @@ public class Splitter {
 			"\\}?" + //
 			")?";
 
+	public static final String emojiPattern = Emoji.pattern();
 	public static final String openiconPattern = "\\<&([-\\w]+)" + scale + "\\>";
 	public static final String spritePattern2 = "\\<\\$(" + SpriteUtils.SPRITE_NAME + ")" + scale + "\\>";
 

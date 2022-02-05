@@ -56,7 +56,113 @@ skinparam useBetaStyle false
 	BackgroundColor $PRIMARY_LIGHT-$PRIMARY
 !endprocedure
 
-
+''
+'' Style settings
+''
+<style>
+  root {
+    BackgroundColor $BGCOLOR
+    FontColor $PRIMARY_TEXT
+    HyperLinkColor $ORANGE
+    LineColor $PRIMARY_DARK
+    LineThickness 1
+    Margin 10
+    Padding 6
+    Shadowing 0.0
+  }
+  node {
+   Padding 15
+   roundcorner 20
+   BackgroundColor $PRIMARY-$PRIMARY_DARK
+  }
+  caption {
+    LineThickness 0
+  }
+  footer {
+    LineThickness 0
+  }
+  groupHeader {
+    BackgroundColor $SECONDARY
+    FontColor $INFO
+    FontStyle bold
+  }
+  header {
+    LineThickness 0
+  }
+  referenceHeader {
+    BackgroundColor $BGCOLOR
+    FontColor $DARK
+    FontStyle bold
+  }
+  separator {
+    BackgroundColor $FGCOLOR
+    FontColor $BGCOLOR
+    FontStyle bold
+  }
+  title {
+	FontSize 20
+	BorderRoundCorner            8
+	BorderThickness 	         1
+	BackgroundColor  $SECONDARY_LIGHT-$SECONDARY
+	FontColor $PRIMARY
+	BorderColor $SECONDARY
+  }
+  nwdiagDiagram {
+	network {
+		$primary_scheme()    
+		LineColor $PRIMARY
+		LineThickness 1.0
+		FontColor $PRIMARY_LIGHT
+	}
+	server {
+		$primary_scheme()
+	}
+	arrow {
+		FontColor $PRIMARY_LIGHT
+		LineColor $PRIMARY_LIGHT
+	}
+	group {
+		BackGroundColor $LIGHT
+		LineColor $LIGHT_DARK
+		LineThickness 2.0
+		Margin 5
+		Padding 5
+	}
+  }
+  ganttDiagram {
+	task {
+		$primary_scheme()
+		LineColor $PRIMARY
+		Margin 10
+		Padding 6
+	}
+	note {
+		FontColor $INFO_TEXT
+		LineColor $INFO_DARK
+		BackGroundColor $INFO
+	}
+	separator {
+		LineColor $SECONDARY
+		BackGroundColor $SECONDARY-$SECONDARY_DARK
+		FontColor $SECONDARY_TEXT
+	}
+	milestone {
+		FontColor $INFO
+		FontSize 16
+		FontStyle italic
+		BackGroundColor $SECONDARY
+		LineColor $SECONDARY_DARK
+	}
+	timeline {
+		BackgroundColor $SECONDARY
+		FontColor $SECONDARY_TEXT
+	}
+	closed {
+		BackgroundColor $WARNING_DARK
+		FontColor $WARNING_TEXT
+	}
+  }
+</style>
 ''
 '' Global Default Values
 ''
@@ -421,14 +527,12 @@ skinparam stack {
 }
 !endsub
 
-!if %variable_exists("NEWSTYLE")
 <style>
-wbsDiagram {
-    LineColor $PRIMARY
-    BorderThickness 3
-    BackgroundColor $LIGHT-black
-    FontColor $PRIMARY
-    :depth(0) {
+mindmapDiagram, wbsDiagram {
+    element {
+	    $primary_scheme()
+	}
+	:depth(0) {
         fontSize 16
         fontStyle bold
         fontColor $SECONDARY
@@ -451,33 +555,4 @@ wbsDiagram {
 }
 </style>
 
-<style>
-mindmapDiagram {
-    LineColor $PRIMARY
-    BorderThickness 3
-    BackgroundColor $LIGHT-black
-    FontColor $PRIMARY
-    :depth(0) {
-        fontSize 16
-        fontStyle bold
-        fontColor $SECONDARY
-    }
-    :depth(1) {
-        fontSize 14
-        padding 5
-        fontStyle bold
-    }
-    :depth(2) {
-        fontSize 12
-        padding 4
-    }
-    :depth(3) {
-        fontSize 11
-        padding 3
-        fontColor $INFO
-    }
-
-}
-</style>
-!endif
 

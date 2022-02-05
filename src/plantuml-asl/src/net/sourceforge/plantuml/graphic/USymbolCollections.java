@@ -33,6 +33,7 @@ package net.sourceforge.plantuml.graphic;
 import java.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UGraphicStencil;
 import net.sourceforge.plantuml.ugraphic.URectangle;
@@ -57,13 +58,18 @@ class USymbolCollections extends USymbol {
 	public SkinParameter getSkinParameter() {
 		return skinParameter;
 	}
+	
+	@Override
+	public SName getSName() {
+		return SName.collections;
+	}
 
-	private void drawCollections(UGraphic ug, double width, double height, boolean shadowing, double roundCorner) {
+
+	private void drawCollections(UGraphic ug, double width, double height, double shadowing, double roundCorner) {
 		final URectangle small = new URectangle(width - getDeltaCollection(), height - getDeltaCollection())
 				.rounded(roundCorner);
-		if (shadowing) {
-			small.setDeltaShadow(3.0);
-		}
+		small.setDeltaShadow(shadowing);
+
 		ug.apply(new UTranslate(getDeltaCollection(), getDeltaCollection())).draw(small);
 		small.setDeltaShadow(0);
 		ug.apply(UTranslate.dy(0)).draw(small);
@@ -86,7 +92,7 @@ class USymbolCollections extends USymbol {
 				final Dimension2D dim = calculateDimension(ug.getStringBounder());
 				ug = UGraphicStencil.create(ug, dim);
 				ug = symbolContext.apply(ug);
-				drawCollections(ug, dim.getWidth(), dim.getHeight(), symbolContext.isShadowing(),
+				drawCollections(ug, dim.getWidth(), dim.getHeight(), symbolContext.getDeltaShadow(),
 						symbolContext.getRoundCorner());
 				final Margin margin = getMargin();
 				final TextBlock tb = TextBlockUtils.mergeTB(stereotype, label, stereoAlignment);
@@ -110,7 +116,7 @@ class USymbolCollections extends USymbol {
 			public void drawU(UGraphic ug) {
 				final Dimension2D dim = calculateDimension(ug.getStringBounder());
 				ug = symbolContext.apply(ug);
-				drawCollections(ug, dim.getWidth(), dim.getHeight(), symbolContext.isShadowing(),
+				drawCollections(ug, dim.getWidth(), dim.getHeight(), symbolContext.getDeltaShadow(),
 						symbolContext.getRoundCorner());
 				final Dimension2D dimStereo = stereotype.calculateDimension(ug.getStringBounder());
 				final double posStereoX;

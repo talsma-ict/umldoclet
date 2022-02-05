@@ -46,15 +46,17 @@ public class LivingParticipantBox implements InGroupable {
 	}
 
 	/**
-	 * @deprecated a virer
+	 * @deprecated to be deleted
 	 */
+	@Deprecated
 	public ParticipantBox getParticipantBox() {
 		return participantBox;
 	}
 
 	/**
-	 * @deprecated a virer
+	 * @deprecated to be deleted
 	 */
+	@Deprecated
 	public LifeLine getLifeLine() {
 		return lifeLine;
 	}

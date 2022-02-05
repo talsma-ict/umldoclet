@@ -63,6 +63,8 @@ public enum SName {
 	document, //
 	element, //
 	entity, //
+	end, //
+	stop, //
 	file, //
 	folder, //
 	footer, //
@@ -113,8 +115,23 @@ public enum SName {
 	timeline, //
 	timingDiagram, //
 	title, //
-	unstartedTask, //
+	undone, //
+	unstarted, //
 	usecase, //
+	
+	visibilityIcon, //
+	private_, //
+	protected_, //
+	public_, //
+	IEMandatory, //
+	spot, //
+	spotAnnotation, //
+	spotInterface, //
+	spotEnum, //
+	spotEntity, //
+	spotClass, //
+	spotAbstractClass, //
+	
 	wbsDiagram, //
 	yamlDiagram; //
 

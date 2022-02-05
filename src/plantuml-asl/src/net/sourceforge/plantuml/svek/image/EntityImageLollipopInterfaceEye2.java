@@ -84,7 +84,7 @@ public class EntityImageLollipopInterfaceEye2 extends AbstractEntityImage {
 
 		this.url = entity.getUrl99();
 
-		HColor backcolor = getEntity().getColors(getSkinParam()).getColor(ColorType.BACK);
+		HColor backcolor = getEntity().getColors().getColor(ColorType.BACK);
 		if (backcolor == null) {
 			backcolor = SkinParamUtils.getColor(getSkinParam(), getStereo(), symbol.getColorParamBack());
 		}

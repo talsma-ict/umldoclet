@@ -59,11 +59,13 @@ import net.sourceforge.plantuml.eggs.PSystemEggFactory;
 import net.sourceforge.plantuml.eggs.PSystemPathFactory;
 import net.sourceforge.plantuml.eggs.PSystemRIPFactory;
 import net.sourceforge.plantuml.eggs.PSystemWelcomeFactory;
+import net.sourceforge.plantuml.emoji.PSystemListEmojiFactory;
 import net.sourceforge.plantuml.error.PSystemError;
 import net.sourceforge.plantuml.error.PSystemErrorUtils;
 import net.sourceforge.plantuml.flowdiagram.FlowDiagramFactory;
 import net.sourceforge.plantuml.font.PSystemListFontsFactory;
 import net.sourceforge.plantuml.gitlog.GitDiagramFactory;
+import net.sourceforge.plantuml.hcl.HclDiagramFactory;
 import net.sourceforge.plantuml.help.HelpFactory;
 import net.sourceforge.plantuml.jsondiagram.JsonDiagramFactory;
 import net.sourceforge.plantuml.math.PSystemLatexFactory;
@@ -161,6 +163,7 @@ public class PSystemBuilder {
 		factories.add(new PSystemDonorsFactory());
 		factories.add(new PSystemSkinparameterListFactory());
 		factories.add(new PSystemListFontsFactory());
+		factories.add(new PSystemListEmojiFactory());
 		factories.add(new PSystemOpenIconicFactory());
 		factories.add(new PSystemListOpenIconicFactory());
 		factories.add(new PSystemListInternalSpritesFactory());
@@ -204,6 +207,7 @@ public class PSystemBuilder {
 		factories.add(new GitDiagramFactory());
 		factories.add(new BoardDiagramFactory());
 		factories.add(new YamlDiagramFactory());
+		factories.add(new HclDiagramFactory());
 	}
 
 	private boolean isOk(Diagram ps) {

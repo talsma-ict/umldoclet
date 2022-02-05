@@ -31,13 +31,16 @@
 package net.sourceforge.plantuml;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import net.sourceforge.plantuml.anim.Animation;
 import net.sourceforge.plantuml.anim.AnimationDecoder;
+import net.sourceforge.plantuml.api.ApiStable;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.cucadiagram.Display;
+import net.sourceforge.plantuml.cucadiagram.DisplayPositioned;
 import net.sourceforge.plantuml.cucadiagram.DisplayPositionned;
 import net.sourceforge.plantuml.cucadiagram.DisplaySection;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
@@ -48,6 +51,7 @@ import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleBuilder;
+import net.sourceforge.plantuml.style.StyleLoader;
 import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
@@ -58,10 +62,10 @@ public abstract class TitledDiagram extends AbstractPSystem implements Diagram, 
 	public static boolean FORCE_SMETANA = false;
 	public static boolean FORCE_ELK = false;
 
-	private DisplayPositionned title = DisplayPositionned.none(HorizontalAlignment.CENTER, VerticalAlignment.TOP);
+	private DisplayPositioned title = DisplayPositioned.none(HorizontalAlignment.CENTER, VerticalAlignment.TOP);
 
-	private DisplayPositionned caption = DisplayPositionned.none(HorizontalAlignment.CENTER, VerticalAlignment.BOTTOM);
-	private DisplayPositionned legend = DisplayPositionned.none(HorizontalAlignment.CENTER, VerticalAlignment.BOTTOM);
+	private DisplayPositioned caption = DisplayPositioned.none(HorizontalAlignment.CENTER, VerticalAlignment.BOTTOM);
+	private DisplayPositioned legend = DisplayPositioned.none(HorizontalAlignment.CENTER, VerticalAlignment.BOTTOM);
 	private final DisplaySection header = DisplaySection.none();
 	private final DisplaySection footer = DisplaySection.none();
 	private Display mainFrame;
@@ -111,7 +115,13 @@ public abstract class TitledDiagram extends AbstractPSystem implements Diagram, 
 	}
 
 	public CommandExecutionResult loadSkin(String newSkin) throws IOException {
-		getSkinParam().setDefaultSkin(newSkin + ".skin");
+		final String filename = newSkin + ".skin";
+		final InputStream is = StyleLoader.getInputStreamForStyle(filename);
+		if (is == null)
+			return CommandExecutionResult.error("Cannot find style " + newSkin);
+		is.close();
+
+		getSkinParam().setDefaultSkin(filename);
 		return CommandExecutionResult.ok();
 		// final String res = "/skin/" + filename + ".skin";
 		// final InputStream internalIs = UmlDiagram.class.getResourceAsStream(res);
@@ -159,10 +169,9 @@ public abstract class TitledDiagram extends AbstractPSystem implements Diagram, 
 //		return i;
 //	}
 
-	final public void setTitle(DisplayPositionned title) {
-		if (title.isNull() || title.getDisplay().isWhite()) {
+	final public void setTitle(DisplayPositioned title) {
+		if (title.isNull() || title.getDisplay().isWhite())
 			return;
-		}
 		this.title = title;
 	}
 
@@ -171,15 +180,23 @@ public abstract class TitledDiagram extends AbstractPSystem implements Diagram, 
 		return title;
 	}
 
+	@Override
+	@ApiStable
+	final public Display getTitleDisplay() {
+		if (title == null)
+			return null;
+		return title.getDisplay();
+	}
+
 	final public void setMainFrame(Display mainFrame) {
 		this.mainFrame = mainFrame;
 	}
 
-	final public void setCaption(DisplayPositionned caption) {
+	final public void setCaption(DisplayPositioned caption) {
 		this.caption = caption;
 	}
 
-	final public DisplayPositionned getCaption() {
+	final public DisplayPositioned getCaption() {
 		return caption;
 	}
 
@@ -191,11 +208,11 @@ public abstract class TitledDiagram extends AbstractPSystem implements Diagram, 
 		return footer;
 	}
 
-	final public DisplayPositionned getLegend() {
+	final public DisplayPositioned getLegend() {
 		return legend;
 	}
 
-	public void setLegend(DisplayPositionned legend) {
+	public void setLegend(DisplayPositioned legend) {
 		this.legend = legend;
 	}
 
@@ -262,7 +279,7 @@ public abstract class TitledDiagram extends AbstractPSystem implements Diagram, 
 			return backgroundColor;
 
 		}
-		return this.getSkinParam().getBackgroundColor(false);
+		return this.getSkinParam().getBackgroundColor();
 	}
 
 }

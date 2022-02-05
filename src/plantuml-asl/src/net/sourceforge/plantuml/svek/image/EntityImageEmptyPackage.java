@@ -43,7 +43,7 @@ import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.activitydiagram3.ftile.EntityImageLegend;
 import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.cucadiagram.DisplayPositionned;
+import net.sourceforge.plantuml.cucadiagram.DisplayPositioned;
 import net.sourceforge.plantuml.cucadiagram.EntityPortion;
 import net.sourceforge.plantuml.cucadiagram.ILeaf;
 import net.sourceforge.plantuml.cucadiagram.PortionShower;
@@ -54,6 +54,7 @@ import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
+import net.sourceforge.plantuml.graphic.USymbol;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.style.PName;
@@ -96,7 +97,7 @@ public class EntityImageEmptyPackage extends AbstractEntityImage {
 		super(entity, skinParam);
 		this.styleName = styleName;
 
-		final Colors colors = entity.getColors(getSkinParam());
+		final Colors colors = entity.getColors();
 		final HColor specificBackColor = colors.getColor(ColorType.BACK);
 		this.stereotype = entity.getStereotype();
 		final FontConfiguration titleFontConfiguration;
@@ -125,14 +126,14 @@ public class EntityImageEmptyPackage extends AbstractEntityImage {
 			this.shadowing = getSkinParam().shadowing(getEntity().getStereotype()) ? 3 : 0;
 			this.stroke = GeneralImageBuilder.getForcedStroke(getEntity().getStereotype(), getSkinParam());
 			this.roundCorner = 0;
-			this.back = Cluster.getBackColor(specificBackColor, skinParam, stereotype, styleName);
+			this.back = Cluster.getBackColor(specificBackColor, skinParam, stereotype, styleName, USymbol.PACKAGE);
 			titleFontConfiguration = new FontConfiguration(getSkinParam(), FontParam.PACKAGE, stereotype);
 			titleHorizontalAlignment = HorizontalAlignment.CENTER;
 		}
 
 		this.desc = entity.getDisplay().create(titleFontConfiguration, titleHorizontalAlignment, skinParam);
 
-		final DisplayPositionned legend = ((EntityImpl) entity).getLegend();
+		final DisplayPositioned legend = ((EntityImpl) entity).getLegend();
 		if (legend != null) {
 			final TextBlock legendBlock = EntityImageLegend.create(legend.getDisplay(), skinParam);
 			stereoBlock = legendBlock;

@@ -51,7 +51,7 @@ public class Zad {
 		ug = ug.apply(HColorUtils.BLUE.bg()).apply(HColorUtils.RED_LIGHT);
 		for (MinMax minMax : rectangles) {
 			System.err.println("minmax=" + minMax);
-			minMax.drawGrey(ug);
+			minMax.drawGray(ug);
 		}
 
 	}

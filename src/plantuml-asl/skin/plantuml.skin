@@ -69,8 +69,67 @@ element {
   }
 }
 
+artifact {
+  Shadowing 4.0
+}
+node {
+  Shadowing 2.0
+}
+person {
+  Shadowing 2.0
+}
+queue {
+  Shadowing 2.0
+}
+rectangle {
+  Shadowing 3.0
+}
+stack {
+  Shadowing 3.0
+}
+storage {
+  Shadowing 3.0
+}
+boundary {
+  Shadowing 4.0
+}
+card {
+  Shadowing 3.0
+}
+cloud {
+  Shadowing 3.0
+}
+collections {
+  Shadowing 3.0
+}
+component {
+  Shadowing 4.0
+}
+database {
+  Shadowing 3.0
+}
+file {
+  Shadowing 3.0
+}
+frame {
+  Shadowing 3.0
+}
+folder {
+  Shadowing 3.0
+}
 group {
-    BackGroundColor white
+  package {
+    LineThickness 1.5
+    LineColor black
+  }
+  folder {
+    LineThickness 1.5
+    LineColor black
+  }
+}
+
+group {
+    BackGroundColor transparent
 }
 
 sequenceDiagram {
@@ -90,11 +149,56 @@ sequenceDiagram {
 
   lifeLine {
     BackGroundColor white
+    LineStyle 5
   }
 
 }
 
 classDiagram {
+}
+
+visibilityIcon {
+  public {
+    LineColor #038048
+    BackgroundColor #84BE84
+  }
+  private {
+    LineColor #C82930
+    BackgroundColor #F24D5C
+  }
+  protected {
+    LineColor #B38D22
+    BackgroundColor #FFFF44
+  }
+  package {
+    LineColor #1963A0
+    BackgroundColor #4177AF
+  }
+  IEMandatory {
+    LineColor black
+    BackgroundColor black
+  }
+}
+
+spot {
+  spotAnnotation {
+    BackgroundColor #E3664A
+  }
+  spotAbstractClass {
+    BackgroundColor #A9DCDF
+  }
+  spotClass {
+    BackgroundColor #ADD1B2
+  }
+  spotInterface {
+    BackgroundColor #B4A7E5
+  }
+  spotEnum {
+    BackgroundColor #EB937F
+  }
+  spotEntity {
+    BackgroundColor #ADD1B2
+  }
 }
 
 
@@ -265,7 +369,8 @@ activityDiagram {
 }
 
 activityBar {
-	LineColor black
+  Shadowing 3.0
+  BackgroundColor black
 }
 
 circle {
@@ -312,6 +417,9 @@ ganttDiagram {
         Margin 2 2 2 2
         Padding 0
 	}
+	undone {
+        BackGroundColor white
+	}
 	milestone {
         Margin 2
         Padding 3
@@ -323,7 +431,10 @@ usecase {
   HorizontalAlignment center
 }
 
-yamlDiagram {
+yamlDiagram,jsonDiagram {
+  BackGroundColor white
+  FontColor black
+  LineColor black
   arrow {
     LineThickness 1
     LineStyle 3;3
@@ -333,25 +444,9 @@ yamlDiagram {
   	RoundCorner 10
   	separator {
       LineThickness 1
-      LineColor #A80036
   	}
-    highlight {
-	  BackGroundColor #ccff02
-    }
-  }
-}
-
-jsonDiagram {
-  arrow {
-    LineThickness 1
-    LineStyle 3;3
-  }
-  node {
-    LineThickness 1.5
-  	RoundCorner 10
-  	separator {
-      LineThickness 1
-      LineColor #A80036
+  	header {
+  	  FontStyle bold
   	}
     highlight {
 	  BackGroundColor #ccff02

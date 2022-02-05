@@ -41,7 +41,7 @@
  * The javadoc of the UMLDoclet itself is probably a decent example of what the default settings provide for you:
  * <ul>
  *     <li><a href="https://javadoc.io/doc/nl.talsmasoftware/umldoclet">Main javadoc page</a>
- *     <li><a href="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/package-summary.html">Simple package example: <em>nl.talsmasoftware.umldoclet.rendering</em></a>
+ *     <li><a href="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/writers/package-summary.html">Simple package example: <em>nl.talsmasoftware.umldoclet.rendering.writers</em></a>
  *     <li><a href="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/uml/package-summary.html">Complex package example: <em>nl.talsmasoftware.umldoclet.uml</em></a>
  *     <li><a href="https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/indent/Indentation.html">Class example: <em>nl.talsmasoftware.umldoclet.rendering.indent.Indentation</em></a>
  * </ul>

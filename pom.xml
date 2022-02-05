@@ -114,8 +114,12 @@
                     <include>net/sourceforge/plantuml/**/*.png</include>
                     <include>net/sourceforge/plantuml/openiconic/data/**/*.txt</include>
                     <include>net/sourceforge/plantuml/openiconic/data/**/*.svg</include>
-                    <include>net/sourceforge/plantuml/math/**/*.js</include>
+                    <include>net/sourceforge/plantuml/emoji/data/**/*.txt</include>
+                    <include>net/sourceforge/plantuml/emoji/data/**/*.svg</include>
                     <include>sprites/archimate/**/*.png</include>
+                    <include>net/sourceforge/plantuml/math/**/*.js</include>
+                    <include>net/sourceforge/plantuml/utils/**/*.txt</include>
+                    <include>net/sourceforge/plantuml/windowsdot/*.dat</include>
                 </includes>
             </resource>
             <resource>
@@ -124,6 +128,8 @@
                     <include>stdlib/**/*.repx</include>
                     <include>skin/**/*.skin</include>
                     <include>themes/**/*.puml</include>
+                    <include>svg/**/*.js</include>
+                    <include>svg/**/*.css</include>
                 </includes>
             </resource>
         </resources>
@@ -211,7 +217,7 @@
                         <phase>compile</phase>
                         <configuration>
                             <jdkToolchain>
-                                <version>16</version>
+                                <version>17</version>
                             </jdkToolchain>
                             <release>9</release>
                         </configuration>
@@ -224,7 +230,7 @@
                         <phase>test-compile</phase>
                         <configuration>
                             <jdkToolchain>
-                                <version>16</version>
+                                <version>17</version>
                             </jdkToolchain>
                             <release>9</release>
                         </configuration>
@@ -311,7 +317,7 @@
                                 <version>${project.version}</version>
                             </docletArtifact>
                             <jdkToolchain>
-                                <version>16</version>
+                                <version>17</version>
                             </jdkToolchain>
                             <sourcepath>${project.build.sourceDirectory}:${plantuml-asl.directory}/src</sourcepath>
                             <excludePackageNames>gen.*:h:net.sourceforge.*:smetana.*</excludePackageNames>

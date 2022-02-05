@@ -67,8 +67,19 @@ import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.xmi.SequenceDiagramXmiMaker;
 
 public class SequenceDiagram extends UmlDiagram {
+
+	private boolean hideUnlinkedData;
+
+	public final boolean isHideUnlinkedData() {
+		return hideUnlinkedData;
+	}
+
+	public final void setHideUnlinkedData(boolean hideUnlinkedData) {
+		this.hideUnlinkedData = hideUnlinkedData;
+	}
 
 	private final List<Participant> participantsList = new ArrayList<>();
 
@@ -99,11 +110,10 @@ public class SequenceDiagram extends UmlDiagram {
 	}
 
 	private Participant participantsget(String code) {
-		for (Participant p : participantsList) {
-			if (p.getCode().equals(code)) {
+		for (Participant p : participantsList)
+			if (p.getCode().equals(code))
 				return p;
-			}
-		}
+
 		return null;
 	}
 
@@ -129,12 +139,12 @@ public class SequenceDiagram extends UmlDiagram {
 	}
 
 	private void addWithOrder(final Participant result) {
-		for (int i = 0; i < participantsList.size(); i++) {
+		for (int i = 0; i < participantsList.size(); i++)
 			if (result.getOrder() < participantsList.get(i).getOrder()) {
 				participantsList.add(i, result);
 				return;
 			}
-		}
+
 		participantsList.add(result);
 	}
 
@@ -147,16 +157,16 @@ public class SequenceDiagram extends UmlDiagram {
 	}
 
 	public String addMessage(AbstractMessage m) {
-		if (m.isParallel()) {
+		if (m.isParallel())
 			m.setParallelBrother(getLastAbstractMessage());
-		}
+
 		lastEventWithDeactivate = m;
 		lastDelay = null;
 		events.add(m);
 		if (pendingCreate != null) {
-			if (m.compatibleForCreate(pendingCreate.getParticipant()) == false) {
+			if (m.compatibleForCreate(pendingCreate.getParticipant()) == false)
 				return "After create command, you have to send a message to \"" + pendingCreate.getParticipant() + "\"";
-			}
+
 			m.addLifeEvent(pendingCreate);
 			pendingCreate = null;
 		}
@@ -189,9 +199,9 @@ public class SequenceDiagram extends UmlDiagram {
 	}
 
 	public void newpage(Display strings) {
-		if (ignoreNewpage) {
+		if (ignoreNewpage)
 			return;
-		}
+
 		events.add(new Newpage(strings));
 	}
 
@@ -239,13 +249,14 @@ public class SequenceDiagram extends UmlDiagram {
 
 		final FileFormat fileFormat = fileFormatOption.getFileFormat();
 
-		if (fileFormat == FileFormat.ATXT || fileFormat == FileFormat.UTXT) {
+		if (fileFormat == FileFormat.ATXT || fileFormat == FileFormat.UTXT)
 			return new SequenceDiagramTxtMaker(this, fileFormat);
-		}
 
-		if (modeTeoz()) {
+		if (fileFormat.name().startsWith("XMI"))
+			return new SequenceDiagramXmiMaker(this, fileFormat);
+
+		if (modeTeoz())
 			return new SequenceDiagramFileMakerTeoz(this, skin2, fileFormatOption, index);
-		}
 
 		return new SequenceDiagramFileMakerPuma2(this, skin2, fileFormatOption);
 	}
@@ -270,9 +281,9 @@ public class SequenceDiagram extends UmlDiagram {
 	private final Stack<AbstractMessage> activationState = new Stack<>();
 
 	public AbstractMessage getActivatingMessage() {
-		if (activationState.empty()) {
+		if (activationState.empty())
 			return null;
-		}
+
 		return activationState.peek();
 	}
 
@@ -283,9 +294,9 @@ public class SequenceDiagram extends UmlDiagram {
 	}
 
 	public String activate(Participant p, LifeEventType lifeEventType, HColor backcolor, HColor linecolor) {
-		if (lastDelay != null) {
+		if (lastDelay != null)
 			return "You cannot Activate/Deactivate just after a ...";
-		}
+
 		final LifeEvent lifeEvent = new LifeEvent(p, lifeEventType, new SymbolContext(backcolor, linecolor));
 		events.add(lifeEvent);
 		if (lifeEventType == LifeEventType.CREATE) {
@@ -297,24 +308,24 @@ public class SequenceDiagram extends UmlDiagram {
 				p.incInitialLife(new SymbolContext(backcolor, linecolor));
 				return null;
 			}
-			if (p.getInitialLife() == 0) {
+			if (p.getInitialLife() == 0)
 				return "You cannot deactivate here";
-			}
+
 			return null;
 		}
-		if (lifeEventType == LifeEventType.ACTIVATE && lastEventWithDeactivate instanceof AbstractMessage) {
+		if (lifeEventType == LifeEventType.ACTIVATE && lastEventWithDeactivate instanceof AbstractMessage)
 			activationState.push((AbstractMessage) lastEventWithDeactivate);
-		} else if (lifeEventType == LifeEventType.DEACTIVATE && activationState.empty() == false) {
+		else if (lifeEventType == LifeEventType.DEACTIVATE && activationState.empty() == false)
 			activationState.pop();
-		}
+
 		final boolean ok = lastEventWithDeactivate.addLifeEvent(lifeEvent);
 		if (lastEventWithDeactivate instanceof AbstractMessage) {
 			final AbstractMessage lastMessage = (AbstractMessage) lastEventWithDeactivate;
 			lifeEvent.setMessage(lastMessage);
 		}
-		if (ok) {
+		if (ok)
 			return null;
-		}
+
 		return "Activate/Deactivate already done on " + p.getCode();
 	}
 
@@ -322,12 +333,11 @@ public class SequenceDiagram extends UmlDiagram {
 
 	public boolean grouping(String title, String comment, GroupingType type, HColor backColorGeneral,
 			HColor backColorElement, boolean parallel) {
-		if (type != GroupingType.START && openGroupings.size() == 0) {
+		if (type != GroupingType.START && openGroupings.size() == 0)
 			return false;
-		}
-		if (backColorGeneral == null) {
+
+		if (backColorGeneral == null)
 			backColorGeneral = getSkinParam().getHtmlColor(ColorParam.sequenceGroupBodyBackground, null, false);
-		}
 
 		final GroupingStart top = openGroupings.size() > 0 ? openGroupings.get(0) : null;
 
@@ -339,9 +349,9 @@ public class SequenceDiagram extends UmlDiagram {
 		events.add(g);
 
 		if (type == GroupingType.START) {
-			if (parallel) {
+			if (parallel)
 				((GroupingStart) g).goParallel();
-			}
+
 			openGroupings.add(0, (GroupingStart) g);
 		} else if (type == GroupingType.END) {
 			openGroupings.remove(0);
@@ -383,16 +393,16 @@ public class SequenceDiagram extends UmlDiagram {
 	}
 
 	public boolean isShowFootbox() {
-		if (getSkinParam().strictUmlStyle()) {
+		if (getSkinParam().strictUmlStyle())
 			return false;
-		}
+
 		final String footbox = getSkinParam().getValue("footbox");
-		if (footbox == null) {
+		if (footbox == null)
 			return showFootbox;
-		}
-		if (footbox.equalsIgnoreCase("hide")) {
+
+		if (footbox.equalsIgnoreCase("hide"))
 			return false;
-		}
+
 		return true;
 	}
 
@@ -400,23 +410,23 @@ public class SequenceDiagram extends UmlDiagram {
 
 	public void setShowFootbox(boolean footbox) {
 		this.showFootbox = footbox;
-
 	}
 
 	private ParticipantEnglober participantEnglober;
 
 	public void boxStart(Display comment, HColor color, Stereotype stereotype) {
-		if (participantEnglober != null) {
-			throw new IllegalStateException();
-		}
-		this.participantEnglober = new ParticipantEnglober(comment, color, stereotype);
+		if (participantEnglober == null)
+			this.participantEnglober = ParticipantEnglober.build(comment, color, stereotype);
+		else
+			this.participantEnglober = participantEnglober.newChild(comment, color, stereotype);
+
 	}
 
 	public void endBox() {
-		if (participantEnglober == null) {
+		if (participantEnglober == null)
 			throw new IllegalStateException();
-		}
-		this.participantEnglober = null;
+
+		this.participantEnglober = participantEnglober.getParent();
 	}
 
 	public boolean isBoxPending() {
@@ -435,27 +445,24 @@ public class SequenceDiagram extends UmlDiagram {
 	}
 
 	public void removeHiddenParticipants() {
-		for (Participant p : new ArrayList<>(participantsList)) {
-			if (isAlone(p)) {
+		for (Participant p : new ArrayList<>(participantsList))
+			if (isAlone(p))
 				remove(p);
-			}
-		}
 	}
 
 	private void remove(Participant p) {
 		final boolean ok = participantsList.remove(p);
-		if (ok == false) {
+		if (ok == false)
 			throw new IllegalArgumentException();
-		}
+
 		participantEnglobers2.remove(p);
 	}
 
 	private boolean isAlone(Participant p) {
-		for (Event ev : events) {
-			if (ev.dealWith(p)) {
+		for (Event ev : events)
+			if (ev.dealWith(p))
 				return false;
-			}
-		}
+
 		return true;
 	}
 
@@ -482,19 +489,17 @@ public class SequenceDiagram extends UmlDiagram {
 	}
 
 	public boolean hasUrl() {
-		for (Participant p : participantsList) {
-			if (p.getUrl() != null) {
+		for (Participant p : participantsList)
+			if (p.getUrl() != null)
 				return true;
-			}
-		}
-		for (Event ev : events) {
-			if (ev.hasUrl()) {
+
+		for (Event ev : events)
+			if (ev.hasUrl())
 				return true;
-			}
-		}
-		if (getLegend().isNull() == false && getLegend().hasUrl()) {
+
+		if (getLegend().isNull() == false && getLegend().hasUrl())
 			return true;
-		}
+
 		return false;
 	}
 
@@ -504,28 +509,28 @@ public class SequenceDiagram extends UmlDiagram {
 
 	@Override
 	public boolean isOk() {
-		if (participantsList.size() == 0) {
+		if (participantsList.size() == 0)
 			return false;
-		}
+
 		return true;
 	}
 
 	@Override
 	public String checkFinalError() {
-		if (this.isHideUnlinkedData()) {
+		if (this.isHideUnlinkedData())
 			this.removeHiddenParticipants();
-		}
+
 		return super.checkFinalError();
 	}
 
 	private final Set<EntityPortion> hiddenPortions = EnumSet.<EntityPortion>noneOf(EntityPortion.class);
 
 	public void hideOrShow(Set<EntityPortion> portions, boolean show) {
-		if (show) {
+		if (show)
 			hiddenPortions.removeAll(portions);
-		} else {
+		else
 			hiddenPortions.addAll(portions);
-		}
+
 	}
 
 	public Display manageVariable(Display labels) {

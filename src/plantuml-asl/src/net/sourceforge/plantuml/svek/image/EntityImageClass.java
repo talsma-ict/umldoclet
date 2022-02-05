@@ -85,7 +85,7 @@ public class EntityImageClass extends AbstractEntityImage implements Stencil, Wi
 	final private LineConfigurable lineConfig;
 
 	public EntityImageClass(GraphvizVersion version, ILeaf entity, ISkinParam skinParam, PortionShower portionShower) {
-		super(entity, entity.getColors(skinParam).mute(skinParam));
+		super(entity, entity.getColors().mute(skinParam));
 		this.leafType = entity.getLeafType();
 		this.lineConfig = entity;
 		if (UseStyle.useBetaStyle())
@@ -156,12 +156,16 @@ public class EntityImageClass extends AbstractEntityImage implements Stencil, Wi
 		final double heightTotal = dimTotal.getHeight();
 		final Shadowable rect = new URectangle(widthTotal, heightTotal).rounded(roundCorner)
 				.withCommentAndCodeLine(getEntity().getCodeGetName(), getEntity().getCodeLine());
-		if (getSkinParam().shadowing(getEntity().getStereotype())) {
-			rect.setDeltaShadow(4);
+		if (UseStyle.useBetaStyle()) {
+			rect.setDeltaShadow(getStyle().value(PName.Shadowing).asDouble());
+		} else {
+			if (getSkinParam().shadowing(getEntity().getStereotype())) {
+				rect.setDeltaShadow(4);
+			}
 		}
 
-		HColor classBorder = lineConfig.getColors(getSkinParam()).getColor(ColorType.LINE);
-		HColor headerBackcolor = getEntity().getColors(getSkinParam()).getColor(ColorType.HEADER);
+		HColor classBorder = lineConfig.getColors().getColor(ColorType.LINE);
+		HColor headerBackcolor = getEntity().getColors().getColor(ColorType.HEADER);
 
 		if (classBorder == null) {
 			if (UseStyle.useBetaStyle())
@@ -170,7 +174,7 @@ public class EntityImageClass extends AbstractEntityImage implements Stencil, Wi
 			else
 				classBorder = SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.classBorder);
 		}
-		HColor backcolor = getEntity().getColors(getSkinParam()).getColor(ColorType.BACK);
+		HColor backcolor = getEntity().getColors().getColor(ColorType.BACK);
 		if (backcolor == null) {
 			if (UseStyle.useBetaStyle())
 				backcolor = getStyle().value(PName.BackGroundColor).asColor(getSkinParam().getThemeStyle(),
@@ -192,8 +196,7 @@ public class EntityImageClass extends AbstractEntityImage implements Stencil, Wi
 
 		if (headerBackcolor == null) {
 			if (UseStyle.useBetaStyle())
-				headerBackcolor = getStyle().value(PName.BackGroundColor).asColor(getSkinParam().getThemeStyle(),
-						getSkinParam().getIHtmlColorSet());
+				headerBackcolor = backcolor;
 			else
 				headerBackcolor = getSkinParam().getHtmlColor(ColorParam.classHeaderBackground, getStereo(), false);
 		}
@@ -227,6 +230,7 @@ public class EntityImageClass extends AbstractEntityImage implements Stencil, Wi
 		}
 	}
 
+	@Override
 	public Ports getPorts(StringBounder stringBounder) {
 		final Dimension2D dimHeader = header.calculateDimension(stringBounder);
 		if (body instanceof WithPorts)
@@ -235,7 +239,7 @@ public class EntityImageClass extends AbstractEntityImage implements Stencil, Wi
 	}
 
 	private UStroke getStroke() {
-		UStroke stroke = lineConfig.getColors(getSkinParam()).getSpecificLineStroke();
+		UStroke stroke = lineConfig.getColors().getSpecificLineStroke();
 		if (stroke == null) {
 			stroke = getSkinParam().getThickness(LineParam.classBorder, getStereo());
 		}

@@ -46,6 +46,8 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -165,6 +167,9 @@ public class SFile implements Comparable<SFile> {
 
 	public Collection<SFile> listFiles() {
 		final File[] tmp = internal.listFiles();
+		if (tmp == null)
+			return Collections.emptyList();
+		
 		final List<SFile> result = new ArrayList<>(tmp.length);
 		for (File f : tmp) {
 			result.add(new SFile(f));
@@ -237,33 +242,41 @@ public class SFile implements Comparable<SFile> {
 	 * Check SecurityProfile to see if this file can be open.
 	 */
 	private boolean isFileOk() {
-		if (SecurityUtils.getSecurityProfile() == SecurityProfile.SANDBOX) {
+		if (SecurityUtils.getSecurityProfile() == SecurityProfile.SANDBOX)
 			// In SANDBOX, we cannot read any files
+			return false;
+
+		// In any case SFile should not access the security folders
+		// (the files must be handled internally)
+		try {
+			if (isDenied())
+				return false;
+		} catch (IOException e) {
 			return false;
 		}
 		// Files in "plantuml.include.path" and "plantuml.allowlist.path" are ok.
-		if (isInAllowList(SecurityUtils.getPath("plantuml.include.path"))) {
+		if (isInAllowList(SecurityUtils.getPath(SecurityUtils.PATHS_INCLUDES)))
 			return true;
-		}
-		if (isInAllowList(SecurityUtils.getPath("plantuml.allowlist.path"))) {
+
+		if (isInAllowList(SecurityUtils.getPath(SecurityUtils.PATHS_ALLOWED)))
 			return true;
-		}
-		if (SecurityUtils.getSecurityProfile() == SecurityProfile.INTERNET) {
+
+		if (SecurityUtils.getSecurityProfile() == SecurityProfile.INTERNET)
 			return false;
-		}
-		if (SecurityUtils.getSecurityProfile() == SecurityProfile.ALLOWLIST) {
+
+		if (SecurityUtils.getSecurityProfile() == SecurityProfile.ALLOWLIST)
 			return false;
-		}
+
 		if (SecurityUtils.getSecurityProfile() != SecurityProfile.UNSECURE) {
 			// For UNSECURE, we did not do those checks
 			final String path = getCleanPathSecure();
 			if (path.startsWith("/etc/") || path.startsWith("/dev/") || path.startsWith("/boot/")
-					|| path.startsWith("/proc/") || path.startsWith("/sys/")) {
+					|| path.startsWith("/proc/") || path.startsWith("/sys/"))
 				return false;
-			}
-			if (path.startsWith("//")) {
+
+			if (path.startsWith("//"))
 				return false;
-			}
+
 		}
 		return true;
 	}
@@ -277,6 +290,35 @@ public class SFile implements Comparable<SFile> {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Checks, if the SFile is inside the folder (-structure) of the security area.
+	 *
+	 * @return true, if the file is not allowed to read/write
+	 * @throws IOException If an I/O error occurs, which is possible because the
+	 *                     check the pathname may require filesystem queries
+	 */
+	private boolean isDenied() throws IOException {
+		SFile securityPath = SecurityUtils.getSecurityPath();
+		if (securityPath == null)
+			return false;
+		return getSanitizedPath().startsWith(securityPath.getSanitizedPath());
+	}
+
+	/**
+	 * Returns a sanitized, canonical and normalized Path to a file.
+	 *
+	 * @return the Path
+	 * @throws IOException If an I/O error occurs, which is possible because the
+	 *                     construction of the canonical pathname may require
+	 *                     filesystem queries
+	 * @see #getCleanPathSecure()
+	 * @see File#getCanonicalPath()
+	 * @see Path#normalize()
+	 */
+	private Path getSanitizedPath() throws IOException {
+		return Paths.get(new File(getCleanPathSecure()).getCanonicalPath()).normalize();
 	}
 
 	private String getCleanPathSecure() {

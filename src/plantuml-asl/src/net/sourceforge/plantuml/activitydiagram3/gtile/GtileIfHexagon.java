@@ -33,43 +33,23 @@ package net.sourceforge.plantuml.activitydiagram3.gtile;
 import java.awt.geom.Dimension2D;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.ListIterator;
 
-import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.Dimension2DDouble;
-import net.sourceforge.plantuml.FontParam;
-import net.sourceforge.plantuml.LineBreakStrategy;
-import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.activitydiagram3.Branch;
-import net.sourceforge.plantuml.activitydiagram3.ftile.Hexagon;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
-import net.sourceforge.plantuml.creole.CreoleMode;
-import net.sourceforge.plantuml.creole.Parser;
-import net.sourceforge.plantuml.creole.Sheet;
-import net.sourceforge.plantuml.creole.SheetBlock1;
-import net.sourceforge.plantuml.creole.SheetBlock2;
-import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
-import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
-import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleSignature;
-import net.sourceforge.plantuml.svek.ConditionEndStyle;
-import net.sourceforge.plantuml.svek.ConditionStyle;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
-public class GtileIfHexagon extends GtileIfSimple {
+public class GtileIfHexagon extends GtileColumns {
 
-	private final List<Branch> branches;
 	private final Gtile shape1;
+	private final List<Branch> branches;
 	private final Gtile shape2;
 
 	private final UTranslate positionShape1;
@@ -80,107 +60,116 @@ public class GtileIfHexagon extends GtileIfSimple {
 		return "GtileIfHexagon " + gtiles;
 	}
 
+	public static Gtile build(Swimlane swimlane, List<Gtile> gtiles, List<Branch> branches) {
+		final GtileIfHexagon result = new GtileIfHexagon(swimlane, gtiles, branches);
+		return result;
+		// return Gtiles.withEastMargin(result, 0);
+	}
+
 	// ConditionalBuilder
 	// FtileFactoryDelegatorIf
 
-	public GtileIfHexagon(Swimlane swimlane, List<Gtile> gtiles, List<Branch> branches) {
-		super(gtiles);
-
-		final ConditionStyle conditionStyle = skinParam().getConditionStyle();
-		final ConditionEndStyle conditionEndStyle = skinParam().getConditionEndStyle();
+	private GtileIfHexagon(Swimlane swimlane, List<Gtile> gtiles, List<Branch> branches) {
+		super(gtiles, swimlane, 20);
 
 		this.branches = branches;
 
-		final Branch branch0 = branches.get(0);
+		this.shape1 = getShape1(swimlane);
+		this.shape2 = Gtiles.diamondEmpty(swimlane, getStringBounder(), skinParam(), getDefaultStyleDefinitionDiamond(),
+				branches.get(0).getColor());
 
-		final HColor borderColor;
-		final HColor backColor;
-		final FontConfiguration fcTest;
+		final Dimension2D dimShape1 = shape1.calculateDimension(stringBounder);
+		this.pushDown(dimShape1.getHeight());
 
-		if (UseStyle.useBetaStyle()) {
-			final Style styleArrow = getDefaultStyleDefinitionArrow()
-					.getMergedStyle(skinParam().getCurrentStyleBuilder());
-			final Style styleDiamond = getDefaultStyleDefinitionDiamond()
-					.getMergedStyle(skinParam().getCurrentStyleBuilder());
-			borderColor = styleDiamond.value(PName.LineColor).asColor(skinParam().getThemeStyle(),
-					skinParam().getIHtmlColorSet());
-			backColor = branch0.getColor() == null ? styleDiamond.value(PName.BackGroundColor)
-					.asColor(skinParam().getThemeStyle(), skinParam().getIHtmlColorSet()) : branch0.getColor();
-//			arrowColor = Rainbow.build(styleArrow, skinParam().getIHtmlColorSet(), skinParam().getThemeStyle());
-			fcTest = styleDiamond.getFontConfiguration(skinParam().getThemeStyle(), skinParam().getIHtmlColorSet());
-//			fcArrow = styleArrow.getFontConfiguration(skinParam().getThemeStyle(), skinParam().getIHtmlColorSet());
+		final double posShape;
+		final Dimension2D totalDim;
+		if (branches.size() == 2) {
+			final Gtile tile0 = branches.get(0).getGtile();
+			final Gtile tile1 = branches.get(1).getGtile();
+
+			final double northHook0 = tile0.getGPoint(GPoint.NORTH_HOOK).getCoord().getDx();
+			final double width0 = tile0.calculateDimension(getStringBounder()).getWidth();
+			final double northHook1 = tile1.getGPoint(GPoint.NORTH_HOOK).getCoord().getDx();
+			final double width1 = tile1.calculateDimension(getStringBounder()).getWidth();
+
+			final double shlen1 = shape1.calculateDimension(getStringBounder()).getWidth();
+			final double shlen = shape1.getGPoint(GPoint.EAST_HOOK).getCoord().getDx()
+					- shape1.getGPoint(GPoint.WEST_HOOK).getCoord().getDx();
+
+			System.err.println("shlen=" + shlen);
+
+			System.err.println("northHook0=" + northHook0);
+			System.err.println("width0=" + width0);
+
+			System.err.println("northHook1=" + northHook1);
+			System.err.println("width1=" + width1);
+
+			final double alpha = northHook0;
+			final double beta = width1 - northHook1;
+			System.err.println("alpha=" + alpha);
+			System.err.println("beta=" + beta);
+
+			final double wantedWidth = alpha + shlen + beta;
+			System.err.println("wantedWidth=" + wantedWidth);
+			double diff = wantedWidth - width0 - width1;
+			if (diff < 0)
+				diff = 0;
+			System.err.println("diff=" + diff);
+			this.setMargin(diff + 10);
+			totalDim = calculateDimensionRaw(stringBounder);
+			final double p2 = totalDim.getWidth() - beta;
+			posShape = (alpha + p2) / 2;
 		} else {
-			final FontParam testParam = conditionStyle == ConditionStyle.INSIDE_HEXAGON ? FontParam.ACTIVITY_DIAMOND
-					: FontParam.ARROW;
-
-			borderColor = getRose().getHtmlColor(skinParam(), ColorParam.activityDiamondBorder);
-			backColor = branch0.getColor() == null
-					? getRose().getHtmlColor(skinParam(), ColorParam.activityDiamondBackground)
-					: branch0.getColor();
-//			arrowColor = Rainbow.build(skinParam());
-			fcTest = new FontConfiguration(skinParam(), testParam, null)
-					.changeColor(fontColor(FontParam.ACTIVITY_DIAMOND));
-//			fcArrow = new FontConfiguration(skinParam(), FontParam.ARROW, null);
+			totalDim = calculateDimensionRaw(stringBounder);
+			posShape = totalDim.getWidth() / 2;
 		}
 
-		final Sheet sheet = Parser.build(fcTest, skinParam().getDefaultTextAlignment(HorizontalAlignment.LEFT),
-				skinParam(), CreoleMode.FULL).createSheet(branch0.getLabelTest());
-		final SheetBlock1 sheetBlock1 = new SheetBlock1(sheet, LineBreakStrategy.NONE, skinParam().getPadding());
-		final TextBlock tbTest = new SheetBlock2(sheetBlock1, Hexagon.asStencil(sheetBlock1), new UStroke());
+		this.positionShape1 = UTranslate.dx(posShape).compose(shape1.getCoord(GPoint.NORTH_BORDER).reverse());
+		this.positionShape2 = new UTranslate(posShape, totalDim.getHeight())
+				.compose(shape2.getCoord(GPoint.SOUTH_BORDER).reverse());
 
-		this.shape1 = new GtileDiamondInside(getStringBounder(), tbTest, skinParam(), backColor, borderColor, swimlane);
-		this.shape2 = new GtileDiamondInside(getStringBounder(), TextBlockUtils.EMPTY_TEXT_BLOCK, skinParam(),
-				backColor, borderColor, swimlane);
+	}
 
-		final double height1 = shape1.calculateDimension(stringBounder).getHeight() + getSuppHeightMargin();
+	@Override
+	protected UTranslate getCoordImpl(String name) {
+		if (name.equals(GPoint.NORTH_HOOK))
+			return shape1.getCoord(name).compose(positionShape1);
+		if (name.equals(GPoint.SOUTH_HOOK))
+			return shape2.getCoord(name).compose(positionShape2);
+		return super.getCoordImpl(name);
+	}
 
-//		public GtileDiamondInside(StringBounder stringBounder, TextBlock label, ISkinParam skinParam, HColor backColor,
-//				HColor borderColor, Swimlane swimlane) {
+	private Gtile getShape1(Swimlane swimlane) {
+		GtileHexagonInside tmp = Gtiles.hexagonInside(swimlane, getStringBounder(), skinParam(),
+				getDefaultStyleDefinitionDiamond(), branches.get(0).getColor(), branches.get(0).getLabelTest());
 
-		for (ListIterator<UTranslate> it = positions.listIterator(); it.hasNext();) {
-			final UTranslate tmp = it.next();
-			it.set(tmp.compose(UTranslate.dy(height1)));
-		}
-
+		final TextBlock tmp0 = branches.get(0).getTextBlockPositive();
 		if (branches.size() == 1) {
-			final UTranslate tmp = positions.get(0);
-			positions.set(0, tmp.compose(UTranslate.dx(missingSpace())));
+			return Gtiles.withSouthMargin(tmp.withSouthLabel(tmp0), 10);
 		}
 
-		this.positionShape1 = this.getCoord(GPoint.NORTH_HOOK).compose(shape1.getCoord(GPoint.NORTH_HOOK).reverse());
-		this.positionShape2 = this.getCoord(GPoint.SOUTH_HOOK).compose(shape2.getCoord(GPoint.SOUTH_HOOK).reverse());
-
-	}
-
-	private double missingSpace() {
-		if (branches.size() != 1)
-			throw new IllegalStateException();
-		return 25;
-	}
-
-	private double getSuppHeightMargin() {
-		if (branches.size() == 1)
-			return 30;
-		return 10;
+		final TextBlock tmp1 = branches.get(1).getTextBlockPositive();
+		return Gtiles.withSouthMargin(tmp.withWestLabel(tmp0).withEastLabel(tmp1), 10);
 	}
 
 	@Override
 	public Dimension2D calculateDimension(StringBounder stringBounder) {
-		final double height2 = shape2.calculateDimension(stringBounder).getHeight() + getSuppHeightMargin();
+		final Dimension2D rawDim = calculateDimensionRaw(stringBounder);
+		if (branches.size() == 2) {
+			final Dimension2D shape1Dim = shape1.calculateDimension(stringBounder);
+			final double shape1max = this.positionShape1.getDx() + shape1Dim.getWidth();
+			return Dimension2DDouble.atLeast(rawDim, shape1max, 0);
+
+		}
+		// return MathUtils.max(rawDim, shape1Dim);
+		return rawDim;
+	}
+
+	private Dimension2D calculateDimensionRaw(StringBounder stringBounder) {
+		final double height2 = shape2.calculateDimension(stringBounder).getHeight();
 		final Dimension2D nude = super.calculateDimension(stringBounder);
-		if (branches.size() > 1)
-			return Dimension2DDouble.delta(nude, 0, height2);
-		return Dimension2DDouble.delta(nude, missingSpace(), height2);
-	}
-
-	@Override
-	public UTranslate getCoord(String name) {
-		final UTranslate result = super.getCoord(name);
-		return result;
-	}
-
-	private HColor fontColor(FontParam param) {
-		return skinParam().getFontHtmlColor(null, param);
+		// +30 to be done only when branches.size()==1 ?
+		return Dimension2DDouble.delta(nude, 0, height2 + 30);
 	}
 
 	final public StyleSignature getDefaultStyleDefinitionActivity() {
@@ -196,41 +185,49 @@ public class GtileIfHexagon extends GtileIfSimple {
 	}
 
 	@Override
-	public void drawU(UGraphic ug) {
-		super.drawU(ug);
+	protected void drawUInternal(UGraphic ug) {
+		super.drawUInternal(ug);
 
-		shape1.drawU(ug.apply(positionShape1));
-		shape2.drawU(ug.apply(positionShape2));
+		ug.apply(positionShape1).draw(shape1);
+		ug.apply(positionShape2).draw(shape2);
 	}
+
+//	private TextBlock getLabelPositive(Branch branch) {
+//		final LineBreakStrategy labelLineBreak = LineBreakStrategy.NONE;
+//
+//		final FontConfiguration fontConfiguration;
+//		if (UseStyle.useBetaStyle()) {
+//			final Style style = getDefaultStyleDefinitionArrow().getMergedStyle(skinParam().getCurrentStyleBuilder());
+//			fontConfiguration = style.getFontConfiguration(skinParam().getThemeStyle(), skinParam().getIHtmlColorSet());
+//		} else {
+//			fontConfiguration = new FontConfiguration(skinParam(), FontParam.ARROW, null);
+//		}
+//
+//		return branch.getDisplayPositive().create0(fontConfiguration, HorizontalAlignment.LEFT, skinParam(),
+//				labelLineBreak, CreoleMode.SIMPLE_LINE, null, null);
+//	}
 
 	@Override
 	public Collection<GConnection> getInnerConnections() {
 		if (branches.size() == 1) {
 			final GConnection arrow1 = new GConnectionVerticalDown(positionShape1, shape1.getGPoint(GPoint.SOUTH_HOOK),
-					positions.get(0), gtiles.get(0).getGPoint(GPoint.NORTH_HOOK), TextBlockUtils.EMPTY_TEXT_BLOCK);
-			final GConnection arrow2 = new GConnectionVerticalDown(positions.get(0),
+					getPosition(0), gtiles.get(0).getGPoint(GPoint.NORTH_HOOK), TextBlockUtils.EMPTY_TEXT_BLOCK);
+			final GConnection arrow2 = new GConnectionVerticalDown(getPosition(0),
 					gtiles.get(0).getGPoint(GPoint.SOUTH_HOOK), positionShape2, shape2.getGPoint(GPoint.NORTH_HOOK),
 					TextBlockUtils.EMPTY_TEXT_BLOCK);
-
-			final Dimension2D totalDim = calculateDimension(stringBounder);
-
-			final GConnection arrow3 = new GConnectionLeftThenDownThenRight(positionShape1,
-					shape1.getGPoint(GPoint.EAST_HOOK), positionShape2, shape2.getGPoint(GPoint.EAST_HOOK), totalDim.getWidth(),
-					TextBlockUtils.EMPTY_TEXT_BLOCK);
-			return Arrays.asList(arrow1, arrow2, arrow3);
-			// return Arrays.asList(arrow3);
+			return Arrays.asList(arrow1, arrow2);
 		} else if (branches.size() == 2) {
 			final GConnection arrow1 = new GConnectionHorizontalThenVerticalDown(positionShape1,
-					shape1.getGPoint(GPoint.WEST_HOOK), positions.get(0), gtiles.get(0).getGPoint(GPoint.NORTH_HOOK),
+					shape1.getGPoint(GPoint.WEST_HOOK), getPosition(0), gtiles.get(0).getGPoint(GPoint.NORTH_HOOK),
 					TextBlockUtils.EMPTY_TEXT_BLOCK);
 			final GConnection arrow2 = new GConnectionHorizontalThenVerticalDown(positionShape1,
-					shape1.getGPoint(GPoint.EAST_HOOK), positions.get(1), gtiles.get(1).getGPoint(GPoint.NORTH_HOOK),
+					shape1.getGPoint(GPoint.EAST_HOOK), getPosition(1), gtiles.get(1).getGPoint(GPoint.NORTH_HOOK),
 					TextBlockUtils.EMPTY_TEXT_BLOCK);
 
-			final GConnection arrow3 = new GConnectionVerticalDownThenHorizontal(positions.get(0),
+			final GConnection arrow3 = new GConnectionVerticalDownThenHorizontal(getPosition(0),
 					gtiles.get(0).getGPoint(GPoint.SOUTH_HOOK), positionShape2, shape2.getGPoint(GPoint.WEST_HOOK),
 					TextBlockUtils.EMPTY_TEXT_BLOCK);
-			final GConnection arrow4 = new GConnectionVerticalDownThenHorizontal(positions.get(1),
+			final GConnection arrow4 = new GConnectionVerticalDownThenHorizontal(getPosition(1),
 					gtiles.get(1).getGPoint(GPoint.SOUTH_HOOK), positionShape2, shape2.getGPoint(GPoint.EAST_HOOK),
 					TextBlockUtils.EMPTY_TEXT_BLOCK);
 

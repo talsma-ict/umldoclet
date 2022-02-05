@@ -463,7 +463,7 @@ public class StringUtils {
 	public static String manageUnicodeNotationUplus(String s) {
 		final Pattern pattern = Pattern.compile("\\<U\\+([0-9a-fA-F]{4,5})\\>");
 		final Matcher matcher = pattern.matcher(s);
-		final StringBuffer result = new StringBuffer();
+		final StringBuffer result = new StringBuffer(); // Can't be switched to StringBuilder in order to support Java 8
 		while (matcher.find()) {
 			final String num = matcher.group(1);
 			final int value = Integer.parseInt(num, 16);
@@ -477,7 +477,7 @@ public class StringUtils {
 	public static String manageAmpDiese(String s) {
 		final Pattern pattern = Pattern.compile("\\&#([0-9]+);");
 		final Matcher matcher = pattern.matcher(s);
-		final StringBuffer result = new StringBuffer();
+		final StringBuffer result = new StringBuffer(); // Can't be switched to StringBuilder in order to support Java 8
 		while (matcher.find()) {
 			final String num = matcher.group(1);
 			final char c = (char) Integer.parseInt(num);

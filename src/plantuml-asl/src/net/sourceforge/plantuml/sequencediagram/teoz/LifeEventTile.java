@@ -109,7 +109,7 @@ public class LifeEventTile extends AbstractTile {
 
 	public Real getMinX() {
 		// return tileArguments.getLivingSpace(lifeEvent.getParticipant()).getPosB();
-		return livingSpace.getPosB();
+		return livingSpace.getPosB(getStringBounder());
 	}
 
 	public Real getMaxX() {
