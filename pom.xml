@@ -183,64 +183,38 @@
                 </dependencies>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.3.0</version>
                 <executions>
                     <execution>
-                        <id>default-compile</id>
-                        <phase>none</phase>
-                    </execution>
-                    <execution>
-                        <id>compile-plantuml-sources</id>
+                        <phase>generate-sources</phase>
                         <goals>
-                            <goal>compile</goal>
+                            <goal>add-source</goal>
                         </goals>
-                        <phase>compile</phase>
                         <configuration>
-                            <jdkToolchain>
-                                <version>1.8</version>
-                            </jdkToolchain>
-                            <source>1.8</source>
-                            <target>1.8</target>
-                            <compileSourceRoots>
-                                <compileSourceRoot>${plantuml-asl.directory}/src</compileSourceRoot>
-                            </compileSourceRoots>
-                            <showDeprecation>false</showDeprecation>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>compile-umldoclet</id>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <phase>compile</phase>
-                        <configuration>
-                            <jdkToolchain>
-                                <version>17</version>
-                            </jdkToolchain>
-                            <release>9</release>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>default-testCompile</id>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                        <phase>test-compile</phase>
-                        <configuration>
-                            <jdkToolchain>
-                                <version>17</version>
-                            </jdkToolchain>
-                            <release>9</release>
+                            <sources>
+                                <source>${plantuml-asl.directory}/src</source>
+                            </sources>
                         </configuration>
                     </execution>
                 </executions>
-                <configuration> <!-- defaults for compile and testCompile -->
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <showDeprecation>true</showDeprecation>
+                    <jdkToolchain>
+                        <version>17</version>
+                    </jdkToolchain>
+                    <release>9</release>
+<!--
                     <source>9</source>
                     <target>9</target>
+-->
                 </configuration>
             </plugin>
             <plugin>
