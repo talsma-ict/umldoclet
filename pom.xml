@@ -66,6 +66,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.release>9</maven.compiler.release>
 
         <!-- Plant UML apache-licensed sources: https://sourceforge.net/projects/plantuml/files/ -->
         <plantuml-asl.directory>${project.basedir}/src/plantuml-asl</plantuml-asl.directory>
@@ -78,10 +79,6 @@
         <logback.version>1.2.10</logback.version>
         <maven-invoker.version>3.1.0</maven-invoker.version>
 
-        <!--
-            This compiler plugin version fails in testComple on jdk >= jdk9-ea167:
-            https://issues.apache.org/jira/browse/MCOMPILER-294
-         -->
         <maven-compiler-plugin.version>3.9.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>3.0.0-M5</maven-failsafe-plugin.version>
@@ -204,18 +201,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
-                <configuration>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                    <showDeprecation>true</showDeprecation>
-                    <jdkToolchain>
-                        <version>17</version>
-                    </jdkToolchain>
-                    <release>9</release>
-<!--
-                    <source>9</source>
-                    <target>9</target>
--->
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -290,9 +275,6 @@
                                 <artifactId>umldoclet</artifactId>
                                 <version>${project.version}</version>
                             </docletArtifact>
-                            <jdkToolchain>
-                                <version>17</version>
-                            </jdkToolchain>
                             <sourcepath>${project.build.sourceDirectory}:${plantuml-asl.directory}/src</sourcepath>
                             <excludePackageNames>gen.*:h:net.sourceforge.*:smetana.*</excludePackageNames>
                             <additionalOptions>
