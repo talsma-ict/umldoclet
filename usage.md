@@ -87,6 +87,28 @@ To build with an older JDK, please use the latest [1.x version][usage-v1] of thi
 In gradle, the doclet and its dependency need to be declared.
 From there on, the configuration is the same as your regular JavaDoc configuration.
 
+Using the gradle Kotlin DSL:
+```kotlin
+val umlDoclet: Configuration by configurations.creating
+
+dependencies {
+    umlDoclet("nl.talsmasoftware:umldoclet:2.0.15")
+}
+
+configurations {
+    umlDoclet
+}
+
+tasks.javadoc {
+    source = sourceSets.main.get().allJava
+    val docletOptions = options as StandardJavadocDocletOptions
+    docletOptions.docletpath = umlDoclet.files.toList()
+    docletOptions.doclet = "nl.talsmasoftware.umldoclet.UMLDoclet"
+    docletOptions.addStringOption("additionalParamName", "additionalParamValue")
+}
+```
+
+Alternatively, using the gradle Groovy DSL:
 ```groovy
 apply plugin: 'java'
 
