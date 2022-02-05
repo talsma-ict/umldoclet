@@ -137,10 +137,11 @@
                 <version>${license-maven-plugin.version}</version>
                 <executions>
                     <execution>
+                        <id>check-license-headers</id>
+                        <phase>validate</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
-                        <phase>compile</phase>
                     </execution>
                 </executions>
                 <configuration>
