@@ -59,8 +59,8 @@ jobs:
     name: "Release"
     runs-on: ubuntu-latest
     needs: build
-    env:
-      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+#    env:
+#      GH_TOKEN: ${{ secrets.GH_TOKEN }}
     steps:
       - name: Check out code
         if: env.GH_TOKEN != null
@@ -68,18 +68,20 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ env.GH_TOKEN }}
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
       - name: Set up CI git user
-        if: env.GH_TOKEN != null
+#        if: env.GH_TOKEN != null
         run: |
           git config user.name "Talsma CI"
           git config user.email "ci-user@talsma-ict.nl"
       - name: Set up JDK
-        if: env.GH_TOKEN != null
+#        if: env.GH_TOKEN != null
         uses: actions/setup-java@v1
         with:
           java-version: 17
       - name: Set up maven cache
-        if: env.GH_TOKEN != null
+#        if: env.GH_TOKEN != null
         uses: actions/cache@v2
         with:
           path: ~/.m2/repository
@@ -91,3 +93,4 @@ jobs:
         shell: bash
         env:
           MAVEN_CLI_OPTS: --settings .github/mvn-settings.xml
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
