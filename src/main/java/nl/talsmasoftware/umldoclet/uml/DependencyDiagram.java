@@ -99,7 +99,8 @@ public class DependencyDiagram extends Diagram {
     private IndentingPrintWriter writePackageLinkTo(IndentingPrintWriter output, Namespace namespace) {
         String link = Link.forPackage(namespace).toString().trim();
         if (!link.isEmpty()) {
-            output.append("class \"").append(namespace.name).append("\" ").append(link).append(" {\n}\n");
+            output.append("class \"").append(namespace.name).append("\" ").append(link)
+                    .append(" {").newline().append('}').newline();
         }
         return output;
     }
