@@ -37,6 +37,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static java.lang.System.lineSeparator;
 import static java.util.stream.Collectors.joining;
 import static nl.talsmasoftware.umldoclet.logging.Message.DOCLET_COPYRIGHT;
 import static nl.talsmasoftware.umldoclet.logging.Message.DOCLET_VERSION;
@@ -169,7 +170,7 @@ public class UMLDoclet extends StandardDoclet {
     private Set<PackageDependencyCycle> detectPackageDependencyCycles(Set<PackageDependency> packageDependencies) {
         Set<PackageDependencyCycle> cycles = PackageDependencyCycle.detectCycles(packageDependencies);
         if (!cycles.isEmpty()) {
-            String cyclesString = cycles.stream().map(cycle -> " - " + cycle).collect(joining("\n", "\n", ""));
+            String cyclesString = cycles.stream().map(cycle -> " - " + cycle).collect(joining(lineSeparator(), lineSeparator(), ""));
             if (config.failOnCyclicPackageDependencies()) {
                 config.logger().error(Message.WARNING_PACKAGE_DEPENDENCY_CYCLES, cyclesString);
             } else {
