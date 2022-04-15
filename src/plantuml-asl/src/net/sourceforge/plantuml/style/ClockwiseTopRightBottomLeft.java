@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -111,7 +111,7 @@ public class ClockwiseTopRightBottomLeft {
 	}
 
 	public static ClockwiseTopRightBottomLeft marginForDocument(StyleBuilder styleBuilder) {
-		final Style style = StyleSignature.of(SName.root, SName.document).getMergedStyle(styleBuilder);
+		final Style style = StyleSignatureBasic.of(SName.root, SName.document).getMergedStyle(styleBuilder);
 		return style.getMargin();
 	}
 

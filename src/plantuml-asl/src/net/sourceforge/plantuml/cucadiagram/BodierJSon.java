@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -28,65 +28,71 @@
  *
  * Original Author:  Arnaud Roques
  */
-package net.sourceforge.plantuml.style;
+package net.sourceforge.plantuml.cucadiagram;
 
-import net.sourceforge.plantuml.ThemeStyle;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
-import net.sourceforge.plantuml.ugraphic.color.HColorSimple;
+import java.util.List;
+import java.util.Objects;
 
-public class ValueForDark implements Value {
+import net.sourceforge.plantuml.FontParam;
+import net.sourceforge.plantuml.ISkinParam;
+import net.sourceforge.plantuml.graphic.FontConfiguration;
+import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.json.JsonValue;
+import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
 
-	private final Value regular;
-	private final Value dark;
+public class BodierJSon implements Bodier {
 
-	public ValueForDark(Value regular, Value dark) {
-		this.regular = regular;
-		this.dark = dark;
+	private ILeaf leaf;
+	private JsonValue json;
+
+	@Override
+	public void muteClassToObject() {
+		throw new UnsupportedOperationException();
+	}
+
+	public BodierJSon() {
 	}
 
 	@Override
-	public String asString() {
+	public void setLeaf(ILeaf leaf) {
+		this.leaf = Objects.requireNonNull(leaf);
+
+	}
+
+	@Override
+	public Display getMethodsToDisplay() {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public HColor asColor(ThemeStyle themeStyle, HColorSet set) {
-		final HColor result = regular.asColor(themeStyle, set);
-		if (result instanceof HColorSimple)
-			return ((HColorSimple) result).withDark(dark.asColor(themeStyle, set));
-		return result;
-	}
-
-	@Override
-	public int asInt() {
+	public Display getFieldsToDisplay() {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public double asDouble() {
+	public boolean hasUrl() {
+		return false;
+	}
+
+	@Override
+	public TextBlock getBody(FontParam fontParam, ISkinParam skinParam, final boolean showMethods,
+			final boolean showFields, Stereotype stereotype, Style style, FontConfiguration fontConfiguration) {
+		return new TextBlockCucaJSon(fontConfiguration, fontParam, skinParam, json);
+	}
+
+	@Override
+	public List<CharSequence> getRawBody() {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public boolean asBoolean() {
+	public boolean addFieldOrMethod(String s) throws NoSuchColorException {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
-	public int asFontStyle() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public HorizontalAlignment asHorizontalAlignment() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public int getPriority() {
-		throw new UnsupportedOperationException();
+	public void setJson(JsonValue json) {
+		this.json = json;
 	}
 
 }

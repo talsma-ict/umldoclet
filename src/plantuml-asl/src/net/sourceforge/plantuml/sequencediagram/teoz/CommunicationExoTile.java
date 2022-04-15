@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.sequencediagram.teoz;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.graphic.StringBounder;
@@ -116,7 +116,7 @@ public class CommunicationExoTile extends AbstractTile {
 			x2 -= ComponentRoseArrow.diamCircle / 2 + 2;
 		}
 
-		final Area area = new Area(x2 - x1, dim.getHeight());
+		final Area area = Area.create(x2 - x1, dim.getHeight());
 		ug = ug.apply(UTranslate.dx(x1));
 		comp.drawU(ug, area, (Context2D) ug);
 	}

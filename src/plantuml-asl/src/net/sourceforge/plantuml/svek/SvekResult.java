@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.svek;
 
-import java.awt.geom.Dimension2D;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,17 +37,19 @@ import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.UseStyle;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.cucadiagram.dot.DotData;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.skin.rose.Rose;
+import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleBuilder;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.ugraphic.MinMax;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UHidden;
@@ -71,11 +72,17 @@ public final class SvekResult extends AbstractTextBlock implements IEntityImage 
 
 	public void drawU(UGraphic ug) {
 
-		for (Cluster cluster : dotStringFactory.getBibliotekon().allCluster()) {
-			cluster.drawU(ug, new UStroke(1.5), dotData.getUmlDiagramType(), dotData.getSkinParam());
-		}
+		for (Cluster cluster : dotStringFactory.getBibliotekon().allCluster())
+			cluster.drawU(ug, dotData.getUmlDiagramType(), dotData.getSkinParam());
 
 		HColor color = rose.getHtmlColor(dotData.getSkinParam(), null, getArrowColorParam());
+		if (UseStyle.useBetaStyle()) {
+			final Style style = getDefaultStyleDefinition(null)
+					.getMergedStyle(dotData.getSkinParam().getCurrentStyleBuilder());
+			color = style.value(PName.LineColor).asColor(dotData.getSkinParam().getThemeStyle(),
+					dotData.getSkinParam().getIHtmlColorSet());
+		}
+
 		color = HColorUtils.noGradient(color);
 		UStroke stroke = null;
 
@@ -85,10 +92,9 @@ public final class SvekResult extends AbstractTextBlock implements IEntityImage 
 			final UGraphic ug2 = node.isHidden() ? ug.apply(UHidden.HIDDEN) : ug;
 			final IEntityImage image = node.getImage();
 			image.drawU(ug2.apply(new UTranslate(minX, minY)));
-			if (image instanceof Untranslated) {
+			if (image instanceof Untranslated)
 				((Untranslated) image).drawUntranslated(ug.apply(color), minX, minY);
-			}
-			// shape.getImage().drawNeighborhood(ug2, minX, minY);
+
 		}
 
 		final Set<String> ids = new HashSet<>();
@@ -111,33 +117,33 @@ public final class SvekResult extends AbstractTextBlock implements IEntityImage 
 	}
 
 	private ColorParam getArrowColorParam() {
-		if (dotData.getUmlDiagramType() == UmlDiagramType.CLASS) {
+		if (dotData.getUmlDiagramType() == UmlDiagramType.CLASS)
 			return ColorParam.arrow;
-		} else if (dotData.getUmlDiagramType() == UmlDiagramType.OBJECT) {
+		else if (dotData.getUmlDiagramType() == UmlDiagramType.OBJECT)
 			return ColorParam.arrow;
-		} else if (dotData.getUmlDiagramType() == UmlDiagramType.DESCRIPTION) {
+		else if (dotData.getUmlDiagramType() == UmlDiagramType.DESCRIPTION)
 			return ColorParam.arrow;
-		} else if (dotData.getUmlDiagramType() == UmlDiagramType.ACTIVITY) {
+		else if (dotData.getUmlDiagramType() == UmlDiagramType.ACTIVITY)
 			return ColorParam.arrow;
-		} else if (dotData.getUmlDiagramType() == UmlDiagramType.STATE) {
+		else if (dotData.getUmlDiagramType() == UmlDiagramType.STATE)
 			return ColorParam.arrow;
-		}
+
 		throw new IllegalStateException();
 	}
 
 	private StyleSignature getDefaultStyleDefinition(Stereotype stereotype) {
-		StyleSignature result = StyleSignature.of(SName.root, SName.element, dotData.getUmlDiagramType().getStyleName(),
+		StyleSignature result = StyleSignatureBasic.of(SName.root, SName.element, dotData.getUmlDiagramType().getStyleName(),
 				SName.arrow);
-		if (stereotype != null) {
-			result = result.with(stereotype);
-		}
+		if (stereotype != null)
+			result = result.withTOBECHANGED(stereotype);
+
 		return result;
 	}
 
 	// Duplicate SvekResult / GeneralImageBuilder
 	public HColor getBackcolor() {
 		if (UseStyle.useBetaStyle()) {
-			final Style style = StyleSignature.of(SName.root, SName.document)
+			final Style style = StyleSignatureBasic.of(SName.root, SName.document)
 					.getMergedStyle(dotData.getSkinParam().getCurrentStyleBuilder());
 			return style.value(PName.BackGroundColor).asColor(dotData.getSkinParam().getThemeStyle(),
 					dotData.getSkinParam().getIHtmlColorSet());

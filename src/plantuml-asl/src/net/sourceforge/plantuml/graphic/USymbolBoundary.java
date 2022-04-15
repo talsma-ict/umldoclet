@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -39,12 +39,11 @@ class USymbolBoundary extends USymbolSimpleAbstract {
 	public SkinParameter getSkinParameter() {
 		return SkinParameter.BOUNDARY;
 	}
-	
+
 	@Override
 	public SName getSName() {
 		return SName.boundary;
 	}
-
 
 	@Override
 	protected TextBlock getDrawing(SymbolContext symbolContext) {

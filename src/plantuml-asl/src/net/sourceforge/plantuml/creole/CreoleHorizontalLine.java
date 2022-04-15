@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.creole;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinSimple;
@@ -54,6 +54,8 @@ public class CreoleHorizontalLine extends AbstractAtom implements Atom {
 	private final char style;
 	private final ISkinSimple skinParam;
 
+	private final static double defaultThickness = 1;
+
 	public static CreoleHorizontalLine create(FontConfiguration fontConfiguration, String line, char style,
 			ISkinSimple skinParam) {
 		return new CreoleHorizontalLine(fontConfiguration, line, style, skinParam);
@@ -68,10 +70,10 @@ public class CreoleHorizontalLine extends AbstractAtom implements Atom {
 
 	private UHorizontalLine getHorizontalLine() {
 		if (line.length() == 0) {
-			return UHorizontalLine.infinite(0, 0, style);
+			return UHorizontalLine.infinite(defaultThickness, 0, 0, style);
 		}
 		final TextBlock tb = getTitle();
-		return UHorizontalLine.infinite(0, 0, tb, style);
+		return UHorizontalLine.infinite(defaultThickness, 0, 0, tb, style);
 	}
 
 	private TextBlock getTitle() {

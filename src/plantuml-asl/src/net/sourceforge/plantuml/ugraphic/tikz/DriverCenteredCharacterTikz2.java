@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -41,7 +41,7 @@ public class DriverCenteredCharacterTikz2 implements UDriver<UCenteredCharacter,
 	public void draw(UCenteredCharacter centeredCharacter, double x, double y, ColorMapper mapper, UParam param, TikzGraphics tikz) {
 		final char c = centeredCharacter.getChar();
 
-		tikz.setStrokeColor(mapper.toColor(param.getColor()));
+		tikz.setStrokeColor(param.getColor());
 		tikz.drawSingleCharacter(x, y, c);
 	}
 

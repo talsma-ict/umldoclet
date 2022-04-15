@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -63,7 +63,7 @@ public class GConnectionVerticalDownThenBack extends GAbstractConnection {
 		final Point2D p1 = pos1.getTranslated(gpoint1.getPoint2D());
 		final Point2D p2 = pos2.getTranslated(gpoint2.getPoint2D());
 		final UPolygon arrow = Arrows.asToLeft();
-		final Snake snake = Snake.create(getInLinkRenderingColor(), arrow)
+		final Snake snake = Snake.create(skinParam(), getInLinkRenderingColor(), arrow)
 				.withLabel(textBlock, HorizontalAlignment.LEFT).emphasizeDirection(Direction.UP);
 
 		snake.addPoint(p1);
@@ -89,7 +89,7 @@ public class GConnectionVerticalDownThenBack extends GAbstractConnection {
 		p2 = translate2.getTranslated(p2);
 
 		final UPolygon arrow = Arrows.asToLeft();
-		final Snake snake = Snake.create(getInLinkRenderingColor(), arrow)
+		final Snake snake = Snake.create(skinParam(), getInLinkRenderingColor(), arrow)
 				.withLabel(textBlock, HorizontalAlignment.LEFT).emphasizeDirection(Direction.UP);
 
 		snake.addPoint(p1);

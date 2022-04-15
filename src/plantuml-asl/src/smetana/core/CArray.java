@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -89,7 +89,7 @@ public class CArray<O> extends UnsupportedC {
 		}
 		try {
 			for (int i = 0; i < size; i++) {
-				data.add((O) cl.newInstance());
+				data.add(cl.getDeclaredConstructor().newInstance());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

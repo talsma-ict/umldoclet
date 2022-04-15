@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -53,6 +53,7 @@ import net.sourceforge.plantuml.security.SFile;
 
 public class StyleLoader {
 
+	public static final int DELTA_PRIORITY_FOR_STEREOTYPE = 1000;
 	private final SkinParam skinParam;
 
 	public StyleLoader(SkinParam skinParam) {
@@ -82,8 +83,12 @@ public class StyleLoader {
 		InputStream internalIs = null;
 		SFile localFile = new SFile(filename);
 		Log.info("Trying to load style " + filename);
-		if (localFile.exists() == false)
-			localFile = FileSystem.getInstance().getFile(filename);
+		try {
+			if (localFile.exists() == false)
+				localFile = FileSystem.getInstance().getFile(filename);
+		} catch (IOException e) {
+			Log.info("Cannot open file. " + e);
+		}
 
 		if (localFile.exists()) {
 			Log.info("File found : " + localFile.getPrintablePath());
@@ -105,7 +110,7 @@ public class StyleLoader {
 
 	}
 
-	private final static String KEYNAMES = "[.\\w(), ]+?";
+	private final static String KEYNAMES = "[-.\\w(), ]+?";
 	private final static Pattern2 keyName = MyPattern.cmpile("^[:]?(" + KEYNAMES + ")([%s]+\\*)?[%s]*\\{$");
 	private final static Pattern2 propertyAndValue = MyPattern.cmpile("^([\\w]+):?[%s]+(.*?);?$");
 	private final static Pattern2 closeBracket = MyPattern.cmpile("^\\}$");
@@ -113,6 +118,7 @@ public class StyleLoader {
 	public static Collection<Style> getDeclaredStyles(BlocLines lines, AutomaticCounter counter) {
 		lines = lines.eventuallyMoveAllEmptyBracket();
 		final List<Style> result = new ArrayList<>();
+		final CssVariables variables = new CssVariables();
 		StyleScheme scheme = StyleScheme.REGULAR;
 
 		Context context = new Context();
@@ -120,6 +126,7 @@ public class StyleLoader {
 		boolean inComment = false;
 		for (StringLocated s : lines) {
 			String trimmed = s.getTrimmed().getString();
+
 			if (trimmed.startsWith("/*") || trimmed.endsWith("*/"))
 				continue;
 			if (trimmed.startsWith("/'") || trimmed.endsWith("'/"))
@@ -141,6 +148,11 @@ public class StyleLoader {
 				continue;
 			}
 
+			if (trimmed.startsWith("--")) {
+				variables.learn(trimmed);
+				continue;
+			}
+
 			final int x = trimmed.lastIndexOf("//");
 			if (x != -1)
 				trimmed = trimmed.substring(0, x).trim();
@@ -159,20 +171,22 @@ public class StyleLoader {
 			final Matcher2 mPropertyAndValue = propertyAndValue.matcher(trimmed);
 			if (mPropertyAndValue.find()) {
 				final PName key = PName.getFromName(mPropertyAndValue.group(1), scheme);
-				final String value = mPropertyAndValue.group(2);
+				final String value = variables.value(mPropertyAndValue.group(2));
 				if (key != null && maps.size() > 0)
-					maps.get(maps.size() - 1).put(key, new ValueImpl(value, counter));
+					maps.get(maps.size() - 1).put(key, //
+							scheme == StyleScheme.REGULAR ? //
+									ValueImpl.regular(value, counter) : ValueImpl.dark(value, counter));
 
 				continue;
 			}
 			final Matcher2 mCloseBracket = closeBracket.matcher(trimmed);
 			if (mCloseBracket.find()) {
 				if (context.size() > 0) {
-					final Collection<StyleSignature> signatures = context.toSignatures();
-					for (StyleSignature signature : signatures) {
+					final Collection<StyleSignatureBasic> signatures = context.toSignatures();
+					for (StyleSignatureBasic signature : signatures) {
 						Map<PName, Value> tmp = maps.get(maps.size() - 1);
 						if (signature.isWithDot())
-							tmp = addPriority(tmp);
+							tmp = addPriorityForStereotype(tmp);
 						if (tmp.size() > 0) {
 							final Style style = new Style(signature, tmp);
 							result.add(style);
@@ -190,10 +204,10 @@ public class StyleLoader {
 
 	}
 
-	private static Map<PName, Value> addPriority(Map<PName, Value> tmp) {
+	public static Map<PName, Value> addPriorityForStereotype(Map<PName, Value> tmp) {
 		final Map<PName, Value> result = new EnumMap<>(PName.class);
 		for (Entry<PName, Value> ent : tmp.entrySet())
-			result.put(ent.getKey(), ((ValueImpl) ent.getValue()).addPriority(1000));
+			result.put(ent.getKey(), ((ValueImpl) ent.getValue()).addPriority(DELTA_PRIORITY_FOR_STEREOTYPE));
 
 		return result;
 	}

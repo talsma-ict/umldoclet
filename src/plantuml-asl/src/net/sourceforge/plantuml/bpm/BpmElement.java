@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,29 +30,25 @@
  */
 package net.sourceforge.plantuml.bpm;
 
-import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.SkinParamUtils;
-import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.activitydiagram3.ftile.BoxStyle;
-import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
-import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileBox;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileCircleStart;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileDiamond;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.InnerStrategy;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.ugraphic.MinMax;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -138,15 +134,12 @@ public class BpmElement extends AbstractConnectorPuzzle implements ConnectorPuzz
 		}
 	}
 
-	private StyleSignature getSignatureCircle() {
-		return StyleSignature.of(SName.root, SName.element, SName.activityDiagram, SName.circle);
+	private StyleSignatureBasic getSignatureCircle() {
+		return StyleSignatureBasic.of(SName.root, SName.element, SName.activityDiagram, SName.circle);
 	}
 
 	private Style getStyle(ISkinParam skinParam) {
-		if (UseStyle.useBetaStyle())
-			return getSignatureCircle().getMergedStyle(skinParam.getCurrentStyleBuilder());
-
-		return null;
+		return getSignatureCircle().getMergedStyle(skinParam.getCurrentStyleBuilder());
 	}
 
 	public TextBlock toTextBlockInternal(ISkinParam skinParam) {
@@ -163,7 +156,7 @@ public class BpmElement extends AbstractConnectorPuzzle implements ConnectorPuzz
 			return FtileBox.create(skinParam, display, null, BoxStyle.PLAIN, null);
 		}
 		final UFont font = UFont.serif(14);
-		final FontConfiguration fc = new FontConfiguration(font, HColorUtils.RED, HColorUtils.RED, false);
+		final FontConfiguration fc = FontConfiguration.create(font, HColorUtils.RED, HColorUtils.RED, false);
 		if (Display.isNull(display)) {
 			return Display.getWithNewlines(type.toString()).create(fc, HorizontalAlignment.LEFT, skinParam);
 		}

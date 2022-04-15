@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,7 +34,7 @@ import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.skin.ComponentType;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleBuilder;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.style.WithStyle;
 
 public class Divider extends AbstractEvent implements Event, WithStyle {
@@ -43,8 +43,8 @@ public class Divider extends AbstractEvent implements Event, WithStyle {
 
 	final private Style style;
 
-	public StyleSignature getDefaultStyleDefinition() {
-		return ComponentType.DIVIDER.getDefaultStyleDefinition();
+	public StyleSignatureBasic getStyleSignature() {
+		return ComponentType.DIVIDER.getStyleSignature();
 	}
 
 	public Style[] getUsedStyles() {
@@ -53,7 +53,7 @@ public class Divider extends AbstractEvent implements Event, WithStyle {
 
 	public Divider(Display text, StyleBuilder styleBuilder) {
 		this.text = text;
-		this.style = getDefaultStyleDefinition().getMergedStyle(styleBuilder);
+		this.style = getStyleSignature().getMergedStyle(styleBuilder);
 	}
 
 	public final Display getText() {

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.cucadiagram;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -60,7 +60,7 @@ public class TextBlockMap extends AbstractTextBlock implements WithPorts {
 	private final FontParam fontParam;
 	private final ISkinParam skinParam;
 	private final FontConfiguration fontConfiguration;
-	private final Map<TextBlock, TextBlock> blocksMap = new LinkedHashMap<TextBlock, TextBlock>();
+	private final Map<TextBlock, TextBlock> blocksMap = new LinkedHashMap<>();
 	private final List<String> keys = new ArrayList<>();
 	private double totalWidth;
 
@@ -198,7 +198,7 @@ public class TextBlockMap extends AbstractTextBlock implements WithPorts {
 
 	private FontConfiguration getFontConfiguration() {
 		if (fontConfiguration == null)
-			return new FontConfiguration(skinParam, fontParam, null);
+			return FontConfiguration.create(skinParam, fontParam, null);
 		return fontConfiguration;
 	}
 

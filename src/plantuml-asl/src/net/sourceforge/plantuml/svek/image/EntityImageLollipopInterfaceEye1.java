@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.svek.image;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.util.List;
 
@@ -67,7 +67,7 @@ public class EntityImageLollipopInterfaceEye1 extends AbstractEntityImage {
 		super(entity, skinParam);
 		this.bibliotekon = bibliotekon;
 		final Stereotype stereotype = entity.getStereotype();
-		this.desc = entity.getDisplay().create(new FontConfiguration(getSkinParam(), FontParam.CLASS, stereotype),
+		this.desc = entity.getDisplay().create(FontConfiguration.create(getSkinParam(), FontParam.CLASS, stereotype),
 				HorizontalAlignment.CENTER, skinParam);
 		this.url = entity.getUrl99();
 
@@ -79,8 +79,7 @@ public class EntityImageLollipopInterfaceEye1 extends AbstractEntityImage {
 
 	final public void drawU(UGraphic ug) {
 		ug = ug.apply(SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.classBorder));
-		ug = ug.apply(SkinParamUtils.getColor(getSkinParam(), getStereo(),
-		ColorParam.classBackground).bg());
+		ug = ug.apply(SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.classBackground).bg());
 		if (url != null) {
 			ug.startUrl(url);
 		}

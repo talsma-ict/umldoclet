@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.skin.rose;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.util.Objects;
 
 import net.sourceforge.plantuml.ISkinSimple;
@@ -97,18 +97,14 @@ public class ComponentRoseGroupingHeader extends AbstractTextualComponent {
 		Objects.requireNonNull(this.background);
 	}
 
-	// new FontConfiguration(smallFont, bigFont.getColor(),
-	// bigFont.getHyperlinkColor(),
-	// bigFont.useUnderlineForHyperlink());
-
 	private double getSuppHeightForComment(StringBounder stringBounder) {
-		if (commentTextBlock == null) {
+		if (commentTextBlock == null)
 			return 0;
-		}
+
 		final double height = commentTextBlock.calculateDimension(stringBounder).getHeight();
-		if (height > 15) {
+		if (height > 15)
 			return height - 15;
-		}
+
 		return 0;
 
 	}
@@ -133,9 +129,9 @@ public class ComponentRoseGroupingHeader extends AbstractTextualComponent {
 
 	@Override
 	protected void drawBackgroundInternalU(UGraphic ug, Area area) {
-		if (background instanceof HColorBackground) {
+		if (background instanceof HColorBackground)
 			return;
-		}
+
 		final Dimension2D dimensionToUse = area.getDimensionToUse();
 		ug = symbolContext.applyStroke(ug).apply(symbolContext.getForeColor());
 		final URectangle rect = new URectangle(dimensionToUse.getWidth(), dimensionToUse.getHeight())
@@ -148,14 +144,13 @@ public class ComponentRoseGroupingHeader extends AbstractTextualComponent {
 	protected void drawInternalU(UGraphic ug, Area area) {
 		final Dimension2D dimensionToUse = area.getDimensionToUse();
 		final StringBounder stringBounder = ug.getStringBounder();
-		final int textWidth = (int) getTextWidth(stringBounder);
-		final int textHeight = (int) getTextHeight(stringBounder);
+		final double textWidth = getTextWidth(stringBounder);
+		final double textHeight = getTextHeight(stringBounder);
 
-		if (UseStyle.useBetaStyle()) {
+		if (UseStyle.useBetaStyle())
 			symbolContextCorner.apply(ug).draw(getCorner(textWidth, textHeight));
-		} else {
+		else
 			symbolContextCorner.applyColors(ug).draw(getCorner(textWidth, textHeight));
-		}
 
 		ug = symbolContext.applyStroke(ug).apply(symbolContext.getForeColor());
 		final URectangle rect = new URectangle(dimensionToUse.getWidth(), dimensionToUse.getHeight())
@@ -167,8 +162,8 @@ public class ComponentRoseGroupingHeader extends AbstractTextualComponent {
 		getTextBlock().drawU(ug.apply(new UTranslate(getMarginX1(), getMarginY())));
 
 		if (commentTextBlock != null) {
-			final int x1 = getMarginX1() + textWidth;
-			final int y2 = getMarginY() + 1;
+			final double x1 = getMarginX1() + textWidth;
+			final double y2 = getMarginY() + 1;
 
 			commentTextBlock.drawU(ug.apply(new UTranslate(x1 + commentMargin, y2)));
 		}

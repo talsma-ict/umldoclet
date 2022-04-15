@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -35,11 +35,13 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.plantuml.StringLocated;
+import net.sourceforge.plantuml.annotation.HaxeIgnored;
 
 public class RegexOr extends RegexComposed implements IRegex {
 
 	private final String name;
 
+	@HaxeIgnored
 	public RegexOr(IRegex... partial) {
 		this(null, partial);
 	}

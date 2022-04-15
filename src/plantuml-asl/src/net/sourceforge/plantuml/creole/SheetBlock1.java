@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.creole;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -40,6 +40,7 @@ import java.util.Objects;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.LineBreakStrategy;
+import net.sourceforge.plantuml.annotation.HaxeIgnored;
 import net.sourceforge.plantuml.creole.atom.Atom;
 import net.sourceforge.plantuml.creole.legacy.StripeSimple;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
@@ -68,6 +69,7 @@ public class SheetBlock1 extends AbstractTextBlock implements TextBlock, Atom, S
 	private final double marginX1;
 	private final double marginX2;
 
+	@HaxeIgnored
 	public SheetBlock1(Sheet sheet, LineBreakStrategy maxWidth, double padding) {
 		this(sheet, maxWidth, padding, 0, 0);
 	}
@@ -104,9 +106,9 @@ public class SheetBlock1 extends AbstractTextBlock implements TextBlock, Atom, S
 		for (Stripe stripe : sheet) {
 			stripes.addAll(new Fission(stripe, maxWidth).getSplitted(stringBounder));
 		}
-		positions = new LinkedHashMap<Atom, Position>();
-		widths = new LinkedHashMap<Stripe, Double>();
-		heights = new LinkedHashMap<Stripe, Double>();
+		positions = new LinkedHashMap<>();
+		widths = new LinkedHashMap<>();
+		heights = new LinkedHashMap<>();
 		minMax = MinMax.getEmpty(true);
 		double y = 0;
 		for (Stripe stripe : stripes) {

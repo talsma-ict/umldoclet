@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -53,7 +53,7 @@ import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class InstructionWhile extends WithNote implements Instruction, InstructionCollection {
 
-	private final InstructionList repeatList = new InstructionList();
+	private final InstructionList repeatList = InstructionList.empty();
 	private final Instruction parent;
 	private final LinkRendering nextLinkRenderer;
 	private final HColor color;

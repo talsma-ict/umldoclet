@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.skin.rose;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.LineBreakStrategy;
@@ -94,9 +94,9 @@ public class ComponentRoseReference extends AbstractTextualComponent {
 
 		URectangle rect = new URectangle(dimensionToUse.getWidth() - xMargin * 2 - symbolContextBody.getDeltaShadow(),
 				dimensionToUse.getHeight() - heightFooter);
-		if (this.roundCorner != 0) {
+		if (this.roundCorner != 0)
 			rect = rect.rounded(this.roundCorner);
-		}
+
 		rect.setDeltaShadow(symbolContextBody.getDeltaShadow());
 		ug = symbolContextBody.apply(ug);
 		ug.apply(UTranslate.dx(xMargin)).draw(rect);

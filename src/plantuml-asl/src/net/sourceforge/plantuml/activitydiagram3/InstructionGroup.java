@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -120,7 +120,7 @@ public class InstructionGroup extends AbstractInstruction implements Instruction
 	@Override
 	public boolean addNote(Display note, NotePosition position, NoteType type, Colors colors, Swimlane swimlaneNote) {
 		if (list.isEmpty()) {
-			this.note = new PositionedNote(note, position, type, colors, swimlaneNote);
+			this.note = new PositionedNote(note, position, type, swimlaneNote, colors);
 			return true;
 		}
 		return list.addNote(note, position, type, colors, swimlaneNote);

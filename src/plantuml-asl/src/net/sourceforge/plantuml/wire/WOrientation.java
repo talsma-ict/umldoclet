@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -35,9 +35,9 @@ public enum WOrientation {
 	HORIZONTAL, VERTICAL;
 
 	public static WOrientation from(String style) {
-		if (style.contains("==") || style.contains("--")) {
+		if (style.contains("==") || style.contains("--"))
 			return WOrientation.VERTICAL;
-		}
+
 		return HORIZONTAL;
 	}
 }

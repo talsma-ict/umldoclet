@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -130,7 +130,7 @@ public class PlayingSpace implements Bordered {
 	}
 
 	public double getPreferredHeight(StringBounder stringBounder) {
-		final LimitFinder limitFinder = new LimitFinder(stringBounder, true);
+		final LimitFinder limitFinder = LimitFinder.create(stringBounder, true);
 		final UGraphicInterceptorTile interceptor = new UGraphicInterceptorTile(limitFinder, false);
 		final double finalY = drawUInternal(interceptor, false);
 		final double result = Math.max(limitFinder.getMinMax().getDimension().getHeight(), finalY) + 10;

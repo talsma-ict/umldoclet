@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -58,7 +58,6 @@ public class CommandSkin extends SingleLineCommand2<TitledDiagram> {
 	@Override
 	protected CommandExecutionResult executeArg(TitledDiagram diagram, LineLocation location, RegexResult arg) {
 		try {
-			UseStyle.setBetaStyle(true);
 			return diagram.loadSkin(arg.get("SKIN", 0));
 		} catch (IOException e) {
 			return CommandExecutionResult.error("Skin read error");

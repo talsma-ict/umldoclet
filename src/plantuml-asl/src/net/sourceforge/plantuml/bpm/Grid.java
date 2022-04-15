@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -306,7 +306,7 @@ public class Grid {
 	// }
 
 	public void addConnections() {
-		for (Map.Entry<Coord, Cell> ent : new HashMap<Coord, Cell>(cells).entrySet()) {
+		for (Map.Entry<Coord, Cell> ent : new HashMap<>(cells).entrySet()) {
 			final List<Placeable> dests2 = ent.getValue().getDestinations2();
 			final Coord src = ent.getKey();
 			for (int i = 0; i < dests2.size(); i++) {

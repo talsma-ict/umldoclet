@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -404,7 +404,8 @@ public class SURL {
 	private static Callable<byte[]> requestWithGetAndResponse(final URL url, final Proxy proxy,
 			final SecurityAuthentication authentication, final Map<String, Object> headers) {
 		return new Callable<byte[]>() {
-			public byte[] call() throws IOException {
+
+			private HttpURLConnection openConnection(final URL url) throws IOException {
 				// Add proxy, if passed throw parameters
 				final URLConnection connection = proxy == null ? url.openConnection() : url.openConnection(proxy);
 				if (connection == null)
@@ -414,6 +415,18 @@ public class SURL {
 
 				applyEndpointAccessAuthentication(http, authentication);
 				applyAdditionalHeaders(http, headers);
+				return http;
+			}
+
+			public byte[] call() throws IOException {
+				HttpURLConnection http = openConnection(url);
+				final int responseCode = http.getResponseCode();
+
+				if (responseCode == HttpURLConnection.HTTP_MOVED_TEMP
+						|| responseCode == HttpURLConnection.HTTP_MOVED_PERM) {
+					final String newUrl = http.getHeaderField("Location");
+					http = openConnection(new URL(newUrl));
+				}
 
 				return retrieveResponseAsBytes(http);
 			}
@@ -544,7 +557,10 @@ public class SURL {
 	public BufferedImage readRasterImageFromURL() {
 		if (isUrlOk())
 			try {
-				final ImageIcon tmp = new ImageIcon(internal);
+				final byte[] bytes = getBytes();
+				if (bytes == null || bytes.length == 0)
+					return null;
+				final ImageIcon tmp = new ImageIcon(bytes);
 				return SecurityUtils.readRasterImage(tmp);
 			} catch (Exception e) {
 				e.printStackTrace();

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -89,6 +89,22 @@ public class StereotypeDecoration {
 	final char character;
 	final String spriteName;
 	final double spriteScale;
+
+	@Override
+	public String toString() {
+		return "label='" + label + "' spriteName='" + spriteName + "'";
+	}
+
+	public List<String> getStyleNames() {
+		final List<String> result = new ArrayList<>(cutLabels(label, Guillemet.NONE));
+		if (spriteName == null)
+			return Collections.unmodifiableList(result);
+
+		final int idx = spriteName.lastIndexOf('/');
+		if (idx != -1)
+			result.add(spriteName.substring(idx + 1));
+		return Collections.unmodifiableList(result);
+	}
 
 	private StereotypeDecoration(String label, HColor htmlColor, char character, String spriteName,
 			double spriteScale) {

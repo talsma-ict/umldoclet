@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -44,20 +44,21 @@ import net.sourceforge.plantuml.graphic.SymbolContext;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.USymbol;
+import net.sourceforge.plantuml.graphic.USymbols;
 import net.sourceforge.plantuml.nwdiag.next.LinkedElement;
 import net.sourceforge.plantuml.nwdiag.next.NBar;
 import net.sourceforge.plantuml.skin.ActorStyle;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleBuilder;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.svek.PackageStyle;
 
 public class NServer {
 
 	private final Map<Network, String> connections = new LinkedHashMap<Network, String>();
 
-	private USymbol shape = USymbol.RECTANGLE;
+	private USymbol shape = USymbols.RECTANGLE;
 	private final String name;
 	private String description;
 	private final NBar bar;
@@ -92,8 +93,8 @@ public class NServer {
 				skinParam);
 	}
 
-	private StyleSignature getStyleDefinition(SName sname) {
-		return StyleSignature.of(SName.root, SName.element, SName.nwdiagDiagram, sname);
+	private StyleSignatureBasic getStyleDefinition(SName sname) {
+		return StyleSignatureBasic.of(SName.root, SName.element, SName.nwdiagDiagram, sname);
 	}
 
 	private FontConfiguration getFontConfiguration(ISkinParam skinParam, SName sname) {
@@ -152,8 +153,8 @@ public class NServer {
 		return name;
 	}
 
-	public NServer(String name) {
-		this(name, new NBar());
+	public static NServer create(String name) {
+		return new NServer(name, new NBar());
 	}
 
 	public NServer(String name, NBar bar) {
@@ -175,7 +176,7 @@ public class NServer {
 	}
 
 	public final void setShape(String shapeName) {
-		final USymbol shapeFromString = USymbol.fromString(shapeName, ActorStyle.STICKMAN, ComponentStyle.RECTANGLE,
+		final USymbol shapeFromString = USymbols.fromString(shapeName, ActorStyle.STICKMAN, ComponentStyle.RECTANGLE,
 				PackageStyle.RECTANGLE);
 		if (shapeFromString != null) {
 			this.shape = shapeFromString;

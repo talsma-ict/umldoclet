@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,7 +32,7 @@ package net.sourceforge.plantuml.graphic;
 
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
@@ -79,31 +79,13 @@ public class TextBlockUtils {
 	}
 
 	public static TextBlock title(FontConfiguration font, Display stringsToDisplay, ISkinParam skinParam) {
-		if (UseStyle.useBetaStyle()) {
-			throw new UnsupportedOperationException();
-		}
-		UStroke stroke = skinParam.getThickness(LineParam.titleBorder, null);
-		final Rose rose = new Rose();
-		HColor borderColor = rose.getHtmlColor(skinParam, ColorParam.titleBorder);
-		final HColor backgroundColor = rose.getHtmlColor(skinParam, ColorParam.titleBackground);
-		final TextBlockTitle result = new TextBlockTitle(font, stringsToDisplay, skinParam);
-		if (stroke == null && borderColor == null) {
-			return result;
-		}
-		if (stroke == null) {
-			stroke = new UStroke(1.5);
-		}
-		if (borderColor == null) {
-			borderColor = HColorUtils.BLACK;
-		}
-		final double corner = skinParam.getRoundCorner(CornerParam.titleBorder, null);
-		return withMargin(bordered(result, stroke, borderColor, backgroundColor, corner), 2, 2);
+		throw new UnsupportedOperationException();
 	}
 
 	public static TextBlock withMargin(TextBlock textBlock, double marginX, double marginY) {
-		if (marginX == 0 && marginY == 0) {
+		if (marginX == 0 && marginY == 0)
 			return textBlock;
-		}
+
 		return new TextBlockMarged(textBlock, marginY, marginX, marginY, marginX);
 	}
 
@@ -179,7 +161,7 @@ public class TextBlockUtils {
 	// }
 
 	public static MinMax getMinMax(UDrawable tb, StringBounder stringBounder, boolean initToZero) {
-		final LimitFinder limitFinder = new LimitFinder(stringBounder, initToZero);
+		final LimitFinder limitFinder = LimitFinder.create(stringBounder, initToZero);
 		tb.drawU(limitFinder);
 		return limitFinder.getMinMax();
 	}

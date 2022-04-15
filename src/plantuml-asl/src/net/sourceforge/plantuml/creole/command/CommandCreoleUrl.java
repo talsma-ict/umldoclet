@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,7 +32,7 @@ package net.sourceforge.plantuml.creole.command;
 
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.UrlBuilder;
-import net.sourceforge.plantuml.UrlBuilder.ModeUrl;
+import net.sourceforge.plantuml.UrlMode;
 import net.sourceforge.plantuml.command.regex.Matcher2;
 import net.sourceforge.plantuml.command.regex.MyPattern;
 import net.sourceforge.plantuml.command.regex.Pattern2;
@@ -67,7 +67,7 @@ public class CommandCreoleUrl implements Command {
 		if (m.find() == false) {
 			throw new IllegalStateException();
 		}
-		final UrlBuilder urlBuilder = new UrlBuilder(stripe.getSkinParam().getValue("topurl"), ModeUrl.STRICT);
+		final UrlBuilder urlBuilder = new UrlBuilder(stripe.getSkinParam().getValue("topurl"), UrlMode.STRICT);
 		final Url url = urlBuilder.getUrl(m.group(1));
 		stripe.addUrl(url);
 		return line.substring(m.group(1).length());

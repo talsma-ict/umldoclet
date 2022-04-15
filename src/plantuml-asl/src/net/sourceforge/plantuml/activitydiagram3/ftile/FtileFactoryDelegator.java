@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,10 +34,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.activitydiagram3.Branch;
 import net.sourceforge.plantuml.activitydiagram3.ForkStyle;
 import net.sourceforge.plantuml.activitydiagram3.Instruction;
@@ -56,7 +54,7 @@ import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class FtileFactoryDelegator implements FtileFactory {
@@ -65,64 +63,51 @@ public class FtileFactoryDelegator implements FtileFactory {
 
 	private final Rose rose = new Rose();
 
-	final public StyleSignature getDefaultStyleDefinitionActivity() {
-		return StyleSignature.of(SName.root, SName.element, SName.activityDiagram, SName.activity);
+	final public StyleSignatureBasic getDefaultStyleDefinitionActivity() {
+		return StyleSignatureBasic.of(SName.root, SName.element, SName.activityDiagram, SName.activity);
 	}
 
-	final public StyleSignature getDefaultStyleDefinitionDiamond() {
-		return StyleSignature.of(SName.root, SName.element, SName.activityDiagram, SName.activity, SName.diamond);
+	final public StyleSignatureBasic getDefaultStyleDefinitionDiamond() {
+		return StyleSignatureBasic.of(SName.root, SName.element, SName.activityDiagram, SName.activity, SName.diamond);
 	}
 
-	final public StyleSignature getDefaultStyleDefinitionArrow() {
-		return StyleSignature.of(SName.root, SName.element, SName.activityDiagram, SName.arrow);
+	final public StyleSignatureBasic getDefaultStyleDefinitionArrow() {
+		return StyleSignatureBasic.of(SName.root, SName.element, SName.activityDiagram, SName.arrow);
 	}
 
 	protected final Rainbow getInLinkRenderingColor(Ftile tile) {
 		Rainbow color;
 		final LinkRendering linkRendering = tile.getInLinkRendering();
 		if (linkRendering == null) {
-			if (UseStyle.useBetaStyle()) {
-				final Style style = getDefaultStyleDefinitionArrow()
-						.getMergedStyle(skinParam().getCurrentStyleBuilder());
-				return Rainbow.build(style, skinParam().getIHtmlColorSet(), skinParam().getThemeStyle());
-			} else {
-				color = Rainbow.build(skinParam());
-			}
+			final Style style = getDefaultStyleDefinitionArrow().getMergedStyle(skinParam().getCurrentStyleBuilder());
+			return Rainbow.build(style, skinParam().getIHtmlColorSet(), skinParam().getThemeStyle());
 		} else {
 			color = linkRendering.getRainbow();
 		}
 		if (color.size() == 0) {
-			if (UseStyle.useBetaStyle()) {
-				final Style style = getDefaultStyleDefinitionArrow()
-						.getMergedStyle(skinParam().getCurrentStyleBuilder());
-				return Rainbow.build(style, skinParam().getIHtmlColorSet(), skinParam().getThemeStyle());
-			} else {
-				color = Rainbow.build(skinParam());
-			}
+			final Style style = getDefaultStyleDefinitionArrow().getMergedStyle(skinParam().getCurrentStyleBuilder());
+			return Rainbow.build(style, skinParam().getIHtmlColorSet(), skinParam().getThemeStyle());
 		}
 		return color;
 	}
 
 	protected final TextBlock getTextBlock(Display display) {
 		// DUP3945
-		if (Display.isNull(display)) {
+		if (Display.isNull(display))
 			return null;
-		}
-		final FontConfiguration fontConfiguration;
-		if (UseStyle.useBetaStyle()) {
-			final Style style = getDefaultStyleDefinitionArrow().getMergedStyle(skinParam().getCurrentStyleBuilder());
-			fontConfiguration = style.getFontConfiguration(skinParam().getThemeStyle(), skinParam().getIHtmlColorSet());
-		} else {
-			fontConfiguration = new FontConfiguration(skinParam(), FontParam.ARROW, null);
-		}
+
+		final Style style = getDefaultStyleDefinitionArrow().getMergedStyle(skinParam().getCurrentStyleBuilder());
+		final FontConfiguration fontConfiguration = style.getFontConfiguration(skinParam().getThemeStyle(),
+				skinParam().getIHtmlColorSet());
+
 		return display.create7(fontConfiguration, HorizontalAlignment.LEFT, skinParam(), CreoleMode.SIMPLE_LINE);
 	}
 
 	protected Display getInLinkRenderingDisplay(Ftile tile) {
 		final LinkRendering linkRendering = tile.getInLinkRendering();
-		if (linkRendering == null) {
+		if (linkRendering == null)
 			return Display.NULL;
-		}
+
 		return linkRendering.getDisplay();
 	}
 

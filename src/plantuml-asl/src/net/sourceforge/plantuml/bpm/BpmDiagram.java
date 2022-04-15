@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -41,6 +41,7 @@ import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
+import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
@@ -70,29 +71,26 @@ public class BpmDiagram extends UmlDiagram {
 		return new DiagramDescription("(Bpm Diagram)");
 	}
 
-	public BpmDiagram(UmlSource source) {
-		super(source, UmlDiagramType.BPM);
+	public BpmDiagram(ThemeStyle style, UmlSource source) {
+		super(style, source, UmlDiagramType.BPM, null);
 	}
 
 	@Override
 	public ImageBuilder createImageBuilder(FileFormatOption fileFormatOption) throws IOException {
-		return super.createImageBuilder(fileFormatOption)
-				.annotations(false);
+		return super.createImageBuilder(fileFormatOption).annotations(false);
 	}
 
 	@Override
 	protected ImageData exportDiagramInternal(OutputStream os, int index, FileFormatOption fileFormatOption)
 			throws IOException {
 
-		return createImageBuilder(fileFormatOption)
-				.drawable(getUDrawable())
-				.write(os);
+		return createImageBuilder(fileFormatOption).drawable(getUDrawable()).write(os);
 	}
 
 	private UDrawable getUDrawable() {
 		final Grid grid = createGrid();
 		cleanGrid(grid);
-		final GridArray gridArray = grid.toArray(SkinParam.create(getUmlDiagramType()));
+		final GridArray gridArray = grid.toArray(SkinParam.create(getUmlDiagramType(), ThemeStyle.LIGHT_REGULAR));
 		// gridArray.addEdges(edges);
 		// System.err.println("gridArray=" + gridArray);
 		return gridArray;

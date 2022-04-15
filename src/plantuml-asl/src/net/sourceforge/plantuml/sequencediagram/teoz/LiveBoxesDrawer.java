@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.sequencediagram.teoz;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -65,11 +65,11 @@ public class LiveBoxesDrawer {
 
 	public LiveBoxesDrawer(Context2D context, Rose skin, ISkinParam skinParam, Map<Double, Double> delays) {
 		this.cross = skin.createComponent(
-				new Style[] { ComponentType.DESTROY.getDefaultStyleDefinition()
+				new Style[] { ComponentType.DESTROY.getStyleSignature()
 						.getMergedStyle(skinParam.getCurrentStyleBuilder()) },
 				ComponentType.DESTROY, null, skinParam, null);
 		this.compForWidth = skin.createComponent(
-				new Style[] { ComponentType.ALIVE_BOX_CLOSE_CLOSE.getDefaultStyleDefinition()
+				new Style[] { ComponentType.ALIVE_BOX_CLOSE_CLOSE.getStyleSignature()
 						.getMergedStyle(skinParam.getCurrentStyleBuilder()) },
 				ComponentType.ALIVE_BOX_CLOSE_CLOSE, null, skinParam, null);
 		this.context = context;
@@ -118,10 +118,10 @@ public class LiveBoxesDrawer {
 
 	private void drawInternal(UGraphic ug, double ya, double yb, ComponentType type) {
 		final double width = getWidth(ug.getStringBounder());
-		final Area area = new Area(width, yb - ya);
+		final Area area = Area.create(width, yb - ya);
 		SkinParamBackcolored skinParam2 = new SkinParamBackcolored(skinParam,
 				symbolContext == null ? null : symbolContext.getBackColor());
-		Style style = type.getDefaultStyleDefinition().getMergedStyle(skinParam.getCurrentStyleBuilder());
+		Style style = type.getStyleSignature().getMergedStyle(skinParam.getCurrentStyleBuilder());
 		if (style == null) {
 			if (symbolContext != null)
 				skinParam2.forceColor(ColorParam.sequenceLifeLineBorder, symbolContext.getForeColor());

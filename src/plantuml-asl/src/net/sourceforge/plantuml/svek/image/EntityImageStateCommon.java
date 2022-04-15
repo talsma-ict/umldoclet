@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.svek.image;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.FontParam;
@@ -49,7 +49,7 @@ import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.svek.AbstractEntityImage;
 import net.sourceforge.plantuml.svek.ShapeType;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -76,7 +76,7 @@ public abstract class EntityImageStateCommon extends AbstractEntityImage {
 			fontConfiguration = getStyleStateHeader().getFontConfiguration(getSkinParam().getThemeStyle(),
 					getSkinParam().getIHtmlColorSet());
 		else
-			fontConfiguration = new FontConfiguration(getSkinParam(), FontParam.STATE, stereotype);
+			fontConfiguration = FontConfiguration.create(getSkinParam(), FontParam.STATE, stereotype);
 
 		this.desc = entity.getDisplay().create8(fontConfiguration, HorizontalAlignment.CENTER, skinParam,
 				CreoleMode.FULL, skinParam.wrapWidth());
@@ -85,16 +85,16 @@ public abstract class EntityImageStateCommon extends AbstractEntityImage {
 	}
 
 	private Style getStyleStateHeader() {
-		return StyleSignature.of(SName.root, SName.element, SName.stateDiagram, SName.state, SName.header)
-				.with(getEntity().getStereotype()).getMergedStyle(getSkinParam().getCurrentStyleBuilder());
+		return StyleSignatureBasic.of(SName.root, SName.element, SName.stateDiagram, SName.state, SName.header)
+				.withTOBECHANGED(getEntity().getStereotype()).getMergedStyle(getSkinParam().getCurrentStyleBuilder());
 	}
 
 	final protected Style getStyleState() {
-		return StyleSignature.of(SName.root, SName.element, SName.stateDiagram, SName.state)
-				.with(getEntity().getStereotype()).getMergedStyle(getSkinParam().getCurrentStyleBuilder());
+		return StyleSignatureBasic.of(SName.root, SName.element, SName.stateDiagram, SName.state)
+				.withTOBECHANGED(getEntity().getStereotype()).getMergedStyle(getSkinParam().getCurrentStyleBuilder());
 	}
 
-	final protected UStroke getStroke() {
+	private UStroke getStrokeWIP() {
 		UStroke stroke = lineConfig.getColors().getSpecificLineStroke();
 		if (stroke == null) {
 			stroke = new UStroke(1.5);
@@ -123,7 +123,7 @@ public abstract class EntityImageStateCommon extends AbstractEntityImage {
 		return rect;
 	}
 
-	final protected UGraphic applyColor(UGraphic ug) {
+	final protected UGraphic applyColorAndStroke(UGraphic ug) {
 
 		HColor border = lineConfig.getColors().getColor(ColorType.LINE);
 		if (border == null) {
@@ -133,7 +133,9 @@ public abstract class EntityImageStateCommon extends AbstractEntityImage {
 			else
 				border = SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.stateBorder);
 		}
-		ug = ug.apply(getStroke()).apply(border);
+		if (UseStyle.useBetaStyle() == false)
+			ug = ug.apply(getStrokeWIP());
+		ug = ug.apply(border);
 		HColor backcolor = getEntity().getColors().getColor(ColorType.BACK);
 		if (backcolor == null) {
 			if (UseStyle.useBetaStyle())

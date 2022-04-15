@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -70,7 +70,7 @@ public class LivingParticipantBox implements InGroupable {
 		// Log.println("AZERTY " + y + " centerX=" + centerX + " left=" + left + " right=" + right);
 		// Log.println("Attention, null for segment");
 		final SymbolContext colors = lifeLine.getColors();
-		return new SegmentColored(centerX - left, centerX + right, colors, lifeLine.shadowing());
+		return SegmentColored.create(centerX - left, centerX + right, colors, lifeLine.shadowing());
 	}
 
 	public void drawLineU22(UGraphic ug, double startingY, double endingY, boolean showTail, double myDelta) {

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,9 @@
  */
 package net.sourceforge.plantuml.svek.image;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import java.util.EnumMap;
+import java.util.Map;
 
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.Dimension2DDouble;
@@ -38,6 +40,7 @@ import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.SkinParamUtils;
 import net.sourceforge.plantuml.Url;
+import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.cucadiagram.ILeaf;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
@@ -45,6 +48,10 @@ import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.style.PName;
+import net.sourceforge.plantuml.style.SName;
+import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.svek.AbstractEntityImage;
 import net.sourceforge.plantuml.svek.ShapeType;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
@@ -52,18 +59,36 @@ import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UGroupType;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class EntityImageLollipopInterface extends AbstractEntityImage {
 
 	private static final int SIZE = 10;
-	private final TextBlock desc;
-	final private Url url;
 
-	public EntityImageLollipopInterface(ILeaf entity, ISkinParam skinParam) {
+	private final TextBlock desc;
+	private final SName sname;
+	private final Url url;
+
+	public StyleSignatureBasic getSignature() {
+		return StyleSignatureBasic.of(SName.root, SName.element, sname, SName.circle);
+	}
+
+	private UStroke getUStroke() {
+		return new UStroke(1.5);
+	}
+
+	public EntityImageLollipopInterface(ILeaf entity, ISkinParam skinParam, SName sname) {
 		super(entity, skinParam);
+		this.sname = sname;
 		final Stereotype stereotype = entity.getStereotype();
-		this.desc = entity.getDisplay().create(new FontConfiguration(getSkinParam(), FontParam.CLASS, stereotype),
-				HorizontalAlignment.CENTER, skinParam);
+		final FontConfiguration fc;
+		if (UseStyle.useBetaStyle())
+			fc = FontConfiguration.create(getSkinParam(),
+					getSignature().getMergedStyle(skinParam.getCurrentStyleBuilder()));
+		else
+			fc = FontConfiguration.create(getSkinParam(), FontParam.CLASS, stereotype);
+
+		this.desc = entity.getDisplay().create(fc, HorizontalAlignment.CENTER, skinParam);
 		this.url = entity.getUrl99();
 
 	}
@@ -73,37 +98,52 @@ public class EntityImageLollipopInterface extends AbstractEntityImage {
 	}
 
 	final public void drawU(UGraphic ug) {
+
+		final HColor backgroundColor;
+		final HColor borderColor;
+		double shadow = 4;
+
+		if (UseStyle.useBetaStyle()) {
+			final Style style = getSignature().getMergedStyle(getSkinParam().getCurrentStyleBuilder());
+			backgroundColor = style.value(PName.BackGroundColor).asColor(getSkinParam().getThemeStyle(),
+					getSkinParam().getIHtmlColorSet());
+			borderColor = style.value(PName.LineColor).asColor(getSkinParam().getThemeStyle(),
+					getSkinParam().getIHtmlColorSet());
+			shadow = style.value(PName.Shadowing).asDouble();
+		} else {
+			backgroundColor = SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.classBackground);
+			borderColor = SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.classBorder);
+		}
+
 		final UEllipse circle;
 		if (getEntity().getLeafType() == LeafType.LOLLIPOP_HALF) {
-			// circle = new UEllipse(SIZE, SIZE, 0, 180);
 			circle = new UEllipse(SIZE, SIZE, angle - 90, 180);
 		} else {
 			circle = new UEllipse(SIZE, SIZE);
-			if (getSkinParam().shadowing(getEntity().getStereotype())) {
-				circle.setDeltaShadow(4);
-			}
-		}
-		ug = ug.apply(
-				SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.classBackground).bg())
-				.apply(SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.classBorder));
-		if (url != null) {
-			ug.startUrl(url);
+			if (getSkinParam().shadowing(getEntity().getStereotype()))
+				circle.setDeltaShadow(shadow);
 		}
 
-		ug.startGroup(UGroupType.CLASS, "elem " + getEntity().getCode() + " selected");
-		ug.apply(new UStroke(1.5)).draw(circle);
+		ug = ug.apply(backgroundColor.bg()).apply(borderColor);
+		if (url != null)
+			ug.startUrl(url);
+
+		final Map<UGroupType, String> typeIDent = new EnumMap<>(UGroupType.class);
+		typeIDent.put(UGroupType.CLASS, "elem " + getEntity().getCode() + " selected");
+		typeIDent.put(UGroupType.ID, "elem_" + getEntity().getCode());
+		ug.startGroup(typeIDent);
+		ug.apply(getUStroke()).draw(circle);
 		ug.closeGroup();
 
 		final Dimension2D dimDesc = desc.calculateDimension(ug.getStringBounder());
 		final double widthDesc = dimDesc.getWidth();
-		// final double totalWidth = Math.max(widthDesc, SIZE);
 
 		final double x = SIZE / 2 - widthDesc / 2;
 		final double y = SIZE;
 		desc.drawU(ug.apply(new UTranslate(x, y)));
-		if (url != null) {
+		if (url != null)
 			ug.closeUrl();
-		}
+
 	}
 
 	public ShapeType getShapeType() {

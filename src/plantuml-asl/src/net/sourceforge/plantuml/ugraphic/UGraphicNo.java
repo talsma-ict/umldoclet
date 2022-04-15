@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -38,32 +38,33 @@ import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 
 public abstract class UGraphicNo implements UGraphic {
 
 	private final StringBounder stringBounder;
 	private final UTranslate translate;
 
-	public UGraphicNo(StringBounder stringBounder) {
-		this.stringBounder = stringBounder;
-		this.translate = new UTranslate();
-	}
+//	private UGraphicNo(UGraphicNo other, UChange change) {
+//		this(other.stringBounder,
+//				change instanceof UTranslate ? other.translate.compose((UTranslate) change) : other.translate);
+//	}
 
-	public UGraphicNo(UGraphicNo other, UChange change) {
-		this.stringBounder = other.stringBounder;
-		this.translate = change instanceof UTranslate ? other.translate.compose((UTranslate) change) : other.translate;
+	public UGraphicNo(StringBounder stringBounder, UTranslate translate) {
+		this.stringBounder = stringBounder;
+		this.translate = translate;
 	}
 
 	//
 	// Implement UGraphic
 	//
-	
+
 	@Override
 	final public void startUrl(Url url) {
 	}
 
 	@Override
-	public void startGroup(UGroupType type, String ident) {
+	public void startGroup(Map<UGroupType, String> typeIdents) {
 	}
 
 	@Override
@@ -83,7 +84,7 @@ public abstract class UGraphicNo implements UGraphic {
 	public HColor getDefaultBackground() {
 		return HColorUtils.BLACK;
 	}
-	
+
 	@Override
 	public UParam getParam() {
 		return new UParamNull();
@@ -112,7 +113,7 @@ public abstract class UGraphicNo implements UGraphic {
 	// Internal things
 	//
 
-	protected UTranslate getTranslate() {
+	protected final UTranslate getTranslate() {
 		return translate;
 	}
 }

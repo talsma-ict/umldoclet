@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.wire;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -52,6 +52,7 @@ import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class Block extends AbstractTextBlock {
@@ -112,16 +113,16 @@ public class Block extends AbstractTextBlock {
 	}
 
 	public Dimension2D calculateDimension(StringBounder stringBounder) {
-		if (fixedDim == null) {
+		if (fixedDim == null)
 			return minMax.getDimension();
-		}
+
 		return fixedDim;
 	}
 
 	public void drawU(UGraphic ug) {
-		ug = ug.apply(HColorUtils.BLACK);
+		ug = ug.apply(getBlack());
 		if (children.size() == 0) {
-			final TextBlock label = display.create(new FontConfiguration(skinParam, FontParam.COMPONENT, null),
+			final TextBlock label = display.create(FontConfiguration.create(skinParam, FontParam.COMPONENT, null),
 					HorizontalAlignment.CENTER, skinParam);
 			label.drawU(ug.apply(new UTranslate(10, 10)));
 		} else {
@@ -136,6 +137,10 @@ public class Block extends AbstractTextBlock {
 		drawPins(Position.LEFT, ug);
 		drawPins(Position.RIGHT, ug);
 
+	}
+
+	private HColor getBlack() {
+		return HColorUtils.BLACK.withDark(HColorUtils.WHITE);
 	}
 
 	private void drawPins(Position pos, UGraphic ug) {

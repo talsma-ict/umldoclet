@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Iterator;
@@ -52,8 +52,8 @@ class SegmentColored {
 	final private boolean shadowing;
 	final private double pos1Initial;
 
-	SegmentColored(double pos1, double pos2, SymbolContext colors, boolean shadowing) {
-		this(new Segment(pos1, pos2), colors, shadowing, pos1);
+	public static SegmentColored create(double pos1, double pos2, SymbolContext colors, boolean shadowing) {
+		return new SegmentColored(new Segment(pos1, pos2), colors, shadowing, pos1);
 	}
 
 	private SegmentColored(Segment segment, SymbolContext colors, boolean shadowing, double pos1Initial) {
@@ -95,9 +95,10 @@ class SegmentColored {
 
 	public void drawU(UGraphic ug, Component compAliveBox, int level) {
 		final StringBounder stringBounder = ug.getStringBounder();
-		ug = ug.apply(new UTranslate((level - 1) * compAliveBox.getPreferredWidth(stringBounder) / 2, segment.getPos1()));
-		final Dimension2D dim = new Dimension2DDouble(compAliveBox.getPreferredWidth(stringBounder), segment.getPos2()
-				- segment.getPos1());
+		ug = ug.apply(
+				new UTranslate((level - 1) * compAliveBox.getPreferredWidth(stringBounder) / 2, segment.getPos1()));
+		final Dimension2D dim = new Dimension2DDouble(compAliveBox.getPreferredWidth(stringBounder),
+				segment.getPos2() - segment.getPos1());
 		compAliveBox.drawU(ug, new Area(dim), new SimpleContext2D(false));
 	}
 

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -51,7 +51,7 @@ import net.sourceforge.plantuml.SpriteContainer;
 import net.sourceforge.plantuml.StringLocated;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UrlBuilder;
-import net.sourceforge.plantuml.UrlBuilder.ModeUrl;
+import net.sourceforge.plantuml.UrlMode;
 import net.sourceforge.plantuml.command.regex.Matcher2;
 import net.sourceforge.plantuml.command.regex.MyPattern;
 import net.sourceforge.plantuml.command.regex.Pattern2;
@@ -60,7 +60,6 @@ import net.sourceforge.plantuml.creole.Parser;
 import net.sourceforge.plantuml.creole.Sheet;
 import net.sourceforge.plantuml.creole.SheetBlock1;
 import net.sourceforge.plantuml.creole.SheetBlock2;
-import net.sourceforge.plantuml.creole.atom.AtomWithMargin;
 import net.sourceforge.plantuml.creole.legacy.CreoleParser;
 import net.sourceforge.plantuml.graphic.CircledCharacter;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
@@ -430,7 +429,7 @@ public class Display implements Iterable<CharSequence> {
 	}
 
 	public boolean hasUrl() {
-		final UrlBuilder urlBuilder = new UrlBuilder(null, ModeUrl.ANYWHERE);
+		final UrlBuilder urlBuilder = new UrlBuilder(null, UrlMode.ANYWHERE);
 		for (CharSequence s : this)
 			if (urlBuilder.getUrl(s.toString()) != null)
 				return true;

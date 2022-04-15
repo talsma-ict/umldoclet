@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -618,7 +618,7 @@ class DrawableSetInitializer {
 				participantDisplay);
 		final Component tail = drawableSet.getSkin().createComponent(p.getUsedStyles(), tailType, null, skinParam,
 				participantDisplay);
-		final Style style = this.defaultLineType.getDefaultStyleDefinition().with(p.getStereotype())
+		final Style style = this.defaultLineType.getStyleSignature().withTOBECHANGED(p.getStereotype())
 				.getMergedStyle(skinParam.getCurrentStyleBuilder());
 		final Component line = drawableSet.getSkin().createComponent(new Style[] { style }, this.defaultLineType, null,
 				drawableSet.getSkinParam(), participantDisplay);
@@ -628,7 +628,7 @@ class DrawableSetInitializer {
 				skinParam.maxAsciiMessageLength() > 0 ? 1 : 5);
 
 		final Component comp = drawableSet.getSkin().createComponent(
-				new Style[] { ComponentType.ALIVE_BOX_CLOSE_CLOSE.getDefaultStyleDefinition()
+				new Style[] { ComponentType.ALIVE_BOX_CLOSE_CLOSE.getStyleSignature()
 						.getMergedStyle(drawableSet.getSkinParam().getCurrentStyleBuilder()) },
 				ComponentType.ALIVE_BOX_CLOSE_CLOSE, null, drawableSet.getSkinParam(), null);
 

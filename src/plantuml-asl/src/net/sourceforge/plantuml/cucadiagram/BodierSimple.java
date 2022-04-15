@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -62,9 +62,10 @@ public class BodierSimple implements Bodier {
 	}
 
 	@Override
-	public void addFieldOrMethod(String s) throws NoSuchColorException {
+	public boolean addFieldOrMethod(String s) throws NoSuchColorException {
 		final Display display = Display.getWithNewlines2(s);
 		rawBody.addAll(display.asList());
+		return true;
 	}
 
 	@Override

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -41,7 +41,7 @@ public class DriverLineTikz implements UDriver<ULine, TikzGraphics> {
 	public void draw(ULine line, double x, double y, ColorMapper mapper, UParam param, TikzGraphics tikz) {
 		double x2 = x + line.getDX();
 		double y2 = y + line.getDY();
-		tikz.setStrokeColor(mapper.toColor(param.getColor()));
+		tikz.setStrokeColor(param.getColor());
 		tikz.setStrokeWidth(param.getStroke().getThickness(), param.getStroke().getDashTikz());
 		tikz.line(x, y, x2, y2);
 	}

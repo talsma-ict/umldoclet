@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -59,7 +59,7 @@ public class UPathHand {
 			} else if (type == USegmentType.SEG_CUBICTO) {
 				final double x2 = segment.getCoord()[4];
 				final double y2 = segment.getCoord()[5];
-				final HandJiggle jiggle = new HandJiggle(last, 2.0, rnd);
+				final HandJiggle jiggle = HandJiggle.create(last, 2.0, rnd);
 
 				final CubicCurve2D tmp = new CubicCurve2D.Double(last.getX(), last.getY(), segment.getCoord()[0],
 						segment.getCoord()[1], segment.getCoord()[2], segment.getCoord()[3], x2, y2);

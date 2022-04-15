@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -35,10 +35,6 @@ import net.sourceforge.plantuml.command.regex.MyPattern;
 import net.sourceforge.plantuml.command.regex.Pattern2;
 
 public class UrlBuilder {
-
-	public static enum ModeUrl {
-		STRICT, ANYWHERE
-	}
 
 	private static final String S_QUOTED = "\\[\\[[%s]*" + //
 			"[%g]([^%g]+)[%g]" + // Quoted part
@@ -83,9 +79,9 @@ public class UrlBuilder {
 			.cmpile(S_LINK_WITH_OPTIONAL_TOOLTIP_WITH_OPTIONAL_LABEL);
 
 	private final String topurl;
-	private ModeUrl mode;
+	private UrlMode mode;
 
-	public UrlBuilder(String topurl, ModeUrl mode) {
+	public UrlBuilder(String topurl, UrlMode mode) {
 		this.topurl = topurl;
 		this.mode = mode;
 	}
@@ -122,9 +118,9 @@ public class UrlBuilder {
 	}
 
 	private boolean matchesOrFind(Matcher2 m) {
-		if (mode == ModeUrl.STRICT) {
+		if (mode == UrlMode.STRICT) {
 			return m.matches();
-		} else if (mode == ModeUrl.ANYWHERE) {
+		} else if (mode == UrlMode.ANYWHERE) {
 			return m.find();
 		} else {
 			throw new IllegalStateException();

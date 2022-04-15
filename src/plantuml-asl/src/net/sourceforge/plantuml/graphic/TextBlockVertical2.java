@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.graphic;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -97,10 +97,10 @@ public class TextBlockVertical2 extends AbstractTextBlock implements TextBlock, 
 			final Dimension2D dimb = block.calculateDimension(ug.getStringBounder());
 			if (block instanceof TextBlockBackcolored) {
 				final HColor back = ((TextBlockBackcolored) block).getBackcolor();
-				if (back != null) {
+				if (back != null)
 					ug.apply(UTranslate.dy(y)).apply(back).apply(back.bg())
 							.draw(new URectangle(dimtotal.getWidth(), dimb.getHeight()));
-				}
+
 			}
 			if (horizontalAlignment == HorizontalAlignment.LEFT) {
 				block.drawU(ug.apply(UTranslate.dy(y)));

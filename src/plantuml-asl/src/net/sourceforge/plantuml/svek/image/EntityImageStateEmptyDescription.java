@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,13 +30,15 @@
  */
 package net.sourceforge.plantuml.svek.image;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinParam;
+import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
+import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 
 public class EntityImageStateEmptyDescription extends EntityImageStateCommon {
@@ -56,23 +58,31 @@ public class EntityImageStateEmptyDescription extends EntityImageStateCommon {
 	}
 
 	final public void drawU(UGraphic ug) {
-		if (url != null) {
+		if (url != null)
 			ug.startUrl(url);
-		}
+
 		final StringBounder stringBounder = ug.getStringBounder();
 		final Dimension2D dimTotal = calculateDimension(stringBounder);
 		final Dimension2D dimDesc = desc.calculateDimension(stringBounder);
 
-		ug = applyColor(ug);
+		final UStroke stroke;
+		if (UseStyle.useBetaStyle())
+			stroke = getStyleState().getStroke();
+		else
+			stroke = new UStroke();
+
+		ug = applyColorAndStroke(ug);
+		ug = ug.apply(stroke);
+
 		ug.draw(getShape(dimTotal));
 
 		final double xDesc = (dimTotal.getWidth() - dimDesc.getWidth()) / 2;
 		final double yDesc = (dimTotal.getHeight() - dimDesc.getHeight()) / 2;
 		desc.drawU(ug.apply(new UTranslate(xDesc, yDesc)));
 
-		if (url != null) {
+		if (url != null)
 			ug.closeUrl();
-		}
+
 	}
 
 }

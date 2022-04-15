@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -36,6 +36,7 @@ import java.util.List;
 
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.UmlDiagramType;
+import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.command.PSystemAbstractFactory;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.DiagramType;
@@ -55,7 +56,7 @@ public class YamlDiagramFactory extends PSystemAbstractFactory {
 	}
 
 	@Override
-	public Diagram createSystem(UmlSource source, ISkinSimple skinParam) {
+	public Diagram createSystem(ThemeStyle style, UmlSource source, ISkinSimple skinParam) {
 		final List<String> highlighted = new ArrayList<>();
 		JsonValue yaml = null;
 		StyleExtractor styleExtractor = null;
@@ -66,9 +67,9 @@ public class YamlDiagramFactory extends PSystemAbstractFactory {
 			it.next();
 			while (true) {
 				final String line = it.next();
-				if (it.hasNext() == false) {
+				if (it.hasNext() == false)
 					break;
-				}
+
 				if (line.startsWith("#highlight ")) {
 					highlighted.add(line.substring("#highlight ".length()).trim());
 					continue;
@@ -79,7 +80,7 @@ public class YamlDiagramFactory extends PSystemAbstractFactory {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		final JsonDiagram result = new JsonDiagram(source, UmlDiagramType.YAML, yaml, highlighted);
+		final JsonDiagram result = new JsonDiagram(style, source, UmlDiagramType.YAML, yaml, highlighted);
 		if (styleExtractor != null) {
 			styleExtractor.applyStyles(result.getSkinParam());
 			final String title = styleExtractor.getTitle();

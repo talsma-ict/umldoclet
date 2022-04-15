@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -69,9 +69,8 @@ public class CommandSwitch extends SingleLineCommand2<ActivityDiagram3> {
 				: diagram.getSkinParam().getIHtmlColorSet().getColor(diagram.getSkinParam().getThemeStyle(), s);
 
 		String test = arg.get("TEST", 0);
-		if (test.length() == 0) {
+		if (test.length() == 0)
 			test = null;
-		}
 
 		diagram.startSwitch(Display.getWithNewlines(test), color);
 

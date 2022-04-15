@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -37,7 +37,7 @@ import java.util.Map;
 
 public class BArray implements Iterable<BNode> {
 
-	private final Map<String, BNode> data = new HashMap<String, BNode>();
+	private final Map<String, BNode> data = new HashMap<>();
 	private int maxX;
 	private int maxY;
 

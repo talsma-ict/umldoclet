@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -56,7 +56,7 @@ import net.sourceforge.plantuml.ugraphic.color.HColor;
 public class UGraphicTikz extends AbstractUGraphic<TikzGraphics> implements ClipContainer {
 
 	public UGraphicTikz(HColor defaultBackground, ColorMapper colorMapper, StringBounder stringBounder, double scale, boolean withPreamble) {
-		super(defaultBackground, colorMapper, stringBounder, new TikzGraphics(scale, withPreamble));
+		super(defaultBackground, colorMapper, stringBounder, new TikzGraphics(scale, withPreamble, colorMapper));
 		register();
 	}
 

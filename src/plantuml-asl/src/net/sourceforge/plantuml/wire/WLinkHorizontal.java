@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.wire;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.cucadiagram.Display;
@@ -64,7 +64,15 @@ public class WLinkHorizontal {
 		this.direction = direction;
 		this.type = type;
 		this.label = label;
-		this.color = color == null ? HColorUtils.BLACK : color;
+		this.color = color == null ? getBlack() : color;
+	}
+
+	private HColor getBlack() {
+		return HColorUtils.BLACK.withDark(HColorUtils.WHITE);
+	}
+
+	private HColor getWhite() {
+		return HColorUtils.WHITE.withDark(HColorUtils.BLACK);
 	}
 
 	private TextBlock getTextBlock() {
@@ -88,7 +96,7 @@ public class WLinkHorizontal {
 			ugText = ugText.apply(UTranslate.dy(-dimText.getHeight() / 2));
 
 		} else if (type == WLinkType.BUS) {
-			ug = ug.apply(HColorUtils.WHITE.bg());
+			ug = ug.apply(getWhite().bg());
 			drawBusArrow(ug);
 			ugText = ugText.apply(UTranslate.dy((20 - dimText.getHeight()) / 2 - 5));
 		}
@@ -105,9 +113,9 @@ public class WLinkHorizontal {
 				ugText = ugText.apply(UTranslate.dx((len - dimText.getWidth()) / 2));
 				break;
 			}
-			if (type == WLinkType.NORMAL) {
-				ugText.apply(HColorUtils.WHITE).apply(HColorUtils.WHITE.bg()).draw(new URectangle(dimText));
-			}
+			if (type == WLinkType.NORMAL)
+				ugText.apply(getWhite()).apply(getWhite().bg()).draw(new URectangle(dimText));
+
 			textBlock.drawU(ugText);
 		}
 

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -31,7 +31,7 @@
 package net.sourceforge.plantuml.sprite;
 
 import java.awt.Color;
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
@@ -119,7 +119,7 @@ public class SpriteColor implements Sprite {
 		return new UImage(new PixelImage(im, AffineTransformType.TYPE_BILINEAR));
 	}
 
-	public TextBlock asTextBlock(final HColor color, final double scale) {
+	public TextBlock asTextBlock(final HColor color, final double scale, ColorMapper colorMapper) {
 		return new AbstractTextBlock() {
 
 			public void drawU(UGraphic ug) {

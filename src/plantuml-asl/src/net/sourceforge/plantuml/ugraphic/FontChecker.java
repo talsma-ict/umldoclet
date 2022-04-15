@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -53,6 +53,7 @@ import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.UDrawable;
 import net.sourceforge.plantuml.security.SImageIO;
 import net.sourceforge.plantuml.security.SFile;
+import net.sourceforge.plantuml.svg.DarkStrategy;
 import net.sourceforge.plantuml.svg.LengthAdjust;
 import net.sourceforge.plantuml.svg.SvgGraphics;
 import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
@@ -153,7 +154,7 @@ public class FontChecker {
 
 	private String getSvgImage(char c) throws IOException, TransformerException {
 		final SvgGraphics svg = new SvgGraphics(null, true, new Dimension2DDouble(0, 0), 1.0, null, 42, "none",
-				LengthAdjust.defaultValue());
+				LengthAdjust.defaultValue(), DarkStrategy.IGNORE_DARK_COLOR, false);
 		svg.setStrokeColor("black");
 		svg.svgImage(getBufferedImage(c), 0, 0);
 		final ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -188,7 +189,7 @@ public class FontChecker {
 	// ug = (UGraphic2) ug.apply(UChangeColor.nnn(HtmlColorUtils.BLACK));
 	// ug.draw(new URectangle(dim - 1, dim - 1));
 	// ug = (UGraphic2) ug.apply(new UTranslate(dim / 3, 2 * dim / 3));
-	// final UText text = new UText("" + c, new FontConfiguration(font,
+	// final UText text = new UText("" + c, FontConfiguration.create(font,
 	// HtmlColorUtils.BLACK));
 	// ug.draw(text);
 	// final ByteArrayOutputStream os = new ByteArrayOutputStream();

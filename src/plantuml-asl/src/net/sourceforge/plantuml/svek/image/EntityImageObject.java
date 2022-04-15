@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,19 +30,18 @@
  */
 package net.sourceforge.plantuml.svek.image;
 
-import java.awt.geom.Dimension2D;
+import java.awt.geom.Rectangle2D;
+import java.util.EnumMap;
+import java.util.Map;
 
-import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.CornerParam;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.Guillemet;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.LineConfigurable;
-import net.sourceforge.plantuml.LineParam;
-import net.sourceforge.plantuml.SkinParamUtils;
 import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.UseStyle;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.creole.Stencil;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.EntityPortion;
@@ -51,6 +50,7 @@ import net.sourceforge.plantuml.cucadiagram.PortionShower;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.InnerStrategy;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockEmpty;
@@ -60,7 +60,7 @@ import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.svek.AbstractEntityImage;
 import net.sourceforge.plantuml.svek.Ports;
 import net.sourceforge.plantuml.svek.ShapeType;
@@ -92,50 +92,46 @@ public class EntityImageObject extends AbstractEntityImage implements Stencil, W
 		final Stereotype stereotype = entity.getStereotype();
 		this.roundCorner = skinParam.getRoundCorner(CornerParam.DEFAULT, null);
 
-		final FontConfiguration fcHeader;
-		if (UseStyle.useBetaStyle())
-			fcHeader = getStyleHeader().getFontConfiguration(getSkinParam().getThemeStyle(),
-					getSkinParam().getIHtmlColorSet());
-		else
-			fcHeader = new FontConfiguration(getSkinParam(), FontParam.OBJECT, stereotype);
+		final FontConfiguration fcHeader = getStyleHeader().getFontConfiguration(getSkinParam().getThemeStyle(),
+				getSkinParam().getIHtmlColorSet());
 
 		final TextBlock tmp = getUnderlinedName(entity).create(fcHeader, HorizontalAlignment.CENTER, skinParam);
 		this.name = TextBlockUtils.withMargin(tmp, 2, 2);
 		if (stereotype == null || stereotype.getLabel(Guillemet.DOUBLE_COMPARATOR) == null
-				|| portionShower.showPortion(EntityPortion.STEREOTYPE, entity) == false) {
+				|| portionShower.showPortion(EntityPortion.STEREOTYPE, entity) == false)
 			this.stereo = null;
-		} else {
+		else
 			this.stereo = Display.create(stereotype.getLabels(skinParam.guillemet())).create(
-					new FontConfiguration(getSkinParam(), FontParam.OBJECT_STEREOTYPE, stereotype),
+					FontConfiguration.create(getSkinParam(), FontParam.OBJECT_STEREOTYPE, stereotype),
 					HorizontalAlignment.CENTER, skinParam);
-		}
 
 		final boolean showFields = portionShower.showPortion(EntityPortion.FIELD, entity);
 
-		if (entity.getBodier().getFieldsToDisplay().size() == 0) {
-			this.fields = new TextBlockLineBefore(new TextBlockEmpty(10, 16));
-		} else {
+		if (entity.getBodier().getFieldsToDisplay().size() == 0)
+			this.fields = new TextBlockLineBefore(getStyle().value(PName.LineThickness).asDouble(),
+					new TextBlockEmpty(10, 16));
+		else
 			this.fields = entity.getBodier().getBody(FontParam.OBJECT_ATTRIBUTE, skinParam, false, showFields,
 					entity.getStereotype(), getStyle(), null);
-		}
+
 		this.url = entity.getUrl99();
 
 	}
 
 	private Style getStyle() {
-		return StyleSignature.of(SName.root, SName.element, SName.objectDiagram, SName.object)
-				.with(getEntity().getStereotype()).getMergedStyle(getSkinParam().getCurrentStyleBuilder());
+		return StyleSignatureBasic.of(SName.root, SName.element, SName.objectDiagram, SName.object)
+				.withTOBECHANGED(getEntity().getStereotype()).getMergedStyle(getSkinParam().getCurrentStyleBuilder());
 	}
 
 	private Style getStyleHeader() {
-		return StyleSignature.of(SName.root, SName.element, SName.objectDiagram, SName.object, SName.header)
-				.with(getEntity().getStereotype()).getMergedStyle(getSkinParam().getCurrentStyleBuilder());
+		return StyleSignatureBasic.of(SName.root, SName.element, SName.objectDiagram, SName.object, SName.header)
+				.withTOBECHANGED(getEntity().getStereotype()).getMergedStyle(getSkinParam().getCurrentStyleBuilder());
 	}
 
 	private Display getUnderlinedName(ILeaf entity) {
-		if (getSkinParam().strictUmlStyle()) {
+		if (getSkinParam().strictUmlStyle())
 			return entity.getDisplay().underlinedName();
-		}
+
 		return entity.getDisplay();
 	}
 
@@ -145,9 +141,8 @@ public class EntityImageObject extends AbstractEntityImage implements Stencil, W
 		final Dimension2D dimTitle = getTitleDimension(stringBounder);
 		final Dimension2D dimFields = fields.calculateDimension(stringBounder);
 		double width = Math.max(dimFields.getWidth(), dimTitle.getWidth() + 2 * xMarginCircle);
-		if (width < getSkinParam().minClassWidth()) {
+		if (width < getSkinParam().minClassWidth())
 			width = getSkinParam().minClassWidth();
-		}
 
 		final double height = getMethodOrFieldHeight(dimFields) + dimTitle.getHeight();
 		return new Dimension2DDouble(width, height);
@@ -161,64 +156,68 @@ public class EntityImageObject extends AbstractEntityImage implements Stencil, W
 		final double widthTotal = dimTotal.getWidth();
 		final double heightTotal = dimTotal.getHeight();
 		final Shadowable rect = new URectangle(widthTotal, heightTotal).rounded(roundCorner);
-		if (getSkinParam().shadowing(getEntity().getStereotype())) {
-			rect.setDeltaShadow(4);
-		}
 
-		final HColor borderColor = SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.objectBorder);
-		ug = ug.apply(borderColor);
 		HColor backcolor = getEntity().getColors().getColor(ColorType.BACK);
-		if (backcolor == null) {
-			if (UseStyle.useBetaStyle())
-				backcolor = getStyle().value(PName.BackGroundColor).asColor(getSkinParam().getThemeStyle(),
-						getSkinParam().getIHtmlColorSet());
-			else
-				backcolor = SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.objectBackground);
+		HColor headerBackcolor = getEntity().getColors().getColor(ColorType.HEADER);
 
-		}
-		ug = ug.apply(backcolor.bg());
-		if (url != null) {
+		final Style style = getStyle();
+		final HColor borderColor = style.value(PName.LineColor).asColor(getSkinParam().getThemeStyle(),
+				getSkinParam().getIHtmlColorSet());
+
+		if (headerBackcolor == null)
+			headerBackcolor = backcolor == null ? getStyleHeader().value(PName.BackGroundColor)
+					.asColor(getSkinParam().getThemeStyle(), getSkinParam().getIHtmlColorSet()) : backcolor;
+
+		if (backcolor == null)
+			backcolor = style.value(PName.BackGroundColor).asColor(getSkinParam().getThemeStyle(),
+					getSkinParam().getIHtmlColorSet());
+
+		rect.setDeltaShadow(style.value(PName.Shadowing).asDouble());
+		final UStroke stroke = style.getStroke();
+
+		ug = ug.apply(borderColor).apply(backcolor.bg());
+
+		if (url != null)
 			ug.startUrl(url);
-		}
 
-		final UStroke stroke = getStroke();
-
-		ug.startGroup(UGroupType.CLASS, "elem " + getEntity().getCode() + " selected");
+		final Map<UGroupType, String> typeIDent = new EnumMap<>(UGroupType.class);
+		typeIDent.put(UGroupType.CLASS, "elem " + getEntity().getCode() + " selected");
+		typeIDent.put(UGroupType.ID, "elem_" + getEntity().getCode());
+		ug.startGroup(typeIDent);
 		ug.apply(stroke).draw(rect);
 
-		final ULayoutGroup header = new ULayoutGroup(new PlacementStrategyY1Y2(ug.getStringBounder()));
-		if (stereo != null) {
-			header.add(stereo);
+		if (roundCorner == 0 && headerBackcolor != null && backcolor.equals(headerBackcolor) == false) {
+			final Shadowable rect2 = new URectangle(widthTotal, dimTitle.getHeight());
+			final UGraphic ugHeader = ug.apply(headerBackcolor.bg());
+			ugHeader.apply(stroke).draw(rect2);
 		}
-		header.add(name);
+
+		final ULayoutGroup header = getLayout(stringBounder);
 		header.drawU(ug, dimTotal.getWidth(), dimTitle.getHeight());
 
 		final UGraphic ug2 = UGraphicStencil.create(ug, this, stroke);
 		fields.drawU(ug2.apply(UTranslate.dy(dimTitle.getHeight())));
 
-		if (url != null) {
+		if (url != null)
 			ug.closeUrl();
-		}
 
 		ug.closeGroup();
 	}
 
-	private UStroke getStroke() {
-		UStroke stroke = lineConfig.getColors().getSpecificLineStroke();
-		if (stroke == null) {
-			stroke = getSkinParam().getThickness(LineParam.objectBorder, getStereo());
-		}
-		if (stroke == null) {
-			stroke = new UStroke(1.5);
-		}
-		return stroke;
+	private ULayoutGroup getLayout(final StringBounder stringBounder) {
+		final ULayoutGroup header = new ULayoutGroup(new PlacementStrategyY1Y2(stringBounder));
+		if (stereo != null)
+			header.add(stereo);
+
+		header.add(name);
+		return header;
 	}
 
 	private double getMethodOrFieldHeight(final Dimension2D dim) {
 		final double fieldsHeight = dim.getHeight();
-		if (fieldsHeight == 0) {
+		if (fieldsHeight == 0)
 			return marginEmptyFieldsOrMethod;
-		}
+
 		return fieldsHeight;
 	}
 
@@ -238,9 +237,9 @@ public class EntityImageObject extends AbstractEntityImage implements Stencil, W
 	}
 
 	public ShapeType getShapeType() {
-		if (((ILeaf) getEntity()).getPortShortNames().size() > 0) {
+		if (((ILeaf) getEntity()).getPortShortNames().size() > 0)
 			return ShapeType.RECTANGLE_HTML_FOR_PORTS;
-		}
+
 		return ShapeType.RECTANGLE;
 	}
 
@@ -258,6 +257,13 @@ public class EntityImageObject extends AbstractEntityImage implements Stencil, W
 		if (fields instanceof WithPorts)
 			return ((WithPorts) fields).getPorts(stringBounder).translateY(dimHeader.getHeight());
 		return new Ports();
+	}
+
+	@Override
+	public Rectangle2D getInnerPosition(String member, StringBounder stringBounder, InnerStrategy strategy) {
+		final Dimension2D dimTitle = getTitleDimension(stringBounder);
+		final UTranslate translate = UTranslate.dy(dimTitle.getHeight());
+		return translate.apply(fields.getInnerPosition(member, stringBounder, strategy));
 	}
 
 }

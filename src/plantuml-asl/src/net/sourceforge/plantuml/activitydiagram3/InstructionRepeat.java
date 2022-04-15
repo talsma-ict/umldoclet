@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -199,7 +199,7 @@ public class InstructionRepeat extends AbstractInstruction implements Instructio
 		if (Display.isNull(backward))
 			return repeatList.addNote(note, position, type, colors, swimlaneNote);
 
-		this.backwardNotes.add(new PositionedNote(note, position, type, colors, swimlaneNote));
+		this.backwardNotes.add(new PositionedNote(note, position, type, swimlaneNote, colors));
 		return true;
 
 	}

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -31,10 +31,11 @@
 package net.sourceforge.plantuml.sprite;
 
 import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public interface Sprite {
-	
-	public TextBlock asTextBlock(final HColor color, double scale);
+
+	public TextBlock asTextBlock(final HColor color, double scale, ColorMapper colorMapper);
 
 }

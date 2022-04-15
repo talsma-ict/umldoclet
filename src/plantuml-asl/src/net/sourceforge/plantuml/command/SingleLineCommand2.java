@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,6 +34,7 @@ import java.util.Objects;
 
 import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.StringLocated;
+import net.sourceforge.plantuml.annotation.HaxeIgnored;
 import net.sourceforge.plantuml.command.regex.IRegex;
 import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.core.Diagram;
@@ -45,6 +46,7 @@ public abstract class SingleLineCommand2<S extends Diagram> implements Command<S
 	private final IRegex pattern;
 	private final boolean doTrim;
 
+	@HaxeIgnored
 	public SingleLineCommand2(IRegex pattern) {
 		this(true, pattern);
 	}

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -39,12 +39,11 @@ class USymbolControl extends USymbolSimpleAbstract {
 	public SkinParameter getSkinParameter() {
 		return SkinParameter.CONTROL;
 	}
-	
+
 	@Override
 	public SName getSName() {
 		return SName.control;
 	}
-
 
 	@Override
 	protected TextBlock getDrawing(final SymbolContext symbolContext) {

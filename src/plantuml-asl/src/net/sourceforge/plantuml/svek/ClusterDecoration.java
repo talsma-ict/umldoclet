@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -71,13 +71,13 @@ public class ClusterDecoration {
 	}
 
 	public void drawU(UGraphic ug, HColor backColor, HColor borderColor, double shadowing, double roundCorner,
-			HorizontalAlignment titleAlignment, HorizontalAlignment stereoAlignment) {
+			HorizontalAlignment titleAlignment, HorizontalAlignment stereoAlignment, double diagonalCorner) {
 		final SymbolContext biColor = new SymbolContext(backColor, borderColor);
-		if (symbol == null) {
+		if (symbol == null)
 			throw new UnsupportedOperationException();
-		}
+
 		final SymbolContext symbolContext = biColor.withShadow(shadowing).withStroke(defaultStroke)
-				.withCorner(roundCorner, 0);
+				.withCorner(roundCorner, diagonalCorner);
 		symbol.asBig(title, titleAlignment, stereo, maxX - minX, maxY - minY, symbolContext, stereoAlignment)
 				.drawU(ug.apply(new UTranslate(minX, minY)));
 	}

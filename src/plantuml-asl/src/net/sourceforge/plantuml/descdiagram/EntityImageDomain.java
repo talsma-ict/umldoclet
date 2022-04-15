@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.descdiagram;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.Dimension2DDouble;
@@ -69,14 +69,14 @@ public class EntityImageDomain extends AbstractEntityImage {
 	public EntityImageDomain(ILeaf entity, ISkinParam skinParam, char typeLetter) {
 		super(entity, skinParam);
 		final Stereotype stereotype = entity.getStereotype();
-		FontConfiguration fc = new FontConfiguration(getSkinParam(), FontParam.DESIGNED_DOMAIN, stereotype);
+		FontConfiguration fc = FontConfiguration.create(getSkinParam(), FontParam.DESIGNED_DOMAIN, stereotype);
 		this.name = TextBlockUtils.withMargin(entity.getDisplay().create(fc, HorizontalAlignment.CENTER, skinParam), 2,
 				2);
 		if (stereotype == null || stereotype.getLabel(Guillemet.DOUBLE_COMPARATOR) == null) {
 			this.stereo = null;
 		} else {
 			this.stereo = Display.create(stereotype.getLabels(skinParam.guillemet())).create(
-					new FontConfiguration(getSkinParam(), FontParam.DESIGNED_DOMAIN_STEREOTYPE, stereotype),
+					FontConfiguration.create(getSkinParam(), FontParam.DESIGNED_DOMAIN_STEREOTYPE, stereotype),
 					HorizontalAlignment.CENTER, skinParam);
 		}
 		this.tag = new BoxedCharacter(typeLetter, 8, UFont.byDefault(8), stereotype.getHtmlColor(), null, fc.getColor());

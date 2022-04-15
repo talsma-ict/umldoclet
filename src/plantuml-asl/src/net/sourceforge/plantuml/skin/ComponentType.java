@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,7 +32,7 @@ package net.sourceforge.plantuml.skin;
 
 import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.style.SName;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.style.Styleable;
 
 public enum ComponentType implements Styleable {
@@ -65,42 +65,42 @@ public enum ComponentType implements Styleable {
 		return this == ARROW;
 	}
 
-	public StyleSignature getDefaultStyleDefinition() {
+	public StyleSignatureBasic getStyleSignature() {
 		if (this == PARTICIPANT_HEAD || this == PARTICIPANT_TAIL) {
-			return StyleSignature.of(SName.root, SName.element,
+			return StyleSignatureBasic.of(SName.root, SName.element,
 					SName.sequenceDiagram, SName.participant);
 		}
 		if (this == PARTICIPANT_LINE || this == CONTINUE_LINE) {
-			return StyleSignature.of(SName.root, SName.element,
+			return StyleSignatureBasic.of(SName.root, SName.element,
 					SName.sequenceDiagram, SName.lifeLine);
 		}
 		if (this == ALIVE_BOX_CLOSE_CLOSE || this == ALIVE_BOX_CLOSE_OPEN || this == ALIVE_BOX_OPEN_CLOSE
 				|| this == ALIVE_BOX_OPEN_OPEN) {
-			return StyleSignature.of(SName.root, SName.element,
+			return StyleSignatureBasic.of(SName.root, SName.element,
 					SName.sequenceDiagram, SName.lifeLine);
 		}
 		if (this == DESTROY) {
-			return StyleSignature.of(SName.root, SName.element,
+			return StyleSignatureBasic.of(SName.root, SName.element,
 					SName.sequenceDiagram, SName.lifeLine);
 		}
 		if (this == DIVIDER) {
-			return StyleSignature.of(SName.root, SName.element,
+			return StyleSignatureBasic.of(SName.root, SName.element,
 					SName.sequenceDiagram, SName.separator);
 		}
 		if (this == ENGLOBER) {
-			return StyleSignature.of(SName.root, SName.element,
+			return StyleSignatureBasic.of(SName.root, SName.element,
 					SName.sequenceDiagram, SName.box);
 		}
 		if (this == NOTE) {
-			return StyleSignature.of(SName.root, SName.element,
+			return StyleSignatureBasic.of(SName.root, SName.element,
 					SName.sequenceDiagram, SName.note);
 		}
 		if (this == DELAY_TEXT) {
-			return StyleSignature.of(SName.root, SName.element,
+			return StyleSignatureBasic.of(SName.root, SName.element,
 					SName.sequenceDiagram, SName.delay);
 		}
 		if (this == DELAY_LINE) {
-			return StyleSignature.of(SName.root, SName.element,
+			return StyleSignatureBasic.of(SName.root, SName.element,
 					SName.sequenceDiagram, SName.delay);
 		}
 //		if (this == REFERENCE) {
@@ -111,6 +111,6 @@ public enum ComponentType implements Styleable {
 			throw new UnsupportedOperationException(toString());
 
 		}
-		return StyleSignature.of(SName.root);
+		return StyleSignatureBasic.of(SName.root);
 	}
 }

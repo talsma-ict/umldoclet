@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -127,8 +127,8 @@ public class BlocLines implements Iterable<StringLocated> {
 		return new BlocLines(result);
 	}
 
-	public BlocLines() {
-		this(new ArrayList<StringLocated>());
+	public static BlocLines create() {
+		return new BlocLines(new ArrayList<StringLocated>());
 	}
 
 	public BlocLines add(StringLocated s) {

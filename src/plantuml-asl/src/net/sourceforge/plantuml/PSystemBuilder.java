@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -37,6 +37,7 @@ import java.util.List;
 import net.sourceforge.plantuml.activitydiagram.ActivityDiagramFactory;
 import net.sourceforge.plantuml.activitydiagram3.ActivityDiagramFactory3;
 import net.sourceforge.plantuml.api.PSystemFactory;
+import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.board.BoardDiagramFactory;
 import net.sourceforge.plantuml.bpm.BpmDiagramFactory;
 import net.sourceforge.plantuml.classdiagram.ClassDiagramFactory;
@@ -97,7 +98,7 @@ public class PSystemBuilder {
 
 	public static final long startTime = System.currentTimeMillis();
 
-	final public Diagram createPSystem(ISkinSimple skinParam, List<StringLocated> source,
+	final public Diagram createPSystem(ThemeStyle style, ISkinSimple skinParam, List<StringLocated> source,
 			List<StringLocated> rawSource) {
 
 		final long now = System.currentTimeMillis();
@@ -105,7 +106,7 @@ public class PSystemBuilder {
 		Diagram result = null;
 		try {
 			final DiagramType type = DiagramType.getTypeFromArobaseStart(source.get(0).getString());
-			final UmlSource umlSource = new UmlSource(source, type == DiagramType.UML, rawSource);
+			final UmlSource umlSource = UmlSource.createWithRaw(source, type == DiagramType.UML, rawSource);
 
 			for (StringLocated s : source) {
 				if (s.getPreprocessorError() != null) {
@@ -121,10 +122,10 @@ public class PSystemBuilder {
 			final DiagramType diagramType = umlSource.getDiagramType();
 			final List<PSystemError> errors = new ArrayList<>();
 			for (PSystemFactory systemFactory : factories) {
-				if (diagramType != systemFactory.getDiagramType()) {
+				if (diagramType != systemFactory.getDiagramType())
 					continue;
-				}
-				final Diagram sys = systemFactory.createSystem(umlSource, skinParam);
+
+				final Diagram sys = systemFactory.createSystem(style, umlSource, skinParam);
 				if (isOk(sys)) {
 					result = sys;
 					return sys;
@@ -132,9 +133,8 @@ public class PSystemBuilder {
 				errors.add((PSystemError) sys);
 			}
 
-			final PSystemError err = PSystemErrorUtils.merge(errors);
-			result = err;
-			return err;
+			result = PSystemErrorUtils.merge(errors);
+			return result;
 		} finally {
 			if (result != null && OptionFlags.getInstance().isEnableStats()) {
 				StatsUtilsIncrement.onceMoreParse(System.currentTimeMillis() - now, result.getClass());
@@ -211,9 +211,9 @@ public class PSystemBuilder {
 	}
 
 	private boolean isOk(Diagram ps) {
-		if (ps == null || ps instanceof PSystemError) {
+		if (ps == null || ps instanceof PSystemError)
 			return false;
-		}
+
 		return true;
 	}
 

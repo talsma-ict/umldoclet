@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -189,6 +189,6 @@ public interface ISkinParam extends ISkinSimple {
 
 	public LengthAdjust getlengthAdjust();
 
-	public void assumeTransparent(ThemeStyle style);
+	// public void assumeTransparent(ThemeStyle style);
 
 }

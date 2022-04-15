@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -68,6 +68,7 @@ import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.cucadiagram.dot.Neighborhood;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.USymbol;
+import net.sourceforge.plantuml.graphic.USymbols;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
@@ -572,7 +573,7 @@ final public class EntityImpl implements ILeaf, IGroup {
 
 	public USymbol getUSymbol() {
 		if (getLeafType() == LeafType.CIRCLE) {
-			return USymbol.INTERFACE;
+			return USymbols.INTERFACE;
 		}
 		// if (symbol != null && stereotype != null && stereotype.getSprite() != null) {
 		// return symbol.withStereoAlignment(HorizontalAlignment.RIGHT);
@@ -671,7 +672,7 @@ final public class EntityImpl implements ILeaf, IGroup {
 		final FontParam fontParam = getTitleFontParam();
 		final HColor fontHtmlColor = skinParam.getFontHtmlColor(getStereotype(), fontParam, FontParam.PACKAGE);
 		final UFont font = skinParam.getFont(getStereotype(), true, fontParam, FontParam.PACKAGE);
-		final FontConfiguration fontConfiguration = new FontConfiguration(font, fontHtmlColor,
+		final FontConfiguration fontConfiguration = FontConfiguration.create(font, fontHtmlColor,
 				skinParam.getHyperlinkColor(), skinParam.useUnderlineForHyperlink(), skinParam.getTabSize());
 		return fontConfiguration;
 	}

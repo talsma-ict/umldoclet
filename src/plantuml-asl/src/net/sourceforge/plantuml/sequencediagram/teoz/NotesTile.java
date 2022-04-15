@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.sequencediagram.teoz;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,7 +94,7 @@ public class NotesTile extends AbstractTile implements Tile {
 			final Component comp = getComponent(stringBounder, note);
 			final Dimension2D dim = comp.getPreferredDimension(stringBounder);
 			final double x = getX(stringBounder, note).getCurrentValue();
-			final Area area = new Area(getUsedWidth(stringBounder, note), dim.getHeight());
+			final Area area = Area.create(getUsedWidth(stringBounder, note), dim.getHeight());
 
 			final UGraphic ug2 = ug.apply(UTranslate.dx(x));
 			comp.drawU(ug2, area, (Context2D) ug2);

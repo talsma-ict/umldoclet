@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.salt.element;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.util.List;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
@@ -52,18 +52,19 @@ public class ElementImage extends AbstractElement {
 	}
 
 	public void drawU(UGraphic ug, int zIndex, Dimension2D dimToUse) {
-		if (zIndex != 0) {
+		if (zIndex != 0)
 			return;
-		}
+
+		ug = ug.apply(getBlack());
+
 		final int w = img.get(0).length();
 		final int h = img.size();
-		for (int i = 0; i < w; i++) {
+		for (int i = 0; i < w; i++)
 			for (int j = 0; j < h; j++) {
 				final char c = img.get(j).charAt(i);
-				if (c == 'X') {
+				if (c == 'X')
 					ug.apply(new UTranslate(i, j)).draw(new UPixel());
-				}
 			}
-		}
+
 	}
 }

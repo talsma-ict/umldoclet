@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.timingdiagram;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Comparator;
@@ -40,18 +40,24 @@ import java.util.TreeSet;
 
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.ThemeStyle;
+import net.sourceforge.plantuml.UseStyle;
+import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.style.PName;
+import net.sourceforge.plantuml.style.SName;
+import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorSet;
+import net.sourceforge.plantuml.ugraphic.color.HColorSimple;
 import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class TimingRuler {
@@ -65,19 +71,24 @@ public class TimingRuler {
 
 	private TimingFormat format = TimingFormat.DECIMAL;
 
-	static UGraphic applyForVLines(UGraphic ug) {
+	static UGraphic applyForVLines(UGraphic ug, Style style, ISkinParam skinParam) {
 		final UStroke stroke = new UStroke(3, 5, 0.5);
-		final HColor color = HColorSet.instance().getColorOrWhite(ThemeStyle.LIGHT, "#AAA");
+		final HColor color;
+		if (UseStyle.useBetaStyle())
+			color = style.value(PName.LineColor).asColor(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet());
+		else
+			color = HColorSet.instance().getColorOrWhite(ThemeStyle.LIGHT_REGULAR, "#AAA");
+
 		return ug.apply(stroke).apply(color);
 	}
 
 	public void ensureNotEmpty() {
-		if (times.size() == 0) {
+		if (times.size() == 0)
 			this.times.add(new TimeTick(BigDecimal.ZERO, TimingFormat.DECIMAL));
-		}
-		if (getMax().getTime().signum() > 0 && getMin().getTime().signum() < 0) {
+
+		if (getMax().getTime().signum() > 0 && getMin().getTime().signum() < 0)
 			this.times.add(new TimeTick(BigDecimal.ZERO, TimingFormat.DECIMAL));
-		}
+
 	}
 
 	public TimingRuler(ISkinParam skinParam) {
@@ -92,9 +103,9 @@ public class TimingRuler {
 	}
 
 	private long tickUnitary() {
-		if (tickUnitary == 0) {
+		if (tickUnitary == 0)
 			return highestCommonFactor();
-		}
+
 		return tickUnitary;
 
 	}
@@ -110,9 +121,9 @@ public class TimingRuler {
 					final long candidate = computeHighestCommonFactor(highestCommonFactorInternal, tick);
 					final double size = (getMax().getTime().doubleValue() - getMin().getTime().doubleValue())
 							/ candidate;
-					if (size > 200) {
+					if (size > 200)
 						return highestCommonFactorInternal;
-					}
+
 					highestCommonFactorInternal = candidate;
 				}
 			}
@@ -128,17 +139,17 @@ public class TimingRuler {
 		});
 		for (TimeTick time : times) {
 			final long value = Math.abs(time.getTime().longValue());
-			if (value > 0) {
+			if (value > 0)
 				result.add(value);
-			}
+
 		}
 		return result;
 	}
 
 	private int getNbTick() {
-		if (times.size() == 0) {
+		if (times.size() == 0)
 			return 1;
-		}
+
 		final long delta = getMax().getTime().longValue() - getMin().getTime().longValue();
 		return Math.min(1000, (int) (1 + delta / tickUnitary()));
 	}
@@ -165,13 +176,21 @@ public class TimingRuler {
 	public void addTime(TimeTick time) {
 		this.highestCommonFactorInternal = -1;
 		times.add(time);
-		if (time.getFormat() != TimingFormat.DECIMAL) {
+		if (time.getFormat() != TimingFormat.DECIMAL)
 			this.format = time.getFormat();
-		}
+
 	}
 
 	private FontConfiguration getFontConfiguration() {
-		return new FontConfiguration(skinParam, FontParam.TIMING, null);
+		if (UseStyle.useBetaStyle() == false)
+			return FontConfiguration.create(skinParam, FontParam.TIMING, null);
+
+		return FontConfiguration.create(skinParam, getStyle());
+	}
+
+	private Style getStyle() {
+		return StyleSignatureBasic.of(SName.root, SName.element, SName.timingDiagram, SName.timeline)
+				.getMergedStyle(skinParam.getCurrentStyleBuilder());
 	}
 
 	private TextBlock getTimeTextBlock(long time) {
@@ -180,7 +199,7 @@ public class TimingRuler {
 	}
 
 	public void drawTimeAxis(UGraphic ug) {
-		ug = ug.apply(new UStroke(2.0)).apply(HColorUtils.BLACK);
+		ug = ug.apply(new UStroke(2.0)).apply(black());
 		final double tickHeight = 5;
 		final ULine line = ULine.vline(tickHeight);
 		final double firstTickPosition = getPosInPixelInternal(getFirstPositiveOrZeroValue().doubleValue());
@@ -198,12 +217,21 @@ public class TimingRuler {
 		}
 	}
 
+	private HColor black() {
+		if (UseStyle.useBetaStyle() == false)
+			return HColorUtils.BLACK;
+
+		final Style style = StyleSignatureBasic.of(SName.root, SName.element, SName.timingDiagram)
+				.getMergedStyle(skinParam.getCurrentStyleBuilder());
+		return style.value(PName.LineColor).asColor(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet());
+
+	}
+
 	private BigDecimal getFirstPositiveOrZeroValue() {
-		for (TimeTick time : times) {
-			if (time.getTime().signum() >= 0) {
+		for (TimeTick time : times)
+			if (time.getTime().signum() >= 0)
 				return time.getTime();
-			}
-		}
+
 		throw new IllegalStateException();
 	}
 
@@ -221,19 +249,19 @@ public class TimingRuler {
 				result.add(round);
 			}
 		}
-		if (result.first() < 0 && result.last() > 0) {
+		if (result.first() < 0 && result.last() > 0)
 			result.add(0L);
-		}
+
 		return result;
 	}
 
 	public void drawVlines(UGraphic ug, double height) {
-		ug = applyForVLines(ug);
+		ug = applyForVLines(ug, getStyle(), skinParam);
 		final ULine line = ULine.vline(height);
 		final int nb = getNbTick();
-		for (int i = 0; i <= nb; i++) {
+		for (int i = 0; i <= nb; i++)
 			ug.apply(UTranslate.dx(tickIntervalInPixels * i)).draw(line);
-		}
+
 	}
 
 	public double getHeight(StringBounder stringBounder) {

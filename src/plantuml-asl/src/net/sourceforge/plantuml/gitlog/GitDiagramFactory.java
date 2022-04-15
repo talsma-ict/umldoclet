@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,6 +34,7 @@ import java.util.Iterator;
 
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.StringLocated;
+import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.command.PSystemAbstractFactory;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.DiagramType;
@@ -46,19 +47,19 @@ public class GitDiagramFactory extends PSystemAbstractFactory {
 	}
 
 	@Override
-	public Diagram createSystem(UmlSource source, ISkinSimple skinParam) {
+	public Diagram createSystem(ThemeStyle style, UmlSource source, ISkinSimple skinParam) {
 		final GitTextArea textArea = new GitTextArea();
 
 		final Iterator<StringLocated> it = source.iterator2();
 		it.next();
 		while (true) {
 			final String line = it.next().getString();
-			if (it.hasNext() == false) {
+			if (it.hasNext() == false)
 				break;
-			}
+
 			textArea.add(line);
 		}
-		return new GitDiagram(source, textArea);
+		return new GitDiagram(style, source, textArea);
 	}
 
 }

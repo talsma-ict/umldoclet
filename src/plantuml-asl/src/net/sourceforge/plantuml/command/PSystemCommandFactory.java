@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -38,6 +38,8 @@ import net.sourceforge.plantuml.ErrorUmlType;
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.StringLocated;
+import net.sourceforge.plantuml.annotation.HaxeIgnored;
+import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.DiagramType;
 import net.sourceforge.plantuml.core.UmlSource;
@@ -52,8 +54,9 @@ public abstract class PSystemCommandFactory extends PSystemAbstractFactory {
 
 	protected abstract List<Command> createCommands();
 
-	public abstract AbstractPSystem createEmptyDiagram(UmlSource source, ISkinSimple skinParam);
+	public abstract AbstractPSystem createEmptyDiagram(ThemeStyle style, UmlSource source, ISkinSimple skinParam);
 
+	@HaxeIgnored
 	protected PSystemCommandFactory() {
 		this(DiagramType.UML);
 	}
@@ -63,7 +66,7 @@ public abstract class PSystemCommandFactory extends PSystemAbstractFactory {
 	}
 
 	@Override
-	final public Diagram createSystem(UmlSource source, ISkinSimple skinParam) {
+	final public Diagram createSystem(ThemeStyle style, UmlSource source, ISkinSimple skinParam) {
 		final IteratorCounter2 it = source.iterator2();
 		final StringLocated startLine = it.next();
 		if (StartUtils.isArobaseStartDiagram(startLine.getString()) == false)
@@ -75,7 +78,7 @@ public abstract class PSystemCommandFactory extends PSystemAbstractFactory {
 
 			return buildEmptyError(source, startLine.getLocation(), it.getTrace());
 		}
-		AbstractPSystem sys = createEmptyDiagram(source, skinParam);
+		AbstractPSystem sys = createEmptyDiagram(style, source, skinParam);
 
 		while (it.hasNext()) {
 			if (StartUtils.isArobaseEndDiagram(it.peek().getString())) {
@@ -165,7 +168,7 @@ public abstract class PSystemCommandFactory extends PSystemAbstractFactory {
 	}
 
 	private BlocLines isMultilineCommandOk(IteratorCounter2 it, Command cmd) {
-		BlocLines lines = new BlocLines();
+		BlocLines lines = BlocLines.create();
 		int nb = 0;
 		while (it.hasNext()) {
 			lines = addOneSingleLineManageEmbedded2(it, lines);

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.graphic;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
@@ -111,15 +111,15 @@ public class GraphicStrings extends AbstractTextBlock implements IEntityImage {
 	}
 
 	public static FontConfiguration sansSerif12(HColor color) {
-		return new FontConfiguration(UFont.sansSerif(12), color, hyperlinkColor, useUnderlineForHyperlink);
+		return FontConfiguration.create(UFont.sansSerif(12), color, hyperlinkColor, useUnderlineForHyperlink);
 	}
 
 	public static FontConfiguration sansSerif14(HColor color) {
-		return new FontConfiguration(UFont.sansSerif(14), color, hyperlinkColor, useUnderlineForHyperlink);
+		return FontConfiguration.create(UFont.sansSerif(14), color, hyperlinkColor, useUnderlineForHyperlink);
 	}
 
 	private static FontConfiguration monospaced14(HColor color) {
-		return new FontConfiguration(UFont.monospaced(14), color, hyperlinkColor, useUnderlineForHyperlink);
+		return FontConfiguration.create(UFont.monospaced(14), color, hyperlinkColor, useUnderlineForHyperlink);
 	}
 
 	private final CreoleMode mode;

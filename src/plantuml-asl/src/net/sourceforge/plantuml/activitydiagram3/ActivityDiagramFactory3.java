@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -79,11 +79,12 @@ import net.sourceforge.plantuml.activitydiagram3.command.CommandSwimlane2;
 import net.sourceforge.plantuml.activitydiagram3.command.CommandSwitch;
 import net.sourceforge.plantuml.activitydiagram3.command.CommandWhile3;
 import net.sourceforge.plantuml.activitydiagram3.command.CommandWhileEnd3;
+import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.CommandDecoratorMultine;
 import net.sourceforge.plantuml.command.CommandFootboxIgnored;
-import net.sourceforge.plantuml.command.PSystemCommandFactory;
 import net.sourceforge.plantuml.command.CommonCommands;
+import net.sourceforge.plantuml.command.PSystemCommandFactory;
 import net.sourceforge.plantuml.core.UmlSource;
 
 public class ActivityDiagramFactory3 extends PSystemCommandFactory {
@@ -107,11 +108,11 @@ public class ActivityDiagramFactory3 extends PSystemCommandFactory {
 		cmds.add(new CommandActivity3());
 		cmds.add(new CommandIf4());
 		cmds.add(new CommandIf2());
-		cmds.add(new CommandDecoratorMultine(new CommandIf2(), 50));
+		cmds.add(CommandDecoratorMultine.create(new CommandIf2(), 50));
 		cmds.add(new CommandIfLegacy1());
 		cmds.add(new CommandElseIf2());
 		cmds.add(new CommandElse3());
-		cmds.add(new CommandDecoratorMultine(new CommandElse3(), 50));
+		cmds.add(CommandDecoratorMultine.create(new CommandElse3(), 50));
 		cmds.add(new CommandElseLegacy1());
 		cmds.add(new CommandEndif3());
 
@@ -150,14 +151,14 @@ public class ActivityDiagramFactory3 extends PSystemCommandFactory {
 
 		cmds.add(new CommandLabel());
 		cmds.add(new CommandGoto());
-		cmds.add(new CommandDecoratorMultine(new CommandElseIf2(), 50));
+		cmds.add(CommandDecoratorMultine.create(new CommandElseIf2(), 50));
 
 		return cmds;
 	}
 
 	@Override
-	public ActivityDiagram3 createEmptyDiagram(UmlSource source, ISkinSimple skinParam) {
-		return new ActivityDiagram3(source, skinParam);
+	public ActivityDiagram3 createEmptyDiagram(ThemeStyle style, UmlSource source, ISkinSimple skinParam) {
+		return new ActivityDiagram3(style, source, skinParam);
 	}
 
 }

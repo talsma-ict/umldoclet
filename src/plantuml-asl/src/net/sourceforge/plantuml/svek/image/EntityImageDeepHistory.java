@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,11 +33,12 @@ package net.sourceforge.plantuml.svek.image;
 
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.cucadiagram.ILeaf;
+import net.sourceforge.plantuml.style.SName;
 
 public class EntityImageDeepHistory extends EntityImagePseudoState {
 
-	public EntityImageDeepHistory(ILeaf entity, ISkinParam skinParam) {
-		super(entity, skinParam, "H*");
+	public EntityImageDeepHistory(ILeaf entity, ISkinParam skinParam, SName sname) {
+		super(entity, skinParam, "H*", sname);
 
 	}
 }

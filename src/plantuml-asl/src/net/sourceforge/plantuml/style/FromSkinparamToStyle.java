@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -41,12 +41,26 @@ import java.util.StringTokenizer;
 public class FromSkinparamToStyle {
 
 	static class Data {
-		final private PName propertyName;
 		final private SName[] styleNames;
+		final private PName propertyName;
 
-		Data(PName propertyName, SName[] styleNames) {
+		Data(SName[] styleNames, PName propertyName) {
 			this.propertyName = propertyName;
 			this.styleNames = styleNames;
+		}
+
+		@Override
+		public String toString() {
+			final StringBuilder sb = new StringBuilder();
+			sb.append("[");
+			for (SName s : styleNames) {
+				sb.append(s.toString());
+				sb.append(".");
+			}
+			sb.setLength(sb.length() - 1);
+			sb.append("]");
+			sb.append(propertyName.toString());
+			return sb.toString();
 		}
 	}
 
@@ -56,7 +70,7 @@ public class FromSkinparamToStyle {
 		addConvert("participantClickableBackgroundColor", PName.BackGroundColor, SName.participant, SName.clickable);
 		addConvert("participantClickableBorderColor", PName.LineColor, SName.participant, SName.clickable);
 		addMagic(SName.participant);
-		
+
 		addMagic(SName.boundary);
 		addMagic(SName.control);
 		addMagic(SName.collections);
@@ -64,9 +78,9 @@ public class FromSkinparamToStyle {
 		addMagic(SName.database);
 		addMagic(SName.entity);
 
-		addConFont("header", SName.header);
-		addConFont("footer", SName.footer);
-		
+		addConFont("header", SName.document, SName.header);
+		addConFont("footer", SName.document, SName.footer);
+
 		addConvert("defaultFontSize", PName.FontSize, SName.element);
 
 		addConvert("sequenceStereotypeFontSize", PName.FontSize, SName.stereotype);
@@ -103,17 +117,16 @@ public class FromSkinparamToStyle {
 		addConvert("packageBorderColor", PName.LineColor, SName.group);
 		addMagic(SName.package_);
 
-
 		addConvert("PartitionBorderColor", PName.LineColor, SName.partition);
 		addConvert("PartitionBackgroundColor", PName.BackGroundColor, SName.partition);
 		addConFont("Partition", SName.partition);
 
 		addConvert("hyperlinkColor", PName.HyperLinkColor, SName.root);
 
-		addConvert("activityStartColor", PName.LineColor, SName.circle);
+		addConvert("activityStartColor", PName.BackGroundColor, SName.circle, SName.start);
 		addConvert("activityEndColor", PName.LineColor, SName.circle, SName.end);
 		addConvert("activityStopColor", PName.LineColor, SName.circle, SName.stop);
-		addConvert("activityBarColor", PName.LineColor, SName.activityBar);
+		addConvert("activityBarColor", PName.BackGroundColor, SName.activityBar);
 		addConvert("activityBorderColor", PName.LineColor, SName.activity);
 		addConvert("activityBorderThickness", PName.LineThickness, SName.activity);
 		addConvert("activityBackgroundColor", PName.BackGroundColor, SName.activity);
@@ -129,6 +142,7 @@ public class FromSkinparamToStyle {
 
 		addConvert("defaulttextalignment", PName.HorizontalAlignment, SName.root);
 		addConvert("defaultFontName", PName.FontName, SName.root);
+		addConvert("defaultFontColor", PName.FontColor, SName.root);
 
 		addConFont("SwimlaneTitle", SName.swimlane);
 		addConvert("SwimlaneTitleBackgroundColor", PName.BackGroundColor, SName.swimlane);
@@ -153,11 +167,12 @@ public class FromSkinparamToStyle {
 
 		addConvert("BackgroundColor", PName.BackGroundColor, SName.document);
 
-		addConvert("classBackgroundColor", PName.BackGroundColor, SName.class_);
-		addConvert("classBorderColor", PName.LineColor, SName.class_);
-		addConFont("class", SName.class_);
-		addConFont("classAttribute", SName.class_);
-		addConvert("classBorderThickness", PName.LineThickness, SName.class_);
+		addConvert("classBackgroundColor", PName.BackGroundColor, SName.element, SName.class_);
+		addConvert("classBorderColor", PName.LineColor, SName.element, SName.class_);
+		addConFont("class", SName.element, SName.class_);
+		addConFont("classAttribute", SName.element, SName.class_);
+		addConvert("classBorderThickness", PName.LineThickness, SName.element, SName.class_);
+		addConvert("classHeaderBackgroundColor", PName.BackGroundColor, SName.element, SName.class_, SName.header);
 
 		addConvert("objectBackgroundColor", PName.BackGroundColor, SName.object);
 		addConvert("objectBorderColor", PName.LineColor, SName.object);
@@ -189,6 +204,7 @@ public class FromSkinparamToStyle {
 		addMagic(SName.storage);
 		addMagic(SName.usecase);
 		addMagic(SName.map);
+		addMagic(SName.archimate);
 
 	}
 
@@ -197,53 +213,118 @@ public class FromSkinparamToStyle {
 		addConvert(cleanName + "BackgroundColor", PName.BackGroundColor, sname);
 		addConvert(cleanName + "BorderColor", PName.LineColor, sname);
 		addConvert(cleanName + "BorderThickness", PName.LineThickness, sname);
+		addConvert(cleanName + "RoundCorner", PName.RoundCorner, sname);
+		addConvert(cleanName + "DiagonalCorner", PName.DiagonalCorner, sname);
+		addConvert(cleanName + "BorderStyle", PName.LineStyle, sname);
+		addConvert(cleanName + "StereotypeFontColor", PName.FontColor, SName.stereotype, sname);
 		addConFont(cleanName, sname);
 	}
 
 	private final List<Style> styles = new ArrayList<>();
-	private String stereo = null;
+	private final String stereo;
+	private final String key;
 
-	public FromSkinparamToStyle(String key, String value, final AutomaticCounter counter) {
-		if (value.equals("right:right")) {
-			value = "right";
-		}
+	public FromSkinparamToStyle(String key) {
+
 		if (key.contains("<<")) {
 			final StringTokenizer st = new StringTokenizer(key, "<>");
-			key = st.nextToken();
-			stereo = st.nextToken();
+			this.key = st.nextToken();
+			this.stereo = st.hasMoreTokens() ? st.nextToken() : null;
+		} else {
+			this.key = key;
+			this.stereo = null;
 		}
+
+	}
+
+	public void convertNow(String value, final AutomaticCounter counter) {
+		if (value.equalsIgnoreCase("right:right"))
+			value = "right";
+		if (value.equalsIgnoreCase("dotted"))
+			value = "1;3";
+		if (value.equalsIgnoreCase("dashed"))
+			value = "7;7";
 
 		final List<Data> datas = knowlegde.get(key.toLowerCase());
 
-		if (datas != null) {
-			for (Data data : datas) {
-				addStyle(data.propertyName, new ValueImpl(value, counter), data.styleNames);
-			}
-		} else if (key.equalsIgnoreCase("shadowing")) {
-			addStyle(PName.Shadowing, getShadowingValue(value, counter), SName.root);
-		} else if (key.equalsIgnoreCase("noteshadowing")) {
-			addStyle(PName.Shadowing, getShadowingValue(value, counter), SName.root, SName.note);
+		if (datas == null) {
+			if (key.equalsIgnoreCase("shadowing"))
+				addStyle(PName.Shadowing, getShadowingValue(value, counter), SName.root);
+			else if (key.equalsIgnoreCase("noteshadowing"))
+				addStyle(PName.Shadowing, getShadowingValue(value, counter), SName.root, SName.note);
+			return;
 		}
+
+		final boolean complex = isComplexValue(value);
+		if (complex) {
+			if (value.contains(";")) {
+				if (value.startsWith(";"))
+					value = " " + value;
+				final StringTokenizer st = new StringTokenizer(value, ";");
+				value = st.nextToken();
+				while (st.hasMoreTokens()) {
+					final String read = st.nextToken();
+					readValue(read, datas, counter);
+				}
+			} else {
+				readValue(value, datas, counter);
+				return;
+			}
+		}
+
+		if (" ".equals(value) == false)
+			for (Data data : datas)
+				addStyle(data.propertyName, ValueImpl.regular(value, counter), data.styleNames);
+
+	}
+
+	private void readValue(final String read, final List<Data> datas, final AutomaticCounter counter) {
+		if (read.startsWith("text:")) {
+			final String value2 = read.split(":")[1];
+			for (Data data : datas)
+				addStyle(PName.FontColor, ValueImpl.regular(value2, counter), data.styleNames);
+		} else if (read.startsWith("line.dotted")) {
+			for (Data data : datas)
+				addStyle(PName.LineStyle, ValueImpl.regular("1;3", counter), data.styleNames);
+		} else if (read.startsWith("line.dashed")) {
+			for (Data data : datas)
+				addStyle(PName.LineStyle, ValueImpl.regular("7;7", counter), data.styleNames);
+		} else if (read.toLowerCase().contains("bold")) {
+			for (Data data : datas)
+				addStyle(PName.LineThickness, ValueImpl.regular("2", counter), data.styleNames);
+		}
+	}
+
+	private boolean isComplexValue(String value) {
+		if (value.contains(";"))
+			return true;
+		if (value.startsWith("text:"))
+			return true;
+		return false;
 	}
 
 	private ValueImpl getShadowingValue(final String value, final AutomaticCounter counter) {
-		if (value.equalsIgnoreCase("false") || value.equalsIgnoreCase("no")) {
-			return new ValueImpl("0", counter);
-		}
-		if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("yes")) {
-			return new ValueImpl("3", counter);
-		}
-		return new ValueImpl(value, counter);
+		if (value.equalsIgnoreCase("false") || value.equalsIgnoreCase("no"))
+			return ValueImpl.regular("0", counter);
+
+		if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("yes"))
+			return ValueImpl.regular("3", counter);
+
+		return ValueImpl.regular(value, counter);
 	}
 
 	private void addStyle(PName propertyName, Value value, SName... styleNames) {
-		final Map<PName, Value> map = new EnumMap<PName, Value>(PName.class);
+		Map<PName, Value> map = new EnumMap<PName, Value>(PName.class);
 		map.put(propertyName, value);
-		StyleSignature sig = StyleSignature.of(styleNames);
+		StyleSignatureBasic sig = StyleSignatureBasic.of(styleNames);
 		if (stereo != null) {
-			sig = sig.add(stereo);
+			map = StyleLoader.addPriorityForStereotype(map);
+			for (String s : stereo.split("\\&"))
+				sig = sig.add(s);
 		}
-		styles.add(new Style(sig, map));
+
+		final Style style = new Style(sig, map);
+		styles.add(style);
 	}
 
 	public List<Style> getStyles() {
@@ -257,7 +338,7 @@ public class FromSkinparamToStyle {
 			datas = new ArrayList<>();
 			knowlegde.put(skinparam, datas);
 		}
-		datas.add(new Data(propertyName, styleNames));
+		datas.add(new Data(styleNames, propertyName));
 	}
 
 	private static void addConFont(String skinparam, SName... styleNames) {

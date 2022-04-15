@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.graphic;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.style.SName;
@@ -103,7 +103,7 @@ class USymbolRectangle extends USymbol {
 				final Dimension2D dim = calculateDimension(ug.getStringBounder());
 				ug = symbolContext.apply(ug);
 				drawRect(ug, dim.getWidth(), dim.getHeight(), symbolContext.getDeltaShadow(),
-						symbolContext.getRoundCorner(), 0);
+						symbolContext.getRoundCorner(), symbolContext.getDiagonalCorner());
 				final Dimension2D dimStereo = stereotype.calculateDimension(ug.getStringBounder());
 				final double posStereoX;
 				final double posStereoY;
@@ -117,13 +117,13 @@ class USymbolRectangle extends USymbol {
 				stereotype.drawU(ug.apply(new UTranslate(posStereoX, posStereoY)));
 				final Dimension2D dimTitle = title.calculateDimension(ug.getStringBounder());
 				final double posTitle;
-				if (labelAlignment == HorizontalAlignment.LEFT) {
+				if (labelAlignment == HorizontalAlignment.LEFT)
 					posTitle = 3;
-				} else if (labelAlignment == HorizontalAlignment.RIGHT) {
+				else if (labelAlignment == HorizontalAlignment.RIGHT)
 					posTitle = width - dimTitle.getWidth() - 3;
-				} else {
+				else
 					posTitle = (width - dimTitle.getWidth()) / 2;
-				}
+
 				title.drawU(ug.apply(new UTranslate(posTitle, 2 + dimStereo.getHeight())));
 			}
 

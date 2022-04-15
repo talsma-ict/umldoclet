@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.salt.element;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinSimple;
@@ -42,7 +42,6 @@ import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UPath;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class ElementPyramidScrolled extends ElementPyramid {
 
@@ -50,7 +49,8 @@ public class ElementPyramidScrolled extends ElementPyramid {
 	private final double v2 = 12;
 	private final ScrollStrategy scrollStrategy;
 
-	public ElementPyramidScrolled(Positionner2 positionner, ISkinSimple spriteContainer, ScrollStrategy scrollStrategy) {
+	public ElementPyramidScrolled(Positionner2 positionner, ISkinSimple spriteContainer,
+			ScrollStrategy scrollStrategy) {
 		super(positionner, TableStrategy.DRAW_OUTSIDE, null, spriteContainer);
 		this.scrollStrategy = scrollStrategy;
 	}
@@ -58,25 +58,26 @@ public class ElementPyramidScrolled extends ElementPyramid {
 	@Override
 	public Dimension2D getPreferredDimension(StringBounder stringBounder, double x, double y) {
 		final Dimension2D result = super.getPreferredDimension(stringBounder, x, y);
-		if (scrollStrategy == ScrollStrategy.HORIZONTAL_ONLY) {
+		if (scrollStrategy == ScrollStrategy.HORIZONTAL_ONLY)
 			return Dimension2DDouble.delta(result, 0, 30);
-		}
-		if (scrollStrategy == ScrollStrategy.VERTICAL_ONLY) {
+
+		if (scrollStrategy == ScrollStrategy.VERTICAL_ONLY)
 			return Dimension2DDouble.delta(result, 30, 0);
-		}
+
 		return Dimension2DDouble.delta(result, 30);
 	}
 
 	@Override
 	public void drawU(UGraphic ug, int zIndex, Dimension2D dimToUse) {
 		super.drawU(ug, zIndex, dimToUse);
+		ug = ug.apply(getBlack());
 		final Dimension2D dim = super.getPreferredDimension(ug.getStringBounder(), 0, 0);
-		if (scrollStrategy == ScrollStrategy.BOTH || scrollStrategy == ScrollStrategy.VERTICAL_ONLY) {
+		if (scrollStrategy == ScrollStrategy.BOTH || scrollStrategy == ScrollStrategy.VERTICAL_ONLY)
 			drawV(ug.apply(UTranslate.dx(dim.getWidth() + 4)), v1, dim.getHeight());
-		}
-		if (scrollStrategy == ScrollStrategy.BOTH || scrollStrategy == ScrollStrategy.HORIZONTAL_ONLY) {
+
+		if (scrollStrategy == ScrollStrategy.BOTH || scrollStrategy == ScrollStrategy.HORIZONTAL_ONLY)
 			drawH(ug.apply(UTranslate.dy(dim.getHeight() + 4)), dim.getWidth(), v1);
-		}
+
 	}
 
 	private UPath getTr0() {
@@ -123,16 +124,16 @@ public class ElementPyramidScrolled extends ElementPyramid {
 		ug.draw(new URectangle(width, height));
 		ug.apply(UTranslate.dy(v2)).draw(ULine.hline(width));
 		ug.apply(UTranslate.dy(height - v2)).draw(ULine.hline(width));
-		ug.apply(new UTranslate(4, 4)).apply(HColorUtils.BLACK.bg()).draw(getTr0());
-		ug.apply(new UTranslate(4, height - v2 + 4)).apply(HColorUtils.BLACK.bg()).draw(getTr180());
+		ug.apply(new UTranslate(4, 4)).apply(getBlack().bg()).draw(getTr0());
+		ug.apply(new UTranslate(4, height - v2 + 4)).apply(getBlack().bg()).draw(getTr180());
 	}
 
 	private void drawH(UGraphic ug, double width, double height) {
 		ug.draw(new URectangle(width, height));
 		ug.apply(UTranslate.dx(v2)).draw(ULine.vline(height));
 		ug.apply(UTranslate.dx(width - v2)).draw(ULine.vline(height));
-		ug.apply(new UTranslate(4, 4)).apply(HColorUtils.BLACK.bg()).draw(getTr90());
-		ug.apply(new UTranslate(width - v2 + 4, 4)).apply(HColorUtils.BLACK.bg()).draw(getTr270());
+		ug.apply(new UTranslate(4, 4)).apply(getBlack().bg()).draw(getTr90());
+		ug.apply(new UTranslate(width - v2 + 4, 4)).apply(getBlack().bg()).draw(getTr270());
 	}
 
 }

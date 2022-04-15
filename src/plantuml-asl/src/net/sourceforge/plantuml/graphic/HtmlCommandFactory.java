@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,10 +32,10 @@ package net.sourceforge.plantuml.graphic;
 
 import java.util.EnumSet;
 
-import net.sourceforge.plantuml.ThemeStyle;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.UrlBuilder;
-import net.sourceforge.plantuml.UrlBuilder.ModeUrl;
+import net.sourceforge.plantuml.UrlMode;
+import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.command.regex.MyPattern;
 import net.sourceforge.plantuml.command.regex.Pattern2;
 
@@ -76,7 +76,7 @@ class HtmlCommandFactory {
 		}
 
 		if (addStyle.matcher(s).matches()) {
-			return new AddStyle(s);
+			return AddStyle.fromString(s);
 		}
 		if (removeStyle.matcher(s).matches()) {
 			return new RemoveStyle(FontStyle.getStyle(s));
@@ -119,7 +119,7 @@ class HtmlCommandFactory {
 		}
 
 		if (MyPattern.mtches(s, Splitter.linkPattern)) {
-			final UrlBuilder urlBuilder = new UrlBuilder(null, ModeUrl.STRICT);
+			final UrlBuilder urlBuilder = new UrlBuilder(null, UrlMode.STRICT);
 			final Url url = urlBuilder.getUrl(s);
 			url.setMember(true);
 			return new TextLink(url);

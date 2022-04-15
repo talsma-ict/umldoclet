@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -28,10 +28,17 @@
  *
  * Original Author:  Arnaud Roques
  */
-package net.sourceforge.plantuml;
+package net.sourceforge.plantuml.awt;
 
-public enum ThemeStyle {
+import java.awt.Graphics2D;
 
-	DARK, LIGHT
+import net.sourceforge.plantuml.awt.geom.Rectangle2D;
+
+public class FontMetrics {
+
+	public Rectangle2D getStringBounds(String s, Graphics2D g2d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -31,6 +31,7 @@
 package net.sourceforge.plantuml.activitydiagram3;
 
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
+import net.sourceforge.plantuml.annotation.HaxeIgnored;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
@@ -44,7 +45,7 @@ public class PositionedNote {
 	private final Colors colors;
 	private final Swimlane swimlaneNote;
 
-	public PositionedNote(Display display, NotePosition position, NoteType type, Colors colors, Swimlane swimlaneNote) {
+	public PositionedNote(Display display, NotePosition position, NoteType type, Swimlane swimlaneNote, Colors colors) {
 		this.display = display;
 		this.notePosition = position;
 		this.type = type;
@@ -52,13 +53,14 @@ public class PositionedNote {
 		this.swimlaneNote = swimlaneNote;
 	}
 
+	@HaxeIgnored
+	public PositionedNote(Display note, NotePosition position, NoteType type, Swimlane swimlaneNote) {
+		this(note, position, type, swimlaneNote, null);
+	}
+
 	@Override
 	public String toString() {
 		return "type=" + type + " notePosition=" + notePosition + " " + display;
-	}
-
-	public PositionedNote(Display note, NotePosition position, NoteType type, Swimlane swimlaneNote) {
-		this(note, position, type, null, swimlaneNote);
 	}
 
 	public Display getDisplay() {

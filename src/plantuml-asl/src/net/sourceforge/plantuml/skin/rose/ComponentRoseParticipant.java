@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -91,7 +91,10 @@ public class ComponentRoseParticipant extends AbstractTextualComponent {
 	protected void drawInternalU(UGraphic ug, Area area) {
 		final StringBounder stringBounder = ug.getStringBounder();
 		ug = ug.apply(UTranslate.dx(padding));
-		ug = ug.apply(back.bg()).apply(foregroundColor);
+		if (foregroundColor != null)
+			ug = ug.apply(foregroundColor);
+		if (back != null)
+			ug = ug.apply(back.bg());
 		ug = ug.apply(stroke);
 		final Shadowable rect = new URectangle(getTextWidth(stringBounder), getTextHeight(stringBounder))
 				.rounded(roundCorner).diagonalCorner(diagonalCorner);

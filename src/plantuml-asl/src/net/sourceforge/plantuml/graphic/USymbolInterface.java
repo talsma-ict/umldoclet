@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -39,13 +39,12 @@ public class USymbolInterface extends USymbolSimpleAbstract {
 	public SkinParameter getSkinParameter() {
 		return SkinParameter.INTERFACE;
 	}
-	
+
 	@Override
 	public SName getSName() {
 		return SName.interface_;
 	}
 
-	
 	@Override
 	protected TextBlock getDrawing(SymbolContext symbolContext) {
 		return new CircleInterface2(symbolContext.getBackColor(), symbolContext.getForeColor(),

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -35,6 +35,7 @@ import java.util.Objects;
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagramType;
+import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
 import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.cucadiagram.Code;
@@ -42,11 +43,12 @@ import net.sourceforge.plantuml.cucadiagram.ILeaf;
 import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.graphic.USymbol;
+import net.sourceforge.plantuml.graphic.USymbols;
 
 public class DescriptionDiagram extends AbstractEntityDiagram {
 
-	public DescriptionDiagram(UmlSource source, ISkinSimple skinParam) {
-		super(source, UmlDiagramType.DESCRIPTION, skinParam);
+	public DescriptionDiagram(ThemeStyle style, UmlSource source, ISkinSimple skinParam) {
+		super(style, source, UmlDiagramType.DESCRIPTION, skinParam);
 	}
 
 	@Override
@@ -86,7 +88,7 @@ public class DescriptionDiagram extends AbstractEntityDiagram {
 				codeString = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(codeString);
 				final Ident idNewLong = buildLeafIdent(codeString);
 				final Code code99 = this.V1972() ? idNewLong : buildCode(codeString);
-				return getOrCreateLeafDefault(idNewLong, code99, LeafType.DESCRIPTION, USymbol.INTERFACE);
+				return getOrCreateLeafDefault(idNewLong, code99, LeafType.DESCRIPTION, USymbols.INTERFACE);
 			}
 			final String tmp4 = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(code.getName(), "\"([:");
 			final Ident idNewLong = ident.eventuallyRemoveStartingAndEndingDoubleQuote("\"([:");
@@ -111,7 +113,7 @@ public class DescriptionDiagram extends AbstractEntityDiagram {
 	public void makeDiagramReady() {
 		super.makeDiagramReady();
 		final LeafType defaultType = isUsecase() ? LeafType.DESCRIPTION : LeafType.DESCRIPTION;
-		final USymbol defaultSymbol = isUsecase() ? getSkinParam().actorStyle().toUSymbol() : USymbol.INTERFACE;
+		final USymbol defaultSymbol = isUsecase() ? getSkinParam().actorStyle().toUSymbol() : USymbols.INTERFACE;
 		for (ILeaf leaf : getLeafsvalues()) {
 			if (leaf.getLeafType() == LeafType.STILL_UNKNOWN) {
 				leaf.muteToType(defaultType, defaultSymbol);

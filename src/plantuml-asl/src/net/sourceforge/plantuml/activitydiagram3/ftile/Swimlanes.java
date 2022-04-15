@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,18 +30,14 @@
  */
 package net.sourceforge.plantuml.activitydiagram3.ftile;
 
-import java.awt.geom.Dimension2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import net.sourceforge.plantuml.ColorParam;
-import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.LineBreakStrategy;
 import net.sourceforge.plantuml.Pragma;
-import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.activitydiagram3.Instruction;
 import net.sourceforge.plantuml.activitydiagram3.InstructionList;
 import net.sourceforge.plantuml.activitydiagram3.LinkRendering;
@@ -58,6 +54,7 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.UGraphicIntercep
 import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.VCompactFactory;
 import net.sourceforge.plantuml.activitydiagram3.gtile.GConnection;
 import net.sourceforge.plantuml.activitydiagram3.gtile.Gtile;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
@@ -70,7 +67,7 @@ import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.style.Styleable;
 import net.sourceforge.plantuml.svek.UGraphicForSnake;
 import net.sourceforge.plantuml.ugraphic.LimitFinder;
@@ -95,7 +92,7 @@ public class Swimlanes extends AbstractTextBlock implements TextBlock, Styleable
 	private final List<LaneDivider> dividers = new ArrayList<>();
 	private Swimlane currentSwimlane = null;
 
-	private final Instruction root = new InstructionList();
+	private final Instruction root = InstructionList.empty();
 	private Instruction currentInstruction = root;
 
 	private LinkRendering nextLinkRenderer = LinkRendering.none();
@@ -115,8 +112,8 @@ public class Swimlanes extends AbstractTextBlock implements TextBlock, Styleable
 		return Collections.unmodifiableList(swimlanesSpecial);
 	}
 
-	public StyleSignature getDefaultStyleDefinition() {
-		return StyleSignature.of(SName.root, SName.element, SName.activityDiagram, SName.swimlane);
+	public StyleSignatureBasic getStyleSignature() {
+		return StyleSignatureBasic.of(SName.root, SName.element, SName.activityDiagram, SName.swimlane);
 	}
 
 	public Swimlanes(ISkinParam skinParam, Pragma pragma) {
@@ -126,7 +123,7 @@ public class Swimlanes extends AbstractTextBlock implements TextBlock, Styleable
 
 	protected Style getStyle() {
 		if (style == null) {
-			this.style = getDefaultStyleDefinition().getMergedStyle(skinParam.getCurrentStyleBuilder());
+			this.style = getStyleSignature().getMergedStyle(skinParam.getCurrentStyleBuilder());
 		}
 		return style;
 	}
@@ -210,7 +207,7 @@ public class Swimlanes extends AbstractTextBlock implements TextBlock, Styleable
 	}
 
 	public final void computeSize(StringBounder stringBounder) {
-		final SlotFinder ug = new SlotFinder(CompressionMode.ON_Y, stringBounder);
+		final SlotFinder ug = SlotFinder.create(CompressionMode.ON_Y, stringBounder);
 		if (swimlanes().size() > 1) {
 			TextBlock full = root.createFtile(getFtileFactory(stringBounder));
 			computeSizeInternal(ug, full);
@@ -253,24 +250,21 @@ public class Swimlanes extends AbstractTextBlock implements TextBlock, Styleable
 
 	private TextBlock getTitle(Swimlane swimlane) {
 		final HorizontalAlignment horizontalAlignment = HorizontalAlignment.LEFT;
-		FontConfiguration fontConfiguration = new FontConfiguration(skinParam, FontParam.SWIMLANE_TITLE, null);
-		if (UseStyle.useBetaStyle()) {
-			fontConfiguration = getStyle().getFontConfiguration(skinParam.getThemeStyle(),
-					skinParam.getIHtmlColorSet());
-		}
+		final FontConfiguration fontConfiguration = getStyle().getFontConfiguration(skinParam.getThemeStyle(),
+				skinParam.getIHtmlColorSet());
+
 		LineBreakStrategy wrap = getWrap();
-		if (wrap.isAuto()) {
+		if (wrap.isAuto())
 			wrap = new LineBreakStrategy("" + ((int) swimlane.getActualWidth()));
-		}
 
 		return swimlane.getDisplay().create9(fontConfiguration, horizontalAlignment, skinParam, wrap);
 	}
 
 	private LineBreakStrategy getWrap() {
 		LineBreakStrategy wrap = skinParam.swimlaneWrapTitleWidth();
-		if (wrap == LineBreakStrategy.NONE) {
+		if (wrap == LineBreakStrategy.NONE)
 			wrap = skinParam.wrapWidth();
-		}
+
 		return wrap;
 	}
 
@@ -328,11 +322,9 @@ public class Swimlanes extends AbstractTextBlock implements TextBlock, Styleable
 	}
 
 	private void drawTitlesBackground(UGraphic ug) {
-		HColor color = skinParam.getHtmlColor(ColorParam.swimlaneTitleBackground, null, false);
-		if (UseStyle.useBetaStyle()) {
-			color = getStyle().value(PName.BackGroundColor).asColor(skinParam.getThemeStyle(),
-					skinParam.getIHtmlColorSet());
-		}
+		final HColor color = getStyle().value(PName.BackGroundColor).asColor(skinParam.getThemeStyle(),
+				skinParam.getIHtmlColorSet());
+
 		if (color != null) {
 			final double titleHeight = getTitlesHeight(ug.getStringBounder());
 			double fullWidth = swimlanesSpecial().get(swimlanesSpecial().size() - 1).getTranslate().getDx() - 2 * 5 - 1;
@@ -354,7 +346,7 @@ public class Swimlanes extends AbstractTextBlock implements TextBlock, Styleable
 	private void computeDrawingWidths(UGraphic ug, TextBlock full) {
 		final StringBounder stringBounder = ug.getStringBounder();
 		for (Swimlane swimlane : swimlanes()) {
-			final LimitFinder limitFinder = new LimitFinder(stringBounder, false);
+			final LimitFinder limitFinder = LimitFinder.create(stringBounder, false);
 			final UGraphicInterceptorOneSwimlane interceptor = new UGraphicInterceptorOneSwimlane(
 					new UGraphicForSnake(limitFinder), swimlane, swimlanes());
 			full.drawU(interceptor);

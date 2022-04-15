@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -46,7 +46,7 @@ public class DriverAtomTextTikz implements UDriver<AtomText, TikzGraphics> {
 		final FontConfiguration fontConfiguration = text.getFontConfiguration();
 		final UFont font = fontConfiguration.getFont();
 		final HColor col = fontConfiguration.getColor();
-		tikz.setStrokeColor(mapper.toColor(col));
+		tikz.setStrokeColor(col);
 		final boolean underline = fontConfiguration.containsStyle(FontStyle.UNDERLINE);
 		final boolean italic = font.isItalic();
 		final boolean bold = font.isBold();

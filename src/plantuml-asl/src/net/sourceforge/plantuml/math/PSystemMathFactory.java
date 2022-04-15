@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,6 +30,7 @@
  */
 package net.sourceforge.plantuml.math;
 
+import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.command.PSystemBasicFactory;
 import net.sourceforge.plantuml.core.DiagramType;
 import net.sourceforge.plantuml.core.UmlSource;
@@ -41,16 +42,15 @@ public class PSystemMathFactory extends PSystemBasicFactory<PSystemMath> {
 	}
 
 	@Override
-	public PSystemMath initDiagram(UmlSource source, String startLine) {
-		if (getDiagramType() == DiagramType.MATH) {
+	public PSystemMath initDiagram(ThemeStyle style, UmlSource source, String startLine) {
+		if (getDiagramType() == DiagramType.MATH)
 			return new PSystemMath(source);
-		}
 
 		return null;
 	}
 
 	@Override
-	public PSystemMath executeLine(UmlSource source, PSystemMath system, String line) {
+	public PSystemMath executeLine(ThemeStyle style, UmlSource source, PSystemMath system, String line) {
 		system.doCommandLine(line);
 		return system;
 	}
