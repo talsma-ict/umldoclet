@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -36,7 +36,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -61,6 +61,7 @@ import net.sourceforge.plantuml.LineParam;
 import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.Scale;
 import net.sourceforge.plantuml.SvgCharSizeHack;
+import net.sourceforge.plantuml.Pragma;
 import net.sourceforge.plantuml.TitledDiagram;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.UseStyle;
@@ -82,7 +83,7 @@ import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.svek.TextBlockBackcolored;
 import net.sourceforge.plantuml.svg.LengthAdjust;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
@@ -267,7 +268,8 @@ public class ImageBuilder {
 				/ 96.0;
 		if (scaleFactor <= 0)
 			throw new IllegalStateException("Bad scaleFactor");
-		UGraphic ug = createUGraphic(fileFormatOption, dim, animationArg, dx, dy, scaleFactor);
+		UGraphic ug = createUGraphic(fileFormatOption, dim, animationArg, dx, dy, scaleFactor,
+				titledDiagram == null ? new Pragma() : titledDiagram.getPragma());
 		maybeDrawBorder(ug, dim);
 		if (randomPixel) {
 			drawRandomPoint(ug);
@@ -319,7 +321,7 @@ public class ImageBuilder {
 
 	private Dimension2D getFinalDimension() {
 		if (dimension == null) {
-			final LimitFinder limitFinder = new LimitFinder(stringBounder, true);
+			final LimitFinder limitFinder = LimitFinder.create(stringBounder, true);
 			udrawable.drawU(limitFinder);
 			dimension = new Dimension2DDouble(limitFinder.getMaxX() + 1 + margin.getLeft() + margin.getRight(),
 					limitFinder.getMaxY() + 1 + margin.getTop() + margin.getBottom());
@@ -396,12 +398,13 @@ public class ImageBuilder {
 	}
 
 	private UGraphic createUGraphic(FileFormatOption option, final Dimension2D dim, Animation animationArg, double dx,
-			double dy, double scaleFactor) {
+			double dy, double scaleFactor, Pragma pragma) {
 		switch (option.getFileFormat()) {
 		case PNG:
 			return createUGraphicPNG(scaleFactor, dim, animationArg, dx, dy, option.getWatermark());
 		case SVG:
-			return createUGraphicSVG(scaleFactor, dim);
+			final boolean interactive = "true".equalsIgnoreCase(pragma.getValue("svginteractive"));
+			return createUGraphicSVG(scaleFactor, dim, interactive);
 		case EPS:
 			return new UGraphicEps(backcolor, colorMapper, stringBounder, EpsStrategy.getDefault2());
 		case EPS_TEXT:
@@ -427,14 +430,14 @@ public class ImageBuilder {
 		}
 	}
 
-	private UGraphic createUGraphicSVG(double scaleFactor, Dimension2D dim) {
+	private UGraphic createUGraphicSVG(double scaleFactor, Dimension2D dim, boolean interactive) {
 		final String hoverPathColorRGB = getHoverPathColorRGB();
 		final LengthAdjust lengthAdjust = skinParam == null ? LengthAdjust.defaultValue() : skinParam.getlengthAdjust();
 		final String preserveAspectRatio = getPreserveAspectRatio();
 		final boolean svgDimensionStyle = skinParam == null || skinParam.svgDimensionStyle();
 		final String svgLinkTarget = getSvgLinkTarget();
 		final UGraphicSvg ug = new UGraphicSvg(backcolor, svgDimensionStyle, dim, colorMapper, false, scaleFactor,
-				svgLinkTarget, hoverPathColorRGB, seed, preserveAspectRatio, stringBounder, lengthAdjust);
+				svgLinkTarget, hoverPathColorRGB, seed, preserveAspectRatio, stringBounder, lengthAdjust, interactive);
 		return ug;
 
 	}
@@ -492,7 +495,7 @@ public class ImageBuilder {
 
 	private static ClockwiseTopRightBottomLeft calculateMargin(TitledDiagram diagram) {
 		if (UseStyle.useBetaStyle()) {
-			final Style style = StyleSignature.of(SName.root, SName.document)
+			final Style style = StyleSignatureBasic.of(SName.root, SName.document)
 					.getMergedStyle(diagram.getSkinParam().getCurrentStyleBuilder());
 			if (style.hasValue(PName.Margin)) {
 				return style.getMargin();

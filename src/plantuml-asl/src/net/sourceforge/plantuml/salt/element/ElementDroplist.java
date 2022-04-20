@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.salt.element;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -47,7 +47,6 @@ import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class ElementDroplist extends AbstractElementText implements Element {
@@ -87,8 +86,10 @@ public class ElementDroplist extends AbstractElementText implements Element {
 
 	public void drawU(UGraphic ug, int zIndex, Dimension2D dimToUse) {
 		final Dimension2D dim = getPreferredDimension(ug.getStringBounder(), 0, 0);
+		ug = ug.apply(getBlack());
+		
 		if (zIndex == 0) {
-			ug.apply(HColorSet.instance().getColorOrWhite(getThemeStyle(), "#EEEEEE").bg())
+			ug.apply(getColorEE().bg())
 					.draw(new URectangle(dim.getWidth() - 1, dim.getHeight() - 1));
 			drawText(ug, 2, 2);
 			final double xline = dim.getWidth() - box;
@@ -107,7 +108,7 @@ public class ElementDroplist extends AbstractElementText implements Element {
 			final Dimension2D dimOpen = Dimension2DDouble.atLeast(openDrop.calculateDimension(ug.getStringBounder()),
 					dim.getWidth() - 1, 0);
 			ug = ug.apply(UTranslate.dy(dim.getHeight() - 1));
-			ug.apply(HColorSet.instance().getColorOrWhite(getThemeStyle(), "#EEEEEE").bg())
+			ug.apply(getColorEE().bg())
 					.draw(new URectangle(dimOpen.getWidth() - 1, dimOpen.getHeight() - 1));
 			openDrop.drawU(ug);
 		}

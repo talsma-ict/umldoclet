@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -44,10 +44,6 @@ public class CircleInterface implements UDrawable {
 	private final double headDiam;
 	private final HColor backgroundColor;
 	private final HColor foregroundColor;
-
-	public CircleInterface(HColor backgroundColor, HColor foregroundColor) {
-		this(backgroundColor, foregroundColor, 16, 2);
-	}
 
 	public CircleInterface(HColor backgroundColor, HColor foregroundColor, double headDiam, float thickness) {
 		this.backgroundColor = backgroundColor;

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -52,7 +52,7 @@ import net.sourceforge.plantuml.posimo.DotPath;
 import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.svek.extremity.ExtremityFactory;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -110,7 +110,7 @@ public class SmetanaPath implements UDrawable {
 		HColor color;
 
 		if (UseStyle.useBetaStyle()) {
-			color = StyleSignature.of(SName.root, SName.element, diagram.getUmlDiagramType().getStyleName(), SName.arrow)
+			color = StyleSignatureBasic.of(SName.root, SName.element, diagram.getUmlDiagramType().getStyleName(), SName.arrow)
 					.getMergedStyle(diagram.getSkinParam().getCurrentStyleBuilder())
 					.value(PName.LineColor)
 					.asColor(diagram.getSkinParam().getThemeStyle(), diagram.getSkinParam().getIHtmlColorSet());

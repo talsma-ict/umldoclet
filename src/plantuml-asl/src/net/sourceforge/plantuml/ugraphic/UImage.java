@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -88,6 +88,10 @@ public class UImage implements UShape {
 
 	public UImage muteTransparentColor(Color newColor) {
 		return new UImage(image.muteTransparentColor(newColor), rawFileName, formula);
+	}
+
+	public UImage monochrome() {
+		return new UImage(image.monochrome(), rawFileName, formula);
 	}
 
 }

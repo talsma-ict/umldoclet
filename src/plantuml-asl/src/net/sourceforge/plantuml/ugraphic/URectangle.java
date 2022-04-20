@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -31,7 +31,7 @@
  */
 package net.sourceforge.plantuml.ugraphic;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.ugraphic.comp.CompressionMode;
 
@@ -71,12 +71,12 @@ public class URectangle extends AbstractShadowable implements UShapeSized, UShap
 	}
 
 	public Shadowable diagonalCorner(double diagonalCorner) {
-		if (ignoreForCompressionOnX || ignoreForCompressionOnY) {
+		if (ignoreForCompressionOnX || ignoreForCompressionOnY)
 			throw new IllegalStateException();
-		}
-		if (diagonalCorner == 0) {
+
+		if (diagonalCorner == 0)
 			return this;
-		}
+
 		final UPath result = new UPath();
 		result.moveTo(diagonalCorner, 0);
 		result.lineTo(width - diagonalCorner, 0);
@@ -108,12 +108,12 @@ public class URectangle extends AbstractShadowable implements UShapeSized, UShap
 
 	private URectangle(double width, double height, double rx, double ry, String comment,
 			boolean ignoreForCompressionOnX, boolean ignoreForCompressionOnY, String codeLine) {
-		if (height == 0) {
+		if (height == 0)
 			throw new IllegalArgumentException("height=" + height);
-		}
-		if (width == 0) {
+
+		if (width == 0)
 			throw new IllegalArgumentException("width=" + width);
-		}
+
 		this.ignoreForCompressionOnX = ignoreForCompressionOnX;
 		this.ignoreForCompressionOnY = ignoreForCompressionOnY;
 		this.comment = comment;
@@ -178,12 +178,12 @@ public class URectangle extends AbstractShadowable implements UShapeSized, UShap
 	}
 
 	public boolean isIgnoreForCompressionOn(CompressionMode mode) {
-		if (mode == CompressionMode.ON_X) {
+		if (mode == CompressionMode.ON_X)
 			return ignoreForCompressionOnX;
-		}
-		if (mode == CompressionMode.ON_Y) {
+
+		if (mode == CompressionMode.ON_Y)
 			return ignoreForCompressionOnY;
-		}
+
 		throw new IllegalArgumentException();
 	}
 

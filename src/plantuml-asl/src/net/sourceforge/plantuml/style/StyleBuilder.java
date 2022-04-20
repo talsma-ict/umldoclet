@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -42,24 +42,24 @@ import net.sourceforge.plantuml.SkinParam;
 
 public class StyleBuilder implements AutomaticCounter {
 
-	private final Map<StyleSignature, Style> stylesMap = new LinkedHashMap<StyleSignature, Style>();
-	private final Set<StyleSignature> printedForLog;
+	private final Map<StyleSignatureBasic, Style> stylesMap = new LinkedHashMap<StyleSignatureBasic, Style>();
+	private final Set<StyleSignatureBasic> printedForLog;
 	private final SkinParam skinParam;
 	private int counter;
 
 	public void printMe() {
-		for (Entry<StyleSignature, Style> ent : stylesMap.entrySet())
+		for (Entry<StyleSignatureBasic, Style> ent : stylesMap.entrySet())
 			ent.getValue().printMe();
 
 	}
 
-	private StyleBuilder(SkinParam skinParam, Set<StyleSignature> printedForLog) {
+	private StyleBuilder(SkinParam skinParam, Set<StyleSignatureBasic> printedForLog) {
 		this.skinParam = skinParam;
 		this.printedForLog = new LinkedHashSet<>();
 	}
 
 	public StyleBuilder(SkinParam skinParam) {
-		this(skinParam, new LinkedHashSet<StyleSignature>());
+		this(skinParam, new LinkedHashSet<StyleSignatureBasic>());
 	}
 
 	public final SkinParam getSkinParam() {
@@ -71,7 +71,7 @@ public class StyleBuilder implements AutomaticCounter {
 			throw new IllegalArgumentException();
 
 		name = name.toLowerCase();
-		final StyleSignature signature = new StyleSignature(name);
+		final StyleSignatureBasic signature = new StyleSignatureBasic(name);
 		final Style result = stylesMap.get(signature);
 		if (result == null)
 			return new Style(signature, new EnumMap<PName, Value>(PName.class));
@@ -80,13 +80,13 @@ public class StyleBuilder implements AutomaticCounter {
 	}
 
 	public StyleBuilder muteStyle(Style modifiedStyle) {
-		final Map<StyleSignature, Style> copy = new LinkedHashMap<StyleSignature, Style>(stylesMap);
-		final StyleSignature signature = modifiedStyle.getSignature();
+		final Map<StyleSignatureBasic, Style> copy = new LinkedHashMap<StyleSignatureBasic, Style>(stylesMap);
+		final StyleSignatureBasic signature = modifiedStyle.getSignature();
 		final Style orig = copy.get(signature);
 		if (orig == null) {
 			copy.put(signature, modifiedStyle);
 		} else {
-			final Style tmp = orig.mergeWith(modifiedStyle);
+			final Style tmp = orig.mergeWith(modifiedStyle, MergeStrategy.OVERWRITE_EXISTING_VALUE);
 			copy.put(signature, tmp);
 		}
 		final StyleBuilder result = new StyleBuilder(skinParam, this.printedForLog);
@@ -95,7 +95,7 @@ public class StyleBuilder implements AutomaticCounter {
 		return result;
 	}
 
-	public void loadInternal(StyleSignature signature, Style newStyle) {
+	public void loadInternal(StyleSignatureBasic signature, Style newStyle) {
 		if (signature.isStarred())
 			throw new IllegalArgumentException();
 
@@ -103,7 +103,7 @@ public class StyleBuilder implements AutomaticCounter {
 		if (orig == null) {
 			this.stylesMap.put(signature, newStyle);
 		} else {
-			final Style tmp = orig.mergeWith(newStyle);
+			final Style tmp = orig.mergeWith(newStyle, MergeStrategy.OVERWRITE_EXISTING_VALUE);
 			this.stylesMap.put(signature, tmp);
 		}
 	}
@@ -112,34 +112,34 @@ public class StyleBuilder implements AutomaticCounter {
 		return ++counter;
 	}
 
-	public Style getMergedStyle(StyleSignature signature) {
+	public Style getMergedStyle(StyleSignatureBasic signature) {
 		boolean added = this.printedForLog.add(signature);
 		if (added)
 			Log.info("Using style " + signature);
 
 		Style result = null;
-		for (Entry<StyleSignature, Style> ent : stylesMap.entrySet()) {
-			final StyleSignature key = ent.getKey();
+		for (Entry<StyleSignatureBasic, Style> ent : stylesMap.entrySet()) {
+			final StyleSignatureBasic key = ent.getKey();
 			if (key.matchAll(signature) == false)
 				continue;
 
 			if (result == null)
 				result = ent.getValue();
 			else
-				result = result.mergeWith(ent.getValue());
+				result = result.mergeWith(ent.getValue(), MergeStrategy.OVERWRITE_EXISTING_VALUE);
 
 		}
 		return result;
 	}
 
-	public Style getMergedStyleSpecial(StyleSignature signature, int deltaPriority) {
+	public Style getMergedStyleSpecial(StyleSignatureBasic signature, int deltaPriority) {
 		boolean added = this.printedForLog.add(signature);
 		if (added)
 			Log.info("Using style " + signature);
 
 		Style result = null;
-		for (Entry<StyleSignature, Style> ent : stylesMap.entrySet()) {
-			final StyleSignature key = ent.getKey();
+		for (Entry<StyleSignatureBasic, Style> ent : stylesMap.entrySet()) {
+			final StyleSignatureBasic key = ent.getKey();
 			if (key.matchAll(signature) == false)
 				continue;
 
@@ -150,7 +150,7 @@ public class StyleBuilder implements AutomaticCounter {
 			if (result == null)
 				result = tmp;
 			else
-				result = result.mergeWith(tmp);
+				result = result.mergeWith(tmp, MergeStrategy.OVERWRITE_EXISTING_VALUE);
 
 		}
 		return result;

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -35,7 +35,6 @@ import java.util.Collections;
 import java.util.Set;
 
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.activitydiagram3.ftile.AbstractFtile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileGeometry;
@@ -54,8 +53,8 @@ public class FtileCircleEnd extends AbstractFtile {
 
 	private static final int SIZE = 20;
 
-	private final HColor borderColor;
-	private final HColor backColor;
+	private HColor borderColor;
+	private HColor backColor;
 	private final Swimlane swimlane;
 	private double shadowing;
 
@@ -69,19 +68,16 @@ public class FtileCircleEnd extends AbstractFtile {
 		this.borderColor = borderColor;
 		this.backColor = backColor;
 		this.swimlane = swimlane;
-		if (UseStyle.useBetaStyle()) {
-			this.shadowing = style.value(PName.Shadowing).asDouble();
-		} else {
-			if (skinParam().shadowing(null)) {
-				this.shadowing = 3;
-			}
-		}
+		this.shadowing = style.value(PName.Shadowing).asDouble();
+		this.backColor = style.value(PName.BackGroundColor).asColor(skinParam.getThemeStyle(), getIHtmlColorSet());
+		this.borderColor = style.value(PName.LineColor).asColor(skinParam.getThemeStyle(), getIHtmlColorSet());
+
 	}
 
 	public Set<Swimlane> getSwimlanes() {
-		if (swimlane == null) {
+		if (swimlane == null)
 			return Collections.emptySet();
-		}
+
 		return Collections.singleton(swimlane);
 	}
 

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -71,7 +71,7 @@ public class BodyEnhanced1 extends BodyEnhancedAbstract implements TextBlock, Wi
 
 	BodyEnhanced1(HorizontalAlignment align, List<CharSequence> rawBody, FontParam fontParam, ISkinParam skinParam,
 			Stereotype stereotype, ILeaf entity, Style style) {
-		super(align, new FontConfiguration(skinParam, fontParam, stereotype));
+		super(align, style.getFontConfiguration(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet()), style);
 		this.style = style;
 		this.rawBody2 = Display.create(rawBody);
 		this.stereotype = stereotype;
@@ -86,8 +86,8 @@ public class BodyEnhanced1 extends BodyEnhancedAbstract implements TextBlock, Wi
 
 	BodyEnhanced1(HorizontalAlignment align, Display display, FontParam fontParam, ISkinParam skinParam,
 			Stereotype stereotype, ILeaf entity, Style style) {
-		super(align, style == null ? new FontConfiguration(skinParam, fontParam, stereotype)
-				: style.getFontConfiguration(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet()));
+		super(align, style == null ? FontConfiguration.create(skinParam, fontParam, stereotype)
+				: style.getFontConfiguration(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet()), style);
 
 		this.style = style;
 		this.entity = entity;
@@ -99,9 +99,9 @@ public class BodyEnhanced1 extends BodyEnhancedAbstract implements TextBlock, Wi
 
 		this.inEllipse = fontParam == FontParam.USECASE;
 
-		if (inEllipse && display.size() > 0 && isBlockSeparator(display.get(0).toString())) {
+		if (inEllipse && display.size() > 0 && isBlockSeparator(display.get(0).toString()))
 			display = display.add("");
-		}
+
 		this.rawBody2 = display;
 
 	}
@@ -118,9 +118,9 @@ public class BodyEnhanced1 extends BodyEnhancedAbstract implements TextBlock, Wi
 
 	@Override
 	final protected TextBlock getArea(StringBounder stringBounder) {
-		if (area != null) {
+		if (area != null)
 			return area;
-		}
+
 		urls.clear();
 		final List<TextBlock> blocks = new ArrayList<>();
 
@@ -150,25 +150,25 @@ public class BodyEnhanced1 extends BodyEnhancedAbstract implements TextBlock, Wi
 					display = Display.empty();
 				} else if (isTreeOrTable(s)) {
 					final boolean isTable = CreoleParser.isTableLine(s);
-					if (display.size() > 0) {
+					if (display.size() > 0)
 						blocks.add(decorate(stringBounder, new MethodsOrFieldsArea(display, fontParam, skinParam, align,
 								stereotype, entity, style), separator, title));
-					}
+
 					separator = 0;
 					title = null;
 					display = Display.empty();
 					final List<CharSequence> allTree = buildTreeOrTable(s, it);
 					TextBlock bloc = Display.create(allTree).create7(fontParam.getFontConfiguration(skinParam), align,
 							skinParam, CreoleMode.FULL);
-					if (isTable) {
+					if (isTable)
 						bloc = TextBlockUtils.withMargin(bloc, 10, 10, 0, 5);
-					}
+
 					blocks.add(bloc);
 				} else {
 					display = display.add(cs);
-					if (cs instanceof Member && ((Member) cs).getUrl() != null) {
+					if (cs instanceof Member && ((Member) cs).getUrl() != null)
 						urls.add(((Member) cs).getUrl());
-					}
+
 				}
 			}
 		}
@@ -179,15 +179,13 @@ public class BodyEnhanced1 extends BodyEnhancedAbstract implements TextBlock, Wi
 				new MethodsOrFieldsArea(display, fontParam, skinParam, align, stereotype, entity, style), separator,
 				title));
 
-		if (blocks.size() == 1) {
+		if (blocks.size() == 1)
 			this.area = blocks.get(0);
-		} else {
+		else
 			this.area = new TextBlockVertical2(blocks, align);
-		}
 
-		if (skinParam.minClassWidth() > 0) {
+		if (skinParam.minClassWidth() > 0)
 			this.area = TextBlockUtils.withMinWidth(this.area, skinParam.minClassWidth(), align);
-		}
 
 		return area;
 	}
@@ -197,9 +195,9 @@ public class BodyEnhanced1 extends BodyEnhancedAbstract implements TextBlock, Wi
 		final Pattern p = Pattern.compile("^(\\s+)");
 		final Matcher m = p.matcher(init);
 		String start = "";
-		if (m.find()) {
+		if (m.find())
 			start = m.group(1);
-		}
+
 		result.add(purge(init, start));
 		while (it.hasNext()) {
 			String s = it.next().toString();
@@ -215,18 +213,18 @@ public class BodyEnhanced1 extends BodyEnhancedAbstract implements TextBlock, Wi
 	}
 
 	private static String purge(String s, String start) {
-		if (s.startsWith(start)) {
+		if (s.startsWith(start))
 			return s.substring(start.length());
-		}
+
 		return s;
 	}
 
 	@Override
 	public Ports getPorts(StringBounder stringBounder) {
 		final TextBlock area = getArea(stringBounder);
-		if (area instanceof WithPorts) {
+		if (area instanceof WithPorts)
 			return ((WithPorts) area).getPorts(stringBounder);
-		}
+
 		return new Ports();
 	}
 

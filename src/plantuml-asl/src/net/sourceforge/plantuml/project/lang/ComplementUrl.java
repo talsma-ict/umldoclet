@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,7 +32,7 @@ package net.sourceforge.plantuml.project.lang;
 
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.UrlBuilder;
-import net.sourceforge.plantuml.UrlBuilder.ModeUrl;
+import net.sourceforge.plantuml.UrlMode;
 import net.sourceforge.plantuml.command.regex.IRegex;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
@@ -49,7 +49,7 @@ public class ComplementUrl implements Something {
 
 	public Failable<Url> getMe(GanttDiagram diagram, RegexResult arg, String suffix) {
 		final String urlString = arg.get("COMPLEMENT" + suffix, 0);
-		final UrlBuilder urlBuilder = new UrlBuilder("", ModeUrl.STRICT);
+		final UrlBuilder urlBuilder = new UrlBuilder("", UrlMode.STRICT);
 		final Url url = urlBuilder.getUrl(urlString);
 		return Failable.ok(url);
 	}

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -50,7 +50,7 @@ import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 
 public abstract class AbstractParallelFtilesBuilder {
 
@@ -62,12 +62,12 @@ public abstract class AbstractParallelFtilesBuilder {
 	private final StringBounder stringBounder;
 	protected final List<Ftile> list99 = new ArrayList<>();
 
-	public StyleSignature getDefaultStyleDefinition() {
-		return StyleSignature.of(SName.root, SName.element, SName.activityDiagram, SName.activity);
+	public StyleSignatureBasic getStyleSignature() {
+		return StyleSignatureBasic.of(SName.root, SName.element, SName.activityDiagram, SName.activity);
 	}
 
-	final public StyleSignature getDefaultStyleDefinitionArrow() {
-		return StyleSignature.of(SName.root, SName.element, SName.activityDiagram, SName.arrow);
+	final public StyleSignatureBasic getStyleSignatureArrow() {
+		return StyleSignatureBasic.of(SName.root, SName.element, SName.activityDiagram, SName.arrow);
 	}
 
 	public AbstractParallelFtilesBuilder(ISkinParam skinParam, StringBounder stringBounder, List<Ftile> all) {
@@ -97,9 +97,9 @@ public abstract class AbstractParallelFtilesBuilder {
 
 	final protected double computeMaxHeight(List<Ftile> all) {
 		double height = 0;
-		for (Ftile tmp : all) {
+		for (Ftile tmp : all)
 			height = Math.max(height, tmp.calculateDimension(getStringBounder()).getHeight());
-		}
+
 		return height;
 	}
 
@@ -126,16 +126,13 @@ public abstract class AbstractParallelFtilesBuilder {
 
 	protected final TextBlock getTextBlock(Display display) {
 		// DUP3945
-		if (Display.isNull(display)) {
+		if (Display.isNull(display))
 			return null;
-		}
-		final FontConfiguration fontConfiguration;
-		if (UseStyle.useBetaStyle()) {
-			final Style style = getDefaultStyleDefinitionArrow().getMergedStyle(skinParam().getCurrentStyleBuilder());
-			fontConfiguration = style.getFontConfiguration(skinParam().getThemeStyle(), skinParam().getIHtmlColorSet());
-		} else {
-			fontConfiguration = new FontConfiguration(skinParam(), FontParam.ARROW, null);
-		}
+
+		final Style style = getStyleSignatureArrow().getMergedStyle(skinParam().getCurrentStyleBuilder());
+		final FontConfiguration fontConfiguration = style.getFontConfiguration(skinParam().getThemeStyle(),
+				skinParam().getIHtmlColorSet());
+
 		return display.create7(fontConfiguration, HorizontalAlignment.LEFT, skinParam(), CreoleMode.SIMPLE_LINE);
 	}
 

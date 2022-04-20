@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.activitydiagram3.ftile.vcompact;
 
-import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +37,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.LineBreakStrategy;
 import net.sourceforge.plantuml.activitydiagram3.Branch;
@@ -46,15 +44,16 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.AbstractConnection;
 import net.sourceforge.plantuml.activitydiagram3.ftile.AbstractFtile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Arrows;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Connection;
-import net.sourceforge.plantuml.activitydiagram3.ftile.Hexagon;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactory;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileGeometry;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileUtils;
+import net.sourceforge.plantuml.activitydiagram3.ftile.Hexagon;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Snake;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileDiamond;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileDiamondInside;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.creole.CreoleMode;
 import net.sourceforge.plantuml.creole.Parser;
 import net.sourceforge.plantuml.creole.Sheet;
@@ -66,8 +65,11 @@ import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.Rainbow;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.svek.ConditionStyle;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
+import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 
@@ -110,75 +112,37 @@ class FtileIfAndStop extends AbstractFtile {
 			FtileFactory ftileFactory, ConditionStyle conditionStyle, Branch nonStop, ISkinParam skinParam,
 			StringBounder stringBounder, Display labelTest) {
 
-		// backColor = HtmlColorUtils.BLUE;
-
-		// final Ftile tileNonStop = new FtileMinWidth(nonStop.getFtile(), 30);
 		final Ftile tileNonStop = nonStop.getFtile();
-
-		final FontConfiguration fcTest = new FontConfiguration(skinParam, FontParam.ACTIVITY_DIAMOND, null);
 
 		final Ftile stopFtile = ftileFactory.stop(swimlane);
 
-		// final TextBlock tb1 = Display.create(branch1.getLabelPositive(), fcArrow,
-		// HorizontalAlignment.LEFT,
-		// ftileFactory);
-		// final TextBlock tb2 = Display.create(branch2.getLabelPositive(), fcArrow,
-		// HorizontalAlignment.LEFT,
-		// ftileFactory);
+		final Style style = StyleSignatureBasic.activityDiamond().getMergedStyle(skinParam.getCurrentStyleBuilder());
+		final UStroke thickness = tileNonStop.getThickness(style);
+		final FontConfiguration fcTest = FontConfiguration.create(skinParam, style);
 
-		final Sheet sheet = Parser.build(fcTest, skinParam.getDefaultTextAlignment(HorizontalAlignment.LEFT), skinParam, CreoleMode.FULL)
+		final Sheet sheet = Parser
+				.build(fcTest, skinParam.getDefaultTextAlignment(HorizontalAlignment.LEFT), skinParam, CreoleMode.FULL)
 				.createSheet(labelTest);
 		final SheetBlock1 sheetBlock1 = new SheetBlock1(sheet, LineBreakStrategy.NONE, skinParam.getPadding());
-		final TextBlock tbTest = new SheetBlock2(sheetBlock1, Hexagon.asStencil(sheetBlock1),
-				tileNonStop.getThickness());
+
+		final TextBlock tbTest = new SheetBlock2(sheetBlock1, Hexagon.asStencil(sheetBlock1), thickness);
 
 		final Ftile diamond1;
-		if (conditionStyle == ConditionStyle.INSIDE_HEXAGON) {
+		if (conditionStyle == ConditionStyle.INSIDE_HEXAGON)
 			diamond1 = new FtileDiamondInside(tbTest, tileNonStop.skinParam(), backColor, borderColor, swimlane);
-			// .withWest(tb1).withEast(tb2);
-		} else if (conditionStyle == ConditionStyle.EMPTY_DIAMOND) {
+		else if (conditionStyle == ConditionStyle.EMPTY_DIAMOND)
 			diamond1 = new FtileDiamond(tileNonStop.skinParam(), backColor, borderColor, swimlane).withNorth(tbTest);
-			// .withWest(tb1).withEast(tb2).withNorth(tbTest);
-		} else {
+		else
 			throw new IllegalStateException();
-		}
 
-		// final Ftile diamond2;
-		// if (tile1.calculateDimension(stringBounder).hasPointOut()
-		// && tile2.calculateDimension(stringBounder).hasPointOut()) {
-		// diamond2 = new FtileDiamond(tile1.shadowing(), backColor, borderColor,
-		// swimlane);
-		// } else {
-		// diamond2 = new FtileEmpty(tile1.shadowing(), Diamond.diamondHalfSize * 2,
-		// Diamond.diamondHalfSize * 2,
-		// swimlane, swimlane);
-		// }
 		final FtileIfAndStop result = new FtileIfAndStop(diamond1, tileNonStop, arrowColor, stopFtile);
 
 		final List<Connection> conns = new ArrayList<>();
 		conns.add(result.new ConnectionHorizontal(arrowColor));
-		// conns.add(result.new ConnectionHorizontalThenVertical(tile2));
-		// if (tile1.calculateDimension(stringBounder).hasPointOut()
-		// && tile2.calculateDimension(stringBounder).hasPointOut()) {
-		// conns.add(result.new ConnectionVerticalThenHorizontal(tile1,
-		// branch1.getInlinkRenderingColor()));
-		// conns.add(result.new ConnectionVerticalThenHorizontal(tile2,
-		// branch2.getInlinkRenderingColor()));
-		// } else if (tile1.calculateDimension(stringBounder).hasPointOut()
-		// && tile2.calculateDimension(stringBounder).hasPointOut() == false) {
-		// conns.add(result.new ConnectionVerticalThenHorizontalDirect(tile1,
-		// branch1.getInlinkRenderingColor()));
-		// } else if (tile1.calculateDimension(stringBounder).hasPointOut() == false
-		// && tile2.calculateDimension(stringBounder).hasPointOut()) {
-		// conns.add(result.new ConnectionVerticalThenHorizontalDirect(tile2,
-		// branch2.getInlinkRenderingColor()));
-		// }
 		return FtileUtils.addConnection(result, conns);
-		// return result;
 	}
 
 	private UTranslate getTranslate1(StringBounder stringBounder) {
-		// final Dimension2D dimTotal = calculateDimensionInternal(stringBounder);
 		final FtileGeometry dimTotal = calculateDimension(stringBounder);
 		final FtileGeometry dimDiamond1 = diamond1.calculateDimension(stringBounder);
 		final FtileGeometry dim1 = tile1.calculateDimension(stringBounder);
@@ -228,7 +192,7 @@ class FtileIfAndStop extends AbstractFtile {
 			final Point2D p1 = getP1(stringBounder);
 			final Point2D p2 = getP2(stringBounder);
 
-			final Snake snake = Snake.create(color, Arrows.asToRight());
+			final Snake snake = Snake.create(skinParam(), color, Arrows.asToRight());
 			snake.addPoint(p1);
 			snake.addPoint(p2);
 			ug.draw(snake);
@@ -251,18 +215,10 @@ class FtileIfAndStop extends AbstractFtile {
 
 	@Override
 	public UTranslate getTranslateFor(Ftile child, StringBounder stringBounder) {
-		if (child == diamond1) {
+		if (child == diamond1)
 			return getTranslateDiamond1(stringBounder);
-		}
-		if (child == tile1) {
+		if (child == tile1)
 			return getTranslate1(stringBounder);
-		}
-		// if (child == tile2) {
-		// return getTranslate2(stringBounder);
-		// }
-		// if (child == diamond2) {
-		// return getTranslateDiamond2(stringBounder);
-		// }
 		throw new UnsupportedOperationException();
 	}
 
@@ -282,45 +238,6 @@ class FtileIfAndStop extends AbstractFtile {
 		final FtileGeometry dimDiamond1 = diamond1.calculateDimension(stringBounder);
 		return dimDiamond1.appendBottom(dim1).addDim(0, getSuppHeight());
 
-		// final Dimension2D dimTotal = calculateDimensionInternal(stringBounder);
-		// if (tile1.calculateDimension(stringBounder).hasPointOut()) {
-		// return new FtileGeometry(dimTotal, getLeft(stringBounder), 0,
-		// dimTotal.getHeight());
-		// }
-		// return new FtileGeometry(dimTotal, getLeft(stringBounder), 0);
 	}
-
-	// private Dimension2D calculateDimensionInternal;
-	//
-	// private Dimension2D calculateDimensionInternal(StringBounder stringBounder) {
-	// if (calculateDimensionInternal == null) {
-	// calculateDimensionInternal = calculateDimensionInternalSlow(stringBounder);
-	// }
-	// return calculateDimensionInternal;
-	// }
-	//
-	// private Dimension2D calculateDimensionInternalSlow(StringBounder
-	// stringBounder) {
-	// final Dimension2D dim1 = tile1.calculateDimension(stringBounder);
-	// final Dimension2D dimDiamond1 = diamond1.calculateDimension(stringBounder);
-	// final Dimension2D dimStop2 = stop2.calculateDimension(stringBounder);
-	// final double width = Math.max(dim1.getWidth(),
-	// dimDiamond1.getWidth() + getDiamondStopDistance() + dimStop2.getWidth());
-	// return new Dimension2DDouble(width + 30, dim1.getHeight() +
-	// dimDiamond1.getHeight() + 40);
-	// }
-	//
-	// private double getLeft(StringBounder stringBounder) {
-	// // return calculateDimension(stringBounder).getLeft();
-	// return
-	// tile1.calculateDimension(stringBounder).translate(getTranslate1(stringBounder)).getLeft();
-	// // final double left1 =
-	// tile1.calculateDimension(stringBounder).translate(getTranslate1(stringBounder)).getLeft();
-	// // // final double left2 =
-	// // //
-	// tile2.calculateDimension(stringBounder).translate(getTranslate2(stringBounder)).getLeft();
-	// // // return (left1 + left2) / 2;
-	// // return left1;
-	// }
 
 }

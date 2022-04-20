@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -35,22 +35,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import net.sourceforge.plantuml.FontParam;
-import net.sourceforge.plantuml.LineBreakStrategy;
-import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.activitydiagram3.Branch;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileGeometry;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
-import net.sourceforge.plantuml.creole.CreoleMode;
-import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.style.PName;
-import net.sourceforge.plantuml.style.SName;
-import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 
@@ -80,18 +69,18 @@ public class FtileSwitchWithDiamonds extends FtileSwitchNude {
 				- tiles.get(0).calculateDimension(stringBounder).getRight()
 				- tiles.get(tiles.size() - 1).calculateDimension(stringBounder).getLeft();
 		w9 = getW9(stringBounder);
-		if (w13 > w9) {
+		if (w13 > w9)
 			mode = Mode.BIG_DIAMOND;
-		} else {
+		else
 			mode = Mode.SMALL_DIAMOND;
-		}
+
 	}
 
 	private double getW9(StringBounder stringBounder) {
 		double result = 0;
-		for (int i = 1; i < tiles.size() - 1; i++) {
+		for (int i = 1; i < tiles.size() - 1; i++)
 			result += tiles.get(i).calculateDimension(stringBounder).getWidth();
-		}
+
 		return result;
 	}
 
@@ -139,17 +128,15 @@ public class FtileSwitchWithDiamonds extends FtileSwitchNude {
 		final StringBounder stringBounder = ug.getStringBounder();
 
 		ug.apply(getTranslateDiamond1(stringBounder)).draw(diamond1);
-		if (mode == Mode.BIG_DIAMOND) {
-			for (Ftile tile : tiles) {
+		if (mode == Mode.BIG_DIAMOND)
+			for (Ftile tile : tiles)
 				tile.drawU(ug.apply(getTranslateOf(tile, stringBounder)));
-			}
-		} else {
+		else
 			super.drawU(ug.apply(getTranslateMain(stringBounder)));
-		}
 
-		if (calculateDimension(stringBounder).hasPointOut()) {
+		if (calculateDimension(stringBounder).hasPointOut())
 			ug.apply(getTranslateDiamond2(stringBounder)).draw(diamond2);
-		}
+
 	}
 
 	final protected UTranslate getTranslateOf(Ftile tile, StringBounder stringBounder) {
@@ -158,11 +145,10 @@ public class FtileSwitchWithDiamonds extends FtileSwitchNude {
 			double dx = 0;
 			final double suppx = (w13 - w9) / (tiles.size() - 1);
 			for (int i = 0; i < tiles.size() - 1; i++) {
-				if (tile == tiles.get(i)) {
+				if (tile == tiles.get(i))
 					return main.compose(UTranslate.dx(dx));
-				}
-				dx += tiles.get(i).calculateDimension(stringBounder).getWidth() + suppx;
 
+				dx += tiles.get(i).calculateDimension(stringBounder).getWidth() + suppx;
 			}
 			if (tile == tiles.get(tiles.size() - 1)) {
 				final double dx9 = tiles.get(0).calculateDimension(stringBounder).getWidth() + w13 + SUPP15 + SUPP15;

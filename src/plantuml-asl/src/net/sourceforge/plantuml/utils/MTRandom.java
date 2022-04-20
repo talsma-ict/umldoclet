@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -59,6 +59,8 @@ package net.sourceforge.plantuml.utils;
 
 import java.util.Random;
 
+import net.sourceforge.plantuml.annotation.HaxeIgnored;
+
 /**
  * @version 1.0
  * @author David Beaumont, Copyright 2005
@@ -111,6 +113,7 @@ import java.util.Random;
  * -->
  * 
  */
+@HaxeIgnored
 public class MTRandom extends Random {
 
 	/**

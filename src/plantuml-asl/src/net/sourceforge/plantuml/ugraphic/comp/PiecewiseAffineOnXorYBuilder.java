@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,9 +30,8 @@
  */
 package net.sourceforge.plantuml.ugraphic.comp;
 
-import java.awt.geom.Dimension2D;
-
 import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
@@ -61,7 +60,7 @@ public class PiecewiseAffineOnXorYBuilder extends AbstractTextBlock implements T
 	}
 
 	public void drawU(final UGraphic ug) {
-		textBlock.drawU(new UGraphicCompressOnXorY(mode, ug, piecewiseAffineTransform));
+		textBlock.drawU(UGraphicCompressOnXorY.create(mode, ug, piecewiseAffineTransform));
 	}
 
 	private MinMax cachedMinMax;

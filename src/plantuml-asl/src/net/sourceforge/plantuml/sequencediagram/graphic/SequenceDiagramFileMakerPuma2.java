@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
 
-import java.awt.geom.Dimension2D;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -44,6 +43,7 @@ import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.activitydiagram3.ftile.EntityImageLegend;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.DisplaySection;
@@ -61,7 +61,7 @@ import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
@@ -147,15 +147,14 @@ public class SequenceDiagramFileMakerPuma2 implements FileMaker {
 			compTitle = null;
 		} else {
 			if (UseStyle.useBetaStyle()) {
-				final Style style = StyleSignature.of(SName.root, SName.document, SName.title)
+				final Style style = StyleSignatureBasic.of(SName.root, SName.document, SName.title)
 						.getMergedStyle(diagram.getSkinParam().getCurrentStyleBuilder());
 				compTitle = style.createTextBlockBordered(page.getTitle(), diagram.getSkinParam().getIHtmlColorSet(),
 						diagram.getSkinParam());
 			} else {
-				compTitle = TextBlockUtils.withMargin(
-						TextBlockUtils.title(new FontConfiguration(drawableSet.getSkinParam(), FontParam.TITLE, null),
-								page.getTitle(), drawableSet.getSkinParam()),
-						7, 7);
+				compTitle = TextBlockUtils.withMargin(TextBlockUtils.title(
+						FontConfiguration.create(drawableSet.getSkinParam(), FontParam.TITLE, null), page.getTitle(),
+						drawableSet.getSkinParam()), 7, 7);
 			}
 			final Dimension2D dimTitle = compTitle.calculateDimension(stringBounder);
 			area.setTitleArea(dimTitle.getWidth(), dimTitle.getHeight());
@@ -168,7 +167,7 @@ public class SequenceDiagramFileMakerPuma2 implements FileMaker {
 			legendBlock = TextBlockUtils.empty(0, 0);
 		} else {
 			if (UseStyle.useBetaStyle()) {
-				final Style style = StyleSignature.of(SName.root, SName.document, SName.legend)
+				final Style style = StyleSignatureBasic.of(SName.root, SName.document, SName.legend)
 						.getMergedStyle(diagram.getSkinParam().getCurrentStyleBuilder());
 				legendBlock = style.createTextBlockBordered(diagram.getLegend().getDisplay(),
 						diagram.getSkinParam().getIHtmlColorSet(), diagram.getSkinParam());
@@ -239,18 +238,11 @@ public class SequenceDiagramFileMakerPuma2 implements FileMaker {
 
 	private PngTitler getPngTitler(final FontParam fontParam, int page) {
 		final ISkinParam skinParam = diagram.getSkinParam();
-		final HColor hyperlinkColor = skinParam.getHyperlinkColor();
-		final HColor titleColor = skinParam.getFontHtmlColor(null, fontParam);
-		final String fontFamily = skinParam.getFont(null, false, fontParam).getFamily(null);
-		final int fontSize = skinParam.getFont(null, false, fontParam).getSize();
 		final DisplaySection display = diagram.getFooterOrHeaderTeoz(fontParam).withPage(page + 1, pages.size());
-		Style style = null;
-		if (UseStyle.useBetaStyle()) {
-			final StyleSignature def = fontParam.getStyleDefinition(null);
-			style = def.getMergedStyle(skinParam.getCurrentStyleBuilder());
-		}
-		return new PngTitler(titleColor, display, fontSize, fontFamily, hyperlinkColor,
-				skinParam.useUnderlineForHyperlink(), style, skinParam.getIHtmlColorSet(), skinParam);
+		final StyleSignatureBasic def = fontParam.getStyleDefinition(null);
+		final Style style = def.getMergedStyle(skinParam.getCurrentStyleBuilder());
+
+		return new PngTitler(display, style, skinParam.getIHtmlColorSet(), skinParam);
 	}
 
 	private boolean isLegendTop() {

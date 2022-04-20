@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -36,9 +36,11 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import net.sourceforge.plantuml.annotation.HaxeIgnored;
 import net.sourceforge.plantuml.preproc.Defines;
 import net.sourceforge.plantuml.security.SFile;
 
+@HaxeIgnored
 public class SourceFileReader extends SourceFileReaderAbstract implements ISourceFileReader {
 
 	public SourceFileReader(File file) throws IOException {

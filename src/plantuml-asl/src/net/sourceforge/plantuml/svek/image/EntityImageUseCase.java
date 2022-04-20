@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,8 +30,9 @@
  */
 package net.sourceforge.plantuml.svek.image;
 
-import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
+import java.util.EnumMap;
+import java.util.Map;
 
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.FontParam;
@@ -41,6 +42,7 @@ import net.sourceforge.plantuml.LineParam;
 import net.sourceforge.plantuml.SkinParamUtils;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.UseStyle;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.creole.Stencil;
 import net.sourceforge.plantuml.cucadiagram.BodyFactory;
 import net.sourceforge.plantuml.cucadiagram.Display;
@@ -57,10 +59,11 @@ import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.graphic.color.Colors;
+import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.svek.AbstractEntityImage;
 import net.sourceforge.plantuml.svek.ShapeType;
 import net.sourceforge.plantuml.ugraphic.AbstractUGraphicHorizontalLine;
@@ -103,7 +106,7 @@ public class EntityImageUseCase extends AbstractEntityImage {
 				stereo = stereotype.getSprite(getSkinParam());
 			} else {
 				stereo = Display.getWithNewlines(stereotype.getLabel(getSkinParam().guillemet())).create(
-						new FontConfiguration(getSkinParam(), FontParam.USECASE_STEREOTYPE, stereotype),
+						FontConfiguration.create(getSkinParam(), FontParam.USECASE_STEREOTYPE, stereotype),
 						HorizontalAlignment.CENTER, getSkinParam());
 			}
 			this.desc = TextBlockUtils.mergeTB(stereo, tmp, HorizontalAlignment.CENTER);
@@ -118,9 +121,9 @@ public class EntityImageUseCase extends AbstractEntityImage {
 			return style.getStroke();
 		}
 		UStroke stroke = getSkinParam().getThickness(LineParam.usecaseBorder, getStereo());
-		if (stroke == null) {
+		if (stroke == null)
 			stroke = new UStroke(1.5);
-		}
+
 		final Colors colors = getEntity().getColors();
 		stroke = colors.muteStroke(stroke);
 		return stroke;
@@ -132,14 +135,20 @@ public class EntityImageUseCase extends AbstractEntityImage {
 
 	final public void drawU(UGraphic ug) {
 		final StringBounder stringBounder = ug.getStringBounder();
-		final TextBlockInEllipse ellipse = new TextBlockInEllipse(desc, stringBounder);
-		if (getSkinParam().shadowing2(getEntity().getStereotype(), SkinParameter.USECASE)) {
-			ellipse.setDeltaShadow(3);
-		}
 
-		if (url != null) {
+		double shadow = 0;
+
+		if (UseStyle.useBetaStyle()) {
+			final Style style = getStyle();
+			shadow = style.value(PName.Shadowing).asDouble();
+		} else if (getSkinParam().shadowing2(getEntity().getStereotype(), SkinParameter.USECASE))
+			shadow = 3;
+
+		final TextBlockInEllipse ellipse = new TextBlockInEllipse(desc, stringBounder);
+		ellipse.setDeltaShadow(shadow);
+
+		if (url != null)
 			ug.startUrl(url);
-		}
 
 		ug = ug.apply(getStroke());
 		final HColor linecolor = getLineColor();
@@ -148,17 +157,19 @@ public class EntityImageUseCase extends AbstractEntityImage {
 		ug = ug.apply(backcolor.bg());
 		final UGraphic ug2 = new MyUGraphicEllipse(ug, 0, 0, ellipse.getUEllipse());
 
-		ug2.startGroup(UGroupType.CLASS, "elem " + getEntity().getCode() + " selected");
+		final Map<UGroupType, String> typeIDent = new EnumMap<>(UGroupType.class);
+		typeIDent.put(UGroupType.CLASS, "elem " + getEntity().getCode() + " selected");
+		typeIDent.put(UGroupType.ID, "elem_" + getEntity().getCode());
+		ug.startGroup(typeIDent);
 		ellipse.drawU(ug2);
 		ug2.closeGroup();
 
-		if (getEntity().getLeafType() == LeafType.USECASE_BUSINESS) {
+		if (getEntity().getLeafType() == LeafType.USECASE_BUSINESS)
 			specialBusiness(ug, ellipse.getUEllipse());
-		}
 
-		if (url != null) {
+		if (url != null)
 			ug.closeUrl();
-		}
+
 	}
 
 	private void specialBusiness(UGraphic ug, UEllipse frontier) {
@@ -211,7 +222,7 @@ public class EntityImageUseCase extends AbstractEntityImage {
 	}
 
 	private StyleSignature getDefaultStyleDefinition() {
-		return StyleSignature.of(SName.root, SName.element, SName.componentDiagram, SName.usecase).with(getStereo());
+		return StyleSignatureBasic.of(SName.root, SName.element, SName.componentDiagram, SName.usecase).withTOBECHANGED(getStereo());
 	}
 
 	private HColor getLineColor() {
@@ -251,13 +262,13 @@ public class EntityImageUseCase extends AbstractEntityImage {
 		}
 
 		private double getNormalized(double y) {
-			if (y < yTheoricalPosition) {
+			if (y < yTheoricalPosition)
 				throw new IllegalArgumentException();
-			}
+
 			y = y - yTheoricalPosition;
-			if (y > ellipse.getHeight()) {
+			if (y > ellipse.getHeight())
 				throw new IllegalArgumentException();
-			}
+
 			return y;
 		}
 

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.cucadiagram;
 
-import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.HashSet;
@@ -40,7 +39,7 @@ import net.sourceforge.plantuml.EmbeddedDiagram;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.UseStyle;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.creole.CreoleMode;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
@@ -51,13 +50,9 @@ import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockLineBefore;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.TextBlockWithUrl;
-import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
-import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.style.PName;
-import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.svek.Ports;
 import net.sourceforge.plantuml.svek.WithPorts;
 import net.sourceforge.plantuml.ugraphic.PlacementStrategy;
@@ -68,18 +63,18 @@ import net.sourceforge.plantuml.ugraphic.PlacementStrategyY1Y2Right;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULayoutGroup;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 import net.sourceforge.plantuml.utils.CharHidder;
 
 public class MethodsOrFieldsArea extends AbstractTextBlock implements TextBlock, WithPorts {
 
 	public TextBlock asBlockMemberImpl() {
-		return new TextBlockLineBefore(TextBlockUtils.withMargin(this, 6, 4));
+		return new TextBlockLineBefore(style.value(PName.LineThickness).asDouble(),
+				TextBlockUtils.withMargin(this, 6, 4));
 	}
 
 	private final FontParam fontParam;
 	private final ISkinParam skinParam;
-	private final Rose rose = new Rose();
+
 	private final Display members;
 	private final HorizontalAlignment align;
 	private final Stereotype stereotype;
@@ -180,9 +175,9 @@ public class MethodsOrFieldsArea extends AbstractTextBlock implements TextBlock,
 
 		FontConfiguration config;
 		if (style != null)
-			config = new FontConfiguration(skinParam, style);
+			config = FontConfiguration.create(skinParam, style);
 		else
-			config = new FontConfiguration(skinParam, fontParam, stereotype);
+			config = FontConfiguration.create(skinParam, fontParam, stereotype);
 
 		if (cs instanceof Member) {
 			final Member m = (Member) cs;
@@ -262,20 +257,12 @@ public class MethodsOrFieldsArea extends AbstractTextBlock implements TextBlock,
 				}
 			};
 		}
-		final HColor backColor;
-		final HColor borderColor;
-		if (UseStyle.useBetaStyle()) {
-			final Style style = modifier.getStyleSignature().getMergedStyle(skinParam.getCurrentStyleBuilder());
-			borderColor = style.value(PName.LineColor).asColor(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet());
-			final boolean isField = modifier.isField();
-			backColor = isField ? null
-					: style.value(PName.BackGroundColor).asColor(skinParam.getThemeStyle(),
-							skinParam.getIHtmlColorSet());
-		} else {
-			borderColor = rose.getHtmlColor(skinParam, modifier.getForeground());
-			backColor = modifier.getBackground() == null ? null
-					: rose.getHtmlColor(skinParam, modifier.getBackground());
-		}
+		final Style style = modifier.getStyleSignature().getMergedStyle(skinParam.getCurrentStyleBuilder());
+		final HColor borderColor = style.value(PName.LineColor).asColor(skinParam.getThemeStyle(),
+				skinParam.getIHtmlColorSet());
+		final boolean isField = modifier.isField();
+		final HColor backColor = isField ? null
+				: style.value(PName.BackGroundColor).asColor(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet());
 
 		final TextBlock uBlock = modifier.getUBlock(skinParam.classAttributeIconSize(), borderColor, backColor,
 				url != null);

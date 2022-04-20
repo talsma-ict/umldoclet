@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -47,7 +47,7 @@ public interface Bodier {
 
 	public Display getMethodsToDisplay();
 
-	public void addFieldOrMethod(String s) throws NoSuchColorException;
+	public boolean addFieldOrMethod(String s) throws NoSuchColorException;
 
 	public TextBlock getBody(FontParam fontParam, ISkinParam skinParam, boolean showMethods, boolean showFields,
 			Stereotype stereotype, Style style, FontConfiguration fontConfiguration);

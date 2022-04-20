@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.elk;
 
-import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -49,8 +48,8 @@ import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
-import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.api.ImageDataSimple;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
 import net.sourceforge.plantuml.cucadiagram.Display;
@@ -106,7 +105,6 @@ import net.sourceforge.plantuml.graphic.QuoteUtils;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
-import net.sourceforge.plantuml.graphic.USymbol;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
@@ -161,27 +159,27 @@ public class CucaDiagramFileMakerElk implements CucaDiagramFileMaker {
 			return null;
 		}
 		final ISkinParam skinParam = diagram.getSkinParam();
-		final FontConfiguration labelFont = new FontConfiguration(skinParam, FontParam.ARROW, null);
+		final FontConfiguration labelFont = FontConfiguration.create(skinParam, FontParam.ARROW, null);
 		final TextBlock label = link.getLabel().create(labelFont,
 				skinParam.getDefaultTextAlignment(HorizontalAlignment.CENTER), skinParam);
-		if (TextBlockUtils.isEmpty(label, stringBounder)) {
+		if (TextBlockUtils.isEmpty(label, stringBounder))
 			return null;
-		}
+
 		return label;
 	}
 
 	private TextBlock getQualifier(Link link, int n) {
 		final String tmp = n == 1 ? link.getQualifier1() : link.getQualifier2();
-		if (tmp == null) {
+		if (tmp == null)
 			return null;
-		}
+
 		final ISkinParam skinParam = diagram.getSkinParam();
-		final FontConfiguration labelFont = new FontConfiguration(skinParam, FontParam.ARROW, null);
+		final FontConfiguration labelFont = FontConfiguration.create(skinParam, FontParam.ARROW, null);
 		final TextBlock label = Display.getWithNewlines(tmp).create(labelFont,
 				skinParam.getDefaultTextAlignment(HorizontalAlignment.CENTER), skinParam);
-		if (TextBlockUtils.isEmpty(label, stringBounder)) {
+		if (TextBlockUtils.isEmpty(label, stringBounder))
 			return null;
-		}
+
 		return label;
 	}
 
@@ -220,23 +218,23 @@ public class CucaDiagramFileMakerElk implements CucaDiagramFileMaker {
 		}
 
 		private void drawAllClusters(UGraphic ug) {
-			for (Entry<IGroup, ElkNode> ent : clusters.entrySet()) {
+			for (Entry<IGroup, ElkNode> ent : clusters.entrySet())
 				drawSingleCluster(ug, ent.getKey(), ent.getValue());
-			}
+
 		}
 
 		private void drawAllNodes(UGraphic ug) {
-			for (Entry<ILeaf, ElkNode> ent : nodes.entrySet()) {
+			for (Entry<ILeaf, ElkNode> ent : nodes.entrySet())
 				drawSingleNode(ug, ent.getKey(), ent.getValue());
-			}
+
 		}
 
 		private void drawAllEdges(UGraphic ug) {
 			for (Entry<Link, ElkEdge> ent : edges.entrySet()) {
 				final Link link = ent.getKey();
-				if (link.isInvis()) {
+				if (link.isInvis())
 					continue;
-				}
+
 				drawSingleEdge(ug, link, ent.getValue());
 			}
 		}
@@ -247,28 +245,16 @@ public class CucaDiagramFileMakerElk implements CucaDiagramFileMaker {
 
 			PackageStyle packageStyle = group.getPackageStyle();
 			final ISkinParam skinParam = diagram.getSkinParam();
-			if (packageStyle == null) {
+			if (packageStyle == null)
 				packageStyle = skinParam.packageStyle();
-			}
 
 			final UmlDiagramType umlDiagramType = diagram.getUmlDiagramType();
 
-			final double shadowing;
-			final UStroke stroke;
-			if (UseStyle.useBetaStyle()) {
-				final Style style = Cluster.getDefaultStyleDefinition(umlDiagramType.getStyleName(), group.getUSymbol())
-						.getMergedStyle(skinParam.getCurrentStyleBuilder());
-				shadowing = style.value(PName.Shadowing).asDouble();
-				stroke = Cluster.getStrokeInternal(group, skinParam, style);
-			} else {
-				if (group.getUSymbol() == null) {
-					shadowing = skinParam.shadowing2(group.getStereotype(), USymbol.PACKAGE.getSkinParameter()) ? 3 : 0;
-				} else {
-					shadowing = skinParam.shadowing2(group.getStereotype(), group.getUSymbol().getSkinParameter()) ? 3
-							: 0;
-				}
-				stroke = Cluster.getStrokeInternal(group, skinParam, null);
-			}
+			final Style style = Cluster.getDefaultStyleDefinition(umlDiagramType.getStyleName(), group.getUSymbol())
+					.getMergedStyle(skinParam.getCurrentStyleBuilder());
+			final double shadowing = style.value(PName.Shadowing).asDouble();
+			final UStroke stroke = Cluster.getStrokeInternal(group, skinParam, style);
+
 			HColor backColor = getBackColor(umlDiagramType);
 			backColor = Cluster.getBackColor(backColor, skinParam, group.getStereotype(), umlDiagramType.getStyleName(),
 					group.getUSymbol());
@@ -285,7 +271,7 @@ public class CucaDiagramFileMakerElk implements CucaDiagramFileMaker {
 			final HColor borderColor = HColorUtils.BLACK;
 			decoration.drawU(ug.apply(new UTranslate(corner)), backColor, borderColor, shadowing, roundCorner,
 					skinParam.getHorizontalAlignment(AlignmentParam.packageTitleAlignment, null, false, null),
-					skinParam.getStereotypeAlignment());
+					skinParam.getStereotypeAlignment(), 0);
 
 //			// Print a simple rectangle right now
 //			ug.apply(HColorUtils.BLACK).apply(new UStroke(1.5)).apply(new UTranslate(corner)).draw(rect);
@@ -293,9 +279,8 @@ public class CucaDiagramFileMakerElk implements CucaDiagramFileMaker {
 
 		private TextBlock getTitleBlock(IGroup g) {
 			final Display label = g.getDisplay();
-			if (label == null) {
+			if (label == null)
 				return TextBlockUtils.empty(0, 0);
-			}
 
 			final ISkinParam skinParam = diagram.getSkinParam();
 			final FontConfiguration fontConfiguration = g.getFontConfigurationForTitle(skinParam);
@@ -325,9 +310,9 @@ public class CucaDiagramFileMakerElk implements CucaDiagramFileMaker {
 		}
 
 		public Dimension2D calculateDimension(StringBounder stringBounder) {
-			if (minMax == null) {
+			if (minMax == null)
 				throw new UnsupportedOperationException();
-			}
+
 			return minMax.getDimension();
 		}
 
@@ -339,19 +324,18 @@ public class CucaDiagramFileMakerElk implements CucaDiagramFileMaker {
 
 	private Collection<ILeaf> getUnpackagedEntities() {
 		final List<ILeaf> result = new ArrayList<>();
-		for (ILeaf ent : diagram.getLeafsvalues()) {
-			if (diagram.getEntityFactory().getRootGroup() == ent.getParentContainer()) {
+		for (ILeaf ent : diagram.getLeafsvalues())
+			if (diagram.getEntityFactory().getRootGroup() == ent.getParentContainer())
 				result.add(ent);
-			}
-		}
+
 		return result;
 	}
 
 	private ElkNode getElkNode(final IEntity entity) {
 		ElkNode node = nodes.get(entity);
-		if (node == null) {
+		if (node == null)
 			node = clusters.get(entity);
-		}
+
 		return node;
 	}
 
@@ -418,9 +402,9 @@ public class CucaDiagramFileMakerElk implements CucaDiagramFileMaker {
 	}
 
 	private void printSingleGroup(IGroup g) {
-		if (g.getGroupType() == GroupType.CONCURRENT_STATE) {
+		if (g.getGroupType() == GroupType.CONCURRENT_STATE)
 			return;
-		}
+
 		this.printEntities(clusters.get(g), g.getLeafsDirect());
 		printAllSubgroups(clusters.get(g), g);
 	}
@@ -428,18 +412,18 @@ public class CucaDiagramFileMakerElk implements CucaDiagramFileMaker {
 	private void printEntities(ElkNode parent, Collection<ILeaf> entities) {
 		// Convert all "leaf" to ELK node
 		for (ILeaf ent : entities) {
-			if (ent.isRemoved()) {
+			if (ent.isRemoved())
 				continue;
-			}
+
 			manageSingleNode(parent, ent);
 		}
 	}
 
 	private void manageAllEdges() {
 		// Convert all "link" to ELK edge
-		for (final Link link : diagram.getLinks()) {
+		for (final Link link : diagram.getLinks())
 			manageSingleEdge(link);
-		}
+
 	}
 
 	private void manageSingleNode(final ElkNode root, ILeaf leaf) {
@@ -543,14 +527,13 @@ public class CucaDiagramFileMakerElk implements CucaDiagramFileMaker {
 	}
 
 	private IEntityImage printEntityInternal(ILeaf ent) {
-		if (ent.isRemoved()) {
+		if (ent.isRemoved())
 			throw new IllegalStateException();
-		}
+
 		if (ent.getSvekImage() == null) {
 			final ISkinParam skinParam = diagram.getSkinParam();
-			if (skinParam.sameClassWidth()) {
+			if (skinParam.sameClassWidth())
 				System.err.println("NOT YET IMPLEMENED");
-			}
 
 			return GeneralImageBuilder.createEntityImageBlock(ent, skinParam, diagram.isHideEmptyDescriptionForState(),
 					diagram, getBibliotekon(), null, diagram.getUmlDiagramType(), diagram.getLinks());

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -31,7 +31,7 @@
 package net.sourceforge.plantuml.error;
 
 import java.awt.Color;
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -349,7 +349,7 @@ public abstract class PSystemError extends PlainDiagram {
 				"Details on <i>[[https://plantuml.com/dedication]]");
 
 		final UFont font = UFont.sansSerif(14);
-		final FontConfiguration fc = new FontConfiguration(font, HColorUtils.BLACK, HColorUtils.BLACK, false);
+		final FontConfiguration fc = FontConfiguration.create(font, HColorUtils.BLACK, HColorUtils.BLACK, false);
 		final TextBlock text = TextBlockUtils
 				.withMargin(disp.create(fc, HorizontalAlignment.LEFT, new SpriteContainerEmpty()), 10, 0);
 		final TextBlock result;
@@ -370,7 +370,7 @@ public abstract class PSystemError extends PlainDiagram {
 				"Details on <i>[[http://plantuml.com/adopt]]", " ");
 
 		final UFont font = UFont.sansSerif(14);
-		final FontConfiguration fc = new FontConfiguration(font, HColorUtils.BLACK, HColorUtils.BLACK, false);
+		final FontConfiguration fc = FontConfiguration.create(font, HColorUtils.BLACK, HColorUtils.BLACK, false);
 		final TextBlock text = TextBlockUtils
 				.withMargin(disp.create(fc, HorizontalAlignment.LEFT, new SpriteContainerEmpty()), 10, 0);
 		final TextBlock result;

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -41,16 +41,16 @@ public class ColorMapperMonochrome extends AbstractColorMapper implements ColorM
 	}
 
 	public Color toColor(HColor htmlColor) {
-		if (htmlColor == null) {
+		if (htmlColor == null)
 			return null;
-		}
+
 		final Color color = new ColorMapperIdentity().toColor(htmlColor);
-		if (HColorUtils.isTransparent(htmlColor)) {
+		if (HColorUtils.isTransparent(htmlColor))
 			return color;
-		}
-		if (reverse && HColorUtils.isTransparent(htmlColor) == false) {
+
+		if (reverse && HColorUtils.isTransparent(htmlColor) == false)
 			return ColorUtils.getGrayScaleColorReverse(color);
-		}
+
 		return ColorUtils.getGrayScaleColor(color);
 	}
 }

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -37,7 +37,7 @@ import static gen.lib.cgraph.node__c.agnode;
 import static gen.lib.gvc.gvc__c.gvContext;
 import static gen.lib.gvc.gvlayout__c.gvLayoutJobs;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -55,7 +55,7 @@ import net.sourceforge.plantuml.json.JsonValue;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
@@ -112,27 +112,27 @@ public class SmetanaForJson {
 	}
 
 	private Style getStyleArrow() {
-		return StyleSignature.of(SName.root, SName.element, getDiagramType(), SName.arrow)
+		return StyleSignatureBasic.of(SName.root, SName.element, getDiagramType(), SName.arrow)
 				.getMergedStyle(skinParam.getCurrentStyleBuilder());
 	}
 
 	private Style getStyleNode() {
-		return StyleSignature.of(SName.root, SName.element, getDiagramType(), SName.node)
+		return StyleSignatureBasic.of(SName.root, SName.element, getDiagramType(), SName.node)
 				.getMergedStyle(skinParam.getCurrentStyleBuilder());
 	}
 
 	private Style getStyleNodeHeader() {
-		return StyleSignature.of(SName.root, SName.element, getDiagramType(), SName.header, SName.node)
+		return StyleSignatureBasic.of(SName.root, SName.element, getDiagramType(), SName.header, SName.node)
 				.getMergedStyle(skinParam.getCurrentStyleBuilder());
 	}
 
 	private Style getStyleNodeHighlight() {
-		return StyleSignature.of(SName.root, SName.element, getDiagramType(), SName.node, SName.highlight)
+		return StyleSignatureBasic.of(SName.root, SName.element, getDiagramType(), SName.node, SName.highlight)
 				.getMergedStyle(skinParam.getCurrentStyleBuilder());
 	}
 
 	private Style getStyleNodeHeaderHighlight() {
-		return StyleSignature.of(SName.root, SName.element, getDiagramType(), SName.header, SName.node, SName.highlight)
+		return StyleSignatureBasic.of(SName.root, SName.element, getDiagramType(), SName.header, SName.node, SName.highlight)
 				.getMergedStyle(skinParam.getCurrentStyleBuilder());
 	}
 

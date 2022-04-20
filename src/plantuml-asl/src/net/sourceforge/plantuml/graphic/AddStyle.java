@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -42,8 +42,8 @@ public class AddStyle implements FontChange {
 		this.extendedColor = extendedColor;
 	}
 
-	public AddStyle(String s) {
-		this(FontStyle.getStyle(s), FontStyle.getStyle(s).getExtendedColor(s));
+	public static AddStyle fromString(String s) {
+		return new AddStyle(FontStyle.getStyle(s), FontStyle.getStyle(s).getExtendedColor(s));
 	}
 
 	public FontConfiguration apply(FontConfiguration initial) {

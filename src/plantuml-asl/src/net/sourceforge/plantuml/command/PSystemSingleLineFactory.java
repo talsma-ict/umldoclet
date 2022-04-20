@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -36,6 +36,7 @@ import net.sourceforge.plantuml.ErrorUmlType;
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.StringLocated;
+import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.DiagramType;
 import net.sourceforge.plantuml.core.UmlSource;
@@ -52,11 +53,11 @@ public abstract class PSystemSingleLineFactory extends PSystemAbstractFactory {
 	}
 
 	@Override
-	final public Diagram createSystem(UmlSource source, ISkinSimple skinParam) {
+	final public Diagram createSystem(ThemeStyle style, UmlSource source, ISkinSimple skinParam) {
 
-		if (source.getTotalLineCount() != 3) {
+		if (source.getTotalLineCount() != 3)
 			return null;
-		}
+
 		final IteratorCounter2 it = source.iterator2();
 		if (source.isEmpty()) {
 			final LineLocation location = it.next().getLocation();
@@ -64,17 +65,16 @@ public abstract class PSystemSingleLineFactory extends PSystemAbstractFactory {
 		}
 
 		final StringLocated startLine = it.next();
-		if (StartUtils.isArobaseStartDiagram(startLine.getString()) == false) {
+		if (StartUtils.isArobaseStartDiagram(startLine.getString()) == false)
 			throw new UnsupportedOperationException();
-		}
 
-		if (it.hasNext() == false) {
+		if (it.hasNext() == false)
 			return buildEmptyError(source, startLine.getLocation(), it.getTrace());
-		}
+
 		final StringLocated s = it.next();
-		if (StartUtils.isArobaseEndDiagram(s.getString())) {
+		if (StartUtils.isArobaseEndDiagram(s.getString()))
 			return buildEmptyError(source, s.getLocation(), it.getTrace());
-		}
+
 		final AbstractPSystem sys = executeLine(source, s.getString());
 		if (sys == null) {
 			final ErrorUml err = new ErrorUml(ErrorUmlType.SYNTAX_ERROR, "Syntax Error?", 0, s.getLocation());

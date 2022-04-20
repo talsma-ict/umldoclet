@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.skin;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 
@@ -48,8 +48,8 @@ public class Area {
 		this.dimensionToUse = dimensionToUse;
 	}
 
-	public Area(double with, double height) {
-		this(new Dimension2DDouble(with, height));
+	public static Area create(double with, double height) {
+		return new Area(new Dimension2DDouble(with, height));
 	}
 
 	public Dimension2D getDimensionToUse() {

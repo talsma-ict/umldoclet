@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.activitydiagram3.ftile;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Objects;
 
 import net.sourceforge.plantuml.Direction;
+import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.HtmlColorAndStyle;
 import net.sourceforge.plantuml.graphic.Rainbow;
@@ -46,6 +47,8 @@ import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.VerticalAlignment;
+import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.ugraphic.MinMax;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
@@ -80,6 +83,7 @@ public class Snake implements UShape {
 	private final List<Text> texts;
 	private final MergeStrategy mergeable;
 	private final Direction emphasizeDirection;
+	private final ISkinParam skinParam;
 
 	public Snake transformX(PiecewiseAffineTransform compressionTransform) {
 		final Snake result = cloneEmpty();
@@ -93,15 +97,15 @@ public class Snake implements UShape {
 
 	public Snake move(double dx, double dy) {
 		final Snake result = cloneEmpty();
-		for (Point2D pt : worm) {
+		for (Point2D pt : worm)
 			result.addPoint(pt.getX() + dx, pt.getY() + dy);
-		}
+
 		return result;
 	}
 
 	private Snake cloneEmpty() {
-		return new Snake(startDecoration, color, endDecoration, worm.cloneEmpty(), mergeable, emphasizeDirection,
-				texts);
+		return new Snake(skinParam, startDecoration, color, endDecoration, worm.cloneEmpty(), mergeable,
+				emphasizeDirection, texts);
 	}
 
 	public final Snake ignoreForCompression() {
@@ -110,53 +114,59 @@ public class Snake implements UShape {
 	}
 
 	public Snake emphasizeDirection(Direction emphasizeDirection) {
-		return new Snake(startDecoration, color, endDecoration, worm, mergeable, emphasizeDirection, texts);
+		return new Snake(skinParam, startDecoration, color, endDecoration, worm, mergeable, emphasizeDirection, texts);
 	}
 
 	public Snake withoutEndDecoration() {
-		return new Snake(startDecoration, color, null, worm, mergeable, emphasizeDirection, texts);
+		return new Snake(skinParam, startDecoration, color, null, worm, mergeable, emphasizeDirection, texts);
 	}
 
 	public Snake withMerge(MergeStrategy mergeable) {
-		return new Snake(startDecoration, color, endDecoration, worm, mergeable, emphasizeDirection, texts);
+		return new Snake(skinParam, startDecoration, color, endDecoration, worm, mergeable, emphasizeDirection, texts);
 	}
 
 	public Snake withLabel(TextBlock textBlock, HorizontalAlignment horizontalAlignment) {
-		if (textBlock != null) {
+		if (textBlock != null)
 			this.texts.add(new Text(textBlock, null, horizontalAlignment));
-		}
+
 		return this;
 	}
 
 	public Snake withLabel(TextBlock textBlock, VerticalAlignment verticalAlignment) {
-		if (textBlock != null && textBlock != TextBlockUtils.EMPTY_TEXT_BLOCK) {
+		if (textBlock != null && textBlock != TextBlockUtils.EMPTY_TEXT_BLOCK)
 			this.texts.add(new Text(textBlock, verticalAlignment, null));
-		}
-		if (verticalAlignment != VerticalAlignment.CENTER) {
+
+		if (verticalAlignment != VerticalAlignment.CENTER)
 			throw new UnsupportedOperationException();
-		}
+
 		return this;
 	}
 
-	public static Snake create(Rainbow color) {
-		return new Snake(null, color, null, new Worm(), MergeStrategy.FULL, null, new ArrayList<Text>());
-	}
-
-	public static Snake create(Rainbow color, UPolygon endDecoration) {
-		return new Snake(null, color, endDecoration, new Worm(), MergeStrategy.FULL, null, new ArrayList<Text>());
-	}
-
-	public static Snake create(UPolygon startDecoration, Rainbow color, UPolygon endDecoration) {
-		return new Snake(startDecoration, color, endDecoration, new Worm(), MergeStrategy.FULL, null,
+	public static Snake create(ISkinParam skinParam, Rainbow color) {
+		final Style style = StyleSignatureBasic.activityArrow().getMergedStyle(skinParam.getCurrentStyleBuilder());
+		return new Snake(skinParam, null, color, null, new Worm(style), MergeStrategy.FULL, null,
 				new ArrayList<Text>());
 	}
 
-	private Snake(UPolygon startDecoration, Rainbow color, UPolygon endDecoration, Worm worm, MergeStrategy mergeable,
-			Direction emphasizeDirection, List<Text> texts) {
+	public static Snake create(ISkinParam skinParam, Rainbow color, UPolygon endDecoration) {
+		final Style style = StyleSignatureBasic.activityArrow().getMergedStyle(skinParam.getCurrentStyleBuilder());
+		return new Snake(skinParam, null, color, endDecoration, new Worm(style), MergeStrategy.FULL, null,
+				new ArrayList<Text>());
+	}
 
-		if (Objects.requireNonNull(color).size() == 0) {
+	public static Snake create(ISkinParam skinParam, UPolygon startDecoration, Rainbow color, UPolygon endDecoration) {
+		final Style style = StyleSignatureBasic.activityArrow().getMergedStyle(skinParam.getCurrentStyleBuilder());
+		return new Snake(skinParam, startDecoration, color, endDecoration, new Worm(style), MergeStrategy.FULL, null,
+				new ArrayList<Text>());
+	}
+
+	private Snake(ISkinParam skinParam, UPolygon startDecoration, Rainbow color, UPolygon endDecoration, Worm worm,
+			MergeStrategy mergeable, Direction emphasizeDirection, List<Text> texts) {
+
+		if (Objects.requireNonNull(color).size() == 0)
 			throw new IllegalArgumentException();
-		}
+
+		this.skinParam = skinParam;
 		this.worm = worm;
 		this.texts = Objects.requireNonNull(texts);
 		this.emphasizeDirection = emphasizeDirection;
@@ -205,14 +215,14 @@ public class Snake implements UShape {
 		}
 		final double globalMove = -1.0 * (colors.size() - 1) / 2.0;
 		Worm current = worm.moveFirstPoint(mutation.getFirst().multiplyBy(globalMove));
-		if (mutation.size() > 2) {
+		if (mutation.size() > 2)
 			current = current.moveLastPoint(mutation.getLast().multiplyBy(globalMove));
-		}
+
 		for (int i = 0; i < colors.size(); i++) {
 			double stroke = 1.5;
-			if (colorArrowSeparationSpace == 0) {
+			if (colorArrowSeparationSpace == 0)
 				stroke = i == colors.size() - 1 ? 2.0 : 3.0;
-			}
+
 			current.drawInternalOneColor(startDecoration, ug, colors.get(i), stroke, emphasizeDirection, endDecoration);
 			current = mutation.mute(current);
 		}
@@ -230,9 +240,9 @@ public class Snake implements UShape {
 
 	public double getMaxX(StringBounder stringBounder) {
 		double result = -Double.MAX_VALUE;
-		for (Point2D pt : worm) {
+		for (Point2D pt : worm)
 			result = Math.max(result, pt.getX());
-		}
+
 		for (Text text : texts) {
 			final Point2D position = getTextBlockPosition(stringBounder, text);
 			final Dimension2D dim = text.textBlock.calculateDimension(stringBounder);
@@ -297,14 +307,13 @@ public class Snake implements UShape {
 
 	public Snake merge(Snake other, StringBounder stringBounder) {
 		final MergeStrategy strategy = this.mergeable.max(other.mergeable);
-		if (strategy == MergeStrategy.NONE) {
+		if (strategy == MergeStrategy.NONE)
 			return null;
-		}
-		for (Text text : other.texts) {
-			if (text.hasText(stringBounder)) {
+
+		for (Text text : other.texts)
+			if (text.hasText(stringBounder))
 				return null;
-			}
-		}
+
 		if (same(this.getLast(), other.getFirst())) {
 			final UPolygon oneOf = other.endDecoration == null ? endDecoration : other.endDecoration;
 			if (this.startDecoration != null || other.startDecoration != null) {
@@ -312,23 +321,23 @@ public class Snake implements UShape {
 			}
 			final ArrayList<Text> mergeTexts = new ArrayList<Text>(this.texts);
 			mergeTexts.addAll(other.texts);
-			final Snake result = new Snake(null, color, oneOf, this.worm.merge(other.worm, strategy), strategy,
-					emphasizeDirection == null ? other.emphasizeDirection : emphasizeDirection, mergeTexts);
+			final Snake result = new Snake(skinParam, null, color, oneOf, this.worm.merge(other.worm, strategy),
+					strategy, emphasizeDirection == null ? other.emphasizeDirection : emphasizeDirection, mergeTexts);
 			return result;
 		}
-		if (same(this.getFirst(), other.getLast())) {
+		if (same(this.getFirst(), other.getLast()))
 			return other.merge(this, stringBounder);
-		}
+
 		return null;
 	}
 
 	public boolean touches(Snake other) {
-		if (other.mergeable != MergeStrategy.FULL) {
+		if (other.mergeable != MergeStrategy.FULL)
 			return false;
-		}
-		if (other.worm.isPureHorizontal()) {
+
+		if (other.worm.isPureHorizontal())
 			return false;
-		}
+
 		return same(this.getLast(), other.getFirst());
 	}
 

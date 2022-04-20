@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -40,7 +40,7 @@ import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleBuilder;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class Reference extends AbstractEvent implements Event {
@@ -55,19 +55,17 @@ public class Reference extends AbstractEvent implements Event {
 	final private Style style;
 	final private Style styleHeader;
 
-	public StyleSignature getDefaultStyleDefinition() {
-		return StyleSignature.of(SName.root, SName.element, SName.sequenceDiagram, SName.reference);
+	public StyleSignatureBasic getDefaultStyleDefinition() {
+		return StyleSignatureBasic.of(SName.root, SName.element, SName.sequenceDiagram, SName.reference);
 	}
 
-	private StyleSignature getHeaderStyleDefinition() {
-		return StyleSignature.of(SName.root, SName.element, SName.sequenceDiagram, SName.referenceHeader);
+	private StyleSignatureBasic getHeaderStyleDefinition() {
+		return StyleSignatureBasic.of(SName.root, SName.element, SName.sequenceDiagram, SName.referenceHeader);
 	}
 
 	public Style[] getUsedStyles() {
-		return new Style[] {
-				style,
-				styleHeader == null ? styleHeader : styleHeader.eventuallyOverride(PName.BackGroundColor,
-						backColorElement) };
+		return new Style[] { style, styleHeader == null ? styleHeader
+				: styleHeader.eventuallyOverride(PName.BackGroundColor, backColorElement) };
 	}
 
 	public Reference(List<Participant> participants, Url url, Display strings, HColor backColorGeneral,
@@ -106,9 +104,8 @@ public class Reference extends AbstractEvent implements Event {
 		final StringBuilder sb = new StringBuilder();
 		for (final Iterator<Participant> it = participants.iterator(); it.hasNext();) {
 			sb.append(it.next().getCode());
-			if (it.hasNext()) {
+			if (it.hasNext())
 				sb.append("-");
-			}
 
 		}
 		return sb.toString();

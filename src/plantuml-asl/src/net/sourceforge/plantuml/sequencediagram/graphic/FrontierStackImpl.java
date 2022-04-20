@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -60,7 +60,7 @@ class FrontierStackImpl implements FrontierStack {
 	final private List<Stack> all;
 
 	public FrontierStackImpl(double freeY, int rangeEnd) {
-		final Stack s = new Stack(new FrontierComplex(freeY, rangeEnd));
+		final Stack s = new Stack(FrontierComplex.create(freeY, rangeEnd));
 		all = Collections.singletonList(s);
 	}
 

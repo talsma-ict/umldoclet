@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.graphic;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.util.Objects;
 
@@ -54,11 +54,13 @@ public class USymbolFolder extends USymbol {
 	private final static int marginTitleY2 = 3;
 
 	private final SkinParameter skinParameter;
+	private final SName sname;
 	private final boolean showTitle;
 
-	public USymbolFolder(SkinParameter skinParameter, boolean showTitle) {
+	public USymbolFolder(SName sname, SkinParameter skinParameter, boolean showTitle) {
 		this.skinParameter = skinParameter;
 		this.showTitle = showTitle;
+		this.sname = sname;
 	}
 
 	@Override
@@ -70,12 +72,11 @@ public class USymbolFolder extends USymbol {
 	public SkinParameter getSkinParameter() {
 		return skinParameter;
 	}
-	
+
 	@Override
 	public SName getSName() {
-		return SName.folder;
+		return sname;
 	}
-
 
 	private void drawFolder(UGraphic ug, double width, double height, Dimension2D dimTitle, double shadowing,
 			double roundCorner) {

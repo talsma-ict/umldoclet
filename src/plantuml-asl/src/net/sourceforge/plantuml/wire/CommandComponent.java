@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -86,9 +86,8 @@ public class CommandComponent extends SingleLineCommand2<WireDiagram> {
 
 		final String stringColor = arg.get("COLOR", 0);
 		HColor color = null;
-		if (stringColor != null) {
+		if (stringColor != null)
 			color = HColorSet.instance().getColor(diagram.getSkinParam().getThemeStyle(), stringColor);
-		}
 
 		return diagram.addComponent(indent, name, width, height, color);
 	}

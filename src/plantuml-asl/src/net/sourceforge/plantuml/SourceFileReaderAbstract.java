@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.sourceforge.plantuml.api.ImageDataSimple;
+import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.error.PSystemError;
 import net.sourceforge.plantuml.preproc.Defines;
@@ -63,13 +64,13 @@ public abstract class SourceFileReaderAbstract implements ISourceFileReader {
 	protected File outputFile;
 
 	protected final BlockUmlBuilder builder;
-	protected /*final*/ FileFormatOption fileFormatOption;
+	protected /* final */ FileFormatOption fileFormatOption;
 	private boolean checkMetadata;
 	private boolean noerror;
 
-	public SourceFileReaderAbstract(File file, FileFormatOption fileFormatOption, Defines defines, List<String> config, String charsetName)
-			throws IOException {
-		
+	public SourceFileReaderAbstract(File file, FileFormatOption fileFormatOption, Defines defines, List<String> config,
+			String charsetName) throws IOException {
+
 		if (!file.exists()) {
 			throw new IllegalArgumentException();
 		}
@@ -78,7 +79,7 @@ public abstract class SourceFileReaderAbstract implements ISourceFileReader {
 
 		this.file = file;
 		this.fileFormatOption = fileFormatOption;
-		this.builder = new BlockUmlBuilder(config, charset, defines, getReader(charset),
+		this.builder = new BlockUmlBuilder(fileFormatOption.getStyle(), config, charset, defines, getReader(charset),
 				SFile.fromFile(file.getAbsoluteFile().getParentFile()), FileWithSuffix.getFileName(file));
 	}
 
@@ -107,6 +108,7 @@ public abstract class SourceFileReaderAbstract implements ISourceFileReader {
 		return builder.getIncludedFiles();
 	}
 
+	@Deprecated
 	public final void setFileFormatOption(FileFormatOption fileFormatOption) {
 		this.fileFormatOption = fileFormatOption;
 	}

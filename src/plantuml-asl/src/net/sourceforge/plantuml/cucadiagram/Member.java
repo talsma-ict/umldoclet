@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,7 +34,7 @@ import net.sourceforge.plantuml.Guillemet;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.UrlBuilder;
-import net.sourceforge.plantuml.UrlBuilder.ModeUrl;
+import net.sourceforge.plantuml.UrlMode;
 import net.sourceforge.plantuml.command.regex.Matcher2;
 import net.sourceforge.plantuml.command.regex.MyPattern;
 import net.sourceforge.plantuml.command.regex.Pattern2;
@@ -98,7 +98,7 @@ public class Member implements CharSequence {
 			if (urlString == null) {
 				this.url = null;
 			} else {
-				this.url = new UrlBuilder(null, ModeUrl.STRICT).getUrl(urlString);
+				this.url = new UrlBuilder(null, UrlMode.STRICT).getUrl(urlString);
 			}
 		} else {
 			this.url = null;

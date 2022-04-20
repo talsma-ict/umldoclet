@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -56,7 +56,7 @@ public class GConnectionVerticalDown extends GAbstractConnection {
 
 	@Override
 	public void drawTranslate(UGraphic ug, UTranslate translate1, UTranslate translate2) {
-		final Snake snake = Snake.create(getInLinkRenderingColor(), Arrows.asToDown()).withLabel(textBlock,
+		final Snake snake = Snake.create(skinParam(), getInLinkRenderingColor(), Arrows.asToDown()).withLabel(textBlock,
 				HorizontalAlignment.LEFT);
 		final Point2D p1 = pos1.getTranslated(gpoint1.getPoint2D());
 		final Point2D p2 = pos2.getTranslated(gpoint2.getPoint2D());
@@ -73,7 +73,7 @@ public class GConnectionVerticalDown extends GAbstractConnection {
 
 	@Override
 	public void drawU(UGraphic ug) {
-		final Snake snake = Snake.create(getInLinkRenderingColor(), Arrows.asToDown()).withLabel(textBlock,
+		final Snake snake = Snake.create(skinParam(), getInLinkRenderingColor(), Arrows.asToDown()).withLabel(textBlock,
 				HorizontalAlignment.LEFT);
 		final Point2D p1 = pos1.getTranslated(gpoint1.getPoint2D());
 		final Point2D p2 = pos2.getTranslated(gpoint2.getPoint2D());

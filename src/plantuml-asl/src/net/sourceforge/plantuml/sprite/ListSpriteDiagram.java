@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.sprite;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -39,6 +39,7 @@ import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
+import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.core.UmlSource;
@@ -57,8 +58,8 @@ import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class ListSpriteDiagram extends UmlDiagram {
 
-	public ListSpriteDiagram(UmlSource source, ISkinSimple skinParam) {
-		super(source, UmlDiagramType.HELP, skinParam);
+	public ListSpriteDiagram(ThemeStyle style, UmlSource source, ISkinSimple skinParam) {
+		super(style, source, UmlDiagramType.HELP, skinParam);
 	}
 
 	public DiagramDescription getDescription() {
@@ -67,17 +68,14 @@ public class ListSpriteDiagram extends UmlDiagram {
 
 	@Override
 	public ImageBuilder createImageBuilder(FileFormatOption fileFormatOption) throws IOException {
-		return super.createImageBuilder(fileFormatOption)
-				.annotations(false);
+		return super.createImageBuilder(fileFormatOption).annotations(false);
 	}
 
 	@Override
 	protected ImageData exportDiagramInternal(OutputStream os, int index, FileFormatOption fileFormatOption)
 			throws IOException {
 
-		return createImageBuilder(fileFormatOption)
-				.drawable(getTable())
-				.write(os);
+		return createImageBuilder(fileFormatOption).drawable(getTable()).write(os);
 	}
 
 	private TextBlock getTable() {
@@ -91,7 +89,7 @@ public class ListSpriteDiagram extends UmlDiagram {
 					final Sprite sprite = getSkinParam().getSprite(n);
 					TextBlock blockName = Display.create(n).create(FontConfiguration.blackBlueTrue(UFont.sansSerif(14)),
 							HorizontalAlignment.LEFT, getSkinParam());
-					TextBlock tb = sprite.asTextBlock(HColorUtils.BLACK, 1.0);
+					TextBlock tb = sprite.asTextBlock(HColorUtils.BLACK, 1.0, getSkinParam().getColorMapper());
 					tb = TextBlockUtils.mergeTB(tb, blockName, HorizontalAlignment.CENTER);
 					tb.drawU(ug.apply(new UTranslate(x, y)));
 					final Dimension2D dim = tb.calculateDimension(ug.getStringBounder());

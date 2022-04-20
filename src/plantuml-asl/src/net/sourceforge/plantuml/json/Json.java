@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -361,7 +361,7 @@ public final class Json {
     return string;
   }
 
-  static class DefaultHandler extends JsonHandler<JsonArray, JsonObject> {
+  public static class DefaultHandler extends JsonHandler<JsonArray, JsonObject> {
 
     protected JsonValue value;
 
@@ -415,7 +415,7 @@ public final class Json {
       object.add(name, value);
     }
 
-    JsonValue getValue() {
+    public JsonValue getValue() {
       return value;
     }
 

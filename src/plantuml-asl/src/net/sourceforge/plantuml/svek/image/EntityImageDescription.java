@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,18 +30,18 @@
  */
 package net.sourceforge.plantuml.svek.image;
 
-import java.awt.geom.Dimension2D;
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.Guillemet;
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.SkinParamUtils;
 import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.UseStyle;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.cucadiagram.BodyFactory;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.EntityPortion;
@@ -58,12 +58,13 @@ import net.sourceforge.plantuml.graphic.SymbolContext;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.USymbol;
+import net.sourceforge.plantuml.graphic.USymbols;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.svek.AbstractEntityImage;
 import net.sourceforge.plantuml.svek.Bibliotekon;
 import net.sourceforge.plantuml.svek.Margins;
@@ -107,68 +108,47 @@ public class EntityImageDescription extends AbstractEntityImage {
 		this.fixCircleLabelOverlapping = getSkinParam().fixCircleLabelOverlapping();
 
 		this.links = links;
-		final Stereotype stereotype = entity.getStereotype();
 		USymbol symbol = getUSymbol(entity);
-		if (symbol == USymbol.FOLDER)
+		if (symbol == USymbols.FOLDER)
 			this.shapeType = ShapeType.FOLDER;
-		else if (symbol == USymbol.HEXAGON)
+		else if (symbol == USymbols.HEXAGON)
 			this.shapeType = ShapeType.HEXAGON;
-		else if (symbol == USymbol.INTERFACE)
+		else if (symbol == USymbols.INTERFACE)
 			this.shapeType = getSkinParam().fixCircleLabelOverlapping() ? ShapeType.RECTANGLE_WITH_CIRCLE_INSIDE
 					: ShapeType.RECTANGLE;
 		else
 			this.shapeType = ShapeType.RECTANGLE;
 
-		this.hideText = symbol == USymbol.INTERFACE;
+		this.hideText = symbol == USymbols.INTERFACE;
 
 		this.url = entity.getUrl99();
 
 		final Colors colors = entity.getColors();
 		HColor backcolor = colors.getColor(ColorType.BACK);
-		final HColor forecolor;
-		final double roundCorner;
-		final double diagonalCorner;
-		final double deltaShadow;
-		final UStroke stroke;
-		final FontConfiguration fcTitle;
-		final FontConfiguration fcStereo;
 
-		Style style = null;
-		final HorizontalAlignment defaultAlign;
-		if (UseStyle.useBetaStyle()) {
-			final StyleSignature tmp = StyleSignature.of(SName.root, SName.element, styleName,
-					symbol.getSkinParameter().getStyleName());
-			style = tmp.with(stereotype).getMergedStyle(getSkinParam().getCurrentStyleBuilder());
-			style = style.eventuallyOverride(colors);
-			final Style styleStereo = tmp.forStereotypeItself(stereotype)
-					.getMergedStyle(getSkinParam().getCurrentStyleBuilder());
-			forecolor = style.value(PName.LineColor).asColor(getSkinParam().getThemeStyle(),
+		final StyleSignatureBasic tmp = StyleSignatureBasic.of(SName.root, SName.element, styleName,
+				symbol.getSkinParameter().getStyleName());
+		final Stereotype stereotype = entity.getStereotype();
+		final Style style = tmp.withTOBECHANGED(stereotype).getMergedStyle(getSkinParam().getCurrentStyleBuilder())
+				.eventuallyOverride(colors);
+
+		final Style styleStereo = tmp.forStereotypeItself(stereotype)
+				.getMergedStyle(getSkinParam().getCurrentStyleBuilder());
+		final HColor forecolor = style.value(PName.LineColor).asColor(getSkinParam().getThemeStyle(),
+				getSkinParam().getIHtmlColorSet());
+		if (backcolor == null)
+			backcolor = style.value(PName.BackGroundColor).asColor(getSkinParam().getThemeStyle(),
 					getSkinParam().getIHtmlColorSet());
-			if (backcolor == null)
-				backcolor = style.value(PName.BackGroundColor).asColor(getSkinParam().getThemeStyle(),
-						getSkinParam().getIHtmlColorSet());
 
-			roundCorner = style.value(PName.RoundCorner).asDouble();
-			diagonalCorner = style.value(PName.DiagonalCorner).asDouble();
-			deltaShadow = style.value(PName.Shadowing).asDouble();
-			stroke = style.getStroke(colors);
-			fcTitle = style.getFontConfiguration(getSkinParam().getThemeStyle(), getSkinParam().getIHtmlColorSet());
-			fcStereo = styleStereo.getFontConfiguration(getSkinParam().getThemeStyle(),
-					getSkinParam().getIHtmlColorSet());
-			defaultAlign = style.getHorizontalAlignment();
-		} else {
-			forecolor = SkinParamUtils.getColor(getSkinParam(), stereotype, symbol.getColorParamBorder());
-			if (backcolor == null)
-				backcolor = SkinParamUtils.getColor(getSkinParam(), getStereo(), symbol.getColorParamBack());
-
-			roundCorner = symbol.getSkinParameter().getRoundCorner(getSkinParam(), stereotype);
-			diagonalCorner = symbol.getSkinParameter().getDiagonalCorner(getSkinParam(), stereotype);
-			deltaShadow = getSkinParam().shadowing2(getEntity().getStereotype(), symbol.getSkinParameter()) ? 3 : 0;
-			stroke = colors.muteStroke(symbol.getSkinParameter().getStroke(getSkinParam(), stereotype));
-			fcTitle = new FontConfiguration(getSkinParam(), symbol.getFontParam(), stereotype);
-			fcStereo = new FontConfiguration(getSkinParam(), symbol.getFontParamStereotype(), stereotype);
-			defaultAlign = HorizontalAlignment.LEFT;
-		}
+		final double roundCorner = style.value(PName.RoundCorner).asDouble();
+		final double diagonalCorner = style.value(PName.DiagonalCorner).asDouble();
+		final double deltaShadow = style.value(PName.Shadowing).asDouble();
+		final UStroke stroke = style.getStroke(colors);
+		final FontConfiguration fcTitle = style.getFontConfiguration(getSkinParam().getThemeStyle(),
+				getSkinParam().getIHtmlColorSet());
+		final FontConfiguration fcStereo = styleStereo.getFontConfiguration(getSkinParam().getThemeStyle(),
+				getSkinParam().getIHtmlColorSet());
+		final HorizontalAlignment defaultAlign = style.getHorizontalAlignment();
 
 		assert getStereo() == stereotype;
 
@@ -182,7 +162,7 @@ public class EntityImageDescription extends AbstractEntityImage {
 		} else {
 			final HorizontalAlignment align = getSkinParam().getDefaultTextAlignment(defaultAlign);
 			desc = BodyFactory.create3(entity.getDisplay(), symbol.getFontParam(), getSkinParam(), align, fcTitle,
-					getSkinParam().wrapWidth());
+					getSkinParam().wrapWidth(), style);
 		}
 
 		stereo = TextBlockUtils.empty(0, 0);
@@ -280,7 +260,10 @@ public class EntityImageDescription extends AbstractEntityImage {
 
 	final public void drawU(UGraphic ug) {
 		ug.draw(new UComment("entity " + getEntity().getCodeGetName()));
-		ug.startGroup(UGroupType.CLASS, "elem " + getEntity().getCode() + " selected");
+		final Map<UGroupType, String> typeIDent = new EnumMap<>(UGroupType.class);
+		typeIDent.put(UGroupType.CLASS, "elem " + getEntity().getCode() + " selected");
+		typeIDent.put(UGroupType.ID, "elem_" + getEntity().getCode());
+		ug.startGroup(typeIDent);
 
 		if (url != null)
 			ug.startUrl(url);

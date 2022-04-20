@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -47,6 +47,7 @@ import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockLineBefore;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
+import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.Style;
 
 public class BodierLikeClassOrObject implements Bodier {
@@ -81,11 +82,12 @@ public class BodierLikeClassOrObject implements Bodier {
 	}
 
 	@Override
-	public void addFieldOrMethod(String s) {
+	public boolean addFieldOrMethod(String s) {
 		// Empty cache
 		methodsToDisplay = null;
 		fieldsToDisplay = null;
 		rawBody.add(s);
+		return true;
 	}
 
 	private boolean isBodyEnhanced() {
@@ -223,7 +225,7 @@ public class BodierLikeClassOrObject implements Bodier {
 		}
 		if (type == LeafType.OBJECT) {
 			if (showFields == false) {
-				return new TextBlockLineBefore(TextBlockUtils.empty(0, 0));
+				return new TextBlockLineBefore(style.value(PName.LineThickness).asDouble(), TextBlockUtils.empty(0, 0));
 			}
 			return BodyFactory.create1(skinParam.getDefaultTextAlignment(HorizontalAlignment.LEFT),
 					rawBodyWithoutHidden(), fontParam, skinParam, stereotype, leaf, style);

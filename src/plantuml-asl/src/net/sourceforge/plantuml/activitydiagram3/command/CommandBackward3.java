@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -105,7 +105,7 @@ public class CommandBackward3 extends SingleLineCommand2<ActivityDiagram3> {
 		if (incomingColor == null)
 			in = LinkRendering.none();
 		else
-			in = new LinkRendering(incomingColor);
+			in = LinkRendering.create(incomingColor);
 		final String label = arg.get(name, 0);
 		return in.withDisplay(Display.getWithNewlines(label));
 	}

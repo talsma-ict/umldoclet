@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -46,8 +46,8 @@ public class DriverEllipseTikz implements UDriver<UEllipse, TikzGraphics> {
 		final double extend = shape.getExtend();
 		final double cx = x + width / 2;
 		final double cy = y + height / 2;
-		tikz.setFillColor(mapper.toColor(param.getBackcolor()));
-		tikz.setStrokeColor(mapper.toColor(param.getColor()));
+		tikz.setFillColor(param.getBackcolor());
+		tikz.setStrokeColor(param.getColor());
 		tikz.setStrokeWidth(param.getStroke().getThickness(), param.getStroke().getDashTikz());
 		if (start == 0 && extend == 0) {
 			tikz.ellipse(cx, cy, width / 2, height / 2);

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,6 +32,7 @@ package net.sourceforge.plantuml.eggs;
 
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.api.PSystemFactory;
+import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.DiagramType;
 import net.sourceforge.plantuml.core.UmlSource;
@@ -40,10 +41,10 @@ import net.sourceforge.plantuml.graphic.GraphicPosition;
 public class PSystemWelcomeFactory implements PSystemFactory {
 
 	@Override
-	public Diagram createSystem(UmlSource source, ISkinSimple skinParam) {
-		if (source.getTotalLineCount() == 2) {
+	public Diagram createSystem(ThemeStyle style, UmlSource source, ISkinSimple skinParam) {
+		if (source.getTotalLineCount() == 2)
 			return new PSystemWelcome(source, GraphicPosition.BACKGROUND_CORNER_BOTTOM_RIGHT);
-		}
+
 		return null;
 	}
 

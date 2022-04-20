@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -61,7 +61,15 @@ public class WLinkVertical {
 		this.direction = direction;
 		this.type = type;
 		this.label = label;
-		this.color = color == null ? HColorUtils.BLACK : color;
+		this.color = color == null ? getBlack() : color;
+	}
+
+	private HColor getBlack() {
+		return HColorUtils.BLACK.withDark(HColorUtils.WHITE);
+	}
+
+	private HColor getWhite() {
+		return HColorUtils.WHITE.withDark(HColorUtils.BLACK);
 	}
 
 	private TextBlock getTextBlock() {
@@ -76,7 +84,7 @@ public class WLinkVertical {
 			ug = ug.apply(color.bg());
 			drawNormalArrow(ug);
 		} else if (type == WLinkType.BUS) {
-			ug = ug.apply(HColorUtils.WHITE.bg());
+			ug = ug.apply(getWhite().bg());
 			drawBusArrow(ug);
 		}
 	}
@@ -131,7 +139,8 @@ public class WLinkVertical {
 			path.lineTo(5, 0);
 			path.closePath();
 			ug.apply(start.compose(UTranslate.dy(1))).draw(path);
-		}	}
+		}
+	}
 
 	private void drawNormalArrow(UGraphic ug) {
 		final double dy = destination - start.getDy() - 2;

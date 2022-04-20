@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,16 +30,21 @@
  */
 package net.sourceforge.plantuml.svek;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.util.List;
 
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinParam;
+import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.skin.rose.Rose;
+import net.sourceforge.plantuml.style.PName;
+import net.sourceforge.plantuml.style.SName;
+import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UStroke;
@@ -57,27 +62,27 @@ public final class CucaDiagramFileMakerSvek2InternalImage extends AbstractTextBl
 		VERTICAL, HORIZONTAL;
 
 		static Separator fromChar(char sep) {
-			if (sep == '|') {
+			if (sep == '|')
 				return VERTICAL;
-			}
-			if (sep == '-') {
+
+			if (sep == '-')
 				return HORIZONTAL;
-			}
+
 			throw new IllegalArgumentException();
 		}
 
 		UTranslate move(Dimension2D dim) {
-			if (this == VERTICAL) {
+			if (this == VERTICAL)
 				return UTranslate.dx(dim.getWidth());
-			}
+
 			return UTranslate.dy(dim.getHeight());
 		}
 
 		Dimension2D add(Dimension2D orig, Dimension2D other) {
-			if (this == VERTICAL) {
+			if (this == VERTICAL)
 				return new Dimension2DDouble(orig.getWidth() + other.getWidth(),
 						Math.max(orig.getHeight(), other.getHeight()));
-			}
+
 			return new Dimension2DDouble(Math.max(orig.getWidth(), other.getWidth()),
 					orig.getHeight() + other.getHeight());
 		}
@@ -86,17 +91,12 @@ public final class CucaDiagramFileMakerSvek2InternalImage extends AbstractTextBl
 			final double THICKNESS_BORDER = 1.5;
 			final int DASH = 8;
 			ug = ug.apply(new UStroke(DASH, 10, THICKNESS_BORDER));
-			if (this == VERTICAL) {
+			if (this == VERTICAL)
 				ug.draw(ULine.vline(dimTotal.getHeight() + DASH));
-			} else {
+			else
 				ug.draw(ULine.hline(dimTotal.getWidth() + DASH));
-			}
 
 		}
-	}
-
-	private HColor getColor(ColorParam colorParam, Stereotype stereotype) {
-		return new Rose().getHtmlColor(skinParam, stereotype, colorParam);
 	}
 
 	public CucaDiagramFileMakerSvek2InternalImage(List<IEntityImage> inners, char concurrentSeparator,
@@ -107,8 +107,21 @@ public final class CucaDiagramFileMakerSvek2InternalImage extends AbstractTextBl
 		this.inners = inners;
 	}
 
+	private Style getStyle() {
+		return getStyleSignature().getMergedStyle(skinParam.getCurrentStyleBuilder());
+	}
+
+	private StyleSignatureBasic getStyleSignature() {
+		return StyleSignatureBasic.of(SName.root, SName.element, SName.stateDiagram, SName.state);
+	}
+
 	public void drawU(UGraphic ug) {
-		final HColor dotColor = getColor(ColorParam.stateBorder, stereotype);
+		final HColor borderColor;
+		if (UseStyle.useBetaStyle())
+			borderColor = getStyle().value(PName.LineColor).asColor(skinParam.getThemeStyle(),
+					skinParam.getIHtmlColorSet());
+		else
+			borderColor = new Rose().getHtmlColor(skinParam, stereotype, ColorParam.stateBorder);
 		final StringBounder stringBounder = ug.getStringBounder();
 		final Dimension2D dimTotal = calculateDimension(stringBounder);
 
@@ -117,9 +130,9 @@ public final class CucaDiagramFileMakerSvek2InternalImage extends AbstractTextBl
 			inner.drawU(ug);
 			final Dimension2D dim = inner.calculateDimension(stringBounder);
 			ug = ug.apply(separator.move(dim));
-			if (i < inners.size() - 1) {
-				separator.drawSeparator(ug.apply(dotColor), dimTotal);
-			}
+			if (i < inners.size() - 1)
+				separator.drawSeparator(ug.apply(borderColor), dimTotal);
+
 		}
 
 	}

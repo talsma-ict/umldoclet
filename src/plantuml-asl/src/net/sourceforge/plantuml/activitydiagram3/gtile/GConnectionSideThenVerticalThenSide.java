@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -71,7 +71,7 @@ public class GConnectionSideThenVerticalThenSide extends GAbstractConnection {
 		final Point2D p2 = pos2.getTranslated(gpoint2.getPoint2D());
 		final Direction direction = p1.getY() < p2.getY() ? Direction.DOWN : Direction.UP;
 		final UPolygon tmp = p1.getX() < p2.getX() ? Arrows.asToRight() : Arrows.asToLeft();
-		final Snake snake = Snake.create(getInLinkRenderingColor(), tmp).emphasizeDirection(direction)
+		final Snake snake = Snake.create(skinParam(), getInLinkRenderingColor(), tmp).emphasizeDirection(direction)
 				.withLabel(textBlock, HorizontalAlignment.LEFT);
 		// final double maxX = Math.max(p1.getX(), p2.getX());
 		final double maxX = xpos;

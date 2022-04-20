@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -45,7 +45,9 @@ abstract class MonoSwimable extends WithNote implements Swimable {
 	}
 
 	final public Set<Swimlane> getSwimlanes() {
-		return swimlane == null ? Collections.<Swimlane>emptySet() : Collections.<Swimlane>singleton(swimlane);
+		if (swimlane == null)
+			return Collections.emptySet();
+		return Collections.<Swimlane>singleton(swimlane);
 	}
 
 	final public Swimlane getSwimlaneIn() {

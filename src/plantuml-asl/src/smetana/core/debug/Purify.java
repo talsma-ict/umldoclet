@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -47,7 +47,7 @@ import gen.annotation.Reviewed;
 
 public class Purify {
 
-	private final Map<String, Method> methods = new LinkedHashMap<String, Method>();
+	private final Map<String, Method> methods = new LinkedHashMap<>();
 	private final File out2 = new File("../out-smetana", "smetana.txt");
 	private PrintWriter pw2;
 	private int currentLevel;
@@ -157,7 +157,7 @@ public class Purify {
 	}
 
 	public void printMe() {
-		final List<Entry<String, Method>> reverse = new ArrayList<Entry<String, Method>>(methods.entrySet());
+		final List<Entry<String, Method>> reverse = new ArrayList<>(methods.entrySet());
 		Collections.reverse(reverse);
 		for (Entry<String, Method> ent : reverse) {
 			final String signature = ent.getKey();
@@ -166,8 +166,8 @@ public class Purify {
 			final String version = getVersion(m);
 			final String path = getPath(m);
 			final String hasND_Rank = hasND_Rank(m) ? "*" : " ";
-			System.err.println(String.format("%-8s %-26s %-12s %s %-30s %s", version, signature, reviewedWhen,
-					hasND_Rank, m.getName(), path));
+			System.err.printf("%-8s %-26s %-12s %s %-30s %s%n", version, signature, reviewedWhen,
+					hasND_Rank, m.getName(), path);
 		}
 	}
 

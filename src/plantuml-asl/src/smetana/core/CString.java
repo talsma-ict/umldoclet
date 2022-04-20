@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -55,7 +55,7 @@ public class CString extends UnsupportedC implements __ptr__ {
 	}
 
 	public CString(String string) {
-		this(new ArrayList<Character>(), 0);
+		this(null, 0);
 		for (int i = 0; i < string.length(); i++) {
 			data2.add(string.charAt(i));
 		}
@@ -65,7 +65,7 @@ public class CString extends UnsupportedC implements __ptr__ {
 	public CString duplicate() {
 		// return this;
 
-		return new CString(new ArrayList<Character>(this.data2), currentStart);
+		return new CString(new ArrayList<>(this.data2), currentStart);
 
 		// final CString result = new CString(this.data.size());
 		// for (int i = 0; i < result.data.size(); i++) {
@@ -77,21 +77,23 @@ public class CString extends UnsupportedC implements __ptr__ {
 	public CString strdup() {
 		return duplicate();
 	}
-	
+
 	public static CString gmalloc(int nbytes) {
 		return new CString(nbytes);
-		}
-
+	}
 
 	public CString(int size) {
-		this(new ArrayList<Character>(), 0);
+		this(null, 0);
 		for (int i = 0; i < size; i++) {
 			data2.add('\0');
 		}
 	}
 
 	private CString(List<Character> data2, int currentStart) {
-		this.data2 = data2;
+		if (data2 == null)
+			this.data2 = new ArrayList<>();
+		else
+			this.data2 = data2;
 		this.currentStart = currentStart;
 		this.uid = UID;
 		UID += 2;
@@ -126,7 +128,7 @@ public class CString extends UnsupportedC implements __ptr__ {
 	public CString plus_(int pointerMove) {
 		return new CString(data2, currentStart + pointerMove);
 	}
-	
+
 	public int comparePointer(__ptr__ other) {
 		final CString this2 = (CString) other;
 		if (this.data2 != this2.data2) {
@@ -134,8 +136,6 @@ public class CString extends UnsupportedC implements __ptr__ {
 		}
 		return this.currentStart - this2.currentStart;
 	}
-
-
 
 	@Override
 	public String toString() {
@@ -220,7 +220,7 @@ public class CString extends UnsupportedC implements __ptr__ {
 
 	public CString strchr(char c) {
 		for (int i = currentStart; i < data2.size(); i++) {
-			if (data2.get(i).charValue() == c) {
+			if (data2.get(i) == c) {
 				return new CString(data2, i);
 			}
 		}

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.eggs;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -255,7 +255,7 @@ public class PSystemColors extends PlainDiagram implements UDrawable {
 
 	private TextBlock getTextName(final UFont font, String name, final HColorSimple color) {
 		final HColorSimple opposite = color.opposite();
-		final FontConfiguration fc = new FontConfiguration(font, opposite, HColorUtils.BLUE, true);
+		final FontConfiguration fc = FontConfiguration.create(font, opposite, HColorUtils.BLUE, true);
 		final TextBlock tt = Display.getWithNewlines(name).create(fc, HorizontalAlignment.CENTER,
 				new SpriteContainerEmpty());
 		return tt;

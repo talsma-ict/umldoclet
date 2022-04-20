@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -40,7 +40,7 @@ public class DriverDotPathTikz implements UDriver<DotPath, TikzGraphics> {
 
 	public void draw(DotPath path, double x, double y, ColorMapper mapper, UParam param, TikzGraphics tikz) {
 		tikz.setFillColor(null);
-		tikz.setStrokeColor(mapper.toColor(param.getColor()));
+		tikz.setStrokeColor(param.getColor());
 		tikz.setStrokeWidth(param.getStroke().getThickness(), param.getStroke().getDashTikz());
 		tikz.upath(x, y, path.toUPath());
 	}

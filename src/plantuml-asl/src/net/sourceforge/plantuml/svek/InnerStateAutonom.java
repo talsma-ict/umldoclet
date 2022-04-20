@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.svek;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.Url;
@@ -80,9 +80,8 @@ public final class InnerStateAutonom extends AbstractTextBlock implements IEntit
 		final RoundedContainer r = new RoundedContainer(total, titreHeight, attr.getHeight() + marginForFields,
 				borderColor, backColor, im.getBackcolor(), stroke, rounded, shadowing);
 
-		if (url != null) {
+		if (url != null)
 			ug.startUrl(url);
-		}
 
 		r.drawU(ug);
 		title.drawU(ug.apply(new UTranslate((total.getWidth() - text.getWidth()) / 2, IEntityImage.MARGIN)));
@@ -92,14 +91,12 @@ public final class InnerStateAutonom extends AbstractTextBlock implements IEntit
 		final double spaceYforURL = getSpaceYforURL(ug.getStringBounder());
 		im.drawU(ug.apply(new UTranslate(IEntityImage.MARGIN, spaceYforURL)));
 
-		if (withSymbol) {
+		if (withSymbol)
 			EntityImageState.drawSymbol(ug.apply(borderColor), total.getWidth(), total.getHeight());
 
-		}
-
-		if (url != null) {
+		if (url != null)
 			ug.closeUrl();
-		}
+
 	}
 
 	private double getSpaceYforURL(StringBounder stringBounder) {

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,10 +30,9 @@
  */
 package net.sourceforge.plantuml.graphic;
 
-import java.awt.geom.Dimension2D;
-
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.UseStyle;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.ugraphic.AbstractUGraphicHorizontalLine;
 import net.sourceforge.plantuml.ugraphic.UEmpty;
@@ -49,12 +48,11 @@ class USymbolDatabase extends USymbol {
 	public SkinParameter getSkinParameter() {
 		return SkinParameter.DATABASE;
 	}
-	
+
 	@Override
 	public SName getSName() {
 		return SName.database;
 	}
-
 
 	private void drawDatabase(UGraphic ug, double width, double height, double shadowing) {
 		final UPath shape = new UPath();
@@ -72,12 +70,7 @@ class USymbolDatabase extends USymbol {
 
 		final UPath closing = getClosingPath(width);
 		ug.apply(new HColorNone().bg()).draw(closing);
-
-		if (UseStyle.useBetaStyle()) {
-			ug.apply(new UTranslate(width, height)).draw(new UEmpty(10, 10));
-			// ug.apply(HColorUtils.BLACK).apply(new UTranslate(width, height)).draw(new
-			// URectangle(10, 10));
-		}
+		ug.apply(new UTranslate(width, height)).draw(new UEmpty(10, 10));
 
 	}
 

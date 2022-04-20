@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -55,14 +55,16 @@ public class PixelImage implements MutableImage {
 		this.type = Objects.requireNonNull(type);
 	}
 
+	@Override
 	public MutableImage withScale(double scale) {
 		return new PixelImage(bufferedImageScale1, type, this.scale * scale);
 	}
 
+	@Override
 	public final BufferedImage getImage() {
-		if (scale == 1) {
+		if (scale == 1)
 			return bufferedImageScale1;
-		}
+
 		if (cache == null) {
 			final int w = (int) Math.round(bufferedImageScale1.getWidth() * scale);
 			final int h = (int) Math.round(bufferedImageScale1.getHeight() * scale);
@@ -75,61 +77,77 @@ public class PixelImage implements MutableImage {
 		return cache;
 	}
 
+	@Override
+	public MutableImage monochrome() {
+		final BufferedImage copy = deepCopy();
+		for (int i = 0; i < bufferedImageScale1.getWidth(); i++)
+			for (int j = 0; j < bufferedImageScale1.getHeight(); j++) {
+				final int color = bufferedImageScale1.getRGB(i, j);
+				final int rgb = getRgb(color);
+				final int grayScale = ColorUtils.getGrayScale(rgb);
+				final int gray = grayScale + grayScale << 8 + grayScale << 16;
+				final int a = getA(color);
+				copy.setRGB(i, j, gray + a);
+			}
+
+		return new PixelImage(copy, type, scale);
+	}
+
+	@Override
 	public MutableImage muteColor(Color newColor) {
-		if (newColor == null) {
+		if (newColor == null)
 			return this;
-		}
+
 		int darkerRgb = getDarkerRgb();
 		final BufferedImage copy = deepCopy();
-		for (int i = 0; i < bufferedImageScale1.getWidth(); i++) {
+		for (int i = 0; i < bufferedImageScale1.getWidth(); i++)
 			for (int j = 0; j < bufferedImageScale1.getHeight(); j++) {
 				final int color = bufferedImageScale1.getRGB(i, j);
 				final int rgb = getRgb(color);
 				final int a = getA(color);
-				if (a != 0 && rgb == darkerRgb) {
+				if (a != 0 && rgb == darkerRgb)
 					copy.setRGB(i, j, newColor.getRGB() + a);
-				}
 			}
-		}
+
 		return new PixelImage(copy, type, scale);
 	}
 
+	@Override
 	public MutableImage muteTransparentColor(Color newColor) {
-		if (newColor == null) {
+		if (newColor == null)
 			newColor = Color.WHITE;
-		}
+
 		final BufferedImage copy = deepCopy();
-		for (int i = 0; i < bufferedImageScale1.getWidth(); i++) {
+		for (int i = 0; i < bufferedImageScale1.getWidth(); i++)
 			for (int j = 0; j < bufferedImageScale1.getHeight(); j++) {
 				final int color = bufferedImageScale1.getRGB(i, j);
 				final int a = getA(color);
-				if (a == 0) {
+				if (a == 0)
 					copy.setRGB(i, j, newColor.getRGB());
-				}
+
 			}
-		}
+
 		return new PixelImage(copy, type, scale);
 	}
 
 	private int getDarkerRgb() {
 		int darkerRgb = -1;
-		for (int i = 0; i < bufferedImageScale1.getWidth(); i++) {
+		for (int i = 0; i < bufferedImageScale1.getWidth(); i++)
 			for (int j = 0; j < bufferedImageScale1.getHeight(); j++) {
 				final int color = bufferedImageScale1.getRGB(i, j);
 				final int rgb = getRgb(color);
 				final int a = getA(color);
-				if (a != mask_a__) {
+				if (a != mask_a__)
 					continue;
-				}
+
 				// if (isTransparent(color)) {
 				// continue;
 				// }
 				final int gray = ColorUtils.getGrayScale(rgb);
-				if (darkerRgb == -1 || gray < ColorUtils.getGrayScale(darkerRgb)) {
+				if (darkerRgb == -1 || gray < ColorUtils.getGrayScale(darkerRgb))
 					darkerRgb = rgb;
-				}
+
 			}
-		}
 		return darkerRgb;
 	}
 
@@ -156,11 +174,10 @@ public class PixelImage implements MutableImage {
 	private BufferedImage deepCopy() {
 		final BufferedImage result = new BufferedImage(bufferedImageScale1.getWidth(), bufferedImageScale1.getHeight(),
 				BufferedImage.TYPE_INT_ARGB);
-		for (int i = 0; i < this.bufferedImageScale1.getWidth(); i++) {
-			for (int j = 0; j < this.bufferedImageScale1.getHeight(); j++) {
+		for (int i = 0; i < this.bufferedImageScale1.getWidth(); i++)
+			for (int j = 0; j < this.bufferedImageScale1.getHeight(); j++)
 				result.setRGB(i, j, bufferedImageScale1.getRGB(i, j));
-			}
-		}
+
 		return result;
 	}
 

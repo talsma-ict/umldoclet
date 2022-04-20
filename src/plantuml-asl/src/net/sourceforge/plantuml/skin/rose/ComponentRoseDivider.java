@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.skin.rose;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.LineBreakStrategy;
@@ -58,6 +58,7 @@ public class ComponentRoseDivider extends AbstractTextualComponent {
 	private final HColor background;
 	private final boolean empty;
 	private final boolean withShadow;
+	private final double shadow;
 	private final UStroke stroke;
 	private final double roundCorner;
 
@@ -72,7 +73,9 @@ public class ComponentRoseDivider extends AbstractTextualComponent {
 					getIHtmlColorSet());
 			this.stroke = style.getStroke();
 			this.roundCorner = style.value(PName.RoundCorner).asInt();
+			this.shadow = style.value(PName.Shadowing).asDouble();
 		} else {
+			this.shadow = 0;
 			this.background = background;
 			this.borderColor = borderColor;
 			this.stroke = stroke;
@@ -103,15 +106,13 @@ public class ComponentRoseDivider extends AbstractTextualComponent {
 			ug = ug.apply(borderColor);
 			ug = ug.apply(stroke);
 			final URectangle rect = new URectangle(textWidth + deltaX, textHeight).rounded(roundCorner);
-			if (withShadow) {
+			if (UseStyle.useBetaStyle())
+				rect.setDeltaShadow(shadow);
+			else if (withShadow)
 				rect.setDeltaShadow(4);
-			}
+
 			ug.apply(new UTranslate(xpos, ypos)).draw(rect);
 			textBlock.drawU(ug.apply(new UTranslate(xpos + deltaX, ypos + getMarginY())));
-
-			// drawSep(ug.apply(new UTranslate(xpos + deltaX + textWidth +
-			// stroke.getThickness() + , dimensionToUse
-			// .getHeight() / 2)), 10);
 		}
 	}
 
@@ -123,9 +124,11 @@ public class ComponentRoseDivider extends AbstractTextualComponent {
 
 	private void drawRectLong(UGraphic ug, double width) {
 		final URectangle rectLong = new URectangle(width, 3).rounded(roundCorner);
-		if (withShadow) {
+		if (UseStyle.useBetaStyle())
+			rectLong.setDeltaShadow(shadow);
+		else if (withShadow)
 			rectLong.setDeltaShadow(2);
-		}
+
 		ug = ug.apply(new UStroke());
 		ug.draw(rectLong);
 	}

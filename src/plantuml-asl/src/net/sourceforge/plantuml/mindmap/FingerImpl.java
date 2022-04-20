@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.mindmap;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +51,7 @@ import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleBuilder;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UPath;
 import net.sourceforge.plantuml.ugraphic.UStroke;
@@ -77,42 +77,41 @@ public class FingerImpl implements Finger, UDrawable {
 	private final List<FingerImpl> nail = new ArrayList<>();
 	private Tetris tetris = null;
 
-	private StyleSignature getDefaultStyleDefinitionNode() {
+	private StyleSignatureBasic getDefaultStyleDefinitionNode() {
 		final String depth = SName.depth(level);
 		if (level == 0) {
-			return StyleSignature.of(SName.root, SName.element, SName.mindmapDiagram, SName.node, SName.rootNode)
+			return StyleSignatureBasic.of(SName.root, SName.element, SName.mindmapDiagram, SName.node, SName.rootNode)
 					.add(stereotype).add(depth);
 		}
 		if (shape == IdeaShape.NONE && nail.size() == 0) {
-			return StyleSignature
+			return StyleSignatureBasic
 					.of(SName.root, SName.element, SName.mindmapDiagram, SName.node, SName.leafNode, SName.boxless)
 					.add(stereotype).add(depth);
 		}
 		if (shape == IdeaShape.NONE) {
-			return StyleSignature.of(SName.root, SName.element, SName.mindmapDiagram, SName.node, SName.boxless)
+			return StyleSignatureBasic.of(SName.root, SName.element, SName.mindmapDiagram, SName.node, SName.boxless)
 					.add(stereotype).add(depth);
 		}
 		if (nail.size() == 0) {
-			return StyleSignature.of(SName.root, SName.element, SName.mindmapDiagram, SName.node, SName.leafNode)
+			return StyleSignatureBasic.of(SName.root, SName.element, SName.mindmapDiagram, SName.node, SName.leafNode)
 					.add(stereotype).add(depth);
 		}
-		return StyleSignature.of(SName.root, SName.element, SName.mindmapDiagram, SName.node).add(stereotype)
+		return StyleSignatureBasic.of(SName.root, SName.element, SName.mindmapDiagram, SName.node).add(stereotype)
 				.add(depth);
 	}
 
-	public StyleSignature getDefaultStyleDefinitionArrow() {
+	public StyleSignatureBasic getDefaultStyleDefinitionArrow() {
 		final String depth = SName.depth(level);
-		return StyleSignature.of(SName.root, SName.element, SName.mindmapDiagram, SName.arrow).add(stereotype)
+		return StyleSignatureBasic.of(SName.root, SName.element, SName.mindmapDiagram, SName.arrow).add(stereotype)
 				.add(depth);
 	}
 
 	public static FingerImpl build(Idea idea, ISkinParam skinParam, Direction direction) {
 		final FingerImpl result = new FingerImpl(idea.getStyleBuilder(), idea.getBackColor(), idea.getLabel(),
 				skinParam, idea.getShape(), direction, idea.getLevel(), idea.getStereotype());
-		for (Idea child : idea.getChildren()) {
+		for (Idea child : idea.getChildren())
 			result.addInNail(build(child, skinParam, direction));
-		}
-		// System.err.println("End of build for " + idea);
+
 		return result;
 	}
 
@@ -151,7 +150,7 @@ public class FingerImpl implements Finger, UDrawable {
 
 		for (int i = 0; i < nail.size(); i++) {
 			final FingerImpl child = nail.get(i);
-			final SymetricalTeePositioned stp = tetris(stringBounder).getElements().get(i);
+			final SymetricalTeePositioned stp = getTetris(stringBounder).getElements().get(i);
 			final double x = direction == Direction.RIGHT ? dimPhalanx.getWidth() + getX12()
 					: -dimPhalanx.getWidth() - getX12();
 			final Point2D p2 = new Point2D.Double(x, stp.getY());
@@ -184,12 +183,12 @@ public class FingerImpl implements Finger, UDrawable {
 		ug.draw(path);
 	}
 
-	private Tetris tetris(StringBounder stringBounder) {
+	private Tetris getTetris(StringBounder stringBounder) {
 		if (tetris == null) {
 			tetris = new Tetris(label.toString());
-			for (FingerImpl child : nail) {
+			for (FingerImpl child : nail)
 				tetris.add(child.asSymetricalTee(stringBounder));
-			}
+
 			tetris.balance();
 		}
 		return tetris;
@@ -198,9 +197,9 @@ public class FingerImpl implements Finger, UDrawable {
 	private SymetricalTee asSymetricalTee(StringBounder stringBounder) {
 		final double thickness1 = getPhalanxThickness(stringBounder);
 		final double elongation1 = getPhalanxElongation(stringBounder);
-		if (nail.size() == 0) {
+		if (nail.size() == 0)
 			return new SymetricalTee(thickness1, elongation1, 0, 0);
-		}
+
 		final double thickness2 = getNailThickness(stringBounder);
 		final double elongation2 = getNailElongation(stringBounder);
 		return new SymetricalTee(thickness1, elongation1 + getX1(), thickness2, getX2() + elongation2);
@@ -227,9 +226,9 @@ public class FingerImpl implements Finger, UDrawable {
 	}
 
 	private TextBlock getPhalanx() {
-		if (drawPhalanx == false) {
+		if (drawPhalanx == false)
 			return TextBlockUtils.empty(0, 0);
-		}
+
 		if (shape == IdeaShape.BOX) {
 			final ISkinParam foo = new SkinParamColors(skinParam, Colors.empty().add(ColorType.BACK, backColor));
 			final TextBlock box = FtileBoxOld.createMindMap(styleBuilder, foo, label, getDefaultStyleDefinitionNode());
@@ -241,18 +240,18 @@ public class FingerImpl implements Finger, UDrawable {
 		final TextBlock text = label.create0(
 				styleNode.getFontConfiguration(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet()),
 				styleNode.getHorizontalAlignment(), skinParam, styleNode.wrapWidth(), CreoleMode.FULL, null, null);
-		if (direction == Direction.RIGHT) {
+		if (direction == Direction.RIGHT)
 			return TextBlockUtils.withMargin(text, 3, 0, 1, 1);
-		}
+
 		return TextBlockUtils.withMargin(text, 0, 3, 1, 1);
 	}
 
 	public double getNailThickness(StringBounder stringBounder) {
-		return tetris(stringBounder).getHeight();
+		return getTetris(stringBounder).getHeight();
 	}
 
 	public double getNailElongation(StringBounder stringBounder) {
-		return tetris(stringBounder).getWidth();
+		return getTetris(stringBounder).getWidth();
 	}
 
 	public double getFullThickness(StringBounder stringBounder) {

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.svek.image;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinParam;
@@ -47,8 +47,10 @@ public class EntityImageGroup extends AbstractEntityImage {
 
 	public EntityImageGroup(ILeaf entity, ISkinParam skinParam) {
 		super(entity, skinParam);
-		// this.desc = Display.create(StringUtils.getWithNewlines(entity.getDisplay()), new FontConfiguration(
-		// getFont(FontParam.ACTIVITY), HtmlColorUtils.BLACK), HorizontalAlignment.CENTER);
+		// this.desc = Display.create(StringUtils.getWithNewlines(entity.getDisplay()),
+		// FontConfiguration.create(
+		// getFont(FontParam.ACTIVITY), HtmlColorUtils.BLACK),
+		// HorizontalAlignment.CENTER);
 	}
 
 	public Dimension2D calculateDimension(StringBounder stringBounder) {

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -181,10 +181,10 @@ public class LifeLine {
 			if (level == 0) {
 				final double y1 = events.get(i).y;
 				final double y2 = events.get(j).y;
-				return new SegmentColored(y1, y2, events.get(i).colors, shadowing);
+				return SegmentColored.create(y1, y2, events.get(i).colors, shadowing);
 			}
 		}
-		return new SegmentColored(events.get(i).y, events.get(events.size() - 1).y, events.get(i).colors, shadowing);
+		return SegmentColored.create(events.get(i).y, events.get(events.size() - 1).y, events.get(i).colors, shadowing);
 	}
 
 	private Collection<SegmentColored> getSegmentsCutted(StringBounder stringBounder, int i) {
@@ -215,13 +215,13 @@ public class LifeLine {
 					type = type == ComponentType.ALIVE_BOX_CLOSE_OPEN ? ComponentType.ALIVE_BOX_CLOSE_CLOSE
 							: ComponentType.ALIVE_BOX_OPEN_CLOSE;
 				}
-				Style style = type.getDefaultStyleDefinition().getMergedStyle(skinParam2.getCurrentStyleBuilder());
+				Style style = type.getStyleSignature().getMergedStyle(skinParam2.getCurrentStyleBuilder());
 				if (style != null) {
 					style = style.eventuallyOverride(PName.BackGroundColor, specificBackColor);
 					style = style.eventuallyOverride(PName.LineColor, specificLineColor);
 				}
-				final Component compAliveBox = skin
-						.createComponent(new Style[] { style }, type, null, skinParam2, null);
+				final Component compAliveBox = skin.createComponent(new Style[] { style }, type, null, skinParam2,
+						null);
 				type = ComponentType.ALIVE_BOX_OPEN_OPEN;
 				final int currentLevel = getLevel(seg.getPos1Initial());
 				seg.drawU(ug, compAliveBox, currentLevel);

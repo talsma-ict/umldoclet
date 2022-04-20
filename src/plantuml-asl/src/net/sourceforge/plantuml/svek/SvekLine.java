@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,11 +30,13 @@
  */
 package net.sourceforge.plantuml.svek;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -47,6 +49,7 @@ import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.LineParam;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.Pragma;
+import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.command.Position;
@@ -361,7 +364,7 @@ public class SvekLine implements Moveable, Hideable, GuideLine {
 			sb.append("minlen=" + (length - 1));
 			sb.append(",");
 		}
-		sb.append("color=\"" + DotStringFactory.sharp000000(lineColor) + "\"");
+		sb.append("color=\"" + StringUtils.sharp000000(lineColor) + "\"");
 		if (hasNoteLabelText() || link.getLinkConstraint() != null) {
 			sb.append(",");
 			if (graphvizVersion.useXLabelInsteadOfLabel() || dotMode == DotMode.NO_LEFT_RIGHT_AND_XLABEL
@@ -431,7 +434,7 @@ public class SvekLine implements Moveable, Hideable, GuideLine {
 
 	public static void appendTable(StringBuilder sb, int w, int h, int col) {
 		sb.append("<TABLE ");
-		sb.append("BGCOLOR=\"" + DotStringFactory.sharp000000(col) + "\" ");
+		sb.append("BGCOLOR=\"" + StringUtils.sharp000000(col) + "\" ");
 		sb.append("FIXEDSIZE=\"TRUE\" WIDTH=\"" + w + "\" HEIGHT=\"" + h + "\">");
 		sb.append("<TR");
 		sb.append(">");
@@ -617,9 +620,20 @@ public class SvekLine implements Moveable, Hideable, GuideLine {
 		if (opale)
 			return;
 
+		if (link.isInvis())
+			return;
+
+		if (dotPath == null) {
+			Log.info("DotPath is null for " + this);
+			return;
+		}
+
 		ug.draw(link.commentForSvg());
-		ug.startGroup(UGroupType.CLASS,
+		final Map<UGroupType, String> typeIDent = new EnumMap<>(UGroupType.class);
+		typeIDent.put(UGroupType.CLASS,
 				"link " + link.getEntity1().getCode() + " " + link.getEntity2().getCode() + " selected");
+		typeIDent.put(UGroupType.ID, "link_" + link.getEntity1().getCode() + "_" + link.getEntity2().getCode());
+		ug.startGroup(typeIDent);
 		double x = 0;
 		double y = 0;
 		final Url url = link.getUrl();
@@ -636,9 +650,6 @@ public class SvekLine implements Moveable, Hideable, GuideLine {
 
 		x += dx;
 		y += dy;
-
-		if (link.isInvis())
-			return;
 
 		if (this.link.getColors() != null) {
 			final HColor newColor = this.link.getColors().getColor(ColorType.ARROW, ColorType.LINE);
@@ -658,17 +669,13 @@ public class SvekLine implements Moveable, Hideable, GuideLine {
 		ug = ug.apply(stroke);
 		// double moveEndY = 0;
 
-		if (dotPath == null) {
-			Log.info("DotPath is null for " + this);
-			return;
-		}
 		DotPath todraw = dotPath;
 		if (link.getEntity2().isGroup() && link.getEntity2().getUSymbol() instanceof USymbolFolder) {
 			final Cluster endCluster = bibliotekon.getCluster((IGroup) link.getEntity2());
 			if (endCluster != null) {
 				final double deltaFolderH = endCluster.checkFolderPosition(dotPath.getEndPoint(),
 						ug.getStringBounder());
-				todraw = new DotPath(dotPath);
+				todraw = dotPath.copy();
 				todraw.moveEndPoint(0, deltaFolderH);
 				// moveEndY = deltaFolderH;
 			}
@@ -727,7 +734,7 @@ public class SvekLine implements Moveable, Hideable, GuideLine {
 			final Set<Point2D> bez = dotPath.sample();
 			Point2D minPt = null;
 			double minDist = Double.MAX_VALUE;
-			for (Point2D pt : square) {
+			for (Point2D pt : square)
 				for (Point2D pt2 : bez) {
 					final double distance = pt2.distance(pt);
 					if (minPt == null || distance < minDist) {
@@ -735,7 +742,7 @@ public class SvekLine implements Moveable, Hideable, GuideLine {
 						minDist = distance;
 					}
 				}
-			}
+
 			link.getLinkConstraint().setPosition(link, minPt);
 			link.getLinkConstraint().drawMe(ug, skinParam);
 		}
@@ -758,9 +765,9 @@ public class SvekLine implements Moveable, Hideable, GuideLine {
 
 	private String uniq(final Set<String> ids, final String comment) {
 		boolean changed = ids.add(comment);
-		if (changed) {
+		if (changed)
 			return comment;
-		}
+
 		int i = 1;
 		while (true) {
 			final String candidate = comment + "-" + i;
@@ -918,7 +925,7 @@ public class SvekLine implements Moveable, Hideable, GuideLine {
 	}
 
 	public final DotPath getDotPath() {
-		final DotPath result = new DotPath(dotPath);
+		final DotPath result = dotPath.copy();
 		result.moveSvek(dx, dy);
 		return result;
 	}

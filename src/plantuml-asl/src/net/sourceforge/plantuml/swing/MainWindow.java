@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -103,7 +103,7 @@ public class MainWindow extends JFrame {
 	}
 
 	private String getDefaultFileExtensions() {
-		return "txt, tex, java, htm, html, c, h, cpp, apt, pu, puml, hpp, hh";
+		return "txt, tex, java, htm, html, c, h, cpp, apt, pu, puml, hpp, hh, md";
 	}
 
 	private void changeExtensions(String ext) {

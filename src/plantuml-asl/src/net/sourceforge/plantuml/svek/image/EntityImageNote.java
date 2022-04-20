@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,9 +30,11 @@
  */
 package net.sourceforge.plantuml.svek.image;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Objects;
 
 import net.sourceforge.plantuml.AlignmentParam;
@@ -66,7 +68,7 @@ import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.svek.AbstractEntityImage;
 import net.sourceforge.plantuml.svek.ShapeType;
 import net.sourceforge.plantuml.svek.SvekLine;
@@ -89,6 +91,7 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 	private final int marginY = 5;
 	private final boolean withShadow;
 	private final ISkinParam skinParam;
+	private final Style style;
 
 	private final TextBlock textBlock;
 
@@ -104,14 +107,14 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 		final FontConfiguration fontConfiguration;
 		final HorizontalAlignment horizontalAlignment;
 		if (UseStyle.useBetaStyle()) {
-			final Style style = getDefaultStyleDefinition(umlDiagramType.getStyleName())
+			this.style = getDefaultStyleDefinition(umlDiagramType.getStyleName())
 					.getMergedStyle(skinParam.getCurrentStyleBuilder());
-			if (entity.getColors().getColor(ColorType.BACK) == null) {
+			if (entity.getColors().getColor(ColorType.BACK) == null)
 				this.noteBackgroundColor = style.value(PName.BackGroundColor).asColor(skinParam.getThemeStyle(),
 						skinParam.getIHtmlColorSet());
-			} else {
+			else
 				this.noteBackgroundColor = entity.getColors().getColor(ColorType.BACK);
-			}
+
 			this.borderColor = style.value(PName.LineColor).asColor(skinParam.getThemeStyle(),
 					skinParam.getIHtmlColorSet());
 			this.shadowing = style.value(PName.Shadowing).asDouble();
@@ -119,43 +122,44 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 			fontConfiguration = style.getFontConfiguration(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet());
 			horizontalAlignment = style.getHorizontalAlignment();
 		} else {
+			this.style = null;
 			this.shadowing = skinParam.shadowing(getEntity().getStereotype()) ? 4 : 0;
-			if (entity.getColors().getColor(ColorType.BACK) == null) {
+			if (entity.getColors().getColor(ColorType.BACK) == null)
 				this.noteBackgroundColor = rose.getHtmlColor(getSkinParam(), ColorParam.noteBackground);
-			} else {
+			else
 				this.noteBackgroundColor = entity.getColors().getColor(ColorType.BACK);
-			}
+
 			this.borderColor = SkinParamUtils.getColor(getSkinParam(), null, ColorParam.noteBorder);
 
-			fontConfiguration = new FontConfiguration(getSkinParam(), FontParam.NOTE, null);
+			fontConfiguration = FontConfiguration.create(getSkinParam(), FontParam.NOTE, null);
 			horizontalAlignment = skinParam.getHorizontalAlignment(AlignmentParam.noteTextAlignment, null, false, null);
 		}
 
-		if (strings.size() == 1 && strings.get(0).length() == 0) {
+		if (strings.size() == 1 && strings.get(0).length() == 0)
 			textBlock = new TextBlockEmpty();
-		} else {
+		else
 			textBlock = BodyFactory.create3(strings, FontParam.NOTE, getSkinParam(), horizontalAlignment,
-					fontConfiguration, getSkinParam().wrapWidth());
-		}
+					fontConfiguration, getSkinParam().wrapWidth(), style);
+
 	}
 
 	private static ISkinParam getISkinParam(ISkinParam skinParam, IEntity entity) {
-		if (entity.getColors() != null) {
+		if (entity.getColors() != null)
 			return entity.getColors().mute(skinParam);
-		}
+
 		return skinParam;
 	}
 
 	static ISkinParam getSkin(ISkinParam skinParam, IEntity entity) {
 		final Stereotype stereotype = entity.getStereotype();
 		HColor back = entity.getColors().getColor(ColorType.BACK);
-		if (back != null) {
+		if (back != null)
 			return new SkinParamBackcolored(skinParam, back);
-		}
+
 		back = getColorStatic(skinParam, ColorParam.noteBackground, stereotype);
-		if (back != null) {
+		if (back != null)
 			return new SkinParamBackcolored(skinParam, back);
-		}
+
 		return skinParam;
 	}
 
@@ -203,18 +207,21 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 		return new Dimension2DDouble(width, height);
 	}
 
-	private StyleSignature getDefaultStyleDefinition(SName sname) {
-		return StyleSignature.of(SName.root, SName.element, sname, SName.note);
+	private StyleSignatureBasic getDefaultStyleDefinition(SName sname) {
+		return StyleSignatureBasic.of(SName.root, SName.element, sname, SName.note);
 	}
 
 	final public void drawU(UGraphic ug) {
 		final Url url = getEntity().getUrl99();
 
-		ug.startGroup(UGroupType.CLASS, "elem " + getEntity().getCode() + " selected");
+		final Map<UGroupType, String> typeIDent = new EnumMap<>(UGroupType.class);
+		typeIDent.put(UGroupType.CLASS, "elem " + getEntity().getCode() + " selected");
+		typeIDent.put(UGroupType.ID, "elem_" + getEntity().getCode());
+		ug.startGroup(typeIDent);
 
-		if (url != null) {
+		if (url != null)
 			ug.startUrl(url);
-		}
+
 		final UGraphic ug2 = UGraphicStencil.create(ug, this, new UStroke());
 		if (opaleLine == null || opaleLine.isOpale() == false) {
 			drawNormal(ug2);
@@ -238,15 +245,14 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 			final Point2D newRefpp2 = move(pp2, node.getMinX(), node.getMinY());
 			final Point2D projection = move(other.projection(newRefpp2, stringBounder), -node.getMinX(),
 					-node.getMinY());
-			final Opale opale = new Opale(shadowing, borderColor, noteBackgroundColor, textBlock, true);
+			final Opale opale = new Opale(shadowing, borderColor, noteBackgroundColor, textBlock, true, getStroke());
 			opale.setRoundCorner(getRoundCorner());
 			opale.setOpale(strategy, pp1, projection);
 			final UGraphic stroked = applyStroke(ug2);
 			opale.drawU(Colors.applyStroke(stroked, getEntity().getColors()));
 		}
-		if (url != null) {
+		if (url != null)
 			ug.closeUrl();
-		}
 
 		ug.closeGroup();
 	}
@@ -263,9 +269,14 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 		final StringBounder stringBounder = ug.getStringBounder();
 		final UPath polygon = Opale.getPolygonNormal(getTextWidth(stringBounder), getTextHeight(stringBounder),
 				getRoundCorner());
-		if (withShadow) {
-			polygon.setDeltaShadow(4);
-		}
+
+		double shadow = 0;
+		if (UseStyle.useBetaStyle())
+			shadow = this.shadowing;
+		else if (withShadow)
+			shadow = 4;
+		polygon.setDeltaShadow(shadow);
+
 		ug = ug.apply(noteBackgroundColor.bg()).apply(borderColor);
 		final UGraphic stroked = applyStroke(ug);
 		stroked.draw(polygon);
@@ -275,11 +286,21 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 	}
 
 	private UGraphic applyStroke(UGraphic ug) {
+		if (UseStyle.useBetaStyle())
+			return ug.apply(style.getStroke());
+
 		final UStroke stroke = skinParam.getThickness(LineParam.noteBorder, null);
-		if (stroke == null) {
+		if (stroke == null)
 			return ug;
-		}
+
 		return ug.apply(stroke);
+	}
+
+	private UStroke getStroke() {
+		if (UseStyle.useBetaStyle())
+			return style.getStroke();
+
+		return skinParam.getThickness(LineParam.noteBorder, null);
 	}
 
 	private Direction getOpaleStrategy(double width, double height, Point2D pt) {
@@ -287,29 +308,29 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 		final double d2 = getOrthoDistance(new Line2D.Double(0, height, width, height), pt);
 		final double d3 = getOrthoDistance(new Line2D.Double(0, 0, 0, height), pt);
 		final double d4 = getOrthoDistance(new Line2D.Double(0, 0, width, 0), pt);
-		if (d3 <= d1 && d3 <= d2 && d3 <= d4) {
+		if (d3 <= d1 && d3 <= d2 && d3 <= d4)
 			return Direction.LEFT;
-		}
-		if (d1 <= d2 && d1 <= d3 && d1 <= d4) {
+
+		if (d1 <= d2 && d1 <= d3 && d1 <= d4)
 			return Direction.RIGHT;
-		}
-		if (d4 <= d1 && d4 <= d2 && d4 <= d3) {
+
+		if (d4 <= d1 && d4 <= d2 && d4 <= d3)
 			return Direction.UP;
-		}
-		if (d2 <= d1 && d2 <= d3 && d2 <= d4) {
+
+		if (d2 <= d1 && d2 <= d3 && d2 <= d4)
 			return Direction.DOWN;
-		}
+
 		return null;
 
 	}
 
 	private static double getOrthoDistance(Line2D.Double seg, Point2D pt) {
-		if (isHorizontal(seg)) {
+		if (isHorizontal(seg))
 			return Math.abs(seg.getP1().getY() - pt.getY());
-		}
-		if (isVertical(seg)) {
+
+		if (isVertical(seg))
 			return Math.abs(seg.getP1().getX() - pt.getX());
-		}
+
 		throw new IllegalArgumentException();
 	}
 

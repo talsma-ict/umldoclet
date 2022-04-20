@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.cucadiagram;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 
 import net.sourceforge.plantuml.FontParam;
@@ -88,7 +88,7 @@ public class LinkConstraint {
 		ug = ug.apply(new UStroke(3, 3, 1));
 		ug.apply(new UTranslate(x1, y1)).draw(line);
 
-		final TextBlock label = display.create(new FontConfiguration(skinParam, FontParam.ARROW, null),
+		final TextBlock label = display.create(FontConfiguration.create(skinParam, FontParam.ARROW, null),
 				HorizontalAlignment.CENTER, skinParam);
 		final Dimension2D dimLabel = label.calculateDimension(ug.getStringBounder());
 		final double x = (x1 + x2) / 2 - dimLabel.getWidth() / 2;

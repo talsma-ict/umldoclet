@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,7 +34,7 @@ import static net.sourceforge.plantuml.ugraphic.ImageBuilder.plainImageBuilder;
 
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -47,6 +47,7 @@ import java.io.PrintWriter;
 import java.util.List;
 
 import net.sourceforge.plantuml.api.ImageDataSimple;
+import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.ImageData;
@@ -81,12 +82,12 @@ public abstract class UmlDiagram extends TitledDiagram implements Diagram, Annot
 
 	private int minwidth = Integer.MAX_VALUE;
 
-	public UmlDiagram(UmlSource source, UmlDiagramType type) {
-		super(source, type);
-	}
+//	public UmlDiagram(ThemeStyle style, UmlSource source, UmlDiagramType type) {
+//		super(style, source, type);
+//	}
 
-	public UmlDiagram(UmlSource source, UmlDiagramType type, ISkinSimple orig) {
-		super(source, type, orig);
+	public UmlDiagram(ThemeStyle style, UmlSource source, UmlDiagramType type, ISkinSimple orig) {
+		super(style, source, type, orig);
 	}
 
 	final public int getMinwidth() {
@@ -106,24 +107,23 @@ public abstract class UmlDiagram extends TitledDiagram implements Diagram, Annot
 	}
 
 	public final DisplaySection getFooterOrHeaderTeoz(FontParam param) {
-		if (param == FontParam.FOOTER) {
+		if (param == FontParam.FOOTER)
 			return getFooter();
-		}
-		if (param == FontParam.HEADER) {
+
+		if (param == FontParam.HEADER)
 			return getHeader();
-		}
+
 		throw new IllegalArgumentException();
 	}
-	
+
 	@Override
 	final protected ImageData exportDiagramNow(OutputStream os, int index, FileFormatOption fileFormatOption)
 			throws IOException {
 
 		fileFormatOption = fileFormatOption.withTikzFontDistortion(getSkinParam().getTikzFontDistortion());
 
-		if (fileFormatOption.getFileFormat() == FileFormat.PDF) {
+		if (fileFormatOption.getFileFormat() == FileFormat.PDF)
 			return exportDiagramInternalPdf(os, index);
-		}
 
 		try {
 			final ImageData imageData = exportDiagramInternal(os, index, fileFormatOption);
@@ -136,7 +136,7 @@ public abstract class UmlDiagram extends TitledDiagram implements Diagram, Annot
 			e.printStackTrace();
 			exportDiagramError(os, e.getCause(), fileFormatOption, e.getGraphvizVersion());
 		} catch (Throwable e) {
-			//e.printStackTrace();
+			// e.printStackTrace();
 			exportDiagramError(os, e, fileFormatOption, null);
 		}
 		return ImageDataSimple.error();
@@ -167,27 +167,24 @@ public abstract class UmlDiagram extends TitledDiagram implements Diagram, Annot
 				Log.error("Issue in flashcode generation " + e);
 				// e.printStackTrace();
 			}
-			if (im2 != null) {
+			if (im2 != null)
 				GraphvizCrash.addDecodeHint(strings);
-			}
+
 		}
 		final BufferedImage im = im2;
 		final TextBlockBackcolored graphicStrings = GraphicStrings.createBlackOnWhite(strings, IconLoader.getRandom(),
 				GraphicPosition.BACKGROUND_CORNER_TOP_RIGHT);
 
 		final UDrawable drawable = (im == null) ? graphicStrings : new UDrawable() {
-				public void drawU(UGraphic ug) {
-					graphicStrings.drawU(ug);
-					final double height = graphicStrings.calculateDimension(ug.getStringBounder()).getHeight();
-					ug = ug.apply(UTranslate.dy(height));
-					ug.draw(new UImage(new PixelImage(im, AffineTransformType.TYPE_NEAREST_NEIGHBOR)).scale(3));
-				}
-			};
+			public void drawU(UGraphic ug) {
+				graphicStrings.drawU(ug);
+				final double height = graphicStrings.calculateDimension(ug.getStringBounder()).getHeight();
+				ug = ug.apply(UTranslate.dy(height));
+				ug.draw(new UImage(new PixelImage(im, AffineTransformType.TYPE_NEAREST_NEIGHBOR)).scale(3));
+			}
+		};
 
-		plainImageBuilder(drawable, fileFormat)
-				.metadata(metadata)
-				.seed(seed)
-				.write(os);
+		plainImageBuilder(drawable, fileFormat).metadata(metadata).seed(seed).write(os);
 	}
 
 	private static void exportDiagramErrorText(OutputStream os, Throwable exception, List<String> strings) {
@@ -204,18 +201,18 @@ public abstract class UmlDiagram extends TitledDiagram implements Diagram, Annot
 
 	public String getFlashData() {
 		final UmlSource source = getSource();
-		if (source == null) {
+		if (source == null)
 			return "";
-		}
+
 		return source.getPlainString();
 	}
 
 	static private List<String> getFailureText1(Throwable exception, String graphvizVersion, String textDiagram) {
 		final List<String> strings = GraphvizCrash.anErrorHasOccured(exception, textDiagram);
 		strings.add("PlantUML (" + Version.versionString() + ") cannot parse result from dot/GraphViz.");
-		if (exception instanceof EmptySvgException) {
+		if (exception instanceof EmptySvgException)
 			strings.add("Because dot/GraphViz returns an empty string.");
-		}
+
 		GraphvizCrash.checkOldVersionWarning(strings);
 		if (graphvizVersion != null) {
 			strings.add(" ");
@@ -284,9 +281,9 @@ public abstract class UmlDiagram extends TitledDiagram implements Diagram, Annot
 		final String name = changeName(suggestedFile.getFile(index).getAbsolutePath());
 		final SFile cmapFile = new SFile(name);
 		try (PrintWriter pw = cmapFile.createPrintWriter()) {
-			if (PSystemUtils.canFileBeWritten(cmapFile) == false) {
+			if (PSystemUtils.canFileBeWritten(cmapFile) == false)
 				return;
-			}
+
 			pw.print(cmapdata.getCMapData(cmapFile.getName().substring(0, cmapFile.getName().length() - 6)));
 		}
 	}
@@ -297,24 +294,24 @@ public abstract class UmlDiagram extends TitledDiagram implements Diagram, Annot
 
 	@Override
 	public String getWarningOrError() {
-		if (lastInfo == null) {
+		if (lastInfo == null)
 			return null;
-		}
+
 		final double actualWidth = lastInfo.getWidth();
-		if (actualWidth == 0) {
+		if (actualWidth == 0)
 			return null;
-		}
+
 		final String value = getSkinParam().getValue("widthwarning");
-		if (value == null) {
+		if (value == null)
 			return null;
-		}
-		if (value.matches("\\d+") == false) {
+
+		if (value.matches("\\d+") == false)
 			return null;
-		}
+
 		final int widthwarning = Integer.parseInt(value);
-		if (actualWidth > widthwarning) {
+		if (actualWidth > widthwarning)
 			return "The image is " + ((int) actualWidth) + " pixel width. (Warning limit is " + widthwarning + ")";
-		}
+
 		return null;
 	}
 

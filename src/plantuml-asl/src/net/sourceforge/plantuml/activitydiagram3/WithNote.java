@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -47,7 +47,7 @@ abstract class WithNote extends AbstractInstruction {
 	private final Collection<PositionedNote> notes = new ArrayList<>();
 
 	public boolean addNote(Display note, NotePosition position, NoteType type, Colors colors, Swimlane swimlaneNote) {
-		this.notes.add(new PositionedNote(note, position, type, colors, swimlaneNote));
+		this.notes.add(new PositionedNote(note, position, type, swimlaneNote, colors));
 		return true;
 	}
 

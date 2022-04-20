@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.sequencediagram.teoz;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.LineParam;
@@ -171,7 +171,7 @@ public class CommunicationTile extends AbstractTile {
 				x1 -= LIVE_DELTA_SIZE;
 			}
 			x2 += LIVE_DELTA_SIZE * level2;
-			area = new Area(x1 - x2, dim.getHeight());
+			area = Area.create(x1 - x2, dim.getHeight());
 			ug = ug.apply(UTranslate.dx(x2));
 			if (isCreate()) {
 				livingSpace2.drawHead(ug, (Context2D) ug, VerticalAlignment.TOP, HorizontalAlignment.RIGHT);
@@ -184,7 +184,7 @@ public class CommunicationTile extends AbstractTile {
 			}
 			x1 += LIVE_DELTA_SIZE * level1;
 			x2 += LIVE_DELTA_SIZE * level2;
-			area = new Area(x2 - x1, dim.getHeight());
+			area = Area.create(x2 - x1, dim.getHeight());
 			ug = ug.apply(UTranslate.dx(x1));
 			if (isCreate()) {
 				livingSpace2.drawHead(ug.apply(UTranslate.dx(area.getDimensionToUse().getWidth())), (Context2D) ug,
@@ -207,7 +207,7 @@ public class CommunicationTile extends AbstractTile {
 			final boolean reverse = x2 < x1;
 			final ArrowComponent comp = getComponentMulticast(stringBounder, reverse);
 			final Dimension2D dim = comp.getPreferredDimension(stringBounder);
-			final Area area = new Area(Math.abs(x2 - x1), dim.getHeight());
+			final Area area = Area.create(Math.abs(x2 - x1), dim.getHeight());
 			final UGraphic ug2 = ug.apply(UTranslate.dx(Math.min(x1, x2))).apply(UTranslate.dy(dy));
 			dy += 2;
 			comp.drawU(ug2, area, (Context2D) ug2);

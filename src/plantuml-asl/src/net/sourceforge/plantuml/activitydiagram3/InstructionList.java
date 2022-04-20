@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -68,8 +68,12 @@ public class InstructionList extends WithNote implements Instruction, Instructio
 		return false;
 	}
 
-	public InstructionList() {
-		this(null);
+	public static InstructionList empty() {
+		return new InstructionList(null);
+	}
+
+	public InstructionList(Swimlane defaultSwimlane) {
+		this.defaultSwimlane = defaultSwimlane;
 	}
 
 	public boolean isEmpty() {
@@ -84,10 +88,6 @@ public class InstructionList extends WithNote implements Instruction, Instructio
 			return true;
 		}
 		return getLast() instanceof InstructionStop && ((InstructionStop) getLast()).hasNotes() == false;
-	}
-
-	public InstructionList(Swimlane defaultSwimlane) {
-		this.defaultSwimlane = defaultSwimlane;
 	}
 
 	@Override

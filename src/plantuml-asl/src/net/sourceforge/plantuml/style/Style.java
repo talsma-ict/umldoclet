@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -37,7 +37,7 @@ import java.util.StringTokenizer;
 
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.LineBreakStrategy;
-import net.sourceforge.plantuml.ThemeStyle;
+import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
@@ -56,9 +56,9 @@ import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 public class Style {
 
 	private final Map<PName, Value> map;
-	private final StyleSignature signature;
+	private final StyleSignatureBasic signature;
 
-	public Style(StyleSignature signature, Map<PName, Value> map) {
+	public Style(StyleSignatureBasic signature, Map<PName, Value> map) {
 		this.map = map;
 		this.signature = signature;
 	}
@@ -69,7 +69,7 @@ public class Style {
 
 		final EnumMap<PName, Value> copy = new EnumMap<PName, Value>(PName.class);
 		for (Entry<PName, Value> ent : this.map.entrySet())
-			copy.put(ent.getKey(), new ValueDeltaPriority(ent.getValue(), delta));
+			copy.put(ent.getKey(), ((ValueImpl) ent.getValue()).addPriority(delta));
 
 		return new Style(this.signature, copy);
 
@@ -97,24 +97,6 @@ public class Style {
 		if (result == null)
 			return ValueNull.NULL;
 
-		if (name == PName.BackGroundColor) {
-			final Value resultDark = map.get(PName.DARK_BackGroundColor);
-			if (resultDark != null)
-				return new ValueForDark(result, resultDark);
-		} else if (name == PName.LineColor) {
-			final Value resultDark = map.get(PName.DARK_LineColor);
-			if (resultDark != null)
-				return new ValueForDark(result, resultDark);
-		} else if (name == PName.FontColor) {
-			final Value resultDark = map.get(PName.DARK_FontColor);
-			if (resultDark != null)
-				return new ValueForDark(result, resultDark);
-		} else if (name == PName.HyperLinkColor) {
-			final Value resultDark = map.get(PName.DARK_HyperLinkColor);
-			if (resultDark != null)
-				return new ValueForDark(result, resultDark);
-		}
-
 		return result;
 	}
 
@@ -122,16 +104,18 @@ public class Style {
 		return map.containsKey(name);
 	}
 
-	public Style mergeWith(Style other) {
+	public Style mergeWith(Style other, MergeStrategy strategy) {
 		if (other == null)
 			return this;
 
 		final EnumMap<PName, Value> both = new EnumMap<PName, Value>(this.map);
 		for (Entry<PName, Value> ent : other.map.entrySet()) {
 			final Value previous = this.map.get(ent.getKey());
-			if (previous == null || ent.getValue().getPriority() > previous.getPriority())
-				both.put(ent.getKey(), ent.getValue());
-
+			if (previous != null && previous.getPriority() > StyleLoader.DELTA_PRIORITY_FOR_STEREOTYPE
+					&& strategy == MergeStrategy.KEEP_EXISTING_VALUE_OF_STEREOTYPE)
+				continue;
+			final PName key = ent.getKey();
+			both.put(key, ((ValueImpl) ent.getValue()).mergeWith(previous));
 		}
 		return new Style(this.signature.mergeWith(other.getSignature()), both);
 	}
@@ -152,7 +136,7 @@ public class Style {
 
 	public Style eventuallyOverride(PName param, String value) {
 		final EnumMap<PName, Value> result = new EnumMap<PName, Value>(this.map);
-		result.put(param, new ValueImpl(value, Integer.MAX_VALUE));
+		result.put(param, ValueImpl.regular(value, Integer.MAX_VALUE));
 		return new Style(this.signature, result);
 	}
 
@@ -186,7 +170,7 @@ public class Style {
 		return result;
 	}
 
-	public StyleSignature getSignature() {
+	public StyleSignatureBasic getSignature() {
 		return signature;
 	}
 
@@ -201,7 +185,7 @@ public class Style {
 		final UFont font = getUFont();
 		final HColor color = value(PName.FontColor).asColor(themeStyle, set);
 		final HColor hyperlinkColor = value(PName.HyperLinkColor).asColor(themeStyle, set);
-		return new FontConfiguration(font, color, hyperlinkColor, true);
+		return FontConfiguration.create(font, color, hyperlinkColor, true);
 	}
 
 	public SymbolContext getSymbolContext(ThemeStyle themeStyle, HColorSet set) {

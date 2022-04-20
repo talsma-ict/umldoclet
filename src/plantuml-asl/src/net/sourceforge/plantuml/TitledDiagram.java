@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -36,6 +36,7 @@ import java.io.InputStream;
 import net.sourceforge.plantuml.anim.Animation;
 import net.sourceforge.plantuml.anim.AnimationDecoder;
 import net.sourceforge.plantuml.api.ApiStable;
+import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.UmlSource;
@@ -52,7 +53,7 @@ import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleBuilder;
 import net.sourceforge.plantuml.style.StyleLoader;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
@@ -81,21 +82,23 @@ public abstract class TitledDiagram extends AbstractPSystem implements Diagram, 
 		return pragma;
 	}
 
-	public TitledDiagram(UmlSource source, UmlDiagramType type) {
+//	public TitledDiagram(ThemeStyle style, UmlSource source, UmlDiagramType type) {
+//		super(source);
+//		this.type = type;
+//		this.skinParam = SkinParam.create(type, style);
+//	}
+
+	public TitledDiagram(ThemeStyle style, UmlSource source, UmlDiagramType type, ISkinSimple orig) {
 		super(source);
 		this.type = type;
-		this.skinParam = SkinParam.create(type);
+		this.skinParam = SkinParam.create(type, style);
+		if (orig != null)
+			this.skinParam.copyAllFrom(orig);
+
 	}
 
 	public final StyleBuilder getCurrentStyleBuilder() {
 		return skinParam.getCurrentStyleBuilder();
-	}
-
-	public TitledDiagram(UmlSource source, UmlDiagramType type, ISkinSimple orig) {
-		this(source, type);
-		if (orig != null) {
-			this.skinParam.copyAllFrom(orig);
-		}
 	}
 
 	final public UmlDiagramType getUmlDiagramType() {
@@ -267,19 +270,15 @@ public abstract class TitledDiagram extends AbstractPSystem implements Diagram, 
 	}
 
 	public HColor calculateBackColor() {
-		if (UseStyle.useBetaStyle()) {
-			final Style style = StyleSignature.of(SName.root, SName.document, this.getUmlDiagramType().getStyleName())
-					.getMergedStyle(this.getSkinParam().getCurrentStyleBuilder());
+		final Style style = StyleSignatureBasic.of(SName.root, SName.document, this.getUmlDiagramType().getStyleName())
+				.getMergedStyle(this.getSkinParam().getCurrentStyleBuilder());
 
-			HColor backgroundColor = style.value(PName.BackGroundColor).asColor(this.getSkinParam().getThemeStyle(),
-					this.getSkinParam().getIHtmlColorSet());
-			if (backgroundColor == null) {
-				backgroundColor = HColorUtils.transparent();
-			}
-			return backgroundColor;
+		HColor backgroundColor = style.value(PName.BackGroundColor).asColor(this.getSkinParam().getThemeStyle(),
+				this.getSkinParam().getIHtmlColorSet());
+		if (backgroundColor == null)
+			backgroundColor = HColorUtils.transparent();
 
-		}
-		return this.getSkinParam().getBackgroundColor();
+		return backgroundColor;
 	}
 
 }

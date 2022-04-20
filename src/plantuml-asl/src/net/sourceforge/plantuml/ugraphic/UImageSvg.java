@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -38,12 +38,26 @@ import net.sourceforge.plantuml.SignatureUtils;
 
 public class UImageSvg implements UShape {
 
+	private static final String EMPTY_SVG = "<svg width=10 height=10></svg>";
 	private final String svg;
 	private final double scale;
 
 	public UImageSvg(String svg, double scale) {
-		this.svg = Objects.requireNonNull(svg);
+		this.svg = clean(Objects.requireNonNull(svg));
 		this.scale = scale;
+	}
+
+	private String clean(final String svg) {
+		final String svg2 = svg.toLowerCase().replaceAll("\\s", "");
+		if (svg2.contains("<script>"))
+			return EMPTY_SVG;
+		if (svg2.contains("</script>"))
+			return EMPTY_SVG;
+		if (svg2.contains("<foreignobject"))
+			return EMPTY_SVG;
+		if (svg2.contains("</foreignobject>"))
+			return EMPTY_SVG;
+		return svg;
 	}
 
 	public String getMD5Hex() {

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -43,7 +43,7 @@ import net.sourceforge.plantuml.sequencediagram.NoteType;
 
 public class InstructionPartition extends AbstractInstruction implements Instruction {
 
-	private final InstructionList list = new InstructionList();
+	private final InstructionList list = InstructionList.empty();
 	private final Instruction parent;
 
 	public InstructionPartition(Instruction parent, String partitionTitle) {

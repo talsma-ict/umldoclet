@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,7 +32,7 @@ package net.sourceforge.plantuml.ugraphic.color;
 
 import java.awt.Color;
 
-import net.sourceforge.plantuml.svek.DotStringFactory;
+import net.sourceforge.plantuml.StringUtils;
 
 public class HColorSimple extends HColorAbstract implements HColor {
 
@@ -50,7 +50,17 @@ public class HColorSimple extends HColorAbstract implements HColor {
 		if (isTransparent())
 			return "transparent";
 
-		return color.toString() + " alpha=" + color.getAlpha() + " monochrome=" + monochrome;
+		final boolean withDark = this != dark;
+
+		final StringBuilder sb = new StringBuilder();
+		if (withDark)
+			sb.append("WITHDARK ");
+		sb.append(color.toString());
+		sb.append(" \u03B1=");
+		sb.append(color.getAlpha());
+		if (monochrome)
+			sb.append("MONOCHROME");
+		return sb.toString();
 	}
 
 	@Override
@@ -59,7 +69,7 @@ public class HColorSimple extends HColorAbstract implements HColor {
 			return "transparent";
 
 		if (color.getAlpha() == 255)
-			return DotStringFactory.sharp000000(color.getRGB());
+			return StringUtils.sharp000000(color.getRGB());
 
 		return "#" + Integer.toHexString(color.getRGB());
 	}

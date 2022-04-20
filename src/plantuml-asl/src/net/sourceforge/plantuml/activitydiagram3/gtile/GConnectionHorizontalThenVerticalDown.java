@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.activitydiagram3.gtile;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
@@ -79,7 +79,7 @@ public class GConnectionHorizontalThenVerticalDown extends GAbstractConnection {
 			// final Dimension2D dimDiamond1 =
 			// diamond1.calculateDimension(ug.getStringBounder());
 			final Dimension2D dimDiamond1 = new Dimension2DDouble(0, 0);
-			final Snake small = Snake.create(getInLinkRenderingColor()).withLabel(textBlock, HorizontalAlignment.LEFT);
+			final Snake small = Snake.create(skinParam(), getInLinkRenderingColor()).withLabel(textBlock, HorizontalAlignment.LEFT);
 			small.addPoint(p1);
 			small.addPoint(p1.getX() + delta, p1.getY());
 			small.addPoint(p1.getX() + delta, p1.getY() + dimDiamond1.getHeight() * .75);
@@ -88,7 +88,7 @@ public class GConnectionHorizontalThenVerticalDown extends GAbstractConnection {
 		}
 		UPolygon usingArrow = /* branch.isEmpty() ? null : */ Arrows.asToDown();
 
-		final Snake snake = Snake.create(getInLinkRenderingColor(), usingArrow)
+		final Snake snake = Snake.create(skinParam(), getInLinkRenderingColor(), usingArrow)
 				.withLabel(textBlock, HorizontalAlignment.LEFT).withMerge(MergeStrategy.LIMITED);
 		snake.addPoint(p1);
 		snake.addPoint(p2.getX(), p1.getY());
@@ -99,7 +99,7 @@ public class GConnectionHorizontalThenVerticalDown extends GAbstractConnection {
 
 	@Override
 	public void drawU(UGraphic ug) {
-		final Snake snake = Snake.create(getInLinkRenderingColor(), Arrows.asToDown()).withLabel(textBlock,
+		final Snake snake = Snake.create(skinParam(), getInLinkRenderingColor(), Arrows.asToDown()).withLabel(textBlock,
 				HorizontalAlignment.LEFT);
 		final Point2D p1 = pos1.getTranslated(gpoint1.getPoint2D());
 		final Point2D p2 = pos2.getTranslated(gpoint2.getPoint2D());

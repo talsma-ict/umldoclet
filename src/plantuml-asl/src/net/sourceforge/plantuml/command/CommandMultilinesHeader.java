@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,7 +33,6 @@ package net.sourceforge.plantuml.command;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.TitledDiagram;
 import net.sourceforge.plantuml.UmlDiagram;
-import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.command.regex.Matcher2;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
@@ -61,11 +60,11 @@ public class CommandMultilinesHeader extends CommandMultilines<TitledDiagram> {
 		final Display strings = lines.toDisplay();
 		if (strings.size() > 0) {
 			HorizontalAlignment ha = HorizontalAlignment.fromString(align, HorizontalAlignment.RIGHT);
-			if (UseStyle.useBetaStyle() && align == null) {
+			if (align == null)
 				ha = FontParam.HEADER.getStyleDefinition(null)
 						.getMergedStyle(((UmlDiagram) diagram).getSkinParam().getCurrentStyleBuilder())
 						.getHorizontalAlignment();
-			}
+
 			diagram.getHeader().putDisplay(strings, ha);
 			return CommandExecutionResult.ok();
 		}

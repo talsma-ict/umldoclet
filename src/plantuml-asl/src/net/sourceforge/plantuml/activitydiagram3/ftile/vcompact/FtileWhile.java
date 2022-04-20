@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.activitydiagram3.ftile.vcompact;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,11 +47,11 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.AbstractFtile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Arrows;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Connection;
 import net.sourceforge.plantuml.activitydiagram3.ftile.ConnectionTranslatable;
-import net.sourceforge.plantuml.activitydiagram3.ftile.Hexagon;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactory;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileGeometry;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileUtils;
+import net.sourceforge.plantuml.activitydiagram3.ftile.Hexagon;
 import net.sourceforge.plantuml.activitydiagram3.ftile.MergeStrategy;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Snake;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
@@ -184,7 +184,7 @@ class FtileWhile extends AbstractFtile {
 		public void drawU(UGraphic ug) {
 			final StringBounder stringBounder = ug.getStringBounder();
 
-			final Snake snake = Snake.create(arrowColor, Arrows.asToDown());
+			final Snake snake = Snake.create(skinParam(), arrowColor, Arrows.asToDown());
 			snake.addPoint(getP1(stringBounder));
 			snake.addPoint(getP2(stringBounder));
 
@@ -196,7 +196,8 @@ class FtileWhile extends AbstractFtile {
 			final StringBounder stringBounder = ug.getStringBounder();
 			final Point2D p1 = getP1(stringBounder);
 			final Point2D p2 = getP2(stringBounder);
-			final Snake snake = Snake.create(arrowColor, Arrows.asToDown()).withMerge(MergeStrategy.LIMITED);
+			final Snake snake = Snake.create(skinParam(), arrowColor, Arrows.asToDown())
+					.withMerge(MergeStrategy.LIMITED);
 			final Point2D mp1a = translate1.getTranslated(p1);
 			final Point2D mp2b = translate2.getTranslated(p2);
 			final double middle = (mp1a.getY() + mp2b.getY()) / 2.0;
@@ -252,8 +253,8 @@ class FtileWhile extends AbstractFtile {
 			final double half = (dimDiamond1.getOutY() - dimDiamond1.getInY()) / 2;
 			final double y2 = p2.getY() + dimDiamond1.getInY() + half;
 
-			final Snake snake = Snake.create(endInlinkColor, Arrows.asToLeft()).emphasizeDirection(Direction.UP)
-					.withLabel(back, arrowHorizontalAlignment());
+			final Snake snake = Snake.create(skinParam(), endInlinkColor, Arrows.asToLeft())
+					.emphasizeDirection(Direction.UP).withLabel(back, arrowHorizontalAlignment());
 			snake.addPoint(x1, y1);
 			final double y1bis = Math.max(y1, getBottom(stringBounder)) + Hexagon.hexagonHalfSize;
 			snake.addPoint(x1, y1bis);
@@ -270,7 +271,8 @@ class FtileWhile extends AbstractFtile {
 		@Override
 		public void drawTranslate(UGraphic ug, UTranslate translate1, UTranslate translate2) {
 			final StringBounder stringBounder = ug.getStringBounder();
-			final Snake snake = Snake.create(endInlinkColor, Arrows.asToLeft()).withMerge(MergeStrategy.LIMITED);
+			final Snake snake = Snake.create(skinParam(), endInlinkColor, Arrows.asToLeft())
+					.withMerge(MergeStrategy.LIMITED);
 			final Dimension2D dimTotal = calculateDimension(stringBounder);
 			final Point2D ap1 = getP1(stringBounder);
 			final Point2D ap2 = getP2(stringBounder);
@@ -344,7 +346,7 @@ class FtileWhile extends AbstractFtile {
 			final double x2 = p2.getX();
 			final double y2 = p2.getY();
 
-			final Snake snake = Snake.create(endInlinkColor, Arrows.asToUp()).withLabel(back,
+			final Snake snake = Snake.create(skinParam(), endInlinkColor, Arrows.asToUp()).withLabel(back,
 					arrowHorizontalAlignment());
 			snake.addPoint(x1, y1);
 			final double y1bis = Math.max(y1, getBottom(stringBounder)) + Hexagon.hexagonHalfSize;
@@ -379,7 +381,7 @@ class FtileWhile extends AbstractFtile {
 		public void drawU(UGraphic ug) {
 			final StringBounder stringBounder = ug.getStringBounder();
 
-			final Snake snake = Snake.create(endInlinkColor, Arrows.asToLeft()).withLabel(back,
+			final Snake snake = Snake.create(skinParam(), endInlinkColor, Arrows.asToLeft()).withLabel(back,
 					arrowHorizontalAlignment());
 
 			final Point2D p1 = getP1(stringBounder);
@@ -425,7 +427,8 @@ class FtileWhile extends AbstractFtile {
 		public void drawU(UGraphic ug) {
 			final StringBounder stringBounder = ug.getStringBounder();
 
-			final Snake snake = Snake.create(endInlinkColor, Arrows.asToLeft()).emphasizeDirection(Direction.UP);
+			final Snake snake = Snake.create(skinParam(), endInlinkColor, Arrows.asToLeft())
+					.emphasizeDirection(Direction.UP);
 			final Dimension2D dimTotal = calculateDimension(stringBounder);
 			final Point2D p1 = getP1(stringBounder);
 			final Point2D p2 = getP2(stringBounder);
@@ -474,7 +477,7 @@ class FtileWhile extends AbstractFtile {
 		public void drawU(UGraphic ug) {
 			final StringBounder stringBounder = ug.getStringBounder();
 
-			final Snake snake = Snake.create(afterEndwhileColor).withMerge(MergeStrategy.LIMITED)
+			final Snake snake = Snake.create(skinParam(), afterEndwhileColor).withMerge(MergeStrategy.LIMITED)
 					.emphasizeDirection(Direction.DOWN);
 
 			final FtileGeometry dimDiamond1 = diamond1.calculateDimension(stringBounder);
@@ -493,7 +496,7 @@ class FtileWhile extends AbstractFtile {
 
 			ug.draw(snake);
 
-			final Snake snake2 = Snake.create(afterEndwhileColor);
+			final Snake snake2 = Snake.create(skinParam(), afterEndwhileColor);
 			snake2.addPoint(Hexagon.hexagonHalfSize, y2);
 			snake2.addPoint(x2, y2);
 			// snake2.goUnmergeable(MergeStrategy.LIMITED);
@@ -522,7 +525,7 @@ class FtileWhile extends AbstractFtile {
 		public void drawU(UGraphic ug) {
 			final StringBounder stringBounder = ug.getStringBounder();
 
-			final Snake snake = Snake.create(afterEndwhileColor, Arrows.asToDown());
+			final Snake snake = Snake.create(skinParam(), afterEndwhileColor, Arrows.asToDown());
 
 			final FtileGeometry dimDiamond1 = diamond1.calculateDimension(stringBounder);
 			final Point2D p1 = getP1(stringBounder);

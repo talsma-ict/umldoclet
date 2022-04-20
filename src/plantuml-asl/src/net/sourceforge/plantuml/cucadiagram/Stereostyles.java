@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -43,7 +43,7 @@ public class Stereostyles {
 
 	public static final Stereostyles NONE = new Stereostyles();
 
-	private final Set<String> names = new LinkedHashSet<String>();
+	private final Set<String> names = new LinkedHashSet<>();
 
 	private Stereostyles() {
 	}

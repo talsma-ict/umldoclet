@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -40,7 +40,7 @@ import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleBuilder;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.ugraphic.MinMax;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.URectangle;
@@ -129,8 +129,8 @@ public class GridTextBlockDecorated extends GridTextBlockSimple {
 		return false;
 	}
 
-	private StyleSignature getStyleDefinitionNetwork(SName sname) {
-		return StyleSignature.of(SName.root, SName.element, SName.nwdiagDiagram, sname);
+	private StyleSignatureBasic getStyleDefinitionNetwork(SName sname) {
+		return StyleSignatureBasic.of(SName.root, SName.element, SName.nwdiagDiagram, sname);
 	}
 
 	private void drawNetworkTube(UGraphic ug) {

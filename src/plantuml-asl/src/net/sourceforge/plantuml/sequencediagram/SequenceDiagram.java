@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -51,6 +51,7 @@ import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
+import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
@@ -89,8 +90,8 @@ public class SequenceDiagram extends UmlDiagram {
 
 	private final Rose skin2 = new Rose();
 
-	public SequenceDiagram(UmlSource source, ISkinSimple skinParam) {
-		super(source, UmlDiagramType.SEQUENCE, skinParam);
+	public SequenceDiagram(ThemeStyle style, UmlSource source, ISkinSimple skinParam) {
+		super(style, source, UmlDiagramType.SEQUENCE, skinParam);
 	}
 
 	@Deprecated
@@ -226,7 +227,7 @@ public class SequenceDiagram extends UmlDiagram {
 	}
 
 	public void hspace() {
-		events.add(new HSpace());
+		events.add(new HSpace(25));
 	}
 
 	public void hspace(int pixel) {

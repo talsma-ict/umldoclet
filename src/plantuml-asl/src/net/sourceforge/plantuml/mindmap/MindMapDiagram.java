@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.mindmap;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -42,6 +42,7 @@ import net.sourceforge.plantuml.Direction;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
+import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
@@ -69,8 +70,8 @@ public class MindMapDiagram extends UmlDiagram {
 		return new DiagramDescription("MindMap");
 	}
 
-	public MindMapDiagram(UmlSource source) {
-		super(source, UmlDiagramType.MINDMAP);
+	public MindMapDiagram(ThemeStyle style, UmlSource source) {
+		super(style, source, UmlDiagramType.MINDMAP, null);
 		this.mindmaps.add(new MindMap(getSkinParam()));
 	}
 
@@ -128,9 +129,9 @@ public class MindMapDiagram extends UmlDiagram {
 	public CommandExecutionResult addIdea(HColor backColor, int level, Display label, IdeaShape shape,
 			Direction direction) {
 		String stereotype = label.getEndingStereotype();
-		if (stereotype != null) {
+		if (stereotype != null)
 			label = label.removeEndingStereotype();
-		}
+
 		if (last().isFull(level))
 			this.mindmaps.add(new MindMap(getSkinParam()));
 
@@ -148,25 +149,25 @@ public class MindMapDiagram extends UmlDiagram {
 	private String first;
 
 	public int getSmartLevel(String type) {
-		if (first == null) {
+		if (first == null)
 			first = type;
-		}
-		if (type.endsWith("**")) {
+
+		if (type.endsWith("**"))
 			type = type.replace('\t', ' ').trim();
-		}
+
 		type = type.replace('\t', ' ');
-		if (type.contains(" ") == false) {
+		if (type.contains(" ") == false)
 			return type.length() - 1;
-		}
-		if (type.endsWith(first)) {
+
+		if (type.endsWith(first))
 			return type.length() - first.length();
-		}
-		if (type.trim().length() == 1) {
+
+		if (type.trim().length() == 1)
 			return type.length() - 1;
-		}
-		if (type.startsWith(first)) {
+
+		if (type.startsWith(first))
 			return type.length() - first.length();
-		}
+
 		throw new UnsupportedOperationException("type=<" + type + ">[" + first + "]");
 	}
 

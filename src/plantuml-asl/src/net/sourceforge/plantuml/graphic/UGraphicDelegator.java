@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,6 +30,10 @@
  */
 package net.sourceforge.plantuml.graphic;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Map;
+
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UGroupType;
@@ -37,9 +41,6 @@ import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
-
-import java.io.IOException;
-import java.io.OutputStream;
 
 public abstract class UGraphicDelegator implements UGraphic {
 
@@ -73,7 +74,7 @@ public abstract class UGraphicDelegator implements UGraphic {
 	public ColorMapper getColorMapper() {
 		return ug.getColorMapper();
 	}
-	
+
 	@Override
 	public void startUrl(Url url) {
 		ug.startUrl(url);
@@ -84,8 +85,8 @@ public abstract class UGraphicDelegator implements UGraphic {
 		ug.closeUrl();
 	}
 
-	public void startGroup(UGroupType type, String ident) {
-		ug.startGroup(type, ident);
+	public void startGroup(Map<UGroupType, String> typeIdents) {
+		ug.startGroup(typeIdents);
 	}
 
 	public void closeGroup() {

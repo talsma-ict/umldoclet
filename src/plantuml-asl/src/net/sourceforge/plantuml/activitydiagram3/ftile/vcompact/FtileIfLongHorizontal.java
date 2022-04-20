@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.activitydiagram3.ftile.vcompact;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -253,7 +253,7 @@ class FtileIfLongHorizontal extends AbstractFtile {
 			final Point2D p1 = getP1(stringBounder);
 			final Point2D p2 = getP2(stringBounder);
 
-			final Snake snake = Snake.create(color, Arrows.asToRight());
+			final Snake snake = Snake.create(skinParam(), color, Arrows.asToRight());
 			snake.addPoint(p1);
 			snake.addPoint(p2);
 			ug.draw(snake);
@@ -291,7 +291,7 @@ class FtileIfLongHorizontal extends AbstractFtile {
 		public void drawU(UGraphic ug) {
 			final UTranslate tr = getTranslateDiamond1(getFtile2(), ug.getStringBounder());
 			final Point2D p2 = tr.getTranslated(getFtile2().calculateDimension(ug.getStringBounder()).getPointIn());
-			final Snake snake = Snake.create(arrowColor, Arrows.asToDown());
+			final Snake snake = Snake.create(skinParam(), arrowColor, Arrows.asToDown());
 			final Point2D p1 = calculateDimensionInternal(ug.getStringBounder()).getPointIn();
 
 			snake.addPoint(p1);
@@ -315,7 +315,7 @@ class FtileIfLongHorizontal extends AbstractFtile {
 			final Point2D p1 = getP1(ug.getStringBounder());
 			final UTranslate tr2 = getTranslate2(ug.getStringBounder());
 			final Point2D p2 = tr2.getTranslated(getFtile2().calculateDimension(ug.getStringBounder()).getPointIn());
-			final Snake snake = Snake.create(arrowColor, Arrows.asToDown());
+			final Snake snake = Snake.create(skinParam(), arrowColor, Arrows.asToDown());
 			snake.addPoint(p1);
 			snake.addPoint(p2.getX(), p1.getY());
 			snake.addPoint(p2);
@@ -356,7 +356,7 @@ class FtileIfLongHorizontal extends AbstractFtile {
 			final double totalHeight = full.getHeight();
 			final Point2D p2 = new Point2D.Double(p1.getX(), totalHeight);
 
-			final Snake snake = Snake.create(arrowColor, Arrows.asToDown()).withLabel(out2, arrowHorizontalAlignment());
+			final Snake snake = Snake.create(skinParam(), arrowColor, Arrows.asToDown()).withLabel(out2, arrowHorizontalAlignment());
 			snake.addPoint(p1);
 			snake.addPoint(p2);
 			if (nbOut == 0) {
@@ -381,7 +381,7 @@ class FtileIfLongHorizontal extends AbstractFtile {
 			final Point2D p1 = getP1(stringBounder);
 			final Point2D p2 = getP2(stringBounder);
 
-			final Snake snake = Snake.create(color, Arrows.asToDown());
+			final Snake snake = Snake.create(skinParam(), color, Arrows.asToDown());
 			snake.addPoint(p1);
 			snake.addPoint(p2);
 			ug.draw(snake);
@@ -402,7 +402,7 @@ class FtileIfLongHorizontal extends AbstractFtile {
 			final Point2D p1 = getP1(ug.getStringBounder());
 			final Point2D p2 = getP2(ug.getStringBounder());
 
-			final Snake snake = Snake.create(color, Arrows.asToDown());
+			final Snake snake = Snake.create(skinParam(), color, Arrows.asToDown());
 
 			final Point2D mp1a = translate1.getTranslated(p1);
 			final Point2D mp2b = translate2.getTranslated(p2);
@@ -436,7 +436,7 @@ class FtileIfLongHorizontal extends AbstractFtile {
 			}
 			final Point2D p2 = new Point2D.Double(p1.getX(), totalHeight);
 
-			final Snake snake = Snake.create(color, Arrows.asToDown()).withLabel(out2, arrowHorizontalAlignment());
+			final Snake snake = Snake.create(skinParam(), color, Arrows.asToDown()).withLabel(out2, arrowHorizontalAlignment());
 			snake.addPoint(p1);
 			snake.addPoint(p2);
 			ug.draw(snake);
@@ -485,7 +485,7 @@ class FtileIfLongHorizontal extends AbstractFtile {
 				return;
 			}
 
-			final Snake s = Snake.create(arrowColor).withMerge(MergeStrategy.NONE);
+			final Snake s = Snake.create(skinParam(), arrowColor).withMerge(MergeStrategy.NONE);
 			s.addPoint(minX, totalDim.getHeight());
 			s.addPoint(maxX, totalDim.getHeight());
 			ug.draw(s);

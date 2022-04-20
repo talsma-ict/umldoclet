@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -39,6 +39,7 @@ public enum SName {
 	archimate, //
 	arrow, //
 	artifact, //
+	binary, //
 	boundary, //
 	box, //
 	boxless, //
@@ -53,6 +54,9 @@ public enum SName {
 	collection, //
 	collections, //
 	component, //
+	robust, //
+	concise, //
+	clock, //
 	componentDiagram, //
 	constraintArrow, //
 	control, //
@@ -64,6 +68,7 @@ public enum SName {
 	element, //
 	entity, //
 	end, //
+	start, //
 	stop, //
 	file, //
 	folder, //

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -38,7 +38,7 @@ import static gen.lib.cgraph.subg__c.agsubg;
 import static gen.lib.gvc.gvc__c.gvContext;
 import static gen.lib.gvc.gvlayout__c.gvLayoutJobs;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -128,7 +128,8 @@ public class CucaDiagramFileMakerSmetana implements CucaDiagramFileMaker {
 
 		public void drawU(UGraphic ug) {
 			if (minMax != null) {
-				// Matches the adjustment in SvekResult.calculateDimension() except no need to adjust for minY because
+				// Matches the adjustment in SvekResult.calculateDimension() except no need to
+				// adjust for minY because
 				// mirroring takes care of that
 				ug = ug.apply(new UTranslate(6 - minMax.getMinX(), 6));
 			}
@@ -153,8 +154,8 @@ public class CucaDiagramFileMakerSmetana implements CucaDiagramFileMaker {
 					continue;
 				}
 				final ST_Agedge_s edge = ent.getValue();
-				new SmetanaPath(link, edge, ymirror, diagram, getLabel(link), getQualifier(link, 1), getQualifier(link, 2))
-						.drawU(ug);
+				new SmetanaPath(link, edge, ymirror, diagram, getLabel(link), getQualifier(link, 1),
+						getQualifier(link, 2)).drawU(ug);
 			}
 		}
 
@@ -216,7 +217,7 @@ public class CucaDiagramFileMakerSmetana implements CucaDiagramFileMaker {
 			// ug.apply(new UTranslate(llx, lly)).apply(new
 			// UChangeColor(HtmlColorUtils.BLUE))
 			// .draw(new URectangle(urx - llx, ury - lly));
-			cluster.drawU(ug, new UStroke(1.5), diagram.getUmlDiagramType(), diagram.getSkinParam());
+			cluster.drawU(ug, diagram.getUmlDiagramType(), diagram.getSkinParam());
 		} catch (Exception e) {
 			System.err.println("CANNOT DRAW GROUP");
 		}
@@ -319,7 +320,8 @@ public class CucaDiagramFileMakerSmetana implements CucaDiagramFileMaker {
 			throw new IllegalStateException();
 		}
 		final IEntityImage image = printEntityInternal(ent);
-		final SvekNode node = getBibliotekon().createNode(ent, image, dotStringFactory.getColorSequence(), stringBounder);
+		final SvekNode node = getBibliotekon().createNode(ent, image, dotStringFactory.getColorSequence(),
+				stringBounder);
 		dotStringFactory.addNode(node);
 	}
 
@@ -353,7 +355,7 @@ public class CucaDiagramFileMakerSmetana implements CucaDiagramFileMaker {
 		}
 
 		final FontParam fontParam = FontParam.PACKAGE_STEREOTYPE;
-		return Display.create(stereos).create(new FontConfiguration(diagram.getSkinParam(), fontParam, stereotype),
+		return Display.create(stereos).create(FontConfiguration.create(diagram.getSkinParam(), fontParam, stereotype),
 				HorizontalAlignment.CENTER, diagram.getSkinParam());
 	}
 
@@ -444,9 +446,7 @@ public class CucaDiagramFileMakerSmetana implements CucaDiagramFileMaker {
 
 			// imageBuilder.setUDrawable(new Drawing(new YMirror(dim.getHeight())));
 			final TextBlock drawable = new Drawing(new YMirror(minMax.getMaxY()), minMax);
-			return diagram.createImageBuilder(fileFormatOption)
-					.drawable(drawable)
-					.write(os);
+			return diagram.createImageBuilder(fileFormatOption).drawable(drawable).write(os);
 		} catch (Throwable e) {
 			SmetanaDebug.printMe();
 			UmlDiagram.exportDiagramError(os, e, fileFormatOption, diagram.seed(), diagram.getMetadata(),
@@ -495,7 +495,7 @@ public class CucaDiagramFileMakerSmetana implements CucaDiagramFileMaker {
 	private TextBlock getLabel(Link link) {
 		final double marginLabel = 1; // startUid.equals(endUid) ? 6 : 1;
 		ISkinParam skinParam = diagram.getSkinParam();
-		final FontConfiguration labelFont = new FontConfiguration(skinParam, FontParam.ARROW, null);
+		final FontConfiguration labelFont = FontConfiguration.create(skinParam, FontParam.ARROW, null);
 		final TextBlock label = link.getLabel().create(labelFont,
 				skinParam.getDefaultTextAlignment(HorizontalAlignment.CENTER), skinParam);
 		if (TextBlockUtils.isEmpty(label, stringBounder)) {
@@ -511,7 +511,7 @@ public class CucaDiagramFileMakerSmetana implements CucaDiagramFileMaker {
 		}
 		final double marginLabel = 1; // startUid.equals(endUid) ? 6 : 1;
 		ISkinParam skinParam = diagram.getSkinParam();
-		final FontConfiguration labelFont = new FontConfiguration(skinParam, FontParam.ARROW, null);
+		final FontConfiguration labelFont = FontConfiguration.create(skinParam, FontParam.ARROW, null);
 		final TextBlock label = Display.getWithNewlines(tmp).create(labelFont,
 				skinParam.getDefaultTextAlignment(HorizontalAlignment.CENTER), skinParam);
 		if (TextBlockUtils.isEmpty(label, stringBounder)) {
@@ -615,7 +615,8 @@ public class CucaDiagramFileMakerSmetana implements CucaDiagramFileMaker {
 			return;
 		}
 		final IEntityImage image = printEntityInternal(ent);
-		final SvekNode shape = getBibliotekon().createNode(ent, image, dotStringFactory.getColorSequence(), stringBounder);
+		final SvekNode shape = getBibliotekon().createNode(ent, image, dotStringFactory.getColorSequence(),
+				stringBounder);
 		// dotStringFactory.addShape(shape);
 	}
 

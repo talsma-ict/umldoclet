@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,14 +30,18 @@
  */
 package net.sourceforge.plantuml;
 
+import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.sprite.Sprite;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 
 public interface SpriteContainer extends SvgCharSizeHack {
 
 	public Sprite getSprite(String name);
 
 	public Guillemet guillemet();
-	
+
 	public ThemeStyle getThemeStyle();
+
+	public ColorMapper getColorMapper();
 
 }

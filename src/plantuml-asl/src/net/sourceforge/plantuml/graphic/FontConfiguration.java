@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -65,31 +65,34 @@ public class FontConfiguration {
 		return getFont().toStringDebug() + " " + styles.toString();
 	}
 
-	public FontConfiguration(UFont font, HColor color, HColor hyperlinkColor, boolean useUnderlineForHyperlink) {
-		this(font, color, hyperlinkColor, useUnderlineForHyperlink, 8);
+	public static FontConfiguration create(UFont font, HColor color, HColor hyperlinkColor,
+			boolean useUnderlineForHyperlink) {
+		return create(font, color, hyperlinkColor, useUnderlineForHyperlink, 8);
 	}
 
-	public FontConfiguration(UFont font, HColor color, HColor hyperlinkColor, boolean useUnderlineForHyperlink,
-			int tabSize) {
-		this(getStyles(font), font, color, font, color, null, FontPosition.NORMAL, new SvgAttributes(), false,
-				hyperlinkColor, useUnderlineForHyperlink, tabSize);
+	public static FontConfiguration create(UFont font, HColor color, HColor hyperlinkColor,
+			boolean useUnderlineForHyperlink, int tabSize) {
+		return new FontConfiguration(getStyles(font), font, color, font, color, null, FontPosition.NORMAL,
+				new SvgAttributes(), false, hyperlinkColor, useUnderlineForHyperlink, tabSize);
 	}
 
 	public static FontConfiguration blackBlueTrue(UFont font) {
-		return new FontConfiguration(font, HColorUtils.BLACK, HColorUtils.BLUE, true, 8);
+		return create(font, HColorUtils.BLACK.withDark(HColorUtils.WHITE), HColorUtils.BLUE, true, 8);
 	}
 
-	public FontConfiguration(ISkinParam skinParam, FontParam fontParam, Stereotype stereo) {
-		this(SkinParamUtils.getFont(skinParam, fontParam, stereo),
+	public static FontConfiguration create(ISkinParam skinParam, FontParam fontParam, Stereotype stereo) {
+		return create(SkinParamUtils.getFont(skinParam, fontParam, stereo),
 				SkinParamUtils.getFontColor(skinParam, fontParam, stereo), skinParam.getHyperlinkColor(),
 				skinParam.useUnderlineForHyperlink(), skinParam.getTabSize());
 	}
 
-	public FontConfiguration(ISkinParam skinParam, Style style) {
-		// User getStyle().getFontConfiguration(skinParam.getIHtmlColorSet()) instead ?
-		this(style.getUFont(),
+	public static FontConfiguration create(ISkinParam skinParam, Style style) {
+		final HColor hyperlinkColor = style.value(PName.HyperLinkColor).asColor(skinParam.getThemeStyle(),
+				skinParam.getIHtmlColorSet());
+		final boolean useUnderlineForHyperlink = skinParam.useUnderlineForHyperlink();
+		return create(style.getUFont(),
 				style.value(PName.FontColor).asColor(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet()),
-				skinParam.getHyperlinkColor(), skinParam.useUnderlineForHyperlink(), skinParam.getTabSize());
+				hyperlinkColor, useUnderlineForHyperlink, skinParam.getTabSize());
 	}
 
 	// ---

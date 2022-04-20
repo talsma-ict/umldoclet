@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -42,7 +42,7 @@ public class CompressionXorYBuilder {
 
 	private static PiecewiseAffineTransform getPiecewiseAffineTransform(CompressionMode mode, TextBlock textBlock,
 			StringBounder stringBounder) {
-		final SlotFinder slotFinder = new SlotFinder(mode, stringBounder);
+		final SlotFinder slotFinder = SlotFinder.create(mode, stringBounder);
 		textBlock.drawU(slotFinder);
 		final SlotSet ysSlotSet = slotFinder.getSlotSet().reverse().smaller(5.0);
 		return new CompressionTransform(ysSlotSet);

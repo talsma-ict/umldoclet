@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -111,7 +111,7 @@ public class ResourceDraw implements UDrawable {
 
 	private FontConfiguration getFontConfiguration(int size, HColor color) {
 		final UFont font = UFont.serif(size);
-		return new FontConfiguration(font, color, color, false);
+		return FontConfiguration.create(font, color, color, false);
 	}
 
 	public double getHeight() {

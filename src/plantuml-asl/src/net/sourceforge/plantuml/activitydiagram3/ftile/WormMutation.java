@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -183,7 +183,7 @@ public class WormMutation {
 	}
 
 	public Worm mute(Worm original) {
-		final Worm result = new Worm();
+		final Worm result = new Worm(original.getStyle());
 		for (int i = 0; i < original.size(); i++) {
 			result.addPoint(translations.get(i).getTranslated(original.get(i)));
 		}

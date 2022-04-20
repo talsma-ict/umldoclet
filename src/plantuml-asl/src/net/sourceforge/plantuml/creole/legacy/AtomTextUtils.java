@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.creole.legacy;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -114,7 +114,8 @@ public class AtomTextUtils {
 				final Sprite sprite = skinSimple.getSprite(valSprite);
 				if (sprite != null) {
 					final double scale = Parser.getScale(m.group(4), 1);
-					result.add(new AtomSprite(null, scale, fontConfiguration, sprite, url));
+					result.add(
+							new AtomSprite(null, scale, fontConfiguration, sprite, url, skinSimple.getColorMapper()));
 				}
 			} else if (valImg != null) {
 				final double scale = Parser.getScale(m.group(6), 1);

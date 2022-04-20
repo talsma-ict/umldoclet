@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,8 @@
  */
 package net.sourceforge.plantuml;
 
-import java.awt.geom.Dimension2D;
+import java.awt.Dimension;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 
 import net.sourceforge.plantuml.utils.MathUtils;
@@ -41,15 +42,15 @@ public class Dimension2DDouble extends Dimension2D {
 	final private double height;
 
 	public Dimension2DDouble(double width, double height) {
-		if (Double.isNaN(width) || Double.isNaN(height)) {
+		if (Double.isNaN(width) || Double.isNaN(height))
 			throw new IllegalArgumentException();
-		}
+
 		this.width = width;
 		this.height = height;
 	}
 
-	public Dimension2DDouble(Point2D point) {
-		this(point.getX(), point.getY());
+	private static Dimension2DDouble fromPoint(Point2D point) {
+		return new Dimension2DDouble(point.getX(), point.getY());
 	}
 
 	@Override
@@ -128,6 +129,10 @@ public class Dimension2DDouble extends Dimension2D {
 			w = minWidth;
 		}
 		return new Dimension2DDouble(w, h);
+	}
+
+	public static Dimension2D fromDimension(Dimension dimension) {
+		return new Dimension2D(dimension.getWidth(), dimension.getHeight());
 	}
 
 }

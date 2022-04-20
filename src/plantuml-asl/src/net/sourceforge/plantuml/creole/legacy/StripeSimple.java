@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -250,7 +250,7 @@ public class StripeSimple implements Stripe {
 	public void addSprite(String src, double scale, HColor color) {
 		final Sprite sprite = skinParam.getSprite(src);
 		if (sprite != null)
-			atoms.add(new AtomSprite(color, scale, fontConfiguration, sprite, null));
+			atoms.add(new AtomSprite(color, scale, fontConfiguration, sprite, null, skinParam.getColorMapper()));
 	}
 
 	public void addOpenIcon(String src, double scale, HColor color) {

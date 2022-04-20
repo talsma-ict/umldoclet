@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -42,7 +42,7 @@ public class UDotPathHand {
 
 	public UDotPathHand(DotPath source, Random rnd) {
 
-		final HandJiggle jiggle = new HandJiggle(source.getStartPoint(), 2.0, rnd);
+		final HandJiggle jiggle = HandJiggle.create(source.getStartPoint(), 2.0, rnd);
 		for (CubicCurve2D curve : source.getBeziers()) {
 			jiggle.curveTo(curve);
 		}

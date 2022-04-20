@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -35,12 +35,12 @@ public enum WLinkType {
 	NORMAL, BUS;
 
 	static public WLinkType from(String arg) {
-		if (arg.contains("-")) {
+		if (arg.contains("-")) 
 			return WLinkType.NORMAL;
-		}
-		if (arg.contains("=")) {
+		
+		if (arg.contains("=")) 
 			return WLinkType.BUS;
-		}
+		
 		throw new IllegalArgumentException();
 	}
 

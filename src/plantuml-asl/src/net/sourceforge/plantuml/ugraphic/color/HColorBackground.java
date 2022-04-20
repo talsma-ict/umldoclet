@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -38,6 +38,11 @@ public class HColorBackground extends HColorAbstract implements HColor {
 
 	public HColorBackground(HColor back) {
 		this.back = Objects.requireNonNull(back);
+	}
+
+	@Override
+	public String toString() {
+		return "BACK " + back;
 	}
 
 	public HColor getNull() {

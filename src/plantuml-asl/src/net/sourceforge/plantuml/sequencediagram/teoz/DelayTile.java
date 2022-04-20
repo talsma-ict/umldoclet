@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.sequencediagram.teoz;
 
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.real.Real;
@@ -90,7 +90,7 @@ public class DelayTile extends AbstractTile implements Tile {
 		init(stringBounder);
 		final Component comp = getComponent(stringBounder);
 		final Dimension2D dim = comp.getPreferredDimension(stringBounder);
-		final Area area = new Area(getPreferredWidth(stringBounder), dim.getHeight());
+		final Area area = Area.create(getPreferredWidth(stringBounder), dim.getHeight());
 		tileArguments.getLivingSpaces().delayOn(getY(), dim.getHeight());
 
 		ug = ug.apply(UTranslate.dx(getMinX().getCurrentValue()));

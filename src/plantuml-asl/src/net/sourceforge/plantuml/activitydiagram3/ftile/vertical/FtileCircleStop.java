@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -53,8 +53,8 @@ public class FtileCircleStop extends AbstractFtile {
 
 	private static final int SIZE = 22;
 
-	private final HColor borderColor;
-	private final HColor backColor;
+	private HColor borderColor;
+	private HColor backColor;
 	private final Swimlane swimlane;
 	private double shadowing;
 
@@ -68,19 +68,16 @@ public class FtileCircleStop extends AbstractFtile {
 		this.borderColor = borderColor;
 		this.backColor = backColor;
 		this.swimlane = swimlane;
-		if (UseStyle.useBetaStyle()) {
-			this.shadowing = style.value(PName.Shadowing).asDouble();
-		} else {
-			if (skinParam().shadowing(null)) {
-				this.shadowing = 3;
-			}
-		}
+		this.shadowing = style.value(PName.Shadowing).asDouble();
+		this.backColor = style.value(PName.BackGroundColor).asColor(skinParam.getThemeStyle(), getIHtmlColorSet());
+		this.borderColor = style.value(PName.LineColor).asColor(skinParam.getThemeStyle(), getIHtmlColorSet());
+
 	}
 
 	public Set<Swimlane> getSwimlanes() {
-		if (swimlane == null) {
+		if (swimlane == null)
 			return Collections.emptySet();
-		}
+
 		return Collections.singleton(swimlane);
 	}
 

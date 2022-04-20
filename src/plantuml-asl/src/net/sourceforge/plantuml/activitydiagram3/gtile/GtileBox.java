@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,20 +30,15 @@
  */
 package net.sourceforge.plantuml.activitydiagram3.gtile;
 
-import java.awt.geom.Dimension2D;
-
-import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.Dimension2DDouble;
-import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.LineBreakStrategy;
 import net.sourceforge.plantuml.SkinParamColors;
-import net.sourceforge.plantuml.SkinParamUtils;
-import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.activitydiagram3.LinkRendering;
 import net.sourceforge.plantuml.activitydiagram3.ftile.BoxStyle;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileGeometry;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.creole.CreoleMode;
 import net.sourceforge.plantuml.creole.Parser;
 import net.sourceforge.plantuml.creole.Sheet;
@@ -63,7 +58,7 @@ import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
@@ -89,12 +84,12 @@ public class GtileBox extends AbstractGtile {
 	private final HColor backColor;
 	private final Style style;
 
-	static public StyleSignature getDefaultStyleDefinitionActivity() {
-		return StyleSignature.of(SName.root, SName.element, SName.activityDiagram, SName.activity);
+	static public StyleSignatureBasic getDefaultStyleDefinitionActivity() {
+		return StyleSignatureBasic.of(SName.root, SName.element, SName.activityDiagram, SName.activity);
 	}
 
-	static public StyleSignature getDefaultStyleDefinitionArrow() {
-		return StyleSignature.of(SName.root, SName.element, SName.activityDiagram, SName.arrow);
+	static public StyleSignatureBasic getDefaultStyleDefinitionArrow() {
+		return StyleSignatureBasic.of(SName.root, SName.element, SName.activityDiagram, SName.arrow);
 	}
 
 	final public LinkRendering getInLinkRendering() {
@@ -116,54 +111,37 @@ public class GtileBox extends AbstractGtile {
 
 	public static GtileBox create(StringBounder stringBounder, ISkinParam skinParam, Display label, Swimlane swimlane,
 			BoxStyle boxStyle, Stereotype stereotype) {
-		Style style = null;
-		Style styleArrow = null;
-		if (UseStyle.useBetaStyle()) {
-			style = getDefaultStyleDefinitionActivity().with(stereotype)
-					.getMergedStyle(skinParam.getCurrentStyleBuilder());
-			styleArrow = getDefaultStyleDefinitionArrow().getMergedStyle(skinParam.getCurrentStyleBuilder());
-		}
+		final Style style = getDefaultStyleDefinitionActivity().withTOBECHANGED(stereotype)
+				.getMergedStyle(skinParam.getCurrentStyleBuilder());
+		final Style styleArrow = getDefaultStyleDefinitionArrow().getMergedStyle(skinParam.getCurrentStyleBuilder());
+
 		return new GtileBox(stringBounder, skinParam, label, swimlane, boxStyle, style, styleArrow);
 	}
 
 	private GtileBox(StringBounder stringBounder, ISkinParam skinParam, Display label, Swimlane swimlane,
 			BoxStyle boxStyle, Style style, Style styleArrow) {
 		super(stringBounder, skinParam, swimlane);
+		Colors specBack = null;
+		if (skinParam instanceof SkinParamColors)
+			specBack = ((SkinParamColors) skinParam).getColors();
+
+		style = style.eventuallyOverride(specBack);
 		this.style = style;
 		this.boxStyle = boxStyle;
 
-		final FontConfiguration fc;
-		final LineBreakStrategy wrapWidth;
-		if (UseStyle.useBetaStyle()) {
-			this.inRendering = new LinkRendering(
-					Rainbow.build(styleArrow, getIHtmlColorSet(), skinParam.getThemeStyle()));
-			Colors specBack = null;
-			if (skinParam instanceof SkinParamColors) {
-				specBack = ((SkinParamColors) skinParam).getColors();
-			}
-			style = style.eventuallyOverride(specBack);
-			this.borderColor = style.value(PName.LineColor).asColor(skinParam.getThemeStyle(), getIHtmlColorSet());
-			this.backColor = style.value(PName.BackGroundColor).asColor(skinParam.getThemeStyle(), getIHtmlColorSet());
-			fc = style.getFontConfiguration(skinParam.getThemeStyle(), getIHtmlColorSet());
-			this.horizontalAlignment = style.getHorizontalAlignment();
-			this.padding = style.getPadding();
-			this.margin = style.getMargin();
-			this.roundCorner = style.value(PName.RoundCorner).asDouble();
-			this.shadowing = style.value(PName.Shadowing).asDouble();
-			wrapWidth = style.wrapWidth();
-			this.minimumWidth = style.value(PName.MinimumWidth).asDouble();
-		} else {
-			this.padding = ClockwiseTopRightBottomLeft.same(10);
-			this.margin = ClockwiseTopRightBottomLeft.same(0);
-			this.inRendering = new LinkRendering(Rainbow.build(skinParam));
-			this.borderColor = SkinParamUtils.getColor(skinParam(), null, ColorParam.activityBorder);
-			this.backColor = SkinParamUtils.getColor(skinParam(), null, ColorParam.activityBackground);
-			fc = new FontConfiguration(skinParam, FontParam.ACTIVITY, null);
-			this.horizontalAlignment = HorizontalAlignment.LEFT;
-			this.shadowing = skinParam().shadowing(null) ? 3.0 : 0.0;
-			wrapWidth = skinParam.wrapWidth();
+		this.inRendering = LinkRendering
+				.create(Rainbow.build(styleArrow, getIHtmlColorSet(), skinParam.getThemeStyle()));
+		this.borderColor = style.value(PName.LineColor).asColor(skinParam.getThemeStyle(), getIHtmlColorSet());
+		this.backColor = style.value(PName.BackGroundColor).asColor(skinParam.getThemeStyle(), getIHtmlColorSet());
+		final FontConfiguration fc = style.getFontConfiguration(skinParam.getThemeStyle(), getIHtmlColorSet());
+		this.horizontalAlignment = style.getHorizontalAlignment();
+		this.padding = style.getPadding();
+		this.margin = style.getMargin();
+		this.roundCorner = style.value(PName.RoundCorner).asDouble();
+		this.shadowing = style.value(PName.Shadowing).asDouble();
+		final LineBreakStrategy wrapWidth = style.wrapWidth();
+		this.minimumWidth = style.value(PName.MinimumWidth).asDouble();
 
-		}
 		final Sheet sheet = Parser
 				.build(fc, skinParam.getDefaultTextAlignment(horizontalAlignment), skinParam, CreoleMode.FULL)
 				.createSheet(label);
@@ -187,23 +165,17 @@ public class GtileBox extends AbstractGtile {
 		final double heightTotal = dimTotal.getHeight();
 		final UDrawable shape = boxStyle.getUDrawable(widthTotal, heightTotal, shadowing, roundCorner);
 
-		final UStroke thickness;
-		if (UseStyle.useBetaStyle()) {
-			thickness = style.getStroke();
-		} else {
-			thickness = getThickness();
-		}
+		final UStroke thickness = style.getStroke();
 
-		if (borderColor == null) {
+		if (borderColor == null)
 			ug = ug.apply(new HColorNone());
-		} else {
+		else
 			ug = ug.apply(borderColor);
-		}
-		if (backColor == null) {
+
+		if (backColor == null)
 			ug = ug.apply(new HColorNone().bg());
-		} else {
+		else
 			ug = ug.apply(backColor.bg());
-		}
 
 		ug = ug.apply(thickness);
 		shape.drawU(ug);

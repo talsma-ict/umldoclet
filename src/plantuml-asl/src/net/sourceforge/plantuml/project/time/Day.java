@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,6 +34,7 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 import net.sourceforge.plantuml.project.Value;
+import net.sourceforge.plantuml.project.core.PrintScale;
 
 public class Day implements Comparable<Day>, Value {
 
@@ -170,17 +171,23 @@ public class Day implements Comparable<Day>, Value {
 	}
 
 	public static Day min(Day wink1, Day wink2) {
-		if (wink2.internalNumber() < wink1.internalNumber()) {
+		if (wink2.internalNumber() < wink1.internalNumber())
 			return wink2;
-		}
+
 		return wink1;
 	}
 
 	public static Day max(Day wink1, Day wink2) {
-		if (wink2.internalNumber() > wink1.internalNumber()) {
+		if (wink2.internalNumber() > wink1.internalNumber())
 			return wink2;
-		}
+
 		return wink1;
+	}
+
+	public Day increment(PrintScale printScale) {
+		if (printScale == PrintScale.WEEKLY)
+			return this.addDays(7);
+		return increment();
 	}
 
 }

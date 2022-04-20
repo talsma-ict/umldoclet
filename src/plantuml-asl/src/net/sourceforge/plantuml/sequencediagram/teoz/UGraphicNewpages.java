@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2020, Arnaud Roques
+ * (C) Copyright 2009-2023, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -42,8 +42,8 @@ public class UGraphicNewpages extends UGraphicDelegator {
 	private final double ymax;
 	private final double dy;
 
-	public UGraphicNewpages(UGraphic ug, double ymin, double ymax) {
-		this(ug, ymin, ymax, 0);
+	private UGraphicNewpages create(UGraphic ug, double ymin, double ymax) {
+		return new UGraphicNewpages(ug, ymin, ymax, 0);
 	}
 
 	private UGraphicNewpages(UGraphic ug, double ymin, double ymax, double dy) {
