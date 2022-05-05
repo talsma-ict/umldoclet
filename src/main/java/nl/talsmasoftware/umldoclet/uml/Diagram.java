@@ -24,19 +24,13 @@ import nl.talsmasoftware.umldoclet.logging.Message;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.rendering.writers.StringBufferingWriter;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.util.Objects;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
-import static nl.talsmasoftware.umldoclet.util.FileUtils.ensureParentDir;
-import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
-import static nl.talsmasoftware.umldoclet.util.FileUtils.withoutExtension;
+import static nl.talsmasoftware.umldoclet.util.FileUtils.*;
 
 /**
  * Abstract class corresponding to a single UML diagram.
@@ -191,7 +185,13 @@ public abstract class Diagram extends UMLNode {
      */
     private FileFormat toFileFormat(ImageConfig.Format format) {
         try {
-            return FileFormat.valueOf(format.name());
+            switch (format) {
+                case SVG:
+                case SVG_IMG:
+                    return FileFormat.SVG;
+                default:
+                    return FileFormat.valueOf(format.name());
+            }
         } catch (RuntimeException incompatibleFormatOrNull) {
             config.logger().debug(Message.WARNING_UNRECOGNIZED_IMAGE_FORMAT, format);
         }

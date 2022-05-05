@@ -15,6 +15,8 @@
  */
 package nl.talsmasoftware.umldoclet.html;
 
+import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
+
 import java.io.File;
 
 /**
@@ -23,10 +25,12 @@ import java.io.File;
 abstract class DiagramFile {
 
     final File basedir, diagramFile;
+    final ImageConfig.Format format;
 
-    DiagramFile(File basedir, File diagramFile) {
+    DiagramFile(File basedir, File diagramFile, ImageConfig.Format format) {
         this.basedir = basedir;
         this.diagramFile = diagramFile;
+        this.format = format;
     }
 
     /**

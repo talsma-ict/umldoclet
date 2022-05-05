@@ -15,6 +15,8 @@
  */
 package nl.talsmasoftware.umldoclet.html;
 
+import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
+
 import java.io.File;
 
 import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
@@ -39,8 +41,8 @@ final class ClassDiagramInserter extends DiagramFile {
     private final String extension;
     private final String pathToCompare;
 
-    ClassDiagramInserter(File basedir, File diagramFile, boolean hasImagesDirectory) {
-        super(basedir, diagramFile);
+    ClassDiagramInserter(File basedir, File diagramFile, ImageConfig.Format format, boolean hasImagesDirectory) {
+        super(basedir, diagramFile, format);
         final String fileName = diagramFile.getName();
         int dotIdx = fileName.lastIndexOf('.');
         this.extension = fileName.substring(dotIdx);
@@ -62,15 +64,17 @@ final class ClassDiagramInserter extends DiagramFile {
 
     @Override
     public Postprocessor.Inserter newInserter(String relativePathToDiagram) {
-        return new Inserter(relativePathToDiagram);
+        return new Inserter(relativePathToDiagram, ImageConfig.Format.SVG.equals(format));
     }
 
     private final class Inserter extends Postprocessor.Inserter {
+        private final boolean insertAsObject;
         private boolean wrappingAddedToPre = false;
         private boolean clearRightAdded = false;
 
-        private Inserter(String relativePath) {
+        private Inserter(String relativePath, boolean insertAsObject) {
             super(relativePath);
+            this.insertAsObject = insertAsObject;
         }
 
         /**
@@ -112,8 +116,7 @@ final class ClassDiagramInserter extends DiagramFile {
          */
         private String getImageTag() {
             String style = " style=\"max-width:60%;float:right;\"";
-            if (relativePath.endsWith(".svg")) {
-                // Render SVG images as objects to make their links work
+            if (insertAsObject) { // Render SVG images as objects to make their links work
                 return "<object type=\"image/svg+xml\" data=\"" + relativePath + "\" " + style + "></object>";
             }
             return "<img src=\"" + relativePath + "\" alt=\"" + getDiagramName() + " UML Diagram\"" + style + "/>";

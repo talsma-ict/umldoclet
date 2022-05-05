@@ -40,7 +40,20 @@ public interface ImageConfig {
          * <li>Links. SVG images allow us to embed links in the UML diagrams.
          * </ul>
          */
-        SVG,
+        SVG(".svg"),
+
+        /**
+         * This option generates the same images as the {@link #SVG} images, but embeds them in the
+         * generated documentation as plain HTML <em>&lt;img&gt;</em> tags instead of objects.
+         * <p>
+         * This allows loading the documentation in tools like Microsoft Word and keeping the images,
+         * where embedded SVG objects are problematic.
+         * <p>
+         * It is recommended as a fallback option if the default {@link #SVG} option is giving you issues.
+         * Links <em>will</em> be embedded inside the SVG images, but will <em>not</em> be clickable
+         * in most browsers unfortunately.
+         */
+        SVG_IMG(".svg"),
 
         /**
          * Value to indicate UML diagrams must be rendered as PNG
@@ -49,7 +62,7 @@ public interface ImageConfig {
          * This is a raster-graphics format that supports lossless compression. This format is usually only used if
          * {@link #SVG} is not an option.
          */
-        PNG,
+        PNG(".png"),
 
         /**
          * Value to indicate UML diagrams must be rendered as EPS
@@ -57,7 +70,16 @@ public interface ImageConfig {
          * <p>
          * This format is most appropriate for print.
          */
-        EPS
+        EPS(".eps");
+
+        /**
+         * The file extension for images of this format.
+         */
+        public final String fileExtension;
+
+        Format(String fileExtension) {
+            this.fileExtension = fileExtension;
+        }
     }
 
     /**

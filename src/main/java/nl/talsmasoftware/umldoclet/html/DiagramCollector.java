@@ -29,13 +29,11 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
 import static java.util.Collections.unmodifiableCollection;
-import static java.util.Collections.unmodifiableList;
-import static java.util.stream.Collectors.toList;
+import static nl.talsmasoftware.umldoclet.configuration.ImageConfig.Format.SVG;
 
 /**
  * Collects all generated diagram files from the output directory.
@@ -48,16 +46,12 @@ final class DiagramCollector extends SimpleFileVisitor<Path> {
 
     private final File basedir;
     private final Optional<File> imagesDirectory;
-    private final List<String> diagramExtensions;
+    private final Optional<ImageConfig.Format> imageFormat;
     private final ThreadLocal<Collection<DiagramFile>> collected = ThreadLocal.withInitial(ArrayList::new);
 
     DiagramCollector(Configuration config) {
         this.basedir = new File(config.destinationDirectory());
-        this.diagramExtensions = unmodifiableList(config.images().formats().stream()
-                .map(ImageConfig.Format::name)
-                .map(String::toLowerCase)
-                .map(format -> format.startsWith(".") ? format : "." + format)
-                .collect(toList()));
+        this.imageFormat = config.images().formats().stream().findFirst();
         this.imagesDirectory = config.images().directory()
                 .map(imagesDir -> new File(config.destinationDirectory(), imagesDir));
     }
@@ -69,7 +63,7 @@ final class DiagramCollector extends SimpleFileVisitor<Path> {
      * @throws IOException In case there were I/O errors walking the path
      */
     Collection<DiagramFile> collectDiagrams() throws IOException {
-        if (diagramExtensions.isEmpty()) return Collections.emptySet();
+        if (!imageFormat.isPresent()) return Collections.emptySet();
         try {
             Files.walkFileTree(imagesDirectory.orElse(basedir).toPath(), this);
             return unmodifiableCollection(collected.get());
@@ -80,7 +74,7 @@ final class DiagramCollector extends SimpleFileVisitor<Path> {
 
     @Override
     public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
-        if (attrs.isRegularFile() && FileUtils.hasExtension(path, diagramExtensions.get(0))) {
+        if (attrs.isRegularFile() && FileUtils.hasExtension(path, imageFormat.orElse(SVG).fileExtension)) {
             collected.get().add(createDiagramInstance(path));
         }
         return super.visitFile(path, attrs);
@@ -95,13 +89,14 @@ final class DiagramCollector extends SimpleFileVisitor<Path> {
     }
 
     private DiagramFile createDiagramInstance(Path diagramPath) {
-        File diagramFile = diagramPath.normalize().toFile();
+        final File diagramFile = diagramPath.normalize().toFile();
+        final ImageConfig.Format format = imageFormat.orElse(SVG);
         if (isPackageDiagram(diagramFile)) {
-            return new PackageDiagramInserter(basedir, diagramFile, imagesDirectory.isPresent());
+            return new PackageDiagramInserter(basedir, diagramFile, format, imagesDirectory.isPresent());
         } else if (isPackageDependencyDiagram(diagramFile)) {
-            return new PackageDependenciesInserter(basedir, diagramFile);
+            return new PackageDependenciesInserter(basedir, diagramFile, format);
         }
-        return new ClassDiagramInserter(basedir, diagramFile, imagesDirectory.isPresent());
+        return new ClassDiagramInserter(basedir, diagramFile, format, imagesDirectory.isPresent());
     }
 
 }

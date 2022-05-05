@@ -15,6 +15,8 @@
  */
 package nl.talsmasoftware.umldoclet.html;
 
+import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
+
 import java.io.File;
 import java.nio.file.Path;
 
@@ -22,8 +24,8 @@ final class PackageDependenciesInserter extends DiagramFile {
     private final Path index;
     private final Path overviewSummary;
 
-    PackageDependenciesInserter(File basedir, File diagramFile) {
-        super(basedir, diagramFile);
+    PackageDependenciesInserter(File basedir, File diagramFile, ImageConfig.Format format) {
+        super(basedir, diagramFile, format);
         this.index = new File(basedir, "index.html").toPath();
         this.overviewSummary = new File(basedir, "overview-summary.html").toPath();
     }
@@ -36,14 +38,17 @@ final class PackageDependenciesInserter extends DiagramFile {
 
     @Override
     public Postprocessor.Inserter newInserter(String relativePathToDiagram) {
-        return new Inserter(relativePathToDiagram);
+        return new Inserter(relativePathToDiagram, ImageConfig.Format.SVG.equals(format));
     }
 
     private static final class Inserter extends Postprocessor.Inserter {
         private static final String CENTER_STYLE = "style=\"display:block;margin-left:auto;margin-right:auto;max-width:95%;\"";
 
-        private Inserter(String relativePath) {
+        private final boolean insertAsObject;
+
+        private Inserter(String relativePath, boolean insertAsObject) {
             super(relativePath);
+            this.insertAsObject = insertAsObject;
         }
 
         @Override
@@ -65,8 +70,7 @@ final class PackageDependenciesInserter extends DiagramFile {
         }
 
         private String getImageTag() {
-            if (relativePath.endsWith(".svg")) {
-                // Render SVG images as objects to make their links work
+            if (insertAsObject) { // Render SVG images as objects to make their links work
                 return "<object type=\"image/svg+xml\" data=\"" + relativePath + "\" " + CENTER_STYLE + "></object>";
             }
             return "<img src=\"" + relativePath + "\" alt=\"Package dependencies\" " + CENTER_STYLE + "/>";

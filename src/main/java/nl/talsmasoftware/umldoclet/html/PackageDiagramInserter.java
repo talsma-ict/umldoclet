@@ -15,6 +15,8 @@
  */
 package nl.talsmasoftware.umldoclet.html;
 
+import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
+
 import java.io.File;
 
 import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
@@ -26,8 +28,8 @@ final class PackageDiagramInserter extends DiagramFile {
 
     private final String extension, pathToCompare;
 
-    PackageDiagramInserter(File basedir, File diagramFile, boolean hasImagesDirectory) {
-        super(basedir, diagramFile);
+    PackageDiagramInserter(File basedir, File diagramFile, ImageConfig.Format format, boolean hasImagesDirectory) {
+        super(basedir, diagramFile, format);
         final String fileName = diagramFile.getName();
         int dotIdx = fileName.lastIndexOf('.');
         this.extension = fileName.substring(dotIdx);
@@ -49,14 +51,17 @@ final class PackageDiagramInserter extends DiagramFile {
 
     @Override
     public Postprocessor.Inserter newInserter(String relativePathToDiagram) {
-        return new Inserter(relativePathToDiagram);
+        return new Inserter(relativePathToDiagram, ImageConfig.Format.SVG.equals(this.format));
     }
 
     private static final class Inserter extends Postprocessor.Inserter {
         private static final String CENTER_STYLE = "style=\"display:block;margin-left:auto;margin-right:auto;max-width:100%;\"";
 
-        private Inserter(String relativePath) {
+        private final boolean insertAsObject;
+
+        private Inserter(String relativePath, boolean insertAsObject) {
             super(relativePath);
+            this.insertAsObject = insertAsObject;
         }
 
         @Override
@@ -78,8 +83,7 @@ final class PackageDiagramInserter extends DiagramFile {
         }
 
         private String getImageTag() {
-            if (relativePath.endsWith(".svg")) {
-                // Render SVG images as objects to make their links work
+            if (insertAsObject) { // Render SVG images as objects to make their links work
                 return "<object type=\"image/svg+xml\" data=\"" + relativePath + "\" " + CENTER_STYLE + "></object>";
             }
             return "<img src=\"" + relativePath + "\" alt=\"Package summary UML Diagram\" " + CENTER_STYLE + "/>";
