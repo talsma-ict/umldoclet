@@ -112,7 +112,7 @@ public class DescriptionDiagram extends AbstractEntityDiagram {
 	@Override
 	public void makeDiagramReady() {
 		super.makeDiagramReady();
-		final LeafType defaultType = isUsecase() ? LeafType.DESCRIPTION : LeafType.DESCRIPTION;
+		final LeafType defaultType = LeafType.DESCRIPTION;
 		final USymbol defaultSymbol = isUsecase() ? getSkinParam().actorStyle().toUSymbol() : USymbols.INTERFACE;
 		for (ILeaf leaf : getLeafsvalues()) {
 			if (leaf.getLeafType() == LeafType.STILL_UNKNOWN) {

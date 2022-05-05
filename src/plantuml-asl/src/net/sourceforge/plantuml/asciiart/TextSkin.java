@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.asciiart;
 
-import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.cucadiagram.Display;
@@ -41,7 +40,6 @@ import net.sourceforge.plantuml.skin.ArrowDirection;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.ComponentType;
 import net.sourceforge.plantuml.skin.rose.ComponentRoseGroupingSpace;
-import net.sourceforge.plantuml.skin.rose.ComponentRoseNewpage;
 import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.style.Style;
 
@@ -145,6 +143,9 @@ public class TextSkin extends Rose {
 		}
 		if (type == ComponentType.DESTROY) {
 			return new ComponentTextDestroy();
+		}
+		if (type == ComponentType.REFERENCE) {
+			return new ComponentTextReference(stringsToDisplay, fileFormat);
 		}
 		throw new UnsupportedOperationException(type.toString());
 	}

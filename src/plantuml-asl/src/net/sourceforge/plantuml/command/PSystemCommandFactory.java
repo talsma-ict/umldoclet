@@ -160,7 +160,6 @@ public abstract class PSystemCommandFactory extends PSystemAbstractFactory {
 					continue;
 
 				it.copyStateFrom(cloned);
-				assert lines != null;
 				return new Step(cmd, lines);
 			}
 		}

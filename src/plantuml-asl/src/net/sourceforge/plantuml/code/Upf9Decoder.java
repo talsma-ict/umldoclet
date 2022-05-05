@@ -59,7 +59,7 @@ public class Upf9Decoder {
 			final int read1 = is.read();
 			return (char) ((read0 << 8) + read1);
 		}
-		if (read0 >= 0x80 && read0 <= 0xFF) {
+		if (read0 >= 0x80) {
 			final int read1 = is.read();
 			return (char) (((read0 - 0x60) << 8) + read1);
 		}
