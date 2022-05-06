@@ -6,7 +6,6 @@
 
 [Doclet for javadoc][doclet] to automatically add [UML diagrams][plantuml] to Java documentation.  
 
-[![Codacy Badge][codacy-img]][codacy]
 [![Codebeat badge][codebeat-img]][codebeat]
 [![Coverage Status][coveralls-img]][coveralls]
 
@@ -19,7 +18,7 @@ and link to package and class documentation where available.
 
 ### Package dependency diagram
 
-<p align="center"><a href="https://www.javadoc.io/doc/nl.talsmasoftware/umldoclet"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/2.0.16/package-dependencies.svg" width="60%" /></a></p>
+<p align="center"><a href="https://www.javadoc.io/doc/nl.talsmasoftware/umldoclet"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/2.0.17/package-dependencies.svg" width="60%" /></a></p>
 
 _The UML Doclet will warn about (and optionally fail on) cyclic package dependencies._
 
@@ -27,13 +26,13 @@ The dependency diagram links to package documentation containing:
 
 ### Package diagram
 
-<p align="center"><a href="https://www.javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/indent/package-summary.html"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/2.0.16/nl/talsmasoftware/umldoclet/rendering/indent/package.svg" width="60%"/></a></p>
+<p align="center"><a href="https://www.javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/indent/package-summary.html"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/2.0.17/nl/talsmasoftware/umldoclet/rendering/indent/package.svg" width="60%"/></a></p>
 
 The package diagram links to class documentation containing:
 
 ### Class diagram
 
-<p align="center"><a href="https://www.javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/indent/Indentation.html"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/2.0.16/nl/talsmasoftware/umldoclet/rendering/indent/Indentation.svg" height="200"/></a></p>
+<p align="center"><a href="https://www.javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/indent/Indentation.html"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/2.0.17/nl/talsmasoftware/umldoclet/rendering/indent/Indentation.svg" height="200"/></a></p>
 
 (These examples are from the [latest UML Doclet javadoc][javadoc] page. Please feel free to take a look to get an idea of the final result)
 
