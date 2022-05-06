@@ -167,10 +167,12 @@ HTML documentation for the class or package.
 Specifying an _image directory_ will place all generated images in this single directory,
 which makes directly linking to them from javadoc comments easier in some cases.
 
-#### -umlImageFormat (_svg_|png|eps|none)
+#### -umlImageFormat (_svg_ | svg_img | png | eps | none)
 
 By default `.svg` images are generated as they will be significantly smaller
-in size than equivalent `.png` images and scale better.
+in size than equivalent `.png` images and scale better. They are included as
+svg _objects_ in the documentation to enable links in the diagrams. To include
+`.svg` as _images_ in the documentation, please you can use the `svg_img` image format.
 You can generate _multiple_ images per diagram by specifying a comma-separated 
 list of formats or providing the option multiple times.
 
