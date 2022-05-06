@@ -80,7 +80,7 @@ public class PSystemWelcome extends PlainDiagram {
 		return getGraphicStrings();
 	}
 
-	public TextBlockBackcolored getGraphicStrings() throws IOException {
+	public TextBlockBackcolored getGraphicStrings() {
 		if (position != null) {
 			return GraphicStrings.createBlackOnWhite(strings, PSystemVersion.getPlantumlImage(), position);
 		}

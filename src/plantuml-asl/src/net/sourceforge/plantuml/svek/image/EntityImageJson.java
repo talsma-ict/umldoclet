@@ -30,9 +30,6 @@
  */
 package net.sourceforge.plantuml.svek.image;
 
-import java.util.EnumMap;
-import java.util.Map;
-
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.CornerParam;
 import net.sourceforge.plantuml.Dimension2DDouble;
@@ -71,7 +68,6 @@ import net.sourceforge.plantuml.ugraphic.PlacementStrategyY1Y2;
 import net.sourceforge.plantuml.ugraphic.Shadowable;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UGraphicStencil;
-import net.sourceforge.plantuml.ugraphic.UGroupType;
 import net.sourceforge.plantuml.ugraphic.ULayoutGroup;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UStroke;

@@ -31,13 +31,15 @@
 package net.sourceforge.plantuml.svek;
 
 import net.sourceforge.plantuml.awt.geom.Dimension2D;
-
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
+import net.sourceforge.plantuml.ugraphic.UPath;
 import net.sourceforge.plantuml.ugraphic.URectangle;
+import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public final class RoundedContainer {
 
@@ -53,9 +55,9 @@ public final class RoundedContainer {
 
 	public RoundedContainer(Dimension2D dim, double titleHeight, double attributeHeight, HColor borderColor,
 			HColor backColor, HColor imgBackcolor, UStroke stroke, double rounded, double shadowing) {
-		if (dim.getWidth() == 0) {
+		if (dim.getWidth() == 0)
 			throw new IllegalArgumentException();
-		}
+
 		this.rounded = rounded;
 		this.dim = dim;
 		this.imgBackcolor = imgBackcolor;
@@ -68,28 +70,28 @@ public final class RoundedContainer {
 	}
 
 	public void drawU(UGraphic ug) {
-		ug = ug.apply(backColor.bg()).apply(borderColor);
+		ug = ug.apply(backColor.bg()).apply(borderColor).apply(stroke);
 		final URectangle rect = new URectangle(dim.getWidth(), dim.getHeight()).rounded(rounded);
-		rect.setDeltaShadow(shadowing);
-		ug.apply(stroke).draw(rect);
 
-		final double yLine = titleHeight + attributeHeight;
-
-		ug = ug.apply(imgBackcolor.bg());
-
-		final double thickness = stroke.getThickness();
-
-		final URectangle inner = new URectangle(dim.getWidth() - 4 * thickness,
-				dim.getHeight() - titleHeight - 4 * thickness - attributeHeight).rounded(rounded);
-		ug.apply(imgBackcolor).apply(new UTranslate(2 * thickness, yLine + 2 * thickness)).draw(inner);
-
-		if (titleHeight > 0) {
-			ug.apply(stroke).apply(UTranslate.dy(yLine)).draw(ULine.hline(dim.getWidth()));
+		if (shadowing > 0) {
+			rect.setDeltaShadow(shadowing);
+			ug.apply(HColorUtils.transparent().bg()).draw(rect);
+			rect.setDeltaShadow(0);
+			
 		}
+		final double headerHeight = titleHeight + attributeHeight;
 
-		if (attributeHeight > 0) {
-			ug.apply(stroke).apply(UTranslate.dy(yLine - attributeHeight)).draw(ULine.hline(dim.getWidth()));
-		}
+		new RoundedNorth(dim.getWidth(), headerHeight, backColor, rounded).drawU(ug);
+		new RoundedSouth(dim.getWidth(), dim.getHeight() - headerHeight, imgBackcolor, rounded)
+				.drawU(ug.apply(UTranslate.dy(headerHeight)));
+
+		ug.apply(HColorUtils.transparent().bg()).draw(rect);
+
+		if (headerHeight > 0)
+			ug.apply(UTranslate.dy(headerHeight)).draw(ULine.hline(dim.getWidth()));
+
+		if (attributeHeight > 0)
+			ug.apply(UTranslate.dy(titleHeight)).draw(ULine.hline(dim.getWidth()));
 
 	}
 }
