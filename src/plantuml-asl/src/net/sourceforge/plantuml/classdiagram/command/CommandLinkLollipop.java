@@ -90,7 +90,7 @@ final public class CommandLinkLollipop extends SingleLineCommand2<AbstractClassO
 
 	private static String optionalKeywords(UmlDiagramType type) {
 		if (type == UmlDiagramType.CLASS) {
-			return "(interface|enum|annotation|abstract[%s]+class|abstract|class|entity)";
+			return "(interface|enum|annotation|abstract[%s]+class|abstract|class|entity|protocol|struct)";
 		}
 		if (type == UmlDiagramType.OBJECT) {
 			return "(object)";

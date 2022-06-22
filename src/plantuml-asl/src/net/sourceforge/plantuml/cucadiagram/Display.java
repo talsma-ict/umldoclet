@@ -72,6 +72,8 @@ import net.sourceforge.plantuml.sequencediagram.MessageNumber;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.style.Value;
+import net.sourceforge.plantuml.style.ValueNull;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
@@ -83,27 +85,24 @@ public class Display implements Iterable<CharSequence> {
 	private final HorizontalAlignment naturalHorizontalAlignment;
 	private final boolean isNull;
 	private final CreoleMode defaultCreoleMode;
+	private final boolean showStereotype;
 
-	public final static Display NULL = new Display(null, null, true, CreoleMode.FULL);
+	public final static Display NULL = new Display(true, null, null, true, CreoleMode.FULL);
+
+	public boolean showStereotype() {
+		return showStereotype;
+	}
 
 	public Display withoutStereotypeIfNeeded(Style usedStyle) {
 		if (this == NULL)
 			return NULL;
 
-		final boolean showStereotype = usedStyle.value(PName.ShowStereotype).asBoolean();
-		if (showStereotype)
+		final Value showStereotype = usedStyle.value(PName.ShowStereotype);
+		if (showStereotype instanceof ValueNull || showStereotype.asBoolean())
 			return this;
 
-		final List<CharSequence> copy = new ArrayList<>(displayData);
-		final Display result = new Display(naturalHorizontalAlignment, isNull, defaultCreoleMode);
-		for (Iterator<CharSequence> it = copy.iterator(); it.hasNext();) {
-			final CharSequence cs = it.next();
-			if (cs instanceof Stereotype && usedStyle.getSignature().match(((Stereotype) cs)))
-				it.remove();
+		return new Display(false, this, this.defaultCreoleMode);
 
-		}
-		result.displayData.addAll(copy);
-		return result;
 	}
 
 	public Stereotype getStereotypeIfAny() {
@@ -116,7 +115,7 @@ public class Display implements Iterable<CharSequence> {
 	}
 
 	public Display replaceBackslashT() {
-		final Display result = new Display(this, defaultCreoleMode);
+		final Display result = new Display(this.showStereotype, this, defaultCreoleMode);
 		for (int i = 0; i < result.displayData.size(); i++) {
 			final CharSequence s = displayData.get(i);
 			if (s.toString().contains("\\t"))
@@ -133,7 +132,7 @@ public class Display implements Iterable<CharSequence> {
 
 			newDisplay.add(cs);
 		}
-		return new Display(newDisplay, naturalHorizontalAlignment, isNull, defaultCreoleMode);
+		return new Display(showStereotype, newDisplay, naturalHorizontalAlignment, isNull, defaultCreoleMode);
 	}
 
 	public boolean isWhite() {
@@ -142,7 +141,7 @@ public class Display implements Iterable<CharSequence> {
 	}
 
 	public static Display empty() {
-		return new Display((HorizontalAlignment) null, false, CreoleMode.FULL);
+		return new Display(true, (HorizontalAlignment) null, false, CreoleMode.FULL);
 	}
 
 	public static Display create(CharSequence... s) {
@@ -160,7 +159,7 @@ public class Display implements Iterable<CharSequence> {
 	}
 
 	public static Display create(Collection<? extends CharSequence> other) {
-		return new Display(other, null, false, CreoleMode.FULL);
+		return new Display(true, other, null, false, CreoleMode.FULL);
 	}
 
 	public static Display getWithNewlines(Code s) {
@@ -216,24 +215,26 @@ public class Display implements Iterable<CharSequence> {
 			}
 		}
 		result.add(current.toString());
-		return new Display(result, naturalHorizontalAlignment, false, CreoleMode.FULL);
+		return new Display(true, result, naturalHorizontalAlignment, false, CreoleMode.FULL);
 	}
 
-	private Display(Display other, CreoleMode mode) {
-		this(other.naturalHorizontalAlignment, other.isNull, mode);
+	private Display(boolean showStereotype, Display other, CreoleMode mode) {
+		this(showStereotype, other.naturalHorizontalAlignment, other.isNull, mode);
 		this.displayData.addAll(other.displayData);
 	}
 
-	private Display(HorizontalAlignment naturalHorizontalAlignment, boolean isNull, CreoleMode defaultCreoleMode) {
+	private Display(boolean showStereotype, HorizontalAlignment naturalHorizontalAlignment, boolean isNull,
+			CreoleMode defaultCreoleMode) {
+		this.showStereotype = showStereotype;
 		this.defaultCreoleMode = defaultCreoleMode;
 		this.isNull = isNull;
 		this.displayData = isNull ? null : new ArrayList<CharSequence>();
 		this.naturalHorizontalAlignment = isNull ? null : naturalHorizontalAlignment;
 	}
 
-	private Display(Collection<? extends CharSequence> other, HorizontalAlignment naturalHorizontalAlignment,
-			boolean isNull, CreoleMode defaultCreoleMode) {
-		this(naturalHorizontalAlignment, isNull, defaultCreoleMode);
+	private Display(boolean showStereotype, Collection<? extends CharSequence> other,
+			HorizontalAlignment naturalHorizontalAlignment, boolean isNull, CreoleMode defaultCreoleMode) {
+		this(showStereotype, naturalHorizontalAlignment, isNull, defaultCreoleMode);
 		if (isNull == false)
 			this.displayData.addAll(manageEmbeddedDiagrams(other));
 
@@ -279,7 +280,8 @@ public class Display implements Iterable<CharSequence> {
 			}
 			first = false;
 		}
-		return new Display(result, this.naturalHorizontalAlignment, this.isNull, this.defaultCreoleMode);
+		return new Display(showStereotype, result, this.naturalHorizontalAlignment, this.isNull,
+				this.defaultCreoleMode);
 	}
 
 	public Display withPage(int page, int lastpage) {
@@ -292,7 +294,8 @@ public class Display implements Iterable<CharSequence> {
 			line = line.toString().replace("%lastpage%", "" + lastpage);
 			result.add(line);
 		}
-		return new Display(result, this.naturalHorizontalAlignment, this.isNull, this.defaultCreoleMode);
+		return new Display(showStereotype, result, this.naturalHorizontalAlignment, this.isNull,
+				this.defaultCreoleMode);
 	}
 
 	public Display removeEndingStereotype() {
@@ -300,7 +303,8 @@ public class Display implements Iterable<CharSequence> {
 		if (m.matches()) {
 			final List<CharSequence> result = new ArrayList<>(this.displayData);
 			result.set(result.size() - 1, m.group(1));
-			return new Display(result, this.naturalHorizontalAlignment, this.isNull, this.defaultCreoleMode);
+			return new Display(showStereotype, result, this.naturalHorizontalAlignment, this.isNull,
+					this.defaultCreoleMode);
 		}
 		return this;
 	}
@@ -320,7 +324,8 @@ public class Display implements Iterable<CharSequence> {
 		for (CharSequence line : displayData)
 			result.add("<u>" + line);
 
-		return new Display(result, this.naturalHorizontalAlignment, this.isNull, this.defaultCreoleMode);
+		return new Display(showStereotype, result, this.naturalHorizontalAlignment, this.isNull,
+				this.defaultCreoleMode);
 	}
 
 	public Display underlinedName() {
@@ -337,14 +342,15 @@ public class Display implements Iterable<CharSequence> {
 				result.add("<u>" + line);
 			}
 		}
-		return new Display(result, this.naturalHorizontalAlignment, this.isNull, this.defaultCreoleMode);
+		return new Display(showStereotype, result, this.naturalHorizontalAlignment, this.isNull,
+				this.defaultCreoleMode);
 	}
 
 	public Display withCreoleMode(CreoleMode mode) {
 		if (isNull)
 			throw new IllegalArgumentException();
 
-		return new Display(this, mode);
+		return new Display(this.showStereotype, this, mode);
 	}
 
 	@Override
@@ -366,25 +372,25 @@ public class Display implements Iterable<CharSequence> {
 	}
 
 	public Display addAll(Display other) {
-		final Display result = new Display(this, this.defaultCreoleMode);
+		final Display result = new Display(this.showStereotype, this, this.defaultCreoleMode);
 		result.displayData.addAll(other.displayData);
 		return result;
 	}
 
 	public Display addFirst(CharSequence s) {
-		final Display result = new Display(this, this.defaultCreoleMode);
+		final Display result = new Display(this.showStereotype, this, this.defaultCreoleMode);
 		result.displayData.add(0, s);
 		return result;
 	}
 
 	public Display add(CharSequence s) {
-		final Display result = new Display(this, this.defaultCreoleMode);
+		final Display result = new Display(this.showStereotype, this, this.defaultCreoleMode);
 		result.displayData.add(s);
 		return result;
 	}
 
 	public Display addGeneric(CharSequence s) {
-		final Display result = new Display(this, this.defaultCreoleMode);
+		final Display result = new Display(this.showStereotype, this, this.defaultCreoleMode);
 		final int size = displayData.size();
 		if (size == 0)
 			result.displayData.add("<" + s + ">");
@@ -410,7 +416,7 @@ public class Display implements Iterable<CharSequence> {
 	}
 
 	public Display subList(int i, int size) {
-		return new Display(displayData.subList(i, size), this.naturalHorizontalAlignment, this.isNull,
+		return new Display(showStereotype, displayData.subList(i, size), this.naturalHorizontalAlignment, this.isNull,
 				this.defaultCreoleMode);
 	}
 
@@ -443,7 +449,8 @@ public class Display implements Iterable<CharSequence> {
 
 	public List<Display> splitMultiline(Pattern2 separator) {
 		final List<Display> result = new ArrayList<>();
-		Display pending = new Display(this.naturalHorizontalAlignment, this.isNull, this.defaultCreoleMode);
+		Display pending = new Display(showStereotype, this.naturalHorizontalAlignment, this.isNull,
+				this.defaultCreoleMode);
 		result.add(pending);
 		for (CharSequence line : displayData) {
 			final Matcher2 m = separator.matcher(line);
@@ -451,7 +458,8 @@ public class Display implements Iterable<CharSequence> {
 				final CharSequence s1 = line.subSequence(0, m.start());
 				pending.displayData.add(s1);
 				final CharSequence s2 = line.subSequence(m.end(), line.length());
-				pending = new Display(this.naturalHorizontalAlignment, this.isNull, this.defaultCreoleMode);
+				pending = new Display(showStereotype, this.naturalHorizontalAlignment, this.isNull,
+						this.defaultCreoleMode);
 				result.add(pending);
 				pending.displayData.add(s2);
 			} else {

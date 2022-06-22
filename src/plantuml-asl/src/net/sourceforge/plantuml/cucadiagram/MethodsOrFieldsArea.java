@@ -36,7 +36,6 @@ import java.util.HashSet;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.EmbeddedDiagram;
-import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.awt.geom.Dimension2D;
@@ -72,35 +71,32 @@ public class MethodsOrFieldsArea extends AbstractTextBlock implements TextBlock,
 				TextBlockUtils.withMargin(this, 6, 4));
 	}
 
-	private final FontParam fontParam;
 	private final ISkinParam skinParam;
 
 	private final Display members;
 	private final HorizontalAlignment align;
-	private final Stereotype stereotype;
+
 	private final ILeaf leaf;
 	private final Style style;
 
-	public MethodsOrFieldsArea(Display members, FontParam fontParam, ISkinParam skinParam, Stereotype stereotype,
-			ILeaf leaf, Style style) {
-		this(members, fontParam, skinParam, HorizontalAlignment.LEFT, stereotype, leaf, style);
+	public MethodsOrFieldsArea(Display members, ISkinParam skinParam, ILeaf leaf, Style style) {
+		this(members, skinParam, HorizontalAlignment.LEFT, leaf, style);
 	}
 
-	public MethodsOrFieldsArea(Display members, FontParam fontParam, ISkinParam skinParam, HorizontalAlignment align,
-			Stereotype stereotype, ILeaf leaf, Style style) {
+	public MethodsOrFieldsArea(Display members, ISkinParam skinParam, HorizontalAlignment align, ILeaf leaf,
+			Style style) {
 		this.style = style;
 		this.leaf = leaf;
-		this.stereotype = stereotype;
+
 		this.align = align;
 		this.skinParam = skinParam;
-		this.fontParam = fontParam;
 		this.members = members;
 	}
 
 	private boolean hasSmallIcon() {
-		if (skinParam.classAttributeIconSize() == 0) {
+		if (skinParam.classAttributeIconSize() == 0)
 			return false;
-		}
+
 		for (CharSequence cs : members) {
 			if (cs instanceof Member == false)
 				continue;
@@ -114,9 +110,9 @@ public class MethodsOrFieldsArea extends AbstractTextBlock implements TextBlock,
 
 	public Dimension2D calculateDimension(StringBounder stringBounder) {
 		double smallIcon = 0;
-		if (hasSmallIcon()) {
+		if (hasSmallIcon())
 			smallIcon = skinParam.getCircledCharacterRadius() + 3;
-		}
+
 		double x = 0;
 		double y = 0;
 		for (CharSequence cs : members) {
@@ -173,11 +169,7 @@ public class MethodsOrFieldsArea extends AbstractTextBlock implements TextBlock,
 
 	private TextBlock createTextBlock(CharSequence cs) {
 
-		FontConfiguration config;
-		if (style != null)
-			config = FontConfiguration.create(skinParam, style);
-		else
-			config = FontConfiguration.create(skinParam, fontParam, stereotype);
+		FontConfiguration config = FontConfiguration.create(skinParam, style, leaf.getColors());
 
 		if (cs instanceof Member) {
 			final Member m = (Member) cs;
@@ -198,9 +190,8 @@ public class MethodsOrFieldsArea extends AbstractTextBlock implements TextBlock,
 			return new TextBlockTracer(m, bloc);
 		}
 
-		if (cs instanceof EmbeddedDiagram) {
+		if (cs instanceof EmbeddedDiagram)
 			return ((EmbeddedDiagram) cs).asDraw(skinParam);
-		}
 
 		return Display.getWithNewlines(cs.toString()).create8(config, align, skinParam, CreoleMode.SIMPLE_LINE,
 				skinParam.wrapWidth());

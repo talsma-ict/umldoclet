@@ -30,17 +30,12 @@
  */
 package net.sourceforge.plantuml.svek.image;
 
-import net.sourceforge.plantuml.ColorParam;
-import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.LineConfigurable;
-import net.sourceforge.plantuml.SkinParamUtils;
 import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.creole.CreoleMode;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
-import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.TextBlock;
@@ -67,15 +62,9 @@ public abstract class EntityImageStateCommon extends AbstractEntityImage {
 		super(entity, skinParam);
 
 		this.lineConfig = entity;
-		final Stereotype stereotype = entity.getStereotype();
 
-		final FontConfiguration fontConfiguration;
-
-		if (UseStyle.useBetaStyle())
-			fontConfiguration = getStyleStateHeader().getFontConfiguration(getSkinParam().getThemeStyle(),
-					getSkinParam().getIHtmlColorSet());
-		else
-			fontConfiguration = FontConfiguration.create(getSkinParam(), FontParam.STATE, stereotype);
+		final FontConfiguration fontConfiguration = getStyleStateHeader().getFontConfiguration(
+				getSkinParam().getThemeStyle(), getSkinParam().getIHtmlColorSet(), entity.getColors());
 
 		this.desc = entity.getDisplay().create8(fontConfiguration, HorizontalAlignment.CENTER, skinParam,
 				CreoleMode.FULL, skinParam.wrapWidth());
@@ -106,44 +95,28 @@ public abstract class EntityImageStateCommon extends AbstractEntityImage {
 	}
 
 	final protected URectangle getShape(final Dimension2D dimTotal) {
-		double deltaShadow = 0;
-		final double corner;
-		if (UseStyle.useBetaStyle()) {
-			corner = getStyleState().value(PName.RoundCorner).asDouble();
-			deltaShadow = getStyleState().value(PName.Shadowing).asDouble();
-		} else {
-			corner = CORNER;
-			if (getSkinParam().shadowing(getEntity().getStereotype()))
-				deltaShadow = 4;
-		}
+
+		final double corner = getStyleState().value(PName.RoundCorner).asDouble();
+		final double deltaShadow = getStyleState().value(PName.Shadowing).asDouble();
 
 		final URectangle rect = new URectangle(dimTotal).rounded(corner);
 		rect.setDeltaShadow(deltaShadow);
 		return rect;
 	}
 
-	final protected UGraphic applyColorAndStroke(UGraphic ug) {
+	final protected UGraphic applyColor(UGraphic ug) {
 
 		HColor border = lineConfig.getColors().getColor(ColorType.LINE);
-		if (border == null) {
-			if (UseStyle.useBetaStyle())
-				border = getStyleState().value(PName.LineColor).asColor(getSkinParam().getThemeStyle(),
-						getSkinParam().getIHtmlColorSet());
-			else
-				border = SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.stateBorder);
-		}
-		if (UseStyle.useBetaStyle() == false)
-			ug = ug.apply(getStrokeWIP());
-		ug = ug.apply(border);
-		HColor backcolor = getEntity().getColors().getColor(ColorType.BACK);
-		if (backcolor == null) {
-			if (UseStyle.useBetaStyle())
-				backcolor = getStyleState().value(PName.BackGroundColor).asColor(getSkinParam().getThemeStyle(),
-						getSkinParam().getIHtmlColorSet());
-			else
-				backcolor = SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.stateBackground);
+		if (border == null)
+			border = getStyleState().value(PName.LineColor).asColor(getSkinParam().getThemeStyle(),
+					getSkinParam().getIHtmlColorSet());
 
-		}
+		ug = ug.apply(border);
+		HColor backcolor = lineConfig.getColors().getColor(ColorType.BACK);
+		if (backcolor == null)
+			backcolor = getStyleState().value(PName.BackGroundColor).asColor(getSkinParam().getThemeStyle(),
+					getSkinParam().getIHtmlColorSet());
+
 		ug = ug.apply(backcolor.bg());
 
 		return ug;

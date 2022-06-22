@@ -82,16 +82,15 @@ public class CommandExecutionResult {
 	public static List<String> getStackTrace(Throwable exception) {
 		final List<String> result = new ArrayList<>();
 		result.add(exception.toString());
-		for (StackTraceElement ste : exception.getStackTrace()) {
+		for (StackTraceElement ste : exception.getStackTrace())
 			result.add("  " + ste.toString());
-		}
+
 		if (exception.getCause() != null) {
 			final Throwable cause = exception.getCause();
 			result.add("  ");
 			result.add("Caused by " + cause.toString());
-			for (StackTraceElement ste : cause.getStackTrace()) {
+			for (StackTraceElement ste : cause.getStackTrace())
 				result.add("  " + ste.toString());
-			}
 
 		}
 		return result;
@@ -102,9 +101,9 @@ public class CommandExecutionResult {
 	}
 
 	public String getError() {
-		if (isOk()) {
+		if (isOk())
 			throw new IllegalStateException();
-		}
+
 		return error;
 	}
 

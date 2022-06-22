@@ -36,7 +36,6 @@ import net.sourceforge.plantuml.cucadiagram.Rankdir;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.cucadiagram.dot.DotSplines;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.SkinParameter;
 import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.skin.ActorStyle;
 import net.sourceforge.plantuml.skin.ArrowDirection;
@@ -90,8 +89,6 @@ public interface ISkinParam extends ISkinSimple {
 	public boolean shadowing(Stereotype stereotype);
 
 	public boolean shadowingForNote(Stereotype stereotype);
-
-	public boolean shadowing2(Stereotype stereotype, SkinParameter skinParameter);
 
 	public PackageStyle packageStyle();
 
