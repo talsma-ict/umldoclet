@@ -47,6 +47,7 @@ import net.sourceforge.plantuml.command.SingleLineCommand2;
 import net.sourceforge.plantuml.command.regex.IRegex;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
+import net.sourceforge.plantuml.command.regex.RegexOptional;
 import net.sourceforge.plantuml.command.regex.RegexOr;
 import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.Display;
@@ -88,8 +89,11 @@ public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 						new RegexLeaf("PART1CODELONG", "([%pLN_.@]+)[%s]+as[%s]*[%g]([^%g]+)[%g]")), //
 				new RegexLeaf("PART1ANCHOR", ANCHOR), //
 				RegexLeaf.spaceZeroOrMore(), //
-				new RegexLeaf("ARROW_DRESSING1",
-						"([%s][ox]|(?:[%s][ox])?<<?_?|(?:[%s][ox])?//?|(?:[%s][ox])?\\\\\\\\?)?"), //
+				new RegexOptional(new RegexOr("ARROW_DRESSING1", //
+						new RegexLeaf("[%s][ox]"), //
+						new RegexLeaf("(?:[%s][ox]|\\(\\d+\\))?<<?_?"), //
+						new RegexLeaf("(?:[%s][ox])?//?"), //
+						new RegexLeaf("(?:[%s][ox])?\\\\\\\\?"))), //
 				new RegexOr(new RegexConcat( //
 						new RegexLeaf("ARROW_BODYA1", "(-+)"), //
 						new RegexLeaf("ARROW_STYLE1", getColorOrStylePattern()), //
@@ -98,8 +102,11 @@ public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 								new RegexLeaf("ARROW_BODYA2", "(-*)"), //
 								new RegexLeaf("ARROW_STYLE2", getColorOrStylePattern()), //
 								new RegexLeaf("ARROW_BODYB2", "(-+)"))), //
-				new RegexLeaf("ARROW_DRESSING2",
-						"(_?>>?(?:[ox][%s])?|//?(?:[ox][%s])?|\\\\\\\\?(?:[ox][%s])?|[ox][%s])?"), //
+				new RegexOptional(new RegexOr("ARROW_DRESSING2", //
+						new RegexLeaf("_?>>?(?:[ox][%s]|\\(\\d+\\))?"), //
+						new RegexLeaf("//?(?:[ox][%s])?"), //
+						new RegexLeaf("\\\\\\\\?(?:[ox][%s])?"), //
+						new RegexLeaf("[ox][%s]"))), //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexOr("PART2", //
 						new RegexLeaf("PART2CODE", "([%pLN_.@]+)"), //
@@ -177,6 +184,18 @@ public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 		return StringUtils.goLowerCase(value);
 	}
 
+	private int getInclination(String key) {
+		if (key == null)
+			return 0;
+		final int x1 = key.indexOf('(');
+		if (x1 == -1)
+			return 0;
+		final int x2 = key.indexOf(')');
+		if (x2 == -1)
+			return 0;
+		return Integer.parseInt(key.substring(x1 + 1, x2));
+	}
+
 	@Override
 	protected CommandExecutionResult executeArg(SequenceDiagram diagram, LineLocation location, RegexResult arg)
 			throws NoSuchColorException {
@@ -186,6 +205,8 @@ public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 
 		final String dressing1 = getDressing(arg, "ARROW_DRESSING1");
 		final String dressing2 = getDressing(arg, "ARROW_DRESSING2");
+		final int inclination1 = getInclination(arg.get("ARROW_DRESSING1", 0));
+		final int inclination2 = getInclination(arg.get("ARROW_DRESSING2", 0));
 
 		final boolean circleAtStart;
 		final boolean circleAtEnd;
@@ -262,6 +283,8 @@ public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 			config = config.reverseDefine();
 
 		config = applyStyle(diagram.getSkinParam().getThemeStyle(), arg.getLazzy("ARROW_STYLE", 0), config);
+
+		config = config.withInclination(inclination1 + inclination2);
 
 		final String activationSpec = arg.get("ACTIVATION", 0);
 

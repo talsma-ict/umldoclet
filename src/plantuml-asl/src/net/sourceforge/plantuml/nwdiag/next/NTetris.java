@@ -39,7 +39,7 @@ public class NTetris<S extends Staged> {
 
 	private final Map<S, Integer> all = new LinkedHashMap<>();
 	private final BooleanGrid grid = new BooleanGrid();
-	
+
 	@Override
 	public String toString() {
 		return all.toString();
@@ -54,9 +54,9 @@ public class NTetris<S extends Staged> {
 				return;
 			}
 			x++;
-			if (x > 100) {
+			if (x > 100)
 				throw new IllegalStateException();
-			}
+
 		}
 	}
 
@@ -66,9 +66,9 @@ public class NTetris<S extends Staged> {
 
 	public int getNWidth() {
 		int max = 0;
-		for (Entry<S, Integer> ent : all.entrySet()) {
+		for (Entry<S, Integer> ent : all.entrySet())
 			max = Math.max(max, ent.getValue() + ent.getKey().getNWidth());
-		}
+
 		return max;
 	}
 

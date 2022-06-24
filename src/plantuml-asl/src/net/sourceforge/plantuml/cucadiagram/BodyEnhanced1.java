@@ -39,7 +39,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.sourceforge.plantuml.EmbeddedDiagram;
-import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.Url;
@@ -60,22 +59,23 @@ import net.sourceforge.plantuml.svek.WithPorts;
 public class BodyEnhanced1 extends BodyEnhancedAbstract implements TextBlock, WithPorts {
 
 	private final Display rawBody2;
-	private final FontParam fontParam;
+
 	private final ISkinParam skinParam;
 	private final boolean lineFirst;
 	private final List<Url> urls = new ArrayList<>();
-	private final Stereotype stereotype;
+
 	private final ILeaf entity;
 	private final boolean inEllipse;
 	private final Style style;
 
-	BodyEnhanced1(HorizontalAlignment align, List<CharSequence> rawBody, FontParam fontParam, ISkinParam skinParam,
-			Stereotype stereotype, ILeaf entity, Style style) {
-		super(align, style.getFontConfiguration(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet()), style);
+	BodyEnhanced1(HorizontalAlignment align, List<CharSequence> rawBody, ISkinParam skinParam, ILeaf entity,
+			Style style) {
+		super(align,
+				style.getFontConfiguration(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet(), entity.getColors()),
+				style);
 		this.style = style;
 		this.rawBody2 = Display.create(rawBody);
-		this.stereotype = stereotype;
-		this.fontParam = fontParam;
+
 		this.skinParam = skinParam;
 
 		this.lineFirst = true;
@@ -84,20 +84,20 @@ public class BodyEnhanced1 extends BodyEnhancedAbstract implements TextBlock, Wi
 		this.inEllipse = false;
 	}
 
-	BodyEnhanced1(HorizontalAlignment align, Display display, FontParam fontParam, ISkinParam skinParam,
-			Stereotype stereotype, ILeaf entity, Style style) {
-		super(align, style == null ? FontConfiguration.create(skinParam, fontParam, stereotype)
-				: style.getFontConfiguration(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet()), style);
+	BodyEnhanced1(HorizontalAlignment align, Display display, ISkinParam skinParam, ILeaf entity, Style style) {
+		super(align,
+				style.getFontConfiguration(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet(), entity.getColors()),
+				style);
 
 		this.style = style;
 		this.entity = entity;
-		this.stereotype = stereotype;
-		this.fontParam = fontParam;
+
 		this.skinParam = skinParam;
 
 		this.lineFirst = false;
 
-		this.inEllipse = fontParam == FontParam.USECASE;
+		final LeafType leafType = entity.getLeafType();
+		this.inEllipse = leafType == LeafType.USECASE || leafType == LeafType.USECASE_BUSINESS;
 
 		if (inEllipse && display.size() > 0 && isBlockSeparator(display.get(0).toString()))
 			display = display.add("");
@@ -126,45 +126,52 @@ public class BodyEnhanced1 extends BodyEnhancedAbstract implements TextBlock, Wi
 
 		char separator = lineFirst ? '_' : 0;
 		TextBlock title = null;
-		Display display = Display.empty();
+		Display display = null;
 		for (ListIterator<CharSequence> it = rawBody2.iterator(); it.hasNext();) {
 			final CharSequence cs = it.next();
 			if (cs instanceof EmbeddedDiagram) {
+				if (display == null)
+					display = Display.empty();
 				if (display.size() > 0 || separator != 0) {
 					blocks.add(decorate(stringBounder,
-							new MethodsOrFieldsArea(display, fontParam, skinParam, align, stereotype, entity, style),
-							separator, title));
+							new MethodsOrFieldsArea(display, skinParam, align, entity, style), separator, title));
 					separator = 0;
 					title = null;
-					display = Display.empty();
+					display = null;
 				}
-				blocks.add(((EmbeddedDiagram) cs).asDraw(skinParam));
+				blocks.add(TextBlockUtils.withMargin(((EmbeddedDiagram) cs).asDraw(skinParam), 2, 2));
 			} else {
 				final String s = cs.toString();
 				if (isBlockSeparator(s)) {
+					if (display == null)
+						display = Display.empty();
 					blocks.add(decorate(stringBounder,
-							new MethodsOrFieldsArea(display, fontParam, skinParam, align, stereotype, entity, style),
-							separator, title));
+							new MethodsOrFieldsArea(display, skinParam, align, entity, style), separator, title));
 					separator = s.charAt(0);
 					title = getTitle(s, skinParam);
-					display = Display.empty();
+					display = null;
 				} else if (isTreeOrTable(s)) {
 					final boolean isTable = CreoleParser.isTableLine(s);
-					if (display.size() > 0)
-						blocks.add(decorate(stringBounder, new MethodsOrFieldsArea(display, fontParam, skinParam, align,
-								stereotype, entity, style), separator, title));
+					if (display == null)
+						display = Display.empty();
+					blocks.add(decorate(stringBounder,
+							new MethodsOrFieldsArea(display, skinParam, align, entity, style), separator, title));
 
 					separator = 0;
 					title = null;
-					display = Display.empty();
+					display = null;
 					final List<CharSequence> allTree = buildTreeOrTable(s, it);
-					TextBlock bloc = Display.create(allTree).create7(fontParam.getFontConfiguration(skinParam), align,
-							skinParam, CreoleMode.FULL);
+					final FontConfiguration fontConfiguration = style.getFontConfiguration(skinParam.getThemeStyle(),
+							skinParam.getIHtmlColorSet());
+					TextBlock bloc = Display.create(allTree).create7(fontConfiguration, align, skinParam,
+							CreoleMode.FULL);
 					if (isTable)
 						bloc = TextBlockUtils.withMargin(bloc, 10, 10, 0, 5);
 
 					blocks.add(bloc);
 				} else {
+					if (display == null)
+						display = Display.empty();
 					display = display.add(cs);
 					if (cs instanceof Member && ((Member) cs).getUrl() != null)
 						urls.add(((Member) cs).getUrl());
@@ -172,11 +179,13 @@ public class BodyEnhanced1 extends BodyEnhancedAbstract implements TextBlock, Wi
 				}
 			}
 		}
-		if (inEllipse && display.size() == 0) {
+
+		if (display == null)
+			display = Display.empty();
+		if (inEllipse && display.size() == 0)
 			display = display.add("");
-		}
-		blocks.add(decorate(stringBounder,
-				new MethodsOrFieldsArea(display, fontParam, skinParam, align, stereotype, entity, style), separator,
+
+		blocks.add(decorate(stringBounder, new MethodsOrFieldsArea(display, skinParam, align, entity, style), separator,
 				title));
 
 		if (blocks.size() == 1)

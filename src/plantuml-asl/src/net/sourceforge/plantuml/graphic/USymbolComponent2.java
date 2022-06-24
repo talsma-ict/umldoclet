@@ -30,9 +30,8 @@
  */
 package net.sourceforge.plantuml.graphic;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
-
 import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UGraphicStencil;
@@ -41,11 +40,6 @@ import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 
 class USymbolComponent2 extends USymbol {
-
-	@Override
-	public SkinParameter getSkinParameter() {
-		return SkinParameter.COMPONENT2;
-	}
 
 	@Override
 	public SName getSName() {

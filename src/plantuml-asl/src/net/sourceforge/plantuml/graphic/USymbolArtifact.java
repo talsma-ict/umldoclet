@@ -30,9 +30,8 @@
  */
 package net.sourceforge.plantuml.graphic;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
-
 import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UGraphicStencil;
@@ -42,11 +41,6 @@ import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 
 class USymbolArtifact extends USymbol {
-
-	@Override
-	public SkinParameter getSkinParameter() {
-		return SkinParameter.ARTIFACT;
-	}
 
 	@Override
 	public SName getSName() {

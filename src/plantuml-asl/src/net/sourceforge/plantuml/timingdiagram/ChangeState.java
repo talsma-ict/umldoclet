@@ -30,8 +30,10 @@
  */
 package net.sourceforge.plantuml.timingdiagram;
 
+import java.util.Arrays;
+import java.util.List;
+
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.graphic.SymbolContext;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.graphic.color.Colors;
@@ -39,7 +41,6 @@ import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class ChangeState implements Comparable<ChangeState> {
 
@@ -66,12 +67,12 @@ public class ChangeState implements Comparable<ChangeState> {
 		return when;
 	}
 
-	public final String[] getStates() {
-		return states;
-	}
-
 	public final String getState() {
 		return states[0];
+	}
+
+	public final List<String> getStates() {
+		return Arrays.asList(states);
 	}
 
 	public String getComment() {

@@ -37,31 +37,30 @@ import net.sourceforge.plantuml.command.regex.IRegex;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.command.regex.RegexResult;
-import net.sourceforge.plantuml.timingdiagram.TimeAxisStategy;
 import net.sourceforge.plantuml.timingdiagram.TimingDiagram;
 
-public class CommandHideTimeAxis extends SingleLineCommand2<TimingDiagram> {
+public class CommandUseDateFormat extends SingleLineCommand2<TimingDiagram> {
 
-	public CommandHideTimeAxis() {
+	public CommandUseDateFormat() {
 		super(getRegexConcat());
 	}
 
 	private static IRegex getRegexConcat() {
-		return RegexConcat.build(CommandHideTimeAxis.class.getName(), RegexLeaf.start(), //
-				new RegexLeaf("COMMAND", "(hide|manual)"), //
-				RegexLeaf.spaceOneOrMore(), //
-				new RegexLeaf("time"), //
-				new RegexLeaf(".?"), //
-				new RegexLeaf("axis"), //
+		return RegexConcat.build(CommandUseDateFormat.class.getName(), RegexLeaf.start(), //
+				new RegexLeaf("use"), //
+				RegexLeaf.spaceZeroOrMore(), //
+				new RegexLeaf("date"), //
+				RegexLeaf.spaceZeroOrMore(), //
+				new RegexLeaf("format"), //
+				RegexLeaf.spaceZeroOrMore(), //
+				new RegexLeaf("FORMAT", "[%g]([^%g]+)[%g]"), //
 				RegexLeaf.end());
 	}
 
 	@Override
 	final protected CommandExecutionResult executeArg(TimingDiagram diagram, LineLocation location, RegexResult arg) {
-		final String cmd = arg.get("COMMAND", 0);
-		if ("MANUAL".equalsIgnoreCase(cmd))
-			return diagram.setTimeAxisStategy(TimeAxisStategy.MANUAL);
-		return diagram.setTimeAxisStategy(TimeAxisStategy.HIDDEN);
+		final String format = arg.get("FORMAT", 0);
+		return diagram.useDateFormat(format);
 	}
 
 }

@@ -41,6 +41,7 @@ public enum PName {
 	LineThickness, //
 	DiagonalCorner, //
 	HyperLinkColor, //
+	HeadColor, //
 	LineColor, //
 	LineStyle, //
 	Padding, //

@@ -31,7 +31,6 @@
 package net.sourceforge.plantuml.timingdiagram.graphic;
 
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.UseStyle;
 import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.style.PName;
@@ -44,7 +43,6 @@ import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class PlayerFrame {
 
@@ -61,16 +59,11 @@ public class PlayerFrame {
 	}
 
 	private HColor getLineColor() {
-		if (UseStyle.useBetaStyle() == false)
-			return HColorUtils.BLACK;
-
 		final Style style = getStyleSignature().getMergedStyle(skinParam.getCurrentStyleBuilder());
 		return style.value(PName.LineColor).asColor(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet());
 	}
 
 	private UStroke getUStroke() {
-		if (UseStyle.useBetaStyle() == false)
-			return new UStroke(2.0);
 		final Style style = getStyleSignature().getMergedStyle(skinParam.getCurrentStyleBuilder());
 		return style.getStroke();
 	}

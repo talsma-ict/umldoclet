@@ -52,7 +52,6 @@ import net.sourceforge.plantuml.cucadiagram.PortionShower;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.SkinParameter;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.SymbolContext;
 import net.sourceforge.plantuml.graphic.TextBlock;
@@ -124,10 +123,8 @@ public class EntityImageDescription extends AbstractEntityImage {
 		this.url = entity.getUrl99();
 
 		final Colors colors = entity.getColors();
-		HColor backcolor = colors.getColor(ColorType.BACK);
 
-		final StyleSignatureBasic tmp = StyleSignatureBasic.of(SName.root, SName.element, styleName,
-				symbol.getSkinParameter().getStyleName());
+		final StyleSignatureBasic tmp = StyleSignatureBasic.of(SName.root, SName.element, styleName, symbol.getSName());
 		final Stereotype stereotype = entity.getStereotype();
 		final Style style = tmp.withTOBECHANGED(stereotype).getMergedStyle(getSkinParam().getCurrentStyleBuilder())
 				.eventuallyOverride(colors);
@@ -136,6 +133,8 @@ public class EntityImageDescription extends AbstractEntityImage {
 				.getMergedStyle(getSkinParam().getCurrentStyleBuilder());
 		final HColor forecolor = style.value(PName.LineColor).asColor(getSkinParam().getThemeStyle(),
 				getSkinParam().getIHtmlColorSet());
+
+		HColor backcolor = colors.getColor(ColorType.BACK);
 		if (backcolor == null)
 			backcolor = style.value(PName.BackGroundColor).asColor(getSkinParam().getThemeStyle(),
 					getSkinParam().getIHtmlColorSet());
@@ -156,13 +155,13 @@ public class EntityImageDescription extends AbstractEntityImage {
 				diagonalCorner);
 
 		final Display codeDisplay = Display.getWithNewlines(entity.getCodeGetName());
-		if ((entity.getDisplay().equals(codeDisplay) && symbol.getSkinParameter() == SkinParameter.PACKAGE)
+		if ((entity.getDisplay().equals(codeDisplay) && symbol.getSName() == SName.package_)
 				|| entity.getDisplay().isWhite()) {
 			desc = TextBlockUtils.empty(getSkinParam().minClassWidth(), 0);
 		} else {
 			final HorizontalAlignment align = getSkinParam().getDefaultTextAlignment(defaultAlign);
-			desc = BodyFactory.create3(entity.getDisplay(), symbol.getFontParam(), getSkinParam(), align, fcTitle,
-					getSkinParam().wrapWidth(), style);
+			desc = BodyFactory.create3(entity.getDisplay(), getSkinParam(), align, fcTitle, getSkinParam().wrapWidth(),
+					style);
 		}
 
 		stereo = TextBlockUtils.empty(0, 0);
@@ -175,7 +174,7 @@ public class EntityImageDescription extends AbstractEntityImage {
 					HorizontalAlignment.CENTER, getSkinParam());
 
 		name = BodyFactory.create2(getSkinParam().getDefaultTextAlignment(HorizontalAlignment.CENTER), codeDisplay,
-				symbol.getFontParam(), getSkinParam(), stereotype, entity, style);
+				getSkinParam(), stereotype, entity, style);
 
 		if (hideText)
 			asSmall = symbol.asSmall(TextBlockUtils.empty(0, 0), TextBlockUtils.empty(0, 0), TextBlockUtils.empty(0, 0),

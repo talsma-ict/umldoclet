@@ -126,7 +126,7 @@ public class ParallelBuilderFork extends AbstractParallelFtilesBuilder {
 		final List<Connection> conns = new ArrayList<>();
 		final Swimlane swimlaneBlack = in;
 		final Style style = getStyleSignature().getMergedStyle(skinParam().getCurrentStyleBuilder());
-		final Ftile black = new FtileBlackBlock(skinParam(), barColor(), swimlaneBlack);
+		final Ftile black = new FtileBlackBlock(skinParam(), swimlaneBlack);
 		double x = 0;
 		for (Ftile tmp : list99) {
 			final Dimension2D dim = tmp.calculateDimension(getStringBounder());
@@ -177,7 +177,7 @@ public class ParallelBuilderFork extends AbstractParallelFtilesBuilder {
 	@Override
 	protected Ftile doStep2(Ftile middle, Ftile result) {
 		final Swimlane swimlaneBlack = out;
-		final Ftile out = new FtileBlackBlock(skinParam(), barColor(), swimlaneBlack);
+		final Ftile out = new FtileBlackBlock(skinParam(), swimlaneBlack);
 		((FtileBlackBlock) out).setBlackBlockDimension(result.calculateDimension(getStringBounder()).getWidth(),
 				barHeight);
 		if (label != null)
@@ -200,9 +200,9 @@ public class ParallelBuilderFork extends AbstractParallelFtilesBuilder {
 		return result;
 	}
 
-	private HColor barColor() {
-		return getRose().getHtmlColor(skinParam(), ColorParam.activityBar);
-	}
+//	private HColor barColor() {
+//		return getRose().getHtmlColor(skinParam(), ColorParam.activityBar);
+//	}
 
 	class ConnectionIn extends AbstractConnection implements ConnectionTranslatable {
 

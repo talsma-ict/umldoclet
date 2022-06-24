@@ -34,6 +34,7 @@ import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.StringLocated;
 import net.sourceforge.plantuml.UrlBuilder;
 import net.sourceforge.plantuml.command.BlocLines;
+import net.sourceforge.plantuml.command.CommandControl;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.CommandMultilines2;
 import net.sourceforge.plantuml.command.MultilinesStrategy;
@@ -92,41 +93,46 @@ public class CommandCreateJson extends CommandMultilines2<AbstractClassOrObjectD
 		if (entity1 == null)
 			return CommandExecutionResult.error("No such entity");
 
+		final JsonValue json = getJsonValue(lines);
+
+		if (json == null)
+			return CommandExecutionResult.error("Bad data");
+		((BodierJSon) entity1.getBodier()).setJson(json);
+
+		return CommandExecutionResult.ok();
+	}
+
+	@Override
+	protected CommandControl finalVerification(BlocLines lines) {
+		final JsonValue json = getJsonValue(lines);
+		if (json == null)
+			return CommandControl.OK_PARTIAL;
+
+		return super.finalVerification(lines);
+	}
+
+	private JsonValue getJsonValue(BlocLines lines) {
+		try {
+			final String sb = getJsonString(lines);
+			final DefaultHandler handler = new DefaultHandler();
+			new JsonParser(handler).parse(sb);
+			final JsonValue json = handler.getValue();
+			return json;
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	private String getJsonString(BlocLines lines) {
 		lines = lines.subExtract(1, 1);
 		final StringBuilder sb = new StringBuilder("{");
 		for (StringLocated sl : lines) {
 			final String line = sl.getString();
 			assert line.length() > 0;
-			System.err.println("l=" + line);
 			sb.append(line);
-//			entity1.getBodier().addFieldOrMethod(line);
-//			if (BodierMap.getLinkedEntry(line) != null) {
-//				final String linkStr = BodierMap.getLinkedEntry(line);
-//				final int x = line.indexOf(linkStr);
-//				final String key = line.substring(0, x).trim();
-//				final String dest = line.substring(x + linkStr.length()).trim();
-//				final Ident ident2 = diagram.buildLeafIdentSpecial(dest);
-//				final ILeaf entity2 = diagram.getEntityFactory().getLeafStrict(ident2);
-//				if (entity2 == null)
-//					return CommandExecutionResult.error("No such entity " + ident2.getName());
-//
-//				final LinkType linkType = new LinkType(LinkDecor.ARROW, LinkDecor.NONE);
-//				final int length = linkStr.length() - 2;
-//				final Link link = new Link(entity1, entity2, linkType, Display.NULL, length,
-//						diagram.getSkinParam().getCurrentStyleBuilder());
-//				link.setPortMembers(key, null);
-//				diagram.addLink(link);
-//			}
 		}
 		sb.append("}");
-
-		final DefaultHandler handler = new DefaultHandler();
-		new JsonParser(handler).parse(sb.toString());
-		final JsonValue json = handler.getValue();
-		System.err.println("foo=" + json);
-		((BodierJSon) entity1.getBodier()).setJson(json);
-
-		return CommandExecutionResult.ok();
+		return sb.toString();
 	}
 
 	private IEntity executeArg0(AbstractClassOrObjectDiagram diagram, RegexResult line0) throws NoSuchColorException {

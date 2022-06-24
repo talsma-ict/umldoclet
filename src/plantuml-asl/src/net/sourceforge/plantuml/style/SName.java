@@ -104,6 +104,7 @@ public enum SName {
 	rectangle, //
 	reference, //
 	referenceHeader, //
+	requirement, //
 	root, //
 	rootNode, //
 	saltDiagram, //
@@ -123,7 +124,7 @@ public enum SName {
 	undone, //
 	unstarted, //
 	usecase, //
-	
+
 	visibilityIcon, //
 	private_, //
 	protected_, //
@@ -133,10 +134,12 @@ public enum SName {
 	spotAnnotation, //
 	spotInterface, //
 	spotEnum, //
+	spotProtocol, //
+	spotStruct, //
 	spotEntity, //
 	spotClass, //
 	spotAbstractClass, //
-	
+
 	wbsDiagram, //
 	yamlDiagram; //
 

@@ -36,11 +36,6 @@ import net.sourceforge.plantuml.svek.Boundary;
 class USymbolBoundary extends USymbolSimpleAbstract {
 
 	@Override
-	public SkinParameter getSkinParameter() {
-		return SkinParameter.BOUNDARY;
-	}
-
-	@Override
 	public SName getSName() {
 		return SName.boundary;
 	}
