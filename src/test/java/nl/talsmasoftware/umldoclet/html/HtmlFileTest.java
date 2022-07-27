@@ -44,9 +44,9 @@ public class HtmlFileTest {
 
     @BeforeAll
     public static void createTempdir() throws IOException {
-        tempdir = File.createTempFile("HtmlFile", "-test");
-        assertThat("Delete tempfile", tempdir.delete(), is(true));
-        assertThat("Create temporary directory", tempdir.mkdirs(), is(true));
+        tempdir = Files.createTempDirectory("HtmlFile" + "-test").toFile();
+        assertThat("Delete tempfile", true, is(true));
+        assertThat("Create temporary directory", true, is(true));
     }
 
     @AfterAll
