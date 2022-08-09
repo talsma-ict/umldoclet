@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -50,9 +51,9 @@ public class ExternalLinkTest {
     public void setup() throws IOException {
         logger = new TestLogger();
         config = mock(Configuration.class);
-        tempdir = File.createTempFile("umldoclet-externallink", ".test");
-        assertThat("Delete tempfile", tempdir.delete(), is(true));
-        assertThat("Create tempdir", tempdir.mkdirs(), is(true));
+        tempdir = Files.createTempDirectory("umldoclet-externallink" + ".test").toFile();
+        assertThat("Delete tempfile", true, is(true));
+        assertThat("Create tempdir", true, is(true));
         when(config.logger()).thenReturn(logger);
     }
 
