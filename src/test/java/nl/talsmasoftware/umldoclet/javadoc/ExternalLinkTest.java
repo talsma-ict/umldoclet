@@ -28,18 +28,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class ExternalLinkTest {
     private Configuration config;
@@ -50,9 +45,8 @@ public class ExternalLinkTest {
     public void setup() throws IOException {
         logger = new TestLogger();
         config = mock(Configuration.class);
-        tempdir = File.createTempFile("umldoclet-externallink", ".test");
-        assertThat("Delete tempfile", tempdir.delete(), is(true));
-        assertThat("Create tempdir", tempdir.mkdirs(), is(true));
+        tempdir = Files.createTempDirectory("umldoclet-externallink-test").toFile();
+        assertThat("Create tempdir", tempdir.isDirectory(), is(true));
         when(config.logger()).thenReturn(logger);
     }
 

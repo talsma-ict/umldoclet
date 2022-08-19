@@ -31,12 +31,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.startsWith;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
 
 public class HtmlFileTest {
 
@@ -44,9 +41,8 @@ public class HtmlFileTest {
 
     @BeforeAll
     public static void createTempdir() throws IOException {
-        tempdir = File.createTempFile("HtmlFile", "-test");
-        assertThat("Delete tempfile", tempdir.delete(), is(true));
-        assertThat("Create temporary directory", tempdir.mkdirs(), is(true));
+        tempdir = Files.createTempDirectory("HtmlFile-test").toFile();
+        assertThat("Create tempdir", tempdir.isDirectory(), is(true));
     }
 
     @AfterAll
