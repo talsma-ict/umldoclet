@@ -18,17 +18,7 @@ package nl.talsmasoftware.umldoclet.javadoc;
 import jdk.javadoc.doclet.DocletEnvironment;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.Visibility;
-import nl.talsmasoftware.umldoclet.uml.ClassDiagram;
-import nl.talsmasoftware.umldoclet.uml.Diagram;
-import nl.talsmasoftware.umldoclet.uml.Field;
-import nl.talsmasoftware.umldoclet.uml.Method;
-import nl.talsmasoftware.umldoclet.uml.Namespace;
-import nl.talsmasoftware.umldoclet.uml.PackageDiagram;
-import nl.talsmasoftware.umldoclet.uml.Parameters;
-import nl.talsmasoftware.umldoclet.uml.Reference;
-import nl.talsmasoftware.umldoclet.uml.Type;
-import nl.talsmasoftware.umldoclet.uml.TypeMember;
-import nl.talsmasoftware.umldoclet.uml.TypeName;
+import nl.talsmasoftware.umldoclet.uml.*;
 import nl.talsmasoftware.umldoclet.uml.util.UmlPostProcessors;
 
 import javax.lang.model.element.Element;

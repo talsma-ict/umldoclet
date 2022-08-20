@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.talsmasoftware.umldoclet.javadoc;
+package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
-import nl.talsmasoftware.umldoclet.uml.UMLNode;
 
 /**
  * A literal piece of UML.
  *
  * @author Sjoerd Talsma
  */
-class UmlCharacters extends UMLNode {
-    static final UmlCharacters EMPTY = new UmlCharacters("");
-    static final UmlCharacters NEWLINE = new UmlLine("");
+public class UmlCharacters extends UMLNode {
+    public static final UmlCharacters EMPTY = new UmlCharacters("");
+    public static final UmlCharacters NEWLINE = new UmlLine("");
 
     private final String content;
 
@@ -40,7 +39,7 @@ class UmlCharacters extends UMLNode {
         return output;
     }
 
-    static class UmlLine extends UmlCharacters {
+    private static class UmlLine extends UmlCharacters {
         private UmlLine(String line) {
             super(line);
         }
