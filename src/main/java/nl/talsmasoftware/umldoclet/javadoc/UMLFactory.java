@@ -21,25 +21,10 @@ import nl.talsmasoftware.umldoclet.configuration.Visibility;
 import nl.talsmasoftware.umldoclet.uml.*;
 import nl.talsmasoftware.umldoclet.uml.util.UmlPostProcessors;
 
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.Modifier;
-import javax.lang.model.element.PackageElement;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
+import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -202,7 +187,9 @@ public class UMLFactory {
     }
 
     public Diagram createPackageDiagram(PackageElement packageElement) {
-        PackageDiagram packageDiagram = new PackageDiagram(config, packageElement.getQualifiedName().toString());
+        final ModuleElement module = env.getElementUtils().getModuleOf(packageElement);
+        PackageDiagram packageDiagram = new PackageDiagram(config, packageElement.getQualifiedName().toString(),
+                module == null ? null : module.getQualifiedName().toString());
         Map<String, Collection<Type>> foreignTypes = new LinkedHashMap<>();
         List<Reference> references = new ArrayList<>();
 
@@ -229,7 +216,7 @@ public class UMLFactory {
                 .filter(entry -> !entry.getValue().isEmpty())
                 .map(entry -> {
                     String foreignPackage = entry.getKey();
-                    Namespace foreignNamespace = new Namespace(packageDiagram, foreignPackage);
+                    Namespace foreignNamespace = new Namespace(packageDiagram, foreignPackage, null);
                     entry.getValue().forEach(foreignNamespace::addChild);
                     return foreignNamespace;
                 })
@@ -249,7 +236,9 @@ public class UMLFactory {
     }
 
     Namespace packageOf(TypeElement typeElement) {
-        return new Namespace(diagram.get(), env.getElementUtils().getPackageOf(typeElement).getQualifiedName().toString());
+        final ModuleElement module = env.getElementUtils().getModuleOf(typeElement);
+        return new Namespace(diagram.get(), env.getElementUtils().getPackageOf(typeElement).getQualifiedName().toString(),
+                module == null ? null : module.getQualifiedName().toString());
     }
 
     Field createField(Type containingType, VariableElement variable) {
@@ -594,7 +583,9 @@ public class UMLFactory {
                             PackageElement packageElement,
                             Map<String, Collection<Type>> foreignTypes,
                             List<Reference> references) {
-        Namespace pkg = new Namespace(diagram, packageElement.getQualifiedName().toString());
+        final ModuleElement module = env.getElementUtils().getModuleOf(packageElement);
+        Namespace pkg = new Namespace(diagram, packageElement.getQualifiedName().toString(),
+                module == null ? null : module.getQualifiedName().toString());
 
         // Add all types contained in this package.
         packageElement.getEnclosedElements().stream()

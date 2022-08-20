@@ -91,7 +91,7 @@ public class DependencyDiagram extends Diagram {
         output.println("' Package links");
         getChildren(Reference.class).stream()
                 .flatMap(reference -> Stream.of(reference.from.toString(), reference.to.toString()))
-                .distinct().map(packageName -> new Namespace(this, packageName))
+                .distinct().map(packageName -> new Namespace(this, packageName, null))
                 .forEach(namespace -> writePackageLinkTo(output, namespace));
         return output;
     }

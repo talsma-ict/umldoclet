@@ -15,24 +15,17 @@
  */
 package nl.talsmasoftware.umldoclet.uml.util;
 
-import nl.talsmasoftware.umldoclet.uml.Field;
-import nl.talsmasoftware.umldoclet.uml.Method;
-import nl.talsmasoftware.umldoclet.uml.Namespace;
-import nl.talsmasoftware.umldoclet.uml.Type;
+import nl.talsmasoftware.umldoclet.uml.*;
 import nl.talsmasoftware.umldoclet.uml.Type.Classification;
-import nl.talsmasoftware.umldoclet.uml.TypeName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class UmlPostProcessorsTest {
-    private static final Namespace UNNAMED = new Namespace(null, "");
+    private static final Namespace UNNAMED = new Namespace(null, "", null);
 
     private UmlPostProcessors postProcessors;
 
