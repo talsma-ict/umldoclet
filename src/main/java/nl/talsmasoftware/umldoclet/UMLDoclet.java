@@ -156,15 +156,12 @@ public class UMLDoclet extends StandardDoclet {
     }
 
     private DependencyDiagram generatePackageDependencyDiagram(DocletEnvironment docEnv) {
-        Set<PackageDependency> packageDependencies = scanPackageDependencies(docEnv);
+        DependenciesElementScanner scanner = new DependenciesElementScanner(docEnv, config);
+        Set<PackageDependency> packageDependencies = scanner.scan(docEnv.getIncludedElements(), null);
         detectPackageDependencyCycles(packageDependencies);
-        DependencyDiagram dependencyDiagram = new DependencyDiagram(config, "package-dependencies.puml");
+        DependencyDiagram dependencyDiagram = new DependencyDiagram(config, scanner.getModuleName(), "package-dependencies.puml");
         packageDependencies.forEach(dep -> dependencyDiagram.addPackageDependency(dep.fromPackage, dep.toPackage));
         return dependencyDiagram;
-    }
-
-    private Set<PackageDependency> scanPackageDependencies(DocletEnvironment docEnv) {
-        return new DependenciesElementScanner(docEnv, config).scan(docEnv.getIncludedElements(), null);
     }
 
     private Set<PackageDependencyCycle> detectPackageDependencyCycles(Set<PackageDependency> packageDependencies) {

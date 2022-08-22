@@ -41,6 +41,7 @@ public class PackageDiagram extends Diagram {
         if (pumlFile == null) {
             StringBuilder result = new StringBuilder(getConfiguration().destinationDirectory());
             if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');
+            if (moduleName != null) result.append(moduleName).append('/');
             result.append(packageName.replace('.', '/'));
             result.append("/package.puml");
             pumlFile = new File(result.toString());

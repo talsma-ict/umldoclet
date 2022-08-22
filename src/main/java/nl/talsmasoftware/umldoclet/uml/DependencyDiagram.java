@@ -30,11 +30,13 @@ import static java.util.stream.Collectors.toList;
  */
 public class DependencyDiagram extends Diagram {
 
+    private String moduleName;
     private String pumlFileName;
     private File pumlFile = null;
 
-    public DependencyDiagram(Configuration config, String pumlFileName) {
+    public DependencyDiagram(Configuration config, String moduleName, String pumlFileName) {
         super(config);
+        this.moduleName = moduleName;
         this.pumlFileName = pumlFileName;
     }
 
@@ -70,6 +72,7 @@ public class DependencyDiagram extends Diagram {
         if (pumlFile == null) {
             StringBuilder result = new StringBuilder(getConfiguration().destinationDirectory());
             if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');
+            if (moduleName != null) result.append(moduleName).append('/');
             result.append(pumlFileName);
             pumlFile = new File(result.toString());
         }

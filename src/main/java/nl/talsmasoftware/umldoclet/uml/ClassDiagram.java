@@ -59,6 +59,7 @@ public class ClassDiagram extends Diagram {
             final Type type = getType();
             StringBuilder result = new StringBuilder(getConfiguration().destinationDirectory());
             if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');
+            type.getModulename().ifPresent(modulename -> result.append(modulename).append('/'));
             String containingPackage = type.getPackagename();
             result.append(containingPackage.replace('.', '/')).append('/');
             if (type.getName().qualified.startsWith(containingPackage + ".")) {

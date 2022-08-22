@@ -40,6 +40,8 @@ public class DependenciesElementScanner extends ElementScanner9<Set<PackageDepen
     private final DocletEnvironment docEnv;
     private final Configuration config;
 
+    private String moduleName = null;
+
     /**
      * Constructor to create a new package dependencies scanner.
      * <p>
@@ -55,8 +57,16 @@ public class DependenciesElementScanner extends ElementScanner9<Set<PackageDepen
         this.config = requireNonNull(config, "Configuration is <null>");
     }
 
+    /**
+     * @return The modulename if found, otherwise {@code null}.
+     */
+    public String getModuleName() {
+        return moduleName;
+    }
+
     @Override
     public Set<PackageDependency> visitModule(ModuleElement visitedModule, String fromPackage) {
+        moduleName = visitedModule.getQualifiedName().toString();
         return super.visitModule(visitedModule, fromPackage);
     }
 

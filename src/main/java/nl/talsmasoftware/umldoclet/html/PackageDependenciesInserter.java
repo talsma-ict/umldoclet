@@ -23,17 +23,21 @@ import java.nio.file.Path;
 final class PackageDependenciesInserter extends DiagramFile {
     private final Path index;
     private final Path overviewSummary;
+    private final Path moduleSummary;
 
     PackageDependenciesInserter(File basedir, File diagramFile, ImageConfig.Format format) {
         super(basedir, diagramFile, format);
         this.index = new File(basedir, "index.html").toPath();
         this.overviewSummary = new File(basedir, "overview-summary.html").toPath();
+        this.moduleSummary = "package-dependencies.svg".equals(diagramFile.getName())
+                ? new File(diagramFile.getParent(), "module-summary.html").toPath()
+                : null;
     }
 
     @Override
     boolean matches(HtmlFile htmlFile) {
         final Path path = htmlFile.path;
-        return index.equals(path) || overviewSummary.equals(path);
+        return index.equals(path) || overviewSummary.equals(path) || moduleSummary.equals(path);
     }
 
     @Override
@@ -60,6 +64,12 @@ final class PackageDependenciesInserter extends DiagramFile {
                     return line.substring(0, idx) + getImageTag() + System.lineSeparator() + line.substring(idx);
                 }
                 idx = line.indexOf("<div id=\"all-packages-table\">");
+                if (idx >= 0) {
+                    inserted = true;
+                    idx = line.indexOf('>', idx) + 1;
+                    return line.substring(0, idx) + System.lineSeparator() + getImageTag() + System.lineSeparator() + line.substring(idx);
+                }
+                idx = line.indexOf("<div class=\"module-signature\">");
                 if (idx >= 0) {
                     inserted = true;
                     idx = line.indexOf('>', idx) + 1;
