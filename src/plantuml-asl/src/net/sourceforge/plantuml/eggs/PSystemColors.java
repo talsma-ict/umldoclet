@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.eggs;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,6 +42,7 @@ import net.sourceforge.plantuml.BackSlash;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.PlainDiagram;
 import net.sourceforge.plantuml.SpriteContainerEmpty;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.cucadiagram.Display;
@@ -59,7 +59,7 @@ import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 import net.sourceforge.plantuml.ugraphic.color.HColorSimple;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
+import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 // http://www.redblobgames.com/grids/hexagons/
 public class PSystemColors extends PlainDiagram implements UDrawable {
@@ -72,11 +72,11 @@ public class PSystemColors extends PlainDiagram implements UDrawable {
 
 	public PSystemColors(UmlSource source, String option) {
 		super(source);
-		if (option == null) {
+		if (option == null)
 			this.paletteCentralColor = null;
-		} else {
+		else
 			this.paletteCentralColor = option.replaceAll("\\#", "");
-		}
+
 	}
 
 	@Override
@@ -89,11 +89,10 @@ public class PSystemColors extends PlainDiagram implements UDrawable {
 	}
 
 	public void drawU(UGraphic ug) {
-		if (paletteCentralColor != null && colors.getColorOrWhite(paletteCentralColor) instanceof HColorSimple) {
+		if (paletteCentralColor != null && colors.getColorOrWhite(paletteCentralColor) instanceof HColorSimple)
 			drawPalette(ug);
-		} else {
+		else
 			drawFull(ug);
-		}
 	}
 
 	private void drawPalette(UGraphic ug) {
@@ -140,7 +139,7 @@ public class PSystemColors extends PlainDiagram implements UDrawable {
 	}
 
 	private void drawOneHexa(UGraphic ug, String colorName, int i, int j, UPolygon hexa) {
-		final HColorSimple color = (HColorSimple) colors.getColorOrWhite(colorName);
+		final HColor color = colors.getColorOrWhite(colorName);
 		ug = applyColor(ug, color);
 		ug = ug.apply(new UTranslate(centerHexa(i, j)));
 		ug.draw(hexa);
@@ -160,11 +159,11 @@ public class PSystemColors extends PlainDiagram implements UDrawable {
 		String result = null;
 		double min = Double.MAX_VALUE;
 		for (int i = 1; i < colorName.length() - 1; i++) {
-			if (Character.isLowerCase(colorName.charAt(i))) {
+			if (Character.isLowerCase(colorName.charAt(i)))
 				continue;
-			}
+
 			final String candidat = colorName.substring(0, i) + BackSlash.BS_BS_N + colorName.substring(i);
-			final TextBlock tt = getTextName(font, candidat, (HColorSimple) HColorUtils.BLACK);
+			final TextBlock tt = getTextName(font, candidat, (HColorSimple) HColors.BLACK);
 			final double width = tt.calculateDimension(stringBounder).getWidth();
 			if (width < min) {
 				result = candidat;
@@ -186,9 +185,9 @@ public class PSystemColors extends PlainDiagram implements UDrawable {
 
 	private UPolygon getHexa() {
 		final UPolygon result = new UPolygon();
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < 6; i++)
 			result.addPoint(corner(i));
-		}
+
 		return result;
 	}
 
@@ -197,26 +196,25 @@ public class PSystemColors extends PlainDiagram implements UDrawable {
 		for (Iterator<String> it = result.iterator(); it.hasNext();) {
 			final String candidat = it.next();
 			final String similar = candidat.replaceAll("Gray", "Grey");
-			if (candidat.equals(similar)) {
+			if (candidat.equals(similar))
 				continue;
-			}
-			if (result.contains(similar)) {
+
+			if (result.contains(similar))
 				it.remove();
-			}
+
 		}
-		if (containsCaseInsensitive(result, other) == false) {
+		if (containsCaseInsensitive(result, other) == false)
 			result.add(other);
-		}
+
 		Collections.sort(result, closeComparator(paletteCentralColor));
 		return result;
 	}
 
 	private boolean containsCaseInsensitive(Collection<String> source, String target) {
-		for (String s : source) {
-			if (s.equalsIgnoreCase(target)) {
+		for (String s : source)
+			if (s.equalsIgnoreCase(target))
 				return true;
-			}
-		}
+
 		return false;
 	}
 
@@ -224,8 +222,8 @@ public class PSystemColors extends PlainDiagram implements UDrawable {
 		final HColorSimple centerColor = (HColorSimple) colors.getColorOrWhite(center);
 		return new Comparator<String>() {
 			public int compare(String col1, String col2) {
-				final double dist1 = centerColor.distance((HColorSimple) colors.getColorOrWhite(col1));
-				final double dist2 = centerColor.distance((HColorSimple) colors.getColorOrWhite(col2));
+				final int dist1 = centerColor.distanceTo((HColorSimple) colors.getColorOrWhite(col1));
+				final int dist2 = centerColor.distanceTo((HColorSimple) colors.getColorOrWhite(col2));
 				return (int) Math.signum(dist1 - dist2);
 			}
 		};
@@ -234,12 +232,12 @@ public class PSystemColors extends PlainDiagram implements UDrawable {
 	private void drawFull(UGraphic ug) {
 		final UFont font = UFont.sansSerif(14).bold();
 
-		ug = ug.apply(HColorUtils.BLACK);
+		ug = ug.apply(HColors.BLACK);
 		int i = 0;
 		int j = 0;
 		for (String name : colors.names()) {
 			UGraphic tmp = getPositioned(ug, i, j);
-			final HColorSimple color = (HColorSimple) colors.getColorOrWhite(name);
+			final HColor color = colors.getColorOrWhite(name);
 			applyColor(tmp, color).draw(new URectangle(rectangleWidth, rectangleHeight));
 			final TextBlock tt = getTextName(font, name, color);
 			final Dimension2D dimText = tt.calculateDimension(ug.getStringBounder());
@@ -253,9 +251,9 @@ public class PSystemColors extends PlainDiagram implements UDrawable {
 		}
 	}
 
-	private TextBlock getTextName(final UFont font, String name, final HColorSimple color) {
-		final HColorSimple opposite = color.opposite();
-		final FontConfiguration fc = FontConfiguration.create(font, opposite, HColorUtils.BLUE, true);
+	private TextBlock getTextName(final UFont font, String name, final HColor color) {
+		final HColor opposite = color.opposite();
+		final FontConfiguration fc = FontConfiguration.create(font, opposite, HColors.BLUE, true);
 		final TextBlock tt = Display.getWithNewlines(name).create(fc, HorizontalAlignment.CENTER,
 				new SpriteContainerEmpty());
 		return tt;

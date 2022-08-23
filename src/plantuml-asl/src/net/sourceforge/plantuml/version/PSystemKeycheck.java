@@ -48,6 +48,7 @@ import net.sourceforge.plantuml.flashcode.FlashCodeUtils;
 import net.sourceforge.plantuml.graphic.GraphicStrings;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.UDrawable;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.ugraphic.AffineTransformType;
 import net.sourceforge.plantuml.ugraphic.PixelImage;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -72,7 +73,7 @@ public class PSystemKeycheck extends PlainDiagram {
 				try {
 					drawInternal(ug);
 				} catch (Exception e) {
-					e.printStackTrace();
+					Logme.error(e);
 				}
 			}
 		};
@@ -90,7 +91,7 @@ public class PSystemKeycheck extends PlainDiagram {
 			License.addLicenseInfo(strings, info);
 			strings.add(" ");
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logme.error(e);
 			strings.add("<i>Error:</i> " + e);
 		}
 

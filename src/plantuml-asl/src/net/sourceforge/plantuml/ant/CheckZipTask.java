@@ -44,6 +44,7 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileList;
 import org.apache.tools.ant.types.FileSet;
 
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.security.SecurityUtils;
 
@@ -79,7 +80,7 @@ public class CheckZipTask extends Task {
 				manageFileList(fileList);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logme.error(e);
 			throw new BuildException(e.toString());
 		}
 	}

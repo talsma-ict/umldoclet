@@ -46,7 +46,7 @@ import net.sourceforge.plantuml.ugraphic.UClip;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
+import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 public class PlayingSpaceWithParticipants extends AbstractTextBlock implements TextBlock {
 
@@ -125,7 +125,7 @@ public class PlayingSpaceWithParticipants extends AbstractTextBlock implements T
 	}
 
 	private void drawNewPages(UGraphic ug) {
-		ug = ug.apply(HColorUtils.BLUE);
+		ug = ug.apply(HColors.BLUE);
 		for (Double change : yNewPages()) {
 			if (change == 0 || change == Double.MAX_VALUE) {
 				continue;

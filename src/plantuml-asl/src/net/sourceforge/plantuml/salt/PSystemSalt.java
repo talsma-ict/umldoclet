@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.salt;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -49,6 +48,7 @@ import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.WithSprite;
 import net.sourceforge.plantuml.api.ImageDataSimple;
 import net.sourceforge.plantuml.api.ThemeStyle;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.command.BlocLines;
 import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
@@ -58,6 +58,7 @@ import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.graphic.InnerStrategy;
 import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.salt.element.Element;
 import net.sourceforge.plantuml.salt.factory.AbstractElementFactoryComplex;
 import net.sourceforge.plantuml.salt.factory.ElementFactory;
@@ -84,7 +85,7 @@ import net.sourceforge.plantuml.svek.TextBlockBackcolored;
 import net.sourceforge.plantuml.ugraphic.MinMax;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
+import net.sourceforge.plantuml.ugraphic.color.HColors;
 import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
 
 public class PSystemSalt extends TitledDiagram implements WithSprite {
@@ -115,7 +116,7 @@ public class PSystemSalt extends TitledDiagram implements WithSprite {
 			final Dimension2D size = salt.getPreferredDimension(stringBounder, 0, 0);
 			return createImageBuilder(fileFormatOption).drawable(getTextBlock(salt, size)).write(os);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logme.error(e);
 			UmlDiagram.exportDiagramError(os, e, fileFormatOption, seed(), getMetadata(), "none",
 					new ArrayList<String>());
 			return ImageDataSimple.error();
@@ -255,6 +256,6 @@ public class PSystemSalt extends TitledDiagram implements WithSprite {
 	}
 
 	private HColor getBlack() {
-		return HColorUtils.BLACK;
+		return HColors.BLACK;
 	}
 }

@@ -54,9 +54,11 @@ public final class InnerStateAutonom extends AbstractTextBlock implements IEntit
 	private final UStroke stroke;
 	private final double rounded;
 	private final double shadowing;
+	private final HColor bodyColor;
 
 	public InnerStateAutonom(IEntityImage im, TextBlock title, TextBlock attribute, HColor borderColor,
-			HColor backColor, Url url, boolean withSymbol, UStroke stroke, double rounded, double shadowing) {
+			HColor backColor, Url url, boolean withSymbol, UStroke stroke, double rounded, double shadowing,
+			HColor bodyColor) {
 		this.im = im;
 		this.withSymbol = withSymbol;
 		this.title = title;
@@ -67,6 +69,7 @@ public final class InnerStateAutonom extends AbstractTextBlock implements IEntit
 		this.url = url;
 		this.stroke = stroke;
 		this.rounded = rounded;
+		this.bodyColor = bodyColor;
 	}
 
 	public void drawU(UGraphic ug) {
@@ -76,8 +79,9 @@ public final class InnerStateAutonom extends AbstractTextBlock implements IEntit
 		final double marginForFields = attr.getHeight() > 0 ? IEntityImage.MARGIN : 0;
 
 		final double titreHeight = IEntityImage.MARGIN + text.getHeight() + IEntityImage.MARGIN_LINE;
+		// final HColor foo = im.getBackcolor();
 		final RoundedContainer r = new RoundedContainer(total, titreHeight, attr.getHeight() + marginForFields,
-				borderColor, backColor, im.getBackcolor(), stroke, rounded, shadowing);
+				borderColor, backColor, bodyColor, stroke, rounded, shadowing);
 
 		if (url != null)
 			ug.startUrl(url);

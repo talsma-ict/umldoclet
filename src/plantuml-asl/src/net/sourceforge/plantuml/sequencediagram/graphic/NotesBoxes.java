@@ -51,11 +51,11 @@ final class NotesBoxes extends GraphicalElement implements InGroupable {
 	public void add(NoteBox noteBox, ParticipantBox participantBox1, ParticipantBox participantBox2) {
 		notes.add(noteBox);
 		participants1.add(participantBox1);
-		if (participantBox2 == null) {
+		if (participantBox2 == null)
 			participants2.add(participantBox1);
-		} else {
+		else
 			participants2.add(participantBox2);
-		}
+
 	}
 
 	public void ensureConstraints(StringBounder stringBounder, ConstraintSet constraintSet) {
@@ -74,7 +74,9 @@ final class NotesBoxes extends GraphicalElement implements InGroupable {
 				final NoteBox noteBox2 = notes.get(j);
 				final ParticipantBox otherParticipantBox1 = participants1.get(j);
 				final double width2 = noteBox2.getPreferredWidth(stringBounder);
-				constraintSet.getConstraint(participantBox2, otherParticipantBox1).ensureValue((width + width2) / 2);
+				if (participantBox2 != otherParticipantBox1)
+					constraintSet.getConstraint(participantBox2, otherParticipantBox1)
+							.ensureValue((width + width2) / 2);
 			}
 		}
 	}
@@ -83,9 +85,9 @@ final class NotesBoxes extends GraphicalElement implements InGroupable {
 		double result = Double.MAX_VALUE;
 		for (NoteBox n : notes) {
 			final double m = n.getMinX(stringBounder);
-			if (m < result) {
+			if (m < result)
 				result = m;
-			}
+
 		}
 		return result;
 	}
@@ -94,9 +96,9 @@ final class NotesBoxes extends GraphicalElement implements InGroupable {
 		double result = -Double.MAX_VALUE;
 		for (NoteBox n : notes) {
 			final double m = n.getMaxX(stringBounder);
-			if (m > result) {
+			if (m > result)
 				result = m;
-			}
+
 		}
 		return result;
 	}
@@ -107,9 +109,9 @@ final class NotesBoxes extends GraphicalElement implements InGroupable {
 
 	@Override
 	protected void drawInternalU(UGraphic ug, double maxX, Context2D context) {
-		for (NoteBox n : notes) {
+		for (NoteBox n : notes)
 			n.drawInternalU(ug, maxX, context);
-		}
+
 	}
 
 	@Override
@@ -117,9 +119,9 @@ final class NotesBoxes extends GraphicalElement implements InGroupable {
 		double result = Double.MAX_VALUE;
 		for (NoteBox n : notes) {
 			final double m = n.getStartingX(stringBounder);
-			if (m < result) {
+			if (m < result)
 				result = m;
-			}
+
 		}
 		return result;
 	}
@@ -135,9 +137,9 @@ final class NotesBoxes extends GraphicalElement implements InGroupable {
 		double result = 0;
 		for (NoteBox n : notes) {
 			final double m = n.getPreferredHeight(stringBounder);
-			if (m > result) {
+			if (m > result)
 				result = m;
-			}
+
 		}
 		return result;
 	}

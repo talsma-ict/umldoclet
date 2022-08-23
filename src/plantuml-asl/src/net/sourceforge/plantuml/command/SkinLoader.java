@@ -101,7 +101,7 @@ public class SkinLoader {
 			}
 			return CommandExecutionResult.ok();
 		} catch (NoStyleAvailableException e) {
-			// e.printStackTrace();
+			// Logme.error(e);
 			return CommandExecutionResult.error("General failure: no style available.");
 		}
 

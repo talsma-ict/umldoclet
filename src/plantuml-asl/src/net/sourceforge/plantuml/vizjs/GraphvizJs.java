@@ -42,6 +42,7 @@ import net.sourceforge.plantuml.cucadiagram.dot.ExeState;
 import net.sourceforge.plantuml.cucadiagram.dot.Graphviz;
 import net.sourceforge.plantuml.cucadiagram.dot.GraphvizVersion;
 import net.sourceforge.plantuml.cucadiagram.dot.ProcessState;
+import net.sourceforge.plantuml.log.Logme;
 
 public class GraphvizJs implements Graphviz {
 
@@ -67,7 +68,7 @@ public class GraphvizJs implements Graphviz {
 				try {
 					this.engine = new VizJsEngine();
 				} catch (Exception e) {
-					e.printStackTrace();
+					Logme.error(e);
 				}
 			}
 			runnable.run();
@@ -87,7 +88,7 @@ public class GraphvizJs implements Graphviz {
 			os.write(svg.getBytes());
 			return ProcessState.TERMINATED_OK();
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logme.error(e);
 			throw new GraphvizJsRuntimeException(e);
 		}
 	}

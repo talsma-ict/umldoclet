@@ -59,6 +59,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 
+import net.sourceforge.plantuml.log.Logme;
+
 /**
  * The <code>ExtendedGeneralPath</code> class represents a geometric path constructed from straight lines, quadratic and
  * cubic (Bezier) curves and elliptical arc. This class delegates lines and curves to an enclosed
@@ -720,7 +722,7 @@ public class ExtendedGeneralPath implements Shape, Cloneable {
 
 			return result;
 		} catch (CloneNotSupportedException ex) {
-			ex.printStackTrace();
+			Logme.error(ex);
 		}
 		return null;
 	}

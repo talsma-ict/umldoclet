@@ -78,6 +78,7 @@ import net.sourceforge.plantuml.DirWatcher2;
 import net.sourceforge.plantuml.GeneratedImage;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.Option;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.version.PSystemVersion;
 
 public class MainWindow extends JFrame {
@@ -333,11 +334,11 @@ public class MainWindow extends JFrame {
 						jList1.setVisible(true);
 					}
 				} catch (IOException e) {
-					e.printStackTrace();
+					Logme.error(e);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					Logme.error(e);
 				} catch (ExecutionException e) {
-					e.printStackTrace();
+					Logme.error(e);
 				}
 			}
 		});

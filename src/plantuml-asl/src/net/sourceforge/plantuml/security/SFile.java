@@ -55,6 +55,8 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 
+import net.sourceforge.plantuml.log.Logme;
+
 /**
  * Secure replacement for java.io.File.
  * <p>
@@ -214,7 +216,7 @@ public class SFile implements Comparable<SFile> {
 			try {
 				return internal.getCanonicalPath();
 			} catch (IOException e) {
-				e.printStackTrace();
+				Logme.error(e);
 			}
 		}
 		return "";
@@ -343,7 +345,7 @@ public class SFile implements Comparable<SFile> {
 			try {
 				return SecurityUtils.readRasterImage(new ImageIcon(this.getAbsolutePath()));
 			} catch (Exception e) {
-				e.printStackTrace();
+				Logme.error(e);
 			}
 		return null;
 	}
@@ -353,7 +355,7 @@ public class SFile implements Comparable<SFile> {
 			try {
 				return new BufferedReader(new FileReader(internal));
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+				Logme.error(e);
 			}
 		}
 		return null;
@@ -368,7 +370,7 @@ public class SFile implements Comparable<SFile> {
 			try {
 				return new BufferedInputStream(new FileInputStream(internal));
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+				Logme.error(e);
 			}
 		return null;
 	}

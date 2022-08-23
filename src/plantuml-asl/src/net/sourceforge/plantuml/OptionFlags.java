@@ -36,6 +36,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.cucadiagram.dot.GraphvizUtils;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.security.SecurityUtils;
 
@@ -212,7 +213,7 @@ public class OptionFlags {
 				ps.println();
 			} catch (FileNotFoundException e) {
 				Log.error("Cannot open " + logData);
-				e.printStackTrace();
+				Logme.error(e);
 			}
 		}
 	}
@@ -224,7 +225,7 @@ public class OptionFlags {
 			ps.println();
 		} catch (FileNotFoundException e) {
 			Log.error("Cannot open " + logData);
-			e.printStackTrace();
+			Logme.error(e);
 		}
 	}
 

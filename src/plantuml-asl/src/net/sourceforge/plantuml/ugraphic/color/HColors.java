@@ -35,10 +35,10 @@ import java.awt.Color;
 import net.sourceforge.plantuml.ugraphic.UChange;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 
-public class HColorUtils {
+public class HColors {
 
-	public static final HColorSimple BLACK;
-	public static final HColorSimple WHITE;
+	public static final HColor BLACK;
+	public static final HColor WHITE;
 	public static final HColor RED_LIGHT;
 	public static final HColor RED_DARK;
 	public static final HColor RED;
@@ -123,22 +123,28 @@ public class HColorUtils {
 	public static UChange changeBack(UGraphic ug) {
 		final HColor color = ug.getParam().getColor();
 		if (color == null)
-			return new HColorNone().bg();
+			return HColors.none().bg();
 
 		return color.bg();
 	}
 
-	final private static HColorSimple TRANSPARENT = new HColorSimple(new Color(0, 0, 0, 0), false);
-
 	public static HColor transparent() {
-		return TRANSPARENT;
+		return new HColorNone();
+	}
+
+	public static HColor none() {
+		return new HColorNone();
+	}
+
+	public static HColor generalBackground() {
+		return new HColorNone();
 	}
 
 	public static boolean isTransparent(HColor back) {
-		if (back == TRANSPARENT)
+		if (back == null)
 			return true;
 
-		if (back instanceof HColorBackground && ((HColorBackground) back).getBack() == TRANSPARENT)
+		if (back instanceof HColorNone)
 			return true;
 
 		if (back instanceof HColorSimple && ((HColorSimple) back).isTransparent())
@@ -158,6 +164,18 @@ public class HColorUtils {
 			return HColorSimple.unlinear((HColorSimple) color1, (HColorSimple) color2, completion);
 
 		return color1;
+	}
+
+	public static HColor middle(HColor c1, HColor c2) {
+		return new HColorMiddle(c1, c2);
+	}
+
+	public static HColorGradient gradient(HColor color1, HColor color2, char policy) {
+		return new HColorGradient(color1, color2, policy);
+	}
+
+	public static HColor simple(Color c) {
+		return new HColorSimple(c);
 	}
 
 }

@@ -50,7 +50,7 @@ import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
+import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 @HaxeIgnored
 public class CollisionDetector extends UGraphicNo {
@@ -93,7 +93,7 @@ public class CollisionDetector extends UGraphicNo {
 				if (collision(minmax))
 					minmax.drawGray(ug);
 
-			final HColor color = HColorUtils.BLACK;
+			final HColor color = HColors.BLACK;
 			ug = ug.apply(color).apply(new UStroke(5));
 			for (Snake snake : snakes)
 				for (Line2D line : snake.getHorizontalLines())

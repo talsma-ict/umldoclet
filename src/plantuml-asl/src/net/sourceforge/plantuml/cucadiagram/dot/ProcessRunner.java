@@ -39,6 +39,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.api.MyRunnable;
 import net.sourceforge.plantuml.api.TimeoutExecutor;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SFile;
 
 public class ProcessRunner {
@@ -157,14 +158,14 @@ public class ProcessRunner {
 			try {
 				process = Runtime.getRuntime().exec(cmd, null, dir == null ? null : dir.conv());
 			} catch (IOException e) {
-				e.printStackTrace();
+				Logme.error(e);
 				changeState.lock();
 				try {
 					state = ProcessState.IO_EXCEPTION1(e);
 				} finally {
 					changeState.unlock();
 				}
-				e.printStackTrace();
+				Logme.error(e);
 				return;
 			}
 			errorStream = new ThreadStream(process.getErrorStream(), null);
@@ -186,7 +187,7 @@ public class ProcessRunner {
 					} finally {
 						changeState.unlock();
 					}
-					e.printStackTrace();
+					Logme.error(e);
 				}
 			}
 		}
@@ -243,7 +244,7 @@ public class ProcessRunner {
 				}
 			} catch (Throwable e) {
 				System.err.println("ProcessRunnerA " + e);
-				e.printStackTrace();
+				Logme.error(e);
 				sb.append('\n');
 				sb.append(e.toString());
 			}
@@ -264,7 +265,7 @@ public class ProcessRunner {
 				is.close();
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logme.error(e);
 		}
 	}
 
@@ -274,7 +275,7 @@ public class ProcessRunner {
 				os.close();
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logme.error(e);
 		}
 	}
 

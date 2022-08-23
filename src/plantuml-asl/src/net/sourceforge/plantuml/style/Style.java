@@ -50,8 +50,8 @@ import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorNone;
 import net.sourceforge.plantuml.ugraphic.color.HColorSet;
+import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 public class Style {
 
@@ -264,8 +264,12 @@ public class Style {
 		final FontConfiguration fc = getFontConfiguration(spriteContainer.getThemeStyle(), set);
 		return display.create(fc, alignment, spriteContainer);
 	}
+	
+	public static final String ID_TITLE = "_title";
+	public static final String ID_CAPTION = "_caption";
+	public static final String ID_LEGEND = "_legend";
 
-	public TextBlock createTextBlockBordered(Display note, HColorSet set, ISkinSimple spriteContainer) {
+	public TextBlock createTextBlockBordered(Display note, HColorSet set, ISkinSimple spriteContainer, String id) {
 		final HorizontalAlignment alignment = this.getHorizontalAlignment();
 		final TextBlock textBlock = this.createTextBlockInternal(note, set, spriteContainer, alignment);
 
@@ -276,14 +280,14 @@ public class Style {
 		final ClockwiseTopRightBottomLeft margin = this.getMargin();
 		final ClockwiseTopRightBottomLeft padding = this.getPadding();
 		final TextBlock result = TextBlockUtils.bordered(textBlock, stroke, lineColor, backgroundColor, cornersize,
-				padding);
+				padding, id);
 		return TextBlockUtils.withMargin(result, margin);
 	}
 
 	public UGraphic applyStrokeAndLineColor(UGraphic ug, HColorSet colorSet, ThemeStyle themeStyle) {
 		final HColor color = value(PName.LineColor).asColor(themeStyle, colorSet);
 		if (color == null)
-			ug = ug.apply(new HColorNone());
+			ug = ug.apply(HColors.none());
 		else
 			ug = ug.apply(color);
 

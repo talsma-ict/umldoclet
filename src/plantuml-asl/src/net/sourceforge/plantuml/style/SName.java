@@ -36,6 +36,7 @@ public enum SName {
 	activityDiagram, //
 	actor, //
 	agent, //
+	analog, //
 	archimate, //
 	arrow, //
 	artifact, //
@@ -100,6 +101,7 @@ public enum SName {
 	participant, //
 	partition, //
 	person, //
+	port, //
 	queue, //
 	rectangle, //
 	reference, //
@@ -114,6 +116,7 @@ public enum SName {
 	stack, //
 	stateDiagram, //
 	state, //
+	stateBody, //
 	stereotype, //
 	storage, //
 	swimlane, //
@@ -137,6 +140,7 @@ public enum SName {
 	spotProtocol, //
 	spotStruct, //
 	spotEntity, //
+	spotException, //
 	spotClass, //
 	spotAbstractClass, //
 

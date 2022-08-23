@@ -81,7 +81,7 @@ public class SubjectDayAsDate implements Subject {
 
 		@Override
 		public CommandExecutionResult execute(GanttDiagram project, Object subject, Object complement) {
-			project.closeDayAsDate((Day) subject);
+			project.closeDayAsDate((Day) subject, (String) complement);
 			return CommandExecutionResult.ok();
 		}
 	}
@@ -93,7 +93,7 @@ public class SubjectDayAsDate implements Subject {
 
 		@Override
 		public CommandExecutionResult execute(GanttDiagram project, Object subject, Object complement) {
-			project.openDayAsDate((Day) subject);
+			project.openDayAsDate((Day) subject, (String) complement);
 			return CommandExecutionResult.ok();
 		}
 	}

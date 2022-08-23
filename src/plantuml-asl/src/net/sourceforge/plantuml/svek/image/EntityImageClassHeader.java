@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.svek.image;
 
-import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.Guillemet;
 import net.sourceforge.plantuml.ISkinParam;
@@ -122,10 +121,17 @@ public class EntityImageClassHeader extends AbstractEntityImage {
 					FontConfiguration.create(getSkinParam(), FontParam.CLASS_STEREOTYPE, stereotype),
 					HorizontalAlignment.CENTER, skinParam);
 			genericBlock = TextBlockUtils.withMargin(genericBlock, 1, 1);
-			final HColor classBackground = SkinParamUtils.getColor(getSkinParam(), stereotype, ColorParam.background);
 
-			final HColor classBorder = SkinParamUtils.getFontColor(getSkinParam(), FontParam.CLASS_STEREOTYPE,
-					stereotype);
+//			final HColor classBackground = SkinParamUtils.getColor(getSkinParam(), stereotype, ColorParam.background);
+//			final HColor classBorder = SkinParamUtils.getFontColor(getSkinParam(), FontParam.CLASS_STEREOTYPE,
+//					stereotype);
+
+//			final HColor classBackground = style.value(PName.BackGroundColor).asColor(skinParam.getThemeStyle(),
+//					skinParam.getIHtmlColorSet());
+			final HColor classBackground = skinParam.getBackgroundColor();
+			final HColor classBorder = style.value(PName.LineColor).asColor(skinParam.getThemeStyle(),
+					skinParam.getIHtmlColorSet());
+
 			genericBlock = new TextBlockGeneric(genericBlock, classBackground, classBorder);
 			genericBlock = TextBlockUtils.withMargin(genericBlock, 1, 1);
 		}
@@ -149,20 +155,17 @@ public class EntityImageClassHeader extends AbstractEntityImage {
 		final LeafType leafType = entity.getLeafType();
 
 		final Style style = spotStyleSignature(leafType).getMergedStyle(skinParam.getCurrentStyleBuilder());
-		HColor spotBorder = style.value(PName.LineColor).asColor(skinParam.getThemeStyle(),
+		final HColor spotBorder = style.value(PName.LineColor).asColor(skinParam.getThemeStyle(),
 				skinParam.getIHtmlColorSet());
 		final HColor spotBackColor = style.value(PName.BackGroundColor).asColor(skinParam.getThemeStyle(),
 				skinParam.getIHtmlColorSet());
-		final HColor classBorder = SkinParamUtils.getColor(getSkinParam(), stereotype, ColorParam.classBorder);
+
 		final HColor fontColor = style.value(PName.FontColor).asColor(skinParam.getThemeStyle(),
 				skinParam.getIHtmlColorSet());
 
 		if (stereotype != null && stereotype.getCharacter() != 0)
 			return new CircledCharacter(stereotype.getCharacter(), getSkinParam().getCircledCharacterRadius(), font,
-					stereotype.getHtmlColor(), classBorder, fontColor);
-
-		if (spotBorder == null)
-			spotBorder = classBorder;
+					stereotype.getHtmlColor(), spotBorder, fontColor);
 
 		char circledChar = 0;
 		if (stereotype != null)
@@ -193,6 +196,8 @@ public class EntityImageClassHeader extends AbstractEntityImage {
 			return StyleSignatureBasic.of(SName.root, SName.element, SName.spot, SName.spotProtocol);
 		case STRUCT:
 			return StyleSignatureBasic.of(SName.root, SName.element, SName.spot, SName.spotStruct);
+		case EXCEPTION:
+			return StyleSignatureBasic.of(SName.root, SName.element, SName.spot, SName.spotException);
 		}
 		throw new IllegalStateException();
 	}
@@ -215,6 +220,8 @@ public class EntityImageClassHeader extends AbstractEntityImage {
 			return 'P';
 		case STRUCT:
 			return 'S';
+		case EXCEPTION:
+			return 'X';
 		}
 		assert false;
 		return '?';

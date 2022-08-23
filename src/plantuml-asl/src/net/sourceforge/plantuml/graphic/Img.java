@@ -39,6 +39,7 @@ import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.command.regex.Matcher2;
 import net.sourceforge.plantuml.command.regex.MyPattern;
 import net.sourceforge.plantuml.command.regex.Pattern2;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.security.SURL;
 
@@ -118,7 +119,7 @@ public class Img implements HtmlCommand {
 
 			return new Img(new TileImage(f.readRasterImageFromFile(), valign, vspace));
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logme.error(e);
 			return new Text("ERROR " + e.toString());
 		}
 	}

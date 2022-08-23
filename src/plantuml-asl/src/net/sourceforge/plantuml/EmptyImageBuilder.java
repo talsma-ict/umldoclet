@@ -45,7 +45,7 @@ import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.ugraphic.UAntiAliasing;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorSimple;
+import net.sourceforge.plantuml.ugraphic.color.HColors;
 import net.sourceforge.plantuml.ugraphic.g2d.UGraphicG2d;
 
 public class EmptyImageBuilder {
@@ -164,7 +164,7 @@ public class EmptyImageBuilder {
 	}
 
 	public UGraphicG2d getUGraphicG2d() {
-		final HColor back = new HColorSimple(background, false);
+		final HColor back = HColors.simple(background);
 		final UGraphicG2d result = new UGraphicG2d(back, new ColorMapperIdentity(), stringBounder, g2d, 1.0);
 		result.setBufferedImage(im);
 		return result;

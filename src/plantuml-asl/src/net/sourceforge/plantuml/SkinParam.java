@@ -58,6 +58,7 @@ import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.cucadiagram.dot.DotSplines;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.color.Colors;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.skin.ActorStyle;
 import net.sourceforge.plantuml.skin.ArrowDirection;
 import net.sourceforge.plantuml.skin.Padder;
@@ -82,7 +83,7 @@ import net.sourceforge.plantuml.ugraphic.color.ColorMapperReverse;
 import net.sourceforge.plantuml.ugraphic.color.ColorOrder;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorSet;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
+import net.sourceforge.plantuml.ugraphic.color.HColors;
 import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
 
 public class SkinParam implements ISkinParam {
@@ -106,7 +107,7 @@ public class SkinParam implements ISkinParam {
 			try {
 				this.styleBuilder = getCurrentStyleBuilderInternal();
 			} catch (IOException e) {
-				e.printStackTrace();
+				Logme.error(e);
 			}
 		}
 		return styleBuilder;
@@ -173,7 +174,7 @@ public class SkinParam implements ISkinParam {
 					this.muteStyle(modifiedStyle);
 
 			} catch (IOException e) {
-				e.printStackTrace();
+				Logme.error(e);
 			}
 		}
 	}
@@ -245,14 +246,14 @@ public class SkinParam implements ISkinParam {
 	public HColor getHyperlinkColor() {
 		final HColor result = getHtmlColor(ColorParam.hyperlink, null, false);
 		if (result == null)
-			return HColorUtils.BLUE;
+			return HColors.BLUE;
 
 		return result;
 	}
 
 	public HColor getBackgroundColor() {
 		final HColor result = getHtmlColor(ColorParam.background, null, false);
-		return result != null ? result : HColorUtils.WHITE;
+		return result != null ? result : HColors.WHITE;
 	}
 
 	public String getValue(String key) {
@@ -305,20 +306,19 @@ public class SkinParam implements ISkinParam {
 			}
 		}
 		final String value = getValue(getParamName(param, clickable));
-		if (value == null) {
+		if (value == null)
 			return null;
-		}
+
 		if ((param == ColorParam.background || param == ColorParam.arrowHead)
-				&& (value.equalsIgnoreCase("transparent") || value.equalsIgnoreCase("none"))) {
-			return HColorUtils.transparent();
-		}
-		if (param == ColorParam.background) {
+				&& (value.equalsIgnoreCase("transparent") || value.equalsIgnoreCase("none")))
+			return HColors.transparent();
+
+		if (param == ColorParam.background)
 			return getIHtmlColorSet().getColorOrWhite(themeStyle, value);
-		}
+
 		assert param != ColorParam.background;
-//		final boolean acceptTransparent = param == ColorParam.background
-//				|| param == ColorParam.sequenceGroupBodyBackground || param == ColorParam.sequenceBoxBackground;
-		return getIHtmlColorSet().getColorOrWhite(themeStyle, value, getBackgroundColor());
+
+		return getIHtmlColorSet().getColorOrWhite(themeStyle, value);
 	}
 
 	public char getCircledCharacter(Stereotype stereotype) {
@@ -1034,7 +1034,7 @@ public class SkinParam implements ISkinParam {
 		if (value == null)
 			return null;
 
-		return getIHtmlColorSet().getColorOrWhite(themeStyle, value, null);
+		return getIHtmlColorSet().getColorOrWhite(themeStyle, value);
 	}
 
 	public double getPadding() {

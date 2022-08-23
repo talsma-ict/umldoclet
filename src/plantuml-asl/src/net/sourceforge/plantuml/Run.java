@@ -53,6 +53,7 @@ import net.sourceforge.plantuml.code.NoPlantumlCompressionException;
 import net.sourceforge.plantuml.code.Transcoder;
 import net.sourceforge.plantuml.code.TranscoderUtil;
 import net.sourceforge.plantuml.ftp.FtpServer;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.picoweb.PicoWebServer;
 import net.sourceforge.plantuml.png.MetadataTag;
 import net.sourceforge.plantuml.preproc.Stdlib;
@@ -398,7 +399,7 @@ public class Run {
 					return;
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				Logme.error(e);
 			}
 		}
 	}
@@ -421,9 +422,9 @@ public class Run {
 						try {
 							manageFileInternal(f, option, error);
 						} catch (IOException e) {
-							e.printStackTrace();
+							Logme.error(e);
 						} catch (InterruptedException e) {
-							e.printStackTrace();
+							Logme.error(e);
 						}
 						incDone(error.hasError());
 					}

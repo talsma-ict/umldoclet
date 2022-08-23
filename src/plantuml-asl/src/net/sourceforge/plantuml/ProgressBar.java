@@ -31,8 +31,19 @@
 package net.sourceforge.plantuml;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 
 public class ProgressBar {
+
+	private static final java.util.logging.Logger logger;
+
+	static {
+		logger = java.util.logging.Logger.getLogger("com.plantuml.ProgressBar");
+		logger.setUseParentHandlers(false);
+		logger.addHandler(new StdErrHandler());
+	}
 
 	private static boolean enable;
 	private static String last = null;
@@ -40,24 +51,30 @@ public class ProgressBar {
 	private static final AtomicInteger done = new AtomicInteger();
 
 	private synchronized static void print(String message) {
-		clear();
-		System.err.print(message);
+		logger.log(Level.INFO, buildClearMessage() + message);
 		last = message;
 	}
 
 	public synchronized static void clear() {
-		if (last != null) {
-			for (int i = 0; i < last.length(); i++) {
-				System.err.print('\b');
-			}
-			for (int i = 0; i < last.length(); i++) {
-				System.err.print(' ');
-			}
-			for (int i = 0; i < last.length(); i++) {
-				System.err.print('\b');
-			}
-		}
+		logger.log(Level.INFO, buildClearMessage());
 		last = null;
+	}
+
+	private static String buildClearMessage() {
+		if (last != null) {
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < last.length(); i++) {
+				sb.append("\b");
+			}
+			for (int i = 0; i < last.length(); i++) {
+				sb.append(" ");
+			}
+			for (int i = 0; i < last.length(); i++) {
+				sb.append("\b");
+			}
+			return sb.toString();
+		}
+		return "";
 	}
 
 	public static void incTotal(int nb) {
@@ -72,9 +89,7 @@ public class ProgressBar {
 		if (total == 0) {
 			return;
 		}
-		final String message = "[" + getBar(done, total) + "] " + done + "/" + total;
-		print(message);
-
+		print("[" + getBar(done, total) + "] " + done + "/" + total);
 	}
 
 	private static String getBar(int done, int total) {
@@ -96,4 +111,29 @@ public class ProgressBar {
 		enable = value;
 	}
 
+	private static class StdErrHandler extends Handler {
+		public StdErrHandler() {
+		}
+
+		@Override
+		public void publish(LogRecord record) {
+			String message = record.getMessage();
+			System.err.print(message);
+			this.flush();
+		}
+
+		@Override
+		public void flush() {
+			System.err.flush();
+		}
+
+		/**
+		 * Override {@code StreamHandler.close} to do a flush but not to close the output stream.
+		 * That is, we do <b>not</b> close {@code System.err}.
+		 */
+		@Override
+		public void close() {
+			flush();
+		}
+	}
 }

@@ -86,7 +86,7 @@ public class CompressionZlibAttic implements Compression {
 
 			return ByteArray.from(result);
 		} catch (IOException e) {
-			// e.printStackTrace();
+			// Logme.error(e);
 			throw new NoPlantumlCompressionException(e);
 		}
 
@@ -110,7 +110,7 @@ public class CompressionZlibAttic implements Compression {
 			final byte[] result = copyArray(tmp, resultLength);
 			return result;
 		} catch (DataFormatException e) {
-			// e.printStackTrace();
+			// Logme.error(e);
 			throw new IOException(e.toString());
 		}
 	}

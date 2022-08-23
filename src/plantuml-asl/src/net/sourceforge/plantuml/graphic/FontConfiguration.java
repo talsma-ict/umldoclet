@@ -44,7 +44,7 @@ import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
+import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 public class FontConfiguration {
 
@@ -77,7 +77,7 @@ public class FontConfiguration {
 	}
 
 	public static FontConfiguration blackBlueTrue(UFont font) {
-		return create(font, HColorUtils.BLACK.withDark(HColorUtils.WHITE), HColorUtils.BLUE, true, 8);
+		return create(font, HColors.BLACK.withDark(HColors.WHITE), HColors.BLUE, true, 8);
 	}
 
 	public static FontConfiguration create(ISkinParam skinParam, FontParam fontParam, Stereotype stereo) {

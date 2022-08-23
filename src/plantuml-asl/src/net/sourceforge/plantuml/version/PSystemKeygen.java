@@ -47,6 +47,7 @@ import net.sourceforge.plantuml.flashcode.FlashCodeUtils;
 import net.sourceforge.plantuml.graphic.GraphicStrings;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.UDrawable;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.ugraphic.AffineTransformType;
 import net.sourceforge.plantuml.ugraphic.PixelImage;
@@ -70,7 +71,7 @@ public class PSystemKeygen extends PlainDiagram {
 				try {
 					drawInternal(ug);
 				} catch (IOException e) {
-					e.printStackTrace();
+					Logme.error(e);
 				}
 			}
 		};

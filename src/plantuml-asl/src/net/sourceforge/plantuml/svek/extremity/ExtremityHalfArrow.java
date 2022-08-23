@@ -36,7 +36,7 @@ import java.awt.geom.Point2D;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
+import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 class ExtremityHalfArrow extends Extremity {
 
@@ -66,7 +66,7 @@ class ExtremityHalfArrow extends Extremity {
 	}
 
 	public void drawU(UGraphic ug) {
-		ug = ug.apply(HColorUtils.changeBack(ug));
+		ug = ug.apply(HColors.changeBack(ug));
 		if (line != null && line.getLength() > 2) {
 			ug.apply(new UTranslate(contact.getX(), contact.getY())).draw(line);
 			ug.apply(new UTranslate(contact.getX(), contact.getY())).draw(otherLine);

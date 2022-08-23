@@ -66,8 +66,9 @@ import javax.swing.WindowConstants;
 import net.sourceforge.plantuml.GeneratedImage;
 import net.sourceforge.plantuml.ImageSelection;
 import net.sourceforge.plantuml.graphic.GraphicStrings;
-import net.sourceforge.plantuml.security.SImageIO;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SFile;
+import net.sourceforge.plantuml.security.SImageIO;
 import net.sourceforge.plantuml.svek.TextBlockBackcolored;
 import net.sourceforge.plantuml.version.PSystemVersion;
 
@@ -332,7 +333,7 @@ class ImageWindow extends JFrame {
 				final byte[] bytes = plainPngBuilder(error).writeByteArray();
 				image = SImageIO.read(bytes);
 			} catch (IOException e) {
-				e.printStackTrace();
+				Logme.error(e);
 			}
 		}
 		final ImageIcon imageIcon = new ImageIcon(image, simpleLine.toString());
@@ -388,7 +389,7 @@ class ImageWindow extends JFrame {
 			final ImageSelection imgSel = new ImageSelection(image);
 			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(imgSel, null);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logme.error(e);
 		}
 	}
 

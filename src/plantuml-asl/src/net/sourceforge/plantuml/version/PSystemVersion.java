@@ -47,10 +47,11 @@ import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.cucadiagram.dot.GraphvizUtils;
 import net.sourceforge.plantuml.dedication.PSystemDedication;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.preproc.Stdlib;
 import net.sourceforge.plantuml.preproc2.PreprocessorUtils;
-import net.sourceforge.plantuml.security.SImageIO;
 import net.sourceforge.plantuml.security.SFile;
+import net.sourceforge.plantuml.security.SImageIO;
 import net.sourceforge.plantuml.security.SecurityProfile;
 import net.sourceforge.plantuml.security.SecurityUtils;
 import net.sourceforge.plantuml.svek.GraphvizCrash;
@@ -116,7 +117,7 @@ public class PSystemVersion extends PlainStringsDiagram {
 			is.close();
 			return image;
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logme.error(e);
 		}
 		return new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
 	}
@@ -125,7 +126,7 @@ public class PSystemVersion extends PlainStringsDiagram {
 		try (InputStream is = PSystemVersion.class.getResourceAsStream(name)) {
 			return PSystemDedication.getBufferedImage(is);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logme.error(e);
 		}
 		return new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
 	}

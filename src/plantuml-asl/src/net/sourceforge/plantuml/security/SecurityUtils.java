@@ -56,6 +56,7 @@ import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.json.Json;
 import net.sourceforge.plantuml.json.JsonValue;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.authentication.SecurityAccessInterceptor;
 import net.sourceforge.plantuml.security.authentication.SecurityAuthentication;
 import net.sourceforge.plantuml.security.authentication.SecurityAuthorizeManager;
@@ -421,7 +422,7 @@ public class SecurityUtils {
 			try (Reader r = new BufferedReader(new FileReader(jsonFile))) {
 				return Json.parse(r);
 			} catch (IOException e) {
-				e.printStackTrace();
+				Logme.error(e);
 			}
 		}
 		return Json.object();

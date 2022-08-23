@@ -28,32 +28,35 @@
  *
  * Original Author:  Arnaud Roques
  */
-package net.sourceforge.plantuml.ugraphic.color;
+package net.sourceforge.plantuml.log;
 
-public class HColorAutomatic extends HColorAbstract implements HColor {
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-	private final HColor colorForLight;
-	private final HColor colorForDark;
-	private final HColor colorForTransparent;
+public class Logme {
 
-	public HColorAutomatic(HColor colorForLight, HColor colorForDark, HColor colorForTransparent) {
-		this.colorForLight = colorForLight;
-		this.colorForDark = colorForDark;
-		this.colorForTransparent = colorForTransparent;
+	private static final Logger logger;
+
+	static {
+		logger = Logger.getLogger("com.plantuml");
+		logger.setUseParentHandlers(false);
+		final ConsoleHandler handler = new ConsoleHandler();
+		handler.setFormatter(new SimpleFormatter());
+		logger.addHandler(handler);
 	}
 
-	public HColor getAppropriateColor(HColor back) {
-		if (back == null || HColorUtils.isTransparent(back)) {
-			if (colorForTransparent != null)
-				return colorForTransparent;
-
-			return ((HColorSimple) colorForLight).withDark(colorForDark);
-
-		}
-		if (back.isDark())
-			return colorForDark;
-
-		return colorForLight;
+	public static void error(Throwable thrown) {
+		logger.log(Level.SEVERE, "", thrown);
 	}
 
+	// Unused right now
+	//
+	// public static void error(String msg, Throwable thrown) {
+	// logger.log(Level.SEVERE, msg, thrown);
+	// }
+	//
+	// public static void error(String msg) {
+	// logger.log(Level.SEVERE, msg);
+	// }
 }

@@ -49,9 +49,9 @@ import java.util.List;
 import java.util.Set;
 
 import net.sourceforge.plantuml.api.ImageDataSimple;
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.error.PSystemError;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.preproc.Defines;
 import net.sourceforge.plantuml.preproc.FileWithSuffix;
 import net.sourceforge.plantuml.security.SFile;
@@ -154,7 +154,7 @@ public abstract class SourceFileReaderAbstract implements ISourceFileReader {
 			try {
 				system = blockUml.getDiagram();
 			} catch (Throwable t) {
-				t.printStackTrace();
+				Logme.error(t);
 				if (OptionFlags.getInstance().isSilentlyCompletelyIgnoreErrors() || noerror) {
 					continue;
 				}

@@ -40,6 +40,7 @@ import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.SourceStringReader;
+import net.sourceforge.plantuml.log.Logme;
 
 class AcceptTelnetClient extends Thread {
 	final private Socket clientSocket;
@@ -80,7 +81,7 @@ class AcceptTelnetClient extends Thread {
 			os.close();
 			br.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logme.error(e);
 		}
 
 	}

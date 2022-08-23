@@ -41,7 +41,7 @@ import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UPath;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
+import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 public class WLinkVertical {
 
@@ -65,11 +65,11 @@ public class WLinkVertical {
 	}
 
 	private HColor getBlack() {
-		return HColorUtils.BLACK.withDark(HColorUtils.WHITE);
+		return HColors.BLACK.withDark(HColors.WHITE);
 	}
 
 	private HColor getWhite() {
-		return HColorUtils.WHITE.withDark(HColorUtils.BLACK);
+		return HColors.WHITE.withDark(HColors.BLACK);
 	}
 
 	private TextBlock getTextBlock() {

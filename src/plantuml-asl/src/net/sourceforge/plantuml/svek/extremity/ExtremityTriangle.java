@@ -35,7 +35,7 @@ import java.awt.geom.Point2D;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
+import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 class ExtremityTriangle extends Extremity {
 
@@ -67,7 +67,7 @@ class ExtremityTriangle extends Extremity {
 		if (backgroundColor != null) {
 			ug = ug.apply(backgroundColor.bg());
 		} else if (fill) {
-			ug = ug.apply(HColorUtils.changeBack(ug));
+			ug = ug.apply(HColors.changeBack(ug));
 		}
 		ug.draw(polygon);
 	}

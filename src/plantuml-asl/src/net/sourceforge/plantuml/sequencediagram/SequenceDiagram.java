@@ -60,6 +60,7 @@ import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.EntityPortion;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.SymbolContext;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.sequencediagram.graphic.FileMaker;
 import net.sourceforge.plantuml.sequencediagram.graphic.SequenceDiagramFileMakerPuma2;
 import net.sourceforge.plantuml.sequencediagram.graphic.SequenceDiagramTxtMaker;
@@ -440,7 +441,7 @@ public class SequenceDiagram extends UmlDiagram {
 			// The DEBUG StringBounder is ok just to compute the number of pages here.
 			return getSequenceDiagramPngMaker(1, new FileFormatOption(FileFormat.DEBUG)).getNbPages();
 		} catch (Throwable t) {
-			t.printStackTrace();
+			Logme.error(t);
 			return 1;
 		}
 	}

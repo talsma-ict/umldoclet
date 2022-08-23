@@ -45,6 +45,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import net.sourceforge.plantuml.FileFormat;
+import net.sourceforge.plantuml.log.Logme;
 
 public class FtpServer {
 
@@ -109,7 +110,7 @@ public class FtpServer {
 				try {
 					connexion.processImage(name);
 				} catch (IOException e) {
-					e.printStackTrace();
+					Logme.error(e);
 				}
 			}
 		});

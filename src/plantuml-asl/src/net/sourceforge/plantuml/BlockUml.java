@@ -50,6 +50,7 @@ import net.sourceforge.plantuml.code.TranscoderUtil;
 import net.sourceforge.plantuml.command.regex.Matcher2;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.error.PSystemErrorPreprocessor;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.preproc.Defines;
 import net.sourceforge.plantuml.preproc.FileWithSuffix;
 import net.sourceforge.plantuml.preproc2.PreprocessorModeSet;
@@ -192,7 +193,7 @@ public class BlockUml {
 			final byte[] digest = msgDigest.digest();
 			return coder.encode(digest);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logme.error(e);
 			return "NOETAG";
 		}
 	}

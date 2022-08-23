@@ -47,6 +47,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import net.sourceforge.plantuml.Log;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.security.SecurityUtils;
 import net.sourceforge.plantuml.stats.api.Stats;
@@ -87,13 +88,13 @@ public class StatsUtils {
 				}
 			});
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logme.error(e);
 		}
 		if (prefs.getInt("VERSION", 0) != VERSION) {
 			try {
 				prefs.clear();
 			} catch (BackingStoreException e1) {
-				e1.printStackTrace();
+				Logme.error(e1);
 			}
 			prefs.putInt("VERSION", VERSION);
 		}
@@ -149,7 +150,7 @@ public class StatsUtils {
 				htmlOutput(stats);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logme.error(e);
 		}
 	}
 
@@ -166,8 +167,7 @@ public class StatsUtils {
 		}
 	}
 
-	static void xmlOutput(Stats stats)
-			throws TransformerException, ParserConfigurationException, IOException {
+	static void xmlOutput(Stats stats) throws TransformerException, ParserConfigurationException, IOException {
 		try (OutputStream os = SecurityUtils.createFileOutputStream("plantuml-stats.xml")) {
 			new XmlConverter(stats).createXml(os);
 		}

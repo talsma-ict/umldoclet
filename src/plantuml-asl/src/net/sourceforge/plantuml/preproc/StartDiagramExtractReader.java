@@ -38,6 +38,7 @@ import java.nio.charset.Charset;
 
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.StringLocated;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SURL;
 import net.sourceforge.plantuml.utils.StartUtils;
 
@@ -81,7 +82,7 @@ public class StartDiagramExtractReader implements ReadLine {
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logme.error(e);
 			Log.error("Error " + e);
 		}
 		finished = true;

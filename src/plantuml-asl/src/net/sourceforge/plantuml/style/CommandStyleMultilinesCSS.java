@@ -67,7 +67,7 @@ public class CommandStyleMultilinesCSS extends CommandMultilines2<TitledDiagram>
 			((SkinParam) diagram.getSkinParam()).applyPendingStyleMigration();
 			return CommandExecutionResult.ok();
 		} catch (NoStyleAvailableException e) {
-			// e.printStackTrace();
+			// Logme.error(e);
 			return CommandExecutionResult.error("General failure: no style available.");
 		}
 	}

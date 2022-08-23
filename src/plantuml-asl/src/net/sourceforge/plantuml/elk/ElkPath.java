@@ -66,7 +66,6 @@ import net.sourceforge.plantuml.elk.proxy.graph.ElkLabel;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.UDrawable;
 import net.sourceforge.plantuml.graphic.color.ColorType;
-import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
@@ -78,7 +77,7 @@ import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
+import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 public class ElkPath implements UDrawable {
 
@@ -89,11 +88,13 @@ public class ElkPath implements UDrawable {
 	private final TextBlock centerLabel;
 	private final TextBlock headLabel;
 	private final TextBlock tailLabel;
-	private final Rose rose = new Rose();
+
 	private final SName styleName;
 
+	private final double magicY2;
+
 	public ElkPath(CucaDiagram diagram, SName styleName, Link link, ElkEdge edge, TextBlock centerLabel,
-			TextBlock tailLabel, TextBlock headLabel) {
+			TextBlock tailLabel, TextBlock headLabel, double magicY2) {
 		this.link = link;
 		this.edge = edge;
 
@@ -102,6 +103,7 @@ public class ElkPath implements UDrawable {
 		this.tailLabel = tailLabel;
 		this.headLabel = headLabel;
 		this.styleName = styleName;
+		this.magicY2 = magicY2;
 
 	}
 
@@ -144,8 +146,8 @@ public class ElkPath implements UDrawable {
 			drawSections(ug, sections);
 		}
 
-		final UDrawable extremityFactory1 = getDecors(link.getType().getDecor1(), Math.PI / 2, HColorUtils.WHITE);
-		final UDrawable extremityFactory2 = getDecors(link.getType().getDecor2(), -Math.PI / 2, HColorUtils.WHITE);
+		final UDrawable extremityFactory1 = getDecors(link.getType().getDecor1(), Math.PI / 2, HColors.WHITE);
+		final UDrawable extremityFactory2 = getDecors(link.getType().getDecor2(), -Math.PI / 2, HColors.WHITE);
 
 		if (extremityFactory1 != null) {
 			final double x = sections.get(0).getEndX();
@@ -165,13 +167,13 @@ public class ElkPath implements UDrawable {
 
 	private UDrawable getDecors(LinkDecor decors, double angle, HColor backColor) {
 		// For legacy reason, extends are treated differently
-		if (decors == LinkDecor.EXTENDS) {
+		if (decors == LinkDecor.EXTENDS)
 			return new ExtremityFactoryExtends(backColor).createUDrawable(new Point2D.Double(), angle, null);
-		}
+
 		final ExtremityFactory extremityFactory = decors.getExtremityFactory(backColor);
-		if (extremityFactory == null) {
+		if (extremityFactory == null)
 			return null;
-		}
+
 		return extremityFactory.createUDrawable(new Point2D.Double(), angle, null);
 	}
 
@@ -208,12 +210,11 @@ public class ElkPath implements UDrawable {
 				y1 = pt.getY();
 			}
 
-			drawLine(ug, x1, y1, section.getEndX(), section.getEndY());
-
+			drawLine(ug, x1, y1, section.getEndX(), section.getEndY() + magicY2);
 		}
 	}
 
-	private void drawLine(UGraphic ug, final double x1, final double y1, final double x2, final double y2) {
+	private void drawLine(UGraphic ug, double x1, double y1, double x2, double y2) {
 		final ULine line = new ULine(x2 - x1, y2 - y1);
 		ug.apply(new UTranslate(x1, y1)).draw(line);
 	}

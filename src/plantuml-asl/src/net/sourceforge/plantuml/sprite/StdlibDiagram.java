@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.sprite;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -42,6 +41,7 @@ import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.WithSprite;
 import net.sourceforge.plantuml.api.ThemeStyle;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.command.BlocLines;
 import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.CommandFactorySprite;
@@ -55,13 +55,14 @@ import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.preproc.Stdlib;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
+import net.sourceforge.plantuml.ugraphic.color.HColors;
 import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
 
 public class StdlibDiagram extends UmlDiagram {
@@ -96,7 +97,7 @@ public class StdlibDiagram extends UmlDiagram {
 				try {
 					drawInternal(ug);
 				} catch (IOException e) {
-					e.printStackTrace();
+					Logme.error(e);
 				}
 			}
 
@@ -128,7 +129,7 @@ public class StdlibDiagram extends UmlDiagram {
 			try {
 				cmd.execute(this, bloc);
 			} catch (NoSuchColorException e) {
-				e.printStackTrace();
+				Logme.error(e);
 			}
 //			System.err.println("nb=" + nb);
 			nb++;
@@ -157,6 +158,6 @@ public class StdlibDiagram extends UmlDiagram {
 	}
 
 	private HColor getBlack() {
-		return HColorUtils.BLACK.withDark(HColorUtils.WHITE);
+		return HColors.BLACK.withDark(HColors.WHITE);
 	}
 }

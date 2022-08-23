@@ -34,13 +34,12 @@ import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorSet;
-import net.sourceforge.plantuml.ugraphic.color.HColorSimple;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
+import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 public abstract class AbstractElement implements Element {
 
 	final protected HColor getBlack() {
-		return HColorUtils.BLACK.withDark(HColorUtils.WHITE);
+		return HColors.BLACK.withDark(HColors.WHITE);
 	}
 
 	final protected HColor getColor88() {
@@ -64,11 +63,11 @@ public abstract class AbstractElement implements Element {
 	}
 
 	final protected HColor getWhite() {
-		return HColorUtils.WHITE.withDark(HColorUtils.BLACK);
+		return HColors.WHITE.withDark(HColors.BLACK);
 	}
 
 	private HColor buildColor(String color1, String color2) {
-		final HColorSimple tmp1 = (HColorSimple) HColorSet.instance().getColorOrWhite(null, color1);
+		final HColor tmp1 = HColorSet.instance().getColorOrWhite(null, color1);
 		final HColor tmp2 = HColorSet.instance().getColorOrWhite(null, color2);
 		return tmp1.withDark(tmp2);
 	}

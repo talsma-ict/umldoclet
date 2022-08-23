@@ -63,7 +63,7 @@ import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorNone;
+import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 public class GtileBox extends AbstractGtile {
 
@@ -168,12 +168,12 @@ public class GtileBox extends AbstractGtile {
 		final UStroke thickness = style.getStroke();
 
 		if (borderColor == null)
-			ug = ug.apply(new HColorNone());
+			ug = ug.apply(HColors.none());
 		else
 			ug = ug.apply(borderColor);
 
 		if (backColor == null)
-			ug = ug.apply(new HColorNone().bg());
+			ug = ug.apply(HColors.none().bg());
 		else
 			ug = ug.apply(backColor.bg());
 

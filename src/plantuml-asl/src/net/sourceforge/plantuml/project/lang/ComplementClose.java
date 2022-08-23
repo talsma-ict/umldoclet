@@ -39,10 +39,17 @@ import net.sourceforge.plantuml.project.GanttDiagram;
 public class ComplementClose implements Something {
 
 	public IRegex toRegex(String suffix) {
-		return new RegexLeaf("CLOSED" + suffix, "(closed?)");
+		return new RegexLeaf("CLOSED" + suffix, "(closed?(?: for \\[([^\\[\\]]+?)\\])?)");
 	}
 
-	public Failable<Object> getMe(GanttDiagram project, RegexResult arg, String suffix) {
-		return Failable.ok(new Object());
+	public Failable<String> getMe(GanttDiagram project, RegexResult arg, String suffix) {
+		final String value = arg.get("CLOSED" + suffix, 0);
+		final int x = value.indexOf('[');
+		if (x > 0) {
+			final int y = value.lastIndexOf(']');
+			final String s = value.substring(x + 1, y);
+			return Failable.ok(s);
+		}
+		return Failable.ok("");
 	}
 }

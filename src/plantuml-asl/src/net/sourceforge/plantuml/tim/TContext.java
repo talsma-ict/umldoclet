@@ -50,6 +50,7 @@ import net.sourceforge.plantuml.StringLocated;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.json.Json;
 import net.sourceforge.plantuml.json.JsonValue;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.preproc.Defines;
 import net.sourceforge.plantuml.preproc.FileWithSuffix;
 import net.sourceforge.plantuml.preproc.ImportedFiles;
@@ -106,9 +107,11 @@ import net.sourceforge.plantuml.tim.stdlib.IsLight;
 import net.sourceforge.plantuml.tim.stdlib.JsonKeyExists;
 import net.sourceforge.plantuml.tim.stdlib.Lighten;
 import net.sourceforge.plantuml.tim.stdlib.LoadJson;
+import net.sourceforge.plantuml.tim.stdlib.LoadJsonLegacy;
 import net.sourceforge.plantuml.tim.stdlib.LogicalNot;
 import net.sourceforge.plantuml.tim.stdlib.Lower;
 import net.sourceforge.plantuml.tim.stdlib.Newline;
+import net.sourceforge.plantuml.tim.stdlib.Now;
 import net.sourceforge.plantuml.tim.stdlib.RetrieveProcedure;
 import net.sourceforge.plantuml.tim.stdlib.ReverseColor;
 import net.sourceforge.plantuml.tim.stdlib.ReverseHsluvColor;
@@ -179,12 +182,14 @@ public class TContext {
 		functionsSet.addFunction(new Dec2hex());
 		functionsSet.addFunction(new HslColor());
 		functionsSet.addFunction(new LoadJson());
+		functionsSet.addFunction(new LoadJsonLegacy());
 		functionsSet.addFunction(new Chr());
 		functionsSet.addFunction(new Size());
 		functionsSet.addFunction(new GetJsonKey());
 		functionsSet.addFunction(new GetJsonType());
 		functionsSet.addFunction(new SplitStr());
 		functionsSet.addFunction(new JsonKeyExists());
+		functionsSet.addFunction(new Now());
 		// %standard_exists_function
 		// %str_replace
 		// !exit
@@ -292,7 +297,7 @@ public class TContext {
 				throw (EaterException) e;
 			if (e instanceof EaterExceptionLocated)
 				throw (EaterExceptionLocated) e;
-			e.printStackTrace();
+			Logme.error(e);
 			throw EaterException.located("Fatal parsing error");
 		}
 	}
@@ -364,9 +369,9 @@ public class TContext {
 				tmp[0] = new StringLocated(pendingAdd + tmp[0].getString(), tmp[0].getLocation());
 				pendingAdd = null;
 			}
-			for (StringLocated line : tmp) {
+			for (StringLocated line : tmp)
 				resultList.add(line);
-			}
+
 		}
 	}
 
@@ -396,18 +401,17 @@ public class TContext {
 
 	private StringLocated[] applyFunctionsAndVariablesInternal(TMemory memory, StringLocated located)
 			throws EaterException, EaterExceptionLocated {
-		if (memory.isEmpty() && functionsSet.size() == 0) {
+		if (memory.isEmpty() && functionsSet.size() == 0)
 			return new StringLocated[] { located };
-		}
+
 		final String result = applyFunctionsAndVariables(memory, located.getLocation(), located.getString());
-		if (result == null) {
+		if (result == null)
 			return null;
-		}
+
 		final String[] splited = result.split("\n");
 		final StringLocated[] tab = new StringLocated[splited.length];
-		for (int i = 0; i < splited.length; i++) {
+		for (int i = 0; i < splited.length; i++)
 			tab[i] = new StringLocated(splited[i], located.getLocation());
-		}
 
 		return tab;
 	}
@@ -436,17 +440,17 @@ public class TContext {
 				final TFunctionSignature signature = new TFunctionSignature(presentFunction, call.getValues().size(),
 						call.getNamedArguments().keySet());
 				final TFunction function = functionsSet.getFunctionSmart(signature);
-				if (function == null) {
+				if (function == null)
 					throw EaterException.located("Function not found " + presentFunction);
-				}
+
 				if (function.getFunctionType() == TFunctionType.PROCEDURE) {
 					this.pendingAdd = result.toString();
 					executeVoid3(location, memory, sub, function, call);
 					i += call.getCurrentPosition();
 					final String remaining = str.substring(i);
-					if (remaining.length() > 0) {
+					if (remaining.length() > 0)
 						appendToLastResult(remaining);
-					}
+
 					return null;
 				}
 				if (function.getFunctionType() == TFunctionType.LEGACY_DEFINELONG) {
@@ -493,7 +497,7 @@ public class TContext {
 				return;
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logme.error(e);
 			throw EaterException.located("Cannot import " + e.getMessage());
 		}
 
@@ -529,9 +533,9 @@ public class TContext {
 						saveImportedFiles = this.importedFiles;
 						this.importedFiles = this.importedFiles.withCurrentDir(f2.getParentFile());
 						final Reader reader = f2.getReader(charset);
-						if (reader == null) {
+						if (reader == null)
 							throw EaterException.located("cannot include " + location);
-						}
+
 						try {
 							ReadLine readerline = ReadLineReader.create(reader, location, s.getLocation());
 							readerline = new UncommentReadLine(readerline);
@@ -541,21 +545,21 @@ public class TContext {
 						}
 					}
 				} catch (IOException e) {
-					e.printStackTrace();
+					Logme.error(e);
 					throw EaterException.located("cannot include " + location);
 				}
 			}
-			if (sub == null) {
+			if (sub == null)
 				sub = subs.get(location);
-			}
-			if (sub == null) {
+
+			if (sub == null)
 				throw EaterException.located("cannot include " + location);
-			}
+
 			executeLinesInternal(memory, sub.lines(), null);
 		} finally {
-			if (saveImportedFiles != null) {
+			if (saveImportedFiles != null)
 				this.importedFiles = saveImportedFiles;
-			}
+
 		}
 	}
 
@@ -577,13 +581,13 @@ public class TContext {
 				body.add(sl);
 			} while (true);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logme.error(e);
 			throw EaterException.located("" + e);
 		} finally {
 			try {
 				reader2.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				Logme.error(e);
 			}
 		}
 	}
@@ -592,9 +596,9 @@ public class TContext {
 		final EaterTheme eater = new EaterTheme(s.getTrimmed(), importedFiles);
 		eater.analyze(this, memory);
 		final ReadLine reader = eater.getTheme();
-		if (reader == null) {
+		if (reader == null)
 			throw EaterException.located("No such theme " + eater.getName());
-		}
+
 		try {
 			final List<StringLocated> body = new ArrayList<>();
 			do {
@@ -606,13 +610,13 @@ public class TContext {
 				body.add(sl);
 			} while (true);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logme.error(e);
 			throw EaterException.located("Error reading theme " + e);
 		} finally {
 			try {
 				reader.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				Logme.error(e);
 			}
 		}
 	}
@@ -634,29 +638,28 @@ public class TContext {
 		try {
 			if (location.startsWith("http://") || location.startsWith("https://")) {
 				final SURL url = SURL.create(location);
-				if (url == null) {
+				if (url == null)
 					throw EaterException.located("Cannot open URL");
-				}
+
 				reader = PreprocessorUtils.getReaderIncludeUrl(url, s, suf, charset);
 			} else if (location.startsWith("<") && location.endsWith(">")) {
 				reader = PreprocessorUtils.getReaderStdlibInclude(s, location.substring(1, location.length() - 1));
 			} else {
 				final FileWithSuffix f2 = importedFiles.getFile(location, suf);
 				if (f2.fileOk()) {
-					if (strategy == PreprocessorIncludeStrategy.DEFAULT && filesUsedCurrent.contains(f2)) {
+					if (strategy == PreprocessorIncludeStrategy.DEFAULT && filesUsedCurrent.contains(f2))
 						return;
-					}
-					if (strategy == PreprocessorIncludeStrategy.ONCE && filesUsedCurrent.contains(f2)) {
+
+					if (strategy == PreprocessorIncludeStrategy.ONCE && filesUsedCurrent.contains(f2))
 						throw EaterException.located("This file has already been included");
-					}
 
 					if (StartDiagramExtractReader.containsStartDiagram(f2, s, charset)) {
 						reader = StartDiagramExtractReader.build(f2, s, charset);
 					} else {
 						final Reader tmp = f2.getReader(charset);
-						if (tmp == null) {
+						if (tmp == null)
 							throw EaterException.located("Cannot include file");
-						}
+
 						reader = ReadLineReader.create(tmp, location, s.getLocation());
 					}
 					saveImportedFiles = this.importedFiles;
@@ -677,20 +680,20 @@ public class TContext {
 						body.add(sl);
 					} while (true);
 				} finally {
-					if (saveImportedFiles != null) {
+					if (saveImportedFiles != null)
 						this.importedFiles = saveImportedFiles;
-					}
+
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logme.error(e);
 			throw EaterException.located("cannot include " + e);
 		} finally {
 			if (reader != null) {
 				try {
 					reader.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					Logme.error(e);
 				}
 			}
 		}
@@ -699,41 +702,38 @@ public class TContext {
 	}
 
 	public boolean isLegacyDefine(String functionName) {
-		for (Map.Entry<TFunctionSignature, TFunction> ent : functionsSet.functions().entrySet()) {
-			if (ent.getKey().getFunctionName().equals(functionName) && ent.getValue().getFunctionType().isLegacy()) {
+		for (Map.Entry<TFunctionSignature, TFunction> ent : functionsSet.functions().entrySet())
+			if (ent.getKey().getFunctionName().equals(functionName) && ent.getValue().getFunctionType().isLegacy())
 				return true;
-			}
-		}
+
 		return false;
 	}
 
 	public boolean isUnquoted(String functionName) {
-		for (Map.Entry<TFunctionSignature, TFunction> ent : functionsSet.functions().entrySet()) {
-			if (ent.getKey().getFunctionName().equals(functionName) && ent.getValue().isUnquoted()) {
+		for (Map.Entry<TFunctionSignature, TFunction> ent : functionsSet.functions().entrySet())
+			if (ent.getKey().getFunctionName().equals(functionName) && ent.getValue().isUnquoted())
 				return true;
-			}
-		}
+
 		return false;
 	}
 
 	public boolean doesFunctionExist(String functionName) {
-		for (Map.Entry<TFunctionSignature, TFunction> ent : functionsSet.functions().entrySet()) {
-			if (ent.getKey().getFunctionName().equals(functionName)) {
+		for (Map.Entry<TFunctionSignature, TFunction> ent : functionsSet.functions().entrySet())
+			if (ent.getKey().getFunctionName().equals(functionName))
 				return true;
-			}
-		}
+
 		return false;
 	}
 
 	private String getFunctionNameAt(String s, int pos) {
 		if (pos > 0 && TLineType.isLetterOrUnderscoreOrDigit(s.charAt(pos - 1))
-				&& VariableManager.justAfterBackslashN(s, pos) == false) {
+				&& VariableManager.justAfterBackslashN(s, pos) == false)
 			return null;
-		}
+
 		final String fname = functionsSet.getLonguestMatchStartingIn(s.substring(pos));
-		if (fname.length() == 0) {
+		if (fname.length() == 0)
 			return null;
-		}
+
 		return fname.substring(0, fname.length() - 1);
 	}
 
@@ -750,9 +750,9 @@ public class TContext {
 		while (resultList.size() > n1) {
 			sb.append(resultList.get(n1).getString());
 			resultList.remove(n1);
-			if (resultList.size() > n1) {
+			if (resultList.size() > n1)
 				sb.append("\\n");
-			}
+
 		}
 		return sb.toString();
 	}

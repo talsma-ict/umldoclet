@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import net.sourceforge.plantuml.log.Logme;
+
 class RealMax extends AbstractReal implements Real {
 
 	private final List<Real> all = new ArrayList<>();
@@ -88,7 +90,7 @@ class RealMax extends AbstractReal implements Real {
 	}
 
 	public void printCreationStackTrace() {
-		creationPoint.printStackTrace();
+		Logme.error(creationPoint);
 	}
 
 }

@@ -40,6 +40,7 @@ import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SFile;
 
 abstract class AbstractGraphviz implements Graphviz {
@@ -111,7 +112,7 @@ abstract class AbstractGraphviz implements Graphviz {
 			// }
 			Log.info("Ending process ok");
 		} catch (Throwable e) {
-			e.printStackTrace();
+			Logme.error(e);
 			Log.error("Error: " + e);
 			Log.error("The command was " + cmd);
 			Log.error("");

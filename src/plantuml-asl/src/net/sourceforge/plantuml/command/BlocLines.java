@@ -63,9 +63,9 @@ public class BlocLines implements Iterable<StringLocated> {
 
 	public static BlocLines load(SFile f, LineLocation location) throws IOException {
 		final BufferedReader br = f.openBufferedReader();
-		if (br == null) {
+		if (br == null)
 			return null;
-		}
+
 		return loadInternal(br, location);
 	}
 
@@ -82,9 +82,8 @@ public class BlocLines implements Iterable<StringLocated> {
 		final List<StringLocated> result = new ArrayList<>();
 		String s;
 		try {
-			while ((s = br.readLine()) != null) {
+			while ((s = br.readLine()) != null)
 				result.add(new StringLocated(s, location));
-			}
 		} finally {
 			br.close();
 		}
@@ -113,17 +112,17 @@ public class BlocLines implements Iterable<StringLocated> {
 
 	public static BlocLines fromArray(String[] array) {
 		final List<StringLocated> result = new ArrayList<>();
-		for (String single : array) {
+		for (String single : array)
 			result.add(new StringLocated(single, null));
-		}
+
 		return new BlocLines(result);
 	}
 
 	public static BlocLines getWithNewlines(String s) {
 		final List<StringLocated> result = new ArrayList<>();
-		for (String cs : BackSlash.getWithNewlines(s)) {
+		for (String cs : BackSlash.getWithNewlines(s))
 			result.add(new StringLocated(cs, null));
-		}
+
 		return new BlocLines(result);
 	}
 
@@ -145,9 +144,9 @@ public class BlocLines implements Iterable<StringLocated> {
 
 	public List<String> getLinesAsStringForSprite() {
 		final List<String> result = new ArrayList<>();
-		for (StringLocated s : lines) {
+		for (StringLocated s : lines)
 			result.add(s.getString());
-		}
+
 		return result;
 	}
 
@@ -160,9 +159,9 @@ public class BlocLines implements Iterable<StringLocated> {
 	}
 
 	public StringLocated getFirst() {
-		if (lines.size() == 0) {
+		if (lines.size() == 0)
 			return null;
-		}
+
 		return lines.get(0);
 	}
 
@@ -187,11 +186,10 @@ public class BlocLines implements Iterable<StringLocated> {
 
 	public BlocLines removeEmptyLines() {
 		final List<StringLocated> copy = new ArrayList<>(lines);
-		for (final Iterator<StringLocated> it = copy.iterator(); it.hasNext();) {
-			if (it.next().getString().length() == 0) {
+		for (final Iterator<StringLocated> it = copy.iterator(); it.hasNext();)
+			if (it.next().getString().length() == 0)
 				it.remove();
-			}
-		}
+
 		return new BlocLines(copy);
 	}
 
@@ -205,16 +203,16 @@ public class BlocLines implements Iterable<StringLocated> {
 //	}
 
 	public BlocLines removeEmptyColumns() {
-		if (firstColumnRemovable(lines) == false) {
+		if (firstColumnRemovable(lines) == false)
 			return this;
-		}
+
 		final List<StringLocated> copy = new ArrayList<>(lines);
 		do {
 			for (int i = 0; i < copy.size(); i++) {
 				final StringLocated s = copy.get(i);
-				if (s.getString().length() > 0) {
+				if (s.getString().length() > 0)
 					copy.set(i, s.substring(1, s.getString().length()));
-				}
+
 			}
 		} while (firstColumnRemovable(copy));
 		return new BlocLines(copy);
@@ -223,14 +221,14 @@ public class BlocLines implements Iterable<StringLocated> {
 	private static boolean firstColumnRemovable(List<StringLocated> data) {
 		boolean allEmpty = true;
 		for (StringLocated s : data) {
-			if (s.getString().length() == 0) {
+			if (s.getString().length() == 0)
 				continue;
-			}
+
 			allEmpty = false;
 			final char c = s.getString().charAt(0);
-			if (c != ' ' && c != '\t') {
+			if (c != ' ' && c != '\t')
 				return false;
-			}
+
 		}
 		return allEmpty == false;
 	}
@@ -241,9 +239,9 @@ public class BlocLines implements Iterable<StringLocated> {
 	}
 
 	public BlocLines removeStartingAndEnding(String data, int removeAtEnd) {
-		if (lines.size() == 0) {
+		if (lines.size() == 0)
 			return this;
-		}
+
 		final List<StringLocated> copy = new ArrayList<>(lines);
 		copy.set(0, new StringLocated(data, null));
 		final int n = copy.size() - 1;
@@ -253,9 +251,9 @@ public class BlocLines implements Iterable<StringLocated> {
 	}
 
 	public BlocLines overrideLastLine(String last) {
-		if (lines.size() == 0) {
+		if (lines.size() == 0)
 			return this;
-		}
+
 		final List<StringLocated> copy = new ArrayList<>(lines);
 		final int n = copy.size() - 1;
 		final StringLocated currentLast = copy.get(n);
@@ -273,9 +271,9 @@ public class BlocLines implements Iterable<StringLocated> {
 	}
 
 	public BlocLines trimSmart(int referenceLine) {
-		if (lines.size() <= referenceLine) {
+		if (lines.size() <= referenceLine)
 			return this;
-		}
+
 		final List<StringLocated> copy = new ArrayList<>(lines);
 		final int nbStartingSpace = nbStartingSpace(copy.get(referenceLine).getString());
 		for (int i = referenceLine; i < copy.size(); i++) {
@@ -287,9 +285,9 @@ public class BlocLines implements Iterable<StringLocated> {
 
 	private static int nbStartingSpace(CharSequence s) {
 		int nb = 0;
-		while (nb < s.length() && isSpaceOrTab(s.charAt(nb))) {
+		while (nb < s.length() && isSpaceOrTab(s.charAt(nb)))
 			nb++;
-		}
+
 		return nb;
 	}
 
@@ -326,9 +324,9 @@ public class BlocLines implements Iterable<StringLocated> {
 	}
 
 	public BlocLines eventuallyMoveBracket() {
-		if (size() < 2) {
+		if (size() < 2)
 			return this;
-		}
+
 		final String first = getFirst().getTrimmed().getString();
 		final String second = getAt(1).getTrimmed().getString();
 		if (first.endsWith("{") == false && second.equals("{")) {
@@ -343,7 +341,7 @@ public class BlocLines implements Iterable<StringLocated> {
 
 	public BlocLines eventuallyMoveAllEmptyBracket() {
 		final List<StringLocated> result = new ArrayList<>();
-		for (StringLocated line : lines) {
+		for (StringLocated line : lines)
 			if (line.getTrimmed().toString().equals("{")) {
 				if (result.size() > 0) {
 					final int pos = result.size() - 1;
@@ -353,7 +351,7 @@ public class BlocLines implements Iterable<StringLocated> {
 			} else {
 				result.add(line);
 			}
-		}
+
 		return new BlocLines(result);
 	}
 

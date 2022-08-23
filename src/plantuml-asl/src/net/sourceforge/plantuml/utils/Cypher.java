@@ -45,6 +45,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.sourceforge.plantuml.log.Logme;
+
 public class Cypher {
 
 	final private static Pattern p = Pattern.compile("[\\p{L}\\p{N}]+");
@@ -66,7 +68,7 @@ public class Cypher {
 				}
 				is.close();
 			} catch (Exception e) {
-				e.printStackTrace();
+				Logme.error(e);
 			}
 
 		Collections.shuffle(words, rnd);

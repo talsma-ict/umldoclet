@@ -205,12 +205,18 @@ spot {
   spotEntity {
     BackgroundColor #ADD1B2
   }
+  spotException {
+	BackgroundColor #D94321
+  }
 }
 
 
 stateDiagram {
   state {
     RoundCorner 25
+  }
+  stateBody {
+    BackGroundColor transparent
   }
   element {
 	title {
@@ -550,6 +556,9 @@ spot {
   }
   spotEntity {
     BackgroundColor #2E5233
+  }
+  spotException {
+	BackgroundColor #7D0000
   }
 }
 

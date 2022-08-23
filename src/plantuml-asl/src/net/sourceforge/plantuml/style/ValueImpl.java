@@ -37,8 +37,7 @@ import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorSet;
-import net.sourceforge.plantuml.ugraphic.color.HColorSimple;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
+import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 public class ValueImpl implements Value {
 
@@ -92,7 +91,7 @@ public class ValueImpl implements Value {
 			return null;
 
 		if ("transparent".equalsIgnoreCase(value1))
-			return HColorUtils.transparent();
+			return HColors.transparent();
 
 		if (value1 == null)
 			throw new IllegalArgumentException(value.toString());
@@ -100,7 +99,7 @@ public class ValueImpl implements Value {
 		final HColor result = set.getColorOrWhite(themeStyle, value1);
 		if (value.getValue2() != null) {
 			final HColor dark = set.getColorOrWhite(themeStyle, value.getValue2());
-			return ((HColorSimple) result).withDark(dark);
+			return result.withDark(dark);
 		}
 		return result;
 	}

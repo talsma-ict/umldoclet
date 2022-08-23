@@ -30,10 +30,9 @@
  */
 package net.sourceforge.plantuml.project.draw;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
-
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.SpriteContainerEmpty;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.StringBounder;
@@ -55,13 +54,12 @@ import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public class TaskDrawDiamond extends AbstractTaskDraw {
 
 	public TaskDrawDiamond(TimeScale timeScale, Real y, String prettyDisplay, Day start, ISkinParam skinParam,
-			Task task, ToTaskDraw toTaskDraw, StyleBuilder styleBuilder, HColorSet colorSet) {
-		super(timeScale, y, prettyDisplay, start, skinParam, task, toTaskDraw, styleBuilder, colorSet);
+			Task task, ToTaskDraw toTaskDraw, StyleBuilder styleBuilder) {
+		super(timeScale, y, prettyDisplay, start, skinParam, task, toTaskDraw, styleBuilder);
 	}
 
 	@Override
@@ -136,7 +134,14 @@ public class TaskDrawDiamond extends AbstractTaskDraw {
 		final double x2 = timeScale.getEndingPosition(start);
 		final double width = getShapeHeight(ug.getStringBounder());
 		final double delta = x2 - x1 - width;
+
+		if (url != null)
+			ug.startUrl(url);
+
 		drawShape(applyColors(ug).apply(UTranslate.dx(x1 + delta / 2)));
+
+		if (url != null)
+			ug.closeUrl();
 	}
 
 	private UGraphic applyColors(UGraphic ug) {

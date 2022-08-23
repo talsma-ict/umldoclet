@@ -33,6 +33,7 @@ package net.sourceforge.plantuml.cucadiagram;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SFile;
 
 public class GroupPrinter {
@@ -85,7 +86,7 @@ public class GroupPrinter {
 			new GroupPrinter(pw).printGroup(rootGroup);
 			pw.println("</html>");
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logme.error(e);
 		}
 	}
 

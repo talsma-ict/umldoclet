@@ -32,6 +32,8 @@ package net.sourceforge.plantuml.api;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import net.sourceforge.plantuml.log.Logme;
+
 public final class TimeoutExecutor {
 
 	private final long ms;
@@ -48,7 +50,7 @@ public final class TimeoutExecutor {
 			mainThread.join(ms);
 		} catch (InterruptedException e) {
 			System.err.println("TimeoutExecutorA " + e);
-			e.printStackTrace();
+			Logme.error(e);
 			return false;
 		} finally {
 			done = mainThread.done.get();
@@ -75,7 +77,7 @@ public final class TimeoutExecutor {
 				done.set(true);
 			} catch (InterruptedException e) {
 				System.err.println("TimeoutExecutorB " + e);
-				e.printStackTrace();
+				Logme.error(e);
 			}
 		}
 

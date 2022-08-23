@@ -40,6 +40,7 @@ import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SImageIO;
 import net.sourceforge.plantuml.ugraphic.AffineTransformType;
 import net.sourceforge.plantuml.ugraphic.PixelImage;
@@ -61,15 +62,12 @@ public class SpriteImage implements Sprite {
 		return new AbstractTextBlock() {
 
 			public void drawU(UGraphic ug) {
-				if (colorMapper instanceof ColorMapperMonochrome) {
+				if (colorMapper instanceof ColorMapperMonochrome)
 					ug.draw(img.monochrome().scale(scale));
-				} else if (color == null)
+				else if (color == null)
 					ug.draw(img.scale(scale));
 				else
 					ug.draw(img.muteColor(colorMapper.toColor(color)).scale(scale));
-
-//				ug.draw(img.muteColor(((HColorSimple) color).getColor999()).scale(scale));
-
 			}
 
 			public Dimension2D calculateDimension(StringBounder stringBounder) {
@@ -89,7 +87,7 @@ public class SpriteImage implements Sprite {
 		try {
 			return new SpriteImage(SImageIO.read(is));
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logme.error(e);
 			return null;
 		}
 

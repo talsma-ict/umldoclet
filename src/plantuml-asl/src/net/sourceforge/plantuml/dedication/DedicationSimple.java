@@ -33,6 +33,8 @@ package net.sourceforge.plantuml.dedication;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 
+import net.sourceforge.plantuml.log.Logme;
+
 public class DedicationSimple implements Dedication {
 
 	private final byte crypted[];
@@ -56,7 +58,7 @@ public class DedicationSimple implements Dedication {
 			current = decoded.toByteArray(512);
 			return PSystemDedication.getBufferedImage(new ByteArrayInputStream(current));
 		} catch (Throwable t) {
-			t.printStackTrace();
+			Logme.error(t);
 			return null;
 		}
 	}

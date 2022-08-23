@@ -55,7 +55,7 @@ import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
+import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 public class BpmElement extends AbstractConnectorPuzzle implements ConnectorPuzzle {
 
@@ -95,7 +95,7 @@ public class BpmElement extends AbstractConnectorPuzzle implements ConnectorPuzz
 
 			public void drawU(UGraphic ug) {
 				raw.drawU(ug);
-				ug = ug.apply(HColorUtils.RED);
+				ug = ug.apply(HColors.RED);
 				for (Where w : Where.values()) {
 					if (have(w)) {
 						drawLine(ug, w, raw.calculateDimension(ug.getStringBounder()));
@@ -144,7 +144,7 @@ public class BpmElement extends AbstractConnectorPuzzle implements ConnectorPuzz
 
 	public TextBlock toTextBlockInternal(ISkinParam skinParam) {
 		if (type == BpmElementType.START) {
-			return new FtileCircleStart(skinParam, HColorUtils.BLACK, null, getStyle(skinParam));
+			return new FtileCircleStart(skinParam, HColors.BLACK, null, getStyle(skinParam));
 		}
 		if (type == BpmElementType.MERGE) {
 			final HColor borderColor = SkinParamUtils.getColor(skinParam, null, ColorParam.activityBorder);
@@ -156,7 +156,7 @@ public class BpmElement extends AbstractConnectorPuzzle implements ConnectorPuzz
 			return FtileBox.create(skinParam, display, null, BoxStyle.PLAIN, null);
 		}
 		final UFont font = UFont.serif(14);
-		final FontConfiguration fc = FontConfiguration.create(font, HColorUtils.RED, HColorUtils.RED, false);
+		final FontConfiguration fc = FontConfiguration.create(font, HColors.RED, HColors.RED, false);
 		if (Display.isNull(display)) {
 			return Display.getWithNewlines(type.toString()).create(fc, HorizontalAlignment.LEFT, skinParam);
 		}
