@@ -42,7 +42,7 @@ import net.sourceforge.plantuml.tim.TContext;
 import net.sourceforge.plantuml.tim.TFunctionSignature;
 import net.sourceforge.plantuml.tim.TMemory;
 import net.sourceforge.plantuml.tim.expression.TValue;
-import net.sourceforge.plantuml.ugraphic.color.HColorSimple;
+import net.sourceforge.plantuml.ugraphic.color.HColors;
 import net.sourceforge.plantuml.ugraphic.color.HSLColor;
 
 public class HslColor extends SimpleReturnFunction {
@@ -63,12 +63,12 @@ public class HslColor extends SimpleReturnFunction {
 		if (values.size() == 3) {
 			final HSLColor color = new HSLColor(h, s, l);
 			final Color rgb = color.getRGB();
-			return TValue.fromString(new HColorSimple(rgb, false).asString());
+			return TValue.fromString(HColors.simple(rgb).asString());
 		}
 		final int a = values.get(3).toInt();
 		final HSLColor color = new HSLColor(h, s, l, (float) (a / 100.0));
 		final Color rgb = color.getRGB();
-		return TValue.fromString(new HColorSimple(rgb, false).asString());
+		return TValue.fromString(HColors.simple(rgb).asString());
 
 	}
 }

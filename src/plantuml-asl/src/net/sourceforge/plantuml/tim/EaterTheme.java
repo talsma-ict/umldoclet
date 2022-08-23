@@ -34,10 +34,12 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 
 import net.sourceforge.plantuml.AFile;
 import net.sourceforge.plantuml.StringLocated;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.preproc.FileWithSuffix;
 import net.sourceforge.plantuml.preproc.ImportedFiles;
 import net.sourceforge.plantuml.preproc.ReadLine;
@@ -91,7 +93,7 @@ public class EaterTheme extends Eater {
 						return ReadLineReader.create(br, "theme " + realName);
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				Logme.error(e);
 			}
 			throw EaterException.located("Cannot load " + realName);
 
@@ -103,16 +105,20 @@ public class EaterTheme extends Eater {
 			try {
 				return PreprocessorUtils.getReaderInclude(url, getLineLocation(), UTF_8);
 			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
+				Logme.error(e);
 				throw EaterException.located("Cannot decode charset");
 			}
 		}
 
 		try {
 			final FileWithSuffix file = context.getFileWithSuffix(from, realName);
-			return ReadLineReader.create(file.getReader(UTF_8), "theme " + realName);
+			final Reader tmp = file.getReader(UTF_8);
+			if (tmp == null)
+				throw EaterException.located("No such theme " + realName);
+
+			return ReadLineReader.create(tmp, "theme " + realName);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logme.error(e);
 			throw EaterException.located("Cannot load " + realName);
 		}
 

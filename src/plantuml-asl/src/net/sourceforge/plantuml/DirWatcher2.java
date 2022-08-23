@@ -44,6 +44,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.preproc.FileWithSuffix;
 
 public class DirWatcher2 {
@@ -93,7 +94,7 @@ public class DirWatcher2 {
 										modifieds.put(f, new FileWatcher(files));
 										return Collections.unmodifiableList(generatedImages);
 									} catch (Exception e) {
-										e.printStackTrace();
+										Logme.error(e);
 										return Collections.emptyList();
 									}
 								}

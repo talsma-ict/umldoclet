@@ -50,6 +50,7 @@ import net.sourceforge.plantuml.SignatureUtils;
 import net.sourceforge.plantuml.dedication.Dedication;
 import net.sourceforge.plantuml.dedication.QBlock;
 import net.sourceforge.plantuml.dedication.TurningBytes;
+import net.sourceforge.plantuml.log.Logme;
 
 public class PLSSignature {
 
@@ -224,7 +225,7 @@ public class PLSSignature {
 		try {
 			return SignatureUtils.getSHA512raw(SignatureUtils.salting(signature, getSalt(signature)));
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logme.error(e);
 			throw new IOException();
 		}
 	}

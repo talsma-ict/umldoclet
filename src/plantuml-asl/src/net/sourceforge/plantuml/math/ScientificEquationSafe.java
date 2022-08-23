@@ -47,6 +47,7 @@ import net.sourceforge.plantuml.api.ImageDataSimple;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.eps.EpsGraphics;
 import net.sourceforge.plantuml.graphic.GraphicStrings;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SImageIO;
 import net.sourceforge.plantuml.svek.TextBlockBackcolored;
 import net.sourceforge.plantuml.ugraphic.AffineTransformType;
@@ -68,7 +69,7 @@ public class ScientificEquationSafe {
 		try {
 			return new ScientificEquationSafe(formula, new AsciiMath(formula));
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logme.error(e);
 			Log.info("Error parsing " + formula);
 			return new ScientificEquationSafe(formula, null);
 		}
@@ -78,7 +79,7 @@ public class ScientificEquationSafe {
 		try {
 			return new ScientificEquationSafe(formula, new LatexBuilder(formula));
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logme.error(e);
 			Log.info("Error parsing " + formula);
 			return new ScientificEquationSafe(formula, null);
 		}
@@ -124,7 +125,7 @@ public class ScientificEquationSafe {
 		if (equation != null) {
 			System.err.println("Latex=" + equation.getSource());
 		}
-		e.printStackTrace();
+		Logme.error(e);
 	}
 
 	private TextBlockBackcolored getRollback() {

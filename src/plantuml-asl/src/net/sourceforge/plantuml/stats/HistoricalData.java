@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.version.Version;
 
 public class HistoricalData {
@@ -50,7 +51,7 @@ public class HistoricalData {
 		try {
 			historical.addAll(reload());
 		} catch (BackingStoreException e) {
-			e.printStackTrace();
+			Logme.error(e);
 		}
 		Collections.sort(historical, getIdComparator());
 	}

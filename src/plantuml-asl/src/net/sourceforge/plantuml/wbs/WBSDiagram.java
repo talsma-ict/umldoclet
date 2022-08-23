@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.wbs;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -40,6 +39,7 @@ import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.api.ThemeStyle;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.regex.Matcher2;
 import net.sourceforge.plantuml.command.regex.MyPattern;
@@ -129,15 +129,15 @@ public class WBSDiagram extends UmlDiagram {
 			Direction direction, IdeaShape shape) {
 		try {
 			if (level == 0) {
-				if (root != null) {
+				if (root != null)
 					return CommandExecutionResult.error("Error 44");
-				}
+
 				initRoot(backColor, display, stereotype, shape);
 				return CommandExecutionResult.ok();
 			}
 			return add(backColor, level, display, stereotype, direction, shape);
 		} catch (NoStyleAvailableException e) {
-			// e.printStackTrace();
+			// Logme.error(e);
 			return CommandExecutionResult.error("General failure: no style available.");
 		}
 	}
@@ -153,9 +153,9 @@ public class WBSDiagram extends UmlDiagram {
 
 	private WElement getParentOfLast(int nb) {
 		WElement result = last;
-		for (int i = 0; i < nb; i++) {
+		for (int i = 0; i < nb; i++)
 			result = result.getParent();
-		}
+
 		return result;
 	}
 
@@ -166,18 +166,18 @@ public class WBSDiagram extends UmlDiagram {
 			return 0;
 		}
 		type = type.replace('\t', ' ');
-		if (type.contains(" ") == false) {
+		if (type.contains(" ") == false)
 			return type.length() - 1;
-		}
-		if (type.endsWith(first)) {
+
+		if (type.endsWith(first))
 			return type.length() - first.length();
-		}
-		if (type.trim().length() == 1) {
+
+		if (type.trim().length() == 1)
 			return type.length() - 1;
-		}
-		if (type.startsWith(first)) {
+
+		if (type.startsWith(first))
 			return type.length() - first.length();
-		}
+
 		throw new UnsupportedOperationException("type=<" + type + ">[" + first + "]");
 	}
 
@@ -199,7 +199,7 @@ public class WBSDiagram extends UmlDiagram {
 			}
 			return CommandExecutionResult.error("Bad tree structure");
 		} catch (NoStyleAvailableException e) {
-			// e.printStackTrace();
+			// Logme.error(e);
 			return CommandExecutionResult.error("General failure: no style available.");
 		}
 	}

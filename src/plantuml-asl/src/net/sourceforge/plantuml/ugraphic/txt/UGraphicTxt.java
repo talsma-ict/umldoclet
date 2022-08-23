@@ -50,7 +50,7 @@ import net.sourceforge.plantuml.ugraphic.UImage;
 import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.UText;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
+import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 public class UGraphicTxt extends AbstractCommonUGraphic implements ClipContainer {
 
@@ -67,7 +67,7 @@ public class UGraphicTxt extends AbstractCommonUGraphic implements ClipContainer
 	}
 
 	public UGraphicTxt() {
-		super(HColorUtils.BLACK, new ColorMapperIdentity(), new TextStringBounder());
+		super(HColors.BLACK, new ColorMapperIdentity(), new TextStringBounder());
 		this.charArea = new UmlCharAreaImpl();
 	}
 

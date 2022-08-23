@@ -49,6 +49,7 @@ import java.util.StringTokenizer;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileUtils;
 import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SecurityUtils;
 
 class FtpLoop implements Runnable {
@@ -322,7 +323,7 @@ class FtpLoop implements Runnable {
 		try {
 			runInternal();
 		} catch (Throwable t) {
-			t.printStackTrace();
+			Logme.error(t);
 		}
 
 	}

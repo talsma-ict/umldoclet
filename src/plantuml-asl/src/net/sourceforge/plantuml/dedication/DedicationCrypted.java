@@ -36,6 +36,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.math.BigInteger;
 
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.utils.MTRandom;
 
 public class DedicationCrypted implements Dedication {
@@ -108,7 +109,7 @@ public class DedicationCrypted implements Dedication {
 			this.solution = line;
 			return img;
 		} catch (Throwable t) {
-			t.printStackTrace();
+			Logme.error(t);
 			return null;
 		}
 

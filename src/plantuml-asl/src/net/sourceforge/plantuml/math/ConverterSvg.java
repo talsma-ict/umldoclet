@@ -33,7 +33,6 @@ package net.sourceforge.plantuml.math;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -46,6 +45,8 @@ import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.log.Logme;
 
 public class ConverterSvg {
 
@@ -68,7 +69,7 @@ public class ConverterSvg {
 					Class.forName("org.scilab.forge.jlatexmath.greek.GreekRegistration").newInstance());
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logme.error(e);
 		}
 
 	}

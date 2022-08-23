@@ -98,7 +98,7 @@ import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorNone;
+import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 public class SvekLine implements Moveable, Hideable, GuideLine {
 
@@ -658,7 +658,7 @@ public class SvekLine implements Moveable, Hideable, GuideLine {
 		} else if (this.link.getSpecificColor() != null)
 			color = this.link.getSpecificColor();
 
-		ug = ug.apply(new HColorNone().bg()).apply(color);
+		ug = ug.apply(HColors.none().bg()).apply(color);
 		final LinkType linkType = link.getType();
 		UStroke stroke;
 		if (suggestedStroke == null || linkType.getStyle().isNormal() == false)
@@ -792,7 +792,7 @@ public class SvekLine implements Moveable, Hideable, GuideLine {
 			if (linkType.getDecor1().isFill())
 				ug2 = ug2.apply(color.bg());
 			else
-				ug2 = ug2.apply(new HColorNone().bg());
+				ug2 = ug2.apply(HColors.none().bg());
 
 			// System.err.println("Line::draw EXTREMITY1");
 			this.extremity2.drawU(ug2);
@@ -802,7 +802,7 @@ public class SvekLine implements Moveable, Hideable, GuideLine {
 			if (linkType.getDecor2().isFill())
 				ug2 = ug2.apply(color.bg());
 			else
-				ug2 = ug2.apply(new HColorNone().bg());
+				ug2 = ug2.apply(HColors.none().bg());
 
 			// System.err.println("Line::draw EXTREMITY2");
 			this.extremity1.drawU(ug2);

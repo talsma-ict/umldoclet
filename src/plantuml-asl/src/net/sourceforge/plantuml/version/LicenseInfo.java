@@ -45,8 +45,9 @@ import java.util.prefs.Preferences;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.SignatureUtils;
-import net.sourceforge.plantuml.security.SImageIO;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SFile;
+import net.sourceforge.plantuml.security.SImageIO;
 
 public class LicenseInfo {
 
@@ -117,7 +118,7 @@ public class LicenseInfo {
 				}
 			} catch (IOException e) {
 				Log.info("Error " + e);
-				// e.printStackTrace();
+				// Logme.error(e);
 			}
 		}
 		return cache;
@@ -129,7 +130,7 @@ public class LicenseInfo {
 				final String sig = SignatureUtils.toHexString(PLSSignature.signature());
 				return PLSSignature.retrieveNamed(sig, key, true);
 			} catch (Exception e) {
-				// e.printStackTrace();
+				// Logme.error(e);
 				Log.info("Error retrieving license info" + e);
 			}
 		}
@@ -156,7 +157,7 @@ public class LicenseInfo {
 				dis.close();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logme.error(e);
 		}
 		return null;
 	}
@@ -180,7 +181,7 @@ public class LicenseInfo {
 			}
 			return null;
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logme.error(e);
 			return null;
 		}
 	}

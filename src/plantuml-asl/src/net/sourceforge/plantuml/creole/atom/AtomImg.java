@@ -33,7 +33,6 @@ package net.sourceforge.plantuml.creole.atom;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.awt.Color;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -41,6 +40,7 @@ import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.FileSystem;
 import net.sourceforge.plantuml.FileUtils;
 import net.sourceforge.plantuml.Url;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.code.Base64Coder;
 import net.sourceforge.plantuml.creole.legacy.AtomTextUtils;
 import net.sourceforge.plantuml.flashcode.FlashCodeFactory;
@@ -49,8 +49,9 @@ import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.ImgValign;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TileImageSvg;
-import net.sourceforge.plantuml.security.SImageIO;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SFile;
+import net.sourceforge.plantuml.security.SImageIO;
 import net.sourceforge.plantuml.security.SURL;
 import net.sourceforge.plantuml.security.SecurityProfile;
 import net.sourceforge.plantuml.security.SecurityUtils;
@@ -143,7 +144,7 @@ public class AtomImg extends AbstractAtom implements Atom {
 			}
 			return new AtomImg(f.readRasterImageFromFile(), scale, url, src);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logme.error(e);
 			if (SecurityUtils.getSecurityProfile() == SecurityProfile.UNSECURE) 
 				return AtomTextUtils.createLegacy("ERROR " + e.toString(), fc);
 			

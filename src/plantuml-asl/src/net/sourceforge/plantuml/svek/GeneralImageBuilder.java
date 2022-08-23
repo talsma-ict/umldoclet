@@ -93,6 +93,7 @@ import net.sourceforge.plantuml.graphic.USymbol;
 import net.sourceforge.plantuml.graphic.USymbolHexagon;
 import net.sourceforge.plantuml.graphic.USymbolInterface;
 import net.sourceforge.plantuml.graphic.USymbols;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
@@ -432,7 +433,7 @@ public final class GeneralImageBuilder {
 					}
 				}
 			} catch (IllegalStateException e) {
-				e.printStackTrace();
+				Logme.error(e);
 			}
 		}
 

@@ -30,6 +30,8 @@
  */
 package net.sourceforge.plantuml.real;
 
+import net.sourceforge.plantuml.log.Logme;
+
 class PositiveForce {
 
 	private final Real fixedPoint;
@@ -65,7 +67,7 @@ class PositiveForce {
 		} catch (IllegalStateException e) {
 			System.err.println("Pb with force " + this);
 			System.err.println("This force has been created here:");
-			creationPoint.printStackTrace();
+			Logme.error(creationPoint);
 			System.err.println("The fixed point has been created here: " + fixedPoint);
 			fixedPoint.printCreationStackTrace();
 			throw e;

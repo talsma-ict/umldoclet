@@ -45,6 +45,7 @@ import net.sourceforge.plantuml.code.CompressionZopfliZlib;
 import net.sourceforge.plantuml.code.NoPlantumlCompressionException;
 import net.sourceforge.plantuml.code.PairInt;
 import net.sourceforge.plantuml.code.SpiralOnRectangle;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.ugraphic.color.ColorChangerMonochrome;
 
 public enum SpriteGrayLevel {
@@ -291,7 +292,7 @@ public enum SpriteGrayLevel {
 			}
 			return result;
 		} catch (NoPlantumlCompressionException e) {
-			e.printStackTrace();
+			Logme.error(e);
 			return null;
 		}
 	}

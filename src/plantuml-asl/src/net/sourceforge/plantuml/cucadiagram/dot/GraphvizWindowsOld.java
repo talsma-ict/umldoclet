@@ -38,6 +38,7 @@ import java.util.List;
 
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.windowsdot.WindowsDotArchive;
 
 class GraphvizWindowsOld extends AbstractGraphviz {
@@ -61,7 +62,7 @@ class GraphvizWindowsOld extends AbstractGraphviz {
 		try {
 			return GraphvizUtils.getDotVersion() == 244;
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logme.error(e);
 			return false;
 		}
 	}

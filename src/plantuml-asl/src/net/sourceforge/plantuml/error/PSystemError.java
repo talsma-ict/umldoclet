@@ -31,7 +31,6 @@
 package net.sourceforge.plantuml.error;
 
 import java.awt.Color;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -54,6 +53,7 @@ import net.sourceforge.plantuml.SpriteContainerEmpty;
 import net.sourceforge.plantuml.StringLocated;
 import net.sourceforge.plantuml.api.ImageDataSimple;
 import net.sourceforge.plantuml.asciiart.UmlCharArea;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.core.UmlSource;
@@ -86,7 +86,7 @@ import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 import net.sourceforge.plantuml.ugraphic.color.HColorSimple;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
+import net.sourceforge.plantuml.ugraphic.color.HColors;
 import net.sourceforge.plantuml.ugraphic.txt.UGraphicTxt;
 import net.sourceforge.plantuml.version.LicenseInfo;
 import net.sourceforge.plantuml.version.PSystemVersion;
@@ -143,16 +143,16 @@ public abstract class PSystemError extends PlainDiagram {
 	}
 
 	private TextBlockBackcolored getGraphicalFormatted() {
-		final FontConfiguration fc0 = GraphicStrings.sansSerif14(HColorUtils.BLACK).bold();
-		final FontConfiguration fc1 = GraphicStrings.sansSerif14(HColorUtils.MY_GREEN).bold();
-		final FontConfiguration fc2 = GraphicStrings.sansSerif14(HColorUtils.RED).bold();
-		final FontConfiguration fc4 = GraphicStrings.sansSerif12(HColorUtils.MY_GREEN).bold().italic();
+		final FontConfiguration fc0 = GraphicStrings.sansSerif14(HColors.BLACK).bold();
+		final FontConfiguration fc1 = GraphicStrings.sansSerif14(HColors.MY_GREEN).bold();
+		final FontConfiguration fc2 = GraphicStrings.sansSerif14(HColors.RED).bold();
+		final FontConfiguration fc4 = GraphicStrings.sansSerif12(HColors.MY_GREEN).bold().italic();
 
 		final List<String> fullBody = getTextFullBody();
 		final TextBlock result0 = TextBlockUtils.addBackcolor(
-				TextBlockUtils.withMargin(new TextBlockRaw(getTextFromStack(), fc0), 1, 1, 1, 4), HColorUtils.MY_GREEN);
+				TextBlockUtils.withMargin(new TextBlockRaw(getTextFromStack(), fc0), 1, 1, 1, 4), HColors.MY_GREEN);
 		final TextBlock result1 = new TextBlockRaw(allButLast(fullBody), fc1);
-		final TextBlock result2 = new TextBlockRaw(onlyLast(fullBody), fc1.wave(HColorUtils.RED));
+		final TextBlock result2 = new TextBlockRaw(onlyLast(fullBody), fc1.wave(HColors.RED));
 		final TextBlock result3 = new TextBlockRaw(getTextError(), fc2);
 		final TextBlock result4 = TextBlockUtils.withMargin(new TextBlockRaw(header(), fc4), 0, 2, 0, 8);
 		TextBlock result = result0;
@@ -161,7 +161,7 @@ public abstract class PSystemError extends PlainDiagram {
 		result = TextBlockUtils.mergeTB(result, result3, HorizontalAlignment.LEFT);
 		result = TextBlockUtils.mergeTB(result4, result, HorizontalAlignment.LEFT);
 		result = TextBlockUtils.withMargin(result, 5, 5);
-		return TextBlockUtils.addBackcolor(result, HColorUtils.BLACK);
+		return TextBlockUtils.addBackcolor(result, HColors.BLACK);
 	}
 
 	private List<String> header() {
@@ -349,7 +349,7 @@ public abstract class PSystemError extends PlainDiagram {
 				"Details on <i>[[https://plantuml.com/dedication]]");
 
 		final UFont font = UFont.sansSerif(14);
-		final FontConfiguration fc = FontConfiguration.create(font, HColorUtils.BLACK, HColorUtils.BLACK, false);
+		final FontConfiguration fc = FontConfiguration.create(font, HColors.BLACK, HColors.BLACK, false);
 		final TextBlock text = TextBlockUtils
 				.withMargin(disp.create(fc, HorizontalAlignment.LEFT, new SpriteContainerEmpty()), 10, 0);
 		final TextBlock result;
@@ -364,13 +364,13 @@ public abstract class PSystemError extends PlainDiagram {
 	}
 
 	private TextBlockBackcolored getMessageAdopt() {
-		final HColorSimple backColor = (HColorSimple) HColorSet.instance().getColorOrWhite("#eff4d2");
+		final HColor backColor = HColorSet.instance().getColorOrWhite("#eff4d2");
 
 		final Display disp = Display.create("<b>Adopt-a-Word and put your message here!", " ",
 				"Details on <i>[[http://plantuml.com/adopt]]", " ");
 
 		final UFont font = UFont.sansSerif(14);
-		final FontConfiguration fc = FontConfiguration.create(font, HColorUtils.BLACK, HColorUtils.BLACK, false);
+		final FontConfiguration fc = FontConfiguration.create(font, HColors.BLACK, HColors.BLACK, false);
 		final TextBlock text = TextBlockUtils
 				.withMargin(disp.create(fc, HorizontalAlignment.LEFT, new SpriteContainerEmpty()), 10, 0);
 		final TextBlock result;
@@ -383,7 +383,7 @@ public abstract class PSystemError extends PlainDiagram {
 		final UImage message = new UImage(
 				new PixelImage(PSystemVersion.getTime01(), AffineTransformType.TYPE_BILINEAR));
 		final Color back = new Color(message.getImage(1).getRGB(0, 0));
-		final HColor backColor = new HColorSimple(back, false);
+		final HColor backColor = HColors.simple(back);
 
 		final FlashCodeUtils utils = FlashCodeFactory.getFlashCodeUtils();
 		final BufferedImage qrcode = smaller(
@@ -430,7 +430,7 @@ public abstract class PSystemError extends PlainDiagram {
 		final UImage message = new UImage(
 				new PixelImage(PSystemVersion.getTime15(), AffineTransformType.TYPE_BILINEAR));
 		final Color back = new Color(message.getImage(1).getRGB(0, 0));
-		final HColor backColor = new HColorSimple(back, false);
+		final HColor backColor = HColors.simple(back);
 
 		final FlashCodeUtils utils = FlashCodeFactory.getFlashCodeUtils();
 		final BufferedImage qrcode = smaller(utils.exportFlashcode("http://plantuml.com/lp", Color.BLACK, Color.WHITE));

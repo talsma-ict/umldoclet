@@ -49,6 +49,7 @@ import net.sourceforge.plantuml.api.ImageDataSimple;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.core.UmlSource;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SImageIO;
 import net.sourceforge.plantuml.svek.GraphvizCrash;
 
@@ -81,7 +82,7 @@ public class PSystemDitaa extends AbstractPSystem {
 			this.processingOptions.getClass().getMethod("setAllCornersAreRound", boolean.class)
 					.invoke(this.processingOptions, allCornersAreRound);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logme.error(e);
 			this.processingOptions = null;
 		}
 		this.transparentBackground = transparentBackground;

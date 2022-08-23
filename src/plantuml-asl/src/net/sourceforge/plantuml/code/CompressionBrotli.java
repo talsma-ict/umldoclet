@@ -36,6 +36,7 @@ import java.io.IOException;
 
 import net.sourceforge.plantuml.FileUtils;
 import net.sourceforge.plantuml.brotli.BrotliInputStream;
+import net.sourceforge.plantuml.log.Logme;
 
 public class CompressionBrotli implements Compression {
 
@@ -51,7 +52,7 @@ public class CompressionBrotli implements Compression {
 			FileUtils.copyToStream(brotli, result);
 			return ByteArray.from(result.toByteArray());
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logme.error(e);
 			throw new NoPlantumlCompressionException(e);
 		}
 	}

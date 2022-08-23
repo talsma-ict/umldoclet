@@ -28,29 +28,36 @@
  *
  * Original Author:  Arnaud Roques
  */
-package net.sourceforge.plantuml.ugraphic.color;
+package net.sourceforge.plantuml.project.command;
 
-import java.util.Objects;
+import net.sourceforge.plantuml.LineLocation;
+import net.sourceforge.plantuml.command.CommandExecutionResult;
+import net.sourceforge.plantuml.command.SingleLineCommand2;
+import net.sourceforge.plantuml.command.regex.IRegex;
+import net.sourceforge.plantuml.command.regex.RegexConcat;
+import net.sourceforge.plantuml.command.regex.RegexLeaf;
+import net.sourceforge.plantuml.command.regex.RegexResult;
+import net.sourceforge.plantuml.project.GanttDiagram;
 
-public class HColorBackground extends HColorAbstract implements HColor {
+public class CommandGroupEnd extends SingleLineCommand2<GanttDiagram> {
 
-	private final HColor back;
+	public CommandGroupEnd() {
+		super(getRegexConcat());
+	}
 
-	public HColorBackground(HColor back) {
-		this.back = Objects.requireNonNull(back);
+	static IRegex getRegexConcat() {
+		return RegexConcat.build(CommandGroupEnd.class.getName(), RegexLeaf.start(), //
+				RegexLeaf.spaceZeroOrMore(), //
+				new RegexLeaf("end"), //
+				RegexLeaf.spaceZeroOrMore(), //
+				new RegexLeaf("group"), //
+				RegexLeaf.spaceZeroOrMore(), //
+				RegexLeaf.end());
 	}
 
 	@Override
-	public String toString() {
-		return "BACK " + back;
-	}
-
-	public HColor getNull() {
-		return null;
-	}
-
-	final HColor getBack() {
-		return back;
+	protected CommandExecutionResult executeArg(GanttDiagram diagram, LineLocation location, RegexResult arg) {
+		return diagram.endGroup();
 	}
 
 }

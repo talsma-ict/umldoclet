@@ -46,6 +46,7 @@ import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.version.PSystemVersion;
 
 public class Splash extends Window implements MouseListener, MouseMotionListener {
@@ -134,7 +135,7 @@ public class Splash extends Window implements MouseListener, MouseMotionListener
 			try {
 				Desktop.getDesktop().browse(new URL("https://plantuml.com").toURI());
 			} catch (Exception e) {
-				e.printStackTrace();
+				Logme.error(e);
 			}
 			return;
 		}

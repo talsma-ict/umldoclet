@@ -59,7 +59,7 @@ public class CommandSkinParam extends SingleLineCommand2<TitledDiagram> {
 			diagram.setParam(arg.get("NAME", 0), arg.get("VALUE", 0));
 			return CommandExecutionResult.ok();
 		} catch (NoStyleAvailableException e) {
-			// e.printStackTrace();
+			// Logme.error(e);
 			return CommandExecutionResult.error("General failure: no style available.");
 		}
 

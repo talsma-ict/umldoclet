@@ -39,6 +39,7 @@ import java.util.prefs.Preferences;
 
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.api.NumberAnalyzed;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.stats.api.StatsColumn;
 import net.sourceforge.plantuml.stats.api.StatsLine;
 import net.sourceforge.plantuml.stats.api.StatsTable;
@@ -95,7 +96,7 @@ public class FormatCounter {
 						data.put(format, value);
 					}
 				} catch (Exception e) {
-					e.printStackTrace();
+					Logme.error(e);
 				}
 			}
 		}

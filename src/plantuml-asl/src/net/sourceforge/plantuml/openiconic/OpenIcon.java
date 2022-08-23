@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.openiconic;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,15 +39,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.openiconic.data.DummyIcon;
 import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorAutomaticLegacy;
-import net.sourceforge.plantuml.ugraphic.color.HColorSimple;
+import net.sourceforge.plantuml.ugraphic.color.HColorAutomagic;
 
 public class OpenIcon {
 
@@ -64,7 +64,7 @@ public class OpenIcon {
 		try {
 			return new OpenIcon(is, name);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logme.error(e);
 			return null;
 		}
 	}
@@ -97,7 +97,7 @@ public class OpenIcon {
 	}
 
 	void saveCopy(SFile fnew) throws IOException {
-		try(PrintWriter pw = fnew.createPrintWriter()) {
+		try (PrintWriter pw = fnew.createPrintWriter()) {
 			pw.println(rawData.get(0));
 			pw.println(svgPath.toSvg());
 			pw.println(rawData.get(rawData.size() - 1));
@@ -130,9 +130,9 @@ public class OpenIcon {
 		return new AbstractTextBlock() {
 			public void drawU(UGraphic ug) {
 				HColor textColor = color;
-				if (textColor instanceof HColorAutomaticLegacy && ug.getParam().getBackcolor() != null) {
-					textColor = ((HColorSimple) ug.getParam().getBackcolor()).opposite();
-				}
+				if (textColor instanceof HColorAutomagic && ug.getParam().getBackcolor() != null)
+					textColor = ug.getParam().getBackcolor().opposite();
+
 				svgPath.drawMe(ug.apply(textColor), factor);
 			}
 

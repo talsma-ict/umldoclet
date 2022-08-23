@@ -63,6 +63,7 @@ import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.error.PSystemError;
 import net.sourceforge.plantuml.error.PSystemErrorUtils;
 import net.sourceforge.plantuml.graphic.QuoteUtils;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.version.Version;
 
@@ -132,7 +133,7 @@ public class PicoWebServer implements Runnable {
 			try {
 				sendError(e, out);
 			} catch (Throwable e1) {
-				e.printStackTrace();
+				Logme.error(e);
 			}
 		} finally {
 			try {
@@ -140,7 +141,7 @@ public class PicoWebServer implements Runnable {
 				out.close();
 				connect.close();
 			} catch (Throwable e) {
-				e.printStackTrace();
+				Logme.error(e);
 			}
 		}
 	}
@@ -217,6 +218,7 @@ public class PicoWebServer implements Runnable {
 		write(out, "Cache-Control: no-cache");
 		write(out, "Server: PlantUML PicoWebServer " + Version.versionString());
 		write(out, "Date: " + new Date());
+		write(out, "Access-Control-Allow-Origin: *");
 		write(out, "Content-type: " + fileFormatOption.getFileFormat().getMimeType());
 		write(out, "Content-length: " + fileData.length);
 		write(out, "X-PlantUML-Diagram-Width: " + imageData.getWidth());

@@ -63,6 +63,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.swing.ImageIcon;
 
 import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.authentication.SecurityAccessInterceptor;
 import net.sourceforge.plantuml.security.authentication.SecurityAuthentication;
 import net.sourceforge.plantuml.security.authentication.SecurityCredentials;
@@ -149,7 +150,7 @@ public class SURL {
 			try {
 				return create(new URL(url));
 			} catch (MalformedURLException e) {
-				e.printStackTrace();
+				Logme.error(e);
 			}
 		return null;
 	}
@@ -239,7 +240,7 @@ public class SURL {
 	}
 
 	private boolean forbiddenURL(String full) {
-		if (full.matches("^https?://[.0-9]+/.*"))
+		if (full.matches("^https?://[-#.0-9:\\[\\]+]+/.*"))
 			return true;
 		if (full.matches("^https?://[^.]+/.*"))
 			return true;
@@ -483,7 +484,7 @@ public class SURL {
 			try {
 				return Charset.forName(matcher.group(1));
 			} catch (Exception e) {
-				e.printStackTrace();
+				Logme.error(e);
 			}
 
 		return null;
@@ -563,7 +564,7 @@ public class SURL {
 				final ImageIcon tmp = new ImageIcon(bytes);
 				return SecurityUtils.readRasterImage(tmp);
 			} catch (Exception e) {
-				e.printStackTrace();
+				Logme.error(e);
 			}
 		return null;
 	}

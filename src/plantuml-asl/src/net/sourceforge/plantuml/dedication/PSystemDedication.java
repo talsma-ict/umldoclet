@@ -42,6 +42,7 @@ import net.sourceforge.plantuml.PlainDiagram;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.graphic.UDrawable;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SImageIO;
 import net.sourceforge.plantuml.ugraphic.AffineTransformType;
 import net.sourceforge.plantuml.ugraphic.PixelImage;
@@ -82,7 +83,7 @@ public class PSystemDedication extends PlainDiagram {
 			// final VP8Frame frame = vp8Decoder.getFrame();
 			// return frame.getBufferedImage();
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logme.error(e);
 			return null;
 		}
 	}

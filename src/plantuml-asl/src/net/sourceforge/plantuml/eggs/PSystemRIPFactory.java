@@ -36,6 +36,7 @@ import net.sourceforge.plantuml.AbstractPSystem;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.command.PSystemSingleLineFactory;
 import net.sourceforge.plantuml.core.UmlSource;
+import net.sourceforge.plantuml.log.Logme;
 
 public class PSystemRIPFactory extends PSystemSingleLineFactory {
 
@@ -46,7 +47,7 @@ public class PSystemRIPFactory extends PSystemSingleLineFactory {
 				return new PSystemRIP(source);
 			} catch (IOException e) {
 				Log.error("Error " + e);
-				e.printStackTrace();
+				Logme.error(e);
 			}
 		}
 		return null;

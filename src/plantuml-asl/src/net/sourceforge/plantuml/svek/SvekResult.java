@@ -40,7 +40,6 @@ import net.sourceforge.plantuml.cucadiagram.dot.DotData;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
-import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
@@ -52,11 +51,9 @@ import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UHidden;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
+import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 public final class SvekResult extends AbstractTextBlock implements IEntityImage {
-
-	private final Rose rose = new Rose();
 
 	private final DotData dotData;
 	private final DotStringFactory dotStringFactory;
@@ -76,7 +73,7 @@ public final class SvekResult extends AbstractTextBlock implements IEntityImage 
 
 		HColor color = style2.value(PName.LineColor).asColor(dotData.getSkinParam().getThemeStyle(),
 				dotData.getSkinParam().getIHtmlColorSet());
-		color = HColorUtils.noGradient(color);
+		color = HColors.noGradient(color);
 
 		for (SvekNode node : dotStringFactory.getBibliotekon().allNodes()) {
 			final double minX = node.getMinX();
@@ -98,7 +95,7 @@ public final class SvekResult extends AbstractTextBlock implements IEntityImage 
 			final Style styleLine = getDefaultStyleDefinition(line.getStereotype()).getMergedStyle(currentStyleBuilder);
 			color = styleLine.value(PName.LineColor).asColor(dotData.getSkinParam().getThemeStyle(),
 					dotData.getSkinParam().getIHtmlColorSet());
-			color = HColorUtils.noGradient(color);
+			color = HColors.noGradient(color);
 
 			line.drawU(ug2, styleLine.getStroke(), color, ids);
 		}

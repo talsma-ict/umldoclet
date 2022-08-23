@@ -32,11 +32,14 @@ package net.sourceforge.plantuml.project;
 
 import net.sourceforge.plantuml.project.core.Task;
 import net.sourceforge.plantuml.project.draw.TaskDraw;
+import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public interface ToTaskDraw {
 
 	public TaskDraw getTaskDraw(Task task);
 
 	public LoadPlanable getDefaultPlan();
+
+	public HColorSet getIHtmlColorSet();
 
 }

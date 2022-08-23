@@ -48,6 +48,7 @@ import net.sourceforge.plantuml.graphic.VerticalAlignment;
 import net.sourceforge.plantuml.json.JsonValue;
 import net.sourceforge.plantuml.jsondiagram.JsonDiagram;
 import net.sourceforge.plantuml.jsondiagram.StyleExtractor;
+import net.sourceforge.plantuml.log.Logme;
 
 public class YamlDiagramFactory extends PSystemAbstractFactory {
 
@@ -78,7 +79,7 @@ public class YamlDiagramFactory extends PSystemAbstractFactory {
 			}
 			yaml = new SimpleYamlParser().parse(list);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logme.error(e);
 		}
 		final JsonDiagram result = new JsonDiagram(style, source, UmlDiagramType.YAML, yaml, highlighted);
 		if (styleExtractor != null) {

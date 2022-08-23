@@ -35,6 +35,7 @@ import java.io.IOException;
 
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.error.PSystemError;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SFile;
 
 public class GeneratedImageImpl implements GeneratedImage {
@@ -83,7 +84,7 @@ public class GeneratedImageImpl implements GeneratedImage {
 				return cmp;
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logme.error(e);
 		}
 		return this.description.compareTo(this2.getDescription());
 	}

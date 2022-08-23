@@ -36,6 +36,7 @@ import net.sourceforge.plantuml.AbstractPSystem;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.command.PSystemSingleLineFactory;
 import net.sourceforge.plantuml.core.UmlSource;
+import net.sourceforge.plantuml.log.Logme;
 
 public class PSystemAppleTwoFactory extends PSystemSingleLineFactory {
 
@@ -48,7 +49,7 @@ public class PSystemAppleTwoFactory extends PSystemSingleLineFactory {
 				return new PSystemAppleTwo(source);
 			} catch (IOException e) {
 				Log.error("Error " + e);
-				e.printStackTrace();
+				Logme.error(e);
 			}
 		}
 		return null;

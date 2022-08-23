@@ -33,7 +33,6 @@ package net.sourceforge.plantuml.ugraphic.debug;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.awt.Color;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -43,6 +42,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.posimo.DotPath;
 import net.sourceforge.plantuml.ugraphic.AbstractCommonUGraphic;
 import net.sourceforge.plantuml.ugraphic.ClipContainer;
@@ -62,7 +62,7 @@ import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorMiddle;
 import net.sourceforge.plantuml.ugraphic.color.HColorSimple;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
+import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 public class UGraphicDebug extends AbstractCommonUGraphic implements ClipContainer {
 
@@ -94,7 +94,7 @@ public class UGraphicDebug extends AbstractCommonUGraphic implements ClipContain
 
 	public UGraphicDebug(double scaleFactor, Dimension2D dim, String svgLinkTarget, String hoverPathColorRGB, long seed,
 			String preserveAspectRatio) {
-		super(HColorUtils.WHITE, new ColorMapperIdentity(), new StringBounderDebug());
+		super(HColors.WHITE, new ColorMapperIdentity(), new StringBounderDebug());
 		this.output = new ArrayList<>();
 		this.scaleFactor = scaleFactor;
 		this.dim = dim;
@@ -251,15 +251,13 @@ public class UGraphicDebug extends AbstractCommonUGraphic implements ClipContain
 	}
 
 	private String colorToString(HColor color) {
-		if (color == null) {
+		if (color == null)
 			return "NULL_COLOR";
-		}
+
 		if (color instanceof HColorSimple) {
 			final HColorSimple simple = (HColorSimple) color;
 			final Color internal = simple.getColor999();
-			if (simple.isMonochrome()) {
-				return "monochrome " + Integer.toHexString(internal.getRGB());
-			}
+
 			return Integer.toHexString(internal.getRGB());
 		}
 		if (color instanceof HColorMiddle) {

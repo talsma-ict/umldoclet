@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SFile;
 
 public class AFileZipEntry implements AFile {
@@ -70,7 +71,7 @@ public class AFileZipEntry implements AFile {
 				zis.closeEntry();
 				zis.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				Logme.error(e);
 			}
 		return null;
 	}
@@ -83,7 +84,7 @@ public class AFileZipEntry implements AFile {
 					is.close();
 					return true;
 				} catch (IOException e) {
-					e.printStackTrace();
+					Logme.error(e);
 				}
 			}
 		}

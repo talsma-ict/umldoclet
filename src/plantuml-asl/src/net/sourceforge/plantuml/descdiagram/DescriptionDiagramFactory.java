@@ -58,6 +58,8 @@ import net.sourceforge.plantuml.descdiagram.command.CommandCreateElementMultilin
 import net.sourceforge.plantuml.descdiagram.command.CommandLinkElement;
 import net.sourceforge.plantuml.descdiagram.command.CommandNewpage;
 import net.sourceforge.plantuml.descdiagram.command.CommandPackageWithUSymbol;
+import net.sourceforge.plantuml.objectdiagram.command.CommandCreateJson;
+import net.sourceforge.plantuml.objectdiagram.command.CommandCreateMap;
 
 public class DescriptionDiagramFactory extends PSystemCommandFactory {
 
@@ -111,6 +113,8 @@ public class DescriptionDiagramFactory extends PSystemCommandFactory {
 		cmds.add(factoryNoteOnEntityCommand.createMultiLine(false));
 		cmds.add(factoryNoteCommand.createMultiLine(false));
 
+		cmds.add(new CommandCreateMap());
+		cmds.add(new CommandCreateJson());
 		// cmds.add(new CommandHideShowSpecificClass());
 
 		cmds.add(new CommandArchimate());

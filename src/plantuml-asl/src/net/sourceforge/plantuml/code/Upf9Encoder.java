@@ -34,6 +34,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import net.sourceforge.plantuml.log.Logme;
+
 public class Upf9Encoder {
 
 	private Upf9Encoder() {
@@ -51,7 +53,7 @@ public class Upf9Encoder {
 			if (c == Upf9Decoder.decodeChar(new ByteArrayInputStream(result)))
 				return true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logme.error(e);
 		}
 		return false;
 	}

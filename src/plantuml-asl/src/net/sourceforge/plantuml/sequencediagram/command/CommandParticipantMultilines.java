@@ -71,6 +71,8 @@ public class CommandParticipantMultilines extends CommandMultilines2<SequenceDia
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("STEREO", "(\\<\\<.+\\>\\>)?"), //
 				RegexLeaf.spaceZeroOrMore(), //
+				CommandParticipant.getOrderRegex(), //
+				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("URL", "(" + UrlBuilder.getRegexp() + ")?"), //
 				RegexLeaf.spaceZeroOrMore(), //
 				ColorParser.exp1(), //
@@ -96,7 +98,8 @@ public class CommandParticipantMultilines extends CommandMultilines2<SequenceDia
 
 		final ParticipantType type = ParticipantType.PARTICIPANT;
 		final boolean create = false;
-		final int order = 0;
+		final String orderString = arg.get("ORDER", 0);
+		final int order = orderString == null ? 0 : Integer.parseInt(orderString);
 
 		final Participant participant = diagram.createNewParticipant(type, code, strings, order);
 

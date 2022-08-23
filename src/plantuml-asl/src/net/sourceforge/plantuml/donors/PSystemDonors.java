@@ -52,6 +52,7 @@ import net.sourceforge.plantuml.graphic.GraphicStrings;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.UDrawable;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.svek.TextBlockBackcolored;
 import net.sourceforge.plantuml.ugraphic.AffineTransformType;
 import net.sourceforge.plantuml.ugraphic.PixelImage;
@@ -148,7 +149,7 @@ public class PSystemDonors extends PlainDiagram {
 				lines.add(st.nextToken());
 			}
 		} catch (NoPlantumlCompressionException e) {
-			e.printStackTrace();
+			Logme.error(e);
 		}
 		return lines;
 	}

@@ -44,6 +44,7 @@ import net.sourceforge.plantuml.graphic.AbstractTextBlock;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.Line;
 import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.preproc.Defines;
 import net.sourceforge.plantuml.security.SImageIO;
 import net.sourceforge.plantuml.ugraphic.AffineTransformType;
@@ -76,9 +77,9 @@ class EmbeddedDiagramDraw extends AbstractTextBlock implements Line, Atom {
 			final BufferedImage im = getImage();
 			return new Dimension2DDouble(im.getWidth(), im.getHeight());
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logme.error(e);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			Logme.error(e);
 		}
 		return new Dimension2DDouble(42, 42);
 	}
@@ -96,9 +97,9 @@ class EmbeddedDiagramDraw extends AbstractTextBlock implements Line, Atom {
 			final UShape image = new UImage(new PixelImage(im, AffineTransformType.TYPE_BILINEAR));
 			ug.draw(image);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logme.error(e);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			Logme.error(e);
 		}
 
 	}

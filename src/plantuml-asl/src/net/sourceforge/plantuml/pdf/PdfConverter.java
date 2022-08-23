@@ -33,6 +33,8 @@ package net.sourceforge.plantuml.pdf;
 import java.io.File;
 import java.lang.reflect.Method;
 
+import net.sourceforge.plantuml.log.Logme;
+
 public class PdfConverter {
 
 	public static void convert(File svgFile, File pdfFile) {
@@ -67,7 +69,7 @@ public class PdfConverter {
 			final Method execute = clSVGConverter.getMethod("execute");
 			execute.invoke(converter);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logme.error(e);
 			throw new UnsupportedOperationException();
 		}
 		if (pdfFile.exists() == false) {

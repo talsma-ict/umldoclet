@@ -37,6 +37,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import net.sourceforge.plantuml.Log;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.statediagram.StateDiagram;
 
 public final class StateDiagramScxmlMaker {
@@ -54,11 +55,11 @@ public final class StateDiagramScxmlMaker {
 			xmi.transformerXml(fos);
 		} catch (ParserConfigurationException e) {
 			Log.error(e.toString());
-			e.printStackTrace();
+			Logme.error(e);
 			throw new IOException(e.toString());
 		} catch (TransformerException e) {
 			Log.error(e.toString());
-			e.printStackTrace();
+			Logme.error(e);
 			throw new IOException(e.toString());
 		}
 	}

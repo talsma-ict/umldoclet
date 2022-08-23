@@ -42,6 +42,7 @@ import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.classdiagram.ClassDiagram;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
 import net.sourceforge.plantuml.descdiagram.DescriptionDiagram;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.statediagram.StateDiagram;
 
 public final class CucaDiagramXmiMaker {
@@ -77,11 +78,11 @@ public final class CucaDiagramXmiMaker {
 			xmi.transformerXml(fos);
 		} catch (ParserConfigurationException e) {
 			Log.error(e.toString());
-			e.printStackTrace();
+			Logme.error(e);
 			throw new IOException(e.toString());
 		} catch (TransformerException e) {
 			Log.error(e.toString());
-			e.printStackTrace();
+			Logme.error(e);
 			throw new IOException(e.toString());
 		}
 	}

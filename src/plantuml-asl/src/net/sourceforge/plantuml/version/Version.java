@@ -32,6 +32,7 @@ package net.sourceforge.plantuml.version;
 
 import java.util.Date;
 
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SURL;
 
 public class Version {
@@ -39,7 +40,7 @@ public class Version {
 	private static final int MAJOR_SEPARATOR = 1000000;
 
 	public static int version() {
-		return 1202206;
+		return 1202207;
 	}
 
 	public static int versionPatched() {
@@ -88,7 +89,7 @@ public class Version {
 	}
 
 	public static long compileTime() {
-		return 1655832889469L;
+		return 1661187690019L;
 	}
 
 	public static String compileTimeString() {
@@ -112,7 +113,7 @@ public class Version {
 			fullpath = fullpath.replaceAll("net/sourceforge/plantuml/version/Version\\.class", "");
 			return fullpath;
 		} catch (Throwable t) {
-			t.printStackTrace();
+			Logme.error(t);
 			return t.toString();
 		}
 	}

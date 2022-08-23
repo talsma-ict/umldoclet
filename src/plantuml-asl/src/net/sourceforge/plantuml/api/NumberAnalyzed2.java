@@ -36,6 +36,7 @@ import java.util.prefs.Preferences;
 
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.annotation.HaxeIgnored;
+import net.sourceforge.plantuml.log.Logme;
 
 @HaxeIgnored
 public class NumberAnalyzed2 implements INumberAnalyzed {
@@ -97,7 +98,7 @@ public class NumberAnalyzed2 implements INumberAnalyzed {
 					Long.parseLong(st.nextToken(), 36), Long.parseLong(st.nextToken(), 36), Long.parseLong(
 							st.nextToken(), 36), Long.parseLong(st.nextToken(), 36));
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logme.error(e);
 			Log.info("Error reading " + value);
 			return null;
 		}

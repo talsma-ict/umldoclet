@@ -51,7 +51,7 @@ import net.sourceforge.plantuml.style.StyleBuilder;
 import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorSet;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
+import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 public abstract class AbstractTaskDraw implements TaskDraw {
 
@@ -65,7 +65,6 @@ public abstract class AbstractTaskDraw implements TaskDraw {
 	protected final String prettyDisplay;
 	protected final Day start;
 	private final StyleBuilder styleBuilder;
-	private final HColorSet colorSet;
 	private final Task task;
 	private final ToTaskDraw toTaskDraw;
 
@@ -82,9 +81,8 @@ public abstract class AbstractTaskDraw implements TaskDraw {
 	}
 
 	public AbstractTaskDraw(TimeScale timeScale, Real y, String prettyDisplay, Day start, ISkinParam skinParam,
-			Task task, ToTaskDraw toTaskDraw, StyleBuilder styleBuilder, HColorSet colorSet) {
+			Task task, ToTaskDraw toTaskDraw, StyleBuilder styleBuilder) {
 		this.y = y;
-		this.colorSet = colorSet;
 		this.styleBuilder = styleBuilder;
 		this.toTaskDraw = toTaskDraw;
 		this.start = start;
@@ -101,22 +99,22 @@ public abstract class AbstractTaskDraw implements TaskDraw {
 
 	final protected HColor getLineColor() {
 		final HColor unstarted = getStyleSignatureUnstarted().getMergedStyle(styleBuilder).value(PName.LineColor)
-				.asColor(getStyleBuilder().getSkinParam().getThemeStyle(), colorSet);
+				.asColor(getStyleBuilder().getSkinParam().getThemeStyle(), getColorSet());
 		final HColor regular = getStyle().value(PName.LineColor)
-				.asColor(getStyleBuilder().getSkinParam().getThemeStyle(), colorSet);
-		return HColorUtils.unlinear(unstarted, regular, completion);
+				.asColor(getStyleBuilder().getSkinParam().getThemeStyle(), getColorSet());
+		return HColors.unlinear(unstarted, regular, completion);
 	}
 
 	final protected HColor getBackgroundColor() {
 		final HColor unstarted = getStyleSignatureUnstarted().getMergedStyle(styleBuilder).value(PName.BackGroundColor)
-				.asColor(getStyleBuilder().getSkinParam().getThemeStyle(), colorSet);
+				.asColor(getStyleBuilder().getSkinParam().getThemeStyle(), getColorSet());
 		final HColor regular = getStyle().value(PName.BackGroundColor)
-				.asColor(getStyleBuilder().getSkinParam().getThemeStyle(), colorSet);
-		return HColorUtils.unlinear(unstarted, regular, completion);
+				.asColor(getStyleBuilder().getSkinParam().getThemeStyle(), getColorSet());
+		return HColors.unlinear(unstarted, regular, completion);
 	}
 
 	final protected FontConfiguration getFontConfiguration() {
-		return getStyle().getFontConfiguration(styleBuilder.getSkinParam().getThemeStyle(), colorSet);
+		return getStyle().getFontConfiguration(styleBuilder.getSkinParam().getThemeStyle(), getColorSet());
 	}
 
 	final protected Style getStyle() {
@@ -179,7 +177,7 @@ public abstract class AbstractTaskDraw implements TaskDraw {
 	}
 
 	protected final HColorSet getColorSet() {
-		return colorSet;
+		return toTaskDraw.getIHtmlColorSet();
 	}
 
 	protected CenterBorderColor getColors() {

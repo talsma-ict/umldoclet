@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import net.sourceforge.plantuml.brotli.BrotliInputStream;
+import net.sourceforge.plantuml.log.Logme;
 
 public final class WindowsDotArchive {
 
@@ -116,7 +117,7 @@ public final class WindowsDotArchive {
 				extract(tmp);
 				exe = new File(tmp, "dot.exe");
 			} catch (IOException e) {
-				e.printStackTrace();
+				Logme.error(e);
 			}
 		return exe;
 	}

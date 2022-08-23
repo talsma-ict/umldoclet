@@ -40,6 +40,7 @@ import java.util.regex.Pattern;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.security.SecurityProfile;
 import net.sourceforge.plantuml.security.SecurityUtils;
@@ -181,7 +182,7 @@ public class GraphvizUtils {
 		try {
 			return create(null, "png").graphviz244onWindows();
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logme.error(e);
 			return false;
 		}
 	}
@@ -223,7 +224,7 @@ public class GraphvizUtils {
 
 			} catch (Exception e) {
 				result.add(red + e.toString());
-				e.printStackTrace();
+				Logme.error(e);
 				error = -1;
 			}
 			return error;
@@ -264,7 +265,7 @@ public class GraphvizUtils {
 				}
 			} catch (Exception e) {
 				result.add(red + e.toString());
-				e.printStackTrace();
+				Logme.error(e);
 				error = -5;
 			}
 		} else {

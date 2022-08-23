@@ -43,6 +43,7 @@ import java.util.TreeSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.version.Version;
 
@@ -58,7 +59,7 @@ public class RessourcesUtils {
 			try {
 				return listEntry(new SFile(local.toURI()));
 			} catch (URISyntaxException e) {
-				e.printStackTrace();
+				Logme.error(e);
 				return null;
 			}
 		}

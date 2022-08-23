@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.activitydiagram3.gtile;
 
-import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.LineBreakStrategy;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Hexagon;
@@ -87,10 +86,6 @@ public class Gtiles {
 
 		return new GtileHexagonInside(stringBounder, TextBlockUtils.EMPTY_TEXT_BLOCK, skinParam, backColor, borderColor,
 				swimlane);
-	}
-
-	private static HColor fontColor(ISkinParam skinParam, FontParam param) {
-		return skinParam.getFontHtmlColor(null, param);
 	}
 
 	static public Gtile withSouthMargin(Gtile orig, double south) {

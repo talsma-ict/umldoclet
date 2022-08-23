@@ -105,6 +105,8 @@ import net.sourceforge.plantuml.graphic.QuoteUtils;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
+import net.sourceforge.plantuml.graphic.USymbolFolder;
+import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
@@ -124,7 +126,7 @@ import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
+import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 /*
  * Some notes:
@@ -256,8 +258,9 @@ public class CucaDiagramFileMakerElk implements CucaDiagramFileMaker {
 			final UStroke stroke = Cluster.getStrokeInternal(group, style);
 
 			HColor backColor = getBackColor(umlDiagramType);
-			backColor = Cluster.getBackColor(backColor, skinParam, group.getStereotype(), umlDiagramType.getStyleName(),
-					group.getUSymbol());
+			backColor = Cluster.getBackColor(backColor, group.getStereotype(), umlDiagramType.getStyleName(),
+					group.getUSymbol(), skinParam.getCurrentStyleBuilder(), skinParam.getThemeStyle(),
+					skinParam.getIHtmlColorSet());
 
 			final double roundCorner = style.value(PName.RoundCorner).asDouble();
 //			final double roundCorner = group.getUSymbol() == null ? 0
@@ -269,7 +272,7 @@ public class CucaDiagramFileMakerElk implements CucaDiagramFileMaker {
 			final ClusterDecoration decoration = new ClusterDecoration(packageStyle, group.getUSymbol(), ztitle,
 					zstereo, 0, 0, elkNode.getWidth(), elkNode.getHeight(), stroke);
 
-			final HColor borderColor = HColorUtils.BLACK;
+			final HColor borderColor = HColors.BLACK;
 			decoration.drawU(ug.apply(new UTranslate(corner)), backColor, borderColor, shadowing, roundCorner,
 					skinParam.getHorizontalAlignment(AlignmentParam.packageTitleAlignment, null, false, null),
 					skinParam.getStereotypeAlignment(), 0);
@@ -305,8 +308,16 @@ public class CucaDiagramFileMakerElk implements CucaDiagramFileMaker {
 			// Unfortunately, we have to translate "edge" in its own "cluster" coordinate
 			final Point2D translate = getPosition(edge.getContainingNode());
 
+			final double magicY2 = 0;
+			final IEntity dest = link.getEntity2();
+			if (dest.getUSymbol() instanceof USymbolFolder) {
+//				System.err.println("dest=" + dest);
+//				final IEntityImage image = printEntityInternal((ILeaf) dest);
+//				System.err.println("image=" + image);
+
+			}
 			final ElkPath elkPath = new ElkPath(diagram, SName.classDiagram, link, edge, getLabel(link),
-					getQualifier(link, 1), getQualifier(link, 2));
+					getQualifier(link, 1), getQualifier(link, 2), magicY2);
 			elkPath.drawU(ug.apply(new UTranslate(translate)));
 		}
 
@@ -507,7 +518,7 @@ public class CucaDiagramFileMakerElk implements CucaDiagramFileMaker {
 	}
 
 	static private List<String> getFailureText3(Throwable exception) {
-		exception.printStackTrace();
+		Logme.error(exception);
 		final List<String> strings = new ArrayList<>();
 		strings.add("An error has occured : " + exception);
 		final String quote = StringUtils.rot(QuoteUtils.getSomeQuote());
