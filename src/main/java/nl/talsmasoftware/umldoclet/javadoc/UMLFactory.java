@@ -18,13 +18,40 @@ package nl.talsmasoftware.umldoclet.javadoc;
 import jdk.javadoc.doclet.DocletEnvironment;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.Visibility;
-import nl.talsmasoftware.umldoclet.uml.*;
+import nl.talsmasoftware.umldoclet.uml.ClassDiagram;
+import nl.talsmasoftware.umldoclet.uml.Diagram;
+import nl.talsmasoftware.umldoclet.uml.Field;
+import nl.talsmasoftware.umldoclet.uml.Method;
+import nl.talsmasoftware.umldoclet.uml.Namespace;
+import nl.talsmasoftware.umldoclet.uml.PackageDiagram;
+import nl.talsmasoftware.umldoclet.uml.Parameters;
+import nl.talsmasoftware.umldoclet.uml.Reference;
+import nl.talsmasoftware.umldoclet.uml.Type;
+import nl.talsmasoftware.umldoclet.uml.TypeMember;
+import nl.talsmasoftware.umldoclet.uml.TypeName;
+import nl.talsmasoftware.umldoclet.uml.UmlCharacters;
 import nl.talsmasoftware.umldoclet.uml.util.UmlPostProcessors;
 
-import javax.lang.model.element.*;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.element.ModuleElement;
+import javax.lang.model.element.PackageElement;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -48,7 +75,6 @@ public class UMLFactory {
     private static final UmlPostProcessors POST_PROCESSORS = new UmlPostProcessors();
 
     final Configuration config;
-    final ThreadLocal<Diagram> diagram = new ThreadLocal<>(); // TODO no longer needed?
     private final DocletEnvironment env;
     private final Function<TypeMirror, TypeNameWithCardinality> typeNameWithCardinality;
 
@@ -227,7 +253,7 @@ public class UMLFactory {
         if (config.methods().javaBeanPropertiesAsFields()) {
             namespace.getChildren().stream()
                     .filter(Type.class::isInstance).map(Type.class::cast)
-                    .forEach(POST_PROCESSORS.javaBeanPropertiesAsFieldsPostProcessor()::accept);
+                    .forEach(POST_PROCESSORS.javaBeanPropertiesAsFieldsPostProcessor());
         }
 
         return packageDiagram;
@@ -235,7 +261,7 @@ public class UMLFactory {
 
     Namespace packageOf(TypeElement typeElement) {
         final ModuleElement module = env.getElementUtils().getModuleOf(typeElement);
-        return new Namespace(diagram.get(), env.getElementUtils().getPackageOf(typeElement).getQualifiedName().toString(),
+        return new Namespace(null, env.getElementUtils().getPackageOf(typeElement).getQualifiedName().toString(),
                 module == null ? null : module.getQualifiedName().toString());
     }
 
