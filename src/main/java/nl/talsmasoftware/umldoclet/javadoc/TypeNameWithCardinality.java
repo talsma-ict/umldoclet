@@ -21,8 +21,8 @@ import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
+import java.util.ArrayDeque;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
@@ -64,7 +64,7 @@ final class TypeNameWithCardinality {
                 TypeName componentName = TypeNameVisitor.INSTANCE.visit(((ArrayType) type).getComponentType());
                 return new TypeNameWithCardinality(componentName, "*");
             } else if (type instanceof DeclaredType) {
-                Queue<TypeMirror> superTypes = new LinkedList<>(singleton(type));
+                Queue<TypeMirror> superTypes = new ArrayDeque<>(singleton(type));
                 Set<String> checkedTypes = new HashSet<>();
                 while (!superTypes.isEmpty()) {
                     TypeMirror superType = superTypes.poll();
