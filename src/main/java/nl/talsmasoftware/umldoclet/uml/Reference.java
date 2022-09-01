@@ -61,6 +61,14 @@ public class Reference extends UMLNode {
                 .collect(toCollection(LinkedHashSet::new));
     }
 
+    public static Side from(String qualifiedName, String cardinality) {
+        return new Side(qualifiedName, cardinality, true);
+    }
+
+    public static Side to(String qualifiedName, String cardinality) {
+        return new Side(qualifiedName, cardinality, false);
+    }
+
     public boolean isSelfReference() {
         return from.qualifiedName.equals(to.qualifiedName);
     }
@@ -75,9 +83,9 @@ public class Reference extends UMLNode {
     }
 
     private Reference inverse() {
-        return new Reference(Side.from(to.qualifiedName, to.cardinality),
+        return new Reference(from(to.qualifiedName, to.cardinality),
                 reverseType(),
-                Side.to(from.qualifiedName, from.cardinality),
+                to(from.qualifiedName, from.cardinality),
                 this.notes);
     }
 
@@ -151,14 +159,6 @@ public class Reference extends UMLNode {
         private final boolean nameFirst;
         private final String qualifiedName;
         private final String cardinality;
-
-        public static Side from(String qualifiedName, String cardinality) {
-            return new Side(qualifiedName, cardinality, true);
-        }
-
-        public static Side to(String qualifiedName, String cardinality) {
-            return new Side(qualifiedName, cardinality, false);
-        }
 
         private Side(String qualifiedName, String cardinality, boolean nameFirst) {
             requireNonNull(qualifiedName, "Name of referred object is <null>.");

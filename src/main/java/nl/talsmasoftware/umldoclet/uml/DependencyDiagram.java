@@ -17,7 +17,6 @@ package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
-import nl.talsmasoftware.umldoclet.uml.Reference.Side;
 
 import java.io.File;
 import java.util.List;
@@ -50,9 +49,9 @@ public class DependencyDiagram extends Diagram {
     public void addPackageDependency(String fromPackage, String toPackage) {
         if (fromPackage != null && toPackage != null) {
             this.addChild(new Reference(
-                    Side.from(unnamedIfEmpty(fromPackage), null),
+                    Reference.from(unnamedIfEmpty(fromPackage), null),
                     "-->",
-                    Side.to(unnamedIfEmpty(toPackage), null)));
+                    Reference.to(unnamedIfEmpty(toPackage), null)));
         }
     }
 

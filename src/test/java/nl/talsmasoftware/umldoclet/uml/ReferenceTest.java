@@ -17,8 +17,8 @@ package nl.talsmasoftware.umldoclet.uml;
 
 import org.junit.jupiter.api.Test;
 
-import static nl.talsmasoftware.umldoclet.uml.Reference.Side.from;
-import static nl.talsmasoftware.umldoclet.uml.Reference.Side.to;
+import static nl.talsmasoftware.umldoclet.uml.Reference.from;
+import static nl.talsmasoftware.umldoclet.uml.Reference.to;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;

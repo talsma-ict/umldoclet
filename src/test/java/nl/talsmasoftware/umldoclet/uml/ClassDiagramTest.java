@@ -75,9 +75,9 @@ public class ClassDiagramTest {
                 new TypeName("Foo", "foo.Foo"));
         classDiagram.addChild(foo);
         classDiagram.addChild(new Reference(
-                Reference.Side.from("foo.Foo", null),
+                Reference.from("foo.Foo", null),
                 "<|--",
-                Reference.Side.to("foo.bar.Bar", null)));
+                Reference.to("foo.bar.Bar", null)));
 
         classDiagram.render();
         String uml = TestUtil.read(new File(testdir + "/foo/bar/Bar.puml"));
