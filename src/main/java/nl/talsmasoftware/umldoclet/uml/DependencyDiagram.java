@@ -17,7 +17,6 @@ package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
-import nl.talsmasoftware.umldoclet.uml.Reference.Side;
 
 import java.io.File;
 import java.util.List;
@@ -30,11 +29,13 @@ import static java.util.stream.Collectors.toList;
  */
 public class DependencyDiagram extends Diagram {
 
+    private String moduleName;
     private String pumlFileName;
     private File pumlFile = null;
 
-    public DependencyDiagram(Configuration config, String pumlFileName) {
+    public DependencyDiagram(Configuration config, String moduleName, String pumlFileName) {
         super(config);
+        this.moduleName = moduleName;
         this.pumlFileName = pumlFileName;
     }
 
@@ -48,9 +49,9 @@ public class DependencyDiagram extends Diagram {
     public void addPackageDependency(String fromPackage, String toPackage) {
         if (fromPackage != null && toPackage != null) {
             this.addChild(new Reference(
-                    Side.from(unnamedIfEmpty(fromPackage), null),
+                    Reference.from(unnamedIfEmpty(fromPackage), null),
                     "-->",
-                    Side.to(unnamedIfEmpty(toPackage), null)));
+                    Reference.to(unnamedIfEmpty(toPackage), null)));
         }
     }
 
@@ -70,6 +71,7 @@ public class DependencyDiagram extends Diagram {
         if (pumlFile == null) {
             StringBuilder result = new StringBuilder(getConfiguration().destinationDirectory());
             if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');
+            if (moduleName != null) result.append(moduleName).append('/');
             result.append(pumlFileName);
             pumlFile = new File(result.toString());
         }
@@ -91,7 +93,7 @@ public class DependencyDiagram extends Diagram {
         output.println("' Package links");
         getChildren(Reference.class).stream()
                 .flatMap(reference -> Stream.of(reference.from.toString(), reference.to.toString()))
-                .distinct().map(packageName -> new Namespace(this, packageName))
+                .distinct().map(packageName -> new Namespace(this, packageName, null))
                 .forEach(namespace -> writePackageLinkTo(output, namespace));
         return output;
     }

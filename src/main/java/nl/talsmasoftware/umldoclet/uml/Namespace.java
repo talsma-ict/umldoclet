@@ -17,6 +17,8 @@ package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
+import java.util.Optional;
+
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -28,11 +30,17 @@ import static java.util.Objects.requireNonNull;
  */
 public class Namespace extends UMLNode {
 
+    private final String moduleName;
     public final String name;
 
-    public Namespace(UMLNode parent, String name) {
+    public Namespace(UMLNode parent, String name, String moduleName) {
         super(parent);
         this.name = requireNonNull(name, "Package name is <null>.").trim();
+        this.moduleName = moduleName;
+    }
+
+    public Optional<String> getModuleName() {
+        return Optional.ofNullable(moduleName);
     }
 
     /**

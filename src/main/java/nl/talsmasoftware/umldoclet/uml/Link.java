@@ -21,6 +21,7 @@ import java.io.File;
 import java.net.URI;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
 
@@ -45,24 +46,34 @@ public class Link extends UMLNode {
         final String nameInPackage = type.getName().qualified.startsWith(packageName + ".")
                 ? type.getName().qualified.substring(packageName.length() + 1) : type.getName().simple;
 
-        Optional<URI> target = relativeHtmlFile(destinationDirectory, packageName, nameInPackage)
+        Optional<URI> target = relativeHtmlFile(destinationDirectory, type.getModulename().orElse(null), packageName, nameInPackage)
                 .or(() -> type.getConfiguration().resolveExternalLinkToType(packageName, nameInPackage));
         return new Link(type, target.orElse(null));
     }
 
     public static Link forPackage(Namespace namespace) {
         final String destinationDirectory = namespace.getConfiguration().destinationDirectory();
+        final String moduleName = namespace.getModuleName().orElse(null);
         final String packageName = namespace.name;
-        final String nameInPackage = "package-summary";
-
-        Optional<URI> target = relativeHtmlFile(destinationDirectory, packageName, nameInPackage)
-                .or(() -> namespace.getConfiguration().resolveExternalLinkToType(packageName, nameInPackage));
+        Optional<URI> target = Stream.of("package-summary", "module-summary")
+                .map(name -> relativeHtmlFile(destinationDirectory, moduleName, packageName, name))
+                .filter(Optional::isPresent).map(Optional::get)
+                .findFirst()
+                .or(() -> namespace.getConfiguration().resolveExternalLinkToType(packageName, "package-summary"));
         return new Link(namespace, target.orElse(null));
     }
 
-    private static Optional<URI> relativeHtmlFile(String destinationDirectory, String packageName, String nameInPackage) {
-        final String directory = destinationDirectory + "/" + packageName.replace('.', '/');
-        return Optional.of(new File(directory, nameInPackage + ".html")).filter(File::isFile).map(File::toURI);
+    private static Optional<URI> relativeHtmlFile(String destinationDirectory, String moduleName, String packageName, String nameInPackage) {
+        final String packageAsPath = packageName.replace('.', '/');
+        final String htmlFileName = nameInPackage + ".html";
+
+        File file = new File(destinationDirectory + '/' + packageAsPath, htmlFileName);
+        if (file.isFile()) return Optional.of(file.toURI());
+        if (moduleName != null) {
+            file = new File(destinationDirectory + '/' + moduleName + '/' + packageAsPath, htmlFileName);
+            if (file.isFile()) return Optional.of(file.toURI());
+        }
+        return Optional.empty();
     }
 
     /**

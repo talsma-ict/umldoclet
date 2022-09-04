@@ -29,12 +29,14 @@ import nl.talsmasoftware.umldoclet.uml.Reference;
 import nl.talsmasoftware.umldoclet.uml.Type;
 import nl.talsmasoftware.umldoclet.uml.TypeMember;
 import nl.talsmasoftware.umldoclet.uml.TypeName;
+import nl.talsmasoftware.umldoclet.uml.UmlCharacters;
 import nl.talsmasoftware.umldoclet.uml.util.UmlPostProcessors;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.ModuleElement;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
@@ -57,8 +59,6 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 import static javax.lang.model.element.ElementKind.ENUM;
-import static nl.talsmasoftware.umldoclet.uml.Reference.Side.from;
-import static nl.talsmasoftware.umldoclet.uml.Reference.Side.to;
 
 /**
  * One big factory to produce UML from analyzed Javadoc elements.
@@ -75,7 +75,6 @@ public class UMLFactory {
     private static final UmlPostProcessors POST_PROCESSORS = new UmlPostProcessors();
 
     final Configuration config;
-    final ThreadLocal<Diagram> diagram = new ThreadLocal<>(); // TODO no longer needed?
     private final DocletEnvironment env;
     private final Function<TypeMirror, TypeNameWithCardinality> typeNameWithCardinality;
 
@@ -110,9 +109,9 @@ public class UMLFactory {
                 classDiagram.addChild(superType);
                 sep = UmlCharacters.EMPTY;
                 references.add(new Reference(
-                        from(type.getName().qualified, null),
+                        Reference.from(type.getName().qualified, null),
                         "--|>",
-                        to(superclassName.qualified, null))
+                        Reference.to(superclassName.qualified, null))
                         .canonical());
             }
         }
@@ -131,9 +130,9 @@ public class UMLFactory {
                     sep = UmlCharacters.EMPTY;
                 }
                 references.add(new Reference(
-                        from(type.getName().qualified, null),
+                        Reference.from(type.getName().qualified, null),
                         interfaceRefTypeFrom(type),
-                        to(ifName.qualified, null))
+                        Reference.to(ifName.qualified, null))
                         .canonical());
             }
         }
@@ -153,9 +152,9 @@ public class UMLFactory {
                     sep = UmlCharacters.EMPTY;
                 }
                 references.add(new Reference(
-                        from(type.getName().qualified, null),
+                        Reference.from(type.getName().qualified, null),
                         "--+",
-                        to(enclosingTypeName.qualified, null))
+                        Reference.to(enclosingTypeName.qualified, null))
                         .canonical());
             }
         }
@@ -169,9 +168,9 @@ public class UMLFactory {
                     Type innerType = createType(null, innerclassElem);
                     classDiagram.addChild(innerType);
                     references.add(new Reference(
-                            from(type.getName().qualified, null),
+                            Reference.from(type.getName().qualified, null),
                             "+--",
-                            to(innerType.getName().qualified, null))
+                            Reference.to(innerType.getName().qualified, null))
                             .canonical());
                 });
 
@@ -212,7 +211,9 @@ public class UMLFactory {
     }
 
     public Diagram createPackageDiagram(PackageElement packageElement) {
-        PackageDiagram packageDiagram = new PackageDiagram(config, packageElement.getQualifiedName().toString());
+        final ModuleElement module = env.getElementUtils().getModuleOf(packageElement);
+        PackageDiagram packageDiagram = new PackageDiagram(config, packageElement.getQualifiedName().toString(),
+                module == null ? null : module.getQualifiedName().toString());
         Map<String, Collection<Type>> foreignTypes = new LinkedHashMap<>();
         List<Reference> references = new ArrayList<>();
 
@@ -239,7 +240,7 @@ public class UMLFactory {
                 .filter(entry -> !entry.getValue().isEmpty())
                 .map(entry -> {
                     String foreignPackage = entry.getKey();
-                    Namespace foreignNamespace = new Namespace(packageDiagram, foreignPackage);
+                    Namespace foreignNamespace = new Namespace(packageDiagram, foreignPackage, null);
                     entry.getValue().forEach(foreignNamespace::addChild);
                     return foreignNamespace;
                 })
@@ -252,14 +253,16 @@ public class UMLFactory {
         if (config.methods().javaBeanPropertiesAsFields()) {
             namespace.getChildren().stream()
                     .filter(Type.class::isInstance).map(Type.class::cast)
-                    .forEach(POST_PROCESSORS.javaBeanPropertiesAsFieldsPostProcessor()::accept);
+                    .forEach(POST_PROCESSORS.javaBeanPropertiesAsFieldsPostProcessor());
         }
 
         return packageDiagram;
     }
 
     Namespace packageOf(TypeElement typeElement) {
-        return new Namespace(diagram.get(), env.getElementUtils().getPackageOf(typeElement).getQualifiedName().toString());
+        final ModuleElement module = env.getElementUtils().getModuleOf(typeElement);
+        return new Namespace(null, env.getElementUtils().getPackageOf(typeElement).getQualifiedName().toString(),
+                module == null ? null : module.getQualifiedName().toString());
     }
 
     Field createField(Type containingType, VariableElement variable) {
@@ -464,9 +467,9 @@ public class UMLFactory {
             TypeName superclassName = TypeNameVisitor.INSTANCE.visit(superclassType);
             if (!config.excludedTypeReferences().contains(superclassName.qualified)) {
                 references.add(new Reference(
-                        from(type.getName().qualified, null),
+                        Reference.from(type.getName().qualified, null),
                         "--|>",
-                        to(superclassName.qualified, null)));
+                        Reference.to(superclassName.qualified, null)));
                 if (!namespace.contains(superclassName)) {
                     addForeignType(foreignTypes, superclassElement);
                 }
@@ -478,9 +481,9 @@ public class UMLFactory {
             TypeName interfaceName = TypeNameVisitor.INSTANCE.visit(interfaceType);
             if (!config.excludedTypeReferences().contains(interfaceName.qualified)) {
                 references.add(new Reference(
-                        from(type.getName().qualified, null),
+                        Reference.from(type.getName().qualified, null),
                         interfaceRefTypeFrom(type),
-                        to(interfaceName.qualified, null)));
+                        Reference.to(interfaceName.qualified, null)));
                 // TODO Figure out what to do IF the interface is found BUT has a different typename
                 if (!namespace.contains(interfaceName)) {
                     addForeignType(foreignTypes, env.getTypeUtils().asElement(interfaceType));
@@ -492,7 +495,7 @@ public class UMLFactory {
         ElementKind enclosingKind = typeElement.getEnclosingElement().getKind();
         if (enclosingKind.isClass() || enclosingKind.isInterface()) {
             TypeName parentType = TypeNameVisitor.INSTANCE.visit(typeElement.getEnclosingElement().asType());
-            references.add(new Reference(from(parentType.qualified, null), "+--", to(type.getName().qualified, null)));
+            references.add(new Reference(Reference.from(parentType.qualified, null), "+--", Reference.to(type.getName().qualified, null)));
             // No check needed whether parent type lives in our namespace.
         }
 
@@ -506,9 +509,9 @@ public class UMLFactory {
                     TypeNameWithCardinality fieldType = typeNameWithCardinality.apply(field.asType());
                     if (namespace.contains(fieldType.typeName)) {
                         addReference(references, new Reference(
-                                from(type.getName().qualified, null),
+                                Reference.from(type.getName().qualified, null),
                                 "-->",
-                                to(fieldType.typeName.qualified, fieldType.cardinality),
+                                Reference.to(fieldType.typeName.qualified, fieldType.cardinality),
                                 fieldName));
                         type.removeChildren(child -> child instanceof Field && ((Field) child).name.equals(fieldName));
                     }
@@ -525,9 +528,9 @@ public class UMLFactory {
                         TypeNameWithCardinality returnType = typeNameWithCardinality.apply(propertyType(method));
                         if (namespace.contains(returnType.typeName)) {
                             addReference(references, new Reference(
-                                    from(type.getName().qualified, null),
+                                    Reference.from(type.getName().qualified, null),
                                     "-->",
-                                    to(returnType.typeName.qualified, returnType.cardinality),
+                                    Reference.to(returnType.typeName.qualified, returnType.cardinality),
                                     propertyName));
                             type.removeChildren(child -> child instanceof Method
                                     && ((Method) child).name.equals(method.getSimpleName().toString()));
@@ -604,7 +607,9 @@ public class UMLFactory {
                             PackageElement packageElement,
                             Map<String, Collection<Type>> foreignTypes,
                             List<Reference> references) {
-        Namespace pkg = new Namespace(diagram, packageElement.getQualifiedName().toString());
+        final ModuleElement module = env.getElementUtils().getModuleOf(packageElement);
+        Namespace pkg = new Namespace(diagram, packageElement.getQualifiedName().toString(),
+                module == null ? null : module.getQualifiedName().toString());
 
         // Add all types contained in this package.
         packageElement.getEnclosedElements().stream()

@@ -31,10 +31,7 @@ import static java.util.Collections.singleton;
 import static nl.talsmasoftware.umldoclet.configuration.ImageConfig.Format.SVG;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class ClassDiagramTest {
 
@@ -65,21 +62,22 @@ public class ClassDiagramTest {
     public void testClassWithSuperClassInAnotherPackageRelativePath() {
         TestUtil.touch(new File(testdir + "/foo/bar/Bar.html"));
         TestUtil.touch(new File(testdir + "/foo/Foo.html"));
-        Type bar = new Type(new Namespace(null, "foo.bar"),
+        Type bar = new Type(
+                new Namespace(null, "foo.bar", null),
                 Type.Classification.CLASS,
                 new TypeName("Bar", "foo.bar.Bar"));
 
         ClassDiagram classDiagram = new ClassDiagram(config, bar);
 
         // Add Superclass com.foo.Foo
-        Type foo = new Type(new Namespace(null, "foo"),
+        Type foo = new Type(new Namespace(null, "foo", null),
                 Type.Classification.CLASS,
                 new TypeName("Foo", "foo.Foo"));
         classDiagram.addChild(foo);
         classDiagram.addChild(new Reference(
-                Reference.Side.from("foo.Foo", null),
+                Reference.from("foo.Foo", null),
                 "<|--",
-                Reference.Side.to("foo.bar.Bar", null)));
+                Reference.to("foo.bar.Bar", null)));
 
         classDiagram.render();
         String uml = TestUtil.read(new File(testdir + "/foo/bar/Bar.puml"));

@@ -19,6 +19,7 @@ import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import static java.util.Locale.ENGLISH;
 import static java.util.Objects.requireNonNull;
@@ -91,6 +92,10 @@ public class Type extends UMLNode {
 
     public void setIncludePackagename(boolean include) {
         this.includePackagename = include;
+    }
+
+    public Optional<String> getModulename() {
+        return packageNamespace.getModuleName();
     }
 
     public String getPackagename() {

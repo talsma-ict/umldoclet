@@ -23,15 +23,10 @@ import org.junit.jupiter.api.Test;
 
 import static java.util.Collections.singleton;
 import static nl.talsmasoftware.umldoclet.configuration.ImageConfig.Format.SVG;
+import static nl.talsmasoftware.umldoclet.util.TestUtil.randomString;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
 
 public class NamespaceTest {
 
@@ -55,12 +50,12 @@ public class NamespaceTest {
 
     @Test
     public void testEquals() {
-        PackageDiagram packageUml = new PackageDiagram(config, "a.b.c");
-        Namespace namespace = new Namespace(packageUml, "a.b.c");
+        PackageDiagram packageUml = new PackageDiagram(config, "a.b.c", randomString());
+        Namespace namespace = new Namespace(packageUml, "a.b.c", randomString());
         assertThat(namespace.equals(namespace), is(true));
-        assertThat(namespace, is(equalTo(new Namespace(null, "a.b.c"))));
-        assertThat(namespace, is(equalTo(new Namespace(packageUml, "a.b.c"))));
-        assertThat(namespace, is(not(equalTo(new Namespace(packageUml, "A.B.C")))));
+        assertThat(namespace, is(equalTo(new Namespace(null, "a.b.c", randomString()))));
+        assertThat(namespace, is(equalTo(new Namespace(packageUml, "a.b.c", randomString()))));
+        assertThat(namespace, is(not(equalTo(new Namespace(packageUml, "A.B.C", randomString())))));
     }
 
 }

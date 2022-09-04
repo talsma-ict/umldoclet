@@ -30,17 +30,8 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.hasToString;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
 
 public class DependencyDiagramTest {
     private ImageConfig mockImages;
@@ -56,7 +47,7 @@ public class DependencyDiagramTest {
         when(mockConfig.images()).thenReturn(mockImages);
         when(mockImages.formats()).thenReturn(singleton(ImageConfig.Format.SVG));
         when(mockConfig.excludedPackageDependencies()).thenReturn(excluded);
-        diagram = new DependencyDiagram(mockConfig, "package-dependencies.puml");
+        diagram = new DependencyDiagram(mockConfig, null, "package-dependencies.puml");
     }
 
     @AfterEach

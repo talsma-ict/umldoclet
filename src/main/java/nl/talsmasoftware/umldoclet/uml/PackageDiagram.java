@@ -26,12 +26,14 @@ import static java.util.Objects.requireNonNull;
  */
 public class PackageDiagram extends Diagram {
 
-    final String packageName; // TODO: maybe auto-detect lazily by first addChild() of type Namespace?
+    final String moduleName;
+    final String packageName;
     private File pumlFile = null;
 
-    public PackageDiagram(Configuration config, String packageName) {
+    public PackageDiagram(Configuration config, String packageName, String moduleName) {
         super(config);
         this.packageName = requireNonNull(packageName, "Package name is <null>.");
+        this.moduleName = moduleName;
     }
 
     @Override
@@ -39,6 +41,7 @@ public class PackageDiagram extends Diagram {
         if (pumlFile == null) {
             StringBuilder result = new StringBuilder(getConfiguration().destinationDirectory());
             if (result.length() > 0 && result.charAt(result.length() - 1) != '/') result.append('/');
+            if (moduleName != null) result.append(moduleName).append('/');
             result.append(packageName.replace('.', '/'));
             result.append("/package.puml");
             pumlFile = new File(result.toString());

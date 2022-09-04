@@ -27,6 +27,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.UUID;
 
 import static java.lang.reflect.Modifier.FINAL;
 import static java.lang.reflect.Modifier.PRIVATE;
@@ -135,4 +136,7 @@ public final class TestUtil {
         write(file, "");
     }
 
+    public static String randomString() {
+        return "" + UUID.randomUUID();
+    }
 }
