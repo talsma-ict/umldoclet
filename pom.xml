@@ -156,8 +156,8 @@
                         <exclude>.gitignore</exclude>
                         <exclude>.codebeatignore</exclude>
                         <exclude>.codacy.yml</exclude>
-                        <exclude>.lift.toml</exclude>
                         <exclude>.github/**</exclude>
+                        <exclude>.lift/**</exclude>
                         <exclude>.mvn/**</exclude>
                         <exclude>mvnw*</exclude>
                         <exclude>lib/**</exclude>

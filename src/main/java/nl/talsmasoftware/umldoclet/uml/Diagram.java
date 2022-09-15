@@ -16,15 +16,18 @@
 package nl.talsmasoftware.umldoclet.uml;
 
 import net.sourceforge.plantuml.FileFormat;
-import net.sourceforge.plantuml.FileFormatOption;
-import net.sourceforge.plantuml.SourceStringReader;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
 import nl.talsmasoftware.umldoclet.logging.Message;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.rendering.writers.StringBufferingWriter;
+import nl.talsmasoftware.umldoclet.uml.plantuml.PlantumlGenerator;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.file.Files;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -36,6 +39,8 @@ import static nl.talsmasoftware.umldoclet.util.FileUtils.*;
  * Abstract class corresponding to a single UML diagram.
  */
 public abstract class Diagram extends UMLNode {
+
+    private static final PlantumlGenerator PLANTUML_GENERATOR = PlantumlGenerator.autodetect();
 
     private final Configuration config;
     private final FileFormat[] formats;
@@ -79,7 +84,7 @@ public abstract class Diagram extends UMLNode {
      * Determine the physical file location for the plantuml output.
      *
      * <p>This will even be called if {@code -createPumlFiles} is not enabled,
-     * to determine the {@linkplain #getDiagramBaseFile()}.
+     * to determine the {@code diagram base file}.
      *
      * @return The physical file for the plantuml output.
      */
@@ -156,15 +161,15 @@ public abstract class Diagram extends UMLNode {
     private StringBufferingWriter createBufferingPlantumlFileWriter(File pumlFile) throws IOException {
         return new StringBufferingWriter(
                 new OutputStreamWriter(
-                        new FileOutputStream(pumlFile), config.umlCharset()));
+                        Files.newOutputStream(pumlFile.toPath()), config.umlCharset()));
     }
 
     private void renderDiagramFile(String plantumlSource, FileFormat format) throws IOException {
         final File diagramFile = getDiagramFile(format);
         config.logger().info(Message.INFO_GENERATING_FILE, diagramFile);
         ensureParentDir(diagramFile);
-        try (OutputStream out = new FileOutputStream(diagramFile)) {
-            new SourceStringReader(plantumlSource).outputImage(out, new FileFormatOption(format));
+        try (OutputStream out = Files.newOutputStream(diagramFile.toPath())) {
+            PLANTUML_GENERATOR.generatePlantumlDiagramFromSource(plantumlSource, format, out);
         }
     }
 
