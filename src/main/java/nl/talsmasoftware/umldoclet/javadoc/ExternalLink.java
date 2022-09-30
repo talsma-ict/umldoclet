@@ -51,6 +51,7 @@ import static nl.talsmasoftware.umldoclet.util.UriUtils.addPathComponent;
  * @author Sjoerd Talsma
  */
 final class ExternalLink {
+    private static final PackagenameValidator PACKAGENAME_VALIDATOR = new PackagenameValidator();
     private final Configuration config;
     private final URI docUri;
     private final URI baseUri;
@@ -97,11 +98,16 @@ final class ExternalLink {
             String module = ""; // default to unnamed module
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                 line = line.trim();
-                if (line.startsWith("module:")) {
+                if (module.isEmpty() && line.contains("<")) {
+                    config.logger().debug("Ignoring {0} as it seems to contain HTML.", elementListUri);
+                    return emptyMap();
+                } else if (line.startsWith("module:")) {
                     module = line.substring("module:".length()).trim();
-                } else if (!line.isEmpty()) {
+                } else if (PACKAGENAME_VALIDATOR.test(line)) {
                     if (!modules.containsKey(module)) modules.put(module, new LinkedHashSet<>());
                     modules.get(module).add(line);
+                } else {
+                    config.logger().debug("Skipping '{1}' (in module '{0}') as it does not look like a valid package name.", module, line);
                 }
             }
         } catch (IOException | RuntimeException ex) {
@@ -118,7 +124,7 @@ final class ExternalLink {
                     openReaderTo(config.destinationDirectory(), packageListUri, "UTF-8"))) {
                 for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                     line = line.trim();
-                    if (!line.isEmpty()) packages.add(line);
+                    if (PACKAGENAME_VALIDATOR.test(line)) packages.add(line);
                 }
             }
         } catch (IOException | RuntimeException ex) {

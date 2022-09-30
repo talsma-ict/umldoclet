@@ -16,11 +16,11 @@
 package nl.talsmasoftware.umldoclet.util;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -130,7 +130,7 @@ public final class FileUtils {
         if ("file".equals(uri.getScheme()) || uri.getScheme() == null) {
             File f = uri.isAbsolute() ? new File(uri) : new File(uri.toASCIIString());
             if (!f.exists()) f = new File(basedir, uri.toASCIIString());
-            return new InputStreamReader(new FileInputStream(f), charsetName);
+            return new InputStreamReader(Files.newInputStream(f.toPath()), charsetName);
         }
         return new InputStreamReader(uri.toURL().openStream(), charsetName);
     }
