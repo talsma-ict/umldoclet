@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.activitydiagram3.ftile.vcompact;
 
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -57,7 +56,8 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileDiamond;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileDiamondInside;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileDiamondSquare;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
+import net.sourceforge.plantuml.awt.geom.XPoint2D;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
@@ -137,7 +137,7 @@ class FtileWhile extends AbstractFtile {
 		final Ftile special = specialOut == null ? null : specialOut.createFtile(ftileFactory);
 		final FtileWhile result = new FtileWhile(whileBlock, diamond1, special, backward);
 
-		final Dimension2D dim = whileBlock.calculateDimension(ftileFactory.getStringBounder());
+		final XDimension2D dim = whileBlock.calculateDimension(ftileFactory.getStringBounder());
 		final TextBlock back1 = incoming1.getDisplay().create(fontArrow, HorizontalAlignment.LEFT,
 				ftileFactory.skinParam());
 
@@ -171,12 +171,12 @@ class FtileWhile extends AbstractFtile {
 			this.arrowColor = arrowColor;
 		}
 
-		private Point2D getP1(final StringBounder stringBounder) {
+		private XPoint2D getP1(final StringBounder stringBounder) {
 			return getTranslateDiamond1(stringBounder)
 					.getTranslated(getFtile1().calculateDimension(stringBounder).getPointOut());
 		}
 
-		private Point2D getP2(final StringBounder stringBounder) {
+		private XPoint2D getP2(final StringBounder stringBounder) {
 			return getTranslateForWhile(stringBounder)
 					.getTranslated(getFtile2().calculateDimension(stringBounder).getPointIn());
 		}
@@ -194,12 +194,12 @@ class FtileWhile extends AbstractFtile {
 		@Override
 		public void drawTranslate(UGraphic ug, UTranslate translate1, UTranslate translate2) {
 			final StringBounder stringBounder = ug.getStringBounder();
-			final Point2D p1 = getP1(stringBounder);
-			final Point2D p2 = getP2(stringBounder);
+			final XPoint2D p1 = getP1(stringBounder);
+			final XPoint2D p2 = getP2(stringBounder);
 			final Snake snake = Snake.create(skinParam(), arrowColor, Arrows.asToDown())
 					.withMerge(MergeStrategy.LIMITED);
-			final Point2D mp1a = translate1.getTranslated(p1);
-			final Point2D mp2b = translate2.getTranslated(p2);
+			final XPoint2D mp1a = translate1.getTranslated(p1);
+			final XPoint2D mp2b = translate2.getTranslated(p2);
 			final double middle = (mp1a.getY() + mp2b.getY()) / 2.0;
 			snake.addPoint(mp1a);
 			snake.addPoint(mp1a.getX(), middle);
@@ -219,7 +219,7 @@ class FtileWhile extends AbstractFtile {
 			this.back = back;
 		}
 
-		private Point2D getP1(final StringBounder stringBounder) {
+		private XPoint2D getP1(final StringBounder stringBounder) {
 			final FtileGeometry geo = whileBlock.calculateDimension(stringBounder);
 			if (geo.hasPointOut() == false) {
 				return null;
@@ -232,19 +232,19 @@ class FtileWhile extends AbstractFtile {
 			return getTranslateForWhile(stringBounder).getDy() + geo.getHeight();
 		}
 
-		private Point2D getP2(final StringBounder stringBounder) {
-			return getTranslateDiamond1(stringBounder).getTranslated(new Point2D.Double(0, 0));
+		private XPoint2D getP2(final StringBounder stringBounder) {
+			return getTranslateDiamond1(stringBounder).getTranslated(new XPoint2D(0, 0));
 		}
 
 		public void drawU(UGraphic ug) {
 			final StringBounder stringBounder = ug.getStringBounder();
 
-			final Dimension2D dimTotal = calculateDimension(stringBounder);
-			final Point2D p1 = getP1(stringBounder);
+			final XDimension2D dimTotal = calculateDimension(stringBounder);
+			final XPoint2D p1 = getP1(stringBounder);
 			if (p1 == null) {
 				return;
 			}
-			final Point2D p2 = getP2(stringBounder);
+			final XPoint2D p2 = getP2(stringBounder);
 			final FtileGeometry dimDiamond1 = diamond1.calculateDimension(stringBounder);
 
 			final double x1 = p1.getX();
@@ -273,11 +273,11 @@ class FtileWhile extends AbstractFtile {
 			final StringBounder stringBounder = ug.getStringBounder();
 			final Snake snake = Snake.create(skinParam(), endInlinkColor, Arrows.asToLeft())
 					.withMerge(MergeStrategy.LIMITED);
-			final Dimension2D dimTotal = calculateDimension(stringBounder);
-			final Point2D ap1 = getP1(stringBounder);
-			final Point2D ap2 = getP2(stringBounder);
-			final Point2D p1 = translate1.getTranslated(ap1);
-			final Point2D p2 = translate2.getTranslated(ap2);
+			final XDimension2D dimTotal = calculateDimension(stringBounder);
+			final XPoint2D ap1 = getP1(stringBounder);
+			final XPoint2D ap2 = getP2(stringBounder);
+			final XPoint2D p1 = translate1.getTranslated(ap1);
+			final XPoint2D p2 = translate2.getTranslated(ap2);
 
 			final FtileGeometry dimDiamond1 = diamond1.calculateDimension(stringBounder);
 
@@ -315,7 +315,7 @@ class FtileWhile extends AbstractFtile {
 			this.back = back;
 		}
 
-		private Point2D getP1(final StringBounder stringBounder) {
+		private XPoint2D getP1(final StringBounder stringBounder) {
 			final FtileGeometry geo = whileBlock.calculateDimension(stringBounder);
 			if (geo.hasPointOut() == false) {
 				return null;
@@ -328,19 +328,19 @@ class FtileWhile extends AbstractFtile {
 			return getTranslateForWhile(stringBounder).getDy() + geo.getHeight();
 		}
 
-		private Point2D getP2(final StringBounder stringBounder) {
+		private XPoint2D getP2(final StringBounder stringBounder) {
 			final FtileGeometry dim = backward.calculateDimension(stringBounder);
-			return getTranslateBackward(stringBounder).getTranslated(new Point2D.Double(dim.getLeft(), dim.getOutY()));
+			return getTranslateBackward(stringBounder).getTranslated(new XPoint2D(dim.getLeft(), dim.getOutY()));
 		}
 
 		public void drawU(UGraphic ug) {
 			final StringBounder stringBounder = ug.getStringBounder();
 
-			final Point2D p1 = getP1(stringBounder);
+			final XPoint2D p1 = getP1(stringBounder);
 			if (p1 == null) {
 				return;
 			}
-			final Point2D p2 = getP2(stringBounder);
+			final XPoint2D p2 = getP2(stringBounder);
 			final double x1 = p1.getX();
 			final double y1 = p1.getY();
 			final double x2 = p2.getX();
@@ -369,13 +369,13 @@ class FtileWhile extends AbstractFtile {
 			this.back = back;
 		}
 
-		private Point2D getP1(final StringBounder stringBounder) {
+		private XPoint2D getP1(final StringBounder stringBounder) {
 			final FtileGeometry dim = backward.calculateDimension(stringBounder);
-			return getTranslateBackward(stringBounder).getTranslated(new Point2D.Double(dim.getLeft(), dim.getInY()));
+			return getTranslateBackward(stringBounder).getTranslated(new XPoint2D(dim.getLeft(), dim.getInY()));
 		}
 
-		private Point2D getP2(final StringBounder stringBounder) {
-			return getTranslateDiamond1(stringBounder).getTranslated(new Point2D.Double(0, 0));
+		private XPoint2D getP2(final StringBounder stringBounder) {
+			return getTranslateDiamond1(stringBounder).getTranslated(new XPoint2D(0, 0));
 		}
 
 		public void drawU(UGraphic ug) {
@@ -384,8 +384,8 @@ class FtileWhile extends AbstractFtile {
 			final Snake snake = Snake.create(skinParam(), endInlinkColor, Arrows.asToLeft()).withLabel(back,
 					arrowHorizontalAlignment());
 
-			final Point2D p1 = getP1(stringBounder);
-			final Point2D p2 = getP2(stringBounder);
+			final XPoint2D p1 = getP1(stringBounder);
+			final XPoint2D p2 = getP2(stringBounder);
 			final FtileGeometry dimDiamond1 = diamond1.calculateDimension(stringBounder);
 
 			final double x1 = p1.getX();
@@ -410,7 +410,7 @@ class FtileWhile extends AbstractFtile {
 			this.endInlinkColor = endInlinkColor;
 		}
 
-		private Point2D getP1(final StringBounder stringBounder) {
+		private XPoint2D getP1(final StringBounder stringBounder) {
 			return getTranslateDiamond1(stringBounder)
 					.getTranslated(diamond1.calculateDimension(stringBounder).getPointOut());
 		}
@@ -420,8 +420,8 @@ class FtileWhile extends AbstractFtile {
 			return getTranslateForWhile(stringBounder).getDy() + geo.getHeight();
 		}
 
-		private Point2D getP2(final StringBounder stringBounder) {
-			return getTranslateDiamond1(stringBounder).getTranslated(new Point2D.Double(0, 0));
+		private XPoint2D getP2(final StringBounder stringBounder) {
+			return getTranslateDiamond1(stringBounder).getTranslated(new XPoint2D(0, 0));
 		}
 
 		public void drawU(UGraphic ug) {
@@ -429,9 +429,9 @@ class FtileWhile extends AbstractFtile {
 
 			final Snake snake = Snake.create(skinParam(), endInlinkColor, Arrows.asToLeft())
 					.emphasizeDirection(Direction.UP);
-			final Dimension2D dimTotal = calculateDimension(stringBounder);
-			final Point2D p1 = getP1(stringBounder);
-			final Point2D p2 = getP2(stringBounder);
+			final XDimension2D dimTotal = calculateDimension(stringBounder);
+			final XPoint2D p1 = getP1(stringBounder);
+			final XPoint2D p2 = getP2(stringBounder);
 			final FtileGeometry dimDiamond1 = diamond1.calculateDimension(stringBounder);
 
 			final double x1 = p1.getX();
@@ -465,13 +465,13 @@ class FtileWhile extends AbstractFtile {
 			this.afterEndwhileColor = afterEndwhileColor;
 		}
 
-		private Point2D getP1(final StringBounder stringBounder) {
-			return getTranslateDiamond1(stringBounder).getTranslated(new Point2D.Double(0, 0));
+		private XPoint2D getP1(final StringBounder stringBounder) {
+			return getTranslateDiamond1(stringBounder).getTranslated(new XPoint2D(0, 0));
 		}
 
-		private Point2D getP2(final StringBounder stringBounder) {
+		private XPoint2D getP2(final StringBounder stringBounder) {
 			final FtileGeometry dimTotal = calculateDimension(stringBounder);
-			return new Point2D.Double(dimTotal.getLeft(), dimTotal.getHeight());
+			return new XPoint2D(dimTotal.getLeft(), dimTotal.getHeight());
 		}
 
 		public void drawU(UGraphic ug) {
@@ -481,8 +481,8 @@ class FtileWhile extends AbstractFtile {
 					.emphasizeDirection(Direction.DOWN);
 
 			final FtileGeometry dimDiamond1 = diamond1.calculateDimension(stringBounder);
-			final Point2D p1 = getP1(stringBounder);
-			final Point2D p2 = getP2(stringBounder);
+			final XPoint2D p1 = getP1(stringBounder);
+			final XPoint2D p2 = getP2(stringBounder);
 
 			final double x1 = p1.getX();
 			final double half = (dimDiamond1.getOutY() - dimDiamond1.getInY()) / 2;
@@ -513,11 +513,11 @@ class FtileWhile extends AbstractFtile {
 			this.afterEndwhileColor = afterEndwhileColor;
 		}
 
-		private Point2D getP1(final StringBounder stringBounder) {
-			return getTranslateDiamond1(stringBounder).getTranslated(new Point2D.Double(0, 0));
+		private XPoint2D getP1(final StringBounder stringBounder) {
+			return getTranslateDiamond1(stringBounder).getTranslated(new XPoint2D(0, 0));
 		}
 
-		private Point2D getP2(final StringBounder stringBounder) {
+		private XPoint2D getP2(final StringBounder stringBounder) {
 			return getTranslateForSpecial(stringBounder)
 					.getTranslated(specialOut.calculateDimension(stringBounder).getPointIn());
 		}
@@ -528,8 +528,8 @@ class FtileWhile extends AbstractFtile {
 			final Snake snake = Snake.create(skinParam(), afterEndwhileColor, Arrows.asToDown());
 
 			final FtileGeometry dimDiamond1 = diamond1.calculateDimension(stringBounder);
-			final Point2D p1 = getP1(stringBounder);
-			final Point2D p2 = getP2(stringBounder);
+			final XPoint2D p1 = getP1(stringBounder);
+			final XPoint2D p2 = getP2(stringBounder);
 
 			final double x1 = p1.getX();
 			final double half = (dimDiamond1.getOutY() - dimDiamond1.getInY()) / 2;
@@ -559,8 +559,8 @@ class FtileWhile extends AbstractFtile {
 	}
 
 	private UTranslate getTranslateBackward(StringBounder stringBounder) {
-		final Dimension2D dimTotal = calculateDimensionFtile(stringBounder);
-		final Dimension2D dimBackward = backward.calculateDimension(stringBounder);
+		final XDimension2D dimTotal = calculateDimensionFtile(stringBounder);
+		final XDimension2D dimBackward = backward.calculateDimension(stringBounder);
 		final double x = dimTotal.getWidth() - dimBackward.getWidth();
 		final double y = (dimTotal.getHeight() - dimBackward.getHeight()) / 2;
 

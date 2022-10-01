@@ -35,6 +35,7 @@ package net.sourceforge.plantuml.cucadiagram.entity;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -43,14 +44,18 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import net.sourceforge.plantuml.Direction;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.Guillemet;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.Url;
+import net.sourceforge.plantuml.command.Position;
 import net.sourceforge.plantuml.cucadiagram.Bodier;
 import net.sourceforge.plantuml.cucadiagram.Code;
+import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
+import net.sourceforge.plantuml.cucadiagram.CucaNote;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.DisplayPositioned;
 import net.sourceforge.plantuml.cucadiagram.EntityPosition;
@@ -67,17 +72,23 @@ import net.sourceforge.plantuml.cucadiagram.Stereotag;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.cucadiagram.dot.Neighborhood;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
+import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.graphic.TextBlockEmpty;
 import net.sourceforge.plantuml.graphic.USymbol;
 import net.sourceforge.plantuml.graphic.USymbols;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
+import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.svek.IEntityImage;
+import net.sourceforge.plantuml.svek.Kal;
+import net.sourceforge.plantuml.svek.Margins;
 import net.sourceforge.plantuml.svek.PackageStyle;
 import net.sourceforge.plantuml.svek.SingleStrategy;
+import net.sourceforge.plantuml.svek.image.EntityImageStateCommon;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.utils.UniqueSequence;
 
 final public class EntityImpl implements ILeaf, IGroup {
 
@@ -90,7 +101,7 @@ final public class EntityImpl implements ILeaf, IGroup {
 	private Url url;
 
 	private final Bodier bodier;
-	private final String uid = StringUtils.getUid("cl", UniqueSequence.getValue());
+	private final String uid;
 	private Display display = Display.empty();
 	private DisplayPositioned legend = null;
 
@@ -100,15 +111,13 @@ final public class EntityImpl implements ILeaf, IGroup {
 	private String generic;
 	private IGroup parentContainer;
 
-	private boolean top;
-
 	// Group
 	private Code namespace;
 
 	private GroupType groupType;
 
 	// Other
-	private boolean nearDecoration = false;
+	private Margins margins = Margins.NONE;
 	private final Collection<String> portShortNames = new HashSet<>();
 	private int xposition;
 	private IEntityImage svekImage;
@@ -119,6 +128,25 @@ final public class EntityImpl implements ILeaf, IGroup {
 	private LineLocation codeLine;
 
 	private Set<Stereotag> tags = new LinkedHashSet<>();
+	private final List<CucaNote> notesTop = new ArrayList<>();
+	private final List<CucaNote> notesBottom = new ArrayList<>();
+
+	@Override
+	public void addNote(Display note, Position position, Colors colors) {
+		if (position == Position.TOP)
+			notesTop.add(CucaNote.build(note, position, colors));
+		else if (position == Position.BOTTOM)
+			notesBottom.add(CucaNote.build(note, position, colors));
+	}
+
+	@Override
+	public List<CucaNote> getNotes(Position position) {
+		if (position == Position.TOP)
+			return Collections.unmodifiableList(notesTop);
+		if (position == Position.BOTTOM)
+			return Collections.unmodifiableList(notesBottom);
+		throw new IllegalArgumentException();
+	}
 
 	public void addStereotag(Stereotag tag) {
 		this.tags.add(tag);
@@ -129,19 +157,10 @@ final public class EntityImpl implements ILeaf, IGroup {
 	}
 
 	// Back to Entity
-	public final boolean isTop() {
-		checkNotGroup();
-		return top;
-	}
-
-	public final void setTop(boolean top) {
-		checkNotGroup();
-		this.top = top;
-	}
-
 	private EntityImpl(Ident ident, EntityFactory entityFactory, Code code, Bodier bodier, IGroup parentContainer,
 			String namespaceSeparator, int rawLayout) {
 		this.ident = Objects.requireNonNull(ident);
+		this.uid = StringUtils.getUid("cl", entityFactory.getDiagram().getUniqueSequence());
 		if (entityFactory.namespaceSeparator.V1972())
 			code = ident;
 
@@ -275,14 +294,14 @@ final public class EntityImpl implements ILeaf, IGroup {
 		this.url = url;
 	}
 
-	public final boolean hasNearDecoration() {
+	public final Margins getMargins() {
 		checkNotGroup();
-		return nearDecoration;
+		return margins;
 	}
 
-	public final void setNearDecoration(boolean nearDecoration) {
+	public final void ensureMargins(Margins newMargins) {
 		// checkNotGroup();
-		this.nearDecoration = nearDecoration;
+		this.margins = this.margins.merge(newMargins);
 	}
 
 	public int getXposition() {
@@ -320,9 +339,8 @@ final public class EntityImpl implements ILeaf, IGroup {
 	}
 
 	public EntityPosition getEntityPosition() {
-		checkNotGroup();
-		if (leafType == LeafType.PORT)
-			return EntityPosition.PORT;
+//		if (leafType == LeafType.PORT)
+//			return EntityPosition.PORT;
 
 		if (leafType == LeafType.PORTIN)
 			return EntityPosition.PORTIN;
@@ -642,8 +660,12 @@ final public class EntityImpl implements ILeaf, IGroup {
 			return false;
 
 		for (Link link : entityFactory.getLinks())
-			if (link.contains(this) && link.getType().isInvisible() == false)
-				return false;
+			if (link.contains(this)) {
+				final ILeaf other = (ILeaf) link.getOther(this);
+				final boolean removed = entityFactory.isRemovedIgnoreUnlinked(other);
+				if (removed == false && link.getType().isInvisible() == false)
+					return false;
+			}
 
 		return true;
 	}
@@ -781,6 +803,66 @@ final public class EntityImpl implements ILeaf, IGroup {
 	@Override
 	public Stereostyles getStereostyles() {
 		return stereostyles;
+	}
+
+	private final Map<Direction, List<Kal>> kals = new EnumMap<>(Direction.class);
+
+	public void addKal(Kal kal) {
+		final Direction position = kal.getPosition();
+		List<Kal> list = kals.get(position);
+		if (list == null) {
+			list = new ArrayList<>();
+			kals.put(position, list);
+		}
+		list.add(kal);
+	}
+
+	public List<Kal> getKals(Direction position) {
+		final List<Kal> result = kals.get(position);
+		if (result == null)
+			return Collections.emptyList();
+		return Collections.unmodifiableList(result);
+	}
+
+	public CucaDiagram getDiagram() {
+		return entityFactory.getDiagram();
+	}
+
+	private boolean isStatic;
+
+	@Override
+	public void setStatic(boolean isStatic) {
+		this.isStatic = isStatic;
+	}
+
+	@Override
+	public boolean isStatic() {
+		return isStatic;
+	}
+
+	// For group
+
+	public TextBlock getStateHeader(ISkinParam skinParam) {
+		checkGroup();
+		final Style style = EntityImageStateCommon.getStyleStateHeader(this, skinParam);
+		final List<CharSequence> details = getBodier().getRawBody();
+
+		if (details.size() == 0)
+			return new TextBlockEmpty();
+
+		if (style == null)
+			throw new IllegalArgumentException();
+		final FontConfiguration fontConfiguration = FontConfiguration.create(skinParam, style);
+
+		Display display = null;
+		for (CharSequence s : details)
+			if (display == null)
+				display = Display.getWithNewlines(s.toString());
+			else
+				display = display.addAll(Display.getWithNewlines(s.toString()));
+
+		return display.create(fontConfiguration, HorizontalAlignment.LEFT, skinParam);
+
 	}
 
 }

@@ -104,7 +104,7 @@ public class TikzGraphics {
 	}
 
 	private String getColorName(HColor hcolor) {
-		final Color color = mapper.toColor(hcolor);
+		final Color color = hcolor.toColor(mapper);
 		if (color.equals(Color.WHITE))
 			return "white";
 
@@ -119,10 +119,10 @@ public class TikzGraphics {
 		if (fillcolor == null)
 			return false;
 
-		if (HColors.isTransparent(fillcolor))
+		if (fillcolor.isTransparent())
 			return false;
 
-		if (mapper.toColor(fillcolor).getAlpha() == 0)
+		if (fillcolor.toColor(mapper).getAlpha() == 0)
 			return false;
 		
 		return true;
@@ -641,7 +641,7 @@ public class TikzGraphics {
 	private void addColor(HColor hcolor) {
 		if (hcolor == null)
 			return;
-		final Color color = mapper.toColor(hcolor);
+		final Color color = hcolor.toColor(mapper);
 		if (color == null)
 			return;
 

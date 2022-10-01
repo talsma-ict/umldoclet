@@ -32,7 +32,6 @@ package net.sourceforge.plantuml;
 
 import java.util.Map;
 
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public interface ISkinSimple extends SpriteContainer {
@@ -53,10 +52,8 @@ public interface ISkinSimple extends SpriteContainer {
 
 	public LineBreakStrategy wrapWidth();
 
-	public void copyAllFrom(ISkinSimple other);
+	public void copyAllFrom(Map<String, String> other);
 
 	public double minClassWidth();
-	
-	public ThemeStyle getThemeStyle();
 
 }

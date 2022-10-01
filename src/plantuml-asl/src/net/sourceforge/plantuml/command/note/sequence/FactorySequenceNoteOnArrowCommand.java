@@ -42,6 +42,7 @@ import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.CommandMultilines2;
 import net.sourceforge.plantuml.command.MultilinesStrategy;
 import net.sourceforge.plantuml.command.SingleLineCommand2;
+import net.sourceforge.plantuml.command.Trim;
 import net.sourceforge.plantuml.command.note.SingleMultiFactoryCommand;
 import net.sourceforge.plantuml.command.regex.IRegex;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
@@ -110,7 +111,7 @@ public final class FactorySequenceNoteOnArrowCommand implements SingleMultiFacto
 
 	public Command<SequenceDiagram> createMultiLine(boolean withBracket) {
 		return new CommandMultilines2<SequenceDiagram>(getRegexConcatMultiLine(),
-				MultilinesStrategy.KEEP_STARTING_QUOTE) {
+				MultilinesStrategy.KEEP_STARTING_QUOTE, Trim.BOTH) {
 
 			@Override
 			public String getPatternEnd() {
@@ -143,7 +144,7 @@ public final class FactorySequenceNoteOnArrowCommand implements SingleMultiFacto
 			final Display display = diagram.manageVariable(lines.toDisplay());
 			final String backcolor0 = line0.get("COLOR", 0);
 			Colors colors = Colors.empty().add(ColorType.BACK, backcolor0 == null ? null
-					: HColorSet.instance().getColor(diagram.getSkinParam().getThemeStyle(), backcolor0));
+					: HColorSet.instance().getColor(backcolor0));
 			final Note note = new Note(display, position, style, diagram.getSkinParam().getCurrentStyleBuilder());
 			final String stereotypeString = line0.get("STEREO", 0);
 			if (stereotypeString != null) {

@@ -30,10 +30,9 @@
  */
 package net.sourceforge.plantuml;
 
-import java.awt.geom.Rectangle2D;
-
 import net.sourceforge.plantuml.activitydiagram3.ftile.EntityImageLegend;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
+import net.sourceforge.plantuml.awt.geom.XRectangle2D;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.DisplayPositioned;
 import net.sourceforge.plantuml.cucadiagram.DisplaySection;
@@ -97,15 +96,14 @@ public class AnnotatedWorker {
 		final double deltaShadow = style.value(PName.Shadowing).asDouble();
 		final FontConfiguration fontConfiguration = FontConfiguration.create(getSkinParam(), style);
 		final UStroke stroke = style.getStroke();
-		final HColor borderColor = style.value(PName.LineColor).asColor(skinParam.getThemeStyle(),
-				skinParam.getIHtmlColorSet());
+		final HColor borderColor = style.value(PName.LineColor).asColor(skinParam.getIHtmlColorSet());
 
 		final SymbolContext symbolContext = new SymbolContext(getBackgroundColor(), borderColor).withShadow(deltaShadow)
 				.withStroke(stroke);
 		final MinMax originalMinMax = TextBlockUtils.getMinMax(original, stringBounder, false);
 
 		final TextBlock title = mainFrame.create(fontConfiguration, HorizontalAlignment.CENTER, getSkinParam());
-		final Dimension2D dimTitle = title.calculateDimension(stringBounder);
+		final XDimension2D dimTitle = title.calculateDimension(stringBounder);
 
 		final double width = x1 + Math.max(originalMinMax.getWidth(), dimTitle.getWidth()) + x2;
 		final double height = dimTitle.getHeight() + y1 + originalMinMax.getHeight() + y2;
@@ -124,13 +122,13 @@ public class AnnotatedWorker {
 				return TextBlockUtils.getMinMax(this, stringBounder, false);
 			}
 
-			public Rectangle2D getInnerPosition(String member, StringBounder stringBounder, InnerStrategy strategy) {
-				final Rectangle2D rect = original.getInnerPosition(member, stringBounder, strategy);
-				return new Rectangle2D.Double(rect.getX() + x1, rect.getY() + y1 + dimTitle.getHeight(),
+			public XRectangle2D getInnerPosition(String member, StringBounder stringBounder, InnerStrategy strategy) {
+				final XRectangle2D rect = original.getInnerPosition(member, stringBounder, strategy);
+				return new XRectangle2D(rect.getX() + x1, rect.getY() + y1 + dimTitle.getHeight(),
 						rect.getWidth(), rect.getHeight());
 			}
 
-			public Dimension2D calculateDimension(StringBounder stringBounder) {
+			public XDimension2D calculateDimension(StringBounder stringBounder) {
 				return original.calculateDimension(stringBounder);
 			}
 

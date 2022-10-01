@@ -178,7 +178,7 @@ public class CommandCreateElementFull2 extends SingleLineCommand2<ClassDiagram> 
 			type = LeafType.DESCRIPTION;
 			usymbol = diagram.getSkinParam().actorStyle().toUSymbol();
 		} else if (symbol.equalsIgnoreCase("port")) {
-			type = LeafType.PORT;
+			type = LeafType.PORTIN;
 			usymbol = null;
 		} else if (symbol.equalsIgnoreCase("portin")) {
 			type = LeafType.PORTIN;
@@ -230,7 +230,7 @@ public class CommandCreateElementFull2 extends SingleLineCommand2<ClassDiagram> 
 		final String s = arg.get("COLOR", 0);
 
 		entity.setSpecificColorTOBEREMOVED(ColorType.BACK, s == null ? null
-				: diagram.getSkinParam().getIHtmlColorSet().getColor(diagram.getSkinParam().getThemeStyle(), s));
+				: diagram.getSkinParam().getIHtmlColorSet().getColor(s));
 		return CommandExecutionResult.ok();
 	}
 

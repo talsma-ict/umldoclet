@@ -32,7 +32,7 @@ package net.sourceforge.plantuml.activitydiagram3.ftile.vertical;
 
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileGeometry;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 
@@ -41,7 +41,7 @@ public class FtileDecorateOutLabel extends FtileDecorate {
 	final private double xl;
 	final private double yl;
 
-	public FtileDecorateOutLabel(Ftile ftile, Dimension2D dim) {
+	public FtileDecorateOutLabel(Ftile ftile, XDimension2D dim) {
 		this(ftile, dim.getWidth(), dim.getHeight());
 	}
 

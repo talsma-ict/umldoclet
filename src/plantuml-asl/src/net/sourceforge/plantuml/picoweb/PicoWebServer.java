@@ -63,6 +63,9 @@ import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.error.PSystemError;
 import net.sourceforge.plantuml.error.PSystemErrorUtils;
 import net.sourceforge.plantuml.graphic.QuoteUtils;
+import net.sourceforge.plantuml.json.Json;
+import net.sourceforge.plantuml.json.JsonArray;
+import net.sourceforge.plantuml.json.JsonObject;
 import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.version.Version;
@@ -70,16 +73,19 @@ import net.sourceforge.plantuml.version.Version;
 public class PicoWebServer implements Runnable {
 
 	private final Socket connect;
+	private static boolean enableStop;
 
 	public PicoWebServer(Socket c) {
 		this.connect = c;
 	}
 
 	public static void main(String[] args) throws IOException {
-		startServer(8080, null);
+		startServer(8080, null, false);
 	}
 
-	public static void startServer(final int port, final String bindAddress) throws IOException {
+	public static void startServer(final int port, final String bindAddress, final boolean argEnableStop)
+			throws IOException {
+		PicoWebServer.enableStop = argEnableStop;
 		final InetAddress bindAddress1 = bindAddress == null ? null : InetAddress.getByName(bindAddress);
 		final ServerSocket serverConnect = new ServerSocket(port, 50, bindAddress1);
 		System.err.println("webPort=" + serverConnect.getLocalPort());
@@ -120,6 +126,14 @@ public class PicoWebServer implements Runnable {
 					return;
 				if (request.getPath().startsWith("/plantuml/utxt/") && handleGET(request, out, FileFormat.UTXT))
 					return;
+				if (request.getPath().startsWith("/serverinfo") && handleInfo(out))
+					return;
+				if (request.getPath().startsWith("/plantuml/serverinfo") && handleInfo(out))
+					return;
+				if (enableStop && (request.getPath().startsWith("/stopserver")
+						|| request.getPath().startsWith("/plantuml/stopserver")) && handleStop(out))
+					return;
+
 			} else if (request.getMethod().equals("POST") && request.getPath().equals("/render")) {
 				handleRenderRequest(request, out);
 				return;
@@ -146,6 +160,55 @@ public class PicoWebServer implements Runnable {
 		}
 	}
 
+	private boolean handleStop(BufferedOutputStream out) throws IOException {
+		write(out, "HTTP/1.1 " + "200");
+		write(out, "Cache-Control: no-cache");
+		write(out, "Server: PlantUML PicoWebServer " + Version.versionString());
+		write(out, "Date: " + new Date());
+		write(out, "");
+
+		write(out, "<html>Stoping...</html>");
+
+		out.flush();
+
+		final Thread stop = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(3000L);
+				} catch (InterruptedException e) {
+				}
+				System.exit(0);
+			}
+		});
+		stop.start();
+
+		return true;
+	}
+
+	private boolean handleInfo(BufferedOutputStream out) throws IOException {
+		write(out, "HTTP/1.1 " + "200");
+		write(out, "Cache-Control: no-cache");
+		write(out, "Server: PlantUML PicoWebServer " + Version.versionString());
+		write(out, "Date: " + new Date());
+		write(out, "Content-Type: application/json");
+		write(out, "");
+
+		final JsonArray formats = new JsonArray();
+		formats.add("png");
+		formats.add("svg");
+		formats.add("txt");
+		final JsonObject json = Json.object() //
+				.add("version", Version.versionString()) //
+				.add("PicoWebServer", true) //
+				.add("formats", formats); //
+		write(out, json.toString());
+
+		out.flush();
+
+		return true;
+	}
+
 	private boolean handleGET(ReceivedHTTPRequest request, BufferedOutputStream out, final FileFormat format)
 			throws IOException {
 		final int x = request.getPath().lastIndexOf('/');
@@ -154,9 +217,9 @@ public class PicoWebServer implements Runnable {
 		final String source = transcoder.decode(compressed);
 		final SourceStringReader ssr = new SourceStringReader(source);
 
+		final FileFormatOption fileFormatOption = new FileFormatOption(format);
 		final List<BlockUml> blocks = ssr.getBlocks();
 		if (blocks.size() > 0) {
-			final FileFormatOption fileFormatOption = new FileFormatOption(format);
 			final Diagram system = blocks.get(0).getDiagram();
 			final ByteArrayOutputStream os = new ByteArrayOutputStream();
 			final ImageData imageData = system.exportDiagram(os, 0, fileFormatOption);

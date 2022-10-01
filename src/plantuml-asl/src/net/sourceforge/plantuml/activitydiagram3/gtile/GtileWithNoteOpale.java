@@ -33,12 +33,11 @@ package net.sourceforge.plantuml.activitydiagram3.gtile;
 import java.util.Set;
 
 import net.sourceforge.plantuml.AlignmentParam;
-import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.LineBreakStrategy;
 import net.sourceforge.plantuml.activitydiagram3.PositionedNote;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.creole.CreoleMode;
 import net.sourceforge.plantuml.creole.Parser;
 import net.sourceforge.plantuml.creole.Sheet;
@@ -74,8 +73,8 @@ public class GtileWithNoteOpale extends AbstractGtile implements Stencil, Stylea
 	private final UTranslate positionNote;
 	private final UTranslate positionTile;
 
-	private final Dimension2D dimNote;
-	private final Dimension2D dimTile;
+	private final XDimension2D dimNote;
+	private final XDimension2D dimTile;
 
 	public StyleSignatureBasic getStyleSignature() {
 		return StyleSignatureBasic.of(SName.root, SName.element, SName.activityDiagram, SName.note);
@@ -104,10 +103,9 @@ public class GtileWithNoteOpale extends AbstractGtile implements Stencil, Stylea
 
 		final Style style = getStyleSignature().getMergedStyle(skinParam.getCurrentStyleBuilder())
 				.eventuallyOverride(note.getColors());
-		final HColor noteBackgroundColor = style.value(PName.BackGroundColor).asColor(skinParam.getThemeStyle(),
-				getIHtmlColorSet());
-		final HColor borderColor = style.value(PName.LineColor).asColor(skinParam.getThemeStyle(), getIHtmlColorSet());
-		final FontConfiguration fc = style.getFontConfiguration(skinParam.getThemeStyle(), getIHtmlColorSet());
+		final HColor noteBackgroundColor = style.value(PName.BackGroundColor).asColor(getIHtmlColorSet());
+		final HColor borderColor = style.value(PName.LineColor).asColor(getIHtmlColorSet());
+		final FontConfiguration fc = style.getFontConfiguration(getIHtmlColorSet());
 		final double shadowing = style.value(PName.Shadowing).asDouble();
 		final LineBreakStrategy wrapWidth = style.wrapWidth();
 		final UStroke stroke = style.getStroke();
@@ -122,7 +120,7 @@ public class GtileWithNoteOpale extends AbstractGtile implements Stencil, Stylea
 		this.dimNote = opale.calculateDimension(stringBounder);
 		this.dimTile = tile.calculateDimension(stringBounder);
 
-		final Dimension2D dimTotal = calculateDimension(stringBounder);
+		final XDimension2D dimTotal = calculateDimension(stringBounder);
 
 		if (note.getNotePosition() == NotePosition.LEFT) {
 			this.positionNote = new UTranslate(0, (dimTotal.getHeight() - dimNote.getHeight()) / 2);
@@ -141,9 +139,9 @@ public class GtileWithNoteOpale extends AbstractGtile implements Stencil, Stylea
 	}
 
 	@Override
-	public Dimension2D calculateDimension(StringBounder stringBounder) {
+	public XDimension2D calculateDimension(StringBounder stringBounder) {
 		final double height = Math.max(dimNote.getHeight(), dimTile.getHeight());
-		return new Dimension2DDouble(dimTile.getWidth() + dimNote.getWidth() + suppSpace, height);
+		return new XDimension2D(dimTile.getWidth() + dimNote.getWidth() + suppSpace, height);
 	}
 
 	@Override

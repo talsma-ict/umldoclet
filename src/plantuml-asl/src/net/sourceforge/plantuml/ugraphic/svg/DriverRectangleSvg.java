@@ -80,15 +80,11 @@ public class DriverRectangleSvg implements UDriver<URectangle, SvgGraphics> {
 		final HColor background = param.getBackcolor();
 		if (background instanceof HColorGradient) {
 			final HColorGradient gr = (HColorGradient) background;
-			final String id = svg.createSvgGradient(mapper.toRGB(gr.getColor1()), mapper.toRGB(gr.getColor2()),
+			final String id = svg.createSvgGradient(gr.getColor1().toRGB(mapper), gr.getColor2().toRGB(mapper),
 					gr.getPolicy());
 			svg.setFillColor("url(#" + id + ")");
 		} else {
-			final HColor dark = background == null ? null : background.darkSchemeTheme();
-			if (dark == background)
-				svg.setFillColor(mapper.toSvg(background));
-			else
-				svg.setFillColor(mapper.toSvg(background), mapper.toSvg(dark));
+			svg.setFillColor(background.toSvg(mapper));
 		}
 	}
 
@@ -96,15 +92,11 @@ public class DriverRectangleSvg implements UDriver<URectangle, SvgGraphics> {
 		final HColor color = param.getColor();
 		if (color instanceof HColorGradient) {
 			final HColorGradient gr = (HColorGradient) color;
-			final String id = svg.createSvgGradient(mapper.toRGB(gr.getColor1()), mapper.toRGB(gr.getColor2()),
+			final String id = svg.createSvgGradient(gr.getColor1().toRGB(mapper), gr.getColor2().toRGB(mapper),
 					gr.getPolicy());
 			svg.setStrokeColor("url(#" + id + ")");
 		} else {
-			final HColor dark = color == null ? null : color.darkSchemeTheme();
-			if (dark == color)
-				svg.setStrokeColor(mapper.toSvg(color));
-			else
-				svg.setStrokeColor(mapper.toSvg(color), mapper.toSvg(dark));
+			svg.setStrokeColor(color.toSvg(mapper));
 		}
 
 	}

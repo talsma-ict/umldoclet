@@ -74,60 +74,57 @@ abstract class CommandExoArrowAny extends SingleLineCommand2<SequenceDiagram> {
 		final boolean dotted = body.contains("--");
 
 		final Display labels;
-		if (arg.get("LABEL", 0) == null) {
+		if (arg.get("LABEL", 0) == null)
 			labels = Display.create("");
-		} else {
+		else
 			labels = Display.getWithNewlines(arg.get("LABEL", 0));
-		}
 
 		final boolean bothDirection = arg.get("ARROW_BOTHDRESSING", 0) != null;
 
 		ArrowConfiguration config = bothDirection ? ArrowConfiguration.withDirectionBoth()
 				: ArrowConfiguration.withDirectionNormal();
-		if (dotted) {
+		if (dotted)
 			config = config.withBody(ArrowBody.DOTTED);
-		}
-		if (sync) {
+
+		if (sync)
 			config = config.withHead(ArrowHead.ASYNC);
-		}
+
 		final MessageExoType messageExoType = getMessageExoType(arg);
 
 		config = config.withPart(getArrowPart(dressing, messageExoType));
-		config = CommandArrow.applyStyle(diagram.getSkinParam().getThemeStyle(), arg.getLazzy("ARROW_STYLE", 0),
-				config);
+		config = CommandArrow.applyStyle(arg.getLazzy("ARROW_STYLE", 0), config);
 
 		final String activationSpec = arg.get("ACTIVATION", 0);
 
-		if (activationSpec != null && activationSpec.charAt(0) == '*') {
+		if (activationSpec != null && activationSpec.charAt(0) == '*')
 			diagram.activate(p, LifeEventType.CREATE, null);
-		}
 
 		if (messageExoType == MessageExoType.TO_RIGHT || messageExoType == MessageExoType.TO_LEFT) {
-			if (containsSymbol(ARROW_SUPPCIRCLE1, arg, "o")) {
+			if (containsSymbol(ARROW_SUPPCIRCLE1, arg, "o"))
 				config = config.withDecoration1(ArrowDecoration.CIRCLE);
-			}
-			if (containsSymbol(ARROW_SUPPCIRCLE1, arg, "x")) {
+
+			if (containsSymbol(ARROW_SUPPCIRCLE1, arg, "x"))
 				config = config.withHead1(ArrowHead.CROSSX);
-			}
-			if (containsSymbol(ARROW_SUPPCIRCLE2, arg, "o")) {
+
+			if (containsSymbol(ARROW_SUPPCIRCLE2, arg, "o"))
 				config = config.withDecoration2(ArrowDecoration.CIRCLE);
-			}
-			if (containsSymbol(ARROW_SUPPCIRCLE2, arg, "x")) {
+
+			if (containsSymbol(ARROW_SUPPCIRCLE2, arg, "x"))
 				config = config.withHead2(ArrowHead.CROSSX);
-			}
+
 		} else {
-			if (containsSymbol(ARROW_SUPPCIRCLE2, arg, "o")) {
+			if (containsSymbol(ARROW_SUPPCIRCLE2, arg, "o"))
 				config = config.withDecoration1(ArrowDecoration.CIRCLE);
-			}
-			if (containsSymbol(ARROW_SUPPCIRCLE2, arg, "x")) {
+
+			if (containsSymbol(ARROW_SUPPCIRCLE2, arg, "x"))
 				config = config.withHead1(ArrowHead.CROSSX);
-			}
-			if (containsSymbol(ARROW_SUPPCIRCLE1, arg, "o")) {
+
+			if (containsSymbol(ARROW_SUPPCIRCLE1, arg, "o"))
 				config = config.withDecoration2(ArrowDecoration.CIRCLE);
-			}
-			if (containsSymbol(ARROW_SUPPCIRCLE1, arg, "x")) {
+
+			if (containsSymbol(ARROW_SUPPCIRCLE1, arg, "x"))
 				config = config.withHead2(ArrowHead.CROSSX);
-			}
+
 		}
 
 		final MessageExo msg = new MessageExo(diagram.getSkinParam().getCurrentStyleBuilder(), p, messageExoType,
@@ -139,21 +136,21 @@ abstract class CommandExoArrowAny extends SingleLineCommand2<SequenceDiagram> {
 		}
 
 		final boolean parallel = arg.get("PARALLEL", 0) != null;
-		if (parallel) {
+		if (parallel)
 			msg.goParallel();
-		}
+
 		msg.setAnchor(arg.get("ANCHOR", 1));
 		msg.setPart1Anchor(arg.get("PART1ANCHOR", 1));
 		msg.setPart2Anchor(arg.get("PART2ANCHOR", 1));
 
-		final String error = diagram.addMessage(msg);
-		if (error != null) {
-			return CommandExecutionResult.error(error);
-		}
+		final CommandExecutionResult status = diagram.addMessage(msg);
+		if (status.isOk() == false)
+			return status;
+
 		final String s = arg.get("LIFECOLOR", 0);
 
 		final HColor activationColor = s == null ? null
-				: diagram.getSkinParam().getIHtmlColorSet().getColor(diagram.getSkinParam().getThemeStyle(), s);
+				: diagram.getSkinParam().getIHtmlColorSet().getColor(s);
 
 		if (activationSpec != null) {
 			switch (activationSpec.charAt(0)) {
@@ -171,11 +168,10 @@ abstract class CommandExoArrowAny extends SingleLineCommand2<SequenceDiagram> {
 			}
 		} else if (diagram.isAutoactivate()
 				&& (config.getHead() == ArrowHead.NORMAL || config.getHead() == ArrowHead.ASYNC)) {
-			if (config.isDotted()) {
+			if (config.isDotted())
 				diagram.activate(p, LifeEventType.DEACTIVATE, null);
-			} else {
+			else
 				diagram.activate(p, LifeEventType.ACTIVATE, activationColor);
-			}
 
 		}
 
@@ -184,15 +180,15 @@ abstract class CommandExoArrowAny extends SingleLineCommand2<SequenceDiagram> {
 
 	private ArrowPart getArrowPart(String dressing, MessageExoType messageExoType) {
 		if (dressing.contains("/")) {
-			if (messageExoType.getDirection() == 1) {
+			if (messageExoType.getDirection() == 1)
 				return ArrowPart.BOTTOM_PART;
-			}
+
 			return ArrowPart.TOP_PART;
 		}
 		if (dressing.contains("\\")) {
-			if (messageExoType.getDirection() == 1) {
+			if (messageExoType.getDirection() == 1)
 				return ArrowPart.TOP_PART;
-			}
+
 			return ArrowPart.BOTTOM_PART;
 		}
 		return ArrowPart.FULL;
@@ -202,17 +198,17 @@ abstract class CommandExoArrowAny extends SingleLineCommand2<SequenceDiagram> {
 
 	private boolean isShortArrow(RegexResult arg2) {
 		final String s = arg2.get(ARROW_SUPPCIRCLE2, 0);
-		if (s != null && s.contains("?")) {
+		if (s != null && s.contains("?"))
 			return true;
-		}
+
 		return false;
 	}
 
 	private boolean containsSymbol(String suppCircle, RegexResult arg2, String symbol) {
 		final String s = arg2.get(suppCircle, 0);
-		if (s != null && s.contains(symbol)) {
+		if (s != null && s.contains(symbol))
 			return true;
-		}
+
 		return false;
 	}
 

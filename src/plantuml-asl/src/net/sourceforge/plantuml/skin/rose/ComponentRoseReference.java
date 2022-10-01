@@ -32,7 +32,7 @@ package net.sourceforge.plantuml.skin.rose;
 
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.LineBreakStrategy;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
@@ -66,11 +66,10 @@ public class ComponentRoseReference extends AbstractTextualComponent {
 		super(style, LineBreakStrategy.NONE, 4, 4, 4, spriteContainer,
 				stringsToDisplay.subList(1, stringsToDisplay.size()), false);
 
-		this.symbolContextHeader = styleHeader.getSymbolContext(spriteContainer.getThemeStyle(), getIHtmlColorSet());
-		this.symbolContextBody = style.getSymbolContext(spriteContainer.getThemeStyle(), getIHtmlColorSet());
+		this.symbolContextHeader = styleHeader.getSymbolContext(getIHtmlColorSet());
+		this.symbolContextBody = style.getSymbolContext(getIHtmlColorSet());
 		this.roundCorner = style.value(PName.RoundCorner).asInt();
-		final FontConfiguration fcHeader = styleHeader.getFontConfiguration(spriteContainer.getThemeStyle(),
-				getIHtmlColorSet());
+		final FontConfiguration fcHeader = styleHeader.getFontConfiguration(getIHtmlColorSet());
 		this.position = style.getHorizontalAlignment();
 
 		this.textHeader = stringsToDisplay.subList(0, 1).create(fcHeader, HorizontalAlignment.LEFT, spriteContainer);
@@ -79,7 +78,7 @@ public class ComponentRoseReference extends AbstractTextualComponent {
 
 	@Override
 	protected void drawInternalU(UGraphic ug, Area area) {
-		final Dimension2D dimensionToUse = area.getDimensionToUse();
+		final XDimension2D dimensionToUse = area.getDimensionToUse();
 		final StringBounder stringBounder = ug.getStringBounder();
 		final int textHeaderWidth = (int) (getHeaderWidth(stringBounder));
 		final int textHeaderHeight = (int) (getHeaderHeight(stringBounder));
@@ -136,12 +135,12 @@ public class ComponentRoseReference extends AbstractTextualComponent {
 	}
 
 	private double getHeaderHeight(StringBounder stringBounder) {
-		final Dimension2D headerDim = textHeader.calculateDimension(stringBounder);
+		final XDimension2D headerDim = textHeader.calculateDimension(stringBounder);
 		return headerDim.getHeight() + 2 * 1;
 	}
 
 	private double getHeaderWidth(StringBounder stringBounder) {
-		final Dimension2D headerDim = textHeader.calculateDimension(stringBounder);
+		final XDimension2D headerDim = textHeader.calculateDimension(stringBounder);
 		return headerDim.getWidth() + 30 + 15;
 	}
 

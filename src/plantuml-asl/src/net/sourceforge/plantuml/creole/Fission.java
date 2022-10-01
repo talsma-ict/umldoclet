@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.creole;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,6 +38,7 @@ import java.util.List;
 import java.util.Objects;
 
 import net.sourceforge.plantuml.LineBreakStrategy;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.creole.atom.AbstractAtom;
 import net.sourceforge.plantuml.creole.atom.Atom;
 import net.sourceforge.plantuml.creole.legacy.AtomText;
@@ -107,7 +107,7 @@ public class Fission {
 		}
 		return new AbstractAtom() {
 
-			public Dimension2D calculateDimension(StringBounder stringBounder) {
+			public XDimension2D calculateDimension(StringBounder stringBounder) {
 				return header.calculateDimension(stringBounder);
 			}
 

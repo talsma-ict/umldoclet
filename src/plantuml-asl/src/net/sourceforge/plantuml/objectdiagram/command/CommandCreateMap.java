@@ -38,6 +38,7 @@ import net.sourceforge.plantuml.command.BlocLines;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.CommandMultilines2;
 import net.sourceforge.plantuml.command.MultilinesStrategy;
+import net.sourceforge.plantuml.command.Trim;
 import net.sourceforge.plantuml.command.regex.IRegex;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
@@ -51,6 +52,7 @@ import net.sourceforge.plantuml.cucadiagram.ILeaf;
 import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.Link;
+import net.sourceforge.plantuml.cucadiagram.LinkArg;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
@@ -63,7 +65,7 @@ import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
 public class CommandCreateMap extends CommandMultilines2<AbstractEntityDiagram> {
 
 	public CommandCreateMap() {
-		super(getRegexConcat(), MultilinesStrategy.REMOVE_STARTING_QUOTE);
+		super(getRegexConcat(), MultilinesStrategy.REMOVE_STARTING_QUOTE, Trim.BOTH);
 	}
 
 	private static IRegex getRegexConcat() {
@@ -123,8 +125,8 @@ public class CommandCreateMap extends CommandMultilines2<AbstractEntityDiagram> 
 
 				final LinkType linkType = new LinkType(LinkDecor.ARROW, LinkDecor.NONE);
 				final int length = linkStr.length() - 2;
-				final Link link = new Link(diagram.getSkinParam().getCurrentStyleBuilder(), entity1, entity2, linkType, Display.NULL,
-						length);
+				final Link link = new Link(diagram.getSkinParam().getCurrentStyleBuilder(), entity1, entity2, linkType,
+						LinkArg.noDisplay(length));
 				link.setPortMembers(key, null);
 				diagram.addLink(link);
 			}
@@ -148,12 +150,11 @@ public class CommandCreateMap extends CommandMultilines2<AbstractEntityDiagram> 
 					diagram.getSkinParam().getFont(null, false, FontParam.CIRCLED_CHARACTER),
 					diagram.getSkinParam().getIHtmlColorSet()));
 
-		Colors colors = color().getColor(diagram.getSkinParam().getThemeStyle(), line0,
-				diagram.getSkinParam().getIHtmlColorSet());
+		Colors colors = color().getColor(line0, diagram.getSkinParam().getIHtmlColorSet());
 		final String s = line0.get("LINECOLOR", 1);
 
 		final HColor lineColor = s == null ? null
-				: diagram.getSkinParam().getIHtmlColorSet().getColor(diagram.getSkinParam().getThemeStyle(), s);
+				: diagram.getSkinParam().getIHtmlColorSet().getColor(s);
 		if (lineColor != null)
 			colors = colors.add(ColorType.LINE, lineColor);
 

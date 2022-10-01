@@ -42,7 +42,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.preproc.Defines;
 import net.sourceforge.plantuml.preproc.FileWithSuffix;
 import net.sourceforge.plantuml.preproc.ImportedFiles;
@@ -61,7 +60,6 @@ public final class BlockUmlBuilder implements DefinitionsContainer {
 	private final Defines defines;
 	private final ImportedFiles importedFiles;
 	private final Charset charset;
-	private final ThemeStyle style;
 
 	/**
 	 * @deprecated being kept for backwards compatibility, perhaps other projects
@@ -70,7 +68,7 @@ public final class BlockUmlBuilder implements DefinitionsContainer {
 	@Deprecated
 	public BlockUmlBuilder(List<String> config, String charset, Defines defines, Reader readerInit, SFile newCurrentDir,
 			String desc) throws IOException {
-		this(ThemeStyle.LIGHT_REGULAR, config, charsetOrDefault(charset), defines, readerInit, newCurrentDir, desc);
+		this(config, charsetOrDefault(charset), defines, readerInit, newCurrentDir, desc);
 	}
 
 	/**
@@ -82,10 +80,9 @@ public final class BlockUmlBuilder implements DefinitionsContainer {
 		this(config, charset, defines, reader, null, null);
 	}
 
-	public BlockUmlBuilder(ThemeStyle style, List<String> config, Charset charset, Defines defines, Reader readerInit,
+	public BlockUmlBuilder(List<String> config, Charset charset, Defines defines, Reader readerInit,
 			SFile newCurrentDir, String desc) throws IOException {
 
-		this.style = style;
 		this.defines = defines;
 		this.charset = requireNonNull(charset);
 		this.reader = new UncommentReadLine(ReadLineReader.create(readerInit, desc));
@@ -133,7 +130,7 @@ public final class BlockUmlBuilder implements DefinitionsContainer {
 				if (paused)
 					current.add(s);
 
-				final BlockUml uml = new BlockUml(style, current, defines.cloneMe(), null, this, charset);
+				final BlockUml uml = new BlockUml(current, defines.cloneMe(), null, this, charset);
 				usedFiles.addAll(uml.getIncluded());
 				blocks.add(uml);
 				current = null;

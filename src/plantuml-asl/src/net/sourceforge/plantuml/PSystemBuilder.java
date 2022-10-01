@@ -33,11 +33,11 @@ package net.sourceforge.plantuml;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import net.sourceforge.plantuml.activitydiagram.ActivityDiagramFactory;
 import net.sourceforge.plantuml.activitydiagram3.ActivityDiagramFactory3;
 import net.sourceforge.plantuml.api.PSystemFactory;
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.board.BoardDiagramFactory;
 import net.sourceforge.plantuml.bpm.BpmDiagramFactory;
 import net.sourceforge.plantuml.classdiagram.ClassDiagramFactory;
@@ -53,6 +53,7 @@ import net.sourceforge.plantuml.directdot.PSystemDotFactory;
 import net.sourceforge.plantuml.ditaa.PSystemDitaaFactory;
 import net.sourceforge.plantuml.donors.PSystemDonorsFactory;
 import net.sourceforge.plantuml.donors.PSystemSkinparameterListFactory;
+import net.sourceforge.plantuml.ebnf.PSystemEbnfFactory;
 import net.sourceforge.plantuml.eggs.PSystemAppleTwoFactory;
 import net.sourceforge.plantuml.eggs.PSystemCharlieFactory;
 import net.sourceforge.plantuml.eggs.PSystemColorsFactory;
@@ -98,8 +99,8 @@ public class PSystemBuilder {
 
 	public static final long startTime = System.currentTimeMillis();
 
-	final public Diagram createPSystem(ThemeStyle style, ISkinSimple skinParam, List<StringLocated> source,
-			List<StringLocated> rawSource) {
+	final public Diagram createPSystem(List<StringLocated> source, List<StringLocated> rawSource,
+			Map<String, String> skinParam) {
 
 		final long now = System.currentTimeMillis();
 
@@ -125,7 +126,7 @@ public class PSystemBuilder {
 				if (diagramType != systemFactory.getDiagramType())
 					continue;
 
-				final Diagram sys = systemFactory.createSystem(style, umlSource, skinParam);
+				final Diagram sys = systemFactory.createSystem(umlSource, skinParam);
 				if (isOk(sys)) {
 					result = sys;
 					return sys;
@@ -208,6 +209,7 @@ public class PSystemBuilder {
 		factories.add(new BoardDiagramFactory());
 		factories.add(new YamlDiagramFactory());
 		factories.add(new HclDiagramFactory());
+		factories.add(new PSystemEbnfFactory());
 	}
 
 	private boolean isOk(Diagram ps) {

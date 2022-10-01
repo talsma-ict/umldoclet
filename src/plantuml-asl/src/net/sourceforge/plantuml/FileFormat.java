@@ -38,7 +38,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.braille.BrailleCharFactory;
 import net.sourceforge.plantuml.braille.UGraphicBraille;
 import net.sourceforge.plantuml.graphic.StringBounder;
@@ -57,28 +57,30 @@ import net.sourceforge.plantuml.ugraphic.debug.StringBounderDebug;
  * 
  */
 public enum FileFormat {
-	PNG("image/png"),
-	SVG("image/svg+xml"),
-	EPS("application/postscript"),
-	EPS_TEXT("application/postscript"),
-	ATXT("text/plain"),
-	UTXT("text/plain;charset=UTF-8"),
-	XMI_STANDARD("application/vnd.xmi+xml"),
-	XMI_STAR("application/vnd.xmi+xml"),
-	XMI_ARGO("application/vnd.xmi+xml"),
-	SCXML("application/scxml+xml"),
-	PDF("application/pdf"),
-	MJPEG("video/x-msvideo"),
-	ANIMATED_GIF("image/gif"),
-	HTML("text/html"),
-	HTML5("text/html"),
-	VDX("application/vnd.visio.xml"),
-	LATEX("application/x-latex"),
-	LATEX_NO_PREAMBLE("application/x-latex"),
-	BASE64("text/plain; charset=x-user-defined"),
-	BRAILLE_PNG("image/png"),
-	PREPROC("text/plain"),
-	DEBUG("text/plain");
+
+	PNG("image/png"), //
+	SVG("image/svg+xml"), //
+	EPS("application/postscript"), //
+	EPS_TEXT("application/postscript"), //
+	ATXT("text/plain"), //
+	UTXT("text/plain;charset=UTF-8"), //
+	XMI_STANDARD("application/vnd.xmi+xml"), //
+	XMI_STAR("application/vnd.xmi+xml"), //
+	XMI_ARGO("application/vnd.xmi+xml"), //
+	SCXML("application/scxml+xml"), //
+	GRAPHML("application/graphml+xml"), //
+	PDF("application/pdf"), //
+	MJPEG("video/x-msvideo"), //
+	ANIMATED_GIF("image/gif"), //
+	HTML("text/html"), //
+	HTML5("text/html"), //
+	VDX("application/vnd.visio.xml"), //
+	LATEX("application/x-latex"), //
+	LATEX_NO_PREAMBLE("application/x-latex"), //
+	BASE64("text/plain; charset=x-user-defined"), //
+	BRAILLE_PNG("image/png"), //
+	PREPROC("text/plain"), //
+	DEBUG("text/plain"); //
 
 	private final String mimeType;
 
@@ -96,24 +98,24 @@ public enum FileFormat {
 	 * @return a string starting by a point.
 	 */
 	public String getFileSuffix() {
-		if (name().startsWith("XMI")) {
+		if (name().startsWith("XMI"))
 			return ".xmi";
-		}
-		if (this == MJPEG) {
+
+		if (this == MJPEG)
 			return ".avi";
-		}
-		if (this == LATEX_NO_PREAMBLE) {
+
+		if (this == LATEX_NO_PREAMBLE)
 			return ".latex";
-		}
-		if (this == ANIMATED_GIF) {
+
+		if (this == ANIMATED_GIF)
 			return ".gif";
-		}
-		if (this == BRAILLE_PNG) {
+
+		if (this == BRAILLE_PNG)
 			return ".braille.png";
-		}
-		if (this == EPS_TEXT) {
+
+		if (this == EPS_TEXT)
 			return EPS.getFileSuffix();
-		}
+
 		return "." + StringUtils.goLowerCase(name());
 	}
 
@@ -129,18 +131,18 @@ public enum FileFormat {
 	}
 
 	public StringBounder getDefaultStringBounder(TikzFontDistortion tikzFontDistortion, SvgCharSizeHack charSizeHack) {
-		if (this == LATEX || this == LATEX_NO_PREAMBLE) {
+		if (this == LATEX || this == LATEX_NO_PREAMBLE)
 			return getTikzStringBounder(tikzFontDistortion);
-		}
-		if (this == BRAILLE_PNG) {
+
+		if (this == BRAILLE_PNG)
 			return getBrailleStringBounder();
-		}
-		if (this == SVG) {
+
+		if (this == SVG)
 			return getSvgStringBounder(charSizeHack);
-		}
-		if (this == DEBUG) {
+
+		if (this == DEBUG)
 			return new StringBounderDebug();
-		}
+
 		return getNormalStringBounder();
 	}
 
@@ -150,7 +152,7 @@ public enum FileFormat {
 				return "FileFormat::getSvgStringBounder";
 			}
 
-			protected Dimension2D calculateDimensionInternal(UFont font, String text) {
+			protected XDimension2D calculateDimensionInternal(UFont font, String text) {
 				text = charSizeHack.transformStringForSizeHack(text);
 				return getJavaDimension(font, text);
 			}
@@ -165,18 +167,18 @@ public enum FileFormat {
 				return "FileFormat::getNormalStringBounder";
 			}
 
-			protected Dimension2D calculateDimensionInternal(UFont font, String text) {
+			protected XDimension2D calculateDimensionInternal(UFont font, String text) {
 				return getJavaDimension(font, text);
 			}
 
 		};
 	}
 
-	static private Dimension2DDouble getJavaDimension(UFont font, String text) {
+	static private XDimension2D getJavaDimension(UFont font, String text) {
 		final Font javaFont = font.getUnderlayingFont();
 		final FontMetrics fm = gg.getFontMetrics(javaFont);
 		final Rectangle2D rect = fm.getStringBounds(text, gg);
-		return new Dimension2DDouble(rect.getWidth(), rect.getHeight());
+		return new XDimension2D(rect.getWidth(), rect.getHeight());
 	}
 
 	private StringBounder getBrailleStringBounder() {
@@ -186,12 +188,12 @@ public enum FileFormat {
 				return "FileFormat::getBrailleStringBounder";
 			}
 
-			protected Dimension2D calculateDimensionInternal(UFont font, String text) {
+			protected XDimension2D calculateDimensionInternal(UFont font, String text) {
 				final int nb = BrailleCharFactory.build(text).size();
 				final double quanta = UGraphicBraille.QUANTA;
 				final double height = 5 * quanta;
 				final double width = 3 * nb * quanta + 1;
-				return new Dimension2DDouble(width, height);
+				return new XDimension2D(width, height);
 			}
 
 			@Override
@@ -208,11 +210,11 @@ public enum FileFormat {
 				return "FileFormat::getTikzStringBounder";
 			}
 
-			protected Dimension2D calculateDimensionInternal(UFont font, String text) {
+			protected XDimension2D calculateDimensionInternal(UFont font, String text) {
 				text = text.replace("\t", "    ");
-				final Dimension2DDouble w1 = getJavaDimension(font.goTikz(-1), text);
-				final Dimension2DDouble w2 = getJavaDimension(font.goTikz(0), text);
-				final Dimension2DDouble w3 = getJavaDimension(font.goTikz(1), text);
+				final XDimension2D w1 = getJavaDimension(font.goTikz(-1), text);
+				final XDimension2D w2 = getJavaDimension(font.goTikz(0), text);
+				final XDimension2D w3 = getJavaDimension(font.goTikz(1), text);
 				final double factor = (w3.getWidth() - w1.getWidth()) / w2.getWidth();
 				final double distortion = tikzFontDistortion.getDistortion();
 				final double magnify = tikzFontDistortion.getMagnify();
@@ -228,43 +230,43 @@ public enum FileFormat {
 	 * @return <code>true</code> for EPS.
 	 */
 	public boolean isEps() {
-		if (this == EPS) {
+		if (this == EPS)
 			return true;
-		}
-		if (this == EPS_TEXT) {
+
+		if (this == EPS_TEXT)
 			return true;
-		}
+
 		return false;
 	}
 
 	public String changeName(String fileName, int cpt) {
-		if (cpt == 0) {
+		if (cpt == 0)
 			return changeName(fileName, getFileSuffix());
-		}
+
 		return changeName(fileName,
 				OptionFlags.getInstance().getFileSeparator() + String.format("%03d", cpt) + getFileSuffix());
 	}
 
 	private SFile computeFilename(SFile pngFile, int i) {
-		if (i == 0) {
+		if (i == 0)
 			return pngFile;
-		}
+
 		final SFile dir = pngFile.getParentFile();
 		return dir.file(computeFilenameInternal(pngFile.getName(), i));
 	}
 
 	private String changeName(String fileName, String replacement) {
 		String result = fileName.replaceAll("\\.\\w+$", replacement);
-		if (result.equals(fileName)) {
+		if (result.equals(fileName))
 			result = fileName + replacement;
-		}
+
 		return result;
 	}
 
 	private String computeFilenameInternal(String name, int i) {
-		if (i == 0) {
+		if (i == 0)
 			return name;
-		}
+
 		return name.replaceAll("\\" + getFileSuffix() + "$",
 				OptionFlags.getInstance().getFileSeparator() + String.format("%03d", i) + getFileSuffix());
 	}
@@ -283,9 +285,9 @@ public enum FileFormat {
 			}
 			if (this == SVG) {
 				final String svg = FileUtils.readSvg(existingFile);
-				if (svg == null) {
+				if (svg == null)
 					return false;
-				}
+
 				final String currentSignature = SvgGraphics.getMD5Hex(currentMetadata);
 				final int idx = svg.lastIndexOf(SvgGraphics.MD5_HEADER);
 				if (idx != -1) {

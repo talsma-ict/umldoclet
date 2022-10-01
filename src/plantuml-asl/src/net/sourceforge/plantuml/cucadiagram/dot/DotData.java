@@ -50,7 +50,6 @@ import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.PortionShower;
 import net.sourceforge.plantuml.cucadiagram.entity.EntityFactory;
 import net.sourceforge.plantuml.svek.DotMode;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 
 final public class DotData implements PortionShower {
 
@@ -67,7 +66,6 @@ final public class DotData implements PortionShower {
 	final private String namespaceSeparator;
 	final private Pragma pragma;
 
-	private final ColorMapper colorMapper;
 	private final EntityFactory entityFactory;
 
 	public EntityFactory getEntityFactory() {
@@ -75,7 +73,7 @@ final public class DotData implements PortionShower {
 	}
 
 	public DotData(IGroup topParent, List<Link> links, Collection<ILeaf> leafs, UmlDiagramType umlDiagramType,
-			ISkinParam skinParam, GroupHierarchy groupHierarchy, PortionShower portionShower, ColorMapper colorMapper,
+			ISkinParam skinParam, GroupHierarchy groupHierarchy, PortionShower portionShower,
 			EntityFactory entityFactory, boolean isHideEmptyDescriptionForState, DotMode dotMode,
 			String namespaceSeparator, Pragma pragma) {
 		this.namespaceSeparator = namespaceSeparator;
@@ -83,7 +81,6 @@ final public class DotData implements PortionShower {
 		this.topParent = Objects.requireNonNull(topParent);
 		this.dotMode = dotMode;
 		this.isHideEmptyDescriptionForState = isHideEmptyDescriptionForState;
-		this.colorMapper = colorMapper;
 		this.links = links;
 		this.leafs = leafs;
 		this.umlDiagramType = umlDiagramType;
@@ -95,13 +92,13 @@ final public class DotData implements PortionShower {
 	}
 
 	public DotData(IGroup topParent, List<Link> links, Collection<ILeaf> leafs, UmlDiagramType umlDiagramType,
-			ISkinParam skinParam, GroupHierarchy groupHierarchy, ColorMapper colorMapper, EntityFactory entityFactory,
+			ISkinParam skinParam, GroupHierarchy groupHierarchy, EntityFactory entityFactory,
 			boolean isHideEmptyDescriptionForState, DotMode dotMode, String namespaceSeparator, Pragma pragma) {
 		this(topParent, links, leafs, umlDiagramType, skinParam, groupHierarchy, new PortionShower() {
 			public boolean showPortion(EntityPortion portion, IEntity entity) {
 				return true;
 			}
-		}, colorMapper, entityFactory, isHideEmptyDescriptionForState, dotMode, namespaceSeparator, pragma);
+		}, entityFactory, isHideEmptyDescriptionForState, dotMode, namespaceSeparator, pragma);
 	}
 
 	public UmlDiagramType getUmlDiagramType() {
@@ -134,10 +131,6 @@ final public class DotData implements PortionShower {
 
 	public boolean showPortion(EntityPortion portion, IEntity entity) {
 		return portionShower.showPortion(portion, entity);
-	}
-
-	public final ColorMapper getColorMapper() {
-		return colorMapper;
 	}
 
 	public IGroup getRootGroup() {

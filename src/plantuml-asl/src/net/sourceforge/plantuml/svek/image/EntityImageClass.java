@@ -30,22 +30,22 @@
  */
 package net.sourceforge.plantuml.svek.image;
 
-import java.awt.geom.Rectangle2D;
 import java.util.EnumMap;
 import java.util.Map;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.Direction;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.LineConfigurable;
 import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
+import net.sourceforge.plantuml.awt.geom.XRectangle2D;
 import net.sourceforge.plantuml.creole.Stencil;
 import net.sourceforge.plantuml.cucadiagram.EntityPortion;
 import net.sourceforge.plantuml.cucadiagram.ILeaf;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.PortionShower;
-import net.sourceforge.plantuml.cucadiagram.dot.GraphvizVersion;
+import net.sourceforge.plantuml.cucadiagram.entity.EntityImpl;
 import net.sourceforge.plantuml.graphic.InnerStrategy;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
@@ -55,6 +55,7 @@ import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.svek.AbstractEntityImage;
+import net.sourceforge.plantuml.svek.Kal;
 import net.sourceforge.plantuml.svek.Margins;
 import net.sourceforge.plantuml.svek.Ports;
 import net.sourceforge.plantuml.svek.ShapeType;
@@ -73,7 +74,7 @@ import net.sourceforge.plantuml.ugraphic.color.HColors;
 public class EntityImageClass extends AbstractEntityImage implements Stencil, WithPorts {
 
 	final private TextBlock body;
-	final private Margins shield;
+
 	final private EntityImageClassHeader header;
 	final private Url url;
 	final private double roundCorner;
@@ -81,15 +82,13 @@ public class EntityImageClass extends AbstractEntityImage implements Stencil, Wi
 
 	final private LineConfigurable lineConfig;
 
-	public EntityImageClass(GraphvizVersion version, ILeaf entity, ISkinParam skinParam, PortionShower portionShower) {
+	public EntityImageClass(ILeaf entity, ISkinParam skinParam, PortionShower portionShower) {
 		super(entity, entity.getColors().mute(skinParam));
 		this.leafType = entity.getLeafType();
 		this.lineConfig = entity;
 
 		this.roundCorner = getStyle().value(PName.RoundCorner).asDouble();
 
-		this.shield = version != null && version.useShield() && entity.hasNearDecoration() ? Margins.uniform(16)
-				: Margins.NONE;
 		final boolean showMethods = portionShower.showPortion(EntityPortion.METHOD, entity);
 		final boolean showFields = portionShower.showPortion(EntityPortion.FIELD, entity);
 		this.body = entity.getBodier().getBody(FontParam.CLASS_ATTRIBUTE, getSkinParam(), showMethods, showFields,
@@ -99,24 +98,38 @@ public class EntityImageClass extends AbstractEntityImage implements Stencil, Wi
 		this.url = entity.getUrl99();
 	}
 
-	public Dimension2D calculateDimension(StringBounder stringBounder) {
-		final Dimension2D dimHeader = header.calculateDimension(stringBounder);
-		final Dimension2D dimBody = body == null ? new Dimension2DDouble(0, 0) : body.calculateDimension(stringBounder);
+	public XDimension2D calculateDimension(StringBounder stringBounder) {
+		final XDimension2D dimHeader = header.calculateDimension(stringBounder);
+		final XDimension2D dimBody = body == null ? new XDimension2D(0, 0) : body.calculateDimension(stringBounder);
 		double width = Math.max(dimBody.getWidth(), dimHeader.getWidth());
 		if (width < getSkinParam().minClassWidth())
 			width = getSkinParam().minClassWidth();
 
 		final double height = dimBody.getHeight() + dimHeader.getHeight();
-		return new Dimension2DDouble(width, height);
+		return new XDimension2D(Math.max(width, getKalWidth() * 1.3), height);
+		// return new Dimension2DDouble(width + getKalWidth(), height);
+	}
+
+	private double getKalWidth() {
+		double widthUp = 0;
+		double widthDown = 0;
+		for (Kal kal : ((EntityImpl) getEntity()).getKals(Direction.UP))
+			widthUp += kal.getDimension().getWidth();
+
+		for (Kal kal : ((EntityImpl) getEntity()).getKals(Direction.DOWN))
+			widthDown += kal.getDimension().getWidth();
+
+		return Math.max(widthUp, widthDown);
+
 	}
 
 	@Override
-	public Rectangle2D getInnerPosition(String member, StringBounder stringBounder, InnerStrategy strategy) {
-		final Rectangle2D result = body.getInnerPosition(member, stringBounder, strategy);
+	public XRectangle2D getInnerPosition(String member, StringBounder stringBounder, InnerStrategy strategy) {
+		final XRectangle2D result = body.getInnerPosition(member, stringBounder, strategy);
 		if (result == null)
 			return result;
 
-		final Dimension2D dimHeader = header.calculateDimension(stringBounder);
+		final XDimension2D dimHeader = header.calculateDimension(stringBounder);
 		final UTranslate translate = UTranslate.dy(dimHeader.getHeight());
 		return translate.apply(result);
 	}
@@ -154,8 +167,8 @@ public class EntityImageClass extends AbstractEntityImage implements Stencil, Wi
 
 	private void drawInternal(UGraphic ug) {
 		final StringBounder stringBounder = ug.getStringBounder();
-		final Dimension2D dimTotal = calculateDimension(stringBounder);
-		final Dimension2D dimHeader = header.calculateDimension(stringBounder);
+		final XDimension2D dimTotal = calculateDimension(stringBounder);
+		final XDimension2D dimHeader = header.calculateDimension(stringBounder);
 
 		final double widthTotal = dimTotal.getWidth();
 		final double heightTotal = dimTotal.getHeight();
@@ -171,16 +184,14 @@ public class EntityImageClass extends AbstractEntityImage implements Stencil, Wi
 		shadow = getStyle().value(PName.Shadowing).asDouble();
 
 		if (borderColor == null)
-			borderColor = getStyle().value(PName.LineColor).asColor(getSkinParam().getThemeStyle(),
-					getSkinParam().getIHtmlColorSet());
+			borderColor = getStyle().value(PName.LineColor).asColor(getSkinParam().getIHtmlColorSet());
 
 		if (headerBackcolor == null)
 			headerBackcolor = backcolor == null ? getStyleHeader().value(PName.BackGroundColor)
-					.asColor(getSkinParam().getThemeStyle(), getSkinParam().getIHtmlColorSet()) : backcolor;
+					.asColor(getSkinParam().getIHtmlColorSet()) : backcolor;
 
 		if (backcolor == null)
-			backcolor = getStyle().value(PName.BackGroundColor).asColor(getSkinParam().getThemeStyle(),
-					getSkinParam().getIHtmlColorSet());
+			backcolor = getStyle().value(PName.BackGroundColor).asColor(getSkinParam().getIHtmlColorSet());
 
 		rect.setDeltaShadow(shadow);
 
@@ -221,7 +232,7 @@ public class EntityImageClass extends AbstractEntityImage implements Stencil, Wi
 
 	@Override
 	public Ports getPorts(StringBounder stringBounder) {
-		final Dimension2D dimHeader = header.calculateDimension(stringBounder);
+		final XDimension2D dimHeader = header.calculateDimension(stringBounder);
 		if (body instanceof WithPorts)
 			return ((WithPorts) body).getPorts(stringBounder).translateY(dimHeader.getHeight());
 		return new Ports();
@@ -236,7 +247,7 @@ public class EntityImageClass extends AbstractEntityImage implements Stencil, Wi
 
 	@Override
 	public Margins getShield(StringBounder stringBounder) {
-		return shield;
+		return ((ILeaf) getEntity()).getMargins();
 	}
 
 	public double getStartingX(StringBounder stringBounder, double y) {

@@ -42,11 +42,13 @@ import net.sourceforge.plantuml.command.CommandMultilines2;
 import net.sourceforge.plantuml.command.MultilinesStrategy;
 import net.sourceforge.plantuml.command.Position;
 import net.sourceforge.plantuml.command.SingleLineCommand2;
+import net.sourceforge.plantuml.command.Trim;
 import net.sourceforge.plantuml.command.regex.IRegex;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
+import net.sourceforge.plantuml.cucadiagram.CucaNote;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.graphic.color.ColorParser;
 import net.sourceforge.plantuml.graphic.color.ColorType;
@@ -90,7 +92,7 @@ public final class CommandFactoryNoteOnLink implements SingleMultiFactoryCommand
 	}
 
 	public Command<CucaDiagram> createMultiLine(boolean withBracket) {
-		return new CommandMultilines2<CucaDiagram>(getRegexConcatMultiLine(), MultilinesStrategy.KEEP_STARTING_QUOTE) {
+		return new CommandMultilines2<CucaDiagram>(getRegexConcatMultiLine(), MultilinesStrategy.KEEP_STARTING_QUOTE, Trim.BOTH) {
 
 			@Override
 			public String getPatternEnd() {
@@ -127,21 +129,20 @@ public final class CommandFactoryNoteOnLink implements SingleMultiFactoryCommand
 	private CommandExecutionResult executeInternal(CucaDiagram diagram, BlocLines note, final RegexResult arg)
 			throws NoSuchColorException {
 		final Link link = diagram.getLastLink();
-		if (link == null) {
+		if (link == null)
 			return CommandExecutionResult.error("No link defined");
-		}
+
 		Position position = Position.BOTTOM;
-		if (arg.get("POSITION", 0) != null) {
+		if (arg.get("POSITION", 0) != null)
 			position = Position.valueOf(StringUtils.goUpperCase(arg.get("POSITION", 0)));
-		}
+
 		Url url = null;
 		if (arg.get("URL", 0) != null) {
 			final UrlBuilder urlBuilder = new UrlBuilder(diagram.getSkinParam().getValue("topurl"), UrlMode.STRICT);
 			url = urlBuilder.getUrl(arg.get("URL", 0));
 		}
-		final Colors colors = color().getColor(diagram.getSkinParam().getThemeStyle(), arg,
-				diagram.getSkinParam().getIHtmlColorSet());
-		link.addNote(note.toDisplay(), position, colors);
+		final Colors colors = color().getColor(arg, diagram.getSkinParam().getIHtmlColorSet());
+		link.addNote(CucaNote.build(note.toDisplay(), position, colors));
 		return CommandExecutionResult.ok();
 	}
 

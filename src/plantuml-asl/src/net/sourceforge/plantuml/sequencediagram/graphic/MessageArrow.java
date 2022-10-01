@@ -30,11 +30,10 @@
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.util.Objects;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.Url;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
 import net.sourceforge.plantuml.skin.Area;
@@ -136,8 +135,8 @@ class MessageArrow extends Arrow {
 		endUrl(ug);
 	}
 
-	private Dimension2D getActualDimension(StringBounder stringBounder) {
-		return new Dimension2DDouble(getActualWidth(stringBounder) - getPaddingArrowHead(), getArrowComponent()
+	private XDimension2D getActualDimension(StringBounder stringBounder) {
+		return new XDimension2D(getActualWidth(stringBounder) - getPaddingArrowHead(), getArrowComponent()
 				.getPreferredHeight(stringBounder));
 	}
 
@@ -145,7 +144,7 @@ class MessageArrow extends Arrow {
 	public double getArrowYStartLevel(StringBounder stringBounder) {
 		if (getArrowComponent() instanceof ArrowComponent) {
 			final ArrowComponent arrowComponent = (ArrowComponent) getArrowComponent();
-			final Dimension2D dim = new Dimension2DDouble(arrowComponent.getPreferredWidth(stringBounder),
+			final XDimension2D dim = new XDimension2D(arrowComponent.getPreferredWidth(stringBounder),
 					arrowComponent.getPreferredHeight(stringBounder));
 			return getStartingY() + arrowComponent.getStartPoint(stringBounder, dim).getY();
 		}
@@ -156,7 +155,7 @@ class MessageArrow extends Arrow {
 	public double getArrowYEndLevel(StringBounder stringBounder) {
 		if (getArrowComponent() instanceof ArrowComponent) {
 			final ArrowComponent arrowComponent = (ArrowComponent) getArrowComponent();
-			final Dimension2D dim = new Dimension2DDouble(arrowComponent.getPreferredWidth(stringBounder),
+			final XDimension2D dim = new XDimension2D(arrowComponent.getPreferredWidth(stringBounder),
 					arrowComponent.getPreferredHeight(stringBounder));
 			return getStartingY() + arrowComponent.getEndPoint(stringBounder, dim).getY();
 		}

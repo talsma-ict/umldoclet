@@ -54,7 +54,7 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.UGraphicIntercep
 import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.VCompactFactory;
 import net.sourceforge.plantuml.activitydiagram3.gtile.GConnection;
 import net.sourceforge.plantuml.activitydiagram3.gtile.Gtile;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
@@ -250,8 +250,7 @@ public class Swimlanes extends AbstractTextBlock implements TextBlock, Styleable
 
 	private TextBlock getTitle(Swimlane swimlane) {
 		final HorizontalAlignment horizontalAlignment = HorizontalAlignment.LEFT;
-		final FontConfiguration fontConfiguration = getStyle().getFontConfiguration(skinParam.getThemeStyle(),
-				skinParam.getIHtmlColorSet());
+		final FontConfiguration fontConfiguration = getStyle().getFontConfiguration(skinParam.getIHtmlColorSet());
 
 		LineBreakStrategy wrap = getWrap();
 		if (wrap.isAuto())
@@ -288,7 +287,7 @@ public class Swimlanes extends AbstractTextBlock implements TextBlock, Styleable
 
 		drawTitlesBackground(ug);
 
-		final Dimension2D dimensionFull = full.calculateDimension(stringBounder);
+		final XDimension2D dimensionFull = full.calculateDimension(stringBounder);
 		int i = 0;
 		assert dividers.size() == swimlanes().size() + 1;
 		for (Swimlane swimlane : swimlanesSpecial()) {
@@ -296,7 +295,7 @@ public class Swimlanes extends AbstractTextBlock implements TextBlock, Styleable
 
 			final double xpos = swimlane.getTranslate().getDx() + swimlane.getMinMax().getMinX();
 			final HColor back = swimlane.getColors().getColor(ColorType.BACK);
-			if (back != null) {
+			if (back != null && back.isTransparent() == false) {
 				final LaneDivider divider2 = dividers.get(i + 1);
 				final UGraphic background = ug.apply(back.bg()).apply(back)
 						.apply(UTranslate.dx(xpos - divider1.getX2()));
@@ -322,8 +321,7 @@ public class Swimlanes extends AbstractTextBlock implements TextBlock, Styleable
 	}
 
 	private void drawTitlesBackground(UGraphic ug) {
-		final HColor color = getStyle().value(PName.BackGroundColor).asColor(skinParam.getThemeStyle(),
-				skinParam.getIHtmlColorSet());
+		final HColor color = getStyle().value(PName.BackGroundColor).asColor(skinParam.getIHtmlColorSet());
 
 		if (color != null) {
 			final double titleHeight = getTitlesHeight(ug.getStringBounder());
@@ -375,7 +373,7 @@ public class Swimlanes extends AbstractTextBlock implements TextBlock, Styleable
 		}
 
 		final UTranslate titleHeightTranslate = getTitleHeightTranslate(stringBounder);
-		final Dimension2D dimensionFull = full.calculateDimension(stringBounder);
+		final XDimension2D dimensionFull = full.calculateDimension(stringBounder);
 
 		dividers.clear();
 		double xpos = 0;
@@ -414,7 +412,7 @@ public class Swimlanes extends AbstractTextBlock implements TextBlock, Styleable
 		return swimlane.getMinMax().getWidth();
 	}
 
-	public Dimension2D calculateDimension(StringBounder stringBounder) {
+	public XDimension2D calculateDimension(StringBounder stringBounder) {
 		return getMinMax(stringBounder).getDimension();
 	}
 

@@ -50,7 +50,6 @@ import net.sourceforge.plantuml.AnnotatedWorker;
 import net.sourceforge.plantuml.CMapData;
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.CornerParam;
-import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.EmptyImageBuilder;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
@@ -67,7 +66,7 @@ import net.sourceforge.plantuml.anim.AffineTransformation;
 import net.sourceforge.plantuml.anim.Animation;
 import net.sourceforge.plantuml.api.ImageDataComplex;
 import net.sourceforge.plantuml.api.ImageDataSimple;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.braille.UGraphicBraille;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.eps.EpsStrategy;
@@ -86,10 +85,8 @@ import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.svek.TextBlockBackcolored;
 import net.sourceforge.plantuml.svg.LengthAdjust;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorGradient;
-import net.sourceforge.plantuml.ugraphic.color.HColorNone;
 import net.sourceforge.plantuml.ugraphic.color.HColorSimple;
 import net.sourceforge.plantuml.ugraphic.color.HColors;
 import net.sourceforge.plantuml.ugraphic.debug.UGraphicDebug;
@@ -107,8 +104,8 @@ public class ImageBuilder {
 	private Animation animation;
 	private boolean annotations;
 	private HColor backcolor = getDefaultHBackColor();
-	private ColorMapper colorMapper = new ColorMapperIdentity();
-	private Dimension2D dimension;
+	// private ColorMapper colorMapper;
+	private XDimension2D dimension;
 	private final FileFormatOption fileFormatOption;
 	private UDrawable udrawable;
 	private ClockwiseTopRightBottomLeft margin = ClockwiseTopRightBottomLeft.none();
@@ -152,7 +149,7 @@ public class ImageBuilder {
 		return backcolor(HColors.BLACK);
 	}
 
-	public ImageBuilder dimension(Dimension2D dimension) {
+	public ImageBuilder dimension(XDimension2D dimension) {
 		this.dimension = dimension;
 		return this;
 	}
@@ -215,7 +212,6 @@ public class ImageBuilder {
 		animation = diagram.getAnimation();
 		annotations = true;
 		backcolor = diagram.calculateBackColor();
-		colorMapper = skinParam.getColorMapper();
 		margin = calculateMargin(diagram);
 		metadata = fileFormatOption.isWithMetadata() ? diagram.getMetadata() : null;
 		seed = diagram.seed();
@@ -238,7 +234,7 @@ public class ImageBuilder {
 		case ANIMATED_GIF:
 			return writeImageAnimatedGif(os);
 		default:
-			return writeImageInternal(fileFormatOption, os, animation);
+			return writeImageInternal(os, animation);
 		}
 	}
 
@@ -249,9 +245,8 @@ public class ImageBuilder {
 		}
 	}
 
-	private ImageData writeImageInternal(FileFormatOption fileFormatOption, OutputStream os, Animation animationArg)
-			throws IOException {
-		Dimension2D dim = getFinalDimension();
+	private ImageData writeImageInternal(OutputStream os, Animation animationArg) throws IOException {
+		XDimension2D dim = getFinalDimension();
 		double dx = 0;
 		double dy = 0;
 		if (animationArg != null) {
@@ -267,7 +262,7 @@ public class ImageBuilder {
 		if (scaleFactor <= 0)
 			throw new IllegalStateException("Bad scaleFactor");
 
-		UGraphic ug = createUGraphic(fileFormatOption, dim, animationArg, dx, dy, scaleFactor,
+		UGraphic ug = createUGraphic(dim, animationArg, dx, dy, scaleFactor,
 				titledDiagram == null ? new Pragma() : titledDiagram.getPragma());
 		maybeDrawBorder(ug, dim);
 		if (randomPixel)
@@ -289,7 +284,7 @@ public class ImageBuilder {
 		return createImageData(dim);
 	}
 
-	private void maybeDrawBorder(UGraphic ug, Dimension2D dim) {
+	private void maybeDrawBorder(UGraphic ug, XDimension2D dim) {
 		if (skinParam == null)
 			return;
 
@@ -318,11 +313,11 @@ public class ImageBuilder {
 		ug2.apply(color).apply(color.bg()).draw(new URectangle(1, 1));
 	}
 
-	private Dimension2D getFinalDimension() {
+	private XDimension2D getFinalDimension() {
 		if (dimension == null) {
 			final LimitFinder limitFinder = LimitFinder.create(stringBounder, true);
 			udrawable.drawU(limitFinder);
-			dimension = new Dimension2DDouble(limitFinder.getMaxX() + 1 + margin.getLeft() + margin.getRight(),
+			dimension = new XDimension2D(limitFinder.getMaxX() + 1 + margin.getLeft() + margin.getRight(),
 					limitFinder.getMaxY() + 1 + margin.getTop() + margin.getBottom());
 		}
 		return dimension;
@@ -341,7 +336,7 @@ public class ImageBuilder {
 
 	private ImageData writeImageMjpeg(OutputStream os) throws IOException {
 
-		final Dimension2D dim = getFinalDimension();
+		final XDimension2D dim = getFinalDimension();
 
 		final SFile f = new SFile("c:/tmp.avi");
 
@@ -368,7 +363,7 @@ public class ImageBuilder {
 
 	private ImageData writeImageAnimatedGif(OutputStream os) throws IOException {
 
-		final Dimension2D dim = getFinalDimension();
+		final XDimension2D dim = getFinalDimension();
 
 		final MinMax minmax = animation.getMinMax(dim);
 
@@ -391,16 +386,17 @@ public class ImageBuilder {
 
 	private Image getAviImage(AffineTransformation affineTransform) throws IOException {
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		writeImageInternal(new FileFormatOption(FileFormat.PNG), baos, Animation.singleton(affineTransform));
+		writeImageInternal(baos, Animation.singleton(affineTransform));
 		baos.close();
 		return SImageIO.read(baos.toByteArray());
 	}
 
-	private UGraphic createUGraphic(FileFormatOption option, final Dimension2D dim, Animation animationArg, double dx,
-			double dy, double scaleFactor, Pragma pragma) {
-		switch (option.getFileFormat()) {
+	private UGraphic createUGraphic(final XDimension2D dim, Animation animationArg, double dx, double dy,
+			double scaleFactor, Pragma pragma) {
+		final ColorMapper colorMapper = fileFormatOption.getColorMapper();
+		switch (fileFormatOption.getFileFormat()) {
 		case PNG:
-			return createUGraphicPNG(scaleFactor, dim, animationArg, dx, dy, option.getWatermark());
+			return createUGraphicPNG(scaleFactor, dim, animationArg, dx, dy, fileFormatOption.getWatermark());
 		case SVG:
 			final boolean interactive = "true".equalsIgnoreCase(pragma.getValue("svginteractive"));
 			return createUGraphicSVG(scaleFactor, dim, interactive);
@@ -425,41 +421,39 @@ public class ImageBuilder {
 			return new UGraphicDebug(scaleFactor, dim, getSvgLinkTarget(), getHoverPathColorRGB(), seed,
 					getPreserveAspectRatio());
 		default:
-			throw new UnsupportedOperationException(option.getFileFormat().toString());
+			throw new UnsupportedOperationException(fileFormatOption.getFileFormat().toString());
 		}
 	}
 
-	private UGraphic createUGraphicSVG(double scaleFactor, Dimension2D dim, boolean interactive) {
+	private UGraphic createUGraphicSVG(double scaleFactor, XDimension2D dim, boolean interactive) {
 		final String hoverPathColorRGB = getHoverPathColorRGB();
 		final LengthAdjust lengthAdjust = skinParam == null ? LengthAdjust.defaultValue() : skinParam.getlengthAdjust();
 		final String preserveAspectRatio = getPreserveAspectRatio();
 		final boolean svgDimensionStyle = skinParam == null || skinParam.svgDimensionStyle();
 		final String svgLinkTarget = getSvgLinkTarget();
-		final UGraphicSvg ug = new UGraphicSvg(backcolor, svgDimensionStyle, dim, colorMapper, false, scaleFactor,
-				svgLinkTarget, hoverPathColorRGB, seed, preserveAspectRatio, stringBounder, lengthAdjust, interactive);
+		final UGraphicSvg ug = new UGraphicSvg(backcolor, svgDimensionStyle, dim, fileFormatOption.getColorMapper(),
+				false, scaleFactor, svgLinkTarget, hoverPathColorRGB, seed, preserveAspectRatio, stringBounder,
+				lengthAdjust, interactive);
 		return ug;
 
 	}
 
-	private UGraphic createUGraphicPNG(double scaleFactor, final Dimension2D dim, Animation affineTransforms, double dx,
-			double dy, String watermark) {
-		Color backColor = getDefaultBackColor();
+	private UGraphic createUGraphicPNG(double scaleFactor, final XDimension2D dim, Animation affineTransforms,
+			double dx, double dy, String watermark) {
+		Color pngBackColor = new Color(0, 0, 0, 0);
 
 		if (this.backcolor instanceof HColorSimple)
-			backColor = colorMapper.toColor(this.backcolor);
-		else if (this.backcolor instanceof HColorNone)
-			backColor = null;
+			pngBackColor = this.backcolor.toColor(fileFormatOption.getColorMapper());
 
-		if (OptionFlags.getInstance().isReplaceWhiteBackgroundByTransparent() && backColor != null
-				&& backColor.equals(Color.WHITE))
-			backColor = new Color(0, 0, 0, 0);
+		if (OptionFlags.getInstance().isReplaceWhiteBackgroundByTransparent() && Color.WHITE.equals(pngBackColor))
+			pngBackColor = new Color(0, 0, 0, 0);
 
 		final EmptyImageBuilder builder = new EmptyImageBuilder(watermark, (int) (dim.getWidth() * scaleFactor),
-				(int) (dim.getHeight() * scaleFactor), backColor, stringBounder);
+				(int) (dim.getHeight() * scaleFactor), pngBackColor, stringBounder);
 		final Graphics2D graphics2D = builder.getGraphics2D();
 
-		final UGraphicG2d ug = new UGraphicG2d(backcolor, colorMapper, stringBounder, graphics2D, scaleFactor,
-				affineTransforms == null ? null : affineTransforms.getFirst(), dx, dy);
+		final UGraphicG2d ug = new UGraphicG2d(backcolor, fileFormatOption.getColorMapper(), stringBounder, graphics2D,
+				scaleFactor, affineTransforms == null ? null : affineTransforms.getFirst(), dx, dy);
 		ug.setBufferedImage(builder.getBufferedImage());
 		final BufferedImage im = ug.getBufferedImage();
 		if (this.backcolor instanceof HColorGradient)
@@ -467,10 +461,6 @@ public class ImageBuilder {
 					.draw(new URectangle(im.getWidth() / scaleFactor, im.getHeight() / scaleFactor));
 
 		return ug;
-	}
-
-	static private Color getDefaultBackColor() {
-		return Color.WHITE;
 	}
 
 	static private HColor getDefaultHBackColor() {
@@ -483,7 +473,7 @@ public class ImageBuilder {
 		} else if (skinParam != null) {
 			final HColor color = skinParam.hoverPathColor();
 			if (color != null)
-				return colorMapper.toRGB(color);
+				return color.toRGB(fileFormatOption.getColorMapper());
 
 		}
 		return null;
@@ -508,7 +498,7 @@ public class ImageBuilder {
 
 	}
 
-	private ImageDataSimple createImageData(Dimension2D dim) {
+	private ImageDataSimple createImageData(XDimension2D dim) {
 		return new ImageDataSimple(dim, status);
 	}
 

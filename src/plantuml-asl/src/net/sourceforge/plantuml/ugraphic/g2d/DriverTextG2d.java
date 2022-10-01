@@ -39,11 +39,11 @@ import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import net.sourceforge.plantuml.EnsureVisible;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.FontStyle;
 import net.sourceforge.plantuml.graphic.StringBounder;
@@ -55,7 +55,6 @@ import net.sourceforge.plantuml.ugraphic.UText;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorGradient;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 public class DriverTextG2d implements UDriver<UText, Graphics2D> {
 
@@ -70,7 +69,7 @@ public class DriverTextG2d implements UDriver<UText, Graphics2D> {
 	public void draw(UText shape, double x, double y, ColorMapper mapper, UParam param, Graphics2D g2d) {
 		final FontConfiguration fontConfiguration = shape.getFontConfiguration();
 
-		if (HColors.isTransparent(fontConfiguration.getColor())) {
+		if (fontConfiguration.getColor().isTransparent()) {
 			return;
 		}
 		final String text = shape.getText();
@@ -89,7 +88,7 @@ public class DriverTextG2d implements UDriver<UText, Graphics2D> {
 		final UFont font = fontConfiguration.getFont();
 		final HColor extended = fontConfiguration.getExtendedColor();
 		
-		final Dimension2D dim = stringBounder.calculateDimension(font, text);
+		final XDimension2D dim = stringBounder.calculateDimension(font, text);
 		final double height = max(10, dim.getHeight());
 		final double width = dim.getWidth();
 
@@ -98,7 +97,7 @@ public class DriverTextG2d implements UDriver<UText, Graphics2D> {
 		if (orientation == 90) {
 			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 			g2d.setFont(font.getUnderlayingFont());
-			g2d.setColor(mapper.toColor(fontConfiguration.getColor()));
+			g2d.setColor(fontConfiguration.getColor().toColor(mapper));
 			final AffineTransform orig = g2d.getTransform();
 			g2d.translate(x, y);
 			g2d.rotate(Math.PI / 2);
@@ -114,7 +113,7 @@ public class DriverTextG2d implements UDriver<UText, Graphics2D> {
 					g2d.setPaint(paint);
 					g2d.fill(area);
 				} else {
-					final Color backColor = mapper.toColor(extended);
+					final Color backColor = extended.toColor(mapper);
 					if (backColor != null) {
 						g2d.setColor(backColor);
 						g2d.setBackground(backColor);
@@ -127,12 +126,12 @@ public class DriverTextG2d implements UDriver<UText, Graphics2D> {
 
 			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 			g2d.setFont(font.getUnderlayingFont());
-			g2d.setColor(mapper.toColor(fontConfiguration.getColor()));
+			g2d.setColor(fontConfiguration.getColor().toColor(mapper));
 			g2d.drawString(text, (float) x, (float) y);
 
 			if (fontConfiguration.containsStyle(FontStyle.UNDERLINE)) {
 				if (extended != null) {
-					g2d.setColor(mapper.toColor(extended));
+					g2d.setColor(extended.toColor(mapper));
 				}
 				final int ypos = (int) (y + 2.5);
 				g2d.setStroke(new BasicStroke((float) 1));
@@ -142,7 +141,7 @@ public class DriverTextG2d implements UDriver<UText, Graphics2D> {
 			if (fontConfiguration.containsStyle(FontStyle.WAVE)) {
 				final int ypos = (int) (y + 2.5) - 1;
 				if (extended != null) {
-					g2d.setColor(mapper.toColor(extended));
+					g2d.setColor(extended.toColor(mapper));
 				}
 				for (int i = (int) x; i < x + width - 5; i += 6) {
 					g2d.drawLine(i, ypos - 0, i + 3, ypos + 1);
@@ -153,7 +152,7 @@ public class DriverTextG2d implements UDriver<UText, Graphics2D> {
 				final FontMetrics fm = g2d.getFontMetrics(font.getUnderlayingFont());
 				final int ypos = (int) (y - fm.getDescent() - 0.5);
 				if (extended != null) {
-					g2d.setColor(mapper.toColor(extended));
+					g2d.setColor(extended.toColor(mapper));
 				}
 				g2d.setStroke(new BasicStroke((float) 1.5));
 				g2d.drawLine((int) x, ypos, (int) (x + width), ypos);

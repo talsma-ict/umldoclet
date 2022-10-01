@@ -93,7 +93,7 @@ public class CommandWLink extends SingleLineCommand2<WireDiagram> {
 		final String stringColor = arg.get("COLOR", 0);
 		HColor color = null;
 		if (stringColor != null)
-			color = HColorSet.instance().getColor(diagram.getSkinParam().getThemeStyle(), stringColor);
+			color = HColorSet.instance().getColor(stringColor);
 
 		final Display label;
 		if (arg.get("MESSAGE", 0) == null) {

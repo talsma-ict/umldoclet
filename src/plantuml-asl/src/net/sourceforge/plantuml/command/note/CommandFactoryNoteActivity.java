@@ -43,6 +43,7 @@ import net.sourceforge.plantuml.command.CommandMultilines2;
 import net.sourceforge.plantuml.command.MultilinesStrategy;
 import net.sourceforge.plantuml.command.Position;
 import net.sourceforge.plantuml.command.SingleLineCommand2;
+import net.sourceforge.plantuml.command.Trim;
 import net.sourceforge.plantuml.command.regex.IRegex;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
@@ -53,12 +54,12 @@ import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.Link;
+import net.sourceforge.plantuml.cucadiagram.LinkArg;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.graphic.color.ColorParser;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
-import net.sourceforge.plantuml.utils.UniqueSequence;
 
 public final class CommandFactoryNoteActivity implements SingleMultiFactoryCommand<ActivityDiagram> {
 
@@ -87,7 +88,7 @@ public final class CommandFactoryNoteActivity implements SingleMultiFactoryComma
 
 	public Command<ActivityDiagram> createMultiLine(boolean withBracket) {
 		return new CommandMultilines2<ActivityDiagram>(getRegexConcatMultiLine(),
-				MultilinesStrategy.KEEP_STARTING_QUOTE) {
+				MultilinesStrategy.KEEP_STARTING_QUOTE, Trim.BOTH) {
 
 			@Override
 			public String getPatternEnd() {
@@ -115,7 +116,7 @@ public final class CommandFactoryNoteActivity implements SingleMultiFactoryComma
 
 				// final String s = StringUtils.getMergedLines(strings);
 
-				final String codeString = UniqueSequence.getString("GMN");
+				final String codeString = diagram.getUniqueSequence("GMN");
 				final Ident ident = diagram.buildLeafIdent(codeString);
 				final Code code = diagram.V1972() ? ident : diagram.buildCode(codeString);
 				final IEntity note = diagram.createLeaf(ident, code, strings, LeafType.NOTE, null);
@@ -133,7 +134,7 @@ public final class CommandFactoryNoteActivity implements SingleMultiFactoryComma
 			@Override
 			protected CommandExecutionResult executeArg(final ActivityDiagram diagram, LineLocation location,
 					RegexResult arg) throws NoSuchColorException {
-				final String tmp = UniqueSequence.getString("GN");
+				final String tmp = diagram.getUniqueSequence("GN");
 				final Ident ident = diagram.buildLeafIdent(tmp);
 				final Code code = diagram.V1972() ? ident : diagram.buildCode(tmp);
 				final IEntity note = diagram.createNote(ident, code, Display.getWithNewlines(arg.get("NOTE", 0)));
@@ -147,7 +148,7 @@ public final class CommandFactoryNoteActivity implements SingleMultiFactoryComma
 
 		final String s = arg.get("COLOR", 0);
 		note.setSpecificColorTOBEREMOVED(ColorType.BACK, s == null ? null
-				: diagram.getSkinParam().getIHtmlColorSet().getColor(diagram.getSkinParam().getThemeStyle(), s));
+				: diagram.getSkinParam().getIHtmlColorSet().getColor(s));
 
 		IEntity activity = diagram.getLastEntityConsulted();
 		if (activity == null) {
@@ -162,13 +163,17 @@ public final class CommandFactoryNoteActivity implements SingleMultiFactoryComma
 		final LinkType type = new LinkType(LinkDecor.NONE, LinkDecor.NONE).goDashed();
 
 		if (position == Position.RIGHT) {
-			link = new Link(diagram.getSkinParam().getCurrentStyleBuilder(), activity, note, type, Display.NULL, 1);
+			link = new Link(diagram.getSkinParam().getCurrentStyleBuilder(), activity, note, type,
+					LinkArg.noDisplay(1));
 		} else if (position == Position.LEFT) {
-			link = new Link(diagram.getSkinParam().getCurrentStyleBuilder(), note, activity, type, Display.NULL, 1);
+			link = new Link(diagram.getSkinParam().getCurrentStyleBuilder(), note, activity, type,
+					LinkArg.noDisplay(1));
 		} else if (position == Position.BOTTOM) {
-			link = new Link(diagram.getSkinParam().getCurrentStyleBuilder(), activity, note, type, Display.NULL, 2);
+			link = new Link(diagram.getSkinParam().getCurrentStyleBuilder(), activity, note, type,
+					LinkArg.noDisplay(2));
 		} else if (position == Position.TOP) {
-			link = new Link(diagram.getSkinParam().getCurrentStyleBuilder(), note, activity, type, Display.NULL, 2);
+			link = new Link(diagram.getSkinParam().getCurrentStyleBuilder(), note, activity, type,
+					LinkArg.noDisplay(2));
 		} else {
 			throw new IllegalArgumentException();
 		}

@@ -37,7 +37,6 @@ import static gen.lib.cgraph.node__c.agnode;
 import static gen.lib.gvc.gvc__c.gvContext;
 import static gen.lib.gvc.gvlayout__c.gvLayoutJobs;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -50,6 +49,7 @@ import h.ST_Agraph_s;
 import h.ST_GVC_s;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.UmlDiagramType;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.json.JsonValue;
 import net.sourceforge.plantuml.style.PName;
@@ -181,18 +181,16 @@ public class SmetanaForJson {
 
 		for (InternalNode node : nodes) {
 			node.block.drawU(
-					getStyleNode().applyStrokeAndLineColor(ug, skinParam.getIHtmlColorSet(), skinParam.getThemeStyle())
+					getStyleNode().applyStrokeAndLineColor(ug, skinParam.getIHtmlColorSet())
 							.apply(getPosition(node.node)));
 		}
-		final HColor color = getStyleArrow().value(PName.LineColor).asColor(skinParam.getThemeStyle(),
-				skinParam.getIHtmlColorSet());
+		final HColor color = getStyleArrow().value(PName.LineColor).asColor(skinParam.getIHtmlColorSet());
 
 		for (ST_Agedge_s edge : edges) {
 			final JsonCurve curve = getCurve(edge, 13);
-			curve.drawCurve(color, getStyleArrow().applyStrokeAndLineColor(ug, skinParam.getIHtmlColorSet(),
-					skinParam.getThemeStyle()));
+			curve.drawCurve(color, getStyleArrow().applyStrokeAndLineColor(ug, skinParam.getIHtmlColorSet()));
 			curve.drawSpot(
-					getStyleArrow().applyStrokeAndLineColor(ug, skinParam.getIHtmlColorSet(), skinParam.getThemeStyle())
+					getStyleArrow().applyStrokeAndLineColor(ug, skinParam.getIHtmlColorSet())
 							.apply(color.bg()));
 		}
 	}
@@ -252,7 +250,7 @@ public class SmetanaForJson {
 		return edge;
 	}
 
-	private ST_Agnode_s createNode(Dimension2D dim, int size, boolean isArray, int colAwidth, int colBwidth) {
+	private ST_Agnode_s createNode(XDimension2D dim, int size, boolean isArray, int colAwidth, int colBwidth) {
 		final String width = "" + (dim.getWidth() / 72);
 		final String height = "" + (dim.getHeight() / 72);
 

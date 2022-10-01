@@ -50,6 +50,7 @@ import net.sourceforge.plantuml.cucadiagram.dot.GraphvizUtils;
 import net.sourceforge.plantuml.preproc.Defines;
 import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.stats.StatsUtils;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 
 @HaxeIgnored
 public class Option {
@@ -80,6 +81,7 @@ public class Option {
 	private int ftpPort = -1;
 	private String picowebBindAddress = null;
 	private int picowebPort = -1;
+	private boolean picowebEnableStop = false;
 	private boolean hideMetadata = false;
 	private boolean checkMetadata = false;
 	private int stdrpt = 0;
@@ -108,17 +110,17 @@ public class Option {
 	}
 
 	public Option(String... arg) throws InterruptedException, IOException {
-		if (arg.length == 0) {
+		if (arg.length == 0)
 			OptionFlags.getInstance().setGui(true);
-		}
+
 		initInclude(GraphvizUtils.getenvDefaultConfigFilename());
 		for (int i = 0; i < arg.length; i++) {
 			String s = arg[i];
 			if (s.equalsIgnoreCase("-headless")) {
 				// Useless because done in Run.java
-				if (i != 0) {
+				if (i != 0)
 					Log.error("Warning: -headless flag must be the first one in the command line");
-				}
+
 				System.setProperty("java.awt.headless", "true");
 			} else if (s.equalsIgnoreCase("-tsvg") || s.equalsIgnoreCase("-svg")) {
 				setFileFormatOption(new FileFormatOption(FileFormat.SVG));
@@ -156,73 +158,75 @@ public class Option {
 				setFileFormatOption(new FileFormatOption(FileFormat.BASE64));
 			} else if (s.equalsIgnoreCase("-pdf") || s.equalsIgnoreCase("-tpdf")) {
 				setFileFormatOption(new FileFormatOption(FileFormat.PDF));
+			} else if (s.equalsIgnoreCase("-darkmode")) {
+				setFileFormatOption(this.fileFormatOption.withColorMapper(ColorMapper.FORCE_DARK));
 			} else if (s.equalsIgnoreCase("-overwrite")) {
 				OptionFlags.getInstance().setOverwrite(true);
 			} else if (s.equalsIgnoreCase("-output") || s.equalsIgnoreCase("-o")) {
 				i++;
-				if (i == arg.length) {
+				if (i == arg.length)
 					continue;
-				}
+
 				outputDir = new File(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg[i]));
 			} else if (s.equalsIgnoreCase("-ofile")) {
 				i++;
-				if (i == arg.length) {
+				if (i == arg.length)
 					continue;
-				}
+
 				outputFile = new File(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg[i]));
 			} else if (s.equalsIgnoreCase("-graphvizdot") || s.equalsIgnoreCase("-graphviz_dot")) {
 				i++;
-				if (i == arg.length) {
+				if (i == arg.length)
 					continue;
-				}
+
 				GraphvizUtils.setDotExecutable(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg[i]));
 			} else if (s.equalsIgnoreCase("-charset")) {
 				i++;
-				if (i == arg.length) {
+				if (i == arg.length)
 					continue;
-				}
+
 				charset = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg[i]);
 			} else if (s.equalsIgnoreCase("-filename")) {
 				i++;
-				if (i == arg.length) {
+				if (i == arg.length)
 					continue;
-				}
+
 				filename = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg[i]);
 			} else if (s.equalsIgnoreCase("-filedir")) {
 				i++;
-				if (i == arg.length) {
+				if (i == arg.length)
 					continue;
-				}
+
 				fileDir = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg[i]);
 			} else if (s.startsWith("-o") && s.length() > 3) {
 				s = s.substring(2);
 				outputDir = new File(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(s));
 			} else if (s.equalsIgnoreCase("-exclude") || s.equalsIgnoreCase("-x")) {
 				i++;
-				if (i == arg.length) {
+				if (i == arg.length)
 					continue;
-				}
+
 				excludes.add(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg[i]));
 			} else if (s.equalsIgnoreCase("-nbthread") || s.equalsIgnoreCase("-nbthreads")) {
 				i++;
-				if (i == arg.length) {
+				if (i == arg.length)
 					continue;
-				}
+
 				final String nb = arg[i];
-				if ("auto".equalsIgnoreCase(nb)) {
+				if ("auto".equalsIgnoreCase(nb))
 					this.nbThreads = defaultNbThreads();
-				} else if (nb.matches("\\d+")) {
+				else if (nb.matches("\\d+"))
 					this.nbThreads = Integer.parseInt(nb);
-				}
+
 			} else if (s.equalsIgnoreCase("-timeout")) {
 				i++;
-				if (i == arg.length) {
+				if (i == arg.length)
 					continue;
-				}
+
 				final String timeSeconds = arg[i];
-				if (timeSeconds.matches("\\d+")) {
+				if (timeSeconds.matches("\\d+"))
 					OptionFlags.getInstance().setTimeoutMs(Integer.parseInt(timeSeconds) * 1000L);
-				}
+
 			} else if (s.equalsIgnoreCase("-failfast")) {
 				this.failfast = true;
 			} else if (s.equalsIgnoreCase("-failfast2")) {
@@ -233,15 +237,15 @@ public class Option {
 				this.checkOnly = true;
 			} else if (s.equalsIgnoreCase("-theme")) {
 				i++;
-				if (i == arg.length) {
+				if (i == arg.length)
 					continue;
-				}
+
 				this.config.add(0, "!theme " + arg[i]);
 			} else if (s.equalsIgnoreCase("-config")) {
 				i++;
-				if (i == arg.length) {
+				if (i == arg.length)
 					continue;
-				}
+
 				initConfig(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg[i]));
 			} else if (s.startsWith("-I")) {
 				initInclude(s.substring(2));
@@ -256,9 +260,9 @@ public class Option {
 				pipe = true;
 			} else if (s.equalsIgnoreCase("-pipedelimitor")) {
 				i++;
-				if (i == arg.length) {
+				if (i == arg.length)
 					continue;
-				}
+
 				pipeDelimitor = arg[i];
 			} else if (s.equalsIgnoreCase("-pipemap")) {
 				pipeMap = true;
@@ -277,9 +281,9 @@ public class Option {
 				OptionFlags.getInstance().setExtractFromMetadata(true);
 			} else if (s.equalsIgnoreCase("-logdata")) {
 				i++;
-				if (i == arg.length) {
+				if (i == arg.length)
 					continue;
-				}
+
 				OptionFlags.getInstance()
 						.setLogData(new SFile(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg[i])));
 			} else if (s.equalsIgnoreCase("-word")) {
@@ -296,9 +300,9 @@ public class Option {
 				OptionPrint.printLicense();
 			} else if (s.startsWith("-DPLANTUML_LIMIT_SIZE=")) {
 				final String v = s.substring("-DPLANTUML_LIMIT_SIZE=".length());
-				if (v.matches("\\d+")) {
+				if (v.matches("\\d+"))
 					System.setProperty("PLANTUML_LIMIT_SIZE", v);
-				}
+
 			} else if (s.startsWith("-D")) {
 				manageDefine(s.substring(2));
 			} else if (s.startsWith("-S")) {
@@ -366,24 +370,25 @@ public class Option {
 				stdrpt = 2;
 			} else if (s.equalsIgnoreCase("-pipeimageindex")) {
 				i++;
-				if (i == arg.length) {
+				if (i == arg.length)
 					continue;
-				}
+
 				final String nb = arg[i];
-				if (nb.matches("\\d+")) {
+				if (nb.matches("\\d+"))
 					this.imageIndex = Integer.parseInt(nb);
-				}
+
 			} else if (StringUtils.goLowerCase(s).startsWith("-ftp")) {
 				final int x = s.indexOf(':');
-				if (x == -1) {
+				if (x == -1)
 					this.ftpPort = 4242;
-				} else {
+				else
 					this.ftpPort = Integer.parseInt(s.substring(x + 1));
-				}
+
 			} else if (StringUtils.goLowerCase(s).startsWith("-picoweb")) {
 				final String[] parts = s.split(":");
 				this.picowebPort = parts.length > 1 ? Integer.parseInt(parts[1]) : 8080;
 				this.picowebBindAddress = parts.length > 2 ? parts[2] : null;
+				this.picowebEnableStop = StringUtils.goLowerCase(s).contains("stop");
 			} else if (s.startsWith("-c")) {
 				s = s.substring(2);
 				config.add(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(s));
@@ -394,16 +399,16 @@ public class Option {
 	}
 
 	public Stdrpt getStdrpt() {
-		if (stdrpt == 1) {
+		if (stdrpt == 1)
 			return new StdrptV1();
-		}
-		if (stdrpt == 2) {
+
+		if (stdrpt == 2)
 			return new StdrptV2();
-		}
+
 		// Legacy case
-		if (isPipe() || isPipeMap() || isSyntax()) {
+		if (isPipe() || isPipeMap() || isSyntax())
 			return new StdrptPipe0();
-		}
+
 		return new StdrptNull();
 	}
 
@@ -419,15 +424,19 @@ public class Option {
 		return picowebPort;
 	}
 
+	public boolean getPicowebEnableStop() {
+		return picowebEnableStop;
+	}
+
 	private void addInConfig(BufferedReader br) throws IOException {
-		if (br == null) {
+		if (br == null)
 			return;
-		}
+
 		try {
 			String s = null;
-			while ((s = br.readLine()) != null) {
+			while ((s = br.readLine()) != null)
 				config.add(s);
-			}
+
 		} finally {
 			br.close();
 		}
@@ -439,30 +448,29 @@ public class Option {
 	}
 
 	private void initInclude(String filename) throws IOException {
-		if (filename == null) {
+		if (filename == null)
 			return;
-		}
+
 		if (filename.contains("*")) {
 			final FileGroup group = new FileGroup(filename, Collections.<String>emptyList(), null);
-			for (File f : group.getFiles()) {
-				if (f.exists() && f.canRead()) {
+			for (File f : group.getFiles())
+				if (f.exists() && f.canRead())
 					addInConfig(new BufferedReader(new FileReader(f)));
-				}
-			}
+
 		} else {
 			final File f = new File(filename);
-			if (f.exists() && f.canRead()) {
+			if (f.exists() && f.canRead())
 				addInConfig(new BufferedReader(new FileReader(f)));
-			}
+
 		}
 	}
 
 	private void manageDefine(String s) {
 		final Pattern2 p = MyPattern.cmpile("^(\\w+)(?:=(.*))?$");
 		final Matcher2 m = p.matcher(s);
-		if (m.find()) {
+		if (m.find())
 			define(m.group(1), m.group(2));
-		}
+
 	}
 
 	private void managePragma(String s) {
@@ -471,9 +479,9 @@ public class Option {
 		if (m.find()) {
 			final String var = m.group(1);
 			final String value = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(m.group(2));
-			if (var != null && value != null) {
+			if (var != null && value != null)
 				config.add("!pragma " + var + " " + value);
-			}
+
 		}
 	}
 
@@ -483,9 +491,9 @@ public class Option {
 		if (m.find()) {
 			final String var = m.group(1);
 			final String value = m.group(2);
-			if (var != null && value != null) {
+			if (var != null && value != null)
 				config.add("skinparamlocked " + var + " " + value);
-			}
+
 		}
 	}
 
@@ -509,9 +517,9 @@ public class Option {
 		final Defines result = Defines.createWithFileName(f);
 		for (Map.Entry<String, String> ent : defines.entrySet()) {
 			String value = ent.getValue();
-			if (value == null) {
+			if (value == null)
 				value = "";
-			}
+
 			result.define(ent.getKey(), Arrays.asList(value), false, null);
 		}
 		return result;
@@ -532,9 +540,9 @@ public class Option {
 	public Defines getDefaultDefines() {
 		final Defines result = Defines.createEmpty();
 		result.overrideFilename(filename);
-		for (Map.Entry<String, String> ent : defines.entrySet()) {
+		for (Map.Entry<String, String> ent : defines.entrySet())
 			result.define(ent.getKey(), Arrays.asList(ent.getValue()), false, null);
-		}
+
 		return result;
 	}
 
@@ -580,12 +588,12 @@ public class Option {
 	}
 
 	public FileFormatOption getFileFormatOption() {
-		if (debugsvek) {
+		if (debugsvek)
 			fileFormatOption.setDebugSvek(true);
-		}
-		if (hideMetadata) {
+
+		if (hideMetadata)
 			fileFormatOption.hideMetadata();
-		}
+
 		return fileFormatOption;
 	}
 
@@ -685,11 +693,8 @@ public class Option {
 		return preprocessorOutput;
 	}
 
-	// public final void setPreprocessorOutput(boolean preprocessorOutput) {
-	// this.preprocessorOutput = preprocessorOutput;
-	// }
-
 	public String getFileDir() {
 		return fileDir;
 	}
+
 }

@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.png.PngTitler;
@@ -60,7 +60,7 @@ public class SequenceDiagramArea {
 	private boolean isLegendTop;
 	private HorizontalAlignment legendHorizontalAlignment;
 
-	public void setLegend(Dimension2D dimLegend, boolean isLegendTop, HorizontalAlignment horizontalAlignment) {
+	public void setLegend(XDimension2D dimLegend, boolean isLegendTop, HorizontalAlignment horizontalAlignment) {
 		this.legendHorizontalAlignment = horizontalAlignment;
 		this.legendWidth = dimLegend.getWidth();
 		this.legendHeight = dimLegend.getHeight();
@@ -100,7 +100,7 @@ public class SequenceDiagramArea {
 		this.captionHeight = height;
 	}
 
-	public void setCaptionArea(Dimension2D dim) {
+	public void setCaptionArea(XDimension2D dim) {
 		setCaptionArea(dim.getWidth(), dim.getHeight());
 	}
 
@@ -199,14 +199,14 @@ public class SequenceDiagramArea {
 	}
 
 	public void initFooter(PngTitler pngTitler, StringBounder stringBounder) {
-		final Dimension2D dim = pngTitler.getTextDimension(stringBounder);
+		final XDimension2D dim = pngTitler.getTextDimension(stringBounder);
 		if (dim != null)
 			setFooterArea(dim.getWidth(), dim.getHeight(), 0);
 
 	}
 
 	public void initHeader(PngTitler pngTitler, StringBounder stringBounder) {
-		final Dimension2D dim = pngTitler.getTextDimension(stringBounder);
+		final XDimension2D dim = pngTitler.getTextDimension(stringBounder);
 		if (dim != null)
 			setHeaderArea(dim.getWidth(), dim.getHeight(), 0);
 

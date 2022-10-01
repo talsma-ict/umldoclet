@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.timingdiagram;
 
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,9 +37,9 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
+import net.sourceforge.plantuml.awt.geom.XPoint2D;
 import net.sourceforge.plantuml.command.Position;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
@@ -104,8 +103,8 @@ public class PlayerAnalog extends Player {
 	public IntricatedPoint getTimeProjection(StringBounder stringBounder, TimeTick tick) {
 		final double x = ruler.getPosInPixel(tick);
 		final double value = getValueAt(stringBounder, tick);
-		return new IntricatedPoint(new Point2D.Double(x, getYpos(stringBounder, value)),
-				new Point2D.Double(x, getYpos(stringBounder, value)));
+		return new IntricatedPoint(new XPoint2D(x, getYpos(stringBounder, value)),
+				new XPoint2D(x, getYpos(stringBounder, value)));
 	}
 
 	private double getValueAt(StringBounder stringBounder, TimeTick tick) {
@@ -177,9 +176,9 @@ public class PlayerAnalog extends Player {
 				drawPart1(ug, fullAvailableWidth, specialVSpace);
 			}
 
-			public Dimension2D calculateDimension(StringBounder stringBounder) {
-				final Dimension2D dim = getTitle().calculateDimension(stringBounder);
-				return Dimension2DDouble.delta(dim, 5 + getMaxWidthForTicks(stringBounder), 0);
+			public XDimension2D calculateDimension(StringBounder stringBounder) {
+				final XDimension2D dim = getTitle().calculateDimension(stringBounder);
+				return XDimension2D.delta(dim, 5 + getMaxWidthForTicks(stringBounder), 0);
 			}
 		};
 	}
@@ -201,7 +200,7 @@ public class PlayerAnalog extends Player {
 	private void drawPart1(UGraphic ug, double fullAvailableWidth, double specialVSpace) {
 		final StringBounder stringBounder = ug.getStringBounder();
 		final TextBlock title = getTitle();
-		final Dimension2D dim = title.calculateDimension(stringBounder);
+		final XDimension2D dim = title.calculateDimension(stringBounder);
 		final double y = (getFullHeight(stringBounder) - dim.getHeight()) / 2;
 		title.drawU(ug.apply(UTranslate.dy(y)));
 
@@ -221,13 +220,13 @@ public class PlayerAnalog extends Player {
 
 	private double getWidthLabel(StringBounder stringBounder, double value) {
 		final TextBlock label = getTextBlock(value);
-		final Dimension2D dim = label.calculateDimension(stringBounder);
+		final XDimension2D dim = label.calculateDimension(stringBounder);
 		return dim.getWidth();
 	}
 
 	private void drawScaleLabel(UGraphic ug, double value, double fullAvailableWidth) {
 		final TextBlock label = getTextBlock(value);
-		final Dimension2D dim = label.calculateDimension(ug.getStringBounder());
+		final XDimension2D dim = label.calculateDimension(ug.getStringBounder());
 		ug = ug.apply(UTranslate.dx(fullAvailableWidth - dim.getWidth() - 2));
 		label.drawU(ug.apply(UTranslate.dy(getYpos(ug.getStringBounder(), value) - dim.getHeight() / 2)));
 	}

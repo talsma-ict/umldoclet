@@ -32,13 +32,13 @@ package net.sourceforge.plantuml.skin.rose;
 
 import net.sourceforge.plantuml.AlignmentParam;
 import net.sourceforge.plantuml.ColorParam;
-import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.LineParam;
 import net.sourceforge.plantuml.PaddingParam;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
 import net.sourceforge.plantuml.skin.ArrowComponent;
 import net.sourceforge.plantuml.skin.ArrowConfiguration;
@@ -71,12 +71,6 @@ public class Rose {
 		return colorParams[0].getDefaultValue();
 	}
 
-	public Component createComponentNote(Style[] styles, ComponentType type, ISkinParam param,
-			Display stringsToDisplay) {
-		checkRose();
-		return createComponentNote(styles, type, param, stringsToDisplay, null);
-	}
-
 	private void checkRose() {
 		// Quite ugly, but we want to ensure that TextSkin overrides those methods
 		if (this.getClass() != Rose.class)
@@ -85,7 +79,13 @@ public class Rose {
 	}
 
 	public Component createComponentNote(Style[] styles, ComponentType type, ISkinParam param, Display stringsToDisplay,
-			NotePosition notePosition) {
+			Colors colors) {
+		checkRose();
+		return createComponentNote(styles, type, param, stringsToDisplay, colors, null);
+	}
+
+	public Component createComponentNote(Style[] styles, ComponentType type, ISkinParam param, Display stringsToDisplay,
+			Colors colors, NotePosition notePosition) {
 		checkRose();
 		final HorizontalAlignment textAlign;
 		final HorizontalAlignment position;
@@ -105,13 +105,13 @@ public class Rose {
 
 		if (type == ComponentType.NOTE)
 			return new ComponentRoseNote(styles == null ? null : styles[0], stringsToDisplay, paddingX, paddingY, param,
-					textAlign, position);
+					textAlign, position, colors);
 
 		if (type == ComponentType.NOTE_HEXAGONAL)
-			return new ComponentRoseNoteHexagonal(styles == null ? null : styles[0], stringsToDisplay, param);
+			return new ComponentRoseNoteHexagonal(styles == null ? null : styles[0], stringsToDisplay, param, colors);
 
 		if (type == ComponentType.NOTE_BOX)
-			return new ComponentRoseNoteBox(styles == null ? null : styles[0], stringsToDisplay, param);
+			return new ComponentRoseNoteBox(styles == null ? null : styles[0], stringsToDisplay, param, colors);
 
 		throw new UnsupportedOperationException(type.toString());
 	}
@@ -144,12 +144,10 @@ public class Rose {
 					stringsToDisplay, param, param.minClassWidth(), true, padding);
 
 		if (type == ComponentType.PARTICIPANT_LINE)
-			return new ComponentRoseLine(param.getThemeStyle(), styles == null ? null : styles[0], false,
-					param.getIHtmlColorSet());
+			return new ComponentRoseLine(styles == null ? null : styles[0], false, param.getIHtmlColorSet());
 
 		if (type == ComponentType.CONTINUE_LINE)
-			return new ComponentRoseLine(param.getThemeStyle(), styles == null ? null : styles[0], true,
-					param.getIHtmlColorSet());
+			return new ComponentRoseLine(styles == null ? null : styles[0], true, param.getIHtmlColorSet());
 
 		if (type == ComponentType.ACTOR_HEAD)
 			return new ComponentRoseActor(param.actorStyle(), styles == null ? null : styles[0],
@@ -219,20 +217,16 @@ public class Rose {
 			return new ComponentRoseGroupingSpace(7);
 
 		if (type == ComponentType.ALIVE_BOX_CLOSE_CLOSE)
-			return new ComponentRoseActiveLine(param.getThemeStyle(), styles == null ? null : styles[0], true, true,
-					param.getIHtmlColorSet());
+			return new ComponentRoseActiveLine(styles == null ? null : styles[0], true, true, param.getIHtmlColorSet());
 
 		if (type == ComponentType.ALIVE_BOX_CLOSE_OPEN)
-			return new ComponentRoseActiveLine(param.getThemeStyle(), styles == null ? null : styles[0], true, false,
-					param.getIHtmlColorSet());
+			return new ComponentRoseActiveLine(styles == null ? null : styles[0], true, false, param.getIHtmlColorSet());
 
 		if (type == ComponentType.ALIVE_BOX_OPEN_CLOSE) {
-			return new ComponentRoseActiveLine(param.getThemeStyle(), styles == null ? null : styles[0], false, true,
-					param.getIHtmlColorSet());
+			return new ComponentRoseActiveLine(styles == null ? null : styles[0], false, true, param.getIHtmlColorSet());
 		}
 		if (type == ComponentType.ALIVE_BOX_OPEN_OPEN)
-			return new ComponentRoseActiveLine(param.getThemeStyle(), styles == null ? null : styles[0], false, false,
-					param.getIHtmlColorSet());
+			return new ComponentRoseActiveLine(styles == null ? null : styles[0], false, false, param.getIHtmlColorSet());
 
 		if (type == ComponentType.DELAY_LINE)
 			return new ComponentRoseDelayLine(null, getHtmlColor(param, stereotype, ColorParam.sequenceLifeLineBorder));

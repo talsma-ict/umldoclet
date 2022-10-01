@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Objects;
 
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.Value;
@@ -76,14 +75,14 @@ public class Rainbow {
 		throw new IllegalStateException();
 	}
 
-	public static Rainbow build(Style style, HColorSet set, ThemeStyle themeStyle) {
-		final HColor color = style.value(PName.LineColor).asColor(themeStyle, set);
+	public static Rainbow build(Style style, HColorSet set) {
+		final HColor color = style.value(PName.LineColor).asColor(set);
 		final Value head = style.value(PName.HeadColor);
 		HColor colorHead;
 		if (head instanceof ValueNull)
 			colorHead = color;
 		else
-			colorHead = head.asColor(themeStyle, set);
+			colorHead = head.asColor(set);
 		if (colorHead == null)
 			colorHead = HColors.transparent();
 		return fromColor(color, colorHead);

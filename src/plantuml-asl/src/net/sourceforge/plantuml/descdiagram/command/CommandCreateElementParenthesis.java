@@ -127,7 +127,6 @@ public class CommandCreateElementParenthesis extends SingleLineCommand2<ClassDia
 		return ColorParser.simpleColor(ColorType.BACK, "COLOR2");
 	}
 
-
 	@Override
 	final protected boolean isForbidden(CharSequence line) {
 		if (line.toString().matches("^[\\p{L}0-9_.]+$")) {
@@ -182,12 +181,11 @@ public class CommandCreateElementParenthesis extends SingleLineCommand2<ClassDia
 			entity.addUrl(url);
 		}
 
-		Colors colors = color().getColor(diagram.getSkinParam().getThemeStyle(), arg,
-				diagram.getSkinParam().getIHtmlColorSet());
+		Colors colors = color().getColor(arg, diagram.getSkinParam().getIHtmlColorSet());
 		final String s = arg.get("LINECOLOR", 1);
 
 		final HColor lineColor = s == null ? null
-				: diagram.getSkinParam().getIHtmlColorSet().getColor(diagram.getSkinParam().getThemeStyle(), s);
+				: diagram.getSkinParam().getIHtmlColorSet().getColor(s);
 		if (lineColor != null) {
 			colors = colors.add(ColorType.LINE, lineColor);
 		}

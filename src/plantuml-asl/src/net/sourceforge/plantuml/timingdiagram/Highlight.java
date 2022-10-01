@@ -78,8 +78,7 @@ public class Highlight {
 	private HColor getBackColor() {
 		final HColor result = colors.getColor(ColorType.BACK);
 		if (result == null) 
-			return getStyle().value(PName.BackGroundColor).asColor(skinParam.getThemeStyle(),
-					skinParam.getIHtmlColorSet());
+			return getStyle().value(PName.BackGroundColor).asColor(skinParam.getIHtmlColorSet());
 		
 		return result;
 	}
@@ -87,7 +86,7 @@ public class Highlight {
 	private HColor getLineColor() {
 		final HColor result = colors.getColor(ColorType.LINE);
 		if (result == null) 
-			return getStyle().value(PName.LineColor).asColor(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet());
+			return getStyle().value(PName.LineColor).asColor(skinParam.getIHtmlColorSet());
 		
 		return result;
 	}

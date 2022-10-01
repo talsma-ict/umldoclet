@@ -48,7 +48,7 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.cond.FtileSwitch
 import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileDecorateInLabel;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileDecorateOutLabel;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileDiamondInside;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.creole.CreoleMode;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
@@ -99,13 +99,13 @@ public class FtileFactoryDelegatorSwitch extends FtileFactoryDelegator {
 		final Ftile diamond2 = getDiamond2(swimlane, branches.get(0));
 
 		for (Branch branch : branches) {
-			final Dimension2D dimLabelIn = branch.getTextBlockPositive().calculateDimension(getStringBounder());
-			final Dimension2D dimLabelOut = branch.getTextBlockSpecial().calculateDimension(getStringBounder());
+			final XDimension2D dimLabelIn = branch.getTextBlockPositive().calculateDimension(getStringBounder());
+			final XDimension2D dimLabelOut = branch.getTextBlockSpecial().calculateDimension(getStringBounder());
 			ftiles.add(new FtileDecorateOutLabel(new FtileDecorateInLabel(branch.getFtile(), dimLabelIn), dimLabelOut));
 		}
 
 		final Style style = getDefaultStyleDefinitionArrow().getMergedStyle(skinParam().getCurrentStyleBuilder());
-		final Rainbow arrowColor = Rainbow.build(style, skinParam().getIHtmlColorSet(), skinParam().getThemeStyle());
+		final Rainbow arrowColor = Rainbow.build(style, skinParam().getIHtmlColorSet());
 
 		if (ftiles.size() == 1) {
 			final FtileSwitchWithOneLink result = new FtileSwitchWithOneLink(ftiles, branches, swimlane, diamond1,
@@ -124,12 +124,10 @@ public class FtileFactoryDelegatorSwitch extends FtileFactoryDelegator {
 
 		final Style style = getDefaultStyleDefinitionDiamond().getMergedStyle(skinParam().getCurrentStyleBuilder());
 		lineBreak = style.wrapWidth();
-		final FontConfiguration fcDiamond = style.getFontConfiguration(skinParam().getThemeStyle(),
-				skinParam().getIHtmlColorSet());
-		final HColor borderColor = style.value(PName.LineColor).asColor(skinParam().getThemeStyle(),
-				skinParam().getIHtmlColorSet());
+		final FontConfiguration fcDiamond = style.getFontConfiguration(skinParam().getIHtmlColorSet());
+		final HColor borderColor = style.value(PName.LineColor).asColor(skinParam().getIHtmlColorSet());
 		final HColor backColor = branch0.getColor() == null ? style.value(PName.BackGroundColor)
-				.asColor(skinParam().getThemeStyle(), skinParam().getIHtmlColorSet()) : branch0.getColor();
+				.asColor(skinParam().getIHtmlColorSet()) : branch0.getColor();
 
 		final TextBlock tbTest;
 		if (Display.isNull(test) || test.isWhite())
@@ -144,10 +142,9 @@ public class FtileFactoryDelegatorSwitch extends FtileFactoryDelegator {
 	private Ftile getDiamond2(Swimlane swimlane, Branch branch0) {
 
 		final Style style = getDefaultStyleDefinitionDiamond().getMergedStyle(skinParam().getCurrentStyleBuilder());
-		final HColor borderColor = style.value(PName.LineColor).asColor(skinParam().getThemeStyle(),
-				skinParam().getIHtmlColorSet());
+		final HColor borderColor = style.value(PName.LineColor).asColor(skinParam().getIHtmlColorSet());
 		final HColor backColor = branch0.getColor() == null ? style.value(PName.BackGroundColor)
-				.asColor(skinParam().getThemeStyle(), skinParam().getIHtmlColorSet()) : branch0.getColor();
+				.asColor(skinParam().getIHtmlColorSet()) : branch0.getColor();
 
 		return new FtileDiamondInside(TextBlockUtils.empty(0, 0), branch0.skinParam(), backColor, borderColor,
 				swimlane);

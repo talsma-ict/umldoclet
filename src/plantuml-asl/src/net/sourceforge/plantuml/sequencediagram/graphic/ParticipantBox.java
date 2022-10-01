@@ -36,7 +36,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.Component;
@@ -119,7 +119,7 @@ public class ParticipantBox implements Pushable {
 					- line.getPreferredHeight(stringBounder) / 2;
 			head.drawU(
 					ug.apply(new UTranslate(getMinX(), y1)),
-					new Area(new Dimension2DDouble(head.getPreferredWidth(stringBounder), head
+					new Area(new XDimension2D(head.getPreferredWidth(stringBounder), head
 							.getPreferredHeight(stringBounder))), new SimpleContext2D(false));
 			// ug.setTranslate(atX, atY);
 		}
@@ -134,7 +134,7 @@ public class ParticipantBox implements Pushable {
 			ug = ug.apply(new UTranslate(getMinX(), positionTail));
 			tail.drawU(
 					ug,
-					new Area(new Dimension2DDouble(tail.getPreferredWidth(stringBounder), tail
+					new Area(new XDimension2D(tail.getPreferredWidth(stringBounder), tail
 							.getPreferredHeight(stringBounder))), new SimpleContext2D(false));
 			// ug.setTranslate(atX, atY);
 		}
@@ -145,7 +145,7 @@ public class ParticipantBox implements Pushable {
 		final StringBounder stringBounder = ug.getStringBounder();
 		head.drawU(
 				ug.apply(UTranslate.dx(outMargin)),
-				new Area(new Dimension2DDouble(head.getPreferredWidth(stringBounder), head
+				new Area(new XDimension2D(head.getPreferredWidth(stringBounder), head
 						.getPreferredHeight(stringBounder))), new SimpleContext2D(false));
 		// ug.translate(-outMargin, 0);
 	}
@@ -181,7 +181,7 @@ public class ParticipantBox implements Pushable {
 	private void drawLine(UGraphic ug, double startingY, double endingY, Component comp) {
 		final StringBounder stringBounder = ug.getStringBounder();
 		comp.drawU(ug.apply(UTranslate.dy(startingY)),
-				new Area(new Dimension2DDouble(head.getPreferredWidth(stringBounder) + outMargin * 2, endingY
+				new Area(new XDimension2D(head.getPreferredWidth(stringBounder) + outMargin * 2, endingY
 						- startingY)), new SimpleContext2D(false));
 	}
 

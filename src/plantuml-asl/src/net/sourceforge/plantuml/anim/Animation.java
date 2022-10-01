@@ -30,12 +30,12 @@
  */
 package net.sourceforge.plantuml.anim;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.ugraphic.MinMax;
 
 public class Animation {
@@ -71,7 +71,7 @@ public class Animation {
 		return Collections.unmodifiableCollection(all);
 	}
 
-	public void setDimension(Dimension2D dim) {
+	public void setDimension(XDimension2D dim) {
 		for (AffineTransformation affineTransform : all) {
 			affineTransform.setDimension(dim);
 		}
@@ -82,7 +82,7 @@ public class Animation {
 		return all.get(0);
 	}
 
-	public MinMax getMinMax(Dimension2D dim) {
+	public MinMax getMinMax(XDimension2D dim) {
 		MinMax result = MinMax.getEmpty(false);
 		for (AffineTransformation affineTransform : all) {
 			final MinMax m = affineTransform.getMinMax(dim);

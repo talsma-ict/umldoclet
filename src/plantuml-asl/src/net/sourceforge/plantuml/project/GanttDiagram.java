@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.project;
 
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -47,13 +46,12 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.TitledDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.WithSprite;
-import net.sourceforge.plantuml.api.ThemeStyle;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
+import net.sourceforge.plantuml.awt.geom.XRectangle2D;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
@@ -159,8 +157,8 @@ public class GanttDiagram extends TitledDiagram implements ToTaskDraw, WithSprit
 		this.weekNumberStrategy = new WeekNumberStrategy(firstDayOfWeek, minimalDaysInFirstWeek);
 	}
 
-	public GanttDiagram(ThemeStyle style, UmlSource source) {
-		super(style, source, UmlDiagramType.GANTT, null);
+	public GanttDiagram(UmlSource source) {
+		super(source, UmlDiagramType.GANTT, null);
 	}
 
 	public final int getDpi(FileFormatOption fileFormatOption) {
@@ -221,8 +219,8 @@ public class GanttDiagram extends TitledDiagram implements ToTaskDraw, WithSprit
 							.getMergedStyle(getCurrentStyleBuilder());
 
 					final HColor back = timelineStyle.value(PName.BackGroundColor)
-							.asColor(getSkinParam().getThemeStyle(), getIHtmlColorSet());
-					if (HColors.isTransparent(back) == false) {
+							.asColor(getIHtmlColorSet());
+					if (back.isTransparent() == false) {
 						final URectangle rect1 = new URectangle(calculateDimension(ug.getStringBounder()).getWidth(),
 								timeHeader.getTimeHeaderHeight());
 						ug.apply(back.bg()).draw(rect1);
@@ -268,12 +266,12 @@ public class GanttDiagram extends TitledDiagram implements ToTaskDraw, WithSprit
 				return width;
 			}
 
-			public Rectangle2D getInnerPosition(String member, StringBounder stringBounder, InnerStrategy strategy) {
+			public XRectangle2D getInnerPosition(String member, StringBounder stringBounder, InnerStrategy strategy) {
 				return null;
 			}
 
-			public Dimension2D calculateDimension(StringBounder stringBounder) {
-				return new Dimension2DDouble(getTitlesColumnWidth(stringBounder) + getBarsColumnWidth(timeHeader),
+			public XDimension2D calculateDimension(StringBounder stringBounder) {
+				return new XDimension2D(getTitlesColumnWidth(stringBounder) + getBarsColumnWidth(timeHeader),
 						getTotalHeight(timeHeader));
 			}
 
@@ -312,9 +310,8 @@ public class GanttDiagram extends TitledDiagram implements ToTaskDraw, WithSprit
 	}
 
 	private TimeHeaderParameters thParam() {
-		return new TimeHeaderParameters(colorDays(), getSkinParam().getThemeStyle(), getFactorScale(), min, max,
-				getIHtmlColorSet(), getTimelineStyle(), getClosedStyle(), locale, openClose, colorDaysOfWeek,
-				verticalSeparatorBefore);
+		return new TimeHeaderParameters(colorDays(), getFactorScale(), min, max, getIHtmlColorSet(),
+				getTimelineStyle(), getClosedStyle(), locale, openClose, colorDaysOfWeek, verticalSeparatorBefore);
 	}
 
 	private Map<Day, HColor> colorDays() {

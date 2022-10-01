@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.math;
 
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.command.PSystemBasicFactory;
 import net.sourceforge.plantuml.core.DiagramType;
 import net.sourceforge.plantuml.core.UmlSource;
@@ -42,7 +41,7 @@ public class PSystemMathFactory extends PSystemBasicFactory<PSystemMath> {
 	}
 
 	@Override
-	public PSystemMath initDiagram(ThemeStyle style, UmlSource source, String startLine) {
+	public PSystemMath initDiagram(UmlSource source, String startLine) {
 		if (getDiagramType() == DiagramType.MATH)
 			return new PSystemMath(source);
 
@@ -50,7 +49,7 @@ public class PSystemMathFactory extends PSystemBasicFactory<PSystemMath> {
 	}
 
 	@Override
-	public PSystemMath executeLine(ThemeStyle style, UmlSource source, PSystemMath system, String line) {
+	public PSystemMath executeLine(UmlSource source, PSystemMath system, String line) {
 		system.doCommandLine(line);
 		return system;
 	}

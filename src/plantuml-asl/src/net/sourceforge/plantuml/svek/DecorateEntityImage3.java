@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.svek;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
@@ -42,12 +42,12 @@ public class DecorateEntityImage3 extends AbstractTextBlock  implements TextBloc
 	private final TextBlock original;
 	private final HColor color;
 
-	public DecorateEntityImage3(TextBlock original, HColor color) {
+	private DecorateEntityImage3(TextBlock original, HColor color) {
 		this.original = original;
 		this.color = color;
 	}
 
-	public Dimension2D calculateDimension(StringBounder stringBounder) {
+	public XDimension2D calculateDimension(StringBounder stringBounder) {
 		return original.calculateDimension(stringBounder);
 	}
 

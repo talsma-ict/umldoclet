@@ -117,9 +117,9 @@ public class FromSkinparamToStyle {
 		addConvert("packageBorderColor", PName.LineColor, SName.group);
 		addMagic(SName.package_);
 
-		addConvert("PartitionBorderColor", PName.LineColor, SName.partition);
-		addConvert("PartitionBackgroundColor", PName.BackGroundColor, SName.partition);
-		addConFont("Partition", SName.partition);
+		addConvert("PartitionBorderColor", PName.LineColor, SName.composite);
+		addConvert("PartitionBackgroundColor", PName.BackGroundColor, SName.composite);
+		addConFont("Partition", SName.composite);
 
 		addConvert("hyperlinkColor", PName.HyperLinkColor, SName.root);
 
@@ -156,7 +156,7 @@ public class FromSkinparamToStyle {
 		addConvert("titleBorderColor", PName.LineColor, SName.title);
 		addConvert("titleBackgroundColor", PName.BackGroundColor, SName.title);
 		addConvert("titleBorderRoundCorner", PName.RoundCorner, SName.title);
-		addConFont("title", SName.title);
+		addConFont("title", SName.document, SName.title);
 
 		addConvert("legendBorderThickness", PName.LineThickness, SName.legend);
 		addConvert("legendBorderColor", PName.LineColor, SName.legend);

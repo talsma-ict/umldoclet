@@ -54,11 +54,9 @@ import net.sourceforge.plantuml.cucadiagram.IGroup;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.statediagram.StateDiagram;
-import net.sourceforge.plantuml.utils.UniqueSequence;
-import net.sourceforge.plantuml.version.Version;
 import net.sourceforge.plantuml.xml.XmlFactories;
 
-public class XmiStateDiagram implements IXmiClassDiagram {
+public class XmiStateDiagram implements XmlDiagramTransformer {
 
 	private final StateDiagram diagram;
 	private final Document document;
@@ -88,12 +86,9 @@ public class XmiStateDiagram implements IXmiClassDiagram {
 		final Element content = document.createElement("XMI.content");
 		xmi.appendChild(content);
 
-		// <UML:Model xmi.id="UMLModel.4" name="Design Model"
-		// visibility="public" isSpecification="false" isRoot="false"
-		// isLeaf="false" isAbstract="false">
 		final Element model = document.createElement("UML:Model");
 		model.setAttribute("xmi.id", CucaDiagramXmiMaker.getModel(diagram));
-		model.setAttribute("name", "PlantUML "+Version.versionString());
+		model.setAttribute("name", "PlantUML");
 		content.appendChild(model);
 
 		// <UML:Namespace.ownedElement>
@@ -141,7 +136,7 @@ public class XmiStateDiagram implements IXmiClassDiagram {
 	}
 
 	private void addLink(Link link) {
-		final String assId = "ass" + UniqueSequence.getValue();
+		final String assId = "ass" + diagram.getUniqueSequence();
 
 		final Element association = document.createElement("UML:Association");
 		association.setAttribute("xmi.id", assId);
@@ -152,7 +147,7 @@ public class XmiStateDiagram implements IXmiClassDiagram {
 
 		final Element connection = document.createElement("UML:Association.connection");
 		final Element end1 = document.createElement("UML:AssociationEnd");
-		end1.setAttribute("xmi.id", "end" + UniqueSequence.getValue());
+		end1.setAttribute("xmi.id", "end" + diagram.getUniqueSequence());
 		end1.setAttribute("association", assId);
 		end1.setAttribute("type", link.getEntity1().getUid());
 		if (link.getQualifier1() != null) {
@@ -171,7 +166,7 @@ public class XmiStateDiagram implements IXmiClassDiagram {
 		connection.appendChild(end1);
 
 		final Element end2 = document.createElement("UML:AssociationEnd");
-		end2.setAttribute("xmi.id", "end" + UniqueSequence.getValue());
+		end2.setAttribute("xmi.id", "end" + diagram.getUniqueSequence());
 		end2.setAttribute("association", assId);
 		end2.setAttribute("type", link.getEntity2().getUid());
 		if (link.getQualifier2() != null) {

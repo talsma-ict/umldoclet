@@ -34,18 +34,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
-import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.UmlDiagramType;
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
 
 public abstract class AbstractEntityDiagram extends CucaDiagram {
 
-	public AbstractEntityDiagram(ThemeStyle style, UmlSource source, UmlDiagramType type, ISkinSimple orig) {
-		super(style, source, type, orig);
+	public AbstractEntityDiagram(UmlSource source, UmlDiagramType type, Map<String, String> orig) {
+		super(source, type, orig);
 	}
 
 	final protected List<String> getDotStrings() {

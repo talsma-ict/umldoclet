@@ -30,8 +30,6 @@
  */
 package net.sourceforge.plantuml.wire;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -41,7 +39,8 @@ import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
-import net.sourceforge.plantuml.api.ThemeStyle;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
+import net.sourceforge.plantuml.awt.geom.XRectangle2D;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
@@ -66,8 +65,8 @@ public class WireDiagram extends UmlDiagram {
 		return new DiagramDescription("Wire Diagram");
 	}
 
-	public WireDiagram(ThemeStyle style, UmlSource source) {
-		super(style, source, UmlDiagramType.WIRE, null);
+	public WireDiagram(UmlSource source) {
+		super(source, UmlDiagramType.WIRE, null);
 	}
 
 	@Override
@@ -84,11 +83,11 @@ public class WireDiagram extends UmlDiagram {
 				drawMe(ug);
 			}
 
-			public Rectangle2D getInnerPosition(String member, StringBounder stringBounder, InnerStrategy strategy) {
+			public XRectangle2D getInnerPosition(String member, StringBounder stringBounder, InnerStrategy strategy) {
 				return null;
 			}
 
-			public Dimension2D calculateDimension(StringBounder stringBounder) {
+			public XDimension2D calculateDimension(StringBounder stringBounder) {
 				// return getDrawingElement().calculateDimension(stringBounder);
 				throw new UnsupportedOperationException();
 

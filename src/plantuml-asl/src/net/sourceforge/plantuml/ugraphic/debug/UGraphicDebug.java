@@ -33,7 +33,6 @@ package net.sourceforge.plantuml.ugraphic.debug;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.awt.Color;
-import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -42,7 +41,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
+import net.sourceforge.plantuml.awt.geom.XPoint2D;
 import net.sourceforge.plantuml.posimo.DotPath;
 import net.sourceforge.plantuml.ugraphic.AbstractCommonUGraphic;
 import net.sourceforge.plantuml.ugraphic.ClipContainer;
@@ -58,7 +58,7 @@ import net.sourceforge.plantuml.ugraphic.USegment;
 import net.sourceforge.plantuml.ugraphic.USegmentType;
 import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.UText;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorMiddle;
 import net.sourceforge.plantuml.ugraphic.color.HColorSimple;
@@ -68,7 +68,7 @@ public class UGraphicDebug extends AbstractCommonUGraphic implements ClipContain
 
 	private final List<String> output;
 	private final double scaleFactor;
-	private final Dimension2D dim;
+	private final XDimension2D dim;
 	private final String svgLinkTarget;
 	private final String hoverPathColorRGB;
 	private final long seed;
@@ -80,7 +80,7 @@ public class UGraphicDebug extends AbstractCommonUGraphic implements ClipContain
 				preserveAspectRatio);
 	}
 
-	private UGraphicDebug(UGraphicDebug other, List<String> output, double scaleFactor, Dimension2D dim,
+	private UGraphicDebug(UGraphicDebug other, List<String> output, double scaleFactor, XDimension2D dim,
 			String svgLinkTarget, String hoverPathColorRGB, long seed, String preserveAspectRatio) {
 		super(other);
 		this.output = output;
@@ -92,9 +92,9 @@ public class UGraphicDebug extends AbstractCommonUGraphic implements ClipContain
 		this.preserveAspectRatio = preserveAspectRatio;
 	}
 
-	public UGraphicDebug(double scaleFactor, Dimension2D dim, String svgLinkTarget, String hoverPathColorRGB, long seed,
-			String preserveAspectRatio) {
-		super(HColors.WHITE, new ColorMapperIdentity(), new StringBounderDebug());
+	public UGraphicDebug(double scaleFactor, XDimension2D dim, String svgLinkTarget, String hoverPathColorRGB,
+			long seed, String preserveAspectRatio) {
+		super(HColors.WHITE, ColorMapper.IDENTITY, new StringBounderDebug());
 		this.output = new ArrayList<>();
 		this.scaleFactor = scaleFactor;
 		this.dim = dim;
@@ -175,7 +175,7 @@ public class UGraphicDebug extends AbstractCommonUGraphic implements ClipContain
 	private void outPolygon(UPolygon shape) {
 		output.add("POLYGON:");
 		output.add("  points:");
-		for (Point2D pt : shape.getPoints()) {
+		for (XPoint2D pt : shape.getPoints()) {
 			final double xp = getTranslateX() + pt.getX();
 			final double yp = getTranslateY() + pt.getY();
 			output.add("   - " + pointd(xp, yp));
@@ -251,18 +251,18 @@ public class UGraphicDebug extends AbstractCommonUGraphic implements ClipContain
 	}
 
 	private String colorToString(HColor color) {
-		if (color == null)
+		if (color == null || color.isTransparent())
 			return "NULL_COLOR";
 
 		if (color instanceof HColorSimple) {
 			final HColorSimple simple = (HColorSimple) color;
-			final Color internal = simple.getColor999();
+			final Color internal = simple.getAwtColor();
 
 			return Integer.toHexString(internal.getRGB());
 		}
 		if (color instanceof HColorMiddle) {
 			final HColorMiddle middle = (HColorMiddle) color;
-			return "middle(" + colorToString(middle.getC1()) + " & " + colorToString(middle.getC1()) + " )";
+			return "middle(" + colorToString(middle.getColor1()) + " & " + colorToString(middle.getColor1()) + " )";
 		}
 		System.err.println("Error colorToString " + color.getClass().getSimpleName());
 		return color.getClass().getSimpleName() + " " + new Date();
@@ -279,9 +279,9 @@ public class UGraphicDebug extends AbstractCommonUGraphic implements ClipContain
 		print(os, "preserveAspectRatio: " + preserveAspectRatio);
 		print(os, "");
 
-		for (String s : output) {
+		for (String s : output)
 			print(os, s);
-		}
+
 		os.flush();
 	}
 

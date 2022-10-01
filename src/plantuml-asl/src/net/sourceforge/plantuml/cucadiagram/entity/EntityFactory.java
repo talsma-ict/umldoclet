@@ -117,9 +117,9 @@ public final class EntityFactory {
 		folder.setUSymbol(symbol);
 		folder.setStereotype(g.getStereotype());
 		folder.setColors(g.getColors());
-		if (g.getUrl99() != null) 
+		if (g.getUrl99() != null)
 			folder.addUrl(g.getUrl99());
-		
+
 //		if (UseStyle.useBetaStyle()) {
 //			// System.err.println("Backcolor ?");
 //		} else {
@@ -139,16 +139,15 @@ public final class EntityFactory {
 		final Set<Ident> known = new HashSet<>(groups2.keySet());
 		known.removeAll(hiddenBecauseOfIntrication);
 		String sep = namespaceSeparator.getNamespaceSeparator();
-		if (sep == null) {
+		if (sep == null)
 			sep = ".";
-		}
-		for (int check = ident.size() - 1; check > 0; check--) {
-			if (known.contains(ident.getPrefix(check))) {
-				// if (hiddenBecauseOfIntrication.contains(ident.getPrefix(check)) == false) {
+
+		for (int check = ident.size() - 1; check > 0; check--)
+			if (known.contains(ident.getPrefix(check)))
+				// if (hiddenBecauseOfIntrication.contains(ident.getPrefix(check)) == false)
 				return Display.getWithNewlines(ident.getSuffix(check).toString(sep))
 						.withCreoleMode(CreoleMode.SIMPLE_LINE);
-			}
-		}
+
 		return Display.getWithNewlines(ident.toString(sep)).withCreoleMode(CreoleMode.SIMPLE_LINE);
 	}
 
@@ -159,15 +158,13 @@ public final class EntityFactory {
 		final Collection<IGroup> children = parent.getChildren();
 		if (leafs == 0 && children.size() == 1) {
 			final IGroup g = children.iterator().next();
-			if (g.getLeafsDirect().size() == 0 && g.getChildren().size() == 0
-					&& g.getGroupType() == GroupType.PACKAGE) {
+			if (g.getLeafsDirect().size() == 0 && g.getChildren().size() == 0 && g.getGroupType() == GroupType.PACKAGE)
 				return null;
-			}
-			for (Link link : this.getLinks()) {
-				if (link.contains(parent)) {
+
+			for (Link link : this.getLinks())
+				if (link.contains(parent))
 					return null;
-				}
-			}
+
 			((EntityImpl) g).setIntricated(true);
 			hiddenBecauseOfIntrication.add(parent.getIdent());
 			return g;
@@ -192,17 +189,26 @@ public final class EntityFactory {
 
 	public boolean isHidden(ILeaf leaf) {
 		boolean hidden = false;
-		for (HideOrShow2 hide : hides2) {
+		for (HideOrShow2 hide : hides2)
 			hidden = hide.apply(hidden, leaf);
-		}
+
 		return hidden;
 	}
 
 	public boolean isRemoved(ILeaf leaf) {
 		boolean result = false;
-		for (HideOrShow2 hide : removed) {
+		for (HideOrShow2 hide : removed)
 			result = hide.apply(result, leaf);
-		}
+
+		return result;
+	}
+
+	public boolean isRemovedIgnoreUnlinked(ILeaf leaf) {
+		boolean result = false;
+		for (HideOrShow2 hide : removed)
+			if (hide.isAboutUnlinked() == false)
+				result = hide.apply(result, leaf);
+
 		return result;
 	}
 
@@ -232,17 +238,16 @@ public final class EntityFactory {
 	public IGroup createGroup(Ident ident, Code code, Display display, Code namespace, GroupType groupType,
 			IGroup parentContainer, Set<VisibilityModifier> hides, String namespaceSeparator) {
 		Objects.requireNonNull(groupType);
-		for (Entry<Ident, IGroup> ent : groups2.entrySet()) {
-			if (ent.getKey().equals(ident)) {
+		for (Entry<Ident, IGroup> ent : groups2.entrySet())
+			if (ent.getKey().equals(ident))
 				return ent.getValue();
-			}
-		}
+
 		final Bodier bodier = BodyFactory.createGroup(hides);
 		final EntityImpl result = new EntityImpl(ident, code, this, bodier, parentContainer, groupType, namespace,
 				namespaceSeparator, rawLayout);
-		if (Display.isNull(display) == false) {
+		if (Display.isNull(display) == false)
 			result.setDisplay(display);
-		}
+
 		return result;
 	}
 
@@ -350,13 +355,11 @@ public final class EntityFactory {
 		if (!namespaceSeparator.V1972())
 			throw new UnsupportedOperationException();
 		final ILeaf result = leafs2.get(ident);
-		if (result == null && ident.size() == 1) {
-			for (Entry<Ident, ILeaf> ent : leafs2.entrySet()) {
-				if (ent.getKey().getLast().equals(ident.getLast())) {
+		if (result == null && ident.size() == 1)
+			for (Entry<Ident, ILeaf> ent : leafs2.entrySet())
+				if (ent.getKey().getLast().equals(ident.getLast()))
 					return ent.getValue();
-				}
-			}
-		}
+
 		return result;
 	}
 
@@ -364,45 +367,40 @@ public final class EntityFactory {
 		if (!namespaceSeparator.V1972())
 			throw new UnsupportedOperationException();
 		final ILeaf result = leafs2.get(ident);
-		if (result == null) {
-			for (Entry<Ident, ILeaf> ent : leafs2.entrySet()) {
-				if (ent.getKey().getLast().equals(ident.getLast())) {
+		if (result == null)
+			for (Entry<Ident, ILeaf> ent : leafs2.entrySet())
+				if (ent.getKey().getLast().equals(ident.getLast()))
 					return ent.getValue();
-				}
-			}
-		}
+
 		return result;
 	}
 
 	public Ident buildFullyQualified(Ident currentPath, Ident id) {
-		if (currentPath.equals(id) == false) {
-			if (leafs2.containsKey(id) || groups2.containsKey(id)) {
+		if (currentPath.equals(id) == false)
+			if (leafs2.containsKey(id) || groups2.containsKey(id))
 				return id;
-			}
-		}
-		if (id.size() > 1) {
+
+		if (id.size() > 1)
 			return id;
-		}
+
 		return currentPath.add(id);
 	}
 
 	public final IGroup getGroupStrict(Ident ident) {
-		if (namespaceSeparator.getNamespaceSeparator() == null) {
+		if (namespaceSeparator.getNamespaceSeparator() == null)
 			return getGroupVerySmart(ident);
-		}
+
 		final IGroup result = groups2.get(ident);
 		return result;
 	}
 
 	public final IGroup getGroupVerySmart(Ident ident) {
 		final IGroup result = groups2.get(ident);
-		if (result == null) {
-			for (Entry<Ident, IGroup> ent : groups2.entrySet()) {
-				if (ent.getKey().getLast().equals(ident.getLast())) {
+		if (result == null)
+			for (Entry<Ident, IGroup> ent : groups2.entrySet())
+				if (ent.getKey().getLast().equals(ident.getLast()))
 					return ent.getValue();
-				}
-			}
-		}
+
 		return result;
 	}
 
@@ -410,9 +408,9 @@ public final class EntityFactory {
 		if (namespaceSeparator.V1972())
 			throw new UnsupportedOperationException();
 		final ILeaf result = leafsByCode.get(code.getName());
-		if (result != null && result != leafs2.get(result.getIdent())) {
+		if (result != null && result != leafs2.get(result.getIdent()))
 			bigError();
-		}
+
 		return result;
 	}
 
@@ -420,9 +418,9 @@ public final class EntityFactory {
 		if (namespaceSeparator.V1972())
 			throw new UnsupportedOperationException();
 		final IGroup result = groupsByCode.get(code.getName());
-		if (result != null && result != groups2.get(result.getIdent())) {
+		if (result != null && result != groups2.get(result.getIdent()))
 			bigError();
-		}
+
 		return result;
 	}
 
@@ -430,9 +428,9 @@ public final class EntityFactory {
 		if (namespaceSeparator.V1972())
 			return leafs2();
 		final Collection<ILeaf> result = Collections.unmodifiableCollection(leafsByCode.values());
-		if (new ArrayList<>(result).equals(new ArrayList<>(leafs2())) == false) {
+		if (new ArrayList<>(result).equals(new ArrayList<>(leafs2())) == false)
 			bigError();
-		}
+
 		return result;
 	}
 
@@ -440,9 +438,9 @@ public final class EntityFactory {
 		if (namespaceSeparator.V1972())
 			return groups2();
 		final Collection<IGroup> result = Collections.unmodifiableCollection(groupsByCode.values());
-		if (new ArrayList<>(result).equals(new ArrayList<>(groups2())) == false) {
+		if (new ArrayList<>(result).equals(new ArrayList<>(groups2())) == false)
 			bigError();
-		}
+
 		return result;
 	}
 
@@ -465,39 +463,37 @@ public final class EntityFactory {
 	}
 
 	public void addLink(Link link) {
-		if (link.isSingle() && containsSimilarLink(link)) {
+		if (link.isSingle() && containsSimilarLink(link))
 			return;
-		}
+
 		links.add(link);
 	}
 
 	private boolean containsSimilarLink(Link other) {
-		for (Link link : links) {
-			if (other.sameConnections(link)) {
+		for (Link link : links)
+			if (other.sameConnections(link))
 				return true;
-			}
-		}
+
 		return false;
 	}
 
 	public void removeLink(Link link) {
 		final boolean ok = links.remove(link);
-		if (ok == false) {
+		if (ok == false)
 			throw new IllegalArgumentException();
-		}
+
 	}
 
 	public IGroup getParentContainer(Ident ident, IGroup parentContainer) {
 		if (namespaceSeparator.V1972()) {
 			final Ident parent = ident.parent();
-			if (parent.isRoot()) {
+			if (parent.isRoot())
 				return this.rootGroup;
-			}
+
 			IGroup result = getGroupStrict(parent);
-			if (result != null) {
+			if (result != null)
 				return result;
-			}
-//			System.err.println("getParentContainer::groups2=" + groups2);
+
 			final Display display = Display.getWithNewlines(parent.getName());
 			result = createGroup(parent, parent, display, null, GroupType.PACKAGE, null,
 					Collections.<VisibilityModifier>emptySet(), namespaceSeparator.getNamespaceSeparator());
@@ -505,6 +501,10 @@ public final class EntityFactory {
 			return result;
 		}
 		return Objects.requireNonNull(parentContainer);
+	}
+
+	public CucaDiagram getDiagram() {
+		return namespaceSeparator;
 	}
 
 }

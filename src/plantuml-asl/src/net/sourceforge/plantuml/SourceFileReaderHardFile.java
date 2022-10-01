@@ -39,6 +39,8 @@ import net.sourceforge.plantuml.security.SFile;
 
 public class SourceFileReaderHardFile extends SourceFileReaderAbstract implements ISourceFileReader {
 
+	private final File outputFile;
+
 	public SourceFileReaderHardFile(Defines defines, final File file, File outputFile, List<String> config,
 			String charset, FileFormatOption fileFormatOption) throws IOException {
 		super(file, fileFormatOption, defines, config, charset);
@@ -48,7 +50,7 @@ public class SourceFileReaderHardFile extends SourceFileReaderAbstract implement
 
 	@Override
 	protected SuggestedFile getSuggestedFile(BlockUml blockUml) {
-		final SuggestedFile suggested = SuggestedFile.fromOutputFile(outputFile, fileFormatOption.getFileFormat());
+		final SuggestedFile suggested = SuggestedFile.fromOutputFile(outputFile, getFileFormatOption().getFileFormat());
 		return suggested;
 	}
 

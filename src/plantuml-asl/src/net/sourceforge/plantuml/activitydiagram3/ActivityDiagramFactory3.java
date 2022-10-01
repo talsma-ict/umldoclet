@@ -32,8 +32,8 @@ package net.sourceforge.plantuml.activitydiagram3;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.activitydiagram3.command.CommandActivity3;
 import net.sourceforge.plantuml.activitydiagram3.command.CommandActivityLegacy1;
 import net.sourceforge.plantuml.activitydiagram3.command.CommandActivityLong3;
@@ -55,7 +55,6 @@ import net.sourceforge.plantuml.activitydiagram3.command.CommandFork3;
 import net.sourceforge.plantuml.activitydiagram3.command.CommandForkAgain3;
 import net.sourceforge.plantuml.activitydiagram3.command.CommandForkEnd3;
 import net.sourceforge.plantuml.activitydiagram3.command.CommandGoto;
-import net.sourceforge.plantuml.activitydiagram3.command.CommandGroup3;
 import net.sourceforge.plantuml.activitydiagram3.command.CommandGroupEnd3;
 import net.sourceforge.plantuml.activitydiagram3.command.CommandIf2;
 import net.sourceforge.plantuml.activitydiagram3.command.CommandIf4;
@@ -79,7 +78,6 @@ import net.sourceforge.plantuml.activitydiagram3.command.CommandSwimlane2;
 import net.sourceforge.plantuml.activitydiagram3.command.CommandSwitch;
 import net.sourceforge.plantuml.activitydiagram3.command.CommandWhile3;
 import net.sourceforge.plantuml.activitydiagram3.command.CommandWhileEnd3;
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.CommandDecoratorMultine;
 import net.sourceforge.plantuml.command.CommandFootboxIgnored;
@@ -100,7 +98,7 @@ public class ActivityDiagramFactory3 extends PSystemCommandFactory {
 		cmds.add(new CommandSwimlane2());
 		cmds.add(new CommandPartition3());
 		cmds.add(new CommandEndPartition3());
-		cmds.add(new CommandGroup3());
+		// cmds.add(new CommandGroup3());
 		cmds.add(new CommandGroupEnd3());
 		cmds.add(new CommandArrow3());
 		cmds.add(new CommandArrowLong3());
@@ -157,8 +155,8 @@ public class ActivityDiagramFactory3 extends PSystemCommandFactory {
 	}
 
 	@Override
-	public ActivityDiagram3 createEmptyDiagram(ThemeStyle style, UmlSource source, ISkinSimple skinParam) {
-		return new ActivityDiagram3(style, source, skinParam);
+	public ActivityDiagram3 createEmptyDiagram(UmlSource source, Map<String, String> skinParam) {
+		return new ActivityDiagram3(source, skinParam);
 	}
 
 }

@@ -37,7 +37,7 @@ import java.util.TreeSet;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.LineBreakStrategy;
 import net.sourceforge.plantuml.SpriteContainerEmpty;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.creole.CreoleMode;
 import net.sourceforge.plantuml.creole.Parser;
 import net.sourceforge.plantuml.creole.Sheet;
@@ -107,7 +107,7 @@ public class TaskDrawRegular extends AbstractTaskDraw {
 	public void drawTitle(UGraphic ug, LabelStrategy labelStrategy, double colTitles, double colBars) {
 		final TextBlock title = getTitle();
 		final StringBounder stringBounder = ug.getStringBounder();
-		final Dimension2D dim = title.calculateDimension(stringBounder);
+		final XDimension2D dim = title.calculateDimension(stringBounder);
 
 		final Style style = getStyleSignature().getMergedStyle(getStyleBuilder());
 		final ClockwiseTopRightBottomLeft margin = style.getMargin();
@@ -196,16 +196,15 @@ public class TaskDrawRegular extends AbstractTaskDraw {
 		final Style style = StyleSignatureBasic.of(SName.root, SName.element, SName.ganttDiagram, SName.note)
 				.getMergedStyle(getStyleBuilder());
 
-		final FontConfiguration fc = style.getFontConfiguration(skinParam.getThemeStyle(), getColorSet());
+		final FontConfiguration fc = style.getFontConfiguration(getColorSet());
 
 		final HorizontalAlignment horizontalAlignment = style.value(PName.HorizontalAlignment).asHorizontalAlignment();
 		final Sheet sheet = Parser.build(fc, horizontalAlignment, skinParam, CreoleMode.FULL).createSheet(note);
 		final double padding = style.value(PName.Padding).asDouble();
 		final SheetBlock1 sheet1 = new SheetBlock1(sheet, LineBreakStrategy.NONE, padding);
 
-		final HColor noteBackgroundColor = style.value(PName.BackGroundColor).asColor(skinParam.getThemeStyle(),
-				getColorSet());
-		final HColor borderColor = style.value(PName.LineColor).asColor(skinParam.getThemeStyle(), getColorSet());
+		final HColor noteBackgroundColor = style.value(PName.BackGroundColor).asColor(getColorSet());
+		final HColor borderColor = style.value(PName.LineColor).asColor(getColorSet());
 		final double shadowing = style.value(PName.Shadowing).asDouble();
 
 		return new Opale(shadowing, borderColor, noteBackgroundColor, sheet1, false, style.getStroke());
@@ -222,7 +221,7 @@ public class TaskDrawRegular extends AbstractTaskDraw {
 		if (note == null)
 			return null;
 
-		final Dimension2D dim = getOpaleNote().calculateDimension(stringBounder);
+		final XDimension2D dim = getOpaleNote().calculateDimension(stringBounder);
 		final double startPos = timeScale.getStartingPosition(start);
 		// final double endPos = timeScale.getEndingPosition(end);
 		return new FingerPrint(startPos, getY(stringBounder).getCurrentValue() + getYNotePosition(stringBounder),
@@ -278,7 +277,7 @@ public class TaskDrawRegular extends AbstractTaskDraw {
 
 		final HColor backUndone = StyleSignatureBasic.of(SName.root, SName.element, SName.ganttDiagram, SName.undone)
 				.getMergedStyle(getStyleBuilder()).value(PName.BackGroundColor)
-				.asColor(skinParam.getThemeStyle(), getColorSet());
+				.asColor(getColorSet());
 
 		final RectangleTask rectangleTask = new RectangleTask(startPos, endPos, round, getCompletion(), off);
 

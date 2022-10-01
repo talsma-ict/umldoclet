@@ -41,7 +41,7 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileGeometry;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileUtils;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
@@ -78,7 +78,12 @@ public class FtileGroup extends AbstractFtile {
 	private final double roundCorner;
 
 	final public StyleSignatureBasic getStyleSignature() {
-		return StyleSignatureBasic.of(SName.root, SName.element, SName.activityDiagram, SName.partition);
+		return getStyleSignature(type);
+	}
+
+	final static public StyleSignatureBasic getStyleSignature(USymbol symbol) {
+		return StyleSignatureBasic.of(SName.root, SName.element, SName.activityDiagram, symbol.getSName(),
+				SName.composite);
 	}
 
 	public FtileGroup(Ftile inner, Display title, HColor backColor, HColor titleColor, ISkinParam skinParam,
@@ -89,13 +94,13 @@ public class FtileGroup extends AbstractFtile {
 		this.inner = FtileUtils.addHorizontalMargin(inner, 10);
 
 		final Style style = getStyleSignature().getMergedStyle(skinParam.getCurrentStyleBuilder());
-		final FontConfiguration fc = style.getFontConfiguration(skinParam.getThemeStyle(), getIHtmlColorSet());
+		final FontConfiguration fc = style.getFontConfiguration(getIHtmlColorSet());
 		this.shadowing = style.value(PName.Shadowing).asDouble();
 		this.backColor = backColor == null
-				? style.value(PName.BackGroundColor).asColor(skinParam.getThemeStyle(), getIHtmlColorSet())
+				? style.value(PName.BackGroundColor).asColor(getIHtmlColorSet())
 				: backColor;
 		this.borderColor = borderColor == null
-				? style.value(PName.LineColor).asColor(skinParam.getThemeStyle(), getIHtmlColorSet())
+				? style.value(PName.LineColor).asColor(getIHtmlColorSet())
 				: borderColor;
 		final UStroke thickness = style.getStroke();
 
@@ -135,7 +140,7 @@ public class FtileGroup extends AbstractFtile {
 	}
 
 	private double diffHeightTitle(StringBounder stringBounder) {
-		final Dimension2D dimTitle = name.calculateDimension(stringBounder);
+		final XDimension2D dimTitle = name.calculateDimension(stringBounder);
 		return Math.max(25, dimTitle.getHeight() + 20);
 	}
 
@@ -156,8 +161,8 @@ public class FtileGroup extends AbstractFtile {
 
 	public double suppWidth(StringBounder stringBounder) {
 		final FtileGeometry orig = getInnerDimension(stringBounder);
-		final Dimension2D dimTitle = name.calculateDimension(stringBounder);
-		final Dimension2D dimHeaderNote = headerNote.calculateDimension(stringBounder);
+		final XDimension2D dimTitle = name.calculateDimension(stringBounder);
+		final XDimension2D dimHeaderNote = headerNote.calculateDimension(stringBounder);
 		final double suppWidth = MathUtils.max(orig.getWidth(), dimTitle.getWidth() + 20, dimHeaderNote.getWidth() + 20)
 				- orig.getWidth();
 		return suppWidth;
@@ -205,7 +210,7 @@ public class FtileGroup extends AbstractFtile {
 
 	public void drawU(UGraphic ug) {
 		final StringBounder stringBounder = ug.getStringBounder();
-		final Dimension2D dimTotal = calculateDimension(stringBounder);
+		final XDimension2D dimTotal = calculateDimension(stringBounder);
 
 		final SymbolContext symbolContext = new SymbolContext(backColor, borderColor).withShadow(shadowing)
 				.withStroke(stroke).withCorner(roundCorner, 0);
@@ -215,7 +220,7 @@ public class FtileGroup extends AbstractFtile {
 		type.asBig(name, align, TextBlockUtils.empty(0, 0), dimTotal.getWidth(), dimTotal.getHeight(), symbolContext,
 				skinParam().getStereotypeAlignment()).drawU(ug);
 
-		final Dimension2D dimHeaderNote = headerNote.calculateDimension(stringBounder);
+		final XDimension2D dimHeaderNote = headerNote.calculateDimension(stringBounder);
 		headerNote.drawU(ug.apply(new UTranslate(dimTotal.getWidth() - dimHeaderNote.getWidth() - 10,
 				diffHeightTitle(ug.getStringBounder()) - 10)));
 

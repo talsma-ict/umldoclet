@@ -32,10 +32,9 @@ package net.sourceforge.plantuml.bpm;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import net.sourceforge.plantuml.AbstractPSystem;
-import net.sourceforge.plantuml.ISkinSimple;
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.PSystemCommandFactory;
 import net.sourceforge.plantuml.core.DiagramType;
@@ -61,8 +60,8 @@ public class BpmDiagramFactory extends PSystemCommandFactory {
 	}
 
 	@Override
-	public AbstractPSystem createEmptyDiagram(ThemeStyle style, UmlSource source, ISkinSimple skinParam) {
-		return new BpmDiagram(style, source);
+	public AbstractPSystem createEmptyDiagram(UmlSource source, Map<String, String> skinParam) {
+		return new BpmDiagram(source);
 	}
 
 }

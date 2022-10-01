@@ -33,7 +33,6 @@ package net.sourceforge.plantuml.activitydiagram3.ftile.vcompact;
 import java.util.Collection;
 import java.util.Set;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.LineBreakStrategy;
 import net.sourceforge.plantuml.activitydiagram3.PositionedNote;
@@ -41,7 +40,7 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.AbstractFtile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileGeometry;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.creole.CreoleMode;
 import net.sourceforge.plantuml.creole.Parser;
 import net.sourceforge.plantuml.creole.Sheet;
@@ -105,11 +104,9 @@ public class FtileWithNotes extends AbstractFtile {
 
 			final Style style = getStyleSignature().getMergedStyle(skinParam.getCurrentStyleBuilder())
 					.eventuallyOverride(note.getColors());
-			final HColor noteBackgroundColor = style.value(PName.BackGroundColor).asColor(skinParam.getThemeStyle(),
-					getIHtmlColorSet());
-			final HColor borderColor = style.value(PName.LineColor).asColor(skinParam.getThemeStyle(),
-					getIHtmlColorSet());
-			final FontConfiguration fc = style.getFontConfiguration(skinParam.getThemeStyle(), getIHtmlColorSet());
+			final HColor noteBackgroundColor = style.value(PName.BackGroundColor).asColor(getIHtmlColorSet());
+			final HColor borderColor = style.value(PName.LineColor).asColor(getIHtmlColorSet());
+			final FontConfiguration fc = style.getFontConfiguration(getIHtmlColorSet());
 			final double shadowing = style.value(PName.Shadowing).asDouble();
 			final LineBreakStrategy wrapWidth = style.wrapWidth();
 			final UStroke stroke = style.getStroke();
@@ -156,8 +153,8 @@ public class FtileWithNotes extends AbstractFtile {
 	}
 
 	private UTranslate getTranslate(StringBounder stringBounder) {
-		final Dimension2D dimTotal = calculateDimensionInternal(stringBounder);
-		final Dimension2D dimTile = tile.calculateDimension(stringBounder);
+		final XDimension2D dimTotal = calculateDimensionInternal(stringBounder);
+		final XDimension2D dimTile = tile.calculateDimension(stringBounder);
 		final double xDelta = left.calculateDimension(stringBounder).getWidth();
 		final double yDelta;
 		if (verticalAlignment == VerticalAlignment.TOP)
@@ -168,8 +165,8 @@ public class FtileWithNotes extends AbstractFtile {
 	}
 
 	private UTranslate getTranslateForLeft(StringBounder stringBounder) {
-		final Dimension2D dimTotal = calculateDimensionInternal(stringBounder);
-		final Dimension2D dimLeft = left.calculateDimension(stringBounder);
+		final XDimension2D dimTotal = calculateDimensionInternal(stringBounder);
+		final XDimension2D dimLeft = left.calculateDimension(stringBounder);
 		final double xDelta = 0;
 		final double yDelta;
 		if (verticalAlignment == VerticalAlignment.TOP)
@@ -180,8 +177,8 @@ public class FtileWithNotes extends AbstractFtile {
 	}
 
 	private UTranslate getTranslateForRight(StringBounder stringBounder) {
-		final Dimension2D dimTotal = calculateDimensionInternal(stringBounder);
-		final Dimension2D dimRight = right.calculateDimension(stringBounder);
+		final XDimension2D dimTotal = calculateDimensionInternal(stringBounder);
+		final XDimension2D dimRight = right.calculateDimension(stringBounder);
 		final double xDelta = dimTotal.getWidth() - dimRight.getWidth();
 		final double yDelta;
 		if (verticalAlignment == VerticalAlignment.TOP)
@@ -200,7 +197,7 @@ public class FtileWithNotes extends AbstractFtile {
 
 	@Override
 	protected FtileGeometry calculateDimensionFtile(StringBounder stringBounder) {
-		final Dimension2D dimTotal = calculateDimensionInternal(stringBounder);
+		final XDimension2D dimTotal = calculateDimensionInternal(stringBounder);
 		final FtileGeometry orig = tile.calculateDimension(stringBounder);
 		final UTranslate translate = getTranslate(stringBounder);
 		if (orig.hasPointOut()) {
@@ -210,12 +207,12 @@ public class FtileWithNotes extends AbstractFtile {
 		return new FtileGeometry(dimTotal, orig.getLeft() + translate.getDx(), orig.getInY() + translate.getDy());
 	}
 
-	private Dimension2D calculateDimensionInternal(StringBounder stringBounder) {
-		final Dimension2D dimTile = tile.calculateDimension(stringBounder);
-		final Dimension2D dimLeft = left.calculateDimension(stringBounder);
-		final Dimension2D dimRight = right.calculateDimension(stringBounder);
+	private XDimension2D calculateDimensionInternal(StringBounder stringBounder) {
+		final XDimension2D dimTile = tile.calculateDimension(stringBounder);
+		final XDimension2D dimLeft = left.calculateDimension(stringBounder);
+		final XDimension2D dimRight = right.calculateDimension(stringBounder);
 		final double height = MathUtils.max(dimLeft.getHeight(), dimRight.getHeight(), dimTile.getHeight());
-		return new Dimension2DDouble(dimTile.getWidth() + dimLeft.getWidth() + dimRight.getWidth(), height);
+		return new XDimension2D(dimTile.getWidth() + dimLeft.getWidth() + dimRight.getWidth(), height);
 	}
 
 }

@@ -45,6 +45,7 @@ import net.sourceforge.plantuml.command.BlocLines;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.CommandMultilines2;
 import net.sourceforge.plantuml.command.MultilinesStrategy;
+import net.sourceforge.plantuml.command.Trim;
 import net.sourceforge.plantuml.command.regex.IRegex;
 import net.sourceforge.plantuml.command.regex.MyPattern;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
@@ -59,6 +60,7 @@ import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.Link;
+import net.sourceforge.plantuml.cucadiagram.LinkArg;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.cucadiagram.NamespaceStrategy;
@@ -70,7 +72,7 @@ import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
 public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram> {
 
 	public CommandLinkLongActivity() {
-		super(getRegexConcat(), MultilinesStrategy.REMOVE_STARTING_QUOTE);
+		super(getRegexConcat(), MultilinesStrategy.REMOVE_STARTING_QUOTE, Trim.BOTH);
 	}
 
 	@Override
@@ -116,17 +118,16 @@ public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram>
 		final RegexResult line0 = getStartingPattern().matcher(lines.getFirst().getTrimmed().getString());
 
 		final IEntity entity1 = CommandLinkActivity.getEntity(diagram, line0, true);
-		if (entity1 == null) {
+		if (entity1 == null)
 			return CommandExecutionResult.error("No such entity");
-		}
 
-		if (line0.get("STEREOTYPE", 0) != null) {
+		if (line0.get("STEREOTYPE", 0) != null)
 			entity1.setStereotype(Stereotype.build(line0.get("STEREOTYPE", 0)));
-		}
+
 		final String stringColor = line0.get("BACKCOLOR", 0);
 		if (stringColor != null) {
 			entity1.setSpecificColorTOBEREMOVED(ColorType.BACK, diagram.getSkinParam().getIHtmlColorSet()
-					.getColor(diagram.getSkinParam().getThemeStyle(), stringColor));
+					.getColor(stringColor));
 		}
 		final StringBuilder sb = new StringBuilder();
 
@@ -144,22 +145,22 @@ public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram>
 			i++;
 			if (i == 1 && urlActivity == null) {
 				urlActivity = extractUrl(diagram, cs);
-				if (urlActivity != null) {
+				if (urlActivity != null)
 					continue;
-				}
+
 			}
 			sb.append(cs.getString());
-			if (i < lines.size() - 2) {
+			if (i < lines.size() - 2)
 				sb.append(BackSlash.BS_BS_N);
-			}
+
 		}
 
 		final List<String> lineLast = StringUtils.getSplit(MyPattern.cmpile(getPatternEnd()),
 				lines.getLast().getString());
 		if (StringUtils.isNotEmpty(lineLast.get(0))) {
-			if (sb.length() > 0 && sb.toString().endsWith(BackSlash.BS_BS_N) == false) {
+			if (sb.length() > 0 && sb.toString().endsWith(BackSlash.BS_BS_N) == false)
 				sb.append(BackSlash.BS_BS_N);
-			}
+
 			sb.append(lineLast.get(0));
 		}
 
@@ -179,24 +180,22 @@ public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram>
 		final Ident ident = diagram.buildLeafIdent(idShort);
 		final Code code = diagram.V1972() ? ident : diagram.buildCode(idShort);
 		final IEntity entity2 = diagram.getOrCreate(ident, code, Display.getWithNewlines(display), LeafType.ACTIVITY);
-		if (entity2 == null) {
+		if (entity2 == null)
 			return CommandExecutionResult.error("No such entity");
-		}
 
-		if (partition != null) {
+		if (partition != null)
 			diagram.endGroup();
-		}
-		if (urlActivity != null) {
-			entity2.addUrl(urlActivity);
-		}
 
-		if (lineLast.get(2) != null) {
+		if (urlActivity != null)
+			entity2.addUrl(urlActivity);
+
+		if (lineLast.get(2) != null)
 			entity2.setStereotype(Stereotype.build(lineLast.get(2)));
-		}
+
 		if (lineLast.get(4) != null) {
 			String s = lineLast.get(4);
 			entity2.setSpecificColorTOBEREMOVED(ColorType.BACK,
-					diagram.getSkinParam().getIHtmlColorSet().getColor(diagram.getSkinParam().getThemeStyle(), s));
+					diagram.getSkinParam().getIHtmlColorSet().getColor(s));
 		}
 
 		final String arrowBody1 = CommandLinkClass.notNull(line0.get("ARROW_BODY1", 0));
@@ -210,15 +209,14 @@ public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram>
 		final Display linkLabel = Display.getWithNewlines(line0.get("BRACKET", 0));
 
 		LinkType type = new LinkType(LinkDecor.ARROW, LinkDecor.NONE);
-		if (arrow.contains(".")) {
+		if (arrow.contains("."))
 			type = type.goDotted();
-		}
-		Link link = new Link(diagram.getSkinParam().getCurrentStyleBuilder(), entity1, entity2, type, linkLabel,
-				lenght);
+
+		final LinkArg linkArg = LinkArg.build(linkLabel, lenght, diagram.getSkinParam().classAttributeIconSize() > 0);
+		Link link = new Link(diagram.getSkinParam().getCurrentStyleBuilder(), entity1, entity2, type, linkArg);
 		final Direction direction = StringUtils.getArrowDirection(arrowBody1 + arrowDirection + arrowBody2 + ">");
-		if (direction == Direction.LEFT || direction == Direction.UP) {
+		if (direction == Direction.LEFT || direction == Direction.UP)
 			link = link.getInv();
-		}
 
 		if (line0.get("URL", 0) != null) {
 			final UrlBuilder urlBuilder = new UrlBuilder(diagram.getSkinParam().getValue("topurl"), UrlMode.STRICT);
@@ -226,7 +224,7 @@ public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram>
 			link.setUrl(urlLink);
 		}
 
-		link.applyStyle(diagram.getSkinParam().getThemeStyle(), line0.getLazzy("ARROW_STYLE", 0));
+		link.applyStyle(line0.getLazzy("ARROW_STYLE", 0));
 		diagram.addLink(link);
 
 		return CommandExecutionResult.ok();

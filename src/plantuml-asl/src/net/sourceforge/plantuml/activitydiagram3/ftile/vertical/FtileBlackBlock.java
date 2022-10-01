@@ -40,7 +40,7 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.AbstractFtile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileGeometry;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
@@ -96,11 +96,10 @@ public class FtileBlackBlock extends AbstractFtile {
 		final Style style = getSignature().getMergedStyle(skinParam().getCurrentStyleBuilder());
 		final double shadowing = style.value(PName.Shadowing).asDouble();
 		rect.setDeltaShadow(shadowing);
-		final HColor colorBar = style.value(PName.BackGroundColor).asColor(skinParam().getThemeStyle(),
-				getIHtmlColorSet());
+		final HColor colorBar = style.value(PName.BackGroundColor).asColor(getIHtmlColorSet());
 
 		ug.apply(colorBar).apply(colorBar.bg()).draw(rect);
-		final Dimension2D dimLabel = label.calculateDimension(ug.getStringBounder());
+		final XDimension2D dimLabel = label.calculateDimension(ug.getStringBounder());
 		label.drawU(ug.apply(new UTranslate(width + labelMargin, -dimLabel.getHeight() / 2)));
 	}
 

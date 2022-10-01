@@ -30,9 +30,8 @@
  */
 package net.sourceforge.plantuml.sequencediagram.teoz;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
-
 import net.sourceforge.plantuml.ISkinParam;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.UDrawable;
 import net.sourceforge.plantuml.real.Real;
@@ -86,8 +85,9 @@ public class CommunicationTileNoteRight extends AbstractTile {
 	}
 
 	private Component getComponent(StringBounder stringBounder) {
-		final Component comp = skin.createComponentNote(noteOnMessage.getUsedStyles(), ComponentType.NOTE, noteOnMessage.getSkinParamBackcolored(skinParam),
-				noteOnMessage.getStrings());
+		final Component comp = skin.createComponentNote(noteOnMessage.getUsedStyles(), ComponentType.NOTE,
+				noteOnMessage.getSkinParamBackcolored(skinParam), noteOnMessage.getStrings(),
+				noteOnMessage.getColors());
 		return comp;
 	}
 
@@ -104,7 +104,7 @@ public class CommunicationTileNoteRight extends AbstractTile {
 	public void drawU(UGraphic ug) {
 		final StringBounder stringBounder = ug.getStringBounder();
 		final Component comp = getComponent(stringBounder);
-		final Dimension2D dim = comp.getPreferredDimension(stringBounder);
+		final XDimension2D dim = comp.getPreferredDimension(stringBounder);
 		final Area area = Area.create(dim.getWidth(), dim.getHeight());
 		((UDrawable) tile).drawU(ug);
 		final Real p = getNotePosition(stringBounder);
@@ -114,7 +114,7 @@ public class CommunicationTileNoteRight extends AbstractTile {
 
 	public double getPreferredHeight() {
 		final Component comp = getComponent(getStringBounder());
-		final Dimension2D dim = comp.getPreferredDimension(getStringBounder());
+		final XDimension2D dim = comp.getPreferredDimension(getStringBounder());
 		return Math.max(tile.getPreferredHeight(), dim.getHeight());
 	}
 
@@ -128,7 +128,7 @@ public class CommunicationTileNoteRight extends AbstractTile {
 
 	public Real getMaxX() {
 		final Component comp = getComponent(getStringBounder());
-		final Dimension2D dim = comp.getPreferredDimension(getStringBounder());
+		final XDimension2D dim = comp.getPreferredDimension(getStringBounder());
 		return getNotePosition(getStringBounder()).addFixed(dim.getWidth());
 	}
 

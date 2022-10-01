@@ -30,11 +30,10 @@
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.util.Objects;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.Url;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.sequencediagram.InGroupable;
 import net.sourceforge.plantuml.skin.Area;
@@ -71,7 +70,7 @@ class GraphicalReference extends GraphicalElement implements InGroupable {
 
 		final double width = Math.max(preferredWidth, w);
 
-		final Dimension2D dim = new Dimension2DDouble(width, comp.getPreferredHeight(stringBounder));
+		final XDimension2D dim = new XDimension2D(width, comp.getPreferredHeight(stringBounder));
 		if (url != null) {
 			ug.startUrl(url);
 		}

@@ -353,7 +353,7 @@ public class HSLColor {
 	 * @return the RGB Color object
 	 */
 	public static Color toRGB(float h, float s, float l, float alpha) {
-		
+
 		if (s < 0)
 			s = 0;
 		if (s > 100)

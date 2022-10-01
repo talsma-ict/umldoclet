@@ -30,15 +30,13 @@
  */
 package net.sourceforge.plantuml.graphic;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.ugraphic.UCenteredCharacter;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorScheme;
 
 public class CircledCharacter extends AbstractTextBlock implements TextBlock {
 
@@ -56,10 +54,7 @@ public class CircledCharacter extends AbstractTextBlock implements TextBlock {
 		this.font = font;
 		this.spotBackColor = spotBackColor;
 		this.spotBorder = spotBorder;
-		if (fontColor instanceof HColorScheme)
-			this.fontColor = ((HColorScheme) fontColor).getAppropriateColor(spotBackColor);
-		else
-			this.fontColor = fontColor;
+		this.fontColor = fontColor.getAppropriateColor(spotBackColor);
 	}
 
 	public void drawU(UGraphic ug) {
@@ -81,28 +76,7 @@ public class CircledCharacter extends AbstractTextBlock implements TextBlock {
 		return 2 * radius;
 	}
 
-	// private PathIterator getPathIteratorCharacter(FontRenderContext frc) {
-	// final TextLayout textLayout = new TextLayout(c, font.getFont(), frc);
-	// final Shape s = textLayout.getOutline(null);
-	// return s.getPathIterator(null);
-	// }
-	//
-	// private UPath getUPath(FontRenderContext frc) {
-	// final UPath result = new UPath();
-	//
-	// final PathIterator path = getPathIteratorCharacter(frc);
-	//
-	// final double coord[] = new double[6];
-	// while (path.isDone() == false) {
-	// final int code = path.currentSegment(coord);
-	// result.add(coord, USegmentType.getByCode(code));
-	// path.next();
-	// }
-	//
-	// return result;
-	// }
-
-	public Dimension2D calculateDimension(StringBounder stringBounder) {
-		return new Dimension2DDouble(getPreferredWidth(stringBounder), getPreferredHeight(stringBounder));
+	public XDimension2D calculateDimension(StringBounder stringBounder) {
+		return new XDimension2D(getPreferredWidth(stringBounder), getPreferredHeight(stringBounder));
 	}
 }

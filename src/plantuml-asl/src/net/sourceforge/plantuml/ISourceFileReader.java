@@ -41,7 +41,7 @@ public interface ISourceFileReader {
 
 	public boolean hasError();
 
-	public void setFileFormatOption(FileFormatOption fileFormatOption);
+	public ISourceFileReader setFileFormatOption(FileFormatOption fileFormatOption);
 
 	public void setCheckMetadata(boolean checkMetadata);
 

@@ -30,9 +30,7 @@
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
-
-import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.sequencediagram.InGroupable;
 import net.sourceforge.plantuml.sequencediagram.InGroupableList;
@@ -67,7 +65,7 @@ public class GroupingGraphicalElementElse extends GroupingGraphicalElement imple
 		if (height <= 0) {
 			return;
 		}
-		final Dimension2D dim = new Dimension2DDouble(x2 - x1, height);
+		final XDimension2D dim = new XDimension2D(x2 - x1, height);
 
 		if (parallel == false) {
 			compElse.drawU(ug, new Area(dim), context);

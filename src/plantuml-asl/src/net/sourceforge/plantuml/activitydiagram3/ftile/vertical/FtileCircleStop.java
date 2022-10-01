@@ -68,8 +68,8 @@ public class FtileCircleStop extends AbstractFtile {
 		this.backColor = backColor;
 		this.swimlane = swimlane;
 		this.shadowing = style.value(PName.Shadowing).asDouble();
-		this.backColor = style.value(PName.BackGroundColor).asColor(skinParam.getThemeStyle(), getIHtmlColorSet());
-		this.borderColor = style.value(PName.LineColor).asColor(skinParam.getThemeStyle(), getIHtmlColorSet());
+		this.backColor = style.value(PName.BackGroundColor).asColor(getIHtmlColorSet());
+		this.borderColor = style.value(PName.LineColor).asColor(getIHtmlColorSet());
 
 	}
 
@@ -99,8 +99,8 @@ public class FtileCircleStop extends AbstractFtile {
 		// if (skinParam().shadowing(null)) {
 		// circleSmall.setDeltaShadow(3);
 		// }
-		ug.apply(HColors.middle(borderColor, backColor)).apply(borderColor.bg()).apply(new UTranslate(delta, delta))
-				.draw(circleSmall);
+		final HColor middle = HColors.middle(borderColor, backColor);
+		ug.apply(middle).apply(borderColor.bg()).apply(new UTranslate(delta, delta)).draw(circleSmall);
 	}
 
 	@Override

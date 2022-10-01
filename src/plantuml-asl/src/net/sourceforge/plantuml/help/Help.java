@@ -39,7 +39,6 @@ import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.LineBreakStrategy;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.core.UmlSource;
@@ -62,8 +61,8 @@ public class Help extends UmlDiagram {
 		return new DiagramDescription("(Help)");
 	}
 
-	public Help(ThemeStyle style, UmlSource source) {
-		super(style, source, UmlDiagramType.HELP, null);
+	public Help(UmlSource source) {
+		super(source, UmlDiagramType.HELP, null);
 	}
 
 	@Override

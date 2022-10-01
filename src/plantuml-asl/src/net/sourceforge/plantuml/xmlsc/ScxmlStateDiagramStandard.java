@@ -44,13 +44,19 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import net.sourceforge.plantuml.Guillemet;
 import net.sourceforge.plantuml.cucadiagram.Display;
+import net.sourceforge.plantuml.cucadiagram.EntityUtils;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
+import net.sourceforge.plantuml.cucadiagram.IGroup;
+import net.sourceforge.plantuml.cucadiagram.ILeaf;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.Link;
+import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.statediagram.StateDiagram;
 import net.sourceforge.plantuml.xml.XmlFactories;
 
@@ -71,34 +77,72 @@ public class ScxmlStateDiagramStandard {
 		scxml.setAttribute("xmlns", "http://www.w3.org/2005/07/scxml");
 		scxml.setAttribute("version", "1.0");
 		final String initial = getInitial();
-		if (initial != null) {
+		if (initial != null)
 			scxml.setAttribute("initial", initial);
-		}
+
 		document.appendChild(scxml);
 
-		for (final IEntity ent : diagram.getLeafsvalues()) {
-			scxml.appendChild(createState(ent));
-		}
+		for (final IEntity ent : diagram.getLeafsvalues())
+			if (EntityUtils.groupRoot(ent.getParentContainer()))
+				scxml.appendChild(createState(ent));
 
+		for (IGroup ent : diagram.getGroups(false))
+			if (EntityUtils.groupRoot(ent.getParentContainer()))
+				exportGroup(scxml, ent);
+
+	}
+
+	private Element exportGroup(Element dest, IGroup ent) {
+		final Element gr = createGroup(ent);
+		dest.appendChild(gr);
+		for (ILeaf leaf : ent.getLeafsDirect())
+			gr.appendChild(createState(leaf));
+		for (IGroup child : ent.getChildren())
+			exportGroup(gr, child);
+		return gr;
 	}
 
 	private String getInitial() {
-		for (final IEntity ent : diagram.getLeafsvalues()) {
-			if (ent.getLeafType() == LeafType.CIRCLE_START) {
+		for (final IEntity ent : diagram.getLeafsvalues())
+			if (ent.getLeafType() == LeafType.CIRCLE_START)
 				return getId(ent);
-			}
-		}
+
 		return null;
 	}
 
+	private Element createGroup(IEntity entity) {
+		return createState(entity);
+	}
+
 	private Element createState(IEntity entity) {
+		final LeafType type = entity.getLeafType();
+
 		final Element state = document.createElement("state");
-		state.setAttribute("id", getId(entity));
-		for (final Link link : diagram.getLinks()) {
-			if (link.getEntity1() == entity) {
-				addLink(state, link);
+		if (type == LeafType.NOTE) {
+			state.setAttribute("stereotype", "note");
+			state.setAttribute("id", entity.getCode().getName());
+			final Display display = entity.getDisplay();
+			final StringBuilder sb = new StringBuilder();
+			for (CharSequence s : display) {
+				sb.append(s);
+				sb.append("\n");
 			}
+			if (sb.length() > 0)
+				sb.setLength(sb.length() - 1);
+			final Comment comment = document.createComment(sb.toString());
+			state.appendChild(comment);
+
+		} else {
+			state.setAttribute("id", getId(entity));
+			final Stereotype stereotype = entity.getStereotype();
+			if (stereotype != null)
+				state.setAttribute("stereotype", stereotype.getLabels(Guillemet.NONE).get(0));
+
+			for (final Link link : diagram.getLinks())
+				if (link.getEntity1() == entity)
+					addLink(state, link);
 		}
+
 		return state;
 	}
 

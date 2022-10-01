@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.cucadiagram;
 
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,6 +41,7 @@ import net.sourceforge.plantuml.EmbeddedDiagram;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.Url;
+import net.sourceforge.plantuml.awt.geom.XRectangle2D;
 import net.sourceforge.plantuml.creole.CreoleMode;
 import net.sourceforge.plantuml.creole.Parser;
 import net.sourceforge.plantuml.creole.legacy.CreoleParser;
@@ -71,7 +71,7 @@ public class BodyEnhanced1 extends BodyEnhancedAbstract implements TextBlock, Wi
 	BodyEnhanced1(HorizontalAlignment align, List<CharSequence> rawBody, ISkinParam skinParam, ILeaf entity,
 			Style style) {
 		super(align,
-				style.getFontConfiguration(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet(), entity.getColors()),
+				style.getFontConfiguration(skinParam.getIHtmlColorSet(), entity.getColors()),
 				style);
 		this.style = style;
 		this.rawBody2 = Display.create(rawBody);
@@ -86,7 +86,7 @@ public class BodyEnhanced1 extends BodyEnhancedAbstract implements TextBlock, Wi
 
 	BodyEnhanced1(HorizontalAlignment align, Display display, ISkinParam skinParam, ILeaf entity, Style style) {
 		super(align,
-				style.getFontConfiguration(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet(), entity.getColors()),
+				style.getFontConfiguration(skinParam.getIHtmlColorSet(), entity.getColors()),
 				style);
 
 		this.style = style;
@@ -161,8 +161,7 @@ public class BodyEnhanced1 extends BodyEnhancedAbstract implements TextBlock, Wi
 					title = null;
 					display = null;
 					final List<CharSequence> allTree = buildTreeOrTable(s, it);
-					final FontConfiguration fontConfiguration = style.getFontConfiguration(skinParam.getThemeStyle(),
-							skinParam.getIHtmlColorSet());
+					final FontConfiguration fontConfiguration = style.getFontConfiguration(skinParam.getIHtmlColorSet());
 					TextBlock bloc = Display.create(allTree).create7(fontConfiguration, align, skinParam,
 							CreoleMode.FULL);
 					if (isTable)
@@ -241,7 +240,7 @@ public class BodyEnhanced1 extends BodyEnhancedAbstract implements TextBlock, Wi
 		return Collections.unmodifiableList(urls);
 	}
 
-	public Rectangle2D getInnerPosition(String member, StringBounder stringBounder, InnerStrategy strategy) {
+	public XRectangle2D getInnerPosition(String member, StringBounder stringBounder, InnerStrategy strategy) {
 		return getArea(stringBounder).getInnerPosition(member, stringBounder, strategy);
 	}
 

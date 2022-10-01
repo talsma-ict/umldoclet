@@ -32,9 +32,8 @@ package net.sourceforge.plantuml.flowdiagram;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import net.sourceforge.plantuml.ISkinSimple;
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.PSystemCommandFactory;
 import net.sourceforge.plantuml.core.DiagramType;
@@ -47,8 +46,8 @@ public class FlowDiagramFactory extends PSystemCommandFactory {
 	}
 
 	@Override
-	public FlowDiagram createEmptyDiagram(ThemeStyle style, UmlSource source, ISkinSimple skinParam) {
-		return new FlowDiagram(style, source);
+	public FlowDiagram createEmptyDiagram(UmlSource source, Map<String, String> skinParam) {
+		return new FlowDiagram(source);
 	}
 
 	@Override

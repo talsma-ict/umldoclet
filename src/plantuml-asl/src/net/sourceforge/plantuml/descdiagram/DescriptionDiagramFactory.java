@@ -32,9 +32,8 @@ package net.sourceforge.plantuml.descdiagram;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import net.sourceforge.plantuml.ISkinSimple;
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.classdiagram.command.CommandHideShow2;
 import net.sourceforge.plantuml.classdiagram.command.CommandNamespaceSeparator;
 import net.sourceforge.plantuml.classdiagram.command.CommandRemoveRestore;
@@ -59,13 +58,14 @@ import net.sourceforge.plantuml.descdiagram.command.CommandLinkElement;
 import net.sourceforge.plantuml.descdiagram.command.CommandNewpage;
 import net.sourceforge.plantuml.descdiagram.command.CommandPackageWithUSymbol;
 import net.sourceforge.plantuml.objectdiagram.command.CommandCreateJson;
+import net.sourceforge.plantuml.objectdiagram.command.CommandCreateJsonSingleLine;
 import net.sourceforge.plantuml.objectdiagram.command.CommandCreateMap;
 
 public class DescriptionDiagramFactory extends PSystemCommandFactory {
 
 	@Override
-	public DescriptionDiagram createEmptyDiagram(ThemeStyle style, UmlSource source, ISkinSimple skinParam) {
-		return new DescriptionDiagram(style, source, skinParam);
+	public DescriptionDiagram createEmptyDiagram(UmlSource source, Map<String, String> skinParam) {
+		return new DescriptionDiagram(source, skinParam);
 	}
 
 	@Override
@@ -115,6 +115,7 @@ public class DescriptionDiagramFactory extends PSystemCommandFactory {
 
 		cmds.add(new CommandCreateMap());
 		cmds.add(new CommandCreateJson());
+		cmds.add(new CommandCreateJsonSingleLine());
 		// cmds.add(new CommandHideShowSpecificClass());
 
 		cmds.add(new CommandArchimate());

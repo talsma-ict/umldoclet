@@ -30,13 +30,13 @@
  */
 package net.sourceforge.plantuml.command;
 
+import java.util.Map;
+
 import net.sourceforge.plantuml.AbstractPSystem;
 import net.sourceforge.plantuml.ErrorUml;
 import net.sourceforge.plantuml.ErrorUmlType;
-import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.StringLocated;
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.DiagramType;
 import net.sourceforge.plantuml.core.UmlSource;
@@ -53,7 +53,7 @@ public abstract class PSystemSingleLineFactory extends PSystemAbstractFactory {
 	}
 
 	@Override
-	final public Diagram createSystem(ThemeStyle style, UmlSource source, ISkinSimple skinParam) {
+	final public Diagram createSystem(UmlSource source, Map<String, String> skinParam) {
 
 		if (source.getTotalLineCount() != 3)
 			return null;

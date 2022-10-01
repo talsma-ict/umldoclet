@@ -31,6 +31,7 @@
  */
 package net.sourceforge.plantuml.cucadiagram;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,7 +41,9 @@ import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.Removeable;
 import net.sourceforge.plantuml.SpecificBackcolorable;
 import net.sourceforge.plantuml.Url;
+import net.sourceforge.plantuml.command.Position;
 import net.sourceforge.plantuml.graphic.USymbol;
+import net.sourceforge.plantuml.graphic.color.Colors;
 
 public interface IEntity extends SpecificBackcolorable, Hideable, Removeable, LineConfigurable {
 
@@ -99,5 +102,11 @@ public interface IEntity extends SpecificBackcolorable, Hideable, Removeable, Li
 	public void setStereostyle(String stereo);
 
 	public Stereostyles getStereostyles();
+
+	public void addNote(Display note, Position position, Colors colors);
+
+	public EntityPosition getEntityPosition();
+
+	public List<CucaNote> getNotes(Position position);
 
 }

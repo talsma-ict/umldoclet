@@ -30,10 +30,8 @@
  */
 package net.sourceforge.plantuml.graphic;
 
-import java.awt.geom.Rectangle2D;
-
-import net.sourceforge.plantuml.Dimension2DDouble;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
+import net.sourceforge.plantuml.awt.geom.XRectangle2D;
 import net.sourceforge.plantuml.svek.Ports;
 import net.sourceforge.plantuml.svek.WithPorts;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -63,11 +61,11 @@ public class TextBlockLineBefore extends AbstractTextBlock implements TextBlock,
 		this(defaultThickness, textBlock, '\0');
 	}
 
-	public Dimension2D calculateDimension(StringBounder stringBounder) {
-		final Dimension2D dim = textBlock.calculateDimension(stringBounder);
+	public XDimension2D calculateDimension(StringBounder stringBounder) {
+		final XDimension2D dim = textBlock.calculateDimension(stringBounder);
 		if (title != null) {
-			final Dimension2D dimTitle = title.calculateDimension(stringBounder);
-			return Dimension2DDouble.atLeast(dim, dimTitle.getWidth() + 8, dimTitle.getHeight());
+			final XDimension2D dimTitle = title.calculateDimension(stringBounder);
+			return XDimension2D.atLeast(dim, dimTitle.getWidth() + 8, dimTitle.getHeight());
 		}
 		return dim;
 	}
@@ -89,7 +87,7 @@ public class TextBlockLineBefore extends AbstractTextBlock implements TextBlock,
 	}
 
 	@Override
-	public Rectangle2D getInnerPosition(String member, StringBounder stringBounder, InnerStrategy strategy) {
+	public XRectangle2D getInnerPosition(String member, StringBounder stringBounder, InnerStrategy strategy) {
 		return textBlock.getInnerPosition(member, stringBounder, strategy);
 	}
 

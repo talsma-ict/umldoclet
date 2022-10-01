@@ -32,7 +32,7 @@ package net.sourceforge.plantuml.cucadiagram;
 
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
@@ -74,7 +74,7 @@ public abstract class BodyEnhancedAbstract extends AbstractTextBlock implements 
 		return false;
 	}
 
-	public final Dimension2D calculateDimension(StringBounder stringBounder) {
+	public final XDimension2D calculateDimension(StringBounder stringBounder) {
 		return getArea(stringBounder).calculateDimension(stringBounder);
 	}
 
@@ -102,7 +102,7 @@ public abstract class BodyEnhancedAbstract extends AbstractTextBlock implements 
 		if (title == null)
 			return new TextBlockLineBefore(getDefaultThickness(), TextBlockUtils.withMargin(b, marginX, 4), separator);
 
-		final Dimension2D dimTitle = title.calculateDimension(stringBounder);
+		final XDimension2D dimTitle = title.calculateDimension(stringBounder);
 		final TextBlock raw = new TextBlockLineBefore(getDefaultThickness(),
 				TextBlockUtils.withMargin(b, marginX, 6, dimTitle.getHeight() / 2, 4), separator, title);
 		return TextBlockUtils.withMargin(raw, 0, 0, dimTitle.getHeight() / 2, 0);

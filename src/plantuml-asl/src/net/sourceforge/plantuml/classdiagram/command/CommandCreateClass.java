@@ -75,7 +75,7 @@ public class CommandCreateClass extends SingleLineCommand2<ClassDiagram> {
 	private static IRegex getRegexConcat() {
 		return RegexConcat.build(CommandCreateClass.class.getName(), RegexLeaf.start(), //
 				new RegexLeaf("TYPE", //
-						"(interface|enum|annotation|abstract[%s]+class|abstract|class|entity|circle|diamond|protocol|struct|exception)"), //
+						"(interface|enum|annotation|abstract[%s]+class|static[%s]+class|abstract|class|entity|circle|diamond|protocol|struct|exception)"), //
 				RegexLeaf.spaceOneOrMore(), //
 				new RegexOr(//
 						new RegexConcat(//
@@ -121,7 +121,8 @@ public class CommandCreateClass extends SingleLineCommand2<ClassDiagram> {
 	@Override
 	protected CommandExecutionResult executeArg(ClassDiagram diagram, LineLocation location, RegexResult arg)
 			throws NoSuchColorException {
-		final LeafType type = LeafType.getLeafType(StringUtils.goUpperCase(arg.get("TYPE", 0)));
+		final String typeString = StringUtils.goUpperCase(arg.get("TYPE", 0));
+		final LeafType type = LeafType.getLeafType(typeString);
 		final String idShort = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.getLazzy("CODE", 0),
 				"\"([:");
 		final String display = arg.getLazzy("DISPLAY", 0);
@@ -168,12 +169,11 @@ public class CommandCreateClass extends SingleLineCommand2<ClassDiagram> {
 		}
 		entity.setCodeLine(location);
 
-		Colors colors = color().getColor(diagram.getSkinParam().getThemeStyle(), arg,
-				diagram.getSkinParam().getIHtmlColorSet());
+		Colors colors = color().getColor(arg, diagram.getSkinParam().getIHtmlColorSet());
 		final String s = arg.get("LINECOLOR", 1);
 
 		final HColor lineColor = s == null ? null
-				: diagram.getSkinParam().getIHtmlColorSet().getColor(diagram.getSkinParam().getThemeStyle(), s);
+				: diagram.getSkinParam().getIHtmlColorSet().getColor(s);
 		if (lineColor != null)
 			colors = colors.add(ColorType.LINE, lineColor);
 
@@ -185,6 +185,9 @@ public class CommandCreateClass extends SingleLineCommand2<ClassDiagram> {
 		CommandCreateClassMultilines.manageExtends("EXTENDS", diagram, arg, entity);
 		CommandCreateClassMultilines.manageExtends("IMPLEMENTS", diagram, arg, entity);
 		CommandCreateClassMultilines.addTags(entity, arg.get("TAGS", 0));
+
+		if (typeString.contains("STATIC"))
+			entity.setStatic(true);
 
 		return CommandExecutionResult.ok();
 	}

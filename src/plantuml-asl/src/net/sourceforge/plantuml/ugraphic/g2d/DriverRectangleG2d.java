@@ -50,7 +50,6 @@ import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorGradient;
 import net.sourceforge.plantuml.ugraphic.color.HColorSimple;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 public class DriverRectangleG2d extends DriverShadowedG2d implements UDriver<URectangle, Graphics2D> {
 
@@ -67,11 +66,10 @@ public class DriverRectangleG2d extends DriverShadowedG2d implements UDriver<URe
 		final double rx = rect.getRx();
 		final double ry = rect.getRy();
 		final Shape shape;
-		if (rx == 0 && ry == 0) {
+		if (rx == 0 && ry == 0)
 			shape = new Rectangle2D.Double(x, y, rect.getWidth(), rect.getHeight());
-		} else {
+		else
 			shape = new RoundRectangle2D.Double(x, y, rect.getWidth(), rect.getHeight(), rx, ry);
-		}
 
 		visible.ensureVisible(x, y);
 		visible.ensureVisible(x + rect.getWidth(), y + rect.getHeight());
@@ -80,42 +78,44 @@ public class DriverRectangleG2d extends DriverShadowedG2d implements UDriver<URe
 
 		// Shadow
 		if (rect.getDeltaShadow() != 0) {
-			if (HColors.isTransparent(back)) {
+			if (back.isTransparent())
 				drawOnlyLineShadowSpecial(g2d, shape, rect.getDeltaShadow(), dpiFactor);
-			} else {
+			else
 				drawShadow(g2d, shape, rect.getDeltaShadow(), dpiFactor);
-			}
 		}
 
 		final HColor color = param.getColor();
+		if (color == null) {
+			param.getColor();
+		}
 		if (back instanceof HColorGradient) {
 			final GradientPaint paint = getPaintGradient(x, y, mapper, rect.getWidth(), rect.getHeight(), back);
 			g2d.setPaint(paint);
 			g2d.fill(shape);
 			drawBorder(param, color, mapper, rect, shape, g2d, x, y);
 		} else {
-			if (param.getBackcolor() != null) {
-				g2d.setColor(mapper.toColor(param.getBackcolor()));
+			if (param.getBackcolor().isTransparent() == false) {
+				g2d.setColor(param.getBackcolor().toColor(mapper));
 				DriverLineG2d.manageStroke(param, g2d);
 				managePattern(param, g2d);
 				g2d.fill(shape);
 			}
-			if (color != null && color.equals(param.getBackcolor()) == false) {
+			if (color.equals(param.getBackcolor()) == false)
 				drawBorder(param, color, mapper, rect, shape, g2d, x, y);
-			}
+
 		}
 	}
 
 	public static void drawBorder(UParam param, HColor color, ColorMapper mapper, UShapeSized sized, Shape shape,
 			Graphics2D g2d, double x, double y) {
-		if (color == null) {
+		if (color.isTransparent())
 			return;
-		}
+
 		if (color instanceof HColorGradient) {
 			final GradientPaint paint = getPaintGradient(x, y, mapper, sized.getWidth(), sized.getHeight(), color);
 			g2d.setPaint(paint);
 		} else {
-			g2d.setColor(mapper.toColor(color));
+			g2d.setColor(color.toColor(mapper));
 		}
 		DriverLineG2d.manageStroke(param, g2d);
 		g2d.draw(shape);
@@ -126,20 +126,20 @@ public class DriverRectangleG2d extends DriverShadowedG2d implements UDriver<URe
 		final HColorGradient gr = (HColorGradient) back;
 		final char policy = gr.getPolicy();
 		final GradientPaint paint;
-		if (policy == '|') {
-			paint = new GradientPaint((float) x, (float) (y + height) / 2, mapper.toColor(gr.getColor1()),
-					(float) (x + width), (float) (y + height) / 2, mapper.toColor(gr.getColor2()));
-		} else if (policy == '\\') {
-			paint = new GradientPaint((float) x, (float) (y + height), mapper.toColor(gr.getColor1()),
-					(float) (x + width), (float) y, mapper.toColor(gr.getColor2()));
-		} else if (policy == '-') {
-			paint = new GradientPaint((float) (x + width) / 2, (float) y, mapper.toColor(gr.getColor1()),
-					(float) (x + width) / 2, (float) (y + height), mapper.toColor(gr.getColor2()));
-		} else {
+		if (policy == '|')
+			paint = new GradientPaint((float) x, (float) (y + height) / 2, gr.getColor1().toColor(mapper),
+					(float) (x + width), (float) (y + height) / 2, gr.getColor2().toColor(mapper));
+		else if (policy == '\\')
+			paint = new GradientPaint((float) x, (float) (y + height), gr.getColor1().toColor(mapper),
+					(float) (x + width), (float) y, gr.getColor2().toColor(mapper));
+		else if (policy == '-')
+			paint = new GradientPaint((float) (x + width) / 2, (float) y, gr.getColor1().toColor(mapper),
+					(float) (x + width) / 2, (float) (y + height), gr.getColor2().toColor(mapper));
+		else
 			// for /
-			paint = new GradientPaint((float) x, (float) y, mapper.toColor(gr.getColor1()), (float) (x + width),
-					(float) (y + height), mapper.toColor(gr.getColor2()));
-		}
+			paint = new GradientPaint((float) x, (float) y, gr.getColor1().toColor(mapper), (float) (x + width),
+					(float) (y + height), gr.getColor2().toColor(mapper));
+
 		return paint;
 	}
 
@@ -148,31 +148,27 @@ public class DriverRectangleG2d extends DriverShadowedG2d implements UDriver<URe
 		if (pattern == UPattern.VERTICAL_STRIPE) {
 			final BufferedImage bi = new BufferedImage(4, 4, BufferedImage.TYPE_INT_ARGB);
 			final Rectangle r = new Rectangle(0, 0, 4, 4);
-			final int rgb = ((HColorSimple) param.getBackcolor()).getColor999().getRGB();
-			for (int i = 0; i < 4; i++) {
-				for (int j = 0; j < 4; j++) {
-					if (i == 0 || i == 1) {
+			final int rgb = ((HColorSimple) param.getBackcolor()).getAwtColor().getRGB();
+			for (int i = 0; i < 4; i++)
+				for (int j = 0; j < 4; j++)
+					if (i == 0 || i == 1)
 						bi.setRGB(i, j, rgb);
-					}
-				}
-			}
+
 			g2d.setPaint(new TexturePaint(bi, r));
 		} else if (pattern == UPattern.HORIZONTAL_STRIPE) {
 			final BufferedImage bi = new BufferedImage(4, 4, BufferedImage.TYPE_INT_ARGB);
 			final Rectangle r = new Rectangle(0, 0, 4, 4);
-			final int rgb = ((HColorSimple) param.getBackcolor()).getColor999().getRGB();
-			for (int i = 0; i < 4; i++) {
-				for (int j = 0; j < 4; j++) {
-					if (j == 0 || j == 1) {
+			final int rgb = ((HColorSimple) param.getBackcolor()).getAwtColor().getRGB();
+			for (int i = 0; i < 4; i++)
+				for (int j = 0; j < 4; j++)
+					if (j == 0 || j == 1)
 						bi.setRGB(i, j, rgb);
-					}
-				}
-			}
+
 			g2d.setPaint(new TexturePaint(bi, r));
 		} else if (pattern == UPattern.SMALL_CIRCLE) {
 			final BufferedImage bi = new BufferedImage(4, 4, BufferedImage.TYPE_INT_ARGB);
 			final Rectangle r = new Rectangle(0, 0, 4, 4);
-			final int rgb = ((HColorSimple) param.getBackcolor()).getColor999().getRGB();
+			final int rgb = ((HColorSimple) param.getBackcolor()).getAwtColor().getRGB();
 			bi.setRGB(0, 1, rgb);
 			bi.setRGB(1, 0, rgb);
 			bi.setRGB(1, 1, rgb);

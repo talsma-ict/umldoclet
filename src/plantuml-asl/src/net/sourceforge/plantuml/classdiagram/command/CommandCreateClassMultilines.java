@@ -41,6 +41,7 @@ import net.sourceforge.plantuml.command.BlocLines;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.CommandMultilines2;
 import net.sourceforge.plantuml.command.MultilinesStrategy;
+import net.sourceforge.plantuml.command.Trim;
 import net.sourceforge.plantuml.command.regex.IRegex;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
@@ -54,6 +55,7 @@ import net.sourceforge.plantuml.cucadiagram.ILeaf;
 import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.Link;
+import net.sourceforge.plantuml.cucadiagram.LinkArg;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.cucadiagram.Stereotag;
@@ -76,7 +78,7 @@ public class CommandCreateClassMultilines extends CommandMultilines2<ClassDiagra
 	};
 
 	public CommandCreateClassMultilines() {
-		super(getRegexConcat(), MultilinesStrategy.REMOVE_STARTING_QUOTE);
+		super(getRegexConcat(), MultilinesStrategy.REMOVE_STARTING_QUOTE, Trim.BOTH);
 	}
 
 	@Override
@@ -88,7 +90,7 @@ public class CommandCreateClassMultilines extends CommandMultilines2<ClassDiagra
 		return RegexConcat.build(CommandCreateClassMultilines.class.getName(), RegexLeaf.start(), //
 				new RegexLeaf("VISIBILITY", "(" + VisibilityModifier.regexForVisibilityCharacterInClassName() + ")?"), //
 				new RegexLeaf("TYPE",
-						"(interface|enum|annotation|abstract[%s]+class|abstract|class|entity|protocol|struct|exception)"), //
+						"(interface|enum|annotation|abstract[%s]+class|static[%s]+class|abstract|class|entity|protocol|struct|exception)"), //
 				RegexLeaf.spaceOneOrMore(), //
 				new RegexOr(//
 						new RegexConcat(//
@@ -209,9 +211,10 @@ public class CommandCreateClassMultilines extends CommandMultilines2<ClassDiagra
 				if (type2 == LeafType.INTERFACE && entity.getLeafType() != LeafType.INTERFACE)
 					typeLink = typeLink.goDashed();
 
-				final Link link = new Link(diagram.getSkinParam().getCurrentStyleBuilder(), cl2, entity, typeLink, Display.NULL, 2, null,
-						null, diagram.getLabeldistance(),
-						diagram.getLabelangle());
+				final LinkArg linkArg = LinkArg.noDisplay(2);
+				final Link link = new Link(diagram.getSkinParam().getCurrentStyleBuilder(), cl2, entity, typeLink,
+						linkArg.withQualifier(null, null).withDistanceAngle(diagram.getLabeldistance(),
+								diagram.getLabelangle()));
 				diagram.addLink(link);
 			}
 		}
@@ -219,7 +222,8 @@ public class CommandCreateClassMultilines extends CommandMultilines2<ClassDiagra
 
 	private IEntity executeArg0(ClassDiagram diagram, RegexResult line0) throws NoSuchColorException {
 
-		final LeafType type = LeafType.getLeafType(StringUtils.goUpperCase(line0.get("TYPE", 0)));
+		final String typeString = StringUtils.goUpperCase(line0.get("TYPE", 0));
+		final LeafType type = LeafType.getLeafType(typeString);
 		final String visibilityString = line0.get("VISIBILITY", 0);
 		VisibilityModifier visibilityModifier = null;
 		if (visibilityString != null)
@@ -271,12 +275,11 @@ public class CommandCreateClassMultilines extends CommandMultilines2<ClassDiagra
 			result.addUrl(url);
 		}
 
-		Colors colors = color().getColor(diagram.getSkinParam().getThemeStyle(), line0,
-				diagram.getSkinParam().getIHtmlColorSet());
+		Colors colors = color().getColor(line0, diagram.getSkinParam().getIHtmlColorSet());
 		final String s = line0.get("LINECOLOR", 1);
 
 		final HColor lineColor = s == null ? null
-				: diagram.getSkinParam().getIHtmlColorSet().getColor(diagram.getSkinParam().getThemeStyle(), s);
+				: diagram.getSkinParam().getIHtmlColorSet().getColor(s);
 		if (lineColor != null)
 			colors = colors.add(ColorType.LINE, lineColor);
 
@@ -287,6 +290,9 @@ public class CommandCreateClassMultilines extends CommandMultilines2<ClassDiagra
 
 		if (generic != null)
 			result.setGeneric(generic);
+
+		if (typeString.contains("STATIC"))
+			result.setStatic(true);
 
 		return result;
 	}

@@ -58,7 +58,6 @@ import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorSet;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 public class TaskDrawSeparator implements TaskDraw {
 
@@ -119,7 +118,7 @@ public class TaskDrawSeparator implements TaskDraw {
 	}
 
 	private FontConfiguration getFontConfiguration() {
-		return getStyle().getFontConfiguration(styleBuilder.getSkinParam().getThemeStyle(), colorSet);
+		return getStyle().getFontConfiguration(colorSet);
 	}
 
 	@Override
@@ -135,9 +134,9 @@ public class TaskDrawSeparator implements TaskDraw {
 		ug = ug.apply(new UTranslate(0, margin.getTop()));
 
 		final HColor backColor = getStyle().value(PName.BackGroundColor)
-				.asColor(styleBuilder.getSkinParam().getThemeStyle(), colorSet);
+				.asColor(colorSet);
 
-		if (HColors.isTransparent(backColor) == false) {
+		if (backColor.isTransparent() == false) {
 			final double height = padding.getTop() + getTextHeight(stringBounder) + padding.getBottom();
 			if (height > 0) {
 				final URectangle rect = new URectangle(end - start, height);
@@ -145,8 +144,7 @@ public class TaskDrawSeparator implements TaskDraw {
 			}
 		}
 
-		final HColor lineColor = getStyle().value(PName.LineColor).asColor(styleBuilder.getSkinParam().getThemeStyle(),
-				colorSet);
+		final HColor lineColor = getStyle().value(PName.LineColor).asColor(colorSet);
 		ug = ug.apply(lineColor);
 		ug = ug.apply(UTranslate.dy(padding.getTop() + getTextHeight(stringBounder) / 2));
 

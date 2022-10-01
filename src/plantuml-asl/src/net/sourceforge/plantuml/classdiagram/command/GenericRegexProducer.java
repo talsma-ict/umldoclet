@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.classdiagram.command;
 
-
 public class GenericRegexProducer {
 
 	public final static String PATTERN = "[^\\<\\>/]" + getGenericRegex(4);

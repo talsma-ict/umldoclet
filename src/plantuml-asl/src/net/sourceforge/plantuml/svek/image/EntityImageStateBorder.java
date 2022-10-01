@@ -31,13 +31,13 @@
  */
 package net.sourceforge.plantuml.svek.image;
 
-import java.awt.geom.Point2D;
-
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
+import net.sourceforge.plantuml.awt.geom.XPoint2D;
 import net.sourceforge.plantuml.cucadiagram.EntityPosition;
 import net.sourceforge.plantuml.cucadiagram.ILeaf;
+import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
@@ -69,14 +69,14 @@ public class EntityImageStateBorder extends AbstractEntityImageBorder {
 		if (parent == null)
 			return false;
 
-		final Point2D clusterCenter = parent.getClusterPosition().getPointCenter();
+		final XPoint2D clusterCenter = parent.getClusterPosition().getPointCenter();
 		final SvekNode node = bibliotekon.getNode(getEntity());
 		return node.getMinY() < clusterCenter.getY();
 	}
 
 	final public void drawU(UGraphic ug) {
 		double y = 0;
-		final Dimension2D dimDesc = desc.calculateDimension(ug.getStringBounder());
+		final XDimension2D dimDesc = desc.calculateDimension(ug.getStringBounder());
 		final double x = 0 - (dimDesc.getWidth() - 2 * EntityPosition.RADIUS) / 2;
 		if (upPosition())
 			y -= 2 * EntityPosition.RADIUS + dimDesc.getHeight();
@@ -86,12 +86,10 @@ public class EntityImageStateBorder extends AbstractEntityImageBorder {
 		desc.drawU(ug.apply(new UTranslate(x, y)));
 
 		final Style style = getSignature().getMergedStyle(getSkinParam().getCurrentStyleBuilder());
-		final HColor borderColor = style.value(PName.LineColor).asColor(getSkinParam().getThemeStyle(),
-				getSkinParam().getIHtmlColorSet());
+		final HColor borderColor = style.value(PName.LineColor).asColor(getSkinParam().getIHtmlColorSet());
 		HColor backcolor = getEntity().getColors().getColor(ColorType.BACK);
 		if (backcolor == null)
-			backcolor = style.value(PName.BackGroundColor).asColor(getSkinParam().getThemeStyle(),
-					getSkinParam().getIHtmlColorSet());
+			backcolor = style.value(PName.BackGroundColor).asColor(getSkinParam().getIHtmlColorSet());
 
 		ug = ug.apply(getUStroke()).apply(borderColor);
 		ug = ug.apply(backcolor.bg());
@@ -102,5 +100,11 @@ public class EntityImageStateBorder extends AbstractEntityImageBorder {
 	private UStroke getUStroke() {
 		return new UStroke(1.5);
 	}
+	
+	public double getMaxWidthFromLabelForEntryExit(StringBounder stringBounder) {
+		final XDimension2D dimDesc = desc.calculateDimension(stringBounder);
+		return dimDesc.getWidth();
+	}
+
 
 }

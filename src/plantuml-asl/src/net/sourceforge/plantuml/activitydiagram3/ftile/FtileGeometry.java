@@ -30,12 +30,11 @@
  */
 package net.sourceforge.plantuml.activitydiagram3.ftile;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
-import java.awt.geom.Point2D;
-
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
+import net.sourceforge.plantuml.awt.geom.XPoint2D;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 
-public class FtileGeometry extends Dimension2D {
+public class FtileGeometry extends XDimension2D {
 
 	private final double width;
 	private final double height;
@@ -43,43 +42,43 @@ public class FtileGeometry extends Dimension2D {
 	private final double inY;
 	private final double outY;
 
-	public Point2D getPointA() {
-		return new Point2D.Double(left, inY);
+	public XPoint2D getPointA() {
+		return new XPoint2D(left, inY);
 	}
 
-	public Point2D getPointIn() {
-		return new Point2D.Double(left, inY);
+	public XPoint2D getPointIn() {
+		return new XPoint2D(left, inY);
 	}
 
-	public Point2D getPointB() {
+	public XPoint2D getPointB() {
 		if (outY == Double.MIN_NORMAL) {
 			throw new UnsupportedOperationException();
 		}
-		return new Point2D.Double(width, (inY + outY) / 2);
+		return new XPoint2D(width, (inY + outY) / 2);
 	}
 
-	public Point2D getPointC() {
+	public XPoint2D getPointC() {
 		if (outY == Double.MIN_NORMAL) {
 			throw new UnsupportedOperationException();
 		}
-		return new Point2D.Double(left, outY);
+		return new XPoint2D(left, outY);
 	}
 
-	public Point2D getPointD() {
+	public XPoint2D getPointD() {
 		if (outY == Double.MIN_NORMAL) {
 			throw new UnsupportedOperationException();
 		}
-		return new Point2D.Double(0, (inY + outY) / 2);
+		return new XPoint2D(0, (inY + outY) / 2);
 	}
 
-	public Point2D getPointOut() {
+	public XPoint2D getPointOut() {
 		if (outY == Double.MIN_NORMAL) {
 			throw new UnsupportedOperationException();
 		}
-		return new Point2D.Double(left, outY);
+		return new XPoint2D(left, outY);
 	}
 
-	public FtileGeometry(Dimension2D dim, double left, double inY) {
+	public FtileGeometry(XDimension2D dim, double left, double inY) {
 		this(dim.getWidth(), dim.getHeight(), left, inY);
 	}
 
@@ -90,11 +89,6 @@ public class FtileGeometry extends Dimension2D {
 	@Override
 	public String toString() {
 		return "[" + width + "x" + height + " left=" + left + "]";
-	}
-
-	@Override
-	public void setSize(double width, double height) {
-		throw new UnsupportedOperationException();
 	}
 
 	public FtileGeometry(double width, double height, double left, double inY, double outY) {
@@ -134,7 +128,7 @@ public class FtileGeometry extends Dimension2D {
 				hasPointOut() ? outY + missing1 : outY);
 	}
 
-	public FtileGeometry(Dimension2D dim, double left, double inY, double outY) {
+	public FtileGeometry(XDimension2D dim, double left, double inY, double outY) {
 		this(dim.getWidth(), dim.getHeight(), left, inY, outY);
 	}
 

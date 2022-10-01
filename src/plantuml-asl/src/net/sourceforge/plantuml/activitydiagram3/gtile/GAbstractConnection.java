@@ -93,7 +93,7 @@ public abstract class GAbstractConnection implements GConnection {
 	final protected Rainbow getInLinkRenderingColor() {
 		final ISkinParam skinParam = gpoint1.getGtile().skinParam();
 		final Style style = getDefaultStyleDefinitionArrow().getMergedStyle(skinParam.getCurrentStyleBuilder());
-		final Rainbow color = Rainbow.build(style, skinParam.getIHtmlColorSet(), skinParam.getThemeStyle());
+		final Rainbow color = Rainbow.build(style, skinParam.getIHtmlColorSet());
 //		final LinkRendering linkRendering = tile.getInLinkRendering();
 //		if (linkRendering == null) {
 //			if (UseStyle.useBetaStyle()) {

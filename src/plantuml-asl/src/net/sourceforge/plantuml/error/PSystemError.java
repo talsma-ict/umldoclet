@@ -31,7 +31,6 @@
 package net.sourceforge.plantuml.error;
 
 import java.awt.Color;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -42,7 +41,6 @@ import java.util.Collections;
 import java.util.List;
 
 import net.sourceforge.plantuml.BackSlash;
-import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ErrorUml;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
@@ -53,7 +51,8 @@ import net.sourceforge.plantuml.SpriteContainerEmpty;
 import net.sourceforge.plantuml.StringLocated;
 import net.sourceforge.plantuml.api.ImageDataSimple;
 import net.sourceforge.plantuml.asciiart.UmlCharArea;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
+import net.sourceforge.plantuml.awt.geom.XRectangle2D;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.core.UmlSource;
@@ -344,7 +343,7 @@ public abstract class PSystemError extends PlainDiagram {
 		final HColorSimple backColor = (HColorSimple) HColorSet.instance().getColorOrWhite("#eae2c9");
 
 		final BufferedImage qrcode = smaller(
-				utils.exportFlashcode("http://plantuml.com/dedication", Color.BLACK, backColor.getColor999()));
+				utils.exportFlashcode("http://plantuml.com/dedication", Color.BLACK, backColor.getAwtColor()));
 		final Display disp = Display.create("<b>Add your own dedication into PlantUML", " ", "For just $5 per month!",
 				"Details on <i>[[https://plantuml.com/dedication]]");
 
@@ -407,12 +406,12 @@ public abstract class PSystemError extends PlainDiagram {
 				}
 			}
 
-			public Rectangle2D getInnerPosition(String member, StringBounder stringBounder, InnerStrategy strategy) {
+			public XRectangle2D getInnerPosition(String member, StringBounder stringBounder, InnerStrategy strategy) {
 				return null;
 			}
 
-			public Dimension2D calculateDimension(StringBounder stringBounder) {
-				return new Dimension2DDouble(imWidth + 1, imHeight + 1);
+			public XDimension2D calculateDimension(StringBounder stringBounder) {
+				return new XDimension2D(imWidth + 1, imHeight + 1);
 			}
 
 			public MinMax getMinMax(StringBounder stringBounder) {
@@ -453,12 +452,12 @@ public abstract class PSystemError extends PlainDiagram {
 				}
 			}
 
-			public Rectangle2D getInnerPosition(String member, StringBounder stringBounder, InnerStrategy strategy) {
+			public XRectangle2D getInnerPosition(String member, StringBounder stringBounder, InnerStrategy strategy) {
 				return null;
 			}
 
-			public Dimension2D calculateDimension(StringBounder stringBounder) {
-				return new Dimension2DDouble(imWidth + 1, imHeight + 1);
+			public XDimension2D calculateDimension(StringBounder stringBounder) {
+				return new XDimension2D(imWidth + 1, imHeight + 1);
 			}
 
 			public MinMax getMinMax(StringBounder stringBounder) {

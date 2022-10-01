@@ -45,8 +45,8 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.command.BlocLines;
 import net.sourceforge.plantuml.command.regex.Matcher2;
 import net.sourceforge.plantuml.command.regex.MyPattern;
@@ -74,13 +74,6 @@ import net.sourceforge.plantuml.svek.PackageStyle;
 import net.sourceforge.plantuml.svg.LengthAdjust;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapperForceDark;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapperLightnessInverse;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapperMonochrome;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapperReverse;
-import net.sourceforge.plantuml.ugraphic.color.ColorOrder;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 import net.sourceforge.plantuml.ugraphic.color.HColors;
@@ -94,11 +87,8 @@ public class SkinParam implements ISkinParam {
 	// private String skin = "debug.skin";
 	private String skin = "plantuml.skin";
 	private StyleBuilder styleBuilder;
-	// private ThemeStyle themeStyle = ThemeStyle.LIGHT_REGULAR;
-	private final ThemeStyle themeStyle;
 
-	private SkinParam(UmlDiagramType type, ThemeStyle style) {
-		this.themeStyle = style;
+	private SkinParam(UmlDiagramType type) {
 		this.type = type;
 	}
 
@@ -148,8 +138,8 @@ public class SkinParam implements ISkinParam {
 	private final UmlDiagramType type;
 	private boolean useVizJs;
 
-	public void copyAllFrom(ISkinSimple other) {
-		this.params.putAll(other.values());
+	public void copyAllFrom(Map<String, String> other) {
+		this.params.putAll(other);
 	}
 
 	public Map<String, String> values() {
@@ -189,12 +179,12 @@ public class SkinParam implements ISkinParam {
 		paramsPendingForStyleMigration.clear();
 	}
 
-	public static SkinParam create(UmlDiagramType type, ThemeStyle style) {
-		return new SkinParam(type, style);
+	public static SkinParam create(UmlDiagramType type) {
+		return new SkinParam(type);
 	}
 
-	public static SkinParam noShadowing(UmlDiagramType type, ThemeStyle style) {
-		final SkinParam result = new SkinParam(type, style);
+	public static SkinParam noShadowing(UmlDiagramType type) {
+		final SkinParam result = new SkinParam(type);
 		result.setParam("shadowing", "false");
 		return result;
 	}
@@ -210,20 +200,19 @@ public class SkinParam implements ISkinParam {
 		return result;
 	}
 
+	private static final Pattern patternCleanUnderscoreDot = Pattern.compile("_|\\.");
+	private static final Pattern patternCleanSequence = Pattern.compile("sequence(participant|actor)");
+	private static final Pattern patternCleanArrow = Pattern
+			.compile("(activity|class|component|object|sequence|state|usecase)arrow");
+	private static final Pattern patternCleanAlign = Pattern.compile("align$");
+
 	List<String> cleanForKeySlow(String key) {
 		key = StringUtils.trin(StringUtils.goLowerCase(key));
-		key = key.replaceAll("_|\\.", "");
-		// key = replaceSmart(key, "partition", "package");
-		key = replaceSmart(key, "sequenceparticipant", "participant");
-		key = replaceSmart(key, "sequenceactor", "actor");
-		key = key.replaceAll("activityarrow", "arrow");
-		key = key.replaceAll("objectarrow", "arrow");
-		key = key.replaceAll("classarrow", "arrow");
-		key = key.replaceAll("componentarrow", "arrow");
-		key = key.replaceAll("statearrow", "arrow");
-		key = key.replaceAll("usecasearrow", "arrow");
-		key = key.replaceAll("sequencearrow", "arrow");
-		key = key.replaceAll("align$", "alignment");
+		key = patternCleanUnderscoreDot.matcher(key).replaceAll("");
+		key = patternCleanSequence.matcher(key).replaceAll("$1");
+		key = patternCleanArrow.matcher(key).replaceAll("arrow");
+		key = patternCleanAlign.matcher(key).replaceAll("alignment");
+
 		final Matcher2 mm = stereoPattern.matcher(key);
 		final List<String> result = new ArrayList<>();
 		while (mm.find()) {
@@ -234,13 +223,6 @@ public class SkinParam implements ISkinParam {
 			result.add(key);
 
 		return Collections.unmodifiableList(result);
-	}
-
-	private static String replaceSmart(String s, String src, String target) {
-		if (s.contains(src) == false) {
-			return s;
-		}
-		return s.replaceAll(src, target);
 	}
 
 	public HColor getHyperlinkColor() {
@@ -300,8 +282,8 @@ public class SkinParam implements ISkinParam {
 			checkStereotype(stereotype);
 			for (String s : stereotype.getMultipleLabels()) {
 				final String value2 = getValue(param.name() + "color" + "<<" + s + ">>");
-				if (value2 != null && getIHtmlColorSet().getColorOrWhite(themeStyle, value2) != null)
-					return getIHtmlColorSet().getColorOrWhite(themeStyle, value2);
+				if (value2 != null && getIHtmlColorSet().getColorOrWhite(value2) != null)
+					return getIHtmlColorSet().getColorOrWhite(value2);
 
 			}
 		}
@@ -314,11 +296,11 @@ public class SkinParam implements ISkinParam {
 			return HColors.transparent();
 
 		if (param == ColorParam.background)
-			return getIHtmlColorSet().getColorOrWhite(themeStyle, value);
+			return getIHtmlColorSet().getColorOrWhite(value);
 
 		assert param != ColorParam.background;
 
-		return getIHtmlColorSet().getColorOrWhite(themeStyle, value);
+		return getIHtmlColorSet().getColorOrWhite(value);
 	}
 
 	public char getCircledCharacter(Stereotype stereotype) {
@@ -335,14 +317,14 @@ public class SkinParam implements ISkinParam {
 			checkStereotype(stereotype);
 			final String value2 = getValue(param.name() + "color" + stereotype.getLabel(Guillemet.DOUBLE_COMPARATOR));
 			if (value2 != null)
-				return new Colors(themeStyle, value2, getIHtmlColorSet(), param.getColorType());
+				return new Colors(value2, getIHtmlColorSet(), param.getColorType());
 
 		}
 		final String value = getValue(getParamName(param, false));
 		if (value == null)
 			return Colors.empty();
 
-		return new Colors(themeStyle, value, getIHtmlColorSet(), param.getColorType());
+		return new Colors(value, getIHtmlColorSet(), param.getColorType());
 	}
 
 	private String getParamName(ColorParam param, boolean clickable) {
@@ -424,7 +406,7 @@ public class SkinParam implements ISkinParam {
 		if (value == null)
 			return null;
 
-		return getIHtmlColorSet().getColorOrWhite(themeStyle, value);
+		return getIHtmlColorSet().getColorOrWhite(value);
 	}
 
 	private String getFirstValueNonNullWithSuffix(String suffix, FontParam... param) {
@@ -669,31 +651,6 @@ public class SkinParam implements ISkinParam {
 			return split[0];
 
 		return split[i];
-	}
-
-	public ColorMapper getColorMapper() {
-		if (themeStyle == ThemeStyle.DARK)
-			return new ColorMapperForceDark();
-
-		final String monochrome = getValue("monochrome");
-		if ("true".equals(monochrome))
-			return new ColorMapperMonochrome(false);
-
-		if ("reverse".equals(monochrome))
-			return new ColorMapperMonochrome(true);
-
-		final String value = getValue("reversecolor");
-		if (value == null)
-			return new ColorMapperIdentity();
-
-		if ("dark".equalsIgnoreCase(value))
-			return new ColorMapperLightnessInverse();
-
-		final ColorOrder order = ColorOrder.fromString(value);
-		if (order == null)
-			return new ColorMapperIdentity();
-
-		return new ColorMapperReverse(order);
 	}
 
 	public boolean shadowing(Stereotype stereotype) {
@@ -1008,8 +965,8 @@ public class SkinParam implements ISkinParam {
 	public SplitParam getSplitParam() {
 		final String border = getValue("pageBorderColor");
 		final String external = getValue("pageExternalColor");
-		final HColor borderColor = border == null ? null : getIHtmlColorSet().getColorOrWhite(themeStyle, border);
-		final HColor externalColor = external == null ? null : getIHtmlColorSet().getColorOrWhite(themeStyle, external);
+		final HColor borderColor = border == null ? null : getIHtmlColorSet().getColorOrWhite(border);
+		final HColor externalColor = external == null ? null : getIHtmlColorSet().getColorOrWhite(external);
 		int margin = getAsInt("pageMargin", 0);
 		return new SplitParam(borderColor, externalColor, margin);
 	}
@@ -1034,7 +991,7 @@ public class SkinParam implements ISkinParam {
 		if (value == null)
 			return null;
 
-		return getIHtmlColorSet().getColorOrWhite(themeStyle, value);
+		return getIHtmlColorSet().getColorOrWhite(value);
 	}
 
 	public double getPadding() {
@@ -1104,9 +1061,8 @@ public class SkinParam implements ISkinParam {
 		if (padding == 0 && margin == 0 && borderColor == null && backgroundColor == null)
 			return Padder.NONE;
 
-		final HColor border = borderColor == null ? null : getIHtmlColorSet().getColorOrWhite(themeStyle, borderColor);
-		final HColor background = backgroundColor == null ? null
-				: getIHtmlColorSet().getColorOrWhite(themeStyle, backgroundColor);
+		final HColor border = borderColor == null ? null : getIHtmlColorSet().getColorOrWhite(borderColor);
+		final HColor background = backgroundColor == null ? null : getIHtmlColorSet().getColorOrWhite(backgroundColor);
 		final double roundCorner = getRoundCorner(CornerParam.DEFAULT, null);
 		return Padder.NONE.withMargin(margin).withPadding(padding).withBackgroundColor(background)
 				.withBorderColor(border).withRoundCorner(roundCorner);
@@ -1147,14 +1103,6 @@ public class SkinParam implements ISkinParam {
 			return LengthAdjust.NONE;
 
 		return LengthAdjust.defaultValue();
-	}
-
-//	public void assumeTransparent(ThemeStyle style) {
-//		this.themeStyle = style;
-//	}
-
-	public ThemeStyle getThemeStyle() {
-		return themeStyle;
 	}
 
 }

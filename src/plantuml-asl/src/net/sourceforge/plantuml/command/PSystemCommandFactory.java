@@ -31,15 +31,14 @@
 package net.sourceforge.plantuml.command;
 
 import java.util.List;
+import java.util.Map;
 
 import net.sourceforge.plantuml.AbstractPSystem;
 import net.sourceforge.plantuml.ErrorUml;
 import net.sourceforge.plantuml.ErrorUmlType;
-import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.StringLocated;
 import net.sourceforge.plantuml.annotation.HaxeIgnored;
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.DiagramType;
 import net.sourceforge.plantuml.core.UmlSource;
@@ -54,7 +53,7 @@ public abstract class PSystemCommandFactory extends PSystemAbstractFactory {
 
 	protected abstract List<Command> createCommands();
 
-	public abstract AbstractPSystem createEmptyDiagram(ThemeStyle style, UmlSource source, ISkinSimple skinParam);
+	public abstract AbstractPSystem createEmptyDiagram(UmlSource source, Map<String, String> skinParam);
 
 	@HaxeIgnored
 	protected PSystemCommandFactory() {
@@ -66,7 +65,7 @@ public abstract class PSystemCommandFactory extends PSystemAbstractFactory {
 	}
 
 	@Override
-	final public Diagram createSystem(ThemeStyle style, UmlSource source, ISkinSimple skinParam) {
+	final public Diagram createSystem(UmlSource source, Map<String, String> skinParam) {
 		final IteratorCounter2 it = source.iterator2();
 		final StringLocated startLine = it.next();
 		if (StartUtils.isArobaseStartDiagram(startLine.getString()) == false)
@@ -78,7 +77,7 @@ public abstract class PSystemCommandFactory extends PSystemAbstractFactory {
 
 			return buildEmptyError(source, startLine.getLocation(), it.getTrace());
 		}
-		AbstractPSystem sys = createEmptyDiagram(style, source, skinParam);
+		AbstractPSystem sys = createEmptyDiagram(source, skinParam);
 
 		while (it.hasNext()) {
 			if (StartUtils.isArobaseEndDiagram(it.peek().getString())) {
