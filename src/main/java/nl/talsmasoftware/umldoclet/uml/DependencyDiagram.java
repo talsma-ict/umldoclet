@@ -93,13 +93,16 @@ public class DependencyDiagram extends Diagram {
         output.println("' Package links");
         getChildren(Reference.class).stream()
                 .flatMap(reference -> Stream.of(reference.from.toString(), reference.to.toString()))
-                .distinct().map(packageName -> new Namespace(this, packageName, null))
+                .distinct().map(packageName -> new Namespace(this, packageName, moduleName))
                 .forEach(namespace -> writePackageLinkTo(output, namespace));
         return output;
     }
 
     private IndentingPrintWriter writePackageLinkTo(IndentingPrintWriter output, Namespace namespace) {
         String link = Link.forPackage(namespace).toString().trim();
+        if (link.isEmpty()) {
+            link = Link.forPackage(new Namespace(this, namespace.name, null)).toString().trim();
+        }
         if (!link.isEmpty()) {
             output.append("class \"").append(namespace.name).append("\" ").append(link)
                     .append(" {").newline().append('}').newline();
