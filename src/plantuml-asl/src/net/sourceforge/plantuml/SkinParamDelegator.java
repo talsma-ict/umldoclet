@@ -33,7 +33,6 @@ package net.sourceforge.plantuml;
 import java.util.Collection;
 import java.util.Map;
 
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.cucadiagram.Rankdir;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.cucadiagram.dot.DotSplines;
@@ -51,7 +50,6 @@ import net.sourceforge.plantuml.svek.PackageStyle;
 import net.sourceforge.plantuml.svg.LengthAdjust;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
@@ -118,11 +116,6 @@ public class SkinParamDelegator implements ISkinParam {
 	public HorizontalAlignment getHorizontalAlignment(AlignmentParam param, ArrowDirection arrowDirection,
 			boolean isReverseDefine, HorizontalAlignment overrideDefault) {
 		return skinParam.getHorizontalAlignment(param, arrowDirection, isReverseDefine, overrideDefault);
-	}
-
-	@Override
-	public ColorMapper getColorMapper() {
-		return skinParam.getColorMapper();
 	}
 
 	@Override
@@ -381,7 +374,7 @@ public class SkinParamDelegator implements ISkinParam {
 	}
 
 	@Override
-	public void copyAllFrom(ISkinSimple other) {
+	public void copyAllFrom(Map<String, String> other) {
 		skinParam.copyAllFrom(other);
 	}
 
@@ -443,16 +436,6 @@ public class SkinParamDelegator implements ISkinParam {
 	@Override
 	public LengthAdjust getlengthAdjust() {
 		return skinParam.getlengthAdjust();
-	}
-
-//	@Override
-//	public void assumeTransparent(ThemeStyle style) {
-//		skinParam.assumeTransparent(style);
-//	}
-
-	@Override
-	public ThemeStyle getThemeStyle() {
-		return skinParam.getThemeStyle();
 	}
 
 }

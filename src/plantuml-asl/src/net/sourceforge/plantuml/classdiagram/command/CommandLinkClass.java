@@ -50,6 +50,7 @@ import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.Link;
+import net.sourceforge.plantuml.cucadiagram.LinkArg;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.descdiagram.command.CommandLinkElement;
@@ -226,9 +227,15 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 
 		final Labels labels = new Labels(arg);
 
-		Link link = new Link(diagram.getSkinParam().getCurrentStyleBuilder(), cl1, cl2, linkType, labels.getDisplay(), queue,
-				labels.getFirstLabel(), labels.getSecondLabel(), diagram.getLabeldistance(),
-				diagram.getLabelangle());
+		final String kal1 = arg.get("QUALIFIER1", 0);
+		final String kal2 = arg.get("QUALIFIER2", 0);
+
+		final LinkArg linkArg = LinkArg
+				.build(labels.getDisplay(), queue, diagram.getSkinParam().classAttributeIconSize() > 0)
+				.withQualifier(labels.getFirstLabel(), labels.getSecondLabel())
+				.withDistanceAngle(diagram.getLabeldistance(), diagram.getLabelangle()).withKal(kal1, kal2);
+
+		Link link = new Link(diagram.getSkinParam().getCurrentStyleBuilder(), cl1, cl2, linkType, linkArg);
 		if (arg.get("URL", 0) != null) {
 			final UrlBuilder urlBuilder = new UrlBuilder(diagram.getSkinParam().getValue("topurl"), UrlMode.STRICT);
 			final Url url = urlBuilder.getUrl(arg.get("URL", 0));
@@ -240,9 +247,8 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 			link = link.getInv();
 
 		link.setLinkArrow(labels.getLinkArrow());
-		link.setColors(color().getColor(diagram.getSkinParam().getThemeStyle(), arg,
-				diagram.getSkinParam().getIHtmlColorSet()));
-		link.applyStyle(diagram.getSkinParam().getThemeStyle(), arg.getLazzy("ARROW_STYLE", 0));
+		link.setColors(color().getColor(arg, diagram.getSkinParam().getIHtmlColorSet()));
+		link.applyStyle(arg.getLazzy("ARROW_STYLE", 0));
 		link.setCodeLine(location);
 
 		addLink(diagram, link, arg.get("HEADER", 0));
@@ -366,14 +372,15 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 		final Display labelLink = Display.getWithNewlines(arg.get("LABEL_LINK", 0));
 		final String firstLabel = arg.get("FIRST_LABEL", 0);
 		final String secondLabel = arg.get("SECOND_LABEL", 0);
-		final Link link = new Link(diagram.getSkinParam().getCurrentStyleBuilder(), cl1, cl2, linkType, labelLink, queue, firstLabel,
-				secondLabel, diagram.getLabeldistance(), diagram.getLabelangle());
-		link.setColors(color().getColor(diagram.getSkinParam().getThemeStyle(), arg,
-				diagram.getSkinParam().getIHtmlColorSet()));
+		final LinkArg linkArg = LinkArg.build(labelLink, queue, diagram.getSkinParam().classAttributeIconSize() > 0);
+		final Link link = new Link(diagram.getSkinParam().getCurrentStyleBuilder(), cl1, cl2, linkType,
+				linkArg.withQualifier(firstLabel, secondLabel).withDistanceAngle(diagram.getLabeldistance(),
+						diagram.getLabelangle()));
+		link.setColors(color().getColor(arg, diagram.getSkinParam().getIHtmlColorSet()));
 
 		diagram.resetPragmaLabel();
 
-		link.applyStyle(diagram.getSkinParam().getThemeStyle(), arg.getLazzy("ARROW_STYLE", 0));
+		link.applyStyle(arg.getLazzy("ARROW_STYLE", 0));
 
 		addLink(diagram, link, arg.get("HEADER", 0));
 		return CommandExecutionResult.ok();

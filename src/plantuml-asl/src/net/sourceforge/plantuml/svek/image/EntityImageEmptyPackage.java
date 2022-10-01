@@ -31,13 +31,12 @@
 package net.sourceforge.plantuml.svek.image;
 
 import net.sourceforge.plantuml.AlignmentParam;
-import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.Guillemet;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.activitydiagram3.ftile.EntityImageLegend;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.DisplayPositioned;
 import net.sourceforge.plantuml.cucadiagram.EntityPortion;
@@ -55,10 +54,10 @@ import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.svek.AbstractEntityImage;
 import net.sourceforge.plantuml.svek.ClusterDecoration;
+import net.sourceforge.plantuml.svek.ClusterPosition;
 import net.sourceforge.plantuml.svek.ShapeType;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UStroke;
@@ -81,11 +80,8 @@ public class EntityImageEmptyPackage extends AbstractEntityImage {
 	private final HColor back;
 
 	private Style getStyle() {
-		return getStyleSignature().getMergedStyle(getSkinParam().getCurrentStyleBuilder());
-	}
-
-	private StyleSignature getStyleSignature() {
-		return StyleSignatureBasic.of(SName.root, SName.element, sname, SName.package_).withTOBECHANGED(stereotype);
+		return StyleSignatureBasic.of(SName.root, SName.element, sname, SName.package_, SName.title)
+				.withTOBECHANGED(stereotype).getMergedStyle(getSkinParam().getCurrentStyleBuilder());
 	}
 
 	public EntityImageEmptyPackage(ILeaf entity, ISkinParam skinParam, PortionShower portionShower, SName sname) {
@@ -99,20 +95,17 @@ public class EntityImageEmptyPackage extends AbstractEntityImage {
 
 		Style style = getStyle();
 		style = style.eventuallyOverride(colors);
-		this.borderColor = style.value(PName.LineColor).asColor(getSkinParam().getThemeStyle(),
-				getSkinParam().getIHtmlColorSet());
+		this.borderColor = style.value(PName.LineColor).asColor(getSkinParam().getIHtmlColorSet());
 		this.shadowing = style.value(PName.Shadowing).asDouble();
 		this.stroke = style.getStroke(colors);
 		this.roundCorner = style.value(PName.RoundCorner).asDouble();
 		this.diagonalCorner = style.value(PName.DiagonalCorner).asDouble();
 		if (specificBackColor == null)
-			this.back = style.value(PName.BackGroundColor).asColor(getSkinParam().getThemeStyle(),
-					getSkinParam().getIHtmlColorSet());
+			this.back = style.value(PName.BackGroundColor).asColor(getSkinParam().getIHtmlColorSet());
 		else
 			this.back = specificBackColor;
 
-		final FontConfiguration titleFontConfiguration = style.getFontConfiguration(getSkinParam().getThemeStyle(),
-				getSkinParam().getIHtmlColorSet());
+		final FontConfiguration titleFontConfiguration = style.getFontConfiguration(getSkinParam().getIHtmlColorSet());
 		final HorizontalAlignment titleHorizontalAlignment = style.getHorizontalAlignment();
 
 		this.desc = entity.getDisplay().create(titleFontConfiguration, titleHorizontalAlignment, skinParam);
@@ -134,12 +127,12 @@ public class EntityImageEmptyPackage extends AbstractEntityImage {
 
 	}
 
-	public Dimension2D calculateDimension(StringBounder stringBounder) {
-		final Dimension2D dimDesc = desc.calculateDimension(stringBounder);
-		Dimension2D dim = TextBlockUtils.mergeTB(desc, stereoBlock, HorizontalAlignment.LEFT)
+	public XDimension2D calculateDimension(StringBounder stringBounder) {
+		final XDimension2D dimDesc = desc.calculateDimension(stringBounder);
+		XDimension2D dim = TextBlockUtils.mergeTB(desc, stereoBlock, HorizontalAlignment.LEFT)
 				.calculateDimension(stringBounder);
-		dim = Dimension2DDouble.atLeast(dim, 0, 2 * dimDesc.getHeight());
-		return Dimension2DDouble.delta(dim, MARGIN * 2, MARGIN * 2);
+		dim = XDimension2D.atLeast(dim, 0, 2 * dimDesc.getHeight());
+		return XDimension2D.delta(dim, MARGIN * 2, MARGIN * 2);
 	}
 
 	final public void drawU(UGraphic ug) {
@@ -147,13 +140,14 @@ public class EntityImageEmptyPackage extends AbstractEntityImage {
 			ug.startUrl(url);
 
 		final StringBounder stringBounder = ug.getStringBounder();
-		final Dimension2D dimTotal = calculateDimension(stringBounder);
+		final XDimension2D dimTotal = calculateDimension(stringBounder);
 
 		final double widthTotal = dimTotal.getWidth();
 		final double heightTotal = dimTotal.getHeight();
 
+		final ClusterPosition clusterPosition = new ClusterPosition(0, 0, widthTotal, heightTotal);
 		final ClusterDecoration decoration = new ClusterDecoration(getSkinParam().packageStyle(), null, desc,
-				stereoBlock, 0, 0, widthTotal, heightTotal, stroke);
+				stereoBlock, clusterPosition, stroke);
 
 		final HorizontalAlignment horizontalAlignment = getSkinParam()
 				.getHorizontalAlignment(AlignmentParam.packageTitleAlignment, null, false, null);

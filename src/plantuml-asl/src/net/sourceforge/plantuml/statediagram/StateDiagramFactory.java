@@ -32,9 +32,8 @@ package net.sourceforge.plantuml.statediagram;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import net.sourceforge.plantuml.ISkinSimple;
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.classdiagram.command.CommandHideShow2;
 import net.sourceforge.plantuml.classdiagram.command.CommandNamespaceSeparator;
 import net.sourceforge.plantuml.classdiagram.command.CommandRemoveRestore;
@@ -62,8 +61,8 @@ import net.sourceforge.plantuml.statediagram.command.CommandLinkStateReverse;
 public class StateDiagramFactory extends PSystemCommandFactory {
 
 	@Override
-	public StateDiagram createEmptyDiagram(ThemeStyle style, UmlSource source, ISkinSimple skinParam) {
-		return new StateDiagram(style, source, skinParam);
+	public StateDiagram createEmptyDiagram(UmlSource source, Map<String, String> skinParam) {
+		return new StateDiagram(source, skinParam);
 	}
 
 	@Override

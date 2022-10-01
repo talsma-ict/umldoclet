@@ -37,18 +37,18 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sourceforge.plantuml.BackSlash;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
-import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.api.ImageDataSimple;
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.core.UmlSource;
@@ -57,6 +57,7 @@ import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramTxtMaker;
 import net.sourceforge.plantuml.cucadiagram.entity.EntityFactory;
 import net.sourceforge.plantuml.elk.CucaDiagramFileMakerElk;
 import net.sourceforge.plantuml.graphic.USymbol;
+import net.sourceforge.plantuml.graphml.CucaDiagramGraphmlMaker;
 import net.sourceforge.plantuml.sdot.CucaDiagramFileMakerSmetana;
 import net.sourceforge.plantuml.security.SecurityUtils;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
@@ -64,7 +65,6 @@ import net.sourceforge.plantuml.statediagram.StateDiagram;
 import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
 import net.sourceforge.plantuml.svek.CucaDiagramFileMaker;
 import net.sourceforge.plantuml.svek.CucaDiagramFileMakerSvek;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 import net.sourceforge.plantuml.xmi.CucaDiagramXmiMaker;
 import net.sourceforge.plantuml.xmlsc.StateDiagramScxmlMaker;
 
@@ -115,8 +115,8 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		return ident;
 	}
 
-	public CucaDiagram(ThemeStyle style, UmlSource source, UmlDiagramType type, ISkinSimple orig) {
-		super(style, source, type, orig);
+	public CucaDiagram(UmlSource source, UmlDiagramType type, Map<String, String> orig) {
+		super(source, type, orig);
 		this.stacks2.add(Ident.empty());
 	}
 
@@ -554,6 +554,11 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		return result.toArray(new String[result.size()]);
 	}
 
+	private void createFilesGraphml(OutputStream suggestedFile) throws IOException {
+		final CucaDiagramGraphmlMaker maker = new CucaDiagramGraphmlMaker(this);
+		maker.createFiles(suggestedFile);
+	}
+
 	private void createFilesXmi(OutputStream suggestedFile, FileFormat fileFormat) throws IOException {
 		final CucaDiagramXmiMaker maker = new CucaDiagramXmiMaker(this, fileFormat);
 		maker.createFiles(suggestedFile);
@@ -575,6 +580,11 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 			} catch (Throwable t) {
 				t.printStackTrace(SecurityUtils.createPrintStream(os));
 			}
+			return ImageDataSimple.ok();
+		}
+
+		if (fileFormat == FileFormat.GRAPHML) {
+			createFilesGraphml(os);
 			return ImageDataSimple.ok();
 		}
 
@@ -772,14 +782,21 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		return Collections.unmodifiableSet(hides);
 	}
 
-	public ColorMapper getColorMapper() {
-		return getSkinParam().getColorMapper();
-	}
-
 	final public boolean isStandalone(IEntity ent) {
 		for (final Link link : getLinks())
 			if (link.getEntity1() == ent || link.getEntity2() == ent)
 				return false;
+
+		return true;
+	}
+
+	final public boolean isStandaloneForArgo(IEntity ent) {
+		for (final Link link : getLinks()) {
+			if (link.isHidden() || link.isInvis())
+				continue;
+			if (link.getEntity1() == ent || link.getEntity2() == ent)
+				return false;
+		}
 
 		return true;
 	}
@@ -868,4 +885,15 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		// Strange numbers here for backwards compatibility
 		return ClockwiseTopRightBottomLeft.topRightBottomLeft(0, 5, 5, 0);
 	}
+
+	private final AtomicInteger cpt = new AtomicInteger(1);
+
+	public int getUniqueSequence() {
+		return cpt.addAndGet(1);
+	}
+
+	public String getUniqueSequence(String prefix) {
+		return prefix + getUniqueSequence();
+	}
+
 }

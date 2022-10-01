@@ -34,7 +34,7 @@ import java.awt.Color;
 
 import net.sourceforge.plantuml.StringUtils;
 
-public class HColorSimple extends HColorAbstract implements HColor {
+public class HColorSimple extends HColor {
 
 	private final Color color;
 	private final HColor dark;
@@ -100,6 +100,7 @@ public class HColorSimple extends HColorAbstract implements HColor {
 		return ColorUtils.getGrayScale(color) < 128;
 	}
 
+	@Override
 	public boolean isTransparent() {
 		return color.getAlpha() == 0;
 	}
@@ -122,16 +123,16 @@ public class HColorSimple extends HColorAbstract implements HColor {
 		this.dark = dark;
 	}
 
-	public Color getColor999() {
+	public Color getAwtColor() {
 		return color;
 	}
 
 	public HColor asMonochrome() {
-		return new HColorSimple(new ColorChangerMonochrome().getChangedColor(color));
+		return new HColorSimple(ColorUtils.getGrayScaleColor(color));
 	}
 
 	public HColor asMonochrome(HColorSimple colorForMonochrome, double minGray, double maxGray) {
-		final Color tmp = new ColorChangerMonochrome().getChangedColor(color);
+		final Color tmp = ColorUtils.getGrayScaleColor(color);
 		final int gray = tmp.getGreen();
 		assert gray == tmp.getBlue();
 		assert gray == tmp.getRed();
@@ -143,7 +144,7 @@ public class HColorSimple extends HColorAbstract implements HColor {
 
 	@Override
 	public HColor opposite() {
-		final Color mono = new ColorChangerMonochrome().getChangedColor(color);
+		final Color mono = ColorUtils.getGrayScaleColor(color);
 		final int grayScale = 255 - mono.getGreen() > 127 ? 255 : 0;
 		return new HColorSimple(new Color(grayScale, grayScale, grayScale));
 	}
@@ -194,6 +195,13 @@ public class HColorSimple extends HColorAbstract implements HColor {
 	@Override
 	public HColor darkSchemeTheme() {
 		return dark;
+	}
+
+	@Override
+	public Color toColor(ColorMapper mapper) {
+		if (this.isTransparent())
+			return getAwtColor();
+		return mapper.fromColorSimple(this);
 	}
 
 }

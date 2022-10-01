@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.cucadiagram;
 
-
 public abstract class EntityUtils {
 
 	public static boolean groupRoot(IGroup g) {

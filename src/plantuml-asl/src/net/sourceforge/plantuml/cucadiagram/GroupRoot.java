@@ -40,6 +40,7 @@ import java.util.Set;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.Url;
+import net.sourceforge.plantuml.command.Position;
 import net.sourceforge.plantuml.cucadiagram.entity.EntityFactory;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.USymbol;
@@ -62,11 +63,10 @@ public class GroupRoot implements IGroup {
 	@Override
 	public Collection<ILeaf> getLeafsDirect() {
 		final List<ILeaf> result = new ArrayList<>();
-		for (ILeaf ent : entityFactory.leafs()) {
-			if (ent.getParentContainer() == this) {
+		for (ILeaf ent : entityFactory.leafs())
+			if (ent.getParentContainer() == this)
 				result.add(ent);
-			}
-		}
+
 		return Collections.unmodifiableCollection(result);
 
 	}
@@ -152,18 +152,13 @@ public class GroupRoot implements IGroup {
 	public Collection<IGroup> getChildren() {
 		final List<IGroup> result = new ArrayList<>();
 		if (entityFactory.namespaceSeparator.V1972()) {
-			for (IGroup ent : entityFactory.groups()) {
-				if (ent.getIdent().size() == 1) {
+			for (IGroup ent : entityFactory.groups())
+				if (ent.getIdent().size() == 1)
 					result.add(ent);
-				}
-			}
-
 		} else {
-			for (IGroup ent : entityFactory.groups()) {
-				if (ent.getParentContainer() == this) {
+			for (IGroup ent : entityFactory.groups())
+				if (ent.getParentContainer() == this)
 					result.add(ent);
-				}
-			}
 		}
 		return Collections.unmodifiableCollection(result);
 	}
@@ -333,6 +328,21 @@ public class GroupRoot implements IGroup {
 
 	@Override
 	public Stereostyles getStereostyles() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void addNote(Display note, Position position, Colors colors) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public EntityPosition getEntityPosition() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public List<CucaNote> getNotes(Position position) {
 		throw new UnsupportedOperationException();
 	}
 }

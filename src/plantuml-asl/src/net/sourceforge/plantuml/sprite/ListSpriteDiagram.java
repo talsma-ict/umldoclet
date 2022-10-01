@@ -32,14 +32,12 @@ package net.sourceforge.plantuml.sprite;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.FileFormatOption;
-import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
-import net.sourceforge.plantuml.api.ThemeStyle;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.core.UmlSource;
@@ -58,8 +56,8 @@ import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 public class ListSpriteDiagram extends UmlDiagram {
 
-	public ListSpriteDiagram(ThemeStyle style, UmlSource source, ISkinSimple skinParam) {
-		super(style, source, UmlDiagramType.HELP, skinParam);
+	public ListSpriteDiagram(UmlSource source, Map<String, String> skinParam) {
+		super(source, UmlDiagramType.HELP, skinParam);
 	}
 
 	public DiagramDescription getDescription() {
@@ -89,10 +87,10 @@ public class ListSpriteDiagram extends UmlDiagram {
 					final Sprite sprite = getSkinParam().getSprite(n);
 					TextBlock blockName = Display.create(n).create(FontConfiguration.blackBlueTrue(UFont.sansSerif(14)),
 							HorizontalAlignment.LEFT, getSkinParam());
-					TextBlock tb = sprite.asTextBlock(HColors.BLACK, 1.0, getSkinParam().getColorMapper());
+					TextBlock tb = sprite.asTextBlock(HColors.BLACK, 1.0);
 					tb = TextBlockUtils.mergeTB(tb, blockName, HorizontalAlignment.CENTER);
 					tb.drawU(ug.apply(new UTranslate(x, y)));
-					final Dimension2D dim = tb.calculateDimension(ug.getStringBounder());
+					final XDimension2D dim = tb.calculateDimension(ug.getStringBounder());
 					rawHeight = Math.max(rawHeight, dim.getHeight());
 					x += dim.getWidth();
 					x += 30;
@@ -104,8 +102,8 @@ public class ListSpriteDiagram extends UmlDiagram {
 				}
 			}
 
-			public Dimension2D calculateDimension(StringBounder stringBounder) {
-				return new Dimension2DDouble(1024, 1024);
+			public XDimension2D calculateDimension(StringBounder stringBounder) {
+				return new XDimension2D(1024, 1024);
 			}
 		};
 	}

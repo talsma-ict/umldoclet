@@ -31,7 +31,7 @@
 package net.sourceforge.plantuml.cucadiagram.dot;
 
 public interface GraphvizVersion {
-	public boolean useShield();
+	public boolean useShieldForQuantifier();
 
 	public boolean useProtectionWhenThereALinkFromOrToGroup();
 

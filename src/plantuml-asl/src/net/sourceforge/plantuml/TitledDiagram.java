@@ -32,11 +32,11 @@ package net.sourceforge.plantuml;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import net.sourceforge.plantuml.anim.Animation;
 import net.sourceforge.plantuml.anim.AnimationDecoder;
 import net.sourceforge.plantuml.api.ApiStable;
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.UmlSource;
@@ -55,6 +55,8 @@ import net.sourceforge.plantuml.style.StyleBuilder;
 import net.sourceforge.plantuml.style.StyleLoader;
 import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
+import net.sourceforge.plantuml.ugraphic.color.ColorOrder;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColors;
 
@@ -82,16 +84,10 @@ public abstract class TitledDiagram extends AbstractPSystem implements Diagram, 
 		return pragma;
 	}
 
-//	public TitledDiagram(ThemeStyle style, UmlSource source, UmlDiagramType type) {
-//		super(source);
-//		this.type = type;
-//		this.skinParam = SkinParam.create(type, style);
-//	}
-
-	public TitledDiagram(ThemeStyle style, UmlSource source, UmlDiagramType type, ISkinSimple orig) {
+	public TitledDiagram(UmlSource source, UmlDiagramType type, Map<String, String> orig) {
 		super(source);
 		this.type = type;
-		this.skinParam = SkinParam.create(type, style);
+		this.skinParam = SkinParam.create(type);
 		if (orig != null)
 			this.skinParam.copyAllFrom(orig);
 
@@ -273,12 +269,36 @@ public abstract class TitledDiagram extends AbstractPSystem implements Diagram, 
 		final Style style = StyleSignatureBasic.of(SName.root, SName.document, this.getUmlDiagramType().getStyleName())
 				.getMergedStyle(this.getSkinParam().getCurrentStyleBuilder());
 
-		HColor backgroundColor = style.value(PName.BackGroundColor).asColor(this.getSkinParam().getThemeStyle(),
-				this.getSkinParam().getIHtmlColorSet());
+		HColor backgroundColor = style.value(PName.BackGroundColor).asColor(this.getSkinParam().getIHtmlColorSet());
 		if (backgroundColor == null)
 			backgroundColor = HColors.transparent();
 
 		return backgroundColor;
+	}
+
+	@Override
+	protected ColorMapper muteColorMapper(ColorMapper init) {
+		if ("dark".equalsIgnoreCase(getSkinParam().getValue("mode")))
+			return ColorMapper.FORCE_DARK;
+		final String monochrome = getSkinParam().getValue("monochrome");
+		if ("true".equals(monochrome))
+			return ColorMapper.MONOCHROME;
+		if ("reverse".equals(monochrome))
+			return ColorMapper.MONOCHROME_REVERSE;
+
+		final String reversecolor = getSkinParam().getValue("reversecolor");
+		if (reversecolor == null)
+			return init;
+
+		if ("dark".equalsIgnoreCase(reversecolor))
+			return ColorMapper.LIGTHNESS_INVERSE;
+
+		final ColorOrder order = ColorOrder.fromString(reversecolor);
+		if (order == null)
+			return init;
+
+		return ColorMapper.reverse(order);
+
 	}
 
 }

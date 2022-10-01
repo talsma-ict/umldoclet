@@ -37,11 +37,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.Guillemet;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.cucadiagram.BodyFactory;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.EntityPortion;
@@ -124,30 +123,27 @@ public class EntityImageDescription extends AbstractEntityImage {
 
 		final Colors colors = entity.getColors();
 
-		final StyleSignatureBasic tmp = StyleSignatureBasic.of(SName.root, SName.element, styleName, symbol.getSName());
+		final StyleSignatureBasic tmp = StyleSignatureBasic.of(SName.root, SName.element, styleName, symbol.getSName(),
+				SName.title);
 		final Stereotype stereotype = entity.getStereotype();
-		final Style style = tmp.withTOBECHANGED(stereotype).getMergedStyle(getSkinParam().getCurrentStyleBuilder())
+		final Style styleTitle = tmp.withTOBECHANGED(stereotype).getMergedStyle(getSkinParam().getCurrentStyleBuilder())
 				.eventuallyOverride(colors);
 
 		final Style styleStereo = tmp.forStereotypeItself(stereotype)
 				.getMergedStyle(getSkinParam().getCurrentStyleBuilder());
-		final HColor forecolor = style.value(PName.LineColor).asColor(getSkinParam().getThemeStyle(),
-				getSkinParam().getIHtmlColorSet());
+		final HColor forecolor = styleTitle.value(PName.LineColor).asColor(getSkinParam().getIHtmlColorSet());
 
 		HColor backcolor = colors.getColor(ColorType.BACK);
 		if (backcolor == null)
-			backcolor = style.value(PName.BackGroundColor).asColor(getSkinParam().getThemeStyle(),
-					getSkinParam().getIHtmlColorSet());
+			backcolor = styleTitle.value(PName.BackGroundColor).asColor(getSkinParam().getIHtmlColorSet());
 
-		final double roundCorner = style.value(PName.RoundCorner).asDouble();
-		final double diagonalCorner = style.value(PName.DiagonalCorner).asDouble();
-		final double deltaShadow = style.value(PName.Shadowing).asDouble();
-		final UStroke stroke = style.getStroke(colors);
-		final FontConfiguration fcTitle = style.getFontConfiguration(getSkinParam().getThemeStyle(),
-				getSkinParam().getIHtmlColorSet());
-		final FontConfiguration fcStereo = styleStereo.getFontConfiguration(getSkinParam().getThemeStyle(),
-				getSkinParam().getIHtmlColorSet());
-		final HorizontalAlignment defaultAlign = style.getHorizontalAlignment();
+		final double roundCorner = styleTitle.value(PName.RoundCorner).asDouble();
+		final double diagonalCorner = styleTitle.value(PName.DiagonalCorner).asDouble();
+		final double deltaShadow = styleTitle.value(PName.Shadowing).asDouble();
+		final UStroke stroke = styleTitle.getStroke(colors);
+		final FontConfiguration fcTitle = styleTitle.getFontConfiguration(getSkinParam().getIHtmlColorSet());
+		final FontConfiguration fcStereo = styleStereo.getFontConfiguration(getSkinParam().getIHtmlColorSet());
+		final HorizontalAlignment defaultAlign = styleTitle.getHorizontalAlignment();
 
 		assert getStereo() == stereotype;
 
@@ -160,7 +156,7 @@ public class EntityImageDescription extends AbstractEntityImage {
 			desc = TextBlockUtils.empty(getSkinParam().minClassWidth(), 0);
 		else
 			desc = BodyFactory.create3(entity.getDisplay(), getSkinParam(), defaultAlign, fcTitle,
-					getSkinParam().wrapWidth(), style);
+					getSkinParam().wrapWidth(), styleTitle);
 
 		stereo = TextBlockUtils.empty(0, 0);
 
@@ -172,7 +168,7 @@ public class EntityImageDescription extends AbstractEntityImage {
 					HorizontalAlignment.CENTER, getSkinParam());
 
 		name = BodyFactory.create2(getSkinParam().getDefaultTextAlignment(HorizontalAlignment.CENTER), codeDisplay,
-				getSkinParam(), stereotype, entity, style);
+				getSkinParam(), stereotype, entity, styleTitle);
 
 		if (hideText)
 			asSmall = symbol.asSmall(TextBlockUtils.empty(0, 0), TextBlockUtils.empty(0, 0), TextBlockUtils.empty(0, 0),
@@ -188,14 +184,14 @@ public class EntityImageDescription extends AbstractEntityImage {
 		return Objects.requireNonNull(result);
 	}
 
-	public Dimension2D getNameDimension(StringBounder stringBounder) {
+	public XDimension2D getNameDimension(StringBounder stringBounder) {
 		if (hideText)
-			return new Dimension2DDouble(0, 0);
+			return new XDimension2D(0, 0);
 
 		return name.calculateDimension(stringBounder);
 	}
 
-	public Dimension2D calculateDimension(StringBounder stringBounder) {
+	public XDimension2D calculateDimension(StringBounder stringBounder) {
 		return asSmall.calculateDimension(stringBounder);
 	}
 
@@ -213,9 +209,9 @@ public class EntityImageDescription extends AbstractEntityImage {
 		if (hasSomeHorizontalLinkDoubleDecorated((ILeaf) getEntity(), links))
 			return Margins.NONE;
 
-		final Dimension2D dimStereo = stereo.calculateDimension(stringBounder);
-		final Dimension2D dimDesc = desc.calculateDimension(stringBounder);
-		final Dimension2D dimSmall = asSmall.calculateDimension(stringBounder);
+		final XDimension2D dimStereo = stereo.calculateDimension(stringBounder);
+		final XDimension2D dimDesc = desc.calculateDimension(stringBounder);
+		final XDimension2D dimSmall = asSmall.calculateDimension(stringBounder);
 		final double x = Math.max(dimStereo.getWidth(), dimDesc.getWidth());
 		double suppX = x - dimSmall.getWidth();
 		if (suppX < 1)
@@ -272,15 +268,15 @@ public class EntityImageDescription extends AbstractEntityImage {
 
 		if (hideText) {
 			final double space = 8;
-			final Dimension2D dimSmall = asSmall.calculateDimension(ug.getStringBounder());
-			final Dimension2D dimDesc = desc.calculateDimension(ug.getStringBounder());
+			final XDimension2D dimSmall = asSmall.calculateDimension(ug.getStringBounder());
+			final XDimension2D dimDesc = desc.calculateDimension(ug.getStringBounder());
 			final double posx1 = (dimSmall.getWidth() - dimDesc.getWidth()) / 2;
 
 			UGraphic ugDesc = ug.apply(new UTranslate(posx1, space + dimSmall.getHeight()));
 			ugDesc = UGraphicStencil.create(ugDesc, dimDesc);
 			desc.drawU(ugDesc);
 
-			final Dimension2D dimStereo = stereo.calculateDimension(ug.getStringBounder());
+			final XDimension2D dimStereo = stereo.calculateDimension(ug.getStringBounder());
 			final double posx2 = (dimSmall.getWidth() - dimStereo.getWidth()) / 2;
 			stereo.drawU(ug.apply(new UTranslate(posx2, -space - dimStereo.getHeight())));
 		}
@@ -310,9 +306,9 @@ public class EntityImageDescription extends AbstractEntityImage {
 	@Override
 	public double getOverscanX(StringBounder stringBounder) {
 		if (hideText) {
-			final Dimension2D dimSmall = asSmall.calculateDimension(stringBounder);
-			final Dimension2D dimDesc = desc.calculateDimension(stringBounder);
-			final Dimension2D dimStereo = stereo.calculateDimension(stringBounder);
+			final XDimension2D dimSmall = asSmall.calculateDimension(stringBounder);
+			final XDimension2D dimDesc = desc.calculateDimension(stringBounder);
+			final XDimension2D dimStereo = stereo.calculateDimension(stringBounder);
 			final double posx1 = (dimSmall.getWidth() - dimDesc.getWidth()) / 2;
 			final double posx2 = (dimSmall.getWidth() - dimStereo.getWidth()) / 2;
 			return MathUtils.max(-posx1, -posx2, 0);

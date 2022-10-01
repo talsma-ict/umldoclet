@@ -36,6 +36,7 @@ import net.sourceforge.plantuml.command.BlocLines;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.CommandMultilines2;
 import net.sourceforge.plantuml.command.MultilinesStrategy;
+import net.sourceforge.plantuml.command.Trim;
 import net.sourceforge.plantuml.command.regex.IRegex;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
@@ -48,7 +49,7 @@ import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
 public class CommandActivityLong3 extends CommandMultilines2<ActivityDiagram3> {
 
 	public CommandActivityLong3() {
-		super(getRegexConcat(), MultilinesStrategy.REMOVE_STARTING_QUOTE);
+		super(getRegexConcat(), MultilinesStrategy.REMOVE_STARTING_QUOTE, Trim.LEFT_ONLY);
 	}
 
 	@Override
@@ -72,8 +73,7 @@ public class CommandActivityLong3 extends CommandMultilines2<ActivityDiagram3> {
 	protected CommandExecutionResult executeNow(ActivityDiagram3 diagram, BlocLines lines) throws NoSuchColorException {
 		lines = lines.removeEmptyColumns();
 		final RegexResult line0 = getStartingPattern().matcher(lines.getFirst().getTrimmed().getString());
-		final Colors colors = color().getColor(diagram.getSkinParam().getThemeStyle(), line0,
-				diagram.getSkinParam().getIHtmlColorSet());
+		final Colors colors = color().getColor(line0, diagram.getSkinParam().getIHtmlColorSet());
 
 		final BoxStyle style = BoxStyle.fromChar(lines.getLastChar());
 		lines = lines.removeStartingAndEnding(line0.get("DATA", 0), 1);

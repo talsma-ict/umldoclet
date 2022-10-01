@@ -31,7 +31,7 @@
 package net.sourceforge.plantuml.sequencediagram.teoz;
 
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.UDrawable;
 import net.sourceforge.plantuml.real.Real;
@@ -87,7 +87,7 @@ public abstract class CommunicationTileNoteBottomTopAbstract extends AbstractTil
 
 	final protected Component getComponent(StringBounder stringBounder) {
 		final Component comp = skin.createComponentNote(noteOnMessage.getUsedStyles(), ComponentType.NOTE,
-				noteOnMessage.getSkinParamBackcolored(skinParam), noteOnMessage.getStrings());
+				noteOnMessage.getSkinParamBackcolored(skinParam), noteOnMessage.getStrings(), noteOnMessage.getColors());
 		return comp;
 	}
 
@@ -99,7 +99,7 @@ public abstract class CommunicationTileNoteBottomTopAbstract extends AbstractTil
 	public void drawU(UGraphic ug) {
 		final StringBounder stringBounder = ug.getStringBounder();
 		final Component comp = getComponent(stringBounder);
-		final Dimension2D dim = comp.getPreferredDimension(stringBounder);
+		final XDimension2D dim = comp.getPreferredDimension(stringBounder);
 		final Area area = Area.create(dim.getWidth(), dim.getHeight());
 		((UDrawable) tile).drawU(ug);
 
@@ -121,8 +121,7 @@ public abstract class CommunicationTileNoteBottomTopAbstract extends AbstractTil
 
 		final Style style = StyleSignatureBasic.of(SName.root, SName.element, SName.sequenceDiagram)
 				.getMergedStyle(skinParam.getCurrentStyleBuilder());
-		final HColor color = style.value(PName.LineColor).asColor(skinParam.getThemeStyle(),
-				skinParam.getIHtmlColorSet());
+		final HColor color = style.value(PName.LineColor).asColor(skinParam.getIHtmlColorSet());
 
 		final double dx = x2 - x1;
 		final double dy = y2 - y1;
@@ -133,7 +132,7 @@ public abstract class CommunicationTileNoteBottomTopAbstract extends AbstractTil
 
 	public double getPreferredHeight() {
 		final Component comp = getComponent(getStringBounder());
-		final Dimension2D dim = comp.getPreferredDimension(getStringBounder());
+		final XDimension2D dim = comp.getPreferredDimension(getStringBounder());
 		return tile.getPreferredHeight() + dim.getHeight() + spacey;
 	}
 

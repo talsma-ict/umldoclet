@@ -30,11 +30,11 @@
  */
 package net.sourceforge.plantuml.posimo;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.util.Collection;
 import java.util.Objects;
 
 import net.sourceforge.plantuml.Log;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 
 public class DotxMaker {
 
@@ -99,7 +99,7 @@ public class DotxMaker {
 		if (p.getLabel() == null) {
 			sb.append("]");
 		} else {
-			final Dimension2D size = p.getLabel().getSize();
+			final XDimension2D size = p.getLabel().getSize();
 			sb.append(", label=<<TABLE FIXEDSIZE=\"TRUE\" WIDTH=\"" + size.getWidth() + "\" HEIGHT=\""
 					+ size.getHeight() + "\"><TR><TD></TD></TR></TABLE>>]");
 		}

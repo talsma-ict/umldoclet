@@ -48,6 +48,7 @@ import net.sourceforge.plantuml.cucadiagram.ILeaf;
 import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.Link;
+import net.sourceforge.plantuml.cucadiagram.LinkArg;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
@@ -254,16 +255,17 @@ public class CommandLinkElement extends SingleLineCommand2<DescriptionDiagram> {
 			cl1 = getFoo1(diagram, code1, ident1, ident1pure);
 			cl2 = getFoo1(diagram, code2, ident2, ident2pure);
 		}
-		Link link = new Link(diagram.getSkinParam().getCurrentStyleBuilder(), cl1, cl2, linkType, Display.getWithNewlines(labels.getLabelLink()),
-				queue.length(), labels.getFirstLabel(), labels.getSecondLabel(), diagram.getLabeldistance(),
-				diagram.getLabelangle());
+		final LinkArg linkArg = LinkArg.build(Display.getWithNewlines(labels.getLabelLink()), queue.length(),
+				diagram.getSkinParam().classAttributeIconSize() > 0);
+		Link link = new Link(diagram.getSkinParam().getCurrentStyleBuilder(), cl1, cl2, linkType,
+				linkArg.withQualifier(labels.getFirstLabel(), labels.getSecondLabel())
+						.withDistanceAngle(diagram.getLabeldistance(), diagram.getLabelangle()));
 		link.setLinkArrow(labels.getLinkArrow());
 		if (dir == Direction.LEFT || dir == Direction.UP)
 			link = link.getInv();
 
-		link.setColors(color().getColor(diagram.getSkinParam().getThemeStyle(), arg,
-				diagram.getSkinParam().getIHtmlColorSet()));
-		link.applyStyle(diagram.getSkinParam().getThemeStyle(), arg.getLazzy("ARROW_STYLE", 0));
+		link.setColors(color().getColor(arg, diagram.getSkinParam().getIHtmlColorSet()));
+		link.applyStyle(arg.getLazzy("ARROW_STYLE", 0));
 		if (arg.get("STEREOTYPE", 0) != null) {
 			final Stereotype stereotype = Stereotype.build(arg.get("STEREOTYPE", 0));
 			link.setStereotype(stereotype);

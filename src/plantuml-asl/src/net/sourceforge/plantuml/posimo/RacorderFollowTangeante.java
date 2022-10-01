@@ -30,38 +30,31 @@
  */
 package net.sourceforge.plantuml.posimo;
 
-import java.awt.geom.CubicCurve2D;
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
+import net.sourceforge.plantuml.awt.geom.XCubicCurve2D;
+import net.sourceforge.plantuml.awt.geom.XLine2D;
+import net.sourceforge.plantuml.awt.geom.XPoint2D;
+import net.sourceforge.plantuml.awt.geom.XRectangle2D;
 
 public class RacorderFollowTangeante extends RacorderAbstract implements Racorder {
 
-	public DotPath getRacordIn(Rectangle2D rect, Line2D tangeante) {
-
-// Log.println("rect x=" + rect.getX() + " y=" + rect.getY() + " w=" + rect.getWidth() + " h="
-//				+ rect.getHeight());
-// Log.println("tangeante (" + tangeante.getX1() + "," + tangeante.getY1() + ") (" + tangeante.getX2()
-//				+ "," + tangeante.getY2() + ")");
+	@Override
+	public DotPath getRacordIn(XRectangle2D rect, XLine2D tangeante) {
 
 		final DotPath result = new DotPath();
 
-		// final Point2D inter = BezierUtils.intersect((Line2D.Double)
-		// tangeante, rect);
-		Point2D inter = new LineRectIntersection(tangeante, rect).getIntersection();
-// Log.println("inter=" + inter);
+		XPoint2D inter = new LineRectIntersection(tangeante, rect).getIntersection();
 
 		if (inter == null) {
-			final Point2D p1 = new Point2D.Double(rect.getMinX(), rect.getMinY());
-			final Point2D p2 = new Point2D.Double(rect.getMaxX(), rect.getMinY());
-			final Point2D p3 = new Point2D.Double(rect.getMaxX(), rect.getMaxY());
-			final Point2D p4 = new Point2D.Double(rect.getMinX(), rect.getMaxY());
+			final XPoint2D p1 = new XPoint2D(rect.getMinX(), rect.getMinY());
+			final XPoint2D p2 = new XPoint2D(rect.getMaxX(), rect.getMinY());
+			final XPoint2D p3 = new XPoint2D(rect.getMaxX(), rect.getMaxY());
+			final XPoint2D p4 = new XPoint2D(rect.getMinX(), rect.getMaxY());
 
 			inter = LineRectIntersection.getCloser(tangeante.getP1(), p1, p2, p3, p4);
 		}
 
-		final CubicCurve2D.Double curv = new CubicCurve2D.Double(tangeante.getX1(), tangeante.getY1(),
-				tangeante.getX1(), tangeante.getY1(), inter.getX(), inter.getY(), inter.getX(), inter.getY());
+		final XCubicCurve2D curv = new XCubicCurve2D(tangeante.getX1(), tangeante.getY1(), tangeante.getX1(),
+				tangeante.getY1(), inter.getX(), inter.getY(), inter.getX(), inter.getY());
 		return result.addAfter(curv);
 	}
 

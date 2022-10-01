@@ -33,7 +33,7 @@ package net.sourceforge.plantuml.skin;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.LineBreakStrategy;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.creole.CreoleMode;
 import net.sourceforge.plantuml.cucadiagram.BodyFactory;
 import net.sourceforge.plantuml.cucadiagram.Display;
@@ -77,13 +77,12 @@ public abstract class AbstractTextualComponent extends AbstractComponent {
 		super(style);
 		this.spriteContainer = spriteContainer;
 
-		final FontConfiguration fc = style.getFontConfiguration(spriteContainer.getThemeStyle(), getIHtmlColorSet());
+		final FontConfiguration fc = style.getFontConfiguration(getIHtmlColorSet());
 		this.font = style.getUFont();
-		this.fontColor = style.value(PName.FontColor).asColor(spriteContainer.getThemeStyle(), getIHtmlColorSet());
+		this.fontColor = style.value(PName.FontColor).asColor(getIHtmlColorSet());
 		final HorizontalAlignment horizontalAlignment = style.getHorizontalAlignment();
 		final UFont fontForStereotype = stereo.getUFont();
-		final HColor htmlColorForStereotype = stereo.value(PName.FontColor).asColor(spriteContainer.getThemeStyle(),
-				getIHtmlColorSet());
+		final HColor htmlColorForStereotype = stereo.value(PName.FontColor).asColor(getIHtmlColorSet());
 		display = display.withoutStereotypeIfNeeded(style);
 
 		this.marginX1 = marginX1;
@@ -111,7 +110,7 @@ public abstract class AbstractTextualComponent extends AbstractComponent {
 
 	protected double getPureTextWidth(StringBounder stringBounder) {
 		final TextBlock textBlock = getTextBlock();
-		final Dimension2D size = textBlock.calculateDimension(stringBounder);
+		final XDimension2D size = textBlock.calculateDimension(stringBounder);
 		return size.getWidth();
 	}
 
@@ -121,7 +120,7 @@ public abstract class AbstractTextualComponent extends AbstractComponent {
 
 	final protected double getTextHeight(StringBounder stringBounder) {
 		final TextBlock textBlock = getTextBlock();
-		final Dimension2D size = textBlock.calculateDimension(stringBounder);
+		final XDimension2D size = textBlock.calculateDimension(stringBounder);
 		return size.getHeight() + 2 * marginY;
 	}
 

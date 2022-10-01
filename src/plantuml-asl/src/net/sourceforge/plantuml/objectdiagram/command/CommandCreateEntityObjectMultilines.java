@@ -37,6 +37,7 @@ import net.sourceforge.plantuml.command.BlocLines;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.CommandMultilines2;
 import net.sourceforge.plantuml.command.MultilinesStrategy;
+import net.sourceforge.plantuml.command.Trim;
 import net.sourceforge.plantuml.command.regex.IRegex;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
@@ -56,7 +57,7 @@ import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
 public class CommandCreateEntityObjectMultilines extends CommandMultilines2<AbstractClassOrObjectDiagram> {
 
 	public CommandCreateEntityObjectMultilines() {
-		super(getRegexConcat(), MultilinesStrategy.REMOVE_STARTING_QUOTE);
+		super(getRegexConcat(), MultilinesStrategy.REMOVE_STARTING_QUOTE, Trim.BOTH);
 	}
 
 	private static IRegex getRegexConcat() {
@@ -118,7 +119,7 @@ public class CommandCreateEntityObjectMultilines extends CommandMultilines2<Abst
 		}
 		final String s = line0.get("COLOR", 0);
 		entity.setSpecificColorTOBEREMOVED(ColorType.BACK, s == null ? null
-				: diagram.getSkinParam().getIHtmlColorSet().getColor(diagram.getSkinParam().getThemeStyle(), s));
+				: diagram.getSkinParam().getIHtmlColorSet().getColor(s));
 		return entity;
 	}
 

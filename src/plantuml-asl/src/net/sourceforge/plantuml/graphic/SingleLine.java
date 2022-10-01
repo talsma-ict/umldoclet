@@ -33,10 +33,9 @@ package net.sourceforge.plantuml.graphic;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.SpriteContainer;
 import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.sprite.Sprite;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
@@ -55,7 +54,7 @@ class SingleLine extends AbstractTextBlock implements Line {
 
 		final Splitter lineSplitter = new Splitter(text);
 
-		for (HtmlCommand cmd : lineSplitter.getHtmlCommands(spriteContainer.getThemeStyle(), false)) {
+		for (HtmlCommand cmd : lineSplitter.getHtmlCommands(false)) {
 			if (cmd instanceof Text) {
 				final String s = ((Text) cmd).getText();
 				result.blocs.add(new TileText(s, fontConfiguration, null));
@@ -70,7 +69,7 @@ class SingleLine extends AbstractTextBlock implements Line {
 				final Sprite sprite = spriteContainer.getSprite(((SpriteCommand) cmd).getSprite());
 				if (sprite != null)
 					result.blocs
-							.add(sprite.asTextBlock(fontConfiguration.getColor(), 1, spriteContainer.getColorMapper()));
+							.add(sprite.asTextBlock(fontConfiguration.getColor(), 1));
 
 			} else if (cmd instanceof FontChange) {
 				fontConfiguration = ((FontChange) cmd).apply(fontConfiguration);
@@ -92,15 +91,15 @@ class SingleLine extends AbstractTextBlock implements Line {
 		this.horizontalAlignment = horizontalAlignment;
 	}
 
-	public Dimension2D calculateDimension(StringBounder stringBounder) {
+	public XDimension2D calculateDimension(StringBounder stringBounder) {
 		double width = 0;
 		double height = 0;
 		for (TextBlock b : blocs) {
-			final Dimension2D size2D = b.calculateDimension(stringBounder);
+			final XDimension2D size2D = b.calculateDimension(stringBounder);
 			width += size2D.getWidth();
 			height = Math.max(height, size2D.getHeight());
 		}
-		return new Dimension2DDouble(width, height);
+		return new XDimension2D(width, height);
 	}
 
 	// private double maxDeltaY(Graphics2D g2d) {
@@ -122,12 +121,12 @@ class SingleLine extends AbstractTextBlock implements Line {
 
 	private double maxDeltaY(UGraphic ug) {
 		double result = 0;
-		final Dimension2D dim = calculateDimension(ug.getStringBounder());
+		final XDimension2D dim = calculateDimension(ug.getStringBounder());
 		for (TextBlock b : blocs) {
 			if (b instanceof TileText == false)
 				continue;
 
-			final Dimension2D dimBloc = b.calculateDimension(ug.getStringBounder());
+			final XDimension2D dimBloc = b.calculateDimension(ug.getStringBounder());
 			final double deltaY = dim.getHeight() - dimBloc.getHeight() + ((TileText) b).getFontSize2D();
 			result = Math.max(result, deltaY);
 		}
@@ -137,7 +136,7 @@ class SingleLine extends AbstractTextBlock implements Line {
 	public void drawU(UGraphic ug) {
 		final double deltaY = maxDeltaY(ug);
 		final StringBounder stringBounder = ug.getStringBounder();
-		final Dimension2D dim = calculateDimension(stringBounder);
+		final XDimension2D dim = calculateDimension(stringBounder);
 		double x = 0;
 		for (TextBlock b : blocs) {
 			if (b instanceof TileText) {

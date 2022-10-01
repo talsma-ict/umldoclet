@@ -32,7 +32,7 @@ package net.sourceforge.plantuml.skin.rose;
 
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.LineBreakStrategy;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.StringBounder;
@@ -55,7 +55,7 @@ public class ComponentRoseQueue extends AbstractTextualComponent {
 			boolean head, ISkinSimple spriteContainer) {
 		super(style, stereo, LineBreakStrategy.NONE, 3, 3, 0, spriteContainer, stringsToDisplay, false);
 
-		final SymbolContext biColor = style.getSymbolContext(spriteContainer.getThemeStyle(), getIHtmlColorSet());
+		final SymbolContext biColor = style.getSymbolContext(getIHtmlColorSet());
 
 		this.head = head;
 		this.stickman = USymbols.QUEUE.asSmall(TextBlockUtils.empty(0, 0), getTextBlock(), TextBlockUtils.empty(0, 0),
@@ -65,7 +65,7 @@ public class ComponentRoseQueue extends AbstractTextualComponent {
 	@Override
 	protected void drawInternalU(UGraphic ug, Area area) {
 		final StringBounder stringBounder = ug.getStringBounder();
-		final Dimension2D dimStickman = stickman.calculateDimension(stringBounder);
+		final XDimension2D dimStickman = stickman.calculateDimension(stringBounder);
 		final double delta = (getPreferredWidth(stringBounder) - dimStickman.getWidth()) / 2;
 
 		ug = ug.apply(UTranslate.dx(delta));
@@ -74,13 +74,13 @@ public class ComponentRoseQueue extends AbstractTextualComponent {
 
 	@Override
 	public double getPreferredHeight(StringBounder stringBounder) {
-		final Dimension2D dimStickman = stickman.calculateDimension(stringBounder);
+		final XDimension2D dimStickman = stickman.calculateDimension(stringBounder);
 		return dimStickman.getHeight();
 	}
 
 	@Override
 	public double getPreferredWidth(StringBounder stringBounder) {
-		final Dimension2D dimStickman = stickman.calculateDimension(stringBounder);
+		final XDimension2D dimStickman = stickman.calculateDimension(stringBounder);
 		return dimStickman.getWidth();
 	}
 

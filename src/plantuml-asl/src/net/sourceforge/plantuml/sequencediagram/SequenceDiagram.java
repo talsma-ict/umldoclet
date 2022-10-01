@@ -47,11 +47,9 @@ import java.util.Stack;
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
-import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
@@ -91,8 +89,8 @@ public class SequenceDiagram extends UmlDiagram {
 
 	private final Rose skin2 = new Rose();
 
-	public SequenceDiagram(ThemeStyle style, UmlSource source, ISkinSimple skinParam) {
-		super(style, source, UmlDiagramType.SEQUENCE, skinParam);
+	public SequenceDiagram(UmlSource source, Map<String, String> skinParam) {
+		super(source, UmlDiagramType.SEQUENCE, skinParam);
 	}
 
 	@Deprecated
@@ -158,7 +156,7 @@ public class SequenceDiagram extends UmlDiagram {
 		return participantsget(code) != null;
 	}
 
-	public String addMessage(AbstractMessage m) {
+	public CommandExecutionResult addMessage(AbstractMessage m) {
 		if (m.isParallel())
 			m.setParallelBrother(getLastAbstractMessage());
 
@@ -167,12 +165,13 @@ public class SequenceDiagram extends UmlDiagram {
 		events.add(m);
 		if (pendingCreate != null) {
 			if (m.compatibleForCreate(pendingCreate.getParticipant()) == false)
-				return "After create command, you have to send a message to \"" + pendingCreate.getParticipant() + "\"";
+				return CommandExecutionResult.error("After create command, you have to send a message to \""
+						+ pendingCreate.getParticipant() + "\"");
 
 			m.addLifeEvent(pendingCreate);
 			pendingCreate = null;
 		}
-		return null;
+		return CommandExecutionResult.ok();
 	}
 
 	private AbstractMessage getLastAbstractMessage() {

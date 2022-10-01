@@ -30,8 +30,7 @@
  */
 package net.sourceforge.plantuml.skin.rose;
 
-import net.sourceforge.plantuml.api.ThemeStyle;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.skin.AbstractComponent;
 import net.sourceforge.plantuml.skin.Area;
@@ -50,16 +49,16 @@ public class ComponentRoseLine extends AbstractComponent {
 	private final boolean continueLine;
 	private final UStroke stroke;
 
-	public ComponentRoseLine(ThemeStyle themeStyle, Style style, boolean continueLine, HColorSet set) {
+	public ComponentRoseLine(Style style, boolean continueLine, HColorSet set) {
 		super(style);
-		this.color = style.value(PName.LineColor).asColor(themeStyle, set);
+		this.color = style.value(PName.LineColor).asColor(set);
 		this.stroke = style.getStroke();
 		this.continueLine = continueLine;
 	}
 
 	@Override
 	protected void drawInternalU(UGraphic ug, Area area) {
-		final Dimension2D dimensionToUse = area.getDimensionToUse();
+		final XDimension2D dimensionToUse = area.getDimensionToUse();
 		ug = ug.apply(color);
 		ug = ug.apply(stroke);
 //		if (continueLine)

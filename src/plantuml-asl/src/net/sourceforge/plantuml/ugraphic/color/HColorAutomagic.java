@@ -30,6 +30,11 @@
  */
 package net.sourceforge.plantuml.ugraphic.color;
 
-public class HColorAutomagic extends HColorAbstract implements HColor {
+class HColorAutomagic extends HColor {
+
+	@Override
+	public HColor getAppropriateColor(HColor back) {
+		return back.opposite();
+	}
 
 }

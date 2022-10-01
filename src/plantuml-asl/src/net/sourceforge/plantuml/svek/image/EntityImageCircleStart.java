@@ -30,9 +30,8 @@
  */
 package net.sourceforge.plantuml.svek.image;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.cucadiagram.ILeaf;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.style.PName;
@@ -58,16 +57,15 @@ public class EntityImageCircleStart extends AbstractEntityImage {
 		super(entity, skinParam);
 	}
 
-	public Dimension2D calculateDimension(StringBounder stringBounder) {
-		return new Dimension2DDouble(SIZE, SIZE);
+	public XDimension2D calculateDimension(StringBounder stringBounder) {
+		return new XDimension2D(SIZE, SIZE);
 	}
 
 	final public void drawU(UGraphic ug) {
 		final UEllipse circle = new UEllipse(SIZE, SIZE);
 
 		final Style style = getDefaultStyleDefinitionCircle().getMergedStyle(getSkinParam().getCurrentStyleBuilder());
-		final HColor color = style.value(PName.LineColor).asColor(getSkinParam().getThemeStyle(),
-				getSkinParam().getIHtmlColorSet());
+		final HColor color = style.value(PName.LineColor).asColor(getSkinParam().getIHtmlColorSet());
 		final double shadowing = style.value(PName.Shadowing).asDouble();
 
 		circle.setDeltaShadow(shadowing);

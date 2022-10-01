@@ -30,11 +30,9 @@
  */
 package net.sourceforge.plantuml.bpm;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
-import java.awt.geom.Rectangle2D;
-
-import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinParam;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
+import net.sourceforge.plantuml.awt.geom.XRectangle2D;
 import net.sourceforge.plantuml.graphic.InnerStrategy;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
@@ -69,8 +67,8 @@ public class ConnectorPuzzleEmpty extends AbstractConnectorPuzzle implements Pla
 		return connections().toString();
 	}
 
-	public Dimension2D getDimension(StringBounder stringBounder, ISkinParam skinParam) {
-		return new Dimension2DDouble(20, 20);
+	public XDimension2D getDimension(StringBounder stringBounder, ISkinParam skinParam) {
+		return new XDimension2D(20, 20);
 	}
 
 	public TextBlock toTextBlock(ISkinParam skinParam) {
@@ -107,8 +105,8 @@ public class ConnectorPuzzleEmpty extends AbstractConnectorPuzzle implements Pla
 		}
 	}
 
-	public Dimension2D calculateDimension(StringBounder stringBounder) {
-		return new Dimension2DDouble(20, 20);
+	public XDimension2D calculateDimension(StringBounder stringBounder) {
+		return new XDimension2D(20, 20);
 	}
 	
 	public MinMax getMinMax(StringBounder stringBounder) {
@@ -116,7 +114,7 @@ public class ConnectorPuzzleEmpty extends AbstractConnectorPuzzle implements Pla
 	}
 
 
-	public Rectangle2D getInnerPosition(String member, StringBounder stringBounder, InnerStrategy strategy) {
+	public XRectangle2D getInnerPosition(String member, StringBounder stringBounder, InnerStrategy strategy) {
 		return null;
 	}
 

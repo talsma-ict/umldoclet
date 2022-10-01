@@ -38,8 +38,8 @@ import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 public class DriverDotPathBraille implements UDriver<DotPath, BrailleGrid> {
 
 	public void draw(DotPath shape, double x, double y, ColorMapper mapper, UParam param, BrailleGrid grid) {
-		if (param.getColor() != null) {
+		if (param.getColor().isTransparent() == false)
 			grid.drawDotPath(x, y, shape);
-		}
+
 	}
 }

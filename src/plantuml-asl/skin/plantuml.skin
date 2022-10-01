@@ -72,13 +72,12 @@ stereotype {
 
 element {
   Shadowing 0.0
-  title {
-    FontStyle bold
-  }
-}
-
-element {
   LineThickness 0.5
+  composite {
+    title {
+      FontStyle bold
+    }  
+  }
 }
 
 group {
@@ -226,6 +225,9 @@ stateDiagram {
   group {
     LineThickness 0.5
   }
+  header {
+    FontSize 12
+  }
 }
 
 
@@ -238,7 +240,7 @@ delay {
 
 
 swimlane {
-  BackGroundColor none
+  BackGroundColor transparent
   LineColor black
   LineThickness 1.5
   FontSize 18
@@ -291,9 +293,9 @@ activityDiagram {
 	    FontSize 12
 	    RoundCorner 25
 	}
-	partition {
+	composite {
 	    LineColor black
-	    BackgroundColor none
+	    BackgroundColor transparent
 	    LineThickness 1.5
 	}
 	diamond {
@@ -475,7 +477,7 @@ root {
   HyperLinkColor blue
   FontColor white
   LineColor #e7e7e7
-  BackGroundColor #070707
+  BackGroundColor #303030
 }
 
 document {
@@ -535,6 +537,11 @@ sequenceDiagram {
 	  LineColor white
 	  BackGroundColor #1
 	}
+
+	participant,actor,boundary,control,entity,queue,database,collections {
+	  BackgroundColor: #2;
+	  HorizontalAlignment center
+	}
 	
 }
 
@@ -568,7 +575,7 @@ swimlane {
 }
 
 note {
-  BackGroundColor #3
+  BackGroundColor #714137
 }
 
 
@@ -630,6 +637,9 @@ timingDiagram {
 
 
 ganttDiagram {
+	task {
+	    BackGroundColor #555
+	}
 	timeline {
 	    LineColor #3f3f3f
 	}
@@ -651,9 +661,12 @@ yamlDiagram,jsonDiagram {
 	  BackGroundColor #ccff02
     }
   }
-
+}
 
 nwdiagDiagram {
+	network {
+	    BackGroundColor #555
+	}
 	group {
 		BackGroundColor #2
 	}

@@ -46,7 +46,7 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.Snake;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
 import net.sourceforge.plantuml.activitydiagram3.ftile.WeldingPoint;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileDiamond;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.Rainbow;
@@ -74,16 +74,11 @@ public class FtileFactoryDelegatorRepeat extends FtileFactoryDelegator {
 		final Style styleArrow = getDefaultStyleDefinitionArrow().getMergedStyle(skinParam().getCurrentStyleBuilder());
 		final Style styleDiamond = getDefaultStyleDefinitionDiamond()
 				.getMergedStyle(skinParam().getCurrentStyleBuilder());
-		final HColor borderColor = styleDiamond.value(PName.LineColor).asColor(skinParam().getThemeStyle(),
-				skinParam().getIHtmlColorSet());
-		final HColor diamondColor = styleDiamond.value(PName.BackGroundColor).asColor(skinParam().getThemeStyle(),
-				skinParam().getIHtmlColorSet());
-		final Rainbow arrowColor = Rainbow.build(styleArrow, skinParam().getIHtmlColorSet(),
-				skinParam().getThemeStyle());
-		final FontConfiguration fcDiamond = styleDiamond.getFontConfiguration(skinParam().getThemeStyle(),
-				skinParam().getIHtmlColorSet());
-		final FontConfiguration fcArrow = styleArrow.getFontConfiguration(skinParam().getThemeStyle(),
-				skinParam().getIHtmlColorSet());
+		final HColor borderColor = styleDiamond.value(PName.LineColor).asColor(skinParam().getIHtmlColorSet());
+		final HColor diamondColor = styleDiamond.value(PName.BackGroundColor).asColor(skinParam().getIHtmlColorSet());
+		final Rainbow arrowColor = Rainbow.build(styleArrow, skinParam().getIHtmlColorSet());
+		final FontConfiguration fcDiamond = styleDiamond.getFontConfiguration(skinParam().getIHtmlColorSet());
+		final FontConfiguration fcArrow = styleArrow.getFontConfiguration(skinParam().getIHtmlColorSet());
 
 		final LinkRendering endRepeatLinkRendering = repeat.getOutLinkRendering();
 		final Rainbow endRepeatLinkColor = endRepeatLinkRendering == null ? null : endRepeatLinkRendering.getRainbow();
@@ -108,7 +103,7 @@ public class FtileFactoryDelegatorRepeat extends FtileFactoryDelegator {
 				public void drawU(UGraphic ug) {
 					final UTranslate tr1 = genealogy.getTranslate(ftileBreak, ug.getStringBounder());
 					final UTranslate tr2 = genealogy.getTranslate(diamondBreak, ug.getStringBounder());
-					final Dimension2D dimDiamond = diamondBreak.calculateDimension(ug.getStringBounder());
+					final XDimension2D dimDiamond = diamondBreak.calculateDimension(ug.getStringBounder());
 
 					final Snake snake = Snake.create(skinParam(), arrowColor, Arrows.asToRight());
 					snake.addPoint(tr1.getDx(), tr1.getDy());

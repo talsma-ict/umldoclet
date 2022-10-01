@@ -32,9 +32,8 @@ package net.sourceforge.plantuml.salt;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import net.sourceforge.plantuml.ISkinSimple;
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.CommonCommands;
 import net.sourceforge.plantuml.command.PSystemCommandFactory;
@@ -62,8 +61,8 @@ public class PSystemSaltFactory2 extends PSystemCommandFactory {
 	}
 
 	@Override
-	public PSystemSalt createEmptyDiagram(ThemeStyle style, UmlSource source, ISkinSimple skinParam) {
-		final PSystemSalt result = new PSystemSalt(style, source);
+	public PSystemSalt createEmptyDiagram(UmlSource source, Map<String, String> skinParam) {
+		final PSystemSalt result = new PSystemSalt(source);
 		if (getDiagramType() == DiagramType.SALT) {
 			result.setIamSalt(true);
 		}

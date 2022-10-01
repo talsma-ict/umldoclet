@@ -30,14 +30,14 @@
  */
 package net.sourceforge.plantuml.mindmap;
 
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.SkinParamColors;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileBoxOld;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
+import net.sourceforge.plantuml.awt.geom.XPoint2D;
 import net.sourceforge.plantuml.creole.CreoleMode;
 import net.sourceforge.plantuml.cucadiagram.Rankdir;
 import net.sourceforge.plantuml.graphic.StringBounder;
@@ -94,7 +94,7 @@ public class FingerImpl implements Finger, UDrawable {
 	public void drawU(final UGraphic ug) {
 		final StringBounder stringBounder = ug.getStringBounder();
 		final TextBlock phalanx = getPhalanx();
-		final Dimension2D dimPhalanx = phalanx.calculateDimension(stringBounder);
+		final XDimension2D dimPhalanx = phalanx.calculateDimension(stringBounder);
 		if (drawPhalanx) {
 			final double posX;
 			final double posY;
@@ -107,30 +107,32 @@ public class FingerImpl implements Finger, UDrawable {
 			}
 			phalanx.drawU(ug.apply(new UTranslate(posX, posY)));
 		}
-		final Point2D p1;
+		final XPoint2D p1;
 		if (isTopToBottom())
-			p1 = new Point2D.Double(0, direction * dimPhalanx.getHeight());
+			p1 = new XPoint2D(0, direction * dimPhalanx.getHeight());
 		else
-			p1 = new Point2D.Double(direction * dimPhalanx.getWidth(), 0);
+			p1 = new XPoint2D(direction * dimPhalanx.getWidth(), 0);
 
 		for (int i = 0; i < nail.size(); i++) {
 			final FingerImpl child = nail.get(i);
 			final SymetricalTeePositioned stp = getTetris(stringBounder).getElements().get(i);
-			final Point2D p2;
+			final XPoint2D p2;
 			if (isTopToBottom())
-				p2 = new Point2D.Double(stp.getY(), direction * (dimPhalanx.getHeight() + getX12()));
+				p2 = new XPoint2D(stp.getY(), direction * (dimPhalanx.getHeight() + getX12()));
 			else
-				p2 = new Point2D.Double(direction * (dimPhalanx.getWidth() + getX12()), stp.getY());
+				p2 = new XPoint2D(direction * (dimPhalanx.getWidth() + getX12()), stp.getY());
 
 			child.drawU(ug.apply(new UTranslate(p2)));
-			drawLine(ug.apply(getLinkColor()).apply(getUStroke()), p1, p2);
+			final HColor linkColor = getLinkColor();
+			if (linkColor.isTransparent() == false)
+				drawLine(ug.apply(linkColor).apply(getUStroke()), p1, p2);
 		}
 
 	}
 
 	private HColor getLinkColor() {
 		final Style styleArrow = getStyleArrow();
-		return styleArrow.value(PName.LineColor).asColor(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet());
+		return styleArrow.value(PName.LineColor).asColor(skinParam.getIHtmlColorSet());
 	}
 
 	private UStroke getUStroke() {
@@ -138,7 +140,7 @@ public class FingerImpl implements Finger, UDrawable {
 		return styleArrow.getStroke();
 	}
 
-	private void drawLine(UGraphic ug, Point2D p1, Point2D p2) {
+	private void drawLine(UGraphic ug, XPoint2D p1, XPoint2D p2) {
 		final UPath path = new UPath();
 		path.moveTo(p1);
 		if (isTopToBottom()) {
@@ -227,7 +229,7 @@ public class FingerImpl implements Finger, UDrawable {
 
 		assert idea.getShape() == IdeaShape.NONE;
 		final TextBlock text = idea.getLabel().create0(
-				style.getFontConfiguration(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet()),
+				style.getFontConfiguration(skinParam.getIHtmlColorSet()),
 				style.getHorizontalAlignment(), skinParam, style.wrapWidth(), CreoleMode.FULL, null, null);
 		if (direction == 1)
 			return TextBlockUtils.withMargin(text, 3, 0, 1, 1);

@@ -33,9 +33,8 @@ package net.sourceforge.plantuml.graphic;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.SpriteContainerEmpty;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.creole.CreoleMode;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.svek.IEntityImage;
@@ -107,7 +106,7 @@ public class GraphicStrings extends AbstractTextBlock implements IEntityImage {
 	public static TextBlockBackcolored createBlackOnWhite(List<String> strings, BufferedImage image,
 			GraphicPosition position) {
 		return new GraphicStrings(strings, sansSerif12(HColors.BLACK), HColors.WHITE, image, position,
-				CreoleMode.FULL);
+				CreoleMode.FULL_BUT_UNDERSCORE);
 	}
 
 	public static FontConfiguration sansSerif12(HColor color) {
@@ -147,7 +146,7 @@ public class GraphicStrings extends AbstractTextBlock implements IEntityImage {
 
 	public void drawU(UGraphic ug) {
 		ug = ug.apply(new UTranslate(margin, margin));
-		final Dimension2D size = calculateDimensionInternal(ug.getStringBounder());
+		final XDimension2D size = calculateDimensionInternal(ug.getStringBounder());
 		getTextBlock().drawU(ug.apply(fontConfiguration.getColor()));
 
 		if (image != null) {
@@ -164,19 +163,19 @@ public class GraphicStrings extends AbstractTextBlock implements IEntityImage {
 		}
 	}
 
-	public Dimension2D calculateDimension(StringBounder stringBounder) {
-		return Dimension2DDouble.delta(calculateDimensionInternal(stringBounder), 2 * margin);
+	public XDimension2D calculateDimension(StringBounder stringBounder) {
+		return XDimension2D.delta(calculateDimensionInternal(stringBounder), 2 * margin);
 	}
 
-	private Dimension2D calculateDimensionInternal(StringBounder stringBounder) {
-		Dimension2D dim = getTextBlock().calculateDimension(stringBounder);
+	private XDimension2D calculateDimensionInternal(StringBounder stringBounder) {
+		XDimension2D dim = getTextBlock().calculateDimension(stringBounder);
 		if (image != null) {
 			if (position == GraphicPosition.BOTTOM) {
-				dim = new Dimension2DDouble(dim.getWidth(), dim.getHeight() + image.getHeight());
+				dim = new XDimension2D(dim.getWidth(), dim.getHeight() + image.getHeight());
 			} else if (position == GraphicPosition.BACKGROUND_CORNER_BOTTOM_RIGHT) {
-				dim = new Dimension2DDouble(dim.getWidth() + imagePadding + image.getWidth(), dim.getHeight());
+				dim = new XDimension2D(dim.getWidth() + imagePadding + image.getWidth(), dim.getHeight());
 			} else if (position == GraphicPosition.BACKGROUND_CORNER_TOP_RIGHT) {
-				dim = new Dimension2DDouble(dim.getWidth() + imagePadding + image.getWidth(), dim.getHeight());
+				dim = new XDimension2D(dim.getWidth() + imagePadding + image.getWidth(), dim.getHeight());
 			}
 		}
 		return dim;

@@ -38,8 +38,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
@@ -48,7 +47,6 @@ import net.sourceforge.plantuml.openiconic.data.DummyIcon;
 import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorAutomagic;
 
 public class OpenIcon {
 
@@ -104,10 +102,10 @@ public class OpenIcon {
 		}
 	}
 
-	private Dimension2D getDimension(double factor) {
+	private XDimension2D getDimension(double factor) {
 		final String width = getNumber(rawData.get(0), "width");
 		final String height = getNumber(rawData.get(0), "height");
-		return new Dimension2DDouble(Integer.parseInt(width) * factor, Integer.parseInt(height) * factor);
+		return new XDimension2D(Integer.parseInt(width) * factor, Integer.parseInt(height) * factor);
 	}
 
 	private String getNumber(String s, String arg) {
@@ -129,14 +127,11 @@ public class OpenIcon {
 	public TextBlock asTextBlock(final HColor color, final double factor) {
 		return new AbstractTextBlock() {
 			public void drawU(UGraphic ug) {
-				HColor textColor = color;
-				if (textColor instanceof HColorAutomagic && ug.getParam().getBackcolor() != null)
-					textColor = ug.getParam().getBackcolor().opposite();
-
+				HColor textColor = color.getAppropriateColor(ug.getParam().getBackcolor());
 				svgPath.drawMe(ug.apply(textColor), factor);
 			}
 
-			public Dimension2D calculateDimension(StringBounder stringBounder) {
+			public XDimension2D calculateDimension(StringBounder stringBounder) {
 				return getDimension(factor);
 			}
 		};

@@ -264,7 +264,7 @@ public class Display implements Iterable<CharSequence> {
 		return result;
 	}
 
-	public Display manageGuillemet() {
+	public Display manageGuillemet(boolean manageVisibilityModifier) {
 		final List<CharSequence> result = new ArrayList<>();
 		boolean first = true;
 		for (CharSequence line : displayData) {
@@ -272,7 +272,7 @@ public class Display implements Iterable<CharSequence> {
 				result.add(line);
 			} else {
 				String lineString = line.toString();
-				if (first && VisibilityModifier.isVisibilityCharacter(line))
+				if (manageVisibilityModifier && first && VisibilityModifier.isVisibilityCharacter(line))
 					lineString = lineString.substring(1).trim();
 
 				final String withGuillement = Guillemet.GUILLEMET.manageGuillemet(lineString);

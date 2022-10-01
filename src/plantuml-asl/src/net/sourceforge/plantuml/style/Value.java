@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.style;
 
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorSet;
@@ -39,7 +38,7 @@ public interface Value {
 
 	public String asString();
 
-	public HColor asColor(ThemeStyle themeStyle, HColorSet set);
+	public HColor asColor(HColorSet set);
 
 	public int asInt();
 

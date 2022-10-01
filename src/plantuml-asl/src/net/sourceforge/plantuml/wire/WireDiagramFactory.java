@@ -32,9 +32,8 @@ package net.sourceforge.plantuml.wire;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import net.sourceforge.plantuml.ISkinSimple;
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.CommonCommands;
 import net.sourceforge.plantuml.command.PSystemCommandFactory;
@@ -64,8 +63,8 @@ public class WireDiagramFactory extends PSystemCommandFactory {
 	}
 
 	@Override
-	public WireDiagram createEmptyDiagram(ThemeStyle style, UmlSource source, ISkinSimple skinParam) {
-		return new WireDiagram(style, source);
+	public WireDiagram createEmptyDiagram(UmlSource source, Map<String, String> skinParam) {
+		return new WireDiagram(source);
 	}
 
 }

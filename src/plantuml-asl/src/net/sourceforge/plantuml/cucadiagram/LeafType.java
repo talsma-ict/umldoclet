@@ -38,11 +38,8 @@ public enum LeafType {
 
 	EMPTY_PACKAGE,
 
-	ABSTRACT_CLASS, CLASS, INTERFACE, ANNOTATION,
-	PROTOCOL, STRUCT,
-	EXCEPTION,
-	LOLLIPOP_FULL, LOLLIPOP_HALF, NOTE, TIPS, OBJECT, MAP, JSON, ASSOCIATION,
-	ENUM, CIRCLE,
+	ABSTRACT_CLASS, CLASS, INTERFACE, ANNOTATION, PROTOCOL, STRUCT, EXCEPTION, LOLLIPOP_FULL, LOLLIPOP_HALF, NOTE, TIPS,
+	OBJECT, MAP, JSON, ASSOCIATION, ENUM, CIRCLE,
 
 	USECASE, USECASE_BUSINESS,
 
@@ -58,25 +55,28 @@ public enum LeafType {
 
 	DOMAIN, REQUIREMENT,
 
-	PORT, PORTIN, PORTOUT,
+	PORTIN, PORTOUT,
 
 	STILL_UNKNOWN;
 
 	public static LeafType getLeafType(String type) {
 		type = StringUtils.goUpperCase(type);
-		if (type.startsWith("ABSTRACT")) {
+		if (type.startsWith("ABSTRACT"))
 			return LeafType.ABSTRACT_CLASS;
-		}
-		if (type.startsWith("DIAMOND")) {
+
+		if (type.startsWith("DIAMOND"))
 			return LeafType.STATE_CHOICE;
-		}
+
+		if (type.startsWith("STATIC"))
+			return LeafType.CLASS;
+
 		return LeafType.valueOf(type);
 	}
 
 	public boolean isLikeClass() {
 		return this == LeafType.ANNOTATION || this == LeafType.ABSTRACT_CLASS || this == LeafType.CLASS
-				|| this == LeafType.INTERFACE || this == LeafType.ENUM   || this == LeafType.ENTITY
-				|| this == LeafType.PROTOCOL  || this == LeafType.STRUCT || this == LeafType.EXCEPTION;
+				|| this == LeafType.INTERFACE || this == LeafType.ENUM || this == LeafType.ENTITY
+				|| this == LeafType.PROTOCOL || this == LeafType.STRUCT || this == LeafType.EXCEPTION;
 	}
 
 	public String toHtml() {

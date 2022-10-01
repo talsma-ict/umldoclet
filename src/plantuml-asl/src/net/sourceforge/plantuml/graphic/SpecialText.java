@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.graphic;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.ugraphic.UEmpty;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UShapeIgnorableForCompression;
@@ -50,7 +50,7 @@ public class SpecialText implements UShapeIgnorableForCompression {
 	}
 
 	public void drawWhenCompressed(UGraphic ug, CompressionMode mode) {
-		final Dimension2D dim = title.calculateDimension(ug.getStringBounder());
+		final XDimension2D dim = title.calculateDimension(ug.getStringBounder());
 		ug.apply(UTranslate.dx(dim.getWidth())).draw(new UEmpty(1, 1));
 	}
 

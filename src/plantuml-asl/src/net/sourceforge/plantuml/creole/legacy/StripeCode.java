@@ -30,16 +30,13 @@
  */
 package net.sourceforge.plantuml.creole.legacy;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
-import net.sourceforge.plantuml.ISkinSimple;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.creole.Parser;
-import net.sourceforge.plantuml.creole.Stripe;
 import net.sourceforge.plantuml.creole.atom.Atom;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.StringBounder;
@@ -47,15 +44,14 @@ import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UText;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 
-public class StripeCode implements Stripe, Atom {
+public class StripeCode implements StripeRaw {
 
 	final private FontConfiguration fontConfiguration;
 	private final List<String> raw = new ArrayList<>();
 
 	private boolean terminated;
 
-	public StripeCode(FontConfiguration fontConfiguration, ISkinSimple skinParam, String line) {
-//		this.skinParam = skinParam;
+	public StripeCode(FontConfiguration fontConfiguration) {
 		this.fontConfiguration = fontConfiguration;
 	}
 
@@ -67,6 +63,7 @@ public class StripeCode implements Stripe, Atom {
 		return null;
 	}
 
+	@Override
 	public boolean addAndCheckTermination(String line) {
 		if (Parser.isCodeEnd(line)) {
 			this.terminated = true;
@@ -76,19 +73,20 @@ public class StripeCode implements Stripe, Atom {
 		return false;
 	}
 
+	@Override
 	public final boolean isTerminated() {
 		return terminated;
 	}
 
-	public Dimension2D calculateDimension(StringBounder stringBounder) {
+	public XDimension2D calculateDimension(StringBounder stringBounder) {
 		double width = 0;
 		double height = 0;
 		for (String s : raw) {
-			final Dimension2D dim = stringBounder.calculateDimension(fontConfiguration.getFont(), s);
+			final XDimension2D dim = stringBounder.calculateDimension(fontConfiguration.getFont(), s);
 			width = Math.max(width, dim.getWidth());
 			height += dim.getHeight();
 		}
-		return new Dimension2DDouble(width, height);
+		return new XDimension2D(width, height);
 	}
 
 	public double getStartingAltitude(StringBounder stringBounder) {
@@ -100,7 +98,7 @@ public class StripeCode implements Stripe, Atom {
 		for (String s : raw) {
 			final UText shape = new UText(s, fontConfiguration);
 			final StringBounder stringBounder = ug.getStringBounder();
-			final Dimension2D dim = stringBounder.calculateDimension(fontConfiguration.getFont(), s);
+			final XDimension2D dim = stringBounder.calculateDimension(fontConfiguration.getFont(), s);
 			y += dim.getHeight();
 			ug.apply(UTranslate.dy(y - shape.getDescent(stringBounder))).draw(shape);
 		}

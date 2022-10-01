@@ -33,10 +33,9 @@ package net.sourceforge.plantuml.svek.image;
 import java.util.EnumMap;
 import java.util.Map;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.cucadiagram.ILeaf;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
@@ -85,17 +84,15 @@ public class EntityImageLollipopInterface extends AbstractEntityImage {
 
 	}
 
-	public Dimension2D calculateDimension(StringBounder stringBounder) {
-		return new Dimension2DDouble(SIZE, SIZE);
+	public XDimension2D calculateDimension(StringBounder stringBounder) {
+		return new XDimension2D(SIZE, SIZE);
 	}
 
 	final public void drawU(UGraphic ug) {
 
 		final Style style = getSignature().getMergedStyle(getSkinParam().getCurrentStyleBuilder());
-		final HColor backgroundColor = style.value(PName.BackGroundColor).asColor(getSkinParam().getThemeStyle(),
-				getSkinParam().getIHtmlColorSet());
-		final HColor borderColor = style.value(PName.LineColor).asColor(getSkinParam().getThemeStyle(),
-				getSkinParam().getIHtmlColorSet());
+		final HColor backgroundColor = style.value(PName.BackGroundColor).asColor(getSkinParam().getIHtmlColorSet());
+		final HColor borderColor = style.value(PName.LineColor).asColor(getSkinParam().getIHtmlColorSet());
 		final double shadow = style.value(PName.Shadowing).asDouble();
 
 		final UEllipse circle;
@@ -118,7 +115,7 @@ public class EntityImageLollipopInterface extends AbstractEntityImage {
 		ug.apply(getUStroke()).draw(circle);
 		ug.closeGroup();
 
-		final Dimension2D dimDesc = desc.calculateDimension(ug.getStringBounder());
+		final XDimension2D dimDesc = desc.calculateDimension(ug.getStringBounder());
 		final double widthDesc = dimDesc.getWidth();
 
 		final double x = SIZE / 2 - widthDesc / 2;
@@ -130,7 +127,7 @@ public class EntityImageLollipopInterface extends AbstractEntityImage {
 	}
 
 	public ShapeType getShapeType() {
-		return ShapeType.CIRCLE_IN_RECT;
+		return ShapeType.CIRCLE;
 	}
 
 	private double angle;

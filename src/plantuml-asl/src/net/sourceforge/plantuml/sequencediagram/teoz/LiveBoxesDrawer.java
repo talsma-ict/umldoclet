@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.sequencediagram.teoz;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -39,6 +38,7 @@ import java.util.Map;
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.SkinParamBackcolored;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.SymbolContext;
 import net.sourceforge.plantuml.sequencediagram.graphic.Segment;
@@ -110,7 +110,7 @@ public class LiveBoxesDrawer {
 
 	public void drawDestroyIfNeeded(UGraphic ug, Step step) {
 		if (step.isDestroy()) {
-			final Dimension2D dimCross = cross.getPreferredDimension(ug.getStringBounder());
+			final XDimension2D dimCross = cross.getPreferredDimension(ug.getStringBounder());
 			cross.drawU(ug.apply(new UTranslate(-dimCross.getWidth() / 2, step.getValue() - dimCross.getHeight() / 2)),
 					null, context);
 		}

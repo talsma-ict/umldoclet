@@ -36,7 +36,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.script.ScriptException;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.ugraphic.MutableImage;
 import net.sourceforge.plantuml.ugraphic.UImageSvg;
 
@@ -50,7 +50,7 @@ public class AsciiMath implements ScientificEquation {
 		this.builder = new LatexBuilder(tex);
 	}
 
-	public Dimension2D getDimension() {
+	public XDimension2D getDimension() {
 		return builder.getDimension();
 	}
 

@@ -35,12 +35,12 @@ import java.util.Collections;
 import java.util.Set;
 
 import net.sourceforge.plantuml.AlignmentParam;
-import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.LineParam;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.FloatingNote;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.FtileGroup;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
@@ -50,7 +50,6 @@ import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.USymbol;
 import net.sourceforge.plantuml.style.PName;
-import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -73,14 +72,14 @@ public class GtileGroup extends AbstractGtileRoot {
 	private final USymbol type;
 	private final double roundCorner;
 
-	final public StyleSignatureBasic getDefaultStyleDefinitionPartition() {
-		return StyleSignatureBasic.of(SName.root, SName.element, SName.activityDiagram, SName.partition);
+	final public StyleSignatureBasic getStyleSignature() {
+		return FtileGroup.getStyleSignature(type);
 	}
 
 	private double suppWidth(StringBounder stringBounder) {
-		final Dimension2D orig = inner.calculateDimension(stringBounder);
-		final Dimension2D dimTitle = name.calculateDimension(stringBounder);
-		final Dimension2D dimHeaderNote = headerNote.calculateDimension(stringBounder);
+		final XDimension2D orig = inner.calculateDimension(stringBounder);
+		final XDimension2D dimTitle = name.calculateDimension(stringBounder);
+		final XDimension2D dimHeaderNote = headerNote.calculateDimension(stringBounder);
 		final double suppWidth = MathUtils.max(orig.getWidth(), dimTitle.getWidth() + 20, dimHeaderNote.getWidth() + 20)
 				- orig.getWidth();
 		return suppWidth;
@@ -95,9 +94,8 @@ public class GtileGroup extends AbstractGtileRoot {
 		this.inner = inner;
 		this.borderColor = borderColor == null ? HColors.BLACK : borderColor;
 
-		final Style style = getDefaultStyleDefinitionPartition().getMergedStyle(skinParam.getCurrentStyleBuilder());
-		final FontConfiguration fc = style.getFontConfiguration(skinParam.getThemeStyle(),
-				skinParam.getIHtmlColorSet());
+		final Style style = getStyleSignature().getMergedStyle(skinParam.getCurrentStyleBuilder());
+		final FontConfiguration fc = style.getFontConfiguration(skinParam.getIHtmlColorSet());
 		this.shadowing = style.value(PName.Shadowing).asDouble();
 
 		if (title == null)
@@ -130,13 +128,13 @@ public class GtileGroup extends AbstractGtileRoot {
 	}
 
 	@Override
-	public Dimension2D calculateDimension(StringBounder stringBounder) {
-		final Dimension2D orig = inner.calculateDimension(stringBounder);
-		return Dimension2DDouble.delta(orig, 18, suppHeight(stringBounder));
+	public XDimension2D calculateDimension(StringBounder stringBounder) {
+		final XDimension2D orig = inner.calculateDimension(stringBounder);
+		return XDimension2D.delta(orig, 18, suppHeight(stringBounder));
 	}
 
 	private double suppHeight(StringBounder stringBounder) {
-		final Dimension2D dimTitle = name.calculateDimension(stringBounder);
+		final XDimension2D dimTitle = name.calculateDimension(stringBounder);
 		return dimTitle.getHeight() + 30;
 	}
 
@@ -152,7 +150,7 @@ public class GtileGroup extends AbstractGtileRoot {
 	@Override
 	protected void drawUInternal(UGraphic ug) {
 
-		final Dimension2D dimTotal = calculateDimension(stringBounder);
+		final XDimension2D dimTotal = calculateDimension(stringBounder);
 
 		final SymbolContext symbolContext = new SymbolContext(backColor, borderColor).withShadow(shadowing)
 				.withStroke(stroke).withCorner(roundCorner, 0);

@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml;
 
-import java.awt.geom.Point2D;
+import net.sourceforge.plantuml.awt.geom.XPoint2D;
 
 public enum Direction {
 	RIGHT, LEFT, DOWN, UP;
@@ -84,7 +84,7 @@ public enum Direction {
 		throw new IllegalStateException();
 	}
 
-	public static Direction leftOrRight(Point2D p1, Point2D p2) {
+	public static Direction leftOrRight(XPoint2D p1, XPoint2D p2) {
 		if (p1.getX() < p2.getX()) {
 			return Direction.LEFT;
 		}
@@ -94,7 +94,7 @@ public enum Direction {
 		throw new IllegalArgumentException();
 	}
 
-	public static Direction fromVector(Point2D p1, Point2D p2) {
+	public static Direction fromVector(XPoint2D p1, XPoint2D p2) {
 		final double x1 = p1.getX();
 		final double y1 = p1.getY();
 		final double x2 = p2.getX();

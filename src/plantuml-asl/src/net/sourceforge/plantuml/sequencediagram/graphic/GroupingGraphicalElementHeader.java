@@ -30,12 +30,11 @@
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.sequencediagram.InGroupableList;
 import net.sourceforge.plantuml.skin.Area;
@@ -67,7 +66,7 @@ class GroupingGraphicalElementHeader extends GroupingGraphicalElement {
 	final public double getPreferredWidth(StringBounder stringBounder) {
 		double width = comp.getPreferredWidth(stringBounder);
 		for (Component note : notes) {
-			final Dimension2D dimNote = note.getPreferredDimension(stringBounder);
+			final XDimension2D dimNote = note.getPreferredDimension(stringBounder);
 			width += dimNote.getWidth();
 		}
 		return width + 5;
@@ -94,10 +93,10 @@ class GroupingGraphicalElementHeader extends GroupingGraphicalElement {
 			// assert false;
 			return;
 		}
-		final Dimension2D dim = new Dimension2DDouble(x2 - x1, height);
+		final XDimension2D dim = new XDimension2D(x2 - x1, height);
 		comp.drawU(ug, new Area(dim), context);
 		for (Component note : notes) {
-			final Dimension2D dimNote = note.getPreferredDimension(stringBounder);
+			final XDimension2D dimNote = note.getPreferredDimension(stringBounder);
 			note.drawU(ug.apply(UTranslate.dx(x2 - x1)), new Area(dimNote), context);
 		}
 	}

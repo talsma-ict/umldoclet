@@ -32,7 +32,7 @@ package net.sourceforge.plantuml.activitydiagram3.ftile.vcompact;
 
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.LineBreakStrategy;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.creole.CreoleMode;
 import net.sourceforge.plantuml.creole.Parser;
 import net.sourceforge.plantuml.creole.Sheet;
@@ -64,10 +64,8 @@ public class FloatingNote extends AbstractTextBlock implements Stencil, TextBloc
 				.getMergedStyle(skinParam.getCurrentStyleBuilder());
 		final LineBreakStrategy wrapWidth = style.wrapWidth();
 		final FontConfiguration fc = FontConfiguration.create(skinParam, style);
-		final HColor noteBackgroundColor = style.value(PName.BackGroundColor).asColor(skinParam.getThemeStyle(),
-				skinParam.getIHtmlColorSet());
-		final HColor borderColor = style.value(PName.LineColor).asColor(skinParam.getThemeStyle(),
-				skinParam.getIHtmlColorSet());
+		final HColor noteBackgroundColor = style.value(PName.BackGroundColor).asColor(skinParam.getIHtmlColorSet());
+		final HColor borderColor = style.value(PName.LineColor).asColor(skinParam.getIHtmlColorSet());
 		final UStroke stroke = style.getStroke();
 		final double shadowing = style.value(PName.Shadowing).asDouble();
 
@@ -84,7 +82,7 @@ public class FloatingNote extends AbstractTextBlock implements Stencil, TextBloc
 		opale.drawU(ug);
 	}
 
-	public Dimension2D calculateDimension(StringBounder stringBounder) {
+	public XDimension2D calculateDimension(StringBounder stringBounder) {
 		return opale.calculateDimension(stringBounder);
 	}
 

@@ -39,12 +39,12 @@ import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 public class DriverDotPathEps implements UDriver<DotPath, EpsGraphics> {
 
 	public void draw(DotPath shape, double x, double y, ColorMapper mapper, UParam param, EpsGraphics eps) {
-		//DriverLineG2d.manageStroke(param, g2d);
+		// DriverLineG2d.manageStroke(param, g2d);
 
-		if (param.getColor() != null) {
-			eps.setStrokeColor(mapper.toColor(param.getColor()));
-			eps.setStrokeWidth(param.getStroke().getThickness(), param.getStroke().getDashVisible(), param.getStroke()
-					.getDashSpace());
+		if (param.getColor().isTransparent() == false) {
+			eps.setStrokeColor(param.getColor().toColor(mapper));
+			eps.setStrokeWidth(param.getStroke().getThickness(), param.getStroke().getDashVisible(),
+					param.getStroke().getDashSpace());
 			shape.draw(eps, x, y);
 		}
 	}

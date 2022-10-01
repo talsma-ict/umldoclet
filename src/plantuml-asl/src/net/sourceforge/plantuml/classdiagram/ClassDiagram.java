@@ -32,12 +32,11 @@ package net.sourceforge.plantuml.classdiagram;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 import java.util.Objects;
 
 import net.sourceforge.plantuml.FileFormatOption;
-import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.UmlDiagramType;
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.creole.CreoleMode;
@@ -57,8 +56,8 @@ import net.sourceforge.plantuml.svek.image.EntityImageClass;
 
 public class ClassDiagram extends AbstractClassOrObjectDiagram {
 
-	public ClassDiagram(ThemeStyle style, UmlSource source, ISkinSimple skinParam) {
-		super(style, source, UmlDiagramType.CLASS, skinParam);
+	public ClassDiagram(UmlSource source, Map<String, String> skinParam) {
+		super(source, UmlDiagramType.CLASS, skinParam);
 	}
 
 	private Code getShortName1972(Code code) {
@@ -207,7 +206,7 @@ public class ClassDiagram extends AbstractClassOrObjectDiagram {
 	}
 
 	private TextBlock getEntityImageClass(ILeaf entity) {
-		return new EntityImageClass(null, entity, getSkinParam(), this);
+		return new EntityImageClass(entity, getSkinParam(), this);
 	}
 
 	@Override

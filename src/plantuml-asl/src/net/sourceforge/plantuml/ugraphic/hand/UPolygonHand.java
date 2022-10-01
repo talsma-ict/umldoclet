@@ -30,10 +30,10 @@
  */
 package net.sourceforge.plantuml.ugraphic.hand;
 
-import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.Random;
 
+import net.sourceforge.plantuml.awt.geom.XPoint2D;
 import net.sourceforge.plantuml.ugraphic.Shadowable;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 
@@ -42,7 +42,7 @@ public class UPolygonHand {
 	private final UPolygon poly;
 
 	public UPolygonHand(UPolygon source, Random rnd) {
-		final List<Point2D.Double> pt = source.getPoints();
+		final List<XPoint2D> pt = source.getPoints();
 		if (pt.size() == 0) {
 			poly = new UPolygon();
 			return;

@@ -40,7 +40,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
@@ -69,8 +69,7 @@ public class TimingRuler {
 
 	static UGraphic applyForVLines(UGraphic ug, Style style, ISkinParam skinParam) {
 		final UStroke stroke = new UStroke(3, 5, 0.5);
-		final HColor color = style.value(PName.LineColor).asColor(skinParam.getThemeStyle(),
-				skinParam.getIHtmlColorSet());
+		final HColor color = style.value(PName.LineColor).asColor(skinParam.getIHtmlColorSet());
 
 		return ug.apply(stroke).apply(color);
 	}
@@ -199,8 +198,7 @@ public class TimingRuler {
 		final Style style = StyleSignatureBasic.of(SName.root, SName.timingDiagram, SName.timeline)
 				.getMergedStyle(skinParam.getCurrentStyleBuilder());
 
-		final HColor color = style.value(PName.LineColor).asColor(skinParam.getThemeStyle(),
-				skinParam.getIHtmlColorSet());
+		final HColor color = style.value(PName.LineColor).asColor(skinParam.getIHtmlColorSet());
 		final UStroke stroke = style.getStroke();
 
 		ug = ug.apply(stroke).apply(color);
@@ -228,7 +226,7 @@ public class TimingRuler {
 			if (label.length() == 0)
 				continue;
 			final TextBlock text = getTimeTextBlock(label);
-			final Dimension2D dim = text.calculateDimension(ug.getStringBounder());
+			final XDimension2D dim = text.calculateDimension(ug.getStringBounder());
 			text.drawU(ug.apply(new UTranslate(getPosInPixel(tick) - dim.getWidth() / 2, tickHeight + 1)));
 
 		}
@@ -247,7 +245,7 @@ public class TimingRuler {
 
 		for (long round : roundValues()) {
 			final TextBlock text = getTimeTextBlock(round);
-			final Dimension2D dim = text.calculateDimension(ug.getStringBounder());
+			final XDimension2D dim = text.calculateDimension(ug.getStringBounder());
 			text.drawU(ug.apply(new UTranslate(getPosInPixelInternal(round) - dim.getWidth() / 2, tickHeight + 1)));
 		}
 	}

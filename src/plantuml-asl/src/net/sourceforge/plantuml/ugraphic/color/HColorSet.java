@@ -40,7 +40,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.command.regex.Matcher2;
 import net.sourceforge.plantuml.command.regex.MyPattern;
 
@@ -296,15 +295,11 @@ public class HColorSet {
 	}
 
 	public HColor getColorOrWhite(String s) {
-		return getColorOrWhite(null, s);
-	}
-
-	public HColor getColorOrWhite(ThemeStyle UNUSED, String s) {
 		if (isColorValid(Objects.requireNonNull(s)) == false)
 			return HColors.WHITE;
 
 		try {
-			return getColor(null, s);
+			return getColor(s);
 		} catch (NoSuchColorException e) {
 			assert false;
 			return HColors.WHITE;
@@ -312,10 +307,10 @@ public class HColorSet {
 	}
 
 	public HColor getColorLEGACY(String s) throws NoSuchColorException {
-		return getColor(null, s);
+		return getColor(s);
 	}
 
-	public HColor getColor(ThemeStyle UNUSED, String s) throws NoSuchColorException {
+	public HColor getColor(String s) throws NoSuchColorException {
 		if (isColorValid(Objects.requireNonNull(s)) == false)
 			throw new NoSuchColorException();
 
@@ -357,7 +352,7 @@ public class HColorSet {
 		s = removeFirstDieseAndgoLowerCase(s);
 		final Color color;
 		if (s.equalsIgnoreCase("transparent") || s.equalsIgnoreCase("background")) {
-			return HColors.generalBackground();
+			return HColors.none();
 		} else if (s.equalsIgnoreCase("automatic")) {
 			return new HColorAutomagic();
 		} else if (s.matches("[0-9A-Fa-f]")) {

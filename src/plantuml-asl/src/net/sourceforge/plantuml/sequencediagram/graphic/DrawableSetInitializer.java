@@ -34,15 +34,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import net.sourceforge.plantuml.AlignmentParam;
-import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.PaddingParam;
 import net.sourceforge.plantuml.SkinParamBackcolored;
 import net.sourceforge.plantuml.SkinParamBackcoloredReference;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.sequencediagram.AbstractMessage;
 import net.sourceforge.plantuml.sequencediagram.Delay;
@@ -60,7 +58,6 @@ import net.sourceforge.plantuml.sequencediagram.Message;
 import net.sourceforge.plantuml.sequencediagram.MessageExo;
 import net.sourceforge.plantuml.sequencediagram.Newpage;
 import net.sourceforge.plantuml.sequencediagram.Note;
-import net.sourceforge.plantuml.sequencediagram.NotePosition;
 import net.sourceforge.plantuml.sequencediagram.Notes;
 import net.sourceforge.plantuml.sequencediagram.Participant;
 import net.sourceforge.plantuml.sequencediagram.ParticipantEnglober;
@@ -199,7 +196,7 @@ class DrawableSetInitializer {
 
 		prepareMissingSpace(stringBounder);
 
-		drawableSet.setDimension(new Dimension2DDouble(freeX,
+		drawableSet.setDimension(new XDimension2D(freeX,
 				getTotalHeight(freeY2.getFreeY(getFullParticipantRange()), stringBounder)));
 		return drawableSet;
 	}
@@ -404,7 +401,8 @@ class DrawableSetInitializer {
 			for (Note noteOnMessage : m.getNoteOnMessages()) {
 				final ISkinParam sk = noteOnMessage.getSkinParamBackcolored(drawableSet.getSkinParam());
 				final Component note = drawableSet.getSkin().createComponentNote(noteOnMessage.getUsedStyles(),
-						noteOnMessage.getNoteStyle().getNoteComponentType(), sk, noteOnMessage.getStrings());
+						noteOnMessage.getNoteStyle().getNoteComponentType(), sk, noteOnMessage.getStrings(),
+						noteOnMessage.getColors());
 				notes.add(note);
 			}
 			if (m.isParallel())
@@ -462,7 +460,7 @@ class DrawableSetInitializer {
 			}
 
 		final Component component = drawableSet.getSkin().createComponentNote(n.getUsedStyles(), type, skinParam,
-				n.getStrings(), n.getPosition());
+				n.getStrings(), n.getColors(), n.getPosition());
 		final NoteBox noteBox = new NoteBox(freeY2.getFreeY(range), component, p1, p2, n.getPosition(), n.getUrl());
 		return noteBox;
 	}

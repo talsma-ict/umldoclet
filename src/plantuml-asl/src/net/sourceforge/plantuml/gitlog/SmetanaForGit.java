@@ -37,7 +37,6 @@ import static gen.lib.cgraph.node__c.agnode;
 import static gen.lib.gvc.gvc__c.gvContext;
 import static gen.lib.gvc.gvlayout__c.gvLayoutJobs;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -51,8 +50,8 @@ import h.ST_Agnode_s;
 import h.ST_Agnodeinfo_t;
 import h.ST_Agraph_s;
 import h.ST_GVC_s;
-import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinParam;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.jsondiagram.Mirror;
 import net.sourceforge.plantuml.style.PName;
@@ -81,7 +80,7 @@ public class SmetanaForGit {
 	public SmetanaForGit(UGraphic ug, ISkinParam skinParam) {
 		this.stringBounder = ug.getStringBounder();
 		this.skinParam = skinParam;
-		this.ug = getStyle().applyStrokeAndLineColor(ug, skinParam.getIHtmlColorSet(), skinParam.getThemeStyle());
+		this.ug = getStyle().applyStrokeAndLineColor(ug, skinParam.getIHtmlColorSet());
 	}
 
 	private Style getStyle() {
@@ -90,7 +89,7 @@ public class SmetanaForGit {
 	}
 
 	private HColor arrowColor() {
-		return getStyle().value(PName.LineColor).asColor(skinParam.getThemeStyle(), skinParam.getIHtmlColorSet());
+		return getStyle().value(PName.LineColor).asColor(skinParam.getIHtmlColorSet());
 	}
 
 	public void drawMe(Collection<GNode> gnodes) {
@@ -110,11 +109,11 @@ public class SmetanaForGit {
 		}
 	}
 
-	private Dimension2D getSize(ST_Agnode_s node) {
+	private XDimension2D getSize(ST_Agnode_s node) {
 		final ST_Agnodeinfo_t data = (ST_Agnodeinfo_t) Macro.AGDATA(node);
 		final double width = data.width * 72;
 		final double height = data.height * 72;
-		return new Dimension2DDouble(width, height);
+		return new XDimension2D(width, height);
 	}
 
 	private UTranslate getPosition(ST_Agnode_s node) {
@@ -135,7 +134,7 @@ public class SmetanaForGit {
 			g = agopen(new CString("g"), Z.z().Agdirected, null);
 			agsafeset(g, new CString("ranksep"), new CString("0.35"), new CString(""));
 			for (GNode gnode : gnodes) {
-				final Dimension2D dim = new MagicBox(skinParam, gnode).getBigDim(stringBounder);
+				final XDimension2D dim = new MagicBox(skinParam, gnode).getBigDim(stringBounder);
 				nodes.put(gnode, createNode(dim));
 			}
 
@@ -180,7 +179,7 @@ public class SmetanaForGit {
 		return edge;
 	}
 
-	private ST_Agnode_s createNode(Dimension2D dim) {
+	private ST_Agnode_s createNode(XDimension2D dim) {
 		final String width = "" + (dim.getWidth() / 72);
 		final String height = "" + (dim.getHeight() / 72);
 

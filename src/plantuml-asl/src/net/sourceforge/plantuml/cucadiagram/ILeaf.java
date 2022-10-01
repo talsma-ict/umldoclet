@@ -36,6 +36,7 @@ import net.sourceforge.plantuml.cucadiagram.dot.Neighborhood;
 import net.sourceforge.plantuml.graphic.USymbol;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
 import net.sourceforge.plantuml.svek.IEntityImage;
+import net.sourceforge.plantuml.svek.Margins;
 
 public interface ILeaf extends IEntity {
 
@@ -43,13 +44,7 @@ public interface ILeaf extends IEntity {
 
 	public void setContainer(IGroup container);
 
-	public boolean isTop();
-
-	public void setTop(boolean top);
-
-	public boolean hasNearDecoration();
-
-	public void setNearDecoration(boolean nearDecoration);
+	public Margins getMargins();
 
 	public int getXposition();
 
@@ -76,5 +71,9 @@ public interface ILeaf extends IEntity {
 	public void setVisibilityModifier(VisibilityModifier visibility);
 
 	public VisibilityModifier getVisibilityModifier();
+
+	public void setStatic(boolean isStatic);
+
+	public boolean isStatic();
 
 }

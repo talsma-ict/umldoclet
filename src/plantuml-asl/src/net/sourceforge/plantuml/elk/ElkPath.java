@@ -30,12 +30,12 @@
  */
 package net.sourceforge.plantuml.elk;
 
-import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.List;
 
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.LineParam;
+import net.sourceforge.plantuml.awt.geom.XPoint2D;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
@@ -119,8 +119,7 @@ public class ElkPath implements UDrawable {
 
 		final ISkinParam skinParam = diagram.getSkinParam();
 
-		HColor color = getStyle().value(PName.LineColor).asColor(skinParam.getThemeStyle(),
-				skinParam.getIHtmlColorSet());
+		HColor color = getStyle().value(PName.LineColor).asColor(skinParam.getIHtmlColorSet());
 
 		if (this.link.getColors() != null) {
 			final HColor newColor = this.link.getColors().getColor(ColorType.ARROW, ColorType.LINE);
@@ -168,13 +167,13 @@ public class ElkPath implements UDrawable {
 	private UDrawable getDecors(LinkDecor decors, double angle, HColor backColor) {
 		// For legacy reason, extends are treated differently
 		if (decors == LinkDecor.EXTENDS)
-			return new ExtremityFactoryExtends(backColor).createUDrawable(new Point2D.Double(), angle, null);
+			return new ExtremityFactoryExtends(backColor).createUDrawable(new XPoint2D(), angle, null);
 
 		final ExtremityFactory extremityFactory = decors.getExtremityFactory(backColor);
 		if (extremityFactory == null)
 			return null;
 
-		return extremityFactory.createUDrawable(new Point2D.Double(), angle, null);
+		return extremityFactory.createUDrawable(new XPoint2D(), angle, null);
 	}
 
 	private void drawLabels(UGraphic ug) {

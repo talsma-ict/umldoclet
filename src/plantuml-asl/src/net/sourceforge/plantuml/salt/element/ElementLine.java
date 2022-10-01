@@ -30,9 +30,7 @@
  */
 package net.sourceforge.plantuml.salt.element;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
-
-import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
@@ -47,11 +45,11 @@ public class ElementLine extends AbstractElement {
 		this.separator = separator;
 	}
 
-	public Dimension2D getPreferredDimension(StringBounder stringBounder, double x, double y) {
-		return new Dimension2DDouble(10, 6);
+	public XDimension2D getPreferredDimension(StringBounder stringBounder, double x, double y) {
+		return new XDimension2D(10, 6);
 	}
 
-	public void drawU(UGraphic ug, int zIndex, Dimension2D dimToUse) {
+	public void drawU(UGraphic ug, int zIndex, XDimension2D dimToUse) {
 		if (zIndex != 0) {
 			return;
 		}

@@ -30,9 +30,8 @@
  */
 package net.sourceforge.plantuml.ugraphic.svg;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
-
 import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.FontStyle;
 import net.sourceforge.plantuml.graphic.StringBounder;
@@ -47,7 +46,6 @@ import net.sourceforge.plantuml.ugraphic.UText;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorGradient;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 public class DriverTextSvg implements UDriver<UText, SvgGraphics> {
 
@@ -66,7 +64,7 @@ public class DriverTextSvg implements UDriver<UText, SvgGraphics> {
 		}
 
 		final FontConfiguration fontConfiguration = shape.getFontConfiguration();
-		if (HColors.isTransparent(fontConfiguration.getColor())) {
+		if (fontConfiguration.getColor().isTransparent()) {
 			return;
 		}
 		final UFont font = fontConfiguration.getFont();
@@ -92,8 +90,8 @@ public class DriverTextSvg implements UDriver<UText, SvgGraphics> {
 
 		String text = shape.getText();
 		if (text.matches("^\\s*$"))
-			text = text.replace(' ', (char)160);
-		
+			text = text.replace(' ', (char) 160);
+
 		if (text.startsWith(" ")) {
 			final double space = stringBounder.calculateDimension(font, " ").getWidth();
 			while (text.startsWith(" ")) {
@@ -102,7 +100,7 @@ public class DriverTextSvg implements UDriver<UText, SvgGraphics> {
 			}
 		}
 		text = StringUtils.trin(text);
-		final Dimension2D dim = stringBounder.calculateDimension(font, text);
+		final XDimension2D dim = stringBounder.calculateDimension(font, text);
 
 		String backColor = null;
 		final double width = dim.getWidth();
@@ -111,7 +109,7 @@ public class DriverTextSvg implements UDriver<UText, SvgGraphics> {
 			final HColor back = fontConfiguration.getExtendedColor();
 			if (back instanceof HColorGradient) {
 				final HColorGradient gr = (HColorGradient) back;
-				final String id = svg.createSvgGradient(mapper.toRGB(gr.getColor1()), mapper.toRGB(gr.getColor2()),
+				final String id = svg.createSvgGradient(gr.getColor1().toRGB(mapper), gr.getColor2().toRGB(mapper),
 						gr.getPolicy());
 				svg.setFillColor("url(#" + id + ")");
 				svg.setStrokeColor(null);
@@ -119,16 +117,12 @@ public class DriverTextSvg implements UDriver<UText, SvgGraphics> {
 				svg.svgRectangle(x, y - height + deltaPatch, width, height, 0, 0, 0, null, null);
 
 			} else {
-				backColor = mapper.toRGB(back);
+				backColor = back.toRGB(mapper);
 			}
 		}
 
 		final HColor textColor = fontConfiguration.getColor();
-		final HColor dark = textColor == null ? null : textColor.darkSchemeTheme();
-		if (dark == textColor)
-			svg.setFillColor(mapper.toSvg(textColor));
-		else
-			svg.setFillColor(mapper.toSvg(textColor), mapper.toSvg(dark));
+		svg.setFillColor(textColor.toSvg(mapper));
 
 		svg.text(text, x, y, font.getFamily(UFontContext.SVG), font.getSize(), fontWeight, fontStyle, textDecoration,
 				width, fontConfiguration.getAttributes(), backColor);

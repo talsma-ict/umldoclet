@@ -30,10 +30,9 @@
  */
 package net.sourceforge.plantuml.sequencediagram.teoz;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
-
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.SkinParamBackcolored;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.real.Real;
@@ -100,7 +99,7 @@ public class ElseTile extends AbstractTile {
 
 	public double getPreferredHeight() {
 		final Component comp = getComponent(getStringBounder());
-		final Dimension2D dim = comp.getPreferredDimension(getStringBounder());
+		final XDimension2D dim = comp.getPreferredDimension(getStringBounder());
 
 		double height = dim.getHeight();
 		if (anElse.getComment() != null) {
@@ -121,7 +120,7 @@ public class ElseTile extends AbstractTile {
 
 	public Real getMaxX() {
 		final Component comp = getComponent(getStringBounder());
-		final Dimension2D dim = comp.getPreferredDimension(getStringBounder());
+		final XDimension2D dim = comp.getPreferredDimension(getStringBounder());
 		return getMinX().addFixed(dim.getWidth());
 	}
 

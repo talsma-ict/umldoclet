@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.style;
 
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
@@ -50,7 +49,7 @@ public class ValueColor extends ValueAbstract {
 	}
 
 	@Override
-	public HColor asColor(ThemeStyle themeStyle, HColorSet set) {
+	public HColor asColor(HColorSet set) {
 		return color;
 	}
 

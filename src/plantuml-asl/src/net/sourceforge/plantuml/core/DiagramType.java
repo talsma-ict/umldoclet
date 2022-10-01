@@ -34,7 +34,7 @@ import net.sourceforge.plantuml.utils.StartUtils;
 
 public enum DiagramType {
 	UML, BPM, DITAA, DOT, PROJECT, JCCKIT, SALT, FLOW, CREOLE, JUNGLE, CUTE, MATH, LATEX, DEFINITION, GANTT, NW,
-	MINDMAP, WBS, WIRE, JSON, GIT, BOARD, YAML, HCL, UNKNOWN;
+	MINDMAP, WBS, WIRE, JSON, GIT, BOARD, YAML, HCL, EBNF, UNKNOWN;
 
 	static public DiagramType getTypeFromArobaseStart(String s) {
 		s = s.toLowerCase();
@@ -112,6 +112,9 @@ public enum DiagramType {
 
 		if (StartUtils.startsWithSymbolAnd("starthcl", s))
 			return HCL;
+
+		if (StartUtils.startsWithSymbolAnd("startebnf", s))
+			return EBNF;
 
 		return UNKNOWN;
 	}

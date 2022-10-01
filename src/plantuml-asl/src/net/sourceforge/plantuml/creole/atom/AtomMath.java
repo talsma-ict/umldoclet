@@ -33,8 +33,7 @@ package net.sourceforge.plantuml.creole.atom;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.math.ScientificEquationSafe;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -49,23 +48,21 @@ public class AtomMath extends AbstractAtom implements Atom {
 	private final ScientificEquationSafe math;
 	private final HColor foreground;
 	private final HColor background;
-	private final ColorMapper colorMapper;
 
-	public AtomMath(ScientificEquationSafe math, HColor foreground, HColor background, ColorMapper colorMapper) {
+	public AtomMath(ScientificEquationSafe math, HColor foreground, HColor background) {
 		this.math = math;
-		this.colorMapper = colorMapper;
 		this.foreground = foreground;
 		this.background = background;
 	}
 
-	private Dimension2D calculateDimensionSlow(StringBounder stringBounder) {
+	private XDimension2D calculateDimensionSlow(StringBounder stringBounder) {
 		final BufferedImage image = math.getImage(Color.BLACK, Color.WHITE).withScale(1).getImage();
-		return new Dimension2DDouble(image.getWidth(), image.getHeight());
+		return new XDimension2D(image.getWidth(), image.getHeight());
 	}
 
-	private Dimension2D dim;
+	private XDimension2D dim;
 
-	public Dimension2D calculateDimension(StringBounder stringBounder) {
+	public XDimension2D calculateDimension(StringBounder stringBounder) {
 		if (dim == null) {
 			dim = calculateDimensionSlow(stringBounder);
 		}
@@ -77,14 +74,15 @@ public class AtomMath extends AbstractAtom implements Atom {
 	}
 
 	public void drawU(UGraphic ug) {
+		final ColorMapper colorMapper = ug.getColorMapper();
 		final boolean isSvg = ug.matchesProperty("SVG");
 		final Color back;
-		if (background == null) {
+		if (background == null)
 			back = null;
-		} else {
-			back = getColor(background, Color.WHITE);
-		}
-		final Color fore = getColor(foreground, Color.BLACK);
+		else
+			back = getColor(colorMapper, background, Color.WHITE);
+
+		final Color fore = getColor(colorMapper, foreground, Color.BLACK);
 		// final double dpiFactor = ug.dpiFactor();
 		if (isSvg) {
 			final UImageSvg svg = math.getSvg(1, fore, back);
@@ -95,9 +93,9 @@ public class AtomMath extends AbstractAtom implements Atom {
 		}
 	}
 
-	private Color getColor(HColor color, Color defaultValue) {
+	private Color getColor(ColorMapper colorMapper, HColor color, Color defaultValue) {
 		if (color instanceof HColorSimple)
-			return colorMapper.toColor(color);
+			return color.toColor(colorMapper);
 
 		return defaultValue;
 

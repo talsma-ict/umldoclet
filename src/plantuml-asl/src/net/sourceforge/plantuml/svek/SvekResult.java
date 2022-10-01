@@ -33,8 +33,7 @@ package net.sourceforge.plantuml.svek;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.cucadiagram.dot.DotData;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
@@ -71,8 +70,7 @@ public final class SvekResult extends AbstractTextBlock implements IEntityImage 
 		final Style style2 = getDefaultStyleDefinition(null)
 				.getMergedStyle(dotData.getSkinParam().getCurrentStyleBuilder());
 
-		HColor color = style2.value(PName.LineColor).asColor(dotData.getSkinParam().getThemeStyle(),
-				dotData.getSkinParam().getIHtmlColorSet());
+		HColor color = style2.value(PName.LineColor).asColor(dotData.getSkinParam().getIHtmlColorSet());
 		color = HColors.noGradient(color);
 
 		for (SvekNode node : dotStringFactory.getBibliotekon().allNodes()) {
@@ -88,18 +86,29 @@ public final class SvekResult extends AbstractTextBlock implements IEntityImage 
 
 		final Set<String> ids = new HashSet<>();
 
+		computeKal();
+
 		for (SvekLine line : dotStringFactory.getBibliotekon().allLines()) {
 			final UGraphic ug2 = line.isHidden() ? ug.apply(UHidden.HIDDEN) : ug;
 
 			final StyleBuilder currentStyleBuilder = line.getCurrentStyleBuilder();
 			final Style styleLine = getDefaultStyleDefinition(line.getStereotype()).getMergedStyle(currentStyleBuilder);
-			color = styleLine.value(PName.LineColor).asColor(dotData.getSkinParam().getThemeStyle(),
-					dotData.getSkinParam().getIHtmlColorSet());
+			color = styleLine.value(PName.LineColor).asColor(dotData.getSkinParam().getIHtmlColorSet());
 			color = HColors.noGradient(color);
 
 			line.drawU(ug2, styleLine.getStroke(), color, ids);
 		}
 
+		for (SvekNode node : dotStringFactory.getBibliotekon().allNodes())
+			node.drawKals(ug);
+
+	}
+
+	private void computeKal() {
+		for (SvekLine line : dotStringFactory.getBibliotekon().allLines())
+			line.computeKal();
+		for (SvekNode node : dotStringFactory.getBibliotekon().allNodes())
+			node.fixOverlap();
 	}
 
 	private StyleSignature getDefaultStyleDefinition(Stereotype stereotype) {
@@ -113,18 +122,17 @@ public final class SvekResult extends AbstractTextBlock implements IEntityImage 
 	public HColor getBackcolor() {
 		final Style style = StyleSignatureBasic.of(SName.root, SName.document)
 				.getMergedStyle(dotData.getSkinParam().getCurrentStyleBuilder());
-		return style.value(PName.BackGroundColor).asColor(dotData.getSkinParam().getThemeStyle(),
-				dotData.getSkinParam().getIHtmlColorSet());
+		return style.value(PName.BackGroundColor).asColor(dotData.getSkinParam().getIHtmlColorSet());
 	}
 
 	private MinMax minMax;
 
-	public Dimension2D calculateDimension(StringBounder stringBounder) {
+	public XDimension2D calculateDimension(StringBounder stringBounder) {
 		if (minMax == null) {
 			minMax = TextBlockUtils.getMinMax(this, stringBounder, false);
 			dotStringFactory.moveSvek(6 - minMax.getMinX(), 6 - minMax.getMinY());
 		}
-		return Dimension2DDouble.delta(minMax.getDimension(), 0, 12);
+		return XDimension2D.delta(minMax.getDimension(), 0, 12);
 	}
 
 	public ShapeType getShapeType() {

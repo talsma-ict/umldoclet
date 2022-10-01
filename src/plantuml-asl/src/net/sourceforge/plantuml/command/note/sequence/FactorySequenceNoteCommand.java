@@ -42,6 +42,7 @@ import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.CommandMultilines2;
 import net.sourceforge.plantuml.command.MultilinesStrategy;
 import net.sourceforge.plantuml.command.SingleLineCommand2;
+import net.sourceforge.plantuml.command.Trim;
 import net.sourceforge.plantuml.command.note.SingleMultiFactoryCommand;
 import net.sourceforge.plantuml.command.regex.IRegex;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
@@ -107,7 +108,7 @@ public final class FactorySequenceNoteCommand implements SingleMultiFactoryComma
 
 	public Command<SequenceDiagram> createMultiLine(boolean withBracket) {
 		return new CommandMultilines2<SequenceDiagram>(getRegexConcatMultiLine(),
-				MultilinesStrategy.KEEP_STARTING_QUOTE) {
+				MultilinesStrategy.KEEP_STARTING_QUOTE, Trim.BOTH) {
 
 			@Override
 			public String getPatternEnd() {
@@ -148,8 +149,7 @@ public final class FactorySequenceNoteCommand implements SingleMultiFactoryComma
 			final boolean parallel = arg.get("PARALLEL", 0) != null;
 			final Display display = diagram.manageVariable(strings.toDisplay());
 			final Note note = new Note(p, position, display, diagram.getSkinParam().getCurrentStyleBuilder());
-			Colors colors = color().getColor(diagram.getSkinParam().getThemeStyle(), arg,
-					diagram.getSkinParam().getIHtmlColorSet());
+			Colors colors = color().getColor(arg, diagram.getSkinParam().getIHtmlColorSet());
 			final String stereotypeString = arg.get("STEREO", 0);
 			if (stereotypeString != null) {
 				final Stereotype stereotype = Stereotype.build(stereotypeString);

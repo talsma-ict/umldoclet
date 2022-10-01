@@ -99,22 +99,22 @@ public abstract class AbstractTaskDraw implements TaskDraw {
 
 	final protected HColor getLineColor() {
 		final HColor unstarted = getStyleSignatureUnstarted().getMergedStyle(styleBuilder).value(PName.LineColor)
-				.asColor(getStyleBuilder().getSkinParam().getThemeStyle(), getColorSet());
+				.asColor(getColorSet());
 		final HColor regular = getStyle().value(PName.LineColor)
-				.asColor(getStyleBuilder().getSkinParam().getThemeStyle(), getColorSet());
+				.asColor(getColorSet());
 		return HColors.unlinear(unstarted, regular, completion);
 	}
 
 	final protected HColor getBackgroundColor() {
 		final HColor unstarted = getStyleSignatureUnstarted().getMergedStyle(styleBuilder).value(PName.BackGroundColor)
-				.asColor(getStyleBuilder().getSkinParam().getThemeStyle(), getColorSet());
+				.asColor(getColorSet());
 		final HColor regular = getStyle().value(PName.BackGroundColor)
-				.asColor(getStyleBuilder().getSkinParam().getThemeStyle(), getColorSet());
+				.asColor(getColorSet());
 		return HColors.unlinear(unstarted, regular, completion);
 	}
 
 	final protected FontConfiguration getFontConfiguration() {
-		return getStyle().getFontConfiguration(styleBuilder.getSkinParam().getThemeStyle(), getColorSet());
+		return getStyle().getFontConfiguration(getColorSet());
 	}
 
 	final protected Style getStyle() {
@@ -137,15 +137,15 @@ public abstract class AbstractTaskDraw implements TaskDraw {
 		return margin.getTop() + getShapeHeight(stringBounder) + margin.getBottom();
 	}
 
-	public TaskDraw getTrueRow() {
+	final public TaskDraw getTrueRow() {
 		return toTaskDraw.getTaskDraw(task.getRow());
 	}
 
 	@Override
 	final public Real getY(StringBounder stringBounder) {
-		if (task.getRow() == null) {
+		if (task.getRow() == null)
 			return y;
-		}
+
 		return getTrueRow().getY(stringBounder);
 	}
 
@@ -162,12 +162,12 @@ public abstract class AbstractTaskDraw implements TaskDraw {
 		final double y1 = margin.getTop() + getY(stringBounder).getCurrentValue();
 		final double y2 = y1 + getShapeHeight(stringBounder);
 
-		if (direction == Direction.UP) {
+		if (direction == Direction.UP)
 			return y1;
-		}
-		if (direction == Direction.DOWN) {
+
+		if (direction == Direction.DOWN)
 			return y2;
-		}
+
 		return (y1 + y2) / 2;
 
 	}

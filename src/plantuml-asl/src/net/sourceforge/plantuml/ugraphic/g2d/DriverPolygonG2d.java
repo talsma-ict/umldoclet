@@ -34,16 +34,15 @@ import java.awt.BasicStroke;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
-import java.awt.geom.Point2D;
 
 import net.sourceforge.plantuml.EnsureVisible;
+import net.sourceforge.plantuml.awt.geom.XPoint2D;
 import net.sourceforge.plantuml.ugraphic.UDriver;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.HColorGradient;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 public class DriverPolygonG2d extends DriverShadowedG2d implements UDriver<UPolygon, Graphics2D> {
 
@@ -62,62 +61,59 @@ public class DriverPolygonG2d extends DriverShadowedG2d implements UDriver<UPoly
 
 		final HColor back = param.getBackcolor();
 
-		Point2D.Double last = null;
-		for (Point2D pt : shape.getPoints()) {
+		XPoint2D last = null;
+		for (XPoint2D pt : shape.getPoints()) {
 			final double xp = pt.getX() + x;
 			final double yp = pt.getY() + y;
 			visible.ensureVisible(xp, yp);
-			if (last == null) {
+			if (last == null)
 				path.moveTo((float) xp, (float) yp);
-			} else {
+			else
 				path.lineTo((float) xp, (float) yp);
-			}
-			last = new Point2D.Double(xp, yp);
+
+			last = new XPoint2D(xp, yp);
 		}
 
-		if (last != null) {
+		if (last != null)
 			path.closePath();
-		}
 
-		if (shape.getDeltaShadow() != 0) {
-			if (HColors.isTransparent(back)) {
+		if (shape.getDeltaShadow() != 0)
+			if (back.isTransparent())
 				drawOnlyLineShadowSpecial(g2d, path, shape.getDeltaShadow(), dpiFactor);
-			} else {
+			else
 				drawShadow(g2d, path, shape.getDeltaShadow(), dpiFactor);
-			}
-		}
 
 		if (back instanceof HColorGradient) {
 			final HColorGradient gr = (HColorGradient) back;
 			final char policy = gr.getPolicy();
 			final GradientPaint paint;
-			if (policy == '|') {
+			if (policy == '|')
 				paint = new GradientPaint((float) x, (float) (y + shape.getHeight()) / 2,
-						mapper.toColor(gr.getColor1()), (float) (x + shape.getWidth()),
-						(float) (y + shape.getHeight()) / 2, mapper.toColor(gr.getColor2()));
-			} else if (policy == '\\') {
-				paint = new GradientPaint((float) x, (float) (y + shape.getHeight()), mapper.toColor(gr.getColor1()),
-						(float) (x + shape.getWidth()), (float) y, mapper.toColor(gr.getColor2()));
-			} else if (policy == '-') {
-				paint = new GradientPaint((float) (x + shape.getWidth()) / 2, (float) y, mapper.toColor(gr.getColor1()),
+						gr.getColor1().toColor(mapper), (float) (x + shape.getWidth()),
+						(float) (y + shape.getHeight()) / 2, gr.getColor2().toColor(mapper));
+			else if (policy == '\\')
+				paint = new GradientPaint((float) x, (float) (y + shape.getHeight()), gr.getColor1().toColor(mapper),
+						(float) (x + shape.getWidth()), (float) y, gr.getColor2().toColor(mapper));
+			else if (policy == '-')
+				paint = new GradientPaint((float) (x + shape.getWidth()) / 2, (float) y, gr.getColor1().toColor(mapper),
 						(float) (x + shape.getWidth()) / 2, (float) (y + shape.getHeight()),
-						mapper.toColor(gr.getColor2()));
-			} else {
+						gr.getColor2().toColor(mapper));
+			else
 				// for /
-				paint = new GradientPaint((float) x, (float) y, mapper.toColor(gr.getColor1()),
+				paint = new GradientPaint((float) x, (float) y, gr.getColor1().toColor(mapper),
 						(float) (x + shape.getWidth()), (float) (y + shape.getHeight()),
-						mapper.toColor(gr.getColor2()));
-			}
+						gr.getColor2().toColor(mapper));
+
 			g2d.setPaint(paint);
 			g2d.fill(path);
-		} else if (back != null) {
-			g2d.setColor(mapper.toColor(back));
+		} else if (back.isTransparent() == false) {
+			g2d.setColor(back.toColor(mapper));
 			DriverRectangleG2d.managePattern(param, g2d);
 			g2d.fill(path);
 		}
 
-		if (param.getColor() != null) {
-			g2d.setColor(mapper.toColor(param.getColor()));
+		if (param.getColor().isTransparent() == false) {
+			g2d.setColor(param.getColor().toColor(mapper));
 			DriverLineG2d.manageStroke(param, g2d);
 			g2d.draw(path);
 		}

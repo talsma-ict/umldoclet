@@ -217,6 +217,4 @@ public class Member implements CharSequence {
 		return hasUrl;
 	}
 
-
-
 }

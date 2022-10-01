@@ -32,12 +32,11 @@ package net.sourceforge.plantuml.activitydiagram;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import net.sourceforge.plantuml.Direction;
-import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.UmlDiagramType;
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.cucadiagram.Code;
@@ -50,7 +49,6 @@ import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.NamespaceStrategy;
 import net.sourceforge.plantuml.graphic.USymbol;
-import net.sourceforge.plantuml.utils.UniqueSequence;
 
 public class ActivityDiagram extends CucaDiagram {
 
@@ -58,8 +56,8 @@ public class ActivityDiagram extends CucaDiagram {
 	private IEntity lastEntityBrancheConsulted;
 	private ConditionalContext currentContext;
 
-	public ActivityDiagram(ThemeStyle style, UmlSource source, ISkinSimple skinParam) {
-		super(style, source, UmlDiagramType.ACTIVITY, skinParam);
+	public ActivityDiagram(UmlSource source, Map<String, String> skinParam) {
+		super(source, UmlDiagramType.ACTIVITY, skinParam);
 		setNamespaceSeparator(null);
 	}
 
@@ -68,7 +66,7 @@ public class ActivityDiagram extends CucaDiagram {
 	}
 
 	private String getAutoBranch() {
-		return "#" + UniqueSequence.getValue();
+		return "#" + this.getUniqueSequence();
 	}
 
 	public IEntity getOrCreate(Ident idNewLong, Code code, Display display, LeafType type) {
@@ -168,7 +166,7 @@ public class ActivityDiagram extends CucaDiagram {
 
 	public IEntity createInnerActivity() {
 		// Log.println("createInnerActivity A");
-		final String idShort = "##" + UniqueSequence.getValue();
+		final String idShort = "##" + this.getUniqueSequence();
 		final Ident idNewLong = buildLeafIdent(idShort);
 		final Code code = this.V1972() ? idNewLong : buildCode(idShort);
 		gotoGroup(idNewLong, code, Display.getWithNewlines(code), GroupType.INNER_ACTIVITY, getCurrentGroup(),
@@ -188,7 +186,7 @@ public class ActivityDiagram extends CucaDiagram {
 			endGroup();
 			// Log.println("endgroup");
 		}
-		final String idShort = "##" + UniqueSequence.getValue();
+		final String idShort = "##" + this.getUniqueSequence();
 		// Log.println("concurrentActivity A name=" + name+" "+getCurrentGroup());
 		final Code code = buildCode(idShort);
 		if (getCurrentGroup().getGroupType() != GroupType.INNER_ACTIVITY) {

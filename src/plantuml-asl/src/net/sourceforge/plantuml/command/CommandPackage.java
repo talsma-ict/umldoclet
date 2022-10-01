@@ -57,7 +57,6 @@ import net.sourceforge.plantuml.graphic.color.ColorParser;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
-import net.sourceforge.plantuml.utils.UniqueSequence;
 
 public class CommandPackage extends SingleLineCommand2<AbstractEntityDiagram> {
 
@@ -106,7 +105,7 @@ public class CommandPackage extends SingleLineCommand2<AbstractEntityDiagram> {
 		boolean override1972 = false;
 		if (arg.get("AS", 0) == null) {
 			if (name.length() == 0) {
-				idShort = "##" + UniqueSequence.getValue();
+				idShort = "##" + diagram.getUniqueSequence();
 				display = null;
 			} else {
 				idShort = name;
@@ -151,8 +150,7 @@ public class CommandPackage extends SingleLineCommand2<AbstractEntityDiagram> {
 			p.addUrl(url);
 		}
 
-		final Colors colors = color().getColor(diagram.getSkinParam().getThemeStyle(), arg,
-				diagram.getSkinParam().getIHtmlColorSet());
+		final Colors colors = color().getColor(arg, diagram.getSkinParam().getIHtmlColorSet());
 		p.setColors(colors);
 
 		return CommandExecutionResult.ok();

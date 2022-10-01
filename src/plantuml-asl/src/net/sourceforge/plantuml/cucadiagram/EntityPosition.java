@@ -31,11 +31,10 @@
  */
 package net.sourceforge.plantuml.cucadiagram;
 
-import java.awt.geom.Point2D;
 import java.util.EnumSet;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
+import net.sourceforge.plantuml.awt.geom.XPoint2D;
 import net.sourceforge.plantuml.svek.ShapeType;
 import net.sourceforge.plantuml.ugraphic.Shadowable;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
@@ -46,9 +45,33 @@ import net.sourceforge.plantuml.ugraphic.UTranslate;
 
 public enum EntityPosition {
 
-	NORMAL, ENTRY_POINT, EXIT_POINT, INPUT_PIN, OUTPUT_PIN, EXPANSION_INPUT, EXPANSION_OUTPUT, PORT, PORTIN, PORTOUT;
+	NORMAL, ENTRY_POINT, EXIT_POINT, INPUT_PIN, OUTPUT_PIN, EXPANSION_INPUT, EXPANSION_OUTPUT, PORTIN, PORTOUT;
 
 	public static final double RADIUS = 6;
+
+	public static EnumSet<EntityPosition> getInputs() {
+		return EnumSet.of(ENTRY_POINT, INPUT_PIN, EXPANSION_INPUT, PORTIN);
+	}
+
+	public static EnumSet<EntityPosition> getOutputs() {
+		return EnumSet.of(EXIT_POINT, OUTPUT_PIN, EXPANSION_OUTPUT, PORTOUT);
+	}
+
+	public static EnumSet<EntityPosition> getNormals() {
+		return EnumSet.of(NORMAL);
+	}
+
+	public boolean isNormal() {
+		return this == NORMAL;
+	}
+
+	public boolean isInput() {
+		return getInputs().contains(this);
+	}
+
+	public boolean isOutput() {
+		return getOutputs().contains(this);
+	}
 
 	public void drawSymbol(UGraphic ug, Rankdir rankdir) {
 		if (this == NORMAL) {
@@ -65,7 +88,7 @@ public enum EntityPosition {
 				drawLine(ug, getPointOnCircle(xc, yc, -Math.PI / 4, radius),
 						getPointOnCircle(xc, yc, Math.PI - Math.PI / 4, radius));
 			}
-		} else if (this == INPUT_PIN || this == OUTPUT_PIN || this == PORT) {
+		} else if (this == INPUT_PIN || this == OUTPUT_PIN /* || this == PORT */) {
 			final Shadowable rectangle = new URectangle(RADIUS * 2, RADIUS * 2);
 			ug.draw(rectangle);
 		} else if (this == EXPANSION_INPUT || this == EXPANSION_OUTPUT) {
@@ -88,23 +111,23 @@ public enum EntityPosition {
 
 	}
 
-	public Dimension2D getDimension(Rankdir rankdir) {
+	public XDimension2D getDimension(Rankdir rankdir) {
 		if (this == EXPANSION_INPUT || this == EXPANSION_OUTPUT) {
-			if (rankdir == Rankdir.TOP_TO_BOTTOM) {
-				return new Dimension2DDouble(EntityPosition.RADIUS * 2 * 4, EntityPosition.RADIUS * 2);
-			}
-			return new Dimension2DDouble(EntityPosition.RADIUS * 2, EntityPosition.RADIUS * 2 * 4);
+			if (rankdir == Rankdir.TOP_TO_BOTTOM)
+				return new XDimension2D(EntityPosition.RADIUS * 2 * 4, EntityPosition.RADIUS * 2);
+
+			return new XDimension2D(EntityPosition.RADIUS * 2, EntityPosition.RADIUS * 2 * 4);
 		}
-		return new Dimension2DDouble(EntityPosition.RADIUS * 2, EntityPosition.RADIUS * 2);
+		return new XDimension2D(EntityPosition.RADIUS * 2, EntityPosition.RADIUS * 2);
 	}
 
-	private Point2D getPointOnCircle(double xc, double yc, double angle, double radius) {
+	private XPoint2D getPointOnCircle(double xc, double yc, double angle, double radius) {
 		final double x = xc + radius * Math.cos(angle);
 		final double y = yc + radius * Math.sin(angle);
-		return new Point2D.Double(x, y);
+		return new XPoint2D(x, y);
 	}
 
-	static private void drawLine(UGraphic ug, Point2D p1, Point2D p2) {
+	static private void drawLine(UGraphic ug, XPoint2D p1, XPoint2D p2) {
 		final double dx = p2.getX() - p1.getX();
 		final double dy = p2.getY() - p1.getY();
 		ug.apply(new UTranslate(p1.getX(), p1.getY())).draw(new ULine(dx, dy));
@@ -112,54 +135,50 @@ public enum EntityPosition {
 	}
 
 	public ShapeType getShapeType() {
-		if (this == NORMAL) {
+		if (this == NORMAL)
 			throw new IllegalStateException();
-		}
-		if (this == ENTRY_POINT || this == EXIT_POINT) {
-			return ShapeType.CIRCLE;
-		}
+
+		if (this == ENTRY_POINT || this == EXIT_POINT)
+			return ShapeType.RECTANGLE_PORT;
+
 		return ShapeType.RECTANGLE;
 	}
 
 	public static EntityPosition fromStereotype(String label) {
-		if ("<<port>>".equalsIgnoreCase(label)) {
-			return PORT;
-		}
-		if ("<<entrypoint>>".equalsIgnoreCase(label)) {
+		if ("<<port>>".equalsIgnoreCase(label))
+			throw new UnsupportedOperationException();
+
+		if ("<<entrypoint>>".equalsIgnoreCase(label))
 			return ENTRY_POINT;
-		}
-		if ("<<exitpoint>>".equalsIgnoreCase(label)) {
+
+		if ("<<exitpoint>>".equalsIgnoreCase(label))
 			return EXIT_POINT;
-		}
-		if ("<<inputpin>>".equalsIgnoreCase(label)) {
+
+		if ("<<inputpin>>".equalsIgnoreCase(label))
 			return INPUT_PIN;
-		}
-		if ("<<outputpin>>".equalsIgnoreCase(label)) {
+
+		if ("<<outputpin>>".equalsIgnoreCase(label))
 			return OUTPUT_PIN;
-		}
-		if ("<<expansioninput>>".equalsIgnoreCase(label)) {
+
+		if ("<<expansioninput>>".equalsIgnoreCase(label))
 			return EXPANSION_INPUT;
-		}
-		if ("<<expansionoutput>>".equalsIgnoreCase(label)) {
+
+		if ("<<expansionoutput>>".equalsIgnoreCase(label))
 			return EXPANSION_OUTPUT;
-		}
+
 		return EntityPosition.NORMAL;
 	}
 
-	public static EnumSet<EntityPosition> getInputs() {
-		return EnumSet.of(ENTRY_POINT, INPUT_PIN, EXPANSION_INPUT, PORTIN);
-	}
-
-	public static EnumSet<EntityPosition> getOutputs() {
-		return EnumSet.of(EXIT_POINT, OUTPUT_PIN, EXPANSION_OUTPUT, PORTOUT);
-	}
-
-	public static EnumSet<EntityPosition> getSame() {
-		return EnumSet.of(PORT);
-	}
-
+//	public static EnumSet<EntityPosition> getSame() {
+//		return EnumSet.of(PORT);
+//	}
+//
 	public boolean isPort() {
-		return this == PORT || this == PORTIN || this == PORTOUT;
+		return /* this == PORT || */ this == PORTIN || this == PORTOUT;
+	}
+
+	public boolean usePortP() {
+		return isPort() || this == EXIT_POINT || this == ENTRY_POINT;
 	}
 
 }

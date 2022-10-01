@@ -30,8 +30,7 @@
  */
 package net.sourceforge.plantuml.sequencediagram.teoz;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
-
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.real.Real;
 import net.sourceforge.plantuml.real.RealUtils;
@@ -81,7 +80,7 @@ public class DelayTile extends AbstractTile implements Tile {
 
 	private double getPreferredWidth(StringBounder stringBounder) {
 		final Component comp = getComponent(stringBounder);
-		final Dimension2D dim = comp.getPreferredDimension(stringBounder);
+		final XDimension2D dim = comp.getPreferredDimension(stringBounder);
 		return dim.getWidth();
 	}
 
@@ -89,7 +88,7 @@ public class DelayTile extends AbstractTile implements Tile {
 		final StringBounder stringBounder = ug.getStringBounder();
 		init(stringBounder);
 		final Component comp = getComponent(stringBounder);
-		final Dimension2D dim = comp.getPreferredDimension(stringBounder);
+		final XDimension2D dim = comp.getPreferredDimension(stringBounder);
 		final Area area = Area.create(getPreferredWidth(stringBounder), dim.getHeight());
 		tileArguments.getLivingSpaces().delayOn(getY(), dim.getHeight());
 
@@ -99,7 +98,7 @@ public class DelayTile extends AbstractTile implements Tile {
 
 	public double getPreferredHeight() {
 		final Component comp = getComponent(getStringBounder());
-		final Dimension2D dim = comp.getPreferredDimension(getStringBounder());
+		final XDimension2D dim = comp.getPreferredDimension(getStringBounder());
 		return dim.getHeight();
 	}
 

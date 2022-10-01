@@ -34,7 +34,7 @@ package net.sourceforge.plantuml.svek.image;
 
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.cucadiagram.EntityPosition;
 import net.sourceforge.plantuml.cucadiagram.ILeaf;
 import net.sourceforge.plantuml.cucadiagram.Rankdir;
@@ -74,13 +74,8 @@ public abstract class AbstractEntityImageBorder extends AbstractEntityImage {
 		this.desc = leaf.getDisplay().create(fc, HorizontalAlignment.CENTER, skinParam);
 	}
 
-	public Dimension2D calculateDimension(StringBounder stringBounder) {
+	public XDimension2D calculateDimension(StringBounder stringBounder) {
 		return entityPosition.getDimension(rankdir);
-	}
-
-	public double getMaxWidthFromLabelForEntryExit(StringBounder stringBounder) {
-		final Dimension2D dimDesc = desc.calculateDimension(stringBounder);
-		return dimDesc.getWidth();
 	}
 
 	public ShapeType getShapeType() {

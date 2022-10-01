@@ -34,13 +34,12 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import net.sourceforge.plantuml.CornerParam;
-import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.Guillemet;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.LineConfigurable;
 import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.creole.Stencil;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.EntityPortion;
@@ -90,8 +89,7 @@ public class EntityImageMap extends AbstractEntityImage implements Stencil, With
 		final Stereotype stereotype = entity.getStereotype();
 		this.roundCorner = skinParam.getRoundCorner(CornerParam.DEFAULT, null);
 
-		final FontConfiguration fcHeader = getStyleHeader().getFontConfiguration(getSkinParam().getThemeStyle(),
-				getSkinParam().getIHtmlColorSet());
+		final FontConfiguration fcHeader = getStyleHeader().getFontConfiguration(getSkinParam().getIHtmlColorSet());
 
 		this.name = TextBlockUtils
 				.withMargin(entity.getDisplay().create(fcHeader, HorizontalAlignment.CENTER, skinParam), 2, 2);
@@ -105,7 +103,7 @@ public class EntityImageMap extends AbstractEntityImage implements Stencil, With
 					HorizontalAlignment.CENTER, skinParam);
 
 		final FontConfiguration fontConfiguration = getStyleHeader()
-				.getFontConfiguration(getSkinParam().getThemeStyle(), getSkinParam().getIHtmlColorSet());
+				.getFontConfiguration(getSkinParam().getIHtmlColorSet());
 		this.entries = entity.getBodier().getBody(FontParam.OBJECT_ATTRIBUTE, skinParam, false, false,
 				entity.getStereotype(), getStyle(), fontConfiguration);
 
@@ -115,21 +113,21 @@ public class EntityImageMap extends AbstractEntityImage implements Stencil, With
 
 	@Override
 	public Ports getPorts(StringBounder stringBounder) {
-		final Dimension2D dimTitle = getTitleDimension(stringBounder);
+		final XDimension2D dimTitle = getTitleDimension(stringBounder);
 		return ((WithPorts) entries).getPorts(stringBounder).translateY(dimTitle.getHeight());
 	}
 
 	private int marginEmptyFieldsOrMethod = 13;
 
-	public Dimension2D calculateDimension(StringBounder stringBounder) {
-		final Dimension2D dimTitle = getTitleDimension(stringBounder);
-		final Dimension2D dimFields = entries.calculateDimension(stringBounder);
+	public XDimension2D calculateDimension(StringBounder stringBounder) {
+		final XDimension2D dimTitle = getTitleDimension(stringBounder);
+		final XDimension2D dimFields = entries.calculateDimension(stringBounder);
 		double width = Math.max(dimFields.getWidth(), dimTitle.getWidth() + 2 * xMarginCircle);
 		if (width < getSkinParam().minClassWidth())
 			width = getSkinParam().minClassWidth();
 
 		final double height = getMethodOrFieldHeight(dimFields) + dimTitle.getHeight();
-		return new Dimension2DDouble(width, height);
+		return new XDimension2D(width, height);
 	}
 
 	private Style getStyle() {
@@ -144,8 +142,8 @@ public class EntityImageMap extends AbstractEntityImage implements Stencil, With
 
 	final public void drawU(UGraphic ug) {
 		final StringBounder stringBounder = ug.getStringBounder();
-		final Dimension2D dimTotal = calculateDimension(stringBounder);
-		final Dimension2D dimTitle = getTitleDimension(stringBounder);
+		final XDimension2D dimTotal = calculateDimension(stringBounder);
+		final XDimension2D dimTitle = getTitleDimension(stringBounder);
 
 		final double widthTotal = dimTotal.getWidth();
 		final double heightTotal = dimTotal.getHeight();
@@ -158,16 +156,14 @@ public class EntityImageMap extends AbstractEntityImage implements Stencil, With
 		final Style style = getStyle();
 
 		if (borderColor == null)
-			borderColor = getStyle().value(PName.LineColor).asColor(getSkinParam().getThemeStyle(),
-					getSkinParam().getIHtmlColorSet());
+			borderColor = getStyle().value(PName.LineColor).asColor(getSkinParam().getIHtmlColorSet());
 
 		if (headerBackcolor == null)
 			headerBackcolor = backcolor == null ? getStyleHeader().value(PName.BackGroundColor)
-					.asColor(getSkinParam().getThemeStyle(), getSkinParam().getIHtmlColorSet()) : backcolor;
+					.asColor(getSkinParam().getIHtmlColorSet()) : backcolor;
 
 		if (backcolor == null)
-			backcolor = style.value(PName.BackGroundColor).asColor(getSkinParam().getThemeStyle(),
-					getSkinParam().getIHtmlColorSet());
+			backcolor = style.value(PName.BackGroundColor).asColor(getSkinParam().getIHtmlColorSet());
 
 		rect.setDeltaShadow(style.value(PName.Shadowing).asDouble());
 		final UStroke stroke = style.getStroke();
@@ -206,7 +202,7 @@ public class EntityImageMap extends AbstractEntityImage implements Stencil, With
 		ug.closeGroup();
 	}
 
-	private double getMethodOrFieldHeight(final Dimension2D dim) {
+	private double getMethodOrFieldHeight(final XDimension2D dim) {
 		final double fieldsHeight = dim.getHeight();
 		if (fieldsHeight == 0 && this.getEntity().getLeafType() != LeafType.MAP)
 			return marginEmptyFieldsOrMethod;
@@ -216,15 +212,15 @@ public class EntityImageMap extends AbstractEntityImage implements Stencil, With
 
 	private int xMarginCircle = 5;
 
-	private Dimension2D getTitleDimension(StringBounder stringBounder) {
+	private XDimension2D getTitleDimension(StringBounder stringBounder) {
 		return getNameAndSteretypeDimension(stringBounder);
 	}
 
-	private Dimension2D getNameAndSteretypeDimension(StringBounder stringBounder) {
-		final Dimension2D nameDim = name.calculateDimension(stringBounder);
-		final Dimension2D stereoDim = stereo == null ? new Dimension2DDouble(0, 0)
+	private XDimension2D getNameAndSteretypeDimension(StringBounder stringBounder) {
+		final XDimension2D nameDim = name.calculateDimension(stringBounder);
+		final XDimension2D stereoDim = stereo == null ? new XDimension2D(0, 0)
 				: stereo.calculateDimension(stringBounder);
-		final Dimension2D nameAndStereo = new Dimension2DDouble(Math.max(nameDim.getWidth(), stereoDim.getWidth()),
+		final XDimension2D nameAndStereo = new XDimension2D(Math.max(nameDim.getWidth(), stereoDim.getWidth()),
 				nameDim.getHeight() + stereoDim.getHeight());
 		return nameAndStereo;
 	}

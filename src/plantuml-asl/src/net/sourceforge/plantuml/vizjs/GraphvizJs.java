@@ -117,7 +117,7 @@ public class GraphvizJs implements Graphviz {
 
 	public static GraphvizVersion getGraphvizVersion(final boolean modeSafe) {
 		return new GraphvizVersion() {
-			public boolean useShield() {
+			public boolean useShieldForQuantifier() {
 				return true;
 			}
 

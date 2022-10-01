@@ -30,10 +30,8 @@
  */
 package net.sourceforge.plantuml.ugraphic;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
-import java.awt.geom.Point2D;
-
-import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
+import net.sourceforge.plantuml.awt.geom.XPoint2D;
 
 public class UEllipse extends AbstractShadowable implements UShapeSized {
 
@@ -69,8 +67,8 @@ public class UEllipse extends AbstractShadowable implements UShapeSized {
 		return extend;
 	}
 
-	public Dimension2D getDimension() {
-		return new Dimension2DDouble(width, height);
+	public XDimension2D getDimension() {
+		return new XDimension2D(width, height);
 	}
 
 	public UEllipse bigger(double more) {
@@ -97,10 +95,10 @@ public class UEllipse extends AbstractShadowable implements UShapeSized {
 		return x * width / 2;
 	}
 
-	public Point2D getPointAtAngle(double alpha) {
+	public XPoint2D getPointAtAngle(double alpha) {
 		final double x = width / 2 + width / 2 * Math.cos(alpha);
 		final double y = height / 2 + height / 2 * Math.sin(alpha);
-		return new Point2D.Double(x, y);
+		return new XPoint2D(x, y);
 	}
 
 }

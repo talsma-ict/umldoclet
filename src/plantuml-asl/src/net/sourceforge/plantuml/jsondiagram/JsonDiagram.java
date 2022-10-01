@@ -30,8 +30,6 @@
  */
 package net.sourceforge.plantuml.jsondiagram;
 
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -39,7 +37,8 @@ import java.util.List;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.TitledDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
-import net.sourceforge.plantuml.api.ThemeStyle;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
+import net.sourceforge.plantuml.awt.geom.XRectangle2D;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.core.UmlSource;
@@ -63,9 +62,8 @@ public class JsonDiagram extends TitledDiagram {
 	private final JsonValue root;
 	private final List<String> highlighted;
 
-	public JsonDiagram(ThemeStyle style, UmlSource source, UmlDiagramType type, JsonValue json,
-			List<String> highlighted) {
-		super(style, source, type, null);
+	public JsonDiagram(UmlSource source, UmlDiagramType type, JsonValue json, List<String> highlighted) {
+		super(source, type, null);
 		if (json != null && (json.isString() || json.isBoolean() || json.isNumber())) {
 			this.root = new JsonArray();
 			((JsonArray) this.root).add(json);
@@ -76,12 +74,12 @@ public class JsonDiagram extends TitledDiagram {
 	}
 
 	public DiagramDescription getDescription() {
-		if (getUmlDiagramType() == UmlDiagramType.YAML) {
+		if (getUmlDiagramType() == UmlDiagramType.YAML)
 			return new DiagramDescription("(Yaml)");
-		}
-		if (getUmlDiagramType() == UmlDiagramType.HCL) {
+
+		if (getUmlDiagramType() == UmlDiagramType.HCL)
 			return new DiagramDescription("(HCL)");
-		}
+
 		return new DiagramDescription("(Json)");
 	}
 
@@ -116,11 +114,11 @@ public class JsonDiagram extends TitledDiagram {
 				return null;
 			}
 
-			public Rectangle2D getInnerPosition(String member, StringBounder stringBounder, InnerStrategy strategy) {
+			public XRectangle2D getInnerPosition(String member, StringBounder stringBounder, InnerStrategy strategy) {
 				return null;
 			}
 
-			public Dimension2D calculateDimension(StringBounder stringBounder) {
+			public XDimension2D calculateDimension(StringBounder stringBounder) {
 				return TextBlockUtils.getMinMax(getTextBlock(), stringBounder, true).getDimension();
 			}
 

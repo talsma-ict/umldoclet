@@ -32,10 +32,9 @@ package net.sourceforge.plantuml.classdiagram;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.UmlDiagramType;
-import net.sourceforge.plantuml.api.ThemeStyle;
 import net.sourceforge.plantuml.classdiagram.command.CommandAddMethod;
 import net.sourceforge.plantuml.classdiagram.command.CommandAllowMixing;
 import net.sourceforge.plantuml.classdiagram.command.CommandCreateClass;
@@ -76,13 +75,14 @@ import net.sourceforge.plantuml.descdiagram.command.CommandPackageWithUSymbol;
 import net.sourceforge.plantuml.objectdiagram.command.CommandCreateEntityObject;
 import net.sourceforge.plantuml.objectdiagram.command.CommandCreateEntityObjectMultilines;
 import net.sourceforge.plantuml.objectdiagram.command.CommandCreateJson;
+import net.sourceforge.plantuml.objectdiagram.command.CommandCreateJsonSingleLine;
 import net.sourceforge.plantuml.objectdiagram.command.CommandCreateMap;
 
 public class ClassDiagramFactory extends PSystemCommandFactory {
 
 	@Override
-	public ClassDiagram createEmptyDiagram(ThemeStyle style, UmlSource source, ISkinSimple skinParam) {
-		return new ClassDiagram(style, source, skinParam);
+	public ClassDiagram createEmptyDiagram(UmlSource source, Map<String, String> skinParam) {
+		return new ClassDiagram(source, skinParam);
 	}
 
 	@Override
@@ -103,6 +103,7 @@ public class ClassDiagramFactory extends PSystemCommandFactory {
 		cmds.add(new CommandCreateEntityObjectMultilines());
 		cmds.add(new CommandCreateMap());
 		cmds.add(new CommandCreateJson());
+		cmds.add(new CommandCreateJsonSingleLine());
 		cmds.add(new CommandCreateClass());
 		cmds.add(new CommandCreateEntityObject());
 

@@ -38,7 +38,7 @@ import java.util.List;
 import net.sourceforge.plantuml.BackSlash;
 import net.sourceforge.plantuml.OptionPrint;
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.cucadiagram.dot.GraphvizUtils;
 import net.sourceforge.plantuml.flashcode.FlashCodeFactory;
@@ -79,11 +79,11 @@ public class GraphvizCrash extends AbstractTextBlock implements IEntityImage {
 
 	public static List<String> anErrorHasOccured(Throwable exception, String text) {
 		final List<String> strings = new ArrayList<>();
-		if (exception == null) {
+		if (exception == null)
 			strings.add("An error has occured!");
-		} else {
+		else
 			strings.add("An error has occured : " + exception);
-		}
+
 		final String quote = StringUtils.rot(QuoteUtils.getSomeQuote());
 		strings.add("<i>" + quote);
 		strings.add(" ");
@@ -94,11 +94,10 @@ public class GraphvizCrash extends AbstractTextBlock implements IEntityImage {
 
 	private static int lines(String text) {
 		int result = 0;
-		for (int i = 0; i < text.length(); i++) {
-			if (text.charAt(i) == BackSlash.CHAR_NEWLINE) {
+		for (int i = 0; i < text.length(); i++)
+			if (text.charAt(i) == BackSlash.CHAR_NEWLINE)
 				result++;
-			}
-		}
+
 		return result;
 	}
 
@@ -134,9 +133,9 @@ public class GraphvizCrash extends AbstractTextBlock implements IEntityImage {
 		strings.add("For some reason, dot/GraphViz has crashed.");
 		strings.add("");
 		strings.add("RootCause " + rootCause);
-		if (rootCause != null) {
+		if (rootCause != null)
 			strings.addAll(CommandExecutionResult.getStackTrace(rootCause));
-		}
+
 		strings.add("");
 		strings.add("This has been generated with PlantUML (" + Version.versionString() + ").");
 		checkOldVersionWarning(strings);
@@ -151,9 +150,8 @@ public class GraphvizCrash extends AbstractTextBlock implements IEntityImage {
 		}
 		pleaseGoTo(strings);
 		youShouldSendThisDiagram(strings);
-		if (flashCode != null) {
+		if (flashCode != null)
 			addDecodeHint(strings);
-		}
 
 		return strings;
 	}
@@ -192,7 +190,7 @@ public class GraphvizCrash extends AbstractTextBlock implements IEntityImage {
 		return HColors.WHITE;
 	}
 
-	public Dimension2D calculateDimension(StringBounder stringBounder) {
+	public XDimension2D calculateDimension(StringBounder stringBounder) {
 		return getMain().calculateDimension(stringBounder);
 	}
 
