@@ -124,7 +124,6 @@ public class DiagramTest {
         assertThat(asList(output.toString().split("\\n")), contains(
                 "@startuml",
                 "!pragma graphviz_dot jdot",
-                "skinparam backgroundcolor transparent",
                 "",
                 "center footer " + footer,
                 "@enduml"));

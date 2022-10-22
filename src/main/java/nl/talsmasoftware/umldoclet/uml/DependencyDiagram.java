@@ -28,6 +28,8 @@ import static java.util.stream.Collectors.toList;
  * UML diagram representing the dependencies between the documented Java packages.
  */
 public class DependencyDiagram extends Diagram {
+    private static final String BACKGROUNDCOLOR_DIRECTIVE = "skinparam backgroundcolor";
+    private static final String DEFAULT_BACKGROUNDCOLOR = "transparent";
 
     private String moduleName;
     private String pumlFileName;
@@ -76,6 +78,19 @@ public class DependencyDiagram extends Diagram {
             pumlFile = new File(result.toString());
         }
         return pumlFile;
+    }
+
+    @Override
+    protected <IPW extends IndentingPrintWriter> IPW writeCustomDirectives(List<String> customDirectives, IPW output) {
+        boolean backgroundcolorAlreadySet = false;
+        for (String customDirective : customDirectives) {
+            backgroundcolorAlreadySet |= customDirective.contains(BACKGROUNDCOLOR_DIRECTIVE);
+            output.println(customDirective);
+        }
+        if (!backgroundcolorAlreadySet) {
+            output.append(BACKGROUNDCOLOR_DIRECTIVE).whitespace().append(DEFAULT_BACKGROUNDCOLOR).newline();
+        }
+        return output;
     }
 
     @Override

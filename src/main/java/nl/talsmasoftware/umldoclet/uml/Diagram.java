@@ -29,6 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -42,9 +43,6 @@ import static nl.talsmasoftware.umldoclet.util.FileUtils.withoutExtension;
  * Abstract class corresponding to a single UML diagram.
  */
 public abstract class Diagram extends UMLNode {
-    private static final String BACKGROUNDCOLOR_DIRECTIVE = "skinparam backgroundcolor";
-    private static final String DEFAULT_BACKGROUNDCOLOR = "transparent";
-
     private final Configuration config;
     private final FileFormat[] formats;
     private File diagramBaseFile;
@@ -61,7 +59,7 @@ public abstract class Diagram extends UMLNode {
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         output.append("@startuml").newline();
         IndentingPrintWriter indented = output.indent();
-        writeCustomDirectivesto(indented);
+        writeCustomDirectives(config.customPlantumlDirectives(), indented);
         writeChildrenTo(indented);
         indented.newline();
         writeFooterTo(indented);
@@ -69,15 +67,8 @@ public abstract class Diagram extends UMLNode {
         return output;
     }
 
-    private <IPW extends IndentingPrintWriter> IPW writeCustomDirectivesto(IPW output) {
-        boolean backgroundcolorAlreadySet = false;
-        for (String customDirective : config.customPlantumlDirectives()) {
-            backgroundcolorAlreadySet |= customDirective.contains(BACKGROUNDCOLOR_DIRECTIVE);
-            output.println(customDirective);
-        }
-        if (!backgroundcolorAlreadySet) {
-            output.append(BACKGROUNDCOLOR_DIRECTIVE).whitespace().append(DEFAULT_BACKGROUNDCOLOR).newline();
-        }
+    protected <IPW extends IndentingPrintWriter> IPW writeCustomDirectives(List<String> customDirectives, IPW output) {
+        customDirectives.forEach(output::println);
         return output;
     }
 
