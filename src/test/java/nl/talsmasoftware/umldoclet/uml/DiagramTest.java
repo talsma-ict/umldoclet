@@ -124,6 +124,29 @@ public class DiagramTest {
         assertThat(asList(output.toString().split("\\n")), contains(
                 "@startuml",
                 "!pragma graphviz_dot jdot",
+                "skinparam backgroundcolor transparent",
+                "",
+                "center footer " + footer,
+                "@enduml"));
+        verify(config).customPlantumlDirectives();
+    }
+
+    @Test
+    public void testCustomBackgroundcolor() {
+        // prepare
+        when(config.customPlantumlDirectives()).thenReturn(singletonList("skinparam backgroundcolor green"));
+        StringWriter output = new StringWriter();
+        Diagram testDiagram = new TestDiagram(config, new File("target/test-classes/custom-directive.puml"));
+        IndentingPrintWriter writer = IndentingPrintWriter.wrap(output, Indentation.NONE);
+        String footer = logger.localize(Message.DOCLET_UML_FOOTER, Message.DOCLET_VERSION, Version.versionString());
+
+        // execute
+        testDiagram.writeTo(writer);
+
+        // verify
+        assertThat(asList(output.toString().split("\\n")), contains(
+                "@startuml",
+                "skinparam backgroundcolor green",
                 "",
                 "center footer " + footer,
                 "@enduml"));

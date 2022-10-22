@@ -99,7 +99,6 @@ public interface Configuration {
      */
     Optional<URI> resolveExternalLinkToType(String packageName, String type);
 
-
     /**
      * Custom directives to include in rendered PlantUML diagram sources.
      * <p>
