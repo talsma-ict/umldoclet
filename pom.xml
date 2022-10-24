@@ -51,7 +51,6 @@
         <developer>
             <id>sjoerd</id>
             <name>Sjoerd Talsma</name>
-            <email>sjoerd@talsma-ict.nl</email>
             <url>https://github.com/sjoerdtalsma</url>
         </developer>
     </developers>
@@ -87,6 +86,7 @@
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
         <maven-scm-plugin.version>1.13.0</maven-scm-plugin.version>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+        <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
         <license-maven-plugin.version>4.1</license-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
@@ -132,50 +132,9 @@
         </resources>
         <plugins>
             <plugin>
-                <groupId>com.mycila</groupId>
-                <artifactId>license-maven-plugin</artifactId>
-                <version>${license-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>check-license-headers</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <header>${project.basedir}/.mvn/license/header.txt</header>
-                    <properties>
-                        <owner>${project.organization.name}</owner>
-                    </properties>
-                    <mapping>
-                        <java>SLASHSTAR_STYLE</java>
-                    </mapping>
-                    <includes>
-                        <include>pom.xml</include>
-                        <include>src/main/java/**</include>
-                        <include>src/test/java/**</include>
-                    </includes>
-                    <excludes>
-                        <exclude>**/*.md</exclude>
-                        <exclude>**/*.puml</exclude>
-                        <exclude>**/*.svg</exclude>
-                    </excludes>
-                    <strictCheck>true</strictCheck>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.mycila</groupId>
-                        <artifactId>license-maven-plugin-git</artifactId>
-                        <version>${license-maven-plugin.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>${build-helper-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>
@@ -235,6 +194,47 @@
                         <groupId>javax.xml.bind</groupId>
                         <artifactId>jaxb-api</artifactId>
                         <version>2.3.1</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>${license-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>check-license-headers</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <header>${project.basedir}/.mvn/license/header.txt</header>
+                    <properties>
+                        <owner>${project.organization.name}</owner>
+                    </properties>
+                    <mapping>
+                        <java>SLASHSTAR_STYLE</java>
+                    </mapping>
+                    <includes>
+                        <include>pom.xml</include>
+                        <include>src/main/java/**</include>
+                        <include>src/test/java/**</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/*.md</exclude>
+                        <exclude>**/*.puml</exclude>
+                        <exclude>**/*.svg</exclude>
+                    </excludes>
+                    <strictCheck>true</strictCheck>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.mycila</groupId>
+                        <artifactId>license-maven-plugin-git</artifactId>
+                        <version>${license-maven-plugin.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
