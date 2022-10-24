@@ -28,20 +28,9 @@
  *
  * Original Author:  Arnaud Roques
  */
-package net.sourceforge.plantuml;
+package net.sourceforge.plantuml.sequencediagram.teoz;
 
-public class SkinParamSameClassWidth extends SkinParamDelegator {
-
-	final private double width;
-
-	public SkinParamSameClassWidth(ISkinParam skinParam, double width) {
-		super(skinParam);
-		this.width = width;
-	}
-
-	@Override
-	public double minClassWidth() {
-		return width;
-	}
+public enum HookType {
+	NEGATIVE, POSITIVE;
 
 }

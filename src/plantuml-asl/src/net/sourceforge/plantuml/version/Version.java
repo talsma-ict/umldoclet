@@ -40,7 +40,7 @@ public class Version {
 	private static final int MAJOR_SEPARATOR = 1000000;
 
 	public static int version() {
-		return 1202208;
+		return 1202212;
 	}
 
 	public static int versionPatched() {
@@ -89,7 +89,7 @@ public class Version {
 	}
 
 	public static long compileTime() {
-		return 1664096433281L;
+		return 1666548746412L;
 	}
 
 	public static String compileTimeString() {

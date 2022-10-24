@@ -46,6 +46,7 @@ import java.util.Set;
 import javax.swing.ImageIcon;
 
 import net.sourceforge.plantuml.AnimatedGifEncoder;
+import net.sourceforge.plantuml.AnnotatedBuilder;
 import net.sourceforge.plantuml.AnnotatedWorker;
 import net.sourceforge.plantuml.CMapData;
 import net.sourceforge.plantuml.ColorParam;
@@ -224,7 +225,9 @@ public class ImageBuilder {
 		if (annotations && titledDiagram != null) {
 			if (!(udrawable instanceof TextBlock))
 				throw new IllegalStateException("udrawable is not a TextBlock");
-			final AnnotatedWorker annotatedWorker = new AnnotatedWorker(titledDiagram, skinParam, stringBounder);
+			final AnnotatedBuilder builder = new AnnotatedBuilder(titledDiagram, skinParam, stringBounder);
+			final AnnotatedWorker annotatedWorker = new AnnotatedWorker(titledDiagram, skinParam, stringBounder,
+					builder);
 			udrawable = annotatedWorker.addAdd((TextBlock) udrawable);
 		}
 
@@ -445,7 +448,8 @@ public class ImageBuilder {
 		if (this.backcolor instanceof HColorSimple)
 			pngBackColor = this.backcolor.toColor(fileFormatOption.getColorMapper());
 
-		if (OptionFlags.getInstance().isReplaceWhiteBackgroundByTransparent() && Color.WHITE.equals(pngBackColor))
+		if (OptionFlags.getInstance().isReplaceWhiteBackgroundByTransparent()
+				&& (Color.WHITE.equals(pngBackColor) || Color.BLACK.equals(pngBackColor)))
 			pngBackColor = new Color(0, 0, 0, 0);
 
 		final EmptyImageBuilder builder = new EmptyImageBuilder(watermark, (int) (dim.getWidth() * scaleFactor),

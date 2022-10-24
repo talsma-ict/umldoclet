@@ -68,14 +68,13 @@ public class MutingLine {
 
 	private boolean useContinueLineBecauseOfDelay(List<Event> events) {
 		final String strategy = skinParam.getValue("lifelineStrategy");
-		if ("nosolid".equalsIgnoreCase(strategy)) {
+		if ("nosolid".equalsIgnoreCase(strategy))
 			return false;
-		}
-		for (Event ev : events) {
-			if (ev instanceof Delay) {
+
+		for (Event ev : events)
+			if (ev instanceof Delay)
 				return true;
-			}
-		}
+
 		return false;
 	}
 
@@ -99,12 +98,12 @@ public class MutingLine {
 
 	private void drawInternal(UGraphic ug, Context2D context, double y1, double y2,
 			final ComponentType defaultLineType) {
-		if (y2 == y1) {
+		if (y2 == y1)
 			return;
-		}
-		if (y2 < y1) {
+
+		if (y2 < y1)
 			throw new IllegalArgumentException();
-		}
+
 		final Style style = defaultLineType.getStyleSignature().getMergedStyle(styleBuilder);
 		final Component comp = skin.createComponent(new Style[] { style }, defaultLineType, null, skinParam,
 				participant.getDisplay(skinParam.forceSequenceParticipantUnderlined()));

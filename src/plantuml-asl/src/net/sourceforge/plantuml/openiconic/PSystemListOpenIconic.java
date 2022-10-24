@@ -61,7 +61,7 @@ public class PSystemListOpenIconic extends PlainDiagram {
 		lines.add("<i>Credit to");
 		lines.add("https://useiconic.com/open");
 		lines.add(" ");
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(getRessourceAllTxt()))) {
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(getResourceAllTxt()))) {
 			String s = null;
 			while ((s = br.readLine()) != null) {
 				// lines.add("<&yen> " + s);
@@ -73,7 +73,7 @@ public class PSystemListOpenIconic extends PlainDiagram {
 		return new TextBlockHorizontal(cols, VerticalAlignment.TOP);
 	}
 
-	private InputStream getRessourceAllTxt() {
+	private InputStream getResourceAllTxt() {
 		return DummyIcon.class.getResourceAsStream("all.txt");
 	}
 

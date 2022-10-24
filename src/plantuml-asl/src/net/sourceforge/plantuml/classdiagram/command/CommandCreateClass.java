@@ -75,7 +75,7 @@ public class CommandCreateClass extends SingleLineCommand2<ClassDiagram> {
 	private static IRegex getRegexConcat() {
 		return RegexConcat.build(CommandCreateClass.class.getName(), RegexLeaf.start(), //
 				new RegexLeaf("TYPE", //
-						"(interface|enum|annotation|abstract[%s]+class|static[%s]+class|abstract|class|entity|circle|diamond|protocol|struct|exception)"), //
+						"(interface|enum|annotation|abstract[%s]+class|static[%s]+class|abstract|class|entity|circle|diamond|protocol|struct|exception|metaclass|stereotype)"), //
 				RegexLeaf.spaceOneOrMore(), //
 				new RegexOr(//
 						new RegexConcat(//
@@ -106,9 +106,9 @@ public class CommandCreateClass extends SingleLineCommand2<ClassDiagram> {
 				new RegexOptional(new RegexConcat(new RegexLeaf("##"),
 						new RegexLeaf("LINECOLOR", "(?:\\[(dotted|dashed|bold)\\])?(\\w+)?"))), //
 				new RegexOptional(new RegexConcat(RegexLeaf.spaceOneOrMore(),
-						new RegexLeaf("EXTENDS", "(extends)[%s]+(" + CommandCreateClassMultilines.CODES + ")"))), //
+						new RegexLeaf("EXTENDS", "(extends)[%s]+(" + CommandCreateClassMultilines.CODES + "|[%g]([^%g]+)[%g])"))), //
 				new RegexOptional(new RegexConcat(RegexLeaf.spaceOneOrMore(),
-						new RegexLeaf("IMPLEMENTS", "(implements)[%s]+(" + CommandCreateClassMultilines.CODES + ")"))), //
+						new RegexLeaf("IMPLEMENTS", "(implements)[%s]+(" + CommandCreateClassMultilines.CODES + "|[%g]([^%g]+)[%g])"))), //
 				new RegexOptional(new RegexConcat(RegexLeaf.spaceZeroOrMore(), new RegexLeaf("\\{"),
 						RegexLeaf.spaceZeroOrMore(), new RegexLeaf("\\}"))), //
 				RegexLeaf.end());

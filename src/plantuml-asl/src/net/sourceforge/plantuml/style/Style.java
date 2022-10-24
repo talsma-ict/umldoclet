@@ -191,7 +191,8 @@ public class Style {
 			color = value(PName.FontColor).asColor(set);
 
 		final HColor hyperlinkColor = value(PName.HyperLinkColor).asColor(set);
-		return FontConfiguration.create(font, color, hyperlinkColor, true);
+		final UStroke stroke = getStroke(PName.HyperlinkUnderlineThickness, PName.HyperlinkUnderlineStyle);
+		return FontConfiguration.create(font, color, hyperlinkColor, stroke);
 	}
 
 	public SymbolContext getSymbolContext(HColorSet set, Colors colors) {
@@ -202,7 +203,10 @@ public class Style {
 		if (foreColor == null)
 			foreColor = value(PName.LineColor).asColor(set);
 		final double deltaShadowing = value(PName.Shadowing).asDouble();
-		return new SymbolContext(backColor, foreColor).withStroke(getStroke()).withDeltaShadow(deltaShadowing);
+		final double roundCorner = value(PName.RoundCorner).asDouble();
+		final double diagonalCorner = value(PName.DiagonalCorner).asDouble();
+		return new SymbolContext(backColor, foreColor).withStroke(getStroke()).withDeltaShadow(deltaShadowing)
+				.withCorner(roundCorner, diagonalCorner);
 	}
 
 	public SymbolContext getSymbolContext(HColorSet set) {
@@ -221,8 +225,12 @@ public class Style {
 	}
 
 	public UStroke getStroke() {
-		final double thickness = value(PName.LineThickness).asDouble();
-		final String dash = value(PName.LineStyle).asString();
+		return getStroke(PName.LineThickness, PName.LineStyle);
+	}
+
+	private UStroke getStroke(final PName thicknessParam, final PName styleParam) {
+		final double thickness = value(thicknessParam).asDouble();
+		final String dash = value(styleParam).asString();
 		if (dash.length() == 0)
 			return new UStroke(thickness);
 

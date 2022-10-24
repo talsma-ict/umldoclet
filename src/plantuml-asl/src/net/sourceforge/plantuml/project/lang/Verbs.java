@@ -118,7 +118,7 @@ public class Verbs {
 	}
 
 	public static IRegex lasts() {
-		return new RegexLeaf("lasts");
+		return new RegexLeaf("(lasts|requires)");
 	}
 
 	public static IRegex linksTo() {

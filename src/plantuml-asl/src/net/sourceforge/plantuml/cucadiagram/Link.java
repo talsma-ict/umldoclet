@@ -242,9 +242,9 @@ public class Link extends WithLinkType implements Hideable, Removeable {
 	}
 
 	private LinkType getTypeSpecialForPrinting() {
-		if (opale) {
+		if (opale)
 			return new LinkType(LinkDecor.NONE, LinkDecor.NONE);
-		}
+
 		LinkType result = type;
 		if (OptionFlags.USE_INTERFACE_EYE1) {
 			if (isLollipopInterfaceEye(cl1))
@@ -273,12 +273,12 @@ public class Link extends WithLinkType implements Hideable, Removeable {
 		this.getLinkArg().setLength(length);
 	}
 
-	public String getQualifier1() {
-		return getLinkArg().getQualifier1();
+	public String getQuantifier1() {
+		return getLinkArg().getQuantifier1();
 	}
 
-	public String getQualifier2() {
-		return getLinkArg().getQualifier2();
+	public String getQuantifier2() {
+		return getLinkArg().getQuantifier2();
 	}
 
 	public final double getWeight() {
@@ -323,17 +323,29 @@ public class Link extends WithLinkType implements Hideable, Removeable {
 	}
 
 	public boolean contains(IEntity entity) {
-		if (getEntity1() == entity || getEntity2() == entity)
+		if (isSame(getEntity1(), entity))
+			return true;
+		if (isSame(getEntity2(), entity))
 			return true;
 
 		return false;
 	}
 
+	static private boolean isSame(IEntity a, IEntity b) {
+		if (a == b)
+			return true;
+		if (((EntityImpl) a).getOriginalGroup() == b)
+			return true;
+		if (((EntityImpl) b).getOriginalGroup() == a)
+			return true;
+		return false;
+	}
+
 	public IEntity getOther(IEntity entity) {
-		if (getEntity1() == entity)
+		if (isSame(getEntity1(), entity))
 			return getEntity2();
 
-		if (getEntity2() == entity)
+		if (isSame(getEntity2(), entity))
 			return getEntity1();
 
 		throw new IllegalArgumentException();
@@ -351,7 +363,7 @@ public class Link extends WithLinkType implements Hideable, Removeable {
 //		return decor.getMargin() + q;
 //	}
 
-	private double getQualifierMargin(StringBounder stringBounder, UFont fontQualif, String qualif,
+	private double getQuantifierMargin(StringBounder stringBounder, UFont fontQualif, String qualif,
 			ISkinSimple spriteContainer) {
 		if (qualif != null) {
 			final TextBlock b = Display.create(qualif).create(FontConfiguration.blackBlueTrue(fontQualif),

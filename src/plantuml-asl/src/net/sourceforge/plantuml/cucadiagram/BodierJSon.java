@@ -33,7 +33,6 @@ package net.sourceforge.plantuml.cucadiagram;
 import java.util.List;
 import java.util.Objects;
 
-import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.TextBlock;
@@ -76,9 +75,9 @@ public class BodierJSon implements Bodier {
 	}
 
 	@Override
-	public TextBlock getBody(FontParam fontParam, ISkinParam skinParam, final boolean showMethods,
-			final boolean showFields, Stereotype stereotype, Style style, FontConfiguration fontConfiguration) {
-		return new TextBlockCucaJSon(fontConfiguration, fontParam, skinParam, json);
+	public TextBlock getBody(ISkinParam skinParam, final boolean showMethods, final boolean showFields,
+			Stereotype stereotype, Style style, FontConfiguration fontConfiguration) {
+		return new TextBlockCucaJSon(fontConfiguration, skinParam, json, style.wrapWidth());
 	}
 
 	@Override

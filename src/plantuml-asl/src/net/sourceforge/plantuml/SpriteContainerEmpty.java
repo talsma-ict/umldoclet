@@ -35,6 +35,7 @@ import java.util.Map;
 import net.sourceforge.plantuml.creole.Parser;
 import net.sourceforge.plantuml.sprite.Sprite;
 import net.sourceforge.plantuml.sprite.SpriteImage;
+import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public class SpriteContainerEmpty implements SpriteContainer, ISkinSimple {
@@ -83,7 +84,7 @@ public class SpriteContainerEmpty implements SpriteContainer, ISkinSimple {
 		throw new UnsupportedOperationException();
 	}
 
-	public double minClassWidth() {
+	public double minClassWidthTOBEREMOVED(Style style) {
 		return 0;
 	}
 

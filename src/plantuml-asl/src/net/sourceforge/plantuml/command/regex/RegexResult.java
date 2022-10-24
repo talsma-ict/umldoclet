@@ -52,24 +52,24 @@ public class RegexResult {
 
 	public String get(String key, int num) {
 		final RegexPartialMatch reg = data.get(key);
-		if (reg == null) {
+		if (reg == null)
 			return null;
-		}
+
 		return reg.get(num);
 	}
 
 	public String getLazzy(String key, int num) {
 		for (Map.Entry<String, RegexPartialMatch> ent : data.entrySet()) {
-			if (ent.getKey().startsWith(key) == false) {
+			if (ent.getKey().startsWith(key) == false)
 				continue;
-			}
+
 			final RegexPartialMatch match = ent.getValue();
-			if (num >= match.size()) {
+			if (num >= match.size())
 				continue;
-			}
-			if (match.get(num) != null) {
+
+			if (match.get(num) != null)
 				return ent.getValue().get(num);
-			}
+
 		}
 		return null;
 	}

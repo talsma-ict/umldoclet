@@ -46,4 +46,9 @@ public class Load implements Value {
 		return winks * 100;
 	}
 
+	@Override
+	public String toString() {
+		return "(" + winks + ")";
+	}
+
 }
