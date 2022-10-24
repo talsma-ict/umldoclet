@@ -152,23 +152,15 @@
                     <mapping>
                         <java>SLASHSTAR_STYLE</java>
                     </mapping>
+                    <includes>
+                        <include>pom.xml</include>
+                        <include>src/main/java/**</include>
+                        <include>src/test/java/**</include>
+                    </includes>
                     <excludes>
-                        <exclude>.gitignore</exclude>
-                        <exclude>.codebeatignore</exclude>
-                        <exclude>.codacy.yml</exclude>
-                        <exclude>.lift.toml</exclude>
-                        <exclude>.github/**</exclude>
-                        <exclude>.mvn/**</exclude>
-                        <exclude>mvnw*</exclude>
-                        <exclude>lib/**</exclude>
-                        <exclude>**/.idea/**</exclude>
-                        <exclude>LICENSE</exclude>
                         <exclude>**/*.md</exclude>
                         <exclude>**/*.puml</exclude>
                         <exclude>**/*.svg</exclude>
-                        <exclude>src/main/resources/**</exclude>
-                        <exclude>src/test/resources/**</exclude>
-                        <exclude>src/plantuml-asl/**</exclude>
                     </excludes>
                     <strictCheck>true</strictCheck>
                 </configuration>
