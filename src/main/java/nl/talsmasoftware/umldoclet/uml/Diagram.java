@@ -24,19 +24,25 @@ import nl.talsmasoftware.umldoclet.logging.Message;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.rendering.writers.StringBufferingWriter;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
-import static nl.talsmasoftware.umldoclet.util.FileUtils.*;
+import static nl.talsmasoftware.umldoclet.util.FileUtils.ensureParentDir;
+import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
+import static nl.talsmasoftware.umldoclet.util.FileUtils.withoutExtension;
 
 /**
  * Abstract class corresponding to a single UML diagram.
  */
 public abstract class Diagram extends UMLNode {
-
     private final Configuration config;
     private final FileFormat[] formats;
     private File diagramBaseFile;
@@ -53,11 +59,16 @@ public abstract class Diagram extends UMLNode {
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         output.append("@startuml").newline();
         IndentingPrintWriter indented = output.indent();
-        config.customPlantumlDirectives().forEach(indented::println);
+        writeCustomDirectives(config.customPlantumlDirectives(), indented);
         writeChildrenTo(indented);
         indented.newline();
         writeFooterTo(indented);
         output.append("@enduml").newline();
+        return output;
+    }
+
+    protected <IPW extends IndentingPrintWriter> IPW writeCustomDirectives(List<String> customDirectives, IPW output) {
+        customDirectives.forEach(output::println);
         return output;
     }
 
