@@ -57,7 +57,7 @@ public interface ISkinParam extends ISkinSimple {
 
 	public HColor getHyperlinkColor();
 
-	public boolean useUnderlineForHyperlink();
+	public UStroke useUnderlineForHyperlink();
 
 	public HColor getBackgroundColor();
 
@@ -185,4 +185,6 @@ public interface ISkinParam extends ISkinSimple {
 	public void setSvgSize(String origin, String sizeToUse);
 
 	public LengthAdjust getlengthAdjust();
+
+	public double getParamSameClassWidth();
 }

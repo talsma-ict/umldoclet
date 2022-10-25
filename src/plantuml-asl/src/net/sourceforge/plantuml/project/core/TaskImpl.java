@@ -89,7 +89,7 @@ public class TaskImpl extends AbstractTask implements Task, LoadPlanable {
 
 		LoadPlanable result = defaultPlan;
 		if (resources.size() > 0)
-			result = PlanUtils.multiply(defaultPlan, getRessourcePlan());
+			result = PlanUtils.multiply(defaultPlan, getResourcePlan());
 
 		return result.getLoadAt(instant);
 	}
@@ -134,7 +134,7 @@ public class TaskImpl extends AbstractTask implements Task, LoadPlanable {
 		this.pausedDayOfWeek.add(pause);
 	}
 
-	private LoadPlanable getRessourcePlan() {
+	private LoadPlanable getResourcePlan() {
 		if (resources.size() == 0)
 			throw new IllegalStateException();
 
@@ -187,8 +187,9 @@ public class TaskImpl extends AbstractTask implements Task, LoadPlanable {
 
 	public Day getStart() {
 		Day result = (Day) solver.getData(TaskAttribute.START);
-		while (getLoadAt(result) == 0)
-			result = result.increment();
+		if (diamond == false)
+			while (getLoadAt(result) == 0)
+				result = result.increment();
 
 		return result;
 	}

@@ -77,7 +77,7 @@ public class ShuntingYard {
 					ouputQueue.add(variable.toToken());
 				}
 			} else if (token.getTokenType() == TokenType.OPERATOR) {
-				while ((thereIsAFunctionAtTheTopOfTheOperatorStack(token) //
+				while ((thereIsAFunctionAtTheTopOfTheOperatorStack() //
 						|| thereIsAnOperatorAtTheTopOfTheOperatorStackWithGreaterPrecedence(token) //
 						|| theOperatorAtTheTopOfTheOperatorStackHasEqualPrecedenceAndIsLeftAssociative(token)) //
 						&& theOperatorAtTheTopOfTheOperatorStackIsNotALeftParenthesis(token))
@@ -121,7 +121,7 @@ public class ShuntingYard {
 		return name.matches("[a-zA-Z0-9.$_]+");
 	}
 
-	private boolean thereIsAFunctionAtTheTopOfTheOperatorStack(Token token) {
+	private boolean thereIsAFunctionAtTheTopOfTheOperatorStack() {
 		final Token top = operatorStack.peekFirst();
 		return top != null && top.getTokenType() == TokenType.FUNCTION_NAME;
 	}

@@ -46,16 +46,20 @@ import net.sourceforge.plantuml.ugraphic.UTranslate;
 public class CommunicationTileNoteBottom extends CommunicationTileNoteBottomTopAbstract {
 
 	public CommunicationTileNoteBottom(Tile tile, AbstractMessage message, Rose skin, ISkinParam skinParam,
-			Note noteOnMessage) {
-		super(tile, message, skin, skinParam, noteOnMessage);
+			Note noteOnMessage, YGauge currentY) {
+		super(tile, message, skin, skinParam, noteOnMessage, currentY);
 	}
 
+	@Override
 	public void drawU(UGraphic ug) {
 		final StringBounder stringBounder = ug.getStringBounder();
 		final Component comp = getComponent(stringBounder);
 		final XDimension2D dim = comp.getPreferredDimension(stringBounder);
 		final Area area = Area.create(dim.getWidth(), dim.getHeight());
 		((UDrawable) tile).drawU(ug);
+
+		if (YGauge.USE_ME)
+			ug = ug.apply(UTranslate.dy(getYGauge().getMin().getCurrentValue()));
 
 		final double middleMsg = (tile.getMinX().getCurrentValue() + tile.getMaxX().getCurrentValue()) / 2;
 

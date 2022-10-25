@@ -30,122 +30,184 @@
  */
 package net.sourceforge.plantuml.ebnf;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.plantuml.Direction;
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.graphic.UDrawable;
+import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.FloatingNote;
+import net.sourceforge.plantuml.awt.geom.XDimension2D;
+import net.sourceforge.plantuml.awt.geom.XPoint2D;
+import net.sourceforge.plantuml.cucadiagram.Display;
+import net.sourceforge.plantuml.graphic.FontConfiguration;
+import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.graphic.TextBlockUtils;
+import net.sourceforge.plantuml.style.PName;
+import net.sourceforge.plantuml.style.SName;
+import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
-interface CharIterator {
-	char peek();
+public class EbnfExpression implements TextBlockable {
 
-	void next();
-}
+	private final List<Token> tokens = new ArrayList<>();
+	private final boolean isCompact;
+	private final String commentAbove;
+	private final String commentBelow;
 
-class CharIteratorImpl implements CharIterator {
-
-	final private List<String> data;
-	private int line = 0;
-	private int pos = 0;
-
-	public CharIteratorImpl(List<String> data) {
-		this.data = data;
+	public static EbnfExpression create(CharIterator it, boolean isCompact, String commentAbove, String commentBelow) {
+		return new EbnfExpression(it, isCompact, commentAbove, commentBelow);
 	}
 
-	public char peek() {
-		if (line == -1)
-			return 0;
-		return data.get(line).charAt(pos);
-	}
-
-	public void next() {
-		if (line == -1)
-			throw new IllegalStateException();
-		pos++;
-		if (pos >= data.get(line).length()) {
-			line++;
-			pos = 0;
-		}
-		if (line >= data.size())
-			line = -1;
-	}
-}
-
-public class EbnfExpression {
-
-	final List<Token> tokens = new ArrayList<>();
-
-	public EbnfExpression(String... data) {
-		this(Arrays.asList(data));
-	}
-
-	public EbnfExpression(List<String> data) {
-		final CharIterator it = new CharIteratorImpl(data);
-		analyze(it);
-	}
-
-	public UDrawable getUDrawable(ISkinParam skinParam) {
-		final Iterator<Token> iterator = tokens.iterator();
-		final Token name = iterator.next();
-		final Token definition = iterator.next();
-		final ShuntingYard shuntingYard = new ShuntingYard(iterator);
-
-		return build(shuntingYard.getOuputQueue(), skinParam);
-
-	}
-
-	private Alternation build(Iterator<Token> it, ISkinParam skinParam) {
-		final Deque<Token> stack = new ArrayDeque<>();
-		final Alternation ebnf = new Alternation(skinParam);
-		while (it.hasNext()) {
-			final Token element = it.next();
-			if (element.getSymbol() == Symbol.TERMINAL_STRING1 || element.getSymbol() == Symbol.LITTERAL) {
-				stack.addFirst(element);
-			} else if (element.getSymbol() == Symbol.ALTERNATION) {
-				ebnf.alternation(stack.removeFirst());
-			} else {
-				throw new UnsupportedOperationException(element.toString());
-			}
-		}
-		ebnf.alternation(stack.removeFirst());
-
-		return ebnf;
-	}
-
-	private void analyze(CharIterator it) {
+	private EbnfExpression(CharIterator it, boolean isCompact, String commentAbove, String commentBelow) {
+		this.isCompact = isCompact;
+		this.commentAbove = commentAbove;
+		this.commentBelow = commentBelow;
 		while (true) {
-			final char ch = it.peek();
+			final char ch = it.peek(0);
 			if (Character.isWhitespace(ch)) {
 			} else if (isLetterOrDigit(ch)) {
 				final String litteral = readLitteral(it);
 				tokens.add(new Token(Symbol.LITTERAL, litteral));
+				continue;
+			} else if (ch == '*') {
+				tokens.add(new Token(Symbol.REPETITION_SYMBOL, null));
+			} else if (ch == '(' && it.peek(1) == '*') {
+				final String comment = readComment(it);
+				if (comment.trim().length() > 0)
+					tokens.add(new Token(Symbol.COMMENT_TOKEN, comment));
+				continue;
+			} else if (ch == ',') {
+				tokens.add(new Token(Symbol.CONCATENATION, null));
 			} else if (ch == '|') {
 				tokens.add(new Token(Symbol.ALTERNATION, null));
 			} else if (ch == '=') {
 				tokens.add(new Token(Symbol.DEFINITION, null));
+			} else if (ch == '(') {
+				tokens.add(new Token(Symbol.GROUPING_OPEN, null));
+			} else if (ch == ')') {
+				tokens.add(new Token(Symbol.GROUPING_CLOSE, null));
+			} else if (ch == '[') {
+				tokens.add(new Token(Symbol.OPTIONAL_OPEN, null));
+			} else if (ch == ']') {
+				tokens.add(new Token(Symbol.OPTIONAL_CLOSE, null));
+			} else if (ch == '{') {
+				tokens.add(new Token(Symbol.REPETITION_OPEN, null));
+			} else if (ch == '}' && it.peek(1) == '-') {
+				tokens.add(new Token(Symbol.REPETITION_MINUS_CLOSE, null));
+				it.next();
+			} else if (ch == '}') {
+				tokens.add(new Token(Symbol.REPETITION_CLOSE, null));
 			} else if (ch == ';' || ch == 0) {
+				// it.next();
 				break;
 			} else if (ch == '\"') {
 				final String litteral = readString(it);
 				tokens.add(new Token(Symbol.TERMINAL_STRING1, litteral));
-			} else
-				throw new UnsupportedOperationException("" + ch);
+			} else if (ch == '\'') {
+				final String litteral = readString(it);
+				tokens.add(new Token(Symbol.TERMINAL_STRING2, litteral));
+			} else {
+				tokens.clear();
+				return;
+			}
 			it.next();
 			continue;
 		}
+	}
 
+	public TextBlock getUDrawable(ISkinParam skinParam) {
+		final Style style = ETile.getStyleSignature().getMergedStyle(skinParam.getCurrentStyleBuilder());
+		final FontConfiguration fc = style.getFontConfiguration(skinParam.getIHtmlColorSet());
+
+		if (tokens.size() == 0)
+			return EbnfEngine.syntaxError(fc, skinParam);
+
+		try {
+			final Iterator<Token> iterator = tokens.iterator();
+			final Token name = iterator.next();
+			final Token definition = iterator.next();
+			if (definition.getSymbol() != Symbol.DEFINITION)
+				return EbnfEngine.syntaxError(fc, skinParam);
+
+			final TextBlock main;
+			if (iterator.hasNext()) {
+				final List<Token> full = new ShuntingYard(iterator).getOuputQueue();
+				if (full.size() == 0)
+					return EbnfEngine.syntaxError(fc, skinParam);
+
+				main = getMainDrawing(skinParam, full.iterator());
+			} else {
+				final HColor lineColor = style.value(PName.LineColor).asColor(skinParam.getIHtmlColorSet());
+				main = new ETileWithCircles(new ETileEmpty(), lineColor);
+			}
+
+			TextBlock titleBox = new TitleBox(name.getData(), fc);
+			if (commentAbove != null)
+				titleBox = TextBlockUtils.mergeTB(getNoteAbove(skinParam), titleBox, HorizontalAlignment.CENTER);
+			if (commentBelow != null)
+				titleBox = TextBlockUtils.mergeTB(titleBox, getNoteBelow(skinParam), HorizontalAlignment.CENTER);
+
+			return TextBlockUtils.mergeTB(titleBox, TextBlockUtils.withMargin(main, 0, 0, 10, 15),
+					HorizontalAlignment.LEFT);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return EbnfEngine.syntaxError(fc, skinParam);
+		}
+	}
+
+	private TextBlock getNoteAbove(ISkinParam skinParam) {
+		if (commentAbove == null)
+			return null;
+		final FloatingNote note = FloatingNote.create(Display.getWithNewlines(commentAbove), skinParam, SName.ebnf);
+		return note;
+	}
+
+	private TextBlock getNoteBelow(ISkinParam skinParam) {
+		if (commentBelow == null)
+			return null;
+		final FloatingNote note = FloatingNote.create(Display.getWithNewlines(commentBelow), skinParam, SName.ebnf);
+		return note;
+	}
+
+	private TextBlock getMainDrawing(ISkinParam skinParam, Iterator<Token> it) {
+		final EbnfEngine engine = new EbnfEngine(skinParam);
+		while (it.hasNext()) {
+			final Token element = it.next();
+			if (element.getSymbol() == Symbol.TERMINAL_STRING1 || element.getSymbol() == Symbol.TERMINAL_STRING2
+					|| element.getSymbol() == Symbol.LITTERAL)
+				engine.push(element);
+			else if (element.getSymbol() == Symbol.COMMENT_ABOVE)
+				engine.commentAbove(element.getData());
+			else if (element.getSymbol() == Symbol.COMMENT_BELOW)
+				engine.commentBelow(element.getData());
+			else if (element.getSymbol() == Symbol.ALTERNATION)
+				engine.alternation();
+			else if (element.getSymbol() == Symbol.CONCATENATION)
+				engine.concatenation();
+			else if (element.getSymbol() == Symbol.OPTIONAL)
+				engine.optional();
+			else if (element.getSymbol() == Symbol.REPETITION_ZERO_OR_MORE)
+				engine.repetitionZeroOrMore(isCompact);
+			else if (element.getSymbol() == Symbol.REPETITION_ONE_OR_MORE)
+				engine.repetitionOneOrMore();
+			else if (element.getSymbol() == Symbol.REPETITION_SYMBOL)
+				engine.repetitionSymbol();
+			else
+				throw new UnsupportedOperationException(element.toString());
+		}
+
+		return engine.getTextBlock();
 	}
 
 	private String readString(CharIterator it) {
-		final char separator = it.peek();
+		final char separator = it.peek(0);
 		it.next();
 		final StringBuilder sb = new StringBuilder();
 		while (true) {
-			final char ch = it.peek();
+			final char ch = it.peek(0);
 			if (ch == separator)
 				return sb.toString();
 			sb.append(ch);
@@ -156,7 +218,7 @@ public class EbnfExpression {
 	private String readLitteral(CharIterator it) {
 		final StringBuilder sb = new StringBuilder();
 		while (true) {
-			final char ch = it.peek();
+			final char ch = it.peek(0);
 			if (isLetterOrDigit(ch) == false)
 				return sb.toString();
 			sb.append(ch);
@@ -164,8 +226,30 @@ public class EbnfExpression {
 		}
 	}
 
+	private String readComment(CharIterator it) {
+		final StringBuilder sb = new StringBuilder();
+		it.next();
+		it.next();
+		while (true) {
+			final char ch = it.peek(0);
+			if (ch == '\0')
+				return sb.toString();
+			if (ch == '*' && it.peek(1) == ')') {
+				it.next();
+				it.next();
+				return sb.toString();
+			}
+			sb.append(ch);
+			it.next();
+		}
+	}
+
 	private boolean isLetterOrDigit(char ch) {
 		return ch == '-' || ch == '_' || Character.isLetterOrDigit(ch);
+	}
+
+	public boolean isEmpty() {
+		return tokens.size() == 0;
 	}
 
 }

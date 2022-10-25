@@ -54,6 +54,7 @@ public class CommunicationTileNoteRight extends AbstractTile {
 	private final ISkinParam skinParam;
 	private final LivingSpace livingSpace;
 	private final Note noteOnMessage;
+	private final YGauge yGauge;
 
 	public Event getEvent() {
 		return message;
@@ -69,18 +70,25 @@ public class CommunicationTileNoteRight extends AbstractTile {
 	}
 
 	public CommunicationTileNoteRight(Tile tile, AbstractMessage message, Rose skin, ISkinParam skinParam,
-			LivingSpace livingSpace, Note noteOnMessage) {
-		super(((AbstractTile) tile).getStringBounder());
+			LivingSpace livingSpace, Note noteOnMessage, YGauge currentY) {
+		super(((AbstractTile) tile).getStringBounder(), currentY);
 		this.tile = tile;
 		this.message = message;
 		this.skin = skin;
 		this.skinParam = skinParam;
 		this.noteOnMessage = noteOnMessage;
 		this.livingSpace = livingSpace;
+		this.yGauge = YGauge.create(currentY.getMax(), getPreferredHeight());
 	}
 
 	@Override
-	final protected void callbackY_internal(double y) {
+	public YGauge getYGauge() {
+		return yGauge;
+	}
+
+	@Override
+	final protected void callbackY_internal(TimeHook y) {
+		super.callbackY_internal(y);
 		tile.callbackY(y);
 	}
 
@@ -108,6 +116,8 @@ public class CommunicationTileNoteRight extends AbstractTile {
 		final Area area = Area.create(dim.getWidth(), dim.getHeight());
 		((UDrawable) tile).drawU(ug);
 		final Real p = getNotePosition(stringBounder);
+		if (YGauge.USE_ME)
+			ug = ug.apply(UTranslate.dy(getYGauge().getMin().getCurrentValue()));
 
 		comp.drawU(ug.apply(UTranslate.dx(p.getCurrentValue())), area, (Context2D) ug);
 	}

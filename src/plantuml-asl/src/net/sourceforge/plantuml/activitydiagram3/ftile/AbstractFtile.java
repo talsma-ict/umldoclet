@@ -55,9 +55,9 @@ public abstract class AbstractFtile extends AbstractTextBlock implements Ftile {
 	}
 
 	final public ISkinParam skinParam() {
-		if (skinParam == null) {
+		if (skinParam == null)
 			throw new IllegalStateException();
-		}
+
 		return skinParam;
 	}
 

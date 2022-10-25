@@ -78,7 +78,7 @@ public class Stdlib {
 			if (folder == null || folder.info.size() == 0)
 				return null;
 
-			final String data = folder.loadRessource(fullname.substring(last + 1));
+			final String data = folder.loadResource(fullname.substring(last + 1));
 			if (data == null)
 				return null;
 
@@ -104,7 +104,7 @@ public class Stdlib {
 		return result;
 	}
 
-	private String loadRessource(String file) throws IOException {
+	private String loadResource(String file) throws IOException {
 		final SoftReference<String> cached = cache.get(file.toLowerCase());
 		if (cached != null) {
 			final String cachedResult = cached.get();

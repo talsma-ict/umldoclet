@@ -28,36 +28,35 @@
  *
  * Original Author:  Arnaud Roques
  */
-package net.sourceforge.plantuml.project.command;
+package net.sourceforge.plantuml.ebnf;
 
-import net.sourceforge.plantuml.LineLocation;
-import net.sourceforge.plantuml.command.CommandExecutionResult;
-import net.sourceforge.plantuml.command.SingleLineCommand2;
-import net.sourceforge.plantuml.command.regex.IRegex;
-import net.sourceforge.plantuml.command.regex.RegexConcat;
-import net.sourceforge.plantuml.command.regex.RegexLeaf;
-import net.sourceforge.plantuml.command.regex.RegexResult;
-import net.sourceforge.plantuml.project.GanttDiagram;
+import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.ugraphic.UGraphic;
 
-public class CommandHideRessourceName extends SingleLineCommand2<GanttDiagram> {
+public class ETileEmpty extends ETile {
 
-	public CommandHideRessourceName() {
-		super(getRegexConcat());
-	}
-
-	static IRegex getRegexConcat() {
-		return RegexConcat.build(CommandHideRessourceName.class.getName(), RegexLeaf.start(), //
-				new RegexLeaf("hide"), //
-				RegexLeaf.spaceOneOrMore(), //
-				new RegexLeaf("ressources?"), //
-				RegexLeaf.spaceOneOrMore(), //
-				new RegexLeaf("names?"), //
-				RegexLeaf.end()); //
+	@Override
+	public void drawU(UGraphic ug) {
 	}
 
 	@Override
-	protected CommandExecutionResult executeArg(GanttDiagram diagram, LineLocation location, RegexResult arg) {
-		return diagram.hideRessourceName();
+	public void push(ETile tile) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public double getWidth(StringBounder stringBounder) {
+		return 0;
+	}
+
+	@Override
+	public double getH1(StringBounder stringBounder) {
+		return 0;
+	}
+
+	@Override
+	public double getH2(StringBounder stringBounder) {
+		return 0;
 	}
 
 }

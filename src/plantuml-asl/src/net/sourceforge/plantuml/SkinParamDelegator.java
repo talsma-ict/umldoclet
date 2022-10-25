@@ -204,11 +204,6 @@ public class SkinParamDelegator implements ISkinParam {
 	}
 
 	@Override
-	public double minClassWidth() {
-		return skinParam.minClassWidth();
-	}
-
-	@Override
 	public boolean sameClassWidth() {
 		return skinParam.sameClassWidth();
 	}
@@ -229,7 +224,7 @@ public class SkinParamDelegator implements ISkinParam {
 	}
 
 	@Override
-	public boolean useUnderlineForHyperlink() {
+	public UStroke useUnderlineForHyperlink() {
 		return skinParam.useUnderlineForHyperlink();
 	}
 
@@ -436,6 +431,11 @@ public class SkinParamDelegator implements ISkinParam {
 	@Override
 	public LengthAdjust getlengthAdjust() {
 		return skinParam.getlengthAdjust();
+	}
+
+	@Override
+	public double getParamSameClassWidth() {
+		return skinParam.getParamSameClassWidth();
 	}
 
 }

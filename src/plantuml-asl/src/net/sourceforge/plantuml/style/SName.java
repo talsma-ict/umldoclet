@@ -67,6 +67,7 @@ public enum SName {
 	destroy, //
 	diamond, //
 	document, //
+	ebnf, //
 	element, //
 	entity, //
 	end, //
@@ -83,12 +84,14 @@ public enum SName {
 	hexagon, //
 	highlight, //
 	interface_, //
+	json,
 	jsonDiagram, //
 	gitDiagram, //
 	label, //
 	leafNode, //
 	legend, //
 	lifeLine, //
+	mainframe, //
 	map, //
 	milestone, //
 	mindmapDiagram, //
@@ -144,6 +147,8 @@ public enum SName {
 	spotException, //
 	spotClass, //
 	spotAbstractClass, //
+	spotMetaClass, //
+	spotStereotype, //
 
 	wbsDiagram, //
 	yamlDiagram; //

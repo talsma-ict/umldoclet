@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UrlBuilder;
@@ -205,11 +204,11 @@ public class BodierLikeClassOrObject implements Bodier {
 	}
 
 	@Override
-	public TextBlock getBody(FontParam fontParam, ISkinParam skinParam, boolean showMethods, boolean showFields,
-			Stereotype stereotype, Style style, FontConfiguration fontConfiguration) {
+	public TextBlock getBody(ISkinParam skinParam, boolean showMethods, boolean showFields, Stereotype stereotype,
+			Style style, FontConfiguration fontConfiguration) {
 
 		if (BodyFactory.BODY3)
-			return new Body3(rawBody, fontParam, skinParam, stereotype, style);
+			return new Body3(rawBody, skinParam, stereotype, style);
 
 		if (type.isLikeClass() && isBodyEnhanced()) {
 			if (showMethods || showFields)

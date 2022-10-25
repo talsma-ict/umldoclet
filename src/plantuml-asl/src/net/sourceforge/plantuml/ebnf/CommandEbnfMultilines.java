@@ -30,40 +30,36 @@
  */
 package net.sourceforge.plantuml.ebnf;
 
-import net.sourceforge.plantuml.graphic.UDrawable;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.ULine;
-import net.sourceforge.plantuml.ugraphic.UPath;
+import net.sourceforge.plantuml.command.BlocLines;
+import net.sourceforge.plantuml.command.CommandExecutionResult;
+import net.sourceforge.plantuml.command.CommandMultilines2;
+import net.sourceforge.plantuml.command.MultilinesStrategy;
+import net.sourceforge.plantuml.command.Trim;
+import net.sourceforge.plantuml.command.regex.IRegex;
+import net.sourceforge.plantuml.command.regex.RegexConcat;
+import net.sourceforge.plantuml.command.regex.RegexLeaf;
+import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
 
-public class HLineCurved implements UDrawable {
+public class CommandEbnfMultilines extends CommandMultilines2<PSystemEbnf> {
 
-	private final double height;
-	private final double delta;
+	public CommandEbnfMultilines() {
+		super(getRegexConcat(), MultilinesStrategy.KEEP_STARTING_QUOTE, Trim.BOTH);
+	}
 
-	public HLineCurved(double height, double delta) {
-		this.height = height;
-		this.delta = delta;
+	static IRegex getRegexConcat() {
+		return RegexConcat.build(CommandEbnfMultilines.class.getName(), RegexLeaf.start(), //
+				new RegexLeaf("LINE", "(\\w[-\\w]*[%s]*=.*)"), //
+				RegexLeaf.end());
 	}
 
 	@Override
-	public void drawU(UGraphic ug) {
-		if (delta == 0) {
-			ug.draw(ULine.vline(height));
-			return;
-		}
-		final UPath path = new UPath();
-		path.moveTo(-delta, 0);
+	public String getPatternEnd() {
+		return "^(.*);$";
+	}
 
-		final double a = delta / 4;
-		path.cubicTo(-a, 0, 0, Math.abs(a), 0, Math.abs(delta));
-		// path.lineTo(0, delta);
-
-		path.lineTo(0, height - Math.abs(delta));
-
-		path.cubicTo(0, height - a, a, height, delta, height);
-		// path.lineTo(delta, height);
-
-		ug.draw(path);
+	@Override
+	protected CommandExecutionResult executeNow(PSystemEbnf diagram, BlocLines lines) throws NoSuchColorException {
+		return diagram.addBlocLines(lines, null, null);
 	}
 
 }

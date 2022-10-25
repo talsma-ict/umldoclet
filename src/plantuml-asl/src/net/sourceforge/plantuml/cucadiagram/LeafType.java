@@ -29,6 +29,7 @@
  * Original Author:  Arnaud Roques
  * Contribution :  Hisashi Miyashita
  * Contribution :  Serge Wenger
+ * Contribution :  The-Lum
  */
 package net.sourceforge.plantuml.cucadiagram;
 
@@ -38,7 +39,7 @@ public enum LeafType {
 
 	EMPTY_PACKAGE,
 
-	ABSTRACT_CLASS, CLASS, INTERFACE, ANNOTATION, PROTOCOL, STRUCT, EXCEPTION, LOLLIPOP_FULL, LOLLIPOP_HALF, NOTE, TIPS,
+	ABSTRACT_CLASS, CLASS, INTERFACE, ANNOTATION, PROTOCOL, STRUCT, EXCEPTION, METACLASS, STEREOTYPE, LOLLIPOP_FULL, LOLLIPOP_HALF, NOTE, TIPS,
 	OBJECT, MAP, JSON, ASSOCIATION, ENUM, CIRCLE,
 
 	USECASE, USECASE_BUSINESS,
@@ -76,7 +77,8 @@ public enum LeafType {
 	public boolean isLikeClass() {
 		return this == LeafType.ANNOTATION || this == LeafType.ABSTRACT_CLASS || this == LeafType.CLASS
 				|| this == LeafType.INTERFACE || this == LeafType.ENUM || this == LeafType.ENTITY
-				|| this == LeafType.PROTOCOL || this == LeafType.STRUCT || this == LeafType.EXCEPTION;
+				|| this == LeafType.PROTOCOL || this == LeafType.STRUCT || this == LeafType.EXCEPTION
+				|| this == LeafType.METACLASS || this == LeafType.STEREOTYPE;
 	}
 
 	public String toHtml() {

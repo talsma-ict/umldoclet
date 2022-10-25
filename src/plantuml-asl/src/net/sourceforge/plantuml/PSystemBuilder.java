@@ -195,7 +195,7 @@ public class PSystemBuilder {
 		factories.add(new PSystemOregonFactory());
 		factories.add(new PSystemCharlieFactory());
 		factories.add(new GanttDiagramFactory(DiagramType.GANTT));
-		factories.add(new GanttDiagramFactory(DiagramType.UML));
+		// factories.add(new GanttDiagramFactory(DiagramType.UML));
 		GanttDiagramFactory.clearCache();
 		factories.add(new FlowDiagramFactory());
 		// factories.add(new PSystemTreeFactory(DiagramType.JUNGLE));
