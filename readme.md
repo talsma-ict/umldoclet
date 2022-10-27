@@ -1,13 +1,12 @@
 [![CI build][ci-img]][ci]
 [![Maven Version][maven-img]][maven]
 [![Javadoc][javadoc-img]][javadoc]
+[![Codebeat badge][codebeat-img]][codebeat]
+[![Coverage Status][coveralls-img]][coveralls]
 
 # UMLDoclet
 
 [Doclet for javadoc][doclet] to automatically add [UML diagrams][plantuml] to Java documentation.  
-
-[![Codebeat badge][codebeat-img]][codebeat]
-[![Coverage Status][coveralls-img]][coveralls]
 
 ## Generate UML diagrams
 
