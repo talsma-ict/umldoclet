@@ -29,7 +29,7 @@ public interface ImageConfig {
      */
     enum Format {
         /**
-         * Value to indicate UML diagrams must be rendered as SVG
+         * Render UML diagrams as SVG
          * (<a href="https://wikipedia.org/wiki/Scalable_Vector_Graphics">scalable vector graphics</a>) images.
          * <p>
          * This format is the default and recommended format, as they have the following advantages over the other
@@ -43,29 +43,30 @@ public interface ImageConfig {
         SVG(".svg"),
 
         /**
-         * This option generates the same images as the {@link #SVG} images, but embeds them in the
-         * generated documentation as plain HTML <em>&lt;img&gt;</em> tags instead of objects.
+         * Generate the same diagram as the {@link #SVG} option, but embed it as plain <em>&lt;img&gt;</em> tags
+         * in the Javadoc HTML instead of SVG objects.
          * <p>
          * This allows loading the documentation in tools like Microsoft Word and keeping the images,
          * where embedded SVG objects are problematic.
          * <p>
          * It is recommended as a fallback option if the default {@link #SVG} option is giving you issues.
          * Links <em>will</em> be embedded inside the SVG images, but will <em>not</em> be clickable
-         * in most browsers unfortunately.
+         * in most browsers when included as image tag.
          */
         SVG_IMG(".svg"),
 
         /**
-         * Value to indicate UML diagrams must be rendered as PNG
+         * Render UML diagrams as PNG
          * (<a href="https://wikipedia.org/wiki/Portable_Network_Graphics">Portable Network Graphics</a>) images.
          * <p>
          * This is a raster-graphics format that supports lossless compression. This format is usually only used if
-         * {@link #SVG} is not an option.
+         * {@link #SVG} is not an option. Raster images do not automatically scale and their file size is substantially
+         * larger than {@link #SVG}.
          */
         PNG(".png"),
 
         /**
-         * Value to indicate UML diagrams must be rendered as EPS
+         * Render UML diagrams as EPS
          * (<a href="https://wikipedia.org/wiki/Encapsulated_PostScript">Encapsulated Postscript</a>) images.
          * <p>
          * This format is most appropriate for print.
@@ -83,17 +84,24 @@ public interface ImageConfig {
     }
 
     /**
-     * @return The image directory for the UML diagrams, if explicitly specified.
+     * A separate directory where all UML diagram images are generated, if explicitly specified.
+     * <p>
+     * If not configured (i.e. {@link Optional#empty()}), the image will be generated within the same directory als
+     * the corresponding javadoc HTML.
+     *
+     * @return The image directory for UML diagrams, if explicitly specified.
      */
     Optional<String> directory();
 
     /**
+     * Image format(s) to generate UML diagrams in.
+     * <p>
      * By default {@code SVG} images will be generated because they are a lot smaller than for instance {@code PNG}
      * images and they can include links to Javadoc {@code HTML} pages.
      * <p>
      * Providing one or more {@code "-umlImageFormat"} option values overrides this setting.
      *
-     * @return The image formats that are generated (by default only {@code SVG}).
+     * @return Image formats that will be generated (by default only {@code SVG}).
      */
     Collection<Format> formats();
 
