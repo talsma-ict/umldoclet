@@ -31,62 +31,94 @@ import java.util.Optional;
 public interface Configuration {
 
     /**
+     * Tha name of the doclet to delegate main documentation to
+     * or {@link Optional#empty} if no delegation is wanted.
+     *
      * @return The name of the doclet to delegate main documentation to
      * or {@code Optional.empty()} if no delegation is wanted.
+     * @deprecated Delegation to another Doclet does not work at te moment unfortunately.
      */
+    @Deprecated(since = "2.0.21", forRemoval = true)
     Optional<String> delegateDocletName();
 
     /**
-     * Custom logger implementation that only supports fixed messages.
+     * Configured logger for this doclet.
      * <p>
-     * This allows us to write unit tests that verify resource bundle availability of all loggable text.
+     * This is a simple, custom logging implementation so we do not have to introduce an external dependency.
      *
      * @return The logger for this application
      */
     Logger logger();
 
     /**
-     * @return The configured indentation within the generated UML files.
+     * The indentation configuration for generated PlantUML source files.
+     *
+     * @return The indentation configuration.
      */
     Indentation indentation();
 
     /**
-     * @return The destination directory for the UML diagrams, or the empty string {@code ""} for the current directory.
+     * Destination directory for JavaDoc and UML diagrams, or the empty string {@code ""} to use the current directory.
+     *
+     * @return Destination directory for JavaDoc and UML diagrams, or the empty string {@code ""} for the current directory.
      */
     String destinationDirectory();
 
     /**
-     * @return Whether or not to render PlantUML {@code .puml} files.
+     * Whether PlantUML source files are generated.
+     * <p>
+     * PlantUML source files have the {@code .puml} filename extension.
+     *
+     * @return {@code true} if PlantUML source files must be generated, otherwise {@code false}.
      */
     boolean renderPumlFile();
 
     /**
-     * @return The configuration for the images that are generated.
+     * Configuration for generated images.
+     *
+     * @return Configuration for generated images.
      */
     ImageConfig images();
 
     /**
-     * @return The part of the configuration that determines how fields are rendered.
+     * Configuration for generated UML fields.
+     *
+     * @return UML field configuration.
      */
     FieldConfig fields();
 
     /**
-     * @return The part of the configuration that determines how methods are rendered.
+     * Configuration for generated UML methods.
+     *
+     * @return UML method configuration.
      */
     MethodConfig methods();
 
     /**
+     * Names of types that are excluded as reference.
+     * <p>
+     * Types can be any java type, such as classes and interfaces.
+     * <p>
+     * Names should match exactly with the fully quallified type names.
+     *
      * @return The types (classes, interfaces) that are excluded as references.
      */
     List<String> excludedTypeReferences();
 
     /**
+     * Names of packages that are excluded as package dependencies.
+     * <p>
+     * The specified package names <em>and any subpackages</em> will be excluded from package dependency diagrams.
+     *
      * @return The packages (including subpackages) excluded from the package dependencies.
      */
     List<String> excludedPackageDependencies();
 
     /**
-     * @return Whether or not to fail when cyclic package dependencies are detected.
+     * Whether a detected package dependency cycle must result in an error (instead of a warning).
+     *
+     * @return {@code true} if a detected package dependency cycle must be considered as an error,
+     * or {@code false} if it should be reported as merely a warning.
      */
     boolean failOnCyclicPackageDependencies();
 
@@ -95,7 +127,7 @@ public interface Configuration {
      *
      * @param packageName The package of the type.
      * @param type        The type name within the package.
-     * @return The external link, if resolved
+     * @return The external link, if resolved.
      */
     Optional<URI> resolveExternalLinkToType(String packageName, String type);
 
@@ -115,8 +147,11 @@ public interface Configuration {
      * <p>
      * If this is not explicitly set, the {@linkplain #htmlCharset()} will also be used
      * for the {@code PlantUML} source files.
+     * <p>
+     * This encoding is irrelevant if {@link #renderPumlFile()} is set to {@code false}.<br>
+     * Also, diagram files are rendered as binary files, so no explicit encoding is used for them.
      *
-     * @return The charset to use for PlantUML files
+     * @return The charset to use for PlantUML source files ({@code ".puml"} files).
      */
     Charset umlCharset();
 
@@ -127,10 +162,10 @@ public interface Configuration {
      * <li>use the {@code "-docencoding"} if set,</li>
      * <li>otherwise the source encoding ({@code "-encoding"})</li>
      * <li>finally, if no encodings are specified at all,
-     * the {@code default platform encoding} is used as implicit fallback</li>
+     * the {@code default platform encoding} is used as implicit fallback.</li>
      * </ol>
      *
-     * @return The charset used for Javadoc HTML files
+     * @return The charset used for Javadoc HTML files.
      */
     Charset htmlCharset();
 

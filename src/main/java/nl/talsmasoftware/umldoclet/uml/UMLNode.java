@@ -89,8 +89,8 @@ public abstract class UMLNode {
         child.setParent(this);
     }
 
-    public void removeChildren(Predicate<? super UMLNode> condition) {
-        children.removeIf(condition);
+    public boolean removeChildren(Predicate<? super UMLNode> condition) {
+        return children.removeIf(condition);
     }
 
     protected Configuration getConfiguration() {

@@ -18,18 +18,7 @@ package nl.talsmasoftware.umldoclet.javadoc;
 import jdk.javadoc.doclet.DocletEnvironment;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.Visibility;
-import nl.talsmasoftware.umldoclet.uml.ClassDiagram;
-import nl.talsmasoftware.umldoclet.uml.Diagram;
-import nl.talsmasoftware.umldoclet.uml.Field;
-import nl.talsmasoftware.umldoclet.uml.Method;
-import nl.talsmasoftware.umldoclet.uml.Namespace;
-import nl.talsmasoftware.umldoclet.uml.PackageDiagram;
-import nl.talsmasoftware.umldoclet.uml.Parameters;
-import nl.talsmasoftware.umldoclet.uml.Reference;
-import nl.talsmasoftware.umldoclet.uml.Type;
-import nl.talsmasoftware.umldoclet.uml.TypeMember;
-import nl.talsmasoftware.umldoclet.uml.TypeName;
-import nl.talsmasoftware.umldoclet.uml.UmlCharacters;
+import nl.talsmasoftware.umldoclet.uml.*;
 import nl.talsmasoftware.umldoclet.uml.util.UmlPostProcessors;
 
 import javax.lang.model.element.Element;
@@ -42,17 +31,9 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
@@ -73,6 +54,9 @@ import static javax.lang.model.element.ElementKind.ENUM;
 public class UMLFactory {
 
     private static final UmlPostProcessors POST_PROCESSORS = new UmlPostProcessors();
+
+    private static final Predicate<UMLNode> IS_ABSTRACT_METHOD = node ->
+            node instanceof Method && ((Method) node).isAbstract;
 
     final Configuration config;
     private final DocletEnvironment env;
@@ -105,7 +89,8 @@ public class UMLFactory {
             if (!config.excludedTypeReferences().contains(superclassName.qualified)) {
                 classDiagram.addChild(sep);
                 Type superType = createAndPopulateType(null, (TypeElement) superclassElement);
-                superType.removeChildren(child -> !(child instanceof TypeMember) || !((TypeMember) child).isAbstract);
+                // Only keep abstract methods of supertype.
+                superType.removeChildren(not(IS_ABSTRACT_METHOD));
                 classDiagram.addChild(superType);
                 sep = UmlCharacters.EMPTY;
                 references.add(new Reference(
@@ -125,7 +110,7 @@ public class UMLFactory {
                 if (implementedInterface instanceof TypeElement) {
                     classDiagram.addChild(sep);
                     Type implementedType = createAndPopulateType(null, (TypeElement) implementedInterface);
-                    implementedType.removeChildren(child -> !(child instanceof TypeMember) || !((TypeMember) child).isAbstract);
+                    implementedType.removeChildren(not(IS_ABSTRACT_METHOD));
                     classDiagram.addChild(implementedType);
                     sep = UmlCharacters.EMPTY;
                 }
@@ -147,7 +132,7 @@ public class UMLFactory {
                 if (enclosingElement instanceof TypeElement) {
                     classDiagram.addChild(sep);
                     Type enclosingType = createAndPopulateType(null, (TypeElement) enclosingElement);
-                    enclosingType.removeChildren(child -> !(child instanceof TypeMember) || !((TypeMember) child).isAbstract);
+                    enclosingType.removeChildren(not(IS_ABSTRACT_METHOD));
                     classDiagram.addChild(enclosingType);
                     sep = UmlCharacters.EMPTY;
                 }
@@ -627,4 +612,7 @@ public class UMLFactory {
         return pkg;
     }
 
+    private static <T> Predicate<T> not(Predicate<T> predicate) {
+        return t -> !predicate.test(t);
+    }
 }

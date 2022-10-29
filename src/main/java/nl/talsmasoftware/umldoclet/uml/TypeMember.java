@@ -23,7 +23,7 @@ import java.util.Objects;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Model object for a Field or Method in an UML class.
+ * Model object for a Field or Method in a UML class.
  *
  * @author Sjoerd Talsma
  */
@@ -32,7 +32,6 @@ public abstract class TypeMember extends UMLNode {
     public final String name;
     public TypeName type;
     private Visibility visibility;
-    public boolean isAbstract;
     public boolean isStatic;
     public boolean isDeprecated;
 
@@ -70,7 +69,6 @@ public abstract class TypeMember extends UMLNode {
 
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-        if (isAbstract) output.append("{abstract}").whitespace();
         if (isStatic) output.append("{static}").whitespace();
         output.append(umlVisibility());
         if (isDeprecated) output.append("--").append(name).append("--");

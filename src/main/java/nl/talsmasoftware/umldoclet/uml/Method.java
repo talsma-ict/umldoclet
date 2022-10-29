@@ -21,10 +21,24 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import java.util.Objects;
 
 /**
+ * UML representation of a method.
+ *
  * @author Sjoerd Talsma
  */
 public class Method extends TypeMember {
 
+    /**
+     * If this method is an abstract method.
+     */
+    public boolean isAbstract;
+
+    /**
+     * Create a new method in the containing type with a specific name and return type.
+     *
+     * @param containingType The containing type the member is part of.
+     * @param name           The name of the method.
+     * @param returnType     The name of the return type.
+     */
     public Method(Type containingType, String name, TypeName returnType) {
         super(containingType, name, returnType);
     }
@@ -36,8 +50,14 @@ public class Method extends TypeMember {
                 .orElseGet(this::createAndAddNewParameters);
     }
 
+    private Parameters createAndAddNewParameters() {
+        Parameters parameters = new Parameters(this);
+        this.addChild(parameters);
+        return parameters;
+    }
+
     /**
-     * Add a new parameter to this method.
+     * Add a parameter to this method.
      *
      * @param name The name of the parameter.
      * @param type The type of the parameter.
@@ -47,14 +67,15 @@ public class Method extends TypeMember {
     }
 
     @Override
-    protected <IPW extends IndentingPrintWriter> IPW writeParametersTo(IPW output) {
-        return getOrCreateParameters().writeTo(output);
+    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+        if (!getConfiguration().methods().include(getVisibility())) return output;
+        if (isAbstract) output.append("{abstract}").whitespace();
+        return super.writeTo(output);
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-        if (!getConfiguration().methods().include(getVisibility())) return output;
-        return super.writeTo(output);
+    protected <IPW extends IndentingPrintWriter> IPW writeParametersTo(IPW output) {
+        return getOrCreateParameters().writeTo(output);
     }
 
     @Override
@@ -70,12 +91,6 @@ public class Method extends TypeMember {
     void replaceParameterizedType(TypeName from, TypeName to) {
         super.replaceParameterizedType(from, to);
         getOrCreateParameters().replaceParameterizedType(from, to);
-    }
-
-    private Parameters createAndAddNewParameters() {
-        Parameters parameters = new Parameters(this);
-        this.addChild(parameters);
-        return parameters;
     }
 
     @Override
