@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.configuration;
 
 /**
- * The way in which a type is rendered in the resulting UML.
+ * How a type name is rendered in UML.
  *
  * <dl>
  * <dt>{@code NONE}</dt><dd>Omit the type</dd>

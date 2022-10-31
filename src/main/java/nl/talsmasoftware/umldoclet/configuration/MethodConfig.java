@@ -16,13 +16,13 @@
 package nl.talsmasoftware.umldoclet.configuration;
 
 /**
- * Influences how Methods are rendered in the UML.
+ * Configuration for UML method rendering.
  *
  * @author Sjoerd Talsma
  */
 public interface MethodConfig {
     /**
-     * How parameter names must be rendered.
+     * How method parameters are rendered.
      *
      * <p>
      * {@code NONE} will omit the name for the parameter names,
@@ -31,12 +31,12 @@ public interface MethodConfig {
      */
     enum ParamNames {
         /**
-         * Omit names of method parameters.
+         * Omit parameter names from methods altogether.
          */
         NONE,
 
         /**
-         * Render the method parameter name first, followed by its type.
+         * Render the method parameter name first before its type.
          */
         BEFORE_TYPE,
 
@@ -47,33 +47,32 @@ public interface MethodConfig {
     }
 
     /**
-     * How method parameter names must be rendered.
+     * How method parameter names are rendered.
      *
-     * @return How method parameter names must be rendered.
+     * @return How method parameter names are rendered.
      */
     ParamNames paramNames();
 
     /**
-     * How parameter types must be rendered.
+     * How parameter types are rendered.
      *
-     * @return How parameter types must be rendered.
+     * @return How parameter types are rendered.
      */
     TypeDisplay paramTypes();
 
     /**
-     * How method return types must be rendered.
+     * How method return types are rendered.
      *
-     * @return How method return types must be rendered.
+     * @return How method return types are rendered.
      */
     TypeDisplay returnType();
 
     /**
-     * Return whether the method with specified visibility should be included
-     * in the UML diagram.
+     * Whether a method with given visibility must be included in the UML diagram.
      *
      * @param methodVisibility The method visibility.
-     * @return {@code true} if the method should be included in the UML diagram
-     * based on its visibility, or {@code false} if it should be omitted.
+     * @return {@code true} if the method must be included in the UML diagram
+     * based on its visibility, or {@code false} if it must be omitted.
      */
     boolean include(Visibility methodVisibility);
 

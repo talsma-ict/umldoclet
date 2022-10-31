@@ -19,7 +19,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 /**
- * Configuration relating to the images that are generated.
+ * Configuration for generated UML Diagram images.
  *
  * @author Sjoerd Talsma
  */

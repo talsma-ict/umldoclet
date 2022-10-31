@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.configuration;
 
 /**
- * The visibility values for classes, methods and fields.
+ * Visibility for classes, methods and fields.
  * <p>
  * See <a href="https://docs.oracle.com/javase/tutorial/java/javaOO/accesscontrol.html">Access Control</a> description
  * in the official Oracle documentation.
