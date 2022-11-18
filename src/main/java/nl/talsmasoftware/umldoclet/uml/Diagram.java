@@ -27,6 +27,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.file.Files;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -37,7 +39,7 @@ import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.withoutExtension;
 
 /**
- * Abstract class corresponding to a single UML diagram.
+ * Abstract UML Diagram class.
  */
 public abstract class Diagram extends UMLNode {
 
