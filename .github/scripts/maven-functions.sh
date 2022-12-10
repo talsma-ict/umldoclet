@@ -35,7 +35,7 @@ build_and_test_maven() {
 
 build_and_publish_maven_artifacts() {
     log "Building and Testing project."
-    $(maven_command) --batch-mode clean verify -Dmaven.test.failure.ignore=false -Dmaven.javadoc.skip="${MAVEN_JAVADOC_SKIP:-true}" -Dmaven.source.skip="${MAVEN_SOURCE_SKIP:-true}"
+    $(maven_command) --batch-mode clean verify -Dmaven.test.failure.ignore=false -Dmaven.source.skip="${MAVEN_SOURCE_SKIP:-true}"
     log "Publishing project artifacts to maven central."
     $(maven_command) --batch-mode --no-snapshot-updates -Prelease deploy -DskipTests
 }

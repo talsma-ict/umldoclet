@@ -264,11 +264,6 @@
                             <jdkToolchain>
                                 <version>${build.compiler.version}</version>
                             </jdkToolchain>
-<!--
-                            <additionalOptions>
-                                <additionalOption>-umlLogLevel DEBUG</additionalOption>
-                            </additionalOptions>
--->
                         </configuration>
                     </execution>
                     <execution>
