@@ -92,7 +92,7 @@ final class HtmlFile {
         if (tempFile.renameTo(original)) {
             LogSupport.debug("Renamed {0} from {1}.", original, tempFile);
         } else {
-            FileUtils.copyToFile(tempFile, original);
+            org.apache.commons.io.FileUtils.copyFile(tempFile, original);
             LogSupport.debug("Copied {0} from {1}.", original, tempFile);
             if (!tempFile.delete()) {
                 throw new IllegalStateException("Cannot delete " + tempFile + " after postprocessing!");
