@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright 2016-2021 Talsma ICT
+    Copyright 2016-2022 Talsma ICT
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -71,14 +71,14 @@
         <maven.compiler.target>1.7</maven.compiler.target>
 
         <!-- included -->
-        <plantuml.version>1.2019.5</plantuml.version>
+        <plantuml.version>1.2022.14</plantuml.version>
 
         <!-- test -->
-        <junit.version>4.12</junit.version>
-        <hamcrest.version>2.1</hamcrest.version>
-        <mockito.version>2.27.0</mockito.version>
-        <slf4j.version>1.7.26</slf4j.version>
-        <logback.version>1.2.3</logback.version>
+        <junit.version>4.13.2</junit.version>
+        <hamcrest.version>2.2</hamcrest.version>
+        <mockito.version>4.9.0</mockito.version>
+        <slf4j.version>2.0.5</slf4j.version>
+        <logback.version>1.4.5</logback.version>
         <maven-invoker.version>3.0.1</maven-invoker.version>
 
         <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>

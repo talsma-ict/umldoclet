@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Talsma ICT
+ * Copyright 2016-2022 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,13 @@
  */
 package nl.talsmasoftware.umldoclet.html;
 
-import net.sourceforge.plantuml.FileUtils;
 import nl.talsmasoftware.umldoclet.config.UMLDocletConfig;
 import nl.talsmasoftware.umldoclet.logging.LogSupport;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -92,10 +93,20 @@ final class HtmlFile {
         if (tempFile.renameTo(original)) {
             LogSupport.debug("Renamed {0} from {1}.", original, tempFile);
         } else {
-            FileUtils.copyToFile(tempFile, original);
+            copy(tempFile, original);
             LogSupport.debug("Copied {0} from {1}.", original, tempFile);
             if (!tempFile.delete()) {
                 throw new IllegalStateException("Cannot delete " + tempFile + " after postprocessing!");
+            }
+        }
+    }
+
+    private static void copy(final File src, final File dest) throws IOException {
+        final Path destPath = dest.isDirectory() ? new File(dest, src.getName()).toPath() : dest.toPath();
+        try (InputStream in = Files.newInputStream(src.toPath()); OutputStream out = Files.newOutputStream(destPath)) {
+            final byte[] buf = new byte[4096];
+            for (int len = in.read(buf); len >= 0; len = in.read(buf)) {
+                out.write(buf, 0, len);
             }
         }
     }
