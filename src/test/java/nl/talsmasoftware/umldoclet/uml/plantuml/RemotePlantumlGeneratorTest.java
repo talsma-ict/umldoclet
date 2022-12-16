@@ -23,11 +23,13 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.is;
 
 @Testcontainers
 class RemotePlantumlGeneratorTest {
@@ -41,21 +43,26 @@ class RemotePlantumlGeneratorTest {
 
     @BeforeEach
     void setUp() {
-        subject = new RemotePlantumlGenerator(String.format("https://%s:%s/plantuml/",
-                plantumlServer.getHost(), plantumlServer.getMappedPort(8080)));
+//        subject = new RemotePlantumlGenerator(String.format("http://%s:%s/",
+//                plantumlServer.getHost(), plantumlServer.getMappedPort(8080)));
+        subject = new RemotePlantumlGenerator("https://www.plantuml.com/plantuml/");
     }
 
     @Test
     void simpleDiagramCanBeGenerated() throws IOException {
         // prepare
-        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        final File testDiagram = new File("target/test-classes/"
+                + getClass().getPackageName().replace('.', '/')
+                + "/testUml.svg");
+        testDiagram.delete();
 
         // execute
-        subject.generatePlantumlDiagramFromSource(testUml, FileFormat.SVG, bos);
+        try (OutputStream out = new FileOutputStream(testDiagram)) {
+            subject.generatePlantumlDiagramFromSource(testUml, FileFormat.SVG, out);
+        }
 
         // verify
-        final byte[] bytes = bos.toByteArray();
-        assertThat("Diagram size", bytes.length, greaterThan(0));
+        assertThat(testDiagram.isFile(), is(true));
     }
 
 }

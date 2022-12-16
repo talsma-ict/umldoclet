@@ -23,27 +23,47 @@ import net.sourceforge.plantuml.code.Transcoder;
 import net.sourceforge.plantuml.code.TranscoderImpl;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
+import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
 public class RemotePlantumlGenerator implements PlantumlGenerator {
+    private static final String DEFAULT_PLANTUML_BASE_URL = "https://www.plantuml.com/plantuml/";
+
     private final String baseUrl;
     private final Transcoder transcoder =
             TranscoderImpl.utf8(new AsciiEncoder(), new ArobaseStringCompressor(), new CompressionZlib());
 
+    public RemotePlantumlGenerator() {
+        this(null);
+    }
+
     public RemotePlantumlGenerator(final String baseUrl) {
-        this.baseUrl = requireNonNull(baseUrl, "Base URL for remote PlantUML server url is <null>.");
+        String url = Objects.toString(baseUrl, DEFAULT_PLANTUML_BASE_URL);
+        if (!url.endsWith("/")) url += "/";
+        this.baseUrl = url;
     }
 
     @Override
     public void generatePlantumlDiagramFromSource(String plantumlSource, FileFormat format, OutputStream out) {
         final String encodedDiagram = encodeDiagram(plantumlSource);
-        System.out.println(encodedDiagram);
+        final String diagramUrl = baseUrl + format.name().toLowerCase() + '/' + encodedDiagram;
+        try (InputStream in = new URL(diagramUrl).openConnection().getInputStream()) {
+            final byte[] buf = new byte[4096];
+            for (int read = in.read(buf); read >= 0; read = in.read(buf)) {
+                out.write(buf, 0, read);
+            }
+        } catch (IOException | RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private String encodeDiagram(final String diagramSource) {
         try {
+            // TODO internalize transcoder to be able to remove PlantUML dependency altogether.
             return transcoder.encode(requireNonNull(diagramSource, "UML diagram source was <null>."));
         } catch (IOException ioe) {
             throw new IllegalStateException("Error encoding diagram: " + ioe.getMessage(), ioe);

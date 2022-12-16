@@ -23,6 +23,7 @@ import java.io.OutputStream;
 public interface PlantumlGenerator {
 
     static PlantumlGenerator autodetect() {
+//        return new RemotePlantumlGenerator();
         return new BuiltinPlantumlGenerator();
     }
 
