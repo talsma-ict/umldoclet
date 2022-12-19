@@ -45,7 +45,8 @@ class RemotePlantumlGeneratorTest {
     void setUp() {
 //        subject = new RemotePlantumlGenerator(String.format("http://%s:%s/",
 //                plantumlServer.getHost(), plantumlServer.getMappedPort(8080)));
-        subject = new RemotePlantumlGenerator("https://www.plantuml.com/plantuml/");
+//        subject = new RemotePlantumlGenerator("https://www.plantuml.com/plantuml/");
+        subject = new RemotePlantumlGenerator("http://localhost:8080/");
     }
 
     @Test
