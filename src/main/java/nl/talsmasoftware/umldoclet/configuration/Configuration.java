@@ -43,11 +43,11 @@ public interface Configuration {
      * <pre>{@code
      * docker run -d -p 8080:8080 plantuml/plantuml-server:latest
      * }</pre>
-     * After that, you can run the UMLDoclet with {@code plantUmlBaseUrl = "http://localhost:8080/"}
+     * After that, you can run the UMLDoclet with {@code plantumlServerUrl = "http://localhost:8080/"}
      *
      * @return The base URL of the PlantUML online server to use.
      */
-    Optional<String> plantUmlBaseUrl();
+    Optional<String> plantumlServerUrl();
 
     /**
      * The name of the doclet to delegate main documentation to

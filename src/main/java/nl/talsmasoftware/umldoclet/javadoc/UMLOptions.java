@@ -80,6 +80,8 @@ final class UMLOptions {
         this.options.add(new Option("-d", 1, Kind.OTHER, args -> config.destDirName = args.get(0)));
 
         // Our own options
+        this.options.add(new Option("--plantuml-server-url -plantumlServerUrl", 1, Kind.STANDARD,
+                args -> config.plantumlServerUrl = args.get(0)));
         this.options.add(new Option("--delegate-doclet -delegateDoclet", 1, Kind.STANDARD,
                 args -> config.delegateDoclet = args.get(0)));
         this.options.add(new Option("--create-puml-files -createPumlFiles", 0, Kind.STANDARD, args -> config.renderPumlFile = true));

@@ -52,7 +52,7 @@ public class DocletConfig implements Configuration {
     private final UMLOptions options;
     private volatile LocalizedReporter reporter;
 
-    String plantUmlBaseUrl = null;
+    String plantumlServerUrl = null;
 
     /**
      * The name of the delegate doclet to use for the main documentation task.
@@ -142,8 +142,8 @@ public class DocletConfig implements Configuration {
     }
 
     @Override
-    public Optional<String> plantUmlBaseUrl() {
-        return Optional.ofNullable(plantUmlBaseUrl);
+    public Optional<String> plantumlServerUrl() {
+        return Optional.ofNullable(plantumlServerUrl);
     }
 
     @Override
