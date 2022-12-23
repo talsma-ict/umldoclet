@@ -43,15 +43,15 @@ import static nl.talsmasoftware.umldoclet.util.FileUtils.withoutExtension;
  */
 public abstract class Diagram extends UMLNode {
 
-    private static final PlantumlGenerator PLANTUML_GENERATOR = PlantumlGenerator.autodetect();
-
     private final Configuration config;
+    private final PlantumlGenerator plantumlGenerator;
     private final FileFormat[] formats;
     private File diagramBaseFile;
 
     protected Diagram(Configuration config) {
         super(null);
         this.config = requireNonNull(config, "Configuration is <null>");
+        this.plantumlGenerator = PlantumlGenerator.getPlantumlGenerator(config);
         this.formats = config.images().formats().stream()
                 .map(this::toFileFormat).filter(Objects::nonNull)
                 .toArray(FileFormat[]::new);
@@ -177,7 +177,7 @@ public abstract class Diagram extends UMLNode {
         config.logger().info(Message.INFO_GENERATING_FILE, diagramFile);
         ensureParentDir(diagramFile);
         try (OutputStream out = Files.newOutputStream(diagramFile.toPath())) {
-            PLANTUML_GENERATOR.generatePlantumlDiagramFromSource(plantumlSource, format, out);
+            plantumlGenerator.generatePlantumlDiagramFromSource(plantumlSource, format, out);
         }
     }
 

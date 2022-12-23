@@ -16,13 +16,14 @@
 package nl.talsmasoftware.umldoclet.uml.plantuml;
 
 import net.sourceforge.plantuml.FileFormat;
+import nl.talsmasoftware.umldoclet.configuration.Configuration;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
 public interface PlantumlGenerator {
 
-    static PlantumlGenerator autodetect() {
+    static PlantumlGenerator getPlantumlGenerator(Configuration configuration) {
 //        return new RemotePlantumlGenerator();
         return new BuiltinPlantumlGenerator();
     }
