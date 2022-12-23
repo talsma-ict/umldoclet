@@ -24,8 +24,10 @@ import java.io.OutputStream;
 public interface PlantumlGenerator {
 
     static PlantumlGenerator getPlantumlGenerator(Configuration configuration) {
-//        return new RemotePlantumlGenerator();
-        return new BuiltinPlantumlGenerator();
+        return configuration.plantumlServerUrl()
+                .map(RemotePlantumlGenerator::new)
+                .map(PlantumlGenerator.class::cast)
+                .orElseGet(BuiltinPlantumlGenerator::new);
     }
 
     void generatePlantumlDiagramFromSource(String plantumlSource, FileFormat format, OutputStream out) throws IOException;

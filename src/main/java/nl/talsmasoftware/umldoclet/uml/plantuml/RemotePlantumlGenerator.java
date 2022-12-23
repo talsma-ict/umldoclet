@@ -32,10 +32,10 @@ import static java.util.Objects.requireNonNull;
 
 public class RemotePlantumlGenerator implements PlantumlGenerator {
     private static final String DEFAULT_PLANTUML_BASE_URL = "https://www.plantuml.com/plantuml/";
+    private static final Transcoder TRANSCODER =
+            TranscoderImpl.utf8(new AsciiEncoder(), new ArobaseStringCompressor(), new CompressionZlib());
 
     private final String baseUrl;
-    private final Transcoder transcoder =
-            TranscoderImpl.utf8(new AsciiEncoder(), new ArobaseStringCompressor(), new CompressionZlib());
 
     public RemotePlantumlGenerator() {
         this(null);
@@ -64,7 +64,7 @@ public class RemotePlantumlGenerator implements PlantumlGenerator {
     private String encodeDiagram(final String diagramSource) {
         try {
             // TODO internalize transcoder to be able to remove PlantUML dependency altogether.
-            return transcoder.encode(requireNonNull(diagramSource, "UML diagram source was <null>."));
+            return TRANSCODER.encode(requireNonNull(diagramSource, "UML diagram source was <null>."));
         } catch (IOException ioe) {
             throw new IllegalStateException("Error encoding diagram: " + ioe.getMessage(), ioe);
         }
