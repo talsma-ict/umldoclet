@@ -20,11 +20,10 @@ import nl.talsmasoftware.umldoclet.configuration.Configuration;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.regex.Pattern;
+
+import static nl.talsmasoftware.umldoclet.uml.plantuml.RemotePlantumlGenerator.HTTP_URLS;
 
 public interface PlantumlGenerator {
-    Pattern HTTP_URLS = Pattern.compile("^https?://");
-
     static PlantumlGenerator getPlantumlGenerator(Configuration configuration) {
         return configuration.plantumlServerUrl()
                 .filter(url -> HTTP_URLS.matcher(url).find())

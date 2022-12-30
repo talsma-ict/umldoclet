@@ -28,11 +28,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import static java.util.Objects.requireNonNull;
 
 @SuppressFBWarnings(value = "URLCONNECTION_SSRF_FD", justification = "We only allow http(s) urls.")
 public class RemotePlantumlGenerator implements PlantumlGenerator {
+    public static final Pattern HTTP_URLS = Pattern.compile("^https?://");
+
     private static final String DEFAULT_PLANTUML_BASE_URL = "https://www.plantuml.com/plantuml/";
     private static final Transcoder TRANSCODER =
             TranscoderImpl.utf8(new AsciiEncoder(), new ArobaseStringCompressor(), new CompressionZlib());
@@ -41,6 +44,9 @@ public class RemotePlantumlGenerator implements PlantumlGenerator {
 
     public RemotePlantumlGenerator(final String baseUrl) {
         String url = Objects.toString(baseUrl, DEFAULT_PLANTUML_BASE_URL);
+        if (!HTTP_URLS.matcher(url).find()) {
+            throw new IllegalArgumentException("Unsupported PlantUML server base url: [" + url + "].");
+        }
         if (!url.endsWith("/")) url += "/";
         this.baseUrl = url;
     }
