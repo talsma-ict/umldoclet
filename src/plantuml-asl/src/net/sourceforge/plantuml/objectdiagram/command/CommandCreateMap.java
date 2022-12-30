@@ -33,6 +33,8 @@ package net.sourceforge.plantuml.objectdiagram.command;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.StringLocated;
 import net.sourceforge.plantuml.UrlBuilder;
+import net.sourceforge.plantuml.baraye.IEntity;
+import net.sourceforge.plantuml.baraye.ILeaf;
 import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
 import net.sourceforge.plantuml.command.BlocLines;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
@@ -47,8 +49,6 @@ import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.BodierMap;
 import net.sourceforge.plantuml.cucadiagram.Code;
 import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.cucadiagram.IEntity;
-import net.sourceforge.plantuml.cucadiagram.ILeaf;
 import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.Link;
@@ -125,8 +125,8 @@ public class CommandCreateMap extends CommandMultilines2<AbstractEntityDiagram> 
 
 				final LinkType linkType = new LinkType(LinkDecor.ARROW, LinkDecor.NONE);
 				final int length = linkStr.length() - 2;
-				final Link link = new Link(diagram.getSkinParam().getCurrentStyleBuilder(), entity1, entity2, linkType,
-						LinkArg.noDisplay(length));
+				final Link link = new Link(diagram.getIEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(),
+						entity1, entity2, linkType, LinkArg.noDisplay(length));
 				link.setPortMembers(key, null);
 				diagram.addLink(link);
 			}
@@ -153,8 +153,7 @@ public class CommandCreateMap extends CommandMultilines2<AbstractEntityDiagram> 
 		Colors colors = color().getColor(line0, diagram.getSkinParam().getIHtmlColorSet());
 		final String s = line0.get("LINECOLOR", 1);
 
-		final HColor lineColor = s == null ? null
-				: diagram.getSkinParam().getIHtmlColorSet().getColor(s);
+		final HColor lineColor = s == null ? null : diagram.getSkinParam().getIHtmlColorSet().getColor(s);
 		if (lineColor != null)
 			colors = colors.add(ColorType.LINE, lineColor);
 

@@ -32,7 +32,11 @@ package net.sourceforge.plantuml.cucadiagram;
 
 import java.util.List;
 
-class Magma {
+import net.sourceforge.plantuml.baraye.CucaDiagram;
+import net.sourceforge.plantuml.baraye.IGroup;
+import net.sourceforge.plantuml.baraye.ILeaf;
+
+public class Magma {
 
 	private final CucaDiagram diagram;
 	private final List<ILeaf> standalones;
@@ -46,13 +50,13 @@ class Magma {
 	public void putInSquare() {
 		final SquareLinker<ILeaf> linker = new SquareLinker<ILeaf>() {
 			public void topDown(ILeaf top, ILeaf down) {
-				diagram.addLink(new Link(diagram.getSkinParam().getCurrentStyleBuilder(), top, down, linkType,
-						LinkArg.noDisplay(2)));
+				diagram.addLink(new Link(diagram.getIEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(),
+						top, down, linkType, LinkArg.noDisplay(2)));
 			}
 
 			public void leftRight(ILeaf left, ILeaf right) {
-				diagram.addLink(new Link(diagram.getSkinParam().getCurrentStyleBuilder(), left, right, linkType,
-						LinkArg.noDisplay(1)));
+				diagram.addLink(new Link(diagram.getIEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(),
+						left, right, linkType, LinkArg.noDisplay(1)));
 			}
 		};
 		new SquareMaker<ILeaf>().putInSquare(standalones, linker);
@@ -98,14 +102,14 @@ class Magma {
 	}
 
 	public void linkToDown(Magma down) {
-		diagram.addLink(new Link(diagram.getSkinParam().getCurrentStyleBuilder(), this.getBottomLeft(),
-				down.getTopLeft(), linkType, LinkArg.noDisplay(2)));
+		diagram.addLink(new Link(diagram.getIEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(),
+				this.getBottomLeft(), down.getTopLeft(), linkType, LinkArg.noDisplay(2)));
 
 	}
 
 	public void linkToRight(Magma right) {
-		diagram.addLink(new Link(diagram.getSkinParam().getCurrentStyleBuilder(), this.getTopRight(),
-				right.getTopLeft(), linkType, LinkArg.noDisplay(1)));
+		diagram.addLink(new Link(diagram.getIEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(),
+				this.getTopRight(), right.getTopLeft(), linkType, LinkArg.noDisplay(1)));
 	}
 
 }

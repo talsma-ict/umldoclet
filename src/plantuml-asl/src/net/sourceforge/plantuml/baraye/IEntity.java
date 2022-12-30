@@ -29,7 +29,7 @@
  * Original Author:  Arnaud Roques
  * Contribution:  Miguel Esteves
  */
-package net.sourceforge.plantuml.cucadiagram;
+package net.sourceforge.plantuml.baraye;
 
 import java.util.List;
 import java.util.Map;
@@ -42,6 +42,16 @@ import net.sourceforge.plantuml.Removeable;
 import net.sourceforge.plantuml.SpecificBackcolorable;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.command.Position;
+import net.sourceforge.plantuml.cucadiagram.Bodier;
+import net.sourceforge.plantuml.cucadiagram.Code;
+import net.sourceforge.plantuml.cucadiagram.CucaNote;
+import net.sourceforge.plantuml.cucadiagram.Display;
+import net.sourceforge.plantuml.cucadiagram.EntityPosition;
+import net.sourceforge.plantuml.cucadiagram.Ident;
+import net.sourceforge.plantuml.cucadiagram.LeafType;
+import net.sourceforge.plantuml.cucadiagram.Stereostyles;
+import net.sourceforge.plantuml.cucadiagram.Stereotag;
+import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.USymbol;
 import net.sourceforge.plantuml.graphic.color.Colors;
 

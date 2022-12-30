@@ -38,11 +38,11 @@ import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.awt.geom.XPoint2D;
 import net.sourceforge.plantuml.awt.geom.XRectangle2D;
+import net.sourceforge.plantuml.baraye.IEntity;
+import net.sourceforge.plantuml.baraye.ILeaf;
 import net.sourceforge.plantuml.command.Position;
 import net.sourceforge.plantuml.cucadiagram.BodyFactory;
 import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.cucadiagram.IEntity;
-import net.sourceforge.plantuml.cucadiagram.ILeaf;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.InnerStrategy;
@@ -53,6 +53,7 @@ import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.svek.AbstractEntityImage;
 import net.sourceforge.plantuml.svek.Bibliotekon;
@@ -65,7 +66,6 @@ import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class EntityImageTips extends AbstractEntityImage {
 
-	final private Rose rose = new Rose();
 	private final ISkinParam skinParam;
 
 	private final HColor noteBackgroundColor;
@@ -91,8 +91,8 @@ public class EntityImageTips extends AbstractEntityImage {
 
 	}
 
-	private StyleSignatureBasic getDefaultStyleDefinition(SName sname) {
-		return StyleSignatureBasic.of(SName.root, SName.element, sname, SName.note);
+	private StyleSignature getDefaultStyleDefinition(SName sname) {
+		return StyleSignatureBasic.of(SName.root, SName.element, sname, SName.note).withTOBECHANGED(getStereo());
 	}
 
 	private Position getPosition() {

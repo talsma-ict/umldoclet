@@ -28,46 +28,38 @@
  *
  * Original Author:  Arnaud Roques
  */
-package net.sourceforge.plantuml.cucadiagram;
+package net.sourceforge.plantuml.tim.stdlib;
 
-import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.svek.IEntityImage;
-import net.sourceforge.plantuml.svek.PackageStyle;
-import net.sourceforge.plantuml.svek.SingleStrategy;
+import net.sourceforge.plantuml.LineLocation;
+import net.sourceforge.plantuml.tim.EaterException;
+import net.sourceforge.plantuml.tim.EaterExceptionLocated;
+import net.sourceforge.plantuml.tim.TContext;
+import net.sourceforge.plantuml.tim.TFunctionSignature;
+import net.sourceforge.plantuml.tim.TMemory;
+import net.sourceforge.plantuml.tim.expression.TValue;
 
-public interface IGroup extends IEntity {
+public class LogicalNxor extends SimpleReturnFunction {
 
-	public boolean containsLeafRecurse(ILeaf entity);
+	public TFunctionSignature getSignature() {
+		return new TFunctionSignature("%nxor", 2);
+	}
 
-	public Collection<ILeaf> getLeafsDirect();
+	public boolean canCover(int nbArg, Set<String> namedArgument) {
+		return nbArg >= 2;
+	}
 
-	public Collection<IGroup> getChildren();
+	public TValue executeReturnFunction(TContext context, TMemory memory, LineLocation location, List<TValue> values,
+			Map<String, TValue> named) throws EaterException, EaterExceptionLocated {
+		int cpt = 0;
+		for (TValue v : values)
+			if (v.toBoolean() == true)
+				cpt++;
 
-	public void moveEntitiesTo(IGroup dest);
+		return TValue.fromBoolean(!(cpt == 1));
 
-	public int size();
-
-	public GroupType getGroupType();
-
-	public Code getNamespace();
-
-	public PackageStyle getPackageStyle();
-
-	public void overrideImage(IEntityImage img, LeafType state);
-
-	public SingleStrategy getSingleStrategy();
-
-	public FontConfiguration getFontConfigurationForTitle(ISkinParam skinParam);
-
-	public char getConcurrentSeparator();
-
-	public void setConcurrentSeparator(char separator);
-
-	public void setLegend(DisplayPositioned legend);
-
-	public DisplayPositioned getLegend();
-
+	}
 }

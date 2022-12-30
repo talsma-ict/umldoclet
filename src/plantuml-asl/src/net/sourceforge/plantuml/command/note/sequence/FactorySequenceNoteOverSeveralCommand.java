@@ -68,7 +68,7 @@ public final class FactorySequenceNoteOverSeveralCommand implements SingleMultiF
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("STYLE", "(note|hnote|rnote)"), //
 				RegexLeaf.spaceZeroOrMore(), //
-				new RegexLeaf("STEREO", "(\\<{2}.*\\>{2})?"), //
+				new RegexLeaf("STEREO1", "(\\<{2}.*\\>{2})?"), //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("over"), //
 				RegexLeaf.spaceOneOrMore(), //
@@ -77,6 +77,8 @@ public final class FactorySequenceNoteOverSeveralCommand implements SingleMultiF
 				new RegexLeaf(","), //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("P2", "([%pLN_.@]+|[%g][^%g]+[%g])"), //
+				RegexLeaf.spaceZeroOrMore(), //
+				new RegexLeaf("STEREO2", "(\\<{2}.*\\>{2})?"), //
 				RegexLeaf.spaceZeroOrMore(), //
 				color().getRegex(), //
 				RegexLeaf.spaceZeroOrMore(), //
@@ -91,7 +93,7 @@ public final class FactorySequenceNoteOverSeveralCommand implements SingleMultiF
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("STYLE", "(note|hnote|rnote)"), //
 				RegexLeaf.spaceZeroOrMore(), //
-				new RegexLeaf("STEREO", "(\\<{2}.*\\>{2})?"), //
+				new RegexLeaf("STEREO1", "(\\<{2}.*\\>{2})?"), //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("over"), //
 				RegexLeaf.spaceOneOrMore(), //
@@ -100,6 +102,8 @@ public final class FactorySequenceNoteOverSeveralCommand implements SingleMultiF
 				new RegexLeaf(","), //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("P2", "([%pLN_.@]+|[%g][^%g]+[%g])"), //
+				RegexLeaf.spaceZeroOrMore(), //
+				new RegexLeaf("STEREO2", "(\\<{2}.*\\>{2})?"), //
 				RegexLeaf.spaceZeroOrMore(), //
 				color().getRegex(), //
 				RegexLeaf.spaceZeroOrMore(), //
@@ -161,7 +165,7 @@ public final class FactorySequenceNoteOverSeveralCommand implements SingleMultiF
 			final Display display = diagram.manageVariable(lines.toDisplay());
 			final Note note = new Note(p1, p2, display, diagram.getSkinParam().getCurrentStyleBuilder());
 			Colors colors = color().getColor(line0, diagram.getSkinParam().getIHtmlColorSet());
-			final String stereotypeString = line0.get("STEREO", 0);
+			final String stereotypeString = line0.getLazzy("STEREO", 0);
 			if (stereotypeString != null) {
 				final Stereotype stereotype = Stereotype.build(stereotypeString);
 				colors = colors.applyStereotypeForNote(stereotype, diagram.getSkinParam(), ColorParam.noteBackground,

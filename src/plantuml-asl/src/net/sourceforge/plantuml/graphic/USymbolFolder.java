@@ -160,7 +160,7 @@ public class USymbolFolder extends USymbol {
 				final XDimension2D dimName = getDimName(stringBounder);
 				final XDimension2D dimLabel = label.calculateDimension(stringBounder);
 				final XDimension2D dimStereo = stereotype.calculateDimension(stringBounder);
-				return getMargin().addDimension(XDimension2D.mergeTB(dimName, dimStereo, dimLabel));
+				return getMargin().addDimension(dimName.mergeTB(dimStereo, dimLabel));
 			}
 		};
 	}

@@ -31,6 +31,9 @@
 package net.sourceforge.plantuml.cucadiagram;
 
 import net.sourceforge.plantuml.Guillemet;
+import net.sourceforge.plantuml.baraye.EntityUtils;
+import net.sourceforge.plantuml.baraye.IEntity;
+import net.sourceforge.plantuml.baraye.IGroup;
 
 public class EntityGenderUtils {
 

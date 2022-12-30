@@ -52,7 +52,8 @@ public class CommandLinkAnchor extends SingleLineCommand2<SequenceDiagram> {
 				new RegexLeaf("LINK", "\\<-\\>"), //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("ANCHOR2", "\\{([%pLN_]+)\\}"), //
-				RegexLeaf.spaceZeroOrMore(), new RegexLeaf("MESSAGE", "(?::[%s]*(.*))?"), RegexLeaf.end());
+				RegexLeaf.spaceZeroOrMore(), //
+				new RegexLeaf("MESSAGE", "(?::[%s]*(.*))?"), RegexLeaf.end());
 	}
 
 	@Override

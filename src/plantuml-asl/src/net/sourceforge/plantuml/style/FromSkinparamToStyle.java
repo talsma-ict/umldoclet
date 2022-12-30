@@ -38,6 +38,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import net.sourceforge.plantuml.cucadiagram.StereotypeDecoration;
+
 public class FromSkinparamToStyle {
 
 	static class Data {
@@ -215,9 +217,8 @@ public class FromSkinparamToStyle {
 		addConvert("IconProtectedBackgroundColor", PName.BackGroundColor, SName.visibilityIcon, SName.protected_);
 		addConvert("IconPublicColor", PName.LineColor, SName.visibilityIcon, SName.public_);
 		addConvert("IconPublicBackgroundColor", PName.BackGroundColor, SName.visibilityIcon, SName.public_);
-		
-		addConvert("MinClassWidth", PName.MinimumWidth);
 
+		addConvert("MinClassWidth", PName.MinimumWidth);
 
 //		addConvert("nodeStereotypeFontSize", PName.FontSize, SName.node, SName.stereotype);
 //		addConvert("sequenceStereotypeFontSize", PName.FontSize, SName.stereotype);
@@ -351,7 +352,7 @@ public class FromSkinparamToStyle {
 		if (stereo != null) {
 			map = StyleLoader.addPriorityForStereotype(map);
 			for (String s : stereo.split("\\&"))
-				sig = sig.add(s);
+				sig = sig.add(StereotypeDecoration.PREFIX + s);
 		}
 
 		final Style style = new Style(sig, map);

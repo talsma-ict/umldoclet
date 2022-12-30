@@ -60,7 +60,7 @@ public class GraphicsPath {
 
 	public ImageData writeImage(OutputStream os) throws IOException {
 		final BufferedImage im = createImage();
-		PngIO.write(im, os, 96);
+		PngIO.write(im, colorMapper, os, null, 96);
 		return new ImageDataSimple(im.getWidth(), im.getHeight());
 	}
 
