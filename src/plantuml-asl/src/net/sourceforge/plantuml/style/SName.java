@@ -125,6 +125,7 @@ public enum SName {
 	storage, //
 	swimlane, //
 	task, //
+	timegrid, //
 	timeline, //
 	timingDiagram, //
 	title, //

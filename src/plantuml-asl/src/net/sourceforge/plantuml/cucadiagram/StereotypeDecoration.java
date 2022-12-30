@@ -84,6 +84,8 @@ public class StereotypeDecoration {
 			new RegexLeaf("\\>\\>") //
 	);
 
+	public static final String PREFIX = "%";
+
 	final String label;
 	final HColor htmlColor;
 	final char character;
@@ -96,13 +98,15 @@ public class StereotypeDecoration {
 	}
 
 	public List<String> getStyleNames() {
-		final List<String> result = new ArrayList<>(cutLabels(label, Guillemet.NONE));
+		final List<String> result = new ArrayList<>();
+		for (String s : cutLabels(label, Guillemet.NONE))
+			result.add(PREFIX + s);
 		if (spriteName == null)
 			return Collections.unmodifiableList(result);
 
 		final int idx = spriteName.lastIndexOf('/');
 		if (idx != -1)
-			result.add(spriteName.substring(idx + 1));
+			result.add(PREFIX + spriteName.substring(idx + 1));
 		return Collections.unmodifiableList(result);
 	}
 

@@ -42,16 +42,16 @@ public class CompressionZlibAttic implements Compression {
 	private static final int COMPRESSION_LEVEL = 9;
 
 	public byte[] compress(byte[] in) {
-		if (USE_ZOPFLI) {
+		if (USE_ZOPFLI)
 			return new CompressionZopfliZlib().compress(in);
-		}
-		if (in.length == 0) {
+
+		if (in.length == 0)
 			return null;
-		}
+
 		int len = in.length * 2;
-		if (len < 1000) {
+		if (len < 1000)
 			len = 1000;
-		}
+
 		byte[] result = null;
 		result = tryCompress(in, len);
 		return result;
@@ -65,9 +65,9 @@ public class CompressionZlibAttic implements Compression {
 
 		final byte[] output = new byte[len];
 		final int compressedDataLength = compresser.deflate(output);
-		if (compresser.finished() == false) {
+		if (compresser.finished() == false)
 			return null;
-		}
+
 		return copyArray(output, compressedDataLength);
 	}
 
@@ -79,10 +79,8 @@ public class CompressionZlibAttic implements Compression {
 			int len = 100_000;
 			byte[] result = null;
 			result = tryDecompress(in2, len);
-			if (result == null) {
+			if (result == null)
 				throw new NoPlantumlCompressionException("Too big?");
-
-			}
 
 			return ByteArray.from(result);
 		} catch (IOException e) {
@@ -93,18 +91,18 @@ public class CompressionZlibAttic implements Compression {
 	}
 
 	private byte[] tryDecompress(byte[] in, final int len) throws IOException {
-		if (len > 200_000) {
+		if (len > 200_000)
 			throw new IOException("OutOfMemory");
-		}
+
 		// Decompress the bytes
 		final byte[] tmp = new byte[len];
 		final Inflater decompresser = new Inflater(true);
 		decompresser.setInput(in);
 		try {
 			final int resultLength = decompresser.inflate(tmp);
-			if (decompresser.finished() == false) {
+			if (decompresser.finished() == false)
 				return null;
-			}
+
 			decompresser.end();
 
 			final byte[] result = copyArray(tmp, resultLength);

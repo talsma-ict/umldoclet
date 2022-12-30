@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import net.sourceforge.plantuml.EmbeddedDiagram;
 import net.sourceforge.plantuml.SpriteContainer;
 import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.command.regex.MyPattern;
@@ -63,17 +62,13 @@ public final class TextBlockSimple extends AbstractTextBlock implements TextBloc
 
 	private List<Line> getLines(StringBounder stringBounder) {
 		if (lines == null) {
-			if (stringBounder == null) {
+			if (stringBounder == null)
 				throw new IllegalStateException();
-			}
+
 			this.lines = new ArrayList<>();
-			for (CharSequence s : texts) {
-				if (s instanceof EmbeddedDiagram) {
-					lines.add(((EmbeddedDiagram) s).asDraw(null));
-				} else {
-					addInLines(stringBounder, s.toString());
-				}
-			}
+			for (CharSequence s : texts)
+				addInLines(stringBounder, s.toString());
+
 		}
 		return lines;
 	}
@@ -90,12 +85,11 @@ public final class TextBlockSimple extends AbstractTextBlock implements TextBloc
 				if (w > maxMessageSize) {
 					addSingleLineNoSpace(currentLine.toString());
 					currentLine.setLength(0);
-					if (token.startsWith(" ") == false) {
+					if (token.startsWith(" ") == false)
 						currentLine.append(token);
-					}
-				} else {
+				} else
 					currentLine.append(token);
-				}
+
 			}
 			addSingleLineNoSpace(currentLine.toString());
 		} else if (maxMessageSize < 0) {
@@ -106,9 +100,9 @@ public final class TextBlockSimple extends AbstractTextBlock implements TextBloc
 				if (w > -maxMessageSize) {
 					addSingleLineNoSpace(currentLine.toString());
 					currentLine.setLength(0);
-					if (c != ' ') {
+					if (c != ' ')
 						currentLine.append(c);
-					}
+
 				} else {
 					currentLine.append(c);
 				}

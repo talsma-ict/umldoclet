@@ -173,11 +173,12 @@ public class TimingRuler {
 
 	}
 
-	private FontConfiguration getFontConfiguration() {
-		return FontConfiguration.create(skinParam, getStyle());
+	private Style getStyleTimegrid() {
+		return StyleSignatureBasic.of(SName.root, SName.element, SName.timingDiagram, SName.timegrid)
+				.getMergedStyle(skinParam.getCurrentStyleBuilder());
 	}
 
-	private Style getStyle() {
+	private Style getStyleTimeline() {
 		return StyleSignatureBasic.of(SName.root, SName.element, SName.timingDiagram, SName.timeline)
 				.getMergedStyle(skinParam.getCurrentStyleBuilder());
 	}
@@ -188,18 +189,19 @@ public class TimingRuler {
 
 	private TextBlock getTimeTextBlock(String string) {
 		final Display display = Display.getWithNewlines(string);
-		return display.create(getFontConfiguration(), HorizontalAlignment.LEFT, skinParam);
+		final FontConfiguration fontConfiguration = FontConfiguration.create(skinParam, getStyleTimeline());
+		return display.create(fontConfiguration, HorizontalAlignment.LEFT, skinParam);
 	}
 
 	public void drawTimeAxis(UGraphic ug, TimeAxisStategy timeAxisStategy, Map<String, TimeTick> codes) {
 		if (timeAxisStategy == TimeAxisStategy.HIDDEN)
 			return;
 
-		final Style style = StyleSignatureBasic.of(SName.root, SName.timingDiagram, SName.timeline)
-				.getMergedStyle(skinParam.getCurrentStyleBuilder());
+		final Style styleTimeline = getStyleTimeline();
+		final Style styleTimegrid = getStyleTimegrid();
 
-		final HColor color = style.value(PName.LineColor).asColor(skinParam.getIHtmlColorSet());
-		final UStroke stroke = style.getStroke();
+		final HColor color = styleTimeline.value(PName.LineColor).asColor(skinParam.getIHtmlColorSet());
+		final UStroke stroke = styleTimeline.getStroke();
 
 		ug = ug.apply(stroke).apply(color);
 
@@ -287,7 +289,7 @@ public class TimingRuler {
 	}
 
 	public void drawVlines(UGraphic ug, double height) {
-		ug = applyForVLines(ug, getStyle(), skinParam);
+		ug = applyForVLines(ug, getStyleTimegrid(), skinParam);
 		final ULine line = ULine.vline(height);
 		final int nb = getNbTick();
 		for (int i = 0; i <= nb; i++)

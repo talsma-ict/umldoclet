@@ -110,6 +110,8 @@ public class ValueImpl implements Value {
 	public int asInt() {
 		String s = value.getValue1();
 		s = s.replaceAll("[^0-9]", "");
+		if (s.length() == 0)
+			return 0;
 		return Integer.parseInt(s);
 	}
 

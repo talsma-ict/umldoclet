@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.tim.expression;
 
-
 //https://en.cppreference.com/w/c/language/operator_precedence
 
 public enum TokenOperator {
@@ -49,7 +48,7 @@ public enum TokenOperator {
 			return v1.add(v2);
 		}
 	},
-	SUBSTRACTION(100 - 4, "-") {
+	SUBSTRACTION(100 - 4, "" + TokenType.COMMERCIAL_MINUS_SIGN) {
 		public TValue operate(TValue v1, TValue v2) {
 			return v1.minus(v2);
 		}
@@ -93,8 +92,7 @@ public enum TokenOperator {
 		public TValue operate(TValue v1, TValue v2) {
 			return v1.logicalOr(v2);
 		}
-	},
-	;
+	};
 
 	private final int precedence;
 	private final String display;
@@ -109,16 +107,14 @@ public enum TokenOperator {
 	}
 
 	public static TokenOperator getTokenOperator(char ch, char ch2) {
-		for (TokenOperator op : TokenOperator.values()) {
-			if (op.display.length() == 2 && op.display.charAt(0) == ch && op.display.charAt(1) == ch2) {
+		for (TokenOperator op : TokenOperator.values())
+			if (op.display.length() == 2 && op.display.charAt(0) == ch && op.display.charAt(1) == ch2)
 				return op;
-			}
-		}
-		for (TokenOperator op : TokenOperator.values()) {
-			if (op.display.length() == 1 && op.display.charAt(0) == ch) {
+
+		for (TokenOperator op : TokenOperator.values())
+			if (op.display.length() == 1 && op.display.charAt(0) == ch)
 				return op;
-			}
-		}
+
 		return null;
 	}
 

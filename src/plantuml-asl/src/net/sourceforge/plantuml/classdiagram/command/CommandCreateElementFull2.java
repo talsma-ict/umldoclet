@@ -37,6 +37,7 @@ import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.UrlBuilder;
 import net.sourceforge.plantuml.UrlMode;
+import net.sourceforge.plantuml.baraye.IEntity;
 import net.sourceforge.plantuml.classdiagram.ClassDiagram;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand2;
@@ -47,7 +48,6 @@ import net.sourceforge.plantuml.command.regex.RegexOr;
 import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.Code;
 import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.Stereotag;
@@ -94,13 +94,12 @@ public class CommandCreateElementFull2 extends SingleLineCommand2<ClassDiagram> 
 									RegexLeaf.spaceOneOrMore(), //
 									new RegexLeaf("CODE2", CommandCreateElementFull.CODE)) //
 					), //
-					new RegexOptional( //
-							new RegexConcat( //
-									RegexLeaf.spaceZeroOrMore(), //
-									new RegexLeaf("STEREOTYPE", "(\\<\\<.+\\>\\>)")//
-							)), //
 					RegexLeaf.spaceZeroOrMore(), //
-					new RegexLeaf("TAGS", Stereotag.pattern() + "?"), //
+					new RegexLeaf("TAGS1", Stereotag.pattern() + "?"), //
+					RegexLeaf.spaceZeroOrMore(), //
+					new RegexLeaf("STEREOTYPE", "(\\<\\<.+\\>\\>)?"), //
+					RegexLeaf.spaceZeroOrMore(), //
+					new RegexLeaf("TAGS2", Stereotag.pattern() + "?"), //
 					RegexLeaf.spaceZeroOrMore(), //
 					new RegexLeaf("URL", "(" + UrlBuilder.getRegexp() + ")?"), //
 					RegexLeaf.spaceZeroOrMore(), //
@@ -125,13 +124,12 @@ public class CommandCreateElementFull2 extends SingleLineCommand2<ClassDiagram> 
 								RegexLeaf.spaceOneOrMore(), //
 								new RegexLeaf("CODE2", CommandCreateElementFull.CODE)) //
 				), //
-				new RegexOptional( //
-						new RegexConcat( //
-								RegexLeaf.spaceZeroOrMore(), //
-								new RegexLeaf("STEREOTYPE", "(\\<\\<.+\\>\\>)")//
-						)), //
 				RegexLeaf.spaceZeroOrMore(), //
-				new RegexLeaf("TAGS", Stereotag.pattern() + "?"), //
+				new RegexLeaf("TAGS1", Stereotag.pattern() + "?"), //
+				RegexLeaf.spaceZeroOrMore(), //
+				new RegexLeaf("STEREOTYPE", "(\\<\\<.+\\>\\>)?"), //
+				RegexLeaf.spaceZeroOrMore(), //
+				new RegexLeaf("TAGS2", Stereotag.pattern() + "?"), //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("URL", "(" + UrlBuilder.getRegexp() + ")?"), //
 				RegexLeaf.spaceZeroOrMore(), //
@@ -219,7 +217,7 @@ public class CommandCreateElementFull2 extends SingleLineCommand2<ClassDiagram> 
 					diagram.getSkinParam().getFont(null, false, FontParam.CIRCLED_CHARACTER),
 					diagram.getSkinParam().getIHtmlColorSet()));
 
-		CommandCreateClassMultilines.addTags(entity, arg.get("TAGS", 0));
+		CommandCreateClassMultilines.addTags(entity, arg.getLazzy("TAGS", 0));
 
 		final String urlString = arg.get("URL", 0);
 		if (urlString != null) {
@@ -229,8 +227,8 @@ public class CommandCreateElementFull2 extends SingleLineCommand2<ClassDiagram> 
 		}
 		final String s = arg.get("COLOR", 0);
 
-		entity.setSpecificColorTOBEREMOVED(ColorType.BACK, s == null ? null
-				: diagram.getSkinParam().getIHtmlColorSet().getColor(s));
+		entity.setSpecificColorTOBEREMOVED(ColorType.BACK,
+				s == null ? null : diagram.getSkinParam().getIHtmlColorSet().getColor(s));
 		return CommandExecutionResult.ok();
 	}
 

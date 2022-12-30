@@ -35,7 +35,6 @@ import java.util.List;
 
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.activitydiagram3.ftile.AbstractConnection;
-import net.sourceforge.plantuml.activitydiagram3.ftile.Arrows;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Connection;
 import net.sourceforge.plantuml.activitydiagram3.ftile.ConnectionTranslatable;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
@@ -218,7 +217,7 @@ public class ParallelBuilderFork extends AbstractParallelFtilesBuilder {
 		public void drawU(UGraphic ug) {
 			ug = ug.apply(UTranslate.dx(x));
 			final FtileGeometry geo2 = getFtile2().calculateDimension(getStringBounder());
-			Snake snake = Snake.create(skinParam(), arrowColor, Arrows.asToDown());
+			Snake snake = Snake.create(skinParam(), arrowColor, skinParam().arrows().asToDown());
 			if (Display.isNull(label) == false)
 				snake = snake.withLabel(getTextBlock(label), arrowHorizontalAlignment());
 
@@ -236,7 +235,7 @@ public class ParallelBuilderFork extends AbstractParallelFtilesBuilder {
 			final XPoint2D p1 = new XPoint2D(geo2.getLeft(), 0);
 			final XPoint2D p2 = new XPoint2D(geo2.getLeft(), geo2.getInY());
 
-			Snake snake = Snake.create(skinParam(), arrowColor, Arrows.asToDown()).ignoreForCompression();
+			Snake snake = Snake.create(skinParam(), arrowColor, skinParam().arrows().asToDown()).ignoreForCompression();
 			if (Display.isNull(label) == false)
 				snake = snake.withLabel(getTextBlock(label), arrowHorizontalAlignment());
 
@@ -272,7 +271,7 @@ public class ParallelBuilderFork extends AbstractParallelFtilesBuilder {
 			if (geo1.hasPointOut() == false)
 				return;
 
-			Snake snake = Snake.create(skinParam(), arrowColor, Arrows.asToDown());
+			Snake snake = Snake.create(skinParam(), arrowColor, skinParam().arrows().asToDown());
 			if (Display.isNull(label) == false)
 				snake = snake.withLabel(getTextBlock(label), arrowHorizontalAlignment());
 
@@ -293,7 +292,7 @@ public class ParallelBuilderFork extends AbstractParallelFtilesBuilder {
 			final XPoint2D p1 = new XPoint2D(geo.getLeft(), barHeight + geo.getOutY());
 			final XPoint2D p2 = new XPoint2D(geo.getLeft(), justBeforeBar2);
 
-			Snake snake = Snake.create(skinParam(), arrowColor, Arrows.asToDown()).ignoreForCompression();
+			Snake snake = Snake.create(skinParam(), arrowColor, skinParam().arrows().asToDown()).ignoreForCompression();
 			if (Display.isNull(label) == false)
 				snake = snake.withLabel(getTextBlock(label), arrowHorizontalAlignment());
 

@@ -35,6 +35,7 @@ import java.util.Set;
 
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.LineBreakStrategy;
+import net.sourceforge.plantuml.activitydiagram3.LinkRendering;
 import net.sourceforge.plantuml.activitydiagram3.PositionedNote;
 import net.sourceforge.plantuml.activitydiagram3.ftile.AbstractFtile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
@@ -42,7 +43,6 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.FtileGeometry;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
 import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.creole.CreoleMode;
-import net.sourceforge.plantuml.creole.Parser;
 import net.sourceforge.plantuml.creole.Sheet;
 import net.sourceforge.plantuml.creole.SheetBlock1;
 import net.sourceforge.plantuml.creole.SheetBlock2;
@@ -111,8 +111,8 @@ public class FtileWithNotes extends AbstractFtile {
 			final LineBreakStrategy wrapWidth = style.wrapWidth();
 			final UStroke stroke = style.getStroke();
 
-			final Sheet sheet = Parser
-					.build(fc, skinParam.getDefaultTextAlignment(HorizontalAlignment.LEFT), skinParam, CreoleMode.FULL)
+			final Sheet sheet = skinParam
+					.sheet(fc, skinParam.getDefaultTextAlignment(HorizontalAlignment.LEFT), CreoleMode.FULL)
 					.createSheet(note.getDisplay());
 			final SheetBlock1 sheet1 = new SheetBlock1(sheet, wrapWidth, skinParam.getPadding());
 			final SheetBlock2 sheet2 = new SheetBlock2(sheet1, new Stencil() {
@@ -143,12 +143,11 @@ public class FtileWithNotes extends AbstractFtile {
 			}
 		}
 
-		if (left == null) {
+		if (left == null)
 			left = TextBlockUtils.empty(0, 0);
-		}
-		if (right == null) {
+
+		if (right == null)
 			right = TextBlockUtils.empty(0, 0);
-		}
 
 	}
 
@@ -200,10 +199,10 @@ public class FtileWithNotes extends AbstractFtile {
 		final XDimension2D dimTotal = calculateDimensionInternal(stringBounder);
 		final FtileGeometry orig = tile.calculateDimension(stringBounder);
 		final UTranslate translate = getTranslate(stringBounder);
-		if (orig.hasPointOut()) {
+		if (orig.hasPointOut())
 			return new FtileGeometry(dimTotal, orig.getLeft() + translate.getDx(), orig.getInY() + translate.getDy(),
 					orig.getOutY() + translate.getDy());
-		}
+
 		return new FtileGeometry(dimTotal, orig.getLeft() + translate.getDx(), orig.getInY() + translate.getDy());
 	}
 
@@ -213,6 +212,11 @@ public class FtileWithNotes extends AbstractFtile {
 		final XDimension2D dimRight = right.calculateDimension(stringBounder);
 		final double height = MathUtils.max(dimLeft.getHeight(), dimRight.getHeight(), dimTile.getHeight());
 		return new XDimension2D(dimTile.getWidth() + dimLeft.getWidth() + dimRight.getWidth(), height);
+	}
+
+	@Override
+	final public LinkRendering getInLinkRendering() {
+		return tile.getInLinkRendering();
 	}
 
 }
