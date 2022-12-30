@@ -20,13 +20,15 @@ import nl.talsmasoftware.umldoclet.configuration.Configuration;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.regex.Pattern;
 
 public interface PlantumlGenerator {
+    Pattern HTTP_URLS = Pattern.compile("^https?://");
 
     static PlantumlGenerator getPlantumlGenerator(Configuration configuration) {
         return configuration.plantumlServerUrl()
-                .map(RemotePlantumlGenerator::new)
-                .map(PlantumlGenerator.class::cast)
+                .filter(url -> HTTP_URLS.matcher(url).find())
+                .map(url -> (PlantumlGenerator) new RemotePlantumlGenerator(url))
                 .orElseGet(BuiltinPlantumlGenerator::new);
     }
 
