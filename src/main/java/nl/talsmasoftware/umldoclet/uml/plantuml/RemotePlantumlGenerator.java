@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.uml.plantuml;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.code.ArobaseStringCompressor;
 import net.sourceforge.plantuml.code.AsciiEncoder;
@@ -30,7 +31,7 @@ import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
-@SuppressWarnings("URLCONNECTION_SSRF_FD") // Only allow HTTP(S) urls.
+@SuppressFBWarnings(value = "URLCONNECTION_SSRF_FD", justification = "We only allow http(s) urls.")
 public class RemotePlantumlGenerator implements PlantumlGenerator {
     private static final String DEFAULT_PLANTUML_BASE_URL = "https://www.plantuml.com/plantuml/";
     private static final Transcoder TRANSCODER =
