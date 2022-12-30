@@ -30,6 +30,7 @@ import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
+@SuppressWarnings("URLCONNECTION_SSRF_FD") // Only allow HTTP(S) urls.
 public class RemotePlantumlGenerator implements PlantumlGenerator {
     private static final String DEFAULT_PLANTUML_BASE_URL = "https://www.plantuml.com/plantuml/";
     private static final Transcoder TRANSCODER =
