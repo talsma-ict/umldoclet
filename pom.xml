@@ -73,8 +73,8 @@
         <!-- test -->
         <junit.version>5.9.1</junit.version>
         <hamcrest.version>2.2</hamcrest.version>
-        <mockito.version>4.9.0</mockito.version>
-        <slf4j.version>2.0.5</slf4j.version>
+        <mockito.version>4.11.0</mockito.version>
+        <slf4j.version>2.0.6</slf4j.version>
         <logback.version>1.4.5</logback.version>
         <maven-invoker.version>3.2.0</maven-invoker.version>
 
