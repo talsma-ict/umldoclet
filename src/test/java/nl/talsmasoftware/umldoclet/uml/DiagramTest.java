@@ -71,6 +71,7 @@ public class DiagramTest {
 
     @AfterEach
     public void tearDown() {
+        verify(config, atLeast(0)).plantumlServerUrl();
         verify(config, atLeast(0)).images();
         verify(config, atLeast(0)).destinationDirectory();
         verify(config, atLeast(0)).logger();

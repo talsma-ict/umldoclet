@@ -30,8 +30,17 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.hasToString;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class DependencyDiagramTest {
     private ImageConfig mockImages;
@@ -54,6 +63,7 @@ public class DependencyDiagramTest {
     public void verifyMocks() {
         verify(mockConfig, atLeastOnce()).images();
         verify(mockImages, atLeastOnce()).formats();
+        verify(mockConfig, atLeast(0)).plantumlServerUrl();
         verify(mockConfig, atLeast(0)).excludedPackageDependencies();
         verify(mockConfig, atLeast(0)).indentation();
         verifyNoMoreInteractions(mockConfig, mockImages);

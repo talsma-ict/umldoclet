@@ -52,10 +52,12 @@ public class NamespaceTest {
     public void testEquals() {
         PackageDiagram packageUml = new PackageDiagram(config, "a.b.c", randomString());
         Namespace namespace = new Namespace(packageUml, "a.b.c", randomString());
+
         assertThat(namespace.equals(namespace), is(true));
         assertThat(namespace, is(equalTo(new Namespace(null, "a.b.c", randomString()))));
         assertThat(namespace, is(equalTo(new Namespace(packageUml, "a.b.c", randomString()))));
         assertThat(namespace, is(not(equalTo(new Namespace(packageUml, "A.B.C", randomString())))));
+        verify(config, atLeastOnce()).plantumlServerUrl();
     }
 
 }

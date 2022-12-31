@@ -31,7 +31,26 @@ import java.util.Optional;
 public interface Configuration {
 
     /**
-     * Tha name of the doclet to delegate main documentation to
+     * The base URL of the <a href="https://www.plantuml.com/plantuml">PlantUML server</a> to generate diagrams with.
+     * <p>
+     * Please note that it is not recommended to use the public, central PlantUML server at
+     * <a href="https://www.plantuml.com/plantuml">https://www.plantuml.com/plantuml</a>.
+     * Although not strictly forbidden by the author of PlantUML, using the central server to generate your
+     * javadoc diagrams is causing additional load on the central server and is a lot slower than running your own
+     * local server.
+     * <p>
+     * Using docker to run a local PlantUML server can be a simple as:
+     * <pre>{@code
+     * docker run -d -p 8080:8080 plantuml/plantuml-server:latest
+     * }</pre>
+     * After that, you can run the UMLDoclet with {@code plantumlServerUrl = "http://localhost:8080/"}
+     *
+     * @return The base URL of the PlantUML online server to use.
+     */
+    Optional<String> plantumlServerUrl();
+
+    /**
+     * The name of the doclet to delegate main documentation to
      * or {@link Optional#empty} if no delegation is wanted.
      *
      * @return The name of the doclet to delegate main documentation to
