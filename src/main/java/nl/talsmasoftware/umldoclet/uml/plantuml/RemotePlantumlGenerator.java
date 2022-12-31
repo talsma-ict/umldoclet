@@ -61,7 +61,7 @@ public class RemotePlantumlGenerator implements PlantumlGenerator {
                 out.write(buf, 0, read);
             }
         } catch (IOException | RuntimeException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error generating diagram: " + e.getMessage(), e);
         }
     }
 

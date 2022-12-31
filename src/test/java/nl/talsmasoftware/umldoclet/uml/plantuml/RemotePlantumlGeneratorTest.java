@@ -18,6 +18,7 @@ package nl.talsmasoftware.umldoclet.uml.plantuml;
 import net.sourceforge.plantuml.FileFormat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -30,6 +31,11 @@ import java.io.OutputStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doThrow;
 
 @Testcontainers
 class RemotePlantumlGeneratorTest {
@@ -45,8 +51,11 @@ class RemotePlantumlGeneratorTest {
     void setUp() {
         subject = new RemotePlantumlGenerator(String.format("http://%s:%s/",
                 plantumlServer.getHost(), plantumlServer.getMappedPort(8080)));
-//        subject = new RemotePlantumlGenerator("https://www.plantuml.com/plantuml/");
-//        subject = new RemotePlantumlGenerator("http://localhost:8080/");
+    }
+
+    @Test
+    void nonHttpBaseUrlsAreRejected() {
+        assertThrows(IllegalArgumentException.class, () -> new RemotePlantumlGenerator("file:///etc/passwd"));
     }
 
     @Test
@@ -64,6 +73,18 @@ class RemotePlantumlGeneratorTest {
 
         // verify
         assertThat(testDiagram.isFile(), is(true));
+    }
+
+    @Test
+    void exceptionsAreHandled() throws IOException {
+        OutputStream mockOutput = Mockito.mock(OutputStream.class);
+        IOException ioException = new IOException("Stream already closed!");
+        doThrow(ioException).when(mockOutput).write(any(byte[].class), anyInt(), anyInt());
+
+        RuntimeException expected = assertThrows(RuntimeException.class, () ->
+                subject.generatePlantumlDiagramFromSource(testUml, FileFormat.SVG, mockOutput));
+
+        assertThat(expected.getCause(), sameInstance(ioException));
     }
 
 }
