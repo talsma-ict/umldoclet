@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright 2016-2022 Talsma ICT
+    Copyright 2016-2023 Talsma ICT
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -314,7 +314,7 @@
         <dependency> <!-- Required to compile 'net.sourceforge.plantuml.ant.*' -->
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
-            <version>1.10.12</version>
+            <version>1.10.13</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
