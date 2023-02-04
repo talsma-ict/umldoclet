@@ -86,11 +86,6 @@ public class SpriteContainerEmpty implements SpriteContainer, ISkinSimple {
 	}
 
 	@Override
-	public LineBreakStrategy wrapWidth() {
-		return LineBreakStrategy.NONE;
-	}
-
-	@Override
 	public void copyAllFrom(Map<String, String> other) {
 		throw new UnsupportedOperationException();
 	}

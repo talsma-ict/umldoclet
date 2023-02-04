@@ -39,7 +39,6 @@ import java.util.List;
 
 import net.sourceforge.plantuml.EmbeddedDiagram;
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.awt.geom.XDimension2D;
@@ -238,7 +237,7 @@ public class MethodsOrFieldsArea extends AbstractTextBlock implements TextBlock,
 				config = config.underline();
 
 			TextBlock bloc = Display.getWithNewlines(s).create8(config, align, skinParam, CreoleMode.SIMPLE_LINE,
-					skinParam.wrapWidth());
+					style.wrapWidth());
 			bloc = TextBlockUtils.fullInnerPosition(bloc, m.getDisplay(false));
 			return new TextBlockTracer(m, bloc);
 		}
@@ -247,7 +246,7 @@ public class MethodsOrFieldsArea extends AbstractTextBlock implements TextBlock,
 //			return ((EmbeddedDiagram) cs).asDraw(skinParam);
 
 		return Display.getWithNewlines(cs.toString()).create8(config, align, skinParam, CreoleMode.SIMPLE_LINE,
-				skinParam.wrapWidth());
+				style.wrapWidth());
 
 	}
 

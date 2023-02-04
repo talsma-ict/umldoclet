@@ -34,7 +34,6 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.classdiagram.ClassDiagram;
@@ -46,10 +45,13 @@ import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.EntityPortion;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
+import net.sourceforge.plantuml.utils.LineLocation;
 
 public class CommandHideShowByVisibility extends SingleLineCommand2<UmlDiagram> {
 
-	public CommandHideShowByVisibility() {
+	public static final CommandHideShowByVisibility ME = new CommandHideShowByVisibility();
+
+	private CommandHideShowByVisibility() {
 		super(getRegexConcat());
 	}
 

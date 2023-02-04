@@ -44,7 +44,7 @@ public abstract class ValueAbstract implements Value {
 		throw new UnsupportedOperationException("Class=" + getClass());
 	}
 
-	public int asInt() {
+	public int asInt(boolean minusOneIfError) {
 		throw new UnsupportedOperationException("Class=" + getClass());
 	}
 

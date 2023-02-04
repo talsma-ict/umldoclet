@@ -31,6 +31,7 @@
 package net.sourceforge.plantuml.command;
 
 import net.sourceforge.plantuml.core.Diagram;
+import net.sourceforge.plantuml.utils.BlocLines;
 
 public class CommandMultilinesComment extends CommandMultilines<Diagram> {
 

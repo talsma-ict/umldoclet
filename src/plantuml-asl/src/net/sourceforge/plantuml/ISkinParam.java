@@ -109,8 +109,6 @@ public interface ISkinParam extends ISkinSimple {
 
 	public LineBreakStrategy maxMessageSize();
 
-	public LineBreakStrategy wrapWidth();
-
 	public LineBreakStrategy swimlaneWrapTitleWidth();
 
 	public boolean strictUmlStyle();

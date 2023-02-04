@@ -39,11 +39,11 @@ import net.sourceforge.plantuml.awt.geom.XPoint2D;
 import net.sourceforge.plantuml.baraye.ILeaf;
 import net.sourceforge.plantuml.cucadiagram.EntityPosition;
 import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.svek.Bibliotekon;
 import net.sourceforge.plantuml.svek.Cluster;
@@ -65,8 +65,9 @@ public class EntityImagePort extends AbstractEntityImageBorder {
 		this.sname = sname;
 	}
 
-	private StyleSignature getSignature() {
-		return StyleSignatureBasic.of(SName.root, SName.element, sname, SName.port).withTOBECHANGED(getStereo());
+	@Override
+	protected StyleSignatureBasic getSignature() {
+		return StyleSignatureBasic.of(SName.root, SName.element, sname, SName.port);
 	}
 
 	private boolean upPosition() {
@@ -81,6 +82,7 @@ public class EntityImagePort extends AbstractEntityImageBorder {
 	}
 
 	public double getMaxWidthFromLabelForEntryExit(StringBounder stringBounder) {
+		final TextBlock desc = getDesc();
 		final XDimension2D dimDesc = desc.calculateDimension(stringBounder);
 		return dimDesc.getWidth();
 	}
@@ -91,6 +93,7 @@ public class EntityImagePort extends AbstractEntityImageBorder {
 	}
 
 	final public void drawU(UGraphic ug) {
+		final TextBlock desc = getDesc();
 		double y = 0;
 		final XDimension2D dimDesc = desc.calculateDimension(ug.getStringBounder());
 		final double x = 0 - (dimDesc.getWidth() - 2 * EntityPosition.RADIUS) / 2;
@@ -102,7 +105,7 @@ public class EntityImagePort extends AbstractEntityImageBorder {
 
 		desc.drawU(ug.apply(new UTranslate(x, y)));
 
-		final Style style = getSignature().getMergedStyle(getSkinParam().getCurrentStyleBuilder());
+		final Style style = getStyle();
 
 		HColor backcolor = getEntity().getColors().getColor(ColorType.BACK);
 		HColor borderColor = getEntity().getColors().getColor(ColorType.LINE);

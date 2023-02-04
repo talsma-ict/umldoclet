@@ -37,6 +37,7 @@ import h.ST_pointf;
 import h.ST_splines;
 import h.ST_textlabel_t;
 import net.sourceforge.plantuml.LineParam;
+import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.awt.geom.XPoint2D;
 import net.sourceforge.plantuml.cucadiagram.ICucaDiagram;
 import net.sourceforge.plantuml.cucadiagram.Link;
@@ -45,9 +46,9 @@ import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.UDrawable;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.posimo.DotPath;
-import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
+import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.svek.extremity.ExtremityFactory;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
@@ -68,7 +69,6 @@ public class SmetanaPath implements UDrawable {
 	private final TextBlock label;
 	private final TextBlock headLabel;
 	private final TextBlock tailLabel;
-	private final Rose rose = new Rose();
 
 	public SmetanaPath(Link link, ST_Agedge_s edge, YMirror ymirror, ICucaDiagram diagram, TextBlock label,
 			TextBlock tailLabel, TextBlock headLabel) {
@@ -86,10 +86,7 @@ public class SmetanaPath implements UDrawable {
 		if (link.isHidden())
 			return;
 
-		HColor color = StyleSignatureBasic
-				.of(SName.root, SName.element, diagram.getUmlDiagramType().getStyleName(), SName.arrow)
-				.getMergedStyle(diagram.getSkinParam().getCurrentStyleBuilder()).value(PName.LineColor)
-				.asColor(diagram.getSkinParam().getIHtmlColorSet());
+		HColor color = getStyle().value(PName.LineColor).asColor(diagram.getSkinParam().getIHtmlColorSet());
 
 		if (this.link.getColors() != null) {
 			final HColor newColor = this.link.getColors().getColor(ColorType.ARROW, ColorType.LINE);
@@ -108,9 +105,17 @@ public class SmetanaPath implements UDrawable {
 			if (link.getColors() != null && link.getColors().getSpecificLineStroke() != null)
 				stroke = link.getColors().getSpecificLineStroke();
 
+			final Url url = link.getUrl();
+			if (url != null)
+				ug.startUrl(url);
+
 			ug.apply(stroke).apply(color).draw(dotPath);
 			printExtremityAtStart(ug.apply(color));
 			printExtremityAtEnd(ug.apply(color));
+
+			if (url != null)
+				ug.closeUrl();
+
 		}
 		if (getLabelRectangleTranslate("label") != null)
 			label.drawU(ug.apply(getLabelRectangleTranslate("label")));
@@ -123,6 +128,12 @@ public class SmetanaPath implements UDrawable {
 
 		// printDebug(ug);
 
+	}
+
+	private Style getStyle() {
+		return StyleSignatureBasic
+				.of(SName.root, SName.element, diagram.getUmlDiagramType().getStyleName(), SName.arrow)
+				.getMergedStyle(diagram.getSkinParam().getCurrentStyleBuilder());
 	}
 
 	private void printExtremityAtStart(UGraphic ug) {

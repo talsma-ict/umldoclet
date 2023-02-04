@@ -44,6 +44,11 @@ import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class SubjectDayOfWeek implements Subject {
 
+	public static final Subject ME = new SubjectDayOfWeek();
+
+	private SubjectDayOfWeek() {
+	}
+
 	public IRegex toRegex() {
 		return new RegexLeaf("SUBJECT", "(" + DayOfWeek.getRegexString() + ")");
 	}
@@ -59,7 +64,7 @@ public class SubjectDayOfWeek implements Subject {
 
 	class AreOpen extends SentenceSimple {
 		public AreOpen() {
-			super(SubjectDayOfWeek.this, Verbs.are(), new ComplementOpen());
+			super(SubjectDayOfWeek.this, Verbs.are, new ComplementOpen());
 		}
 
 		@Override
@@ -73,7 +78,7 @@ public class SubjectDayOfWeek implements Subject {
 	class AreClose extends SentenceSimple {
 
 		public AreClose() {
-			super(SubjectDayOfWeek.this, Verbs.are(), new ComplementClose());
+			super(SubjectDayOfWeek.this, Verbs.are, new ComplementClose());
 		}
 
 		@Override
@@ -88,7 +93,7 @@ public class SubjectDayOfWeek implements Subject {
 	class InColor extends SentenceSimple {
 
 		public InColor() {
-			super(SubjectDayOfWeek.this, Verbs.isOrAre(), new ComplementInColors2());
+			super(SubjectDayOfWeek.this, Verbs.isOrAre, new ComplementInColors2());
 		}
 
 		@Override

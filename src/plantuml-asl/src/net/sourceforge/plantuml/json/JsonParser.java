@@ -64,6 +64,8 @@ import java.io.StringReader;
  */
 public class JsonParser {
 
+  private static final char END_OF_TEXT = '\u0003';
+  
   private static final int MAX_NESTING_LEVEL = 1000;
   private static final int MIN_BUFFER_SIZE = 10;
   private static final int DEFAULT_BUFFER_SIZE = 1024;
@@ -76,7 +78,7 @@ public class JsonParser {
   private int fill;
   private int line;
   private int lineOffset;
-  private int current;
+  private char current;
   private StringBuilder captureBuffer;
   private int captureStart;
   private int nestingLevel;
@@ -267,6 +269,9 @@ public class JsonParser {
     }
     do {
       skipWhiteSpace();
+      if (readChar('/')) {
+    	  skipComment();
+      }
       handler.startObjectName(object);
       String name = readName();
       handler.endObjectName(object, name);
@@ -279,12 +284,24 @@ public class JsonParser {
       readValue();
       handler.endObjectValue(object, name);
       skipWhiteSpace();
+      if (readChar('/')) {
+    	  skipComment();
+      }
     } while (readChar(','));
     if (!readChar('}')) {
       throw expected("',' or '}'");
     }
     nestingLevel--;
     handler.endObject(object);
+  }
+
+  private void skipComment() throws IOException {
+	    if (!readChar('/')) 
+	        throw expected("Error in comment");
+	    while (current != '\n' && current != '\r') {
+		  read();
+		}
+        skipWhiteSpace();
   }
 
   private String readName() throws IOException {
@@ -468,7 +485,7 @@ public class JsonParser {
       fill = reader.read(buffer, 0, buffer.length);
       index = 0;
       if (fill == -1) {
-        current = -1;
+        current = END_OF_TEXT;
         index++;
         return;
       }
@@ -488,7 +505,7 @@ public class JsonParser {
   }
 
   private void pauseCapture() {
-    int end = current == -1 ? index : index - 1;
+    int end = current == END_OF_TEXT ? index : index - 1;
     captureBuffer.append(buffer, captureStart, end - captureStart);
     captureStart = -1;
   }
@@ -538,7 +555,7 @@ public class JsonParser {
   }
 
   private boolean isEndOfText() {
-    return current == -1;
+    return current == END_OF_TEXT;
   }
 
 }

@@ -34,6 +34,7 @@ import java.io.IOException;
 
 import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.security.SecurityUtils;
+import net.sourceforge.plantuml.utils.Log;
 
 public class FileSystem {
 

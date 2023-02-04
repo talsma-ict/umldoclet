@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.sprite;
 
-import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand2;
@@ -38,6 +37,7 @@ import net.sourceforge.plantuml.command.regex.IRegex;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.command.regex.RegexResult;
+import net.sourceforge.plantuml.utils.LineLocation;
 
 public class CommandListSprite extends SingleLineCommand2<UmlDiagram> {
 
@@ -46,7 +46,8 @@ public class CommandListSprite extends SingleLineCommand2<UmlDiagram> {
 	}
 
 	private static IRegex getRegexConcat() {
-		return RegexConcat.build(CommandListSprite.class.getName(), RegexLeaf.start(), //
+		return RegexConcat.build(CommandListSprite.class.getName(), //
+				RegexLeaf.start(), //
 				new RegexLeaf("listsprites?"), //
 				RegexLeaf.end());
 	}

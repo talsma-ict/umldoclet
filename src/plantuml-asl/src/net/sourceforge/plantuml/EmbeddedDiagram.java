@@ -55,6 +55,7 @@ import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UImage;
 import net.sourceforge.plantuml.ugraphic.UImageSvg;
 import net.sourceforge.plantuml.ugraphic.UShape;
+import net.sourceforge.plantuml.utils.StringLocated;
 
 public class EmbeddedDiagram extends AbstractTextBlock implements Line, Atom {
 
@@ -148,6 +149,11 @@ public class EmbeddedDiagram extends AbstractTextBlock implements Line, Atom {
 
 	public XDimension2D calculateDimension(StringBounder stringBounder) {
 		try {
+			if (stringBounder.getNativeFormat() == FileFormat.SVG) {
+				final String imageSvg = getImageSvg();
+				final UImageSvg svg = new UImageSvg(imageSvg, 1);
+				return new XDimension2D(svg.getWidth(), svg.getHeight());
+			}
 			final BufferedImage im = getImage();
 			return new XDimension2D(im.getWidth(), im.getHeight());
 		} catch (IOException e) {

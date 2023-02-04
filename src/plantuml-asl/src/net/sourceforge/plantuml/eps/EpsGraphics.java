@@ -37,7 +37,6 @@ import java.util.Locale;
 import java.util.StringTokenizer;
 
 import net.sourceforge.plantuml.BackSlash;
-import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.security.SecurityUtils;
 import net.sourceforge.plantuml.ugraphic.ShadowManager;
 import net.sourceforge.plantuml.ugraphic.UPath;
@@ -45,6 +44,7 @@ import net.sourceforge.plantuml.ugraphic.USegment;
 import net.sourceforge.plantuml.ugraphic.USegmentType;
 import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.color.HColorGradient;
+import net.sourceforge.plantuml.utils.Log;
 import net.sourceforge.plantuml.utils.MathUtils;
 import net.sourceforge.plantuml.version.Version;
 
@@ -292,7 +292,7 @@ public class EpsGraphics {
 				} else if (type == USegmentType.SEG_CLOSE) {
 					// Nothing
 				} else if (type == USegmentType.SEG_ARCTO) {
-					// Nothing
+					linetoNoMacro(coord[5] + x, coord[6] + y);
 				} else {
 					Log.println("unknown1 " + seg);
 				}
@@ -318,7 +318,7 @@ public class EpsGraphics {
 				} else if (type == USegmentType.SEG_CLOSE) {
 					// Nothing
 				} else if (type == USegmentType.SEG_ARCTO) {
-					// Nothing
+					linetoNoMacro(coord[5] + x, coord[6] + y);
 				} else {
 					Log.println("unknown2 " + seg);
 				}

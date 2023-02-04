@@ -41,7 +41,7 @@ import net.sourceforge.plantuml.ugraphic.color.HColor;
 public class SentenceTaskStarts extends SentenceSimple {
 
 	public SentenceTaskStarts() {
-		super(new SubjectTask(), Verbs.starts2(), new ComplementBeforeOrAfterOrAtTaskStartOrEnd());
+		super(SubjectTask.ME, Verbs.starts2, new ComplementBeforeOrAfterOrAtTaskStartOrEnd());
 	}
 
 	@Override

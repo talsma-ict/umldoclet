@@ -32,7 +32,6 @@ package net.sourceforge.plantuml.sequencediagram.command;
 
 import java.io.IOException;
 
-import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.TitledDiagram;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand2;
@@ -40,10 +39,13 @@ import net.sourceforge.plantuml.command.regex.IRegex;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.command.regex.RegexResult;
+import net.sourceforge.plantuml.utils.LineLocation;
 
 public class CommandSkin extends SingleLineCommand2<TitledDiagram> {
 
-	public CommandSkin() {
+	public static final CommandSkin ME = new CommandSkin();
+
+	private CommandSkin() {
 		super(getRegexConcat());
 	}
 

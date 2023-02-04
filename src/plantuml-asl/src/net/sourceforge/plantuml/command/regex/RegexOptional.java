@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.command.regex;
 
-import net.sourceforge.plantuml.StringLocated;
+import net.sourceforge.plantuml.utils.StringLocated;
 
 public class RegexOptional extends RegexComposed implements IRegex {
 

@@ -110,6 +110,7 @@ public enum SName {
 	rectangle, //
 	reference, //
 	referenceHeader, //
+	regex, //
 	requirement, //
 	root, //
 	rootNode, //

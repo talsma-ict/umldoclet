@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.classdiagram.command;
 
-import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.baraye.EntityUtils;
@@ -51,10 +50,13 @@ import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.descdiagram.DescriptionDiagram;
 import net.sourceforge.plantuml.objectdiagram.AbstractClassOrObjectDiagram;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
+import net.sourceforge.plantuml.utils.LineLocation;
 
 public class CommandHideShowByGender extends SingleLineCommand2<UmlDiagram> {
 
-	public CommandHideShowByGender() {
+	public static final CommandHideShowByGender ME = new CommandHideShowByGender();
+
+	private CommandHideShowByGender() {
 		super(getRegexConcat());
 	}
 
@@ -183,7 +185,7 @@ public class CommandHideShowByGender extends SingleLineCommand2<UmlDiagram> {
 		} else {
 			arg1 = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg1);
 			final Ident ident = diagram.buildLeafIdent(arg1);
-			final Code code = diagram.V1972() ? ident : diagram.buildCode(arg1);
+			final Code code = diagram.buildCode(arg1);
 			final IEntity entity = diagram.getOrCreateLeaf(ident, code, null, null);
 			gender = EntityGenderUtils.byEntityAlone(entity);
 		}

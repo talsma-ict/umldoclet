@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  */
-package net.sourceforge.plantuml;
+package net.sourceforge.plantuml.utils;
 
 import net.sourceforge.plantuml.awt.geom.XPoint2D;
 

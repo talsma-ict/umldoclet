@@ -32,6 +32,7 @@ package net.sourceforge.plantuml.ugraphic;
 
 import static net.sourceforge.plantuml.utils.ObjectUtils.instanceOfAny;
 
+import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.activitydiagram3.ftile.CenteredText;
 import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.graphic.SpecialText;
@@ -57,6 +58,7 @@ public class LimitFinder extends UGraphicNo {
 
 	private final MinMaxMutable minmax;
 	private UClip clip;
+	private final FileFormat format;
 
 	public static LimitFinder create(StringBounder stringBounder, boolean initToZero) {
 		final LimitFinder result = new LimitFinder(stringBounder, new UTranslate(), MinMaxMutable.getEmpty(initToZero));
@@ -67,6 +69,7 @@ public class LimitFinder extends UGraphicNo {
 	private LimitFinder(StringBounder stringBounder, UTranslate translate, MinMaxMutable minmax) {
 		super(stringBounder, translate);
 		this.minmax = minmax;
+		this.format = stringBounder.getNativeFormat();
 	}
 
 	private void addPoint(double x, double y) {

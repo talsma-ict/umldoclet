@@ -32,6 +32,7 @@ package net.sourceforge.plantuml.ugraphic.debug;
 
 import java.util.Random;
 
+import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.graphic.StringBounderRaw;
@@ -54,6 +55,11 @@ public class StringBounderDebug extends StringBounderRaw {
 	public double getDescent(UFont font, String text) {
 		final double descent = font.getSize2D() / 4.5;
 		return descent;
+	}
+
+	@Override
+	public FileFormat getNativeFormat() {
+		return FileFormat.PNG;
 	}
 
 }

@@ -67,7 +67,7 @@ public abstract class EntityImageStateCommon extends AbstractEntityImage {
 				getSkinParam().getIHtmlColorSet(), entity.getColors());
 
 		this.title = entity.getDisplay().create8(titleFontConfiguration, HorizontalAlignment.CENTER, skinParam,
-				CreoleMode.FULL, skinParam.wrapWidth());
+				CreoleMode.FULL, getStyleState().wrapWidth());
 		this.url = entity.getUrl99();
 
 	}

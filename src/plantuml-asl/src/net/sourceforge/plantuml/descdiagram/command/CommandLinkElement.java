@@ -31,8 +31,6 @@
  */
 package net.sourceforge.plantuml.descdiagram.command;
 
-import net.sourceforge.plantuml.Direction;
-import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.baraye.IEntity;
 import net.sourceforge.plantuml.baraye.ILeaf;
@@ -58,6 +56,8 @@ import net.sourceforge.plantuml.graphic.USymbols;
 import net.sourceforge.plantuml.graphic.color.ColorParser;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
+import net.sourceforge.plantuml.utils.Direction;
+import net.sourceforge.plantuml.utils.LineLocation;
 
 public class CommandLinkElement extends SingleLineCommand2<DescriptionDiagram> {
 
@@ -246,8 +246,8 @@ public class CommandLinkElement extends SingleLineCommand2<DescriptionDiagram> {
 		final Ident ident2 = diagram.buildLeafIdentSpecial(ent2);
 		Ident ident1pure = Ident.empty().add(ent1, diagram.getNamespaceSeparator());
 		Ident ident2pure = Ident.empty().add(ent2, diagram.getNamespaceSeparator());
-		final Code code1 = diagram.V1972() ? ident1 : diagram.buildCode(ent1String);
-		final Code code2 = diagram.V1972() ? ident2 : diagram.buildCode(ent2String);
+		final Code code1 = diagram.buildCode(ent1String);
+		final Code code2 = diagram.buildCode(ent2String);
 
 		final LinkType linkType = getLinkType(arg);
 		final Direction dir = getDirection(arg);
@@ -262,10 +262,8 @@ public class CommandLinkElement extends SingleLineCommand2<DescriptionDiagram> {
 		final IEntity cl1;
 		final IEntity cl2;
 		if (diagram.isGroup(code1) && diagram.isGroup(code2)) {
-			cl1 = diagram.V1972() ? diagram.getGroupStrict(diagram.buildLeafIdent(ent1String))
-					: diagram.getGroup(diagram.buildCode(ent1String));
-			cl2 = diagram.V1972() ? diagram.getGroupStrict(diagram.buildLeafIdent(ent2String))
-					: diagram.getGroup(diagram.buildCode(ent2String));
+			cl1 = diagram.getGroup(diagram.buildCode(ent1String));
+			cl2 = diagram.getGroup(diagram.buildCode(ent2String));
 		} else {
 			cl1 = getFoo1(diagram, code1, ident1, ident1pure);
 			cl2 = getFoo1(diagram, code2, ident2, ident2pure);
@@ -290,11 +288,8 @@ public class CommandLinkElement extends SingleLineCommand2<DescriptionDiagram> {
 	}
 
 	private IEntity getFoo1(DescriptionDiagram diagram, Code code, Ident ident, Ident pure) {
-		if (!diagram.V1972() && diagram.isGroup(code))
+		if (diagram.isGroup(code))
 			return diagram.getGroup(code);
-
-		if (diagram.V1972() && diagram.isGroupStrict(ident))
-			return diagram.getGroupStrict(ident);
 
 		final String codeString = code.getName();
 		if (ident.getLast().startsWith("()")) {
@@ -305,7 +300,7 @@ public class CommandLinkElement extends SingleLineCommand2<DescriptionDiagram> {
 		final char codeChar = codeString.length() > 2 ? codeString.charAt(0) : 0;
 		final String tmp3 = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(codeString, "\"([:");
 		final Ident ident3 = diagram.buildFullyQualified(tmp3);
-		final Code code3 = diagram.V1972() ? ident3 : diagram.buildCode(tmp3);
+		final Code code3 = diagram.buildCode(tmp3);
 		if (codeChar == '(') {
 			return getOrCreateLeaf1972(diagram, ident, code3, LeafType.USECASE, USymbols.USECASE, pure);
 		} else if (codeChar == ':') {
@@ -321,13 +316,6 @@ public class CommandLinkElement extends SingleLineCommand2<DescriptionDiagram> {
 
 	private ILeaf getOrCreateLeaf1972(DescriptionDiagram diagram, Ident ident, Code code, LeafType type, USymbol symbol,
 			Ident pure) {
-		if (diagram.V1972()) {
-			final ILeaf result = pure.size() == 1 ? diagram.getLeafVerySmart(ident) : diagram.getLeafStrict(ident);
-			// final ILeaf result = diagram.getLeafSmart(ident);
-			if (result != null)
-				return result;
-
-		}
 		return diagram.getOrCreateLeaf(ident, code, type, symbol);
 	}
 

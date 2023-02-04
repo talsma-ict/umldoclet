@@ -46,13 +46,18 @@ import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class SubjectDayAsDate implements Subject {
 
+	public static final Subject ME = new SubjectDayAsDate();
+
+	private SubjectDayAsDate() {
+	}
+
 	public Failable<Day> getMe(GanttDiagram project, RegexResult arg) {
-		if (arg.get("BDAY", 0) != null) {
+		if (arg.get("BDAY", 0) != null)
 			return Failable.ok(resultB(arg));
-		}
-		if (arg.get("ECOUNT", 0) != null) {
+
+		if (arg.get("ECOUNT", 0) != null)
 			return Failable.ok(resultE(project, arg));
-		}
+
 		throw new IllegalStateException();
 
 	}
@@ -76,7 +81,7 @@ public class SubjectDayAsDate implements Subject {
 	class Close extends SentenceSimple {
 
 		public Close() {
-			super(SubjectDayAsDate.this, Verbs.isOrAre(), new ComplementClose());
+			super(SubjectDayAsDate.this, Verbs.isOrAre, new ComplementClose());
 		}
 
 		@Override
@@ -88,7 +93,7 @@ public class SubjectDayAsDate implements Subject {
 
 	class Open extends SentenceSimple {
 		public Open() {
-			super(SubjectDayAsDate.this, Verbs.isOrAre(), new ComplementOpen());
+			super(SubjectDayAsDate.this, Verbs.isOrAre, new ComplementOpen());
 		}
 
 		@Override
@@ -101,7 +106,7 @@ public class SubjectDayAsDate implements Subject {
 	class InColor extends SentenceSimple {
 
 		public InColor() {
-			super(SubjectDayAsDate.this, Verbs.isOrAre(), new ComplementInColors2());
+			super(SubjectDayAsDate.this, Verbs.isOrAre, new ComplementInColors2());
 		}
 
 		@Override

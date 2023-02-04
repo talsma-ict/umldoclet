@@ -28,38 +28,10 @@
  *
  * Original Author:  Arnaud Roques
  */
-package net.sourceforge.plantuml.graphic;
+package net.sourceforge.plantuml.utils;
 
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.style.SName;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
+public interface Inspector<O> {
+	O peek(int ahead);
 
-class USymbolTogether extends USymbol {
-
-	@Override
-	public SName getSName() {
-		return SName.storage;
-	}
-
-	@Override
-	public TextBlock asSmall(TextBlock name, final TextBlock label, final TextBlock stereotype,
-			final SymbolContext symbolContext, final HorizontalAlignment stereoAlignment) {
-		return TextBlockUtils.empty(10, 10);
-	}
-
-	@Override
-	public TextBlock asBig(final TextBlock title, HorizontalAlignment labelAlignment, final TextBlock stereotype,
-			final double width, final double height, final SymbolContext symbolContext,
-			final HorizontalAlignment stereoAlignment) {
-		return new AbstractTextBlock() {
-
-			public void drawU(UGraphic ug) {
-			}
-
-			public XDimension2D calculateDimension(StringBounder stringBounder) {
-				return new XDimension2D(width, height);
-			}
-		};
-	}
-
+	void jump();
 }

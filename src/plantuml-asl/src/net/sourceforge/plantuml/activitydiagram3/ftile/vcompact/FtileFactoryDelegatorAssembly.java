@@ -92,6 +92,4 @@ public class FtileFactoryDelegatorAssembly extends FtileFactoryDelegator {
 		return result;
 	}
 
-	private final Rose rose = new Rose();
-
 }

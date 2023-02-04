@@ -30,11 +30,11 @@
  */
 package net.sourceforge.plantuml.tim;
 
-import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.json.JsonArray;
 import net.sourceforge.plantuml.json.JsonObject;
 import net.sourceforge.plantuml.json.JsonValue;
 import net.sourceforge.plantuml.tim.expression.TValue;
+import net.sourceforge.plantuml.utils.LineLocation;
 
 public class VariableManager {
 

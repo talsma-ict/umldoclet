@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.statediagram.command;
 
-import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.UrlBuilder;
 import net.sourceforge.plantuml.UrlMode;
@@ -58,6 +57,7 @@ import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.statediagram.StateDiagram;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
+import net.sourceforge.plantuml.utils.LineLocation;
 
 public class CommandCreatePackageState extends SingleLineCommand2<StateDiagram> {
 
@@ -89,7 +89,7 @@ public class CommandCreatePackageState extends SingleLineCommand2<StateDiagram> 
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("TAGS2", Stereotag.pattern() + "?"), //
 				RegexLeaf.spaceZeroOrMore(), //
-				new RegexLeaf("URL", "(" + UrlBuilder.getRegexp() + ")?"), //
+				UrlBuilder.OPTIONAL, //
 				RegexLeaf.spaceZeroOrMore(), //
 				color().getRegex(), //
 				RegexLeaf.spaceZeroOrMore(), //
@@ -114,7 +114,7 @@ public class CommandCreatePackageState extends SingleLineCommand2<StateDiagram> 
 		final IGroup currentPackage = diagram.getCurrentGroup();
 		final String idShort = getNotNull(arg, "CODE1", "CODE2");
 		final Ident idNewLong = diagram.buildLeafIdentSpecial(idShort);
-		final Code code = diagram.V1972() ? idNewLong : diagram.buildCode(idShort);
+		final Code code = diagram.buildCode(idShort);
 		String display = getNotNull(arg, "DISPLAY1", "DISPLAY2");
 		if (display == null)
 			display = code.getName();

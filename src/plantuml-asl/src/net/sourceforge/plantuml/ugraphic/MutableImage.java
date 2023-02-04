@@ -45,4 +45,6 @@ public interface MutableImage {
 
 	public MutableImage monochrome();
 
+	double getScale();
+
 }

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  */
-package net.sourceforge.plantuml.command;
+package net.sourceforge.plantuml.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,8 +40,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.plantuml.BackSlash;
-import net.sourceforge.plantuml.LineLocation;
-import net.sourceforge.plantuml.StringLocated;
+import net.sourceforge.plantuml.command.MultilinesStrategy;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
@@ -362,6 +361,14 @@ public class BlocLines implements Iterable<StringLocated> {
 		final StringLocated last = getLast();
 		result.add(last.substring(0, last.length() - nb).getTrimmed());
 		return new BlocLines(result);
+	}
+
+	public CharInspector inspector() {
+		return new CharInspectorImpl(this, false);
+	}
+
+	public CharInspector inspectorWithNewlines() {
+		return new CharInspectorImpl(this, true);
 	}
 
 }

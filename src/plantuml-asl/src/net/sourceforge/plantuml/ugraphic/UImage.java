@@ -94,4 +94,8 @@ public class UImage implements UShape {
 		return new UImage(image.monochrome(), rawFileName, formula);
 	}
 
+	public double getScale() {
+		return image.getScale();
+	}
+
 }

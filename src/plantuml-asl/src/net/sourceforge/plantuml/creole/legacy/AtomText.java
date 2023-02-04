@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import net.sourceforge.plantuml.BackSlash;
-import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.awt.geom.XDimension2D;
@@ -50,6 +49,7 @@ import net.sourceforge.plantuml.ugraphic.UText;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.utils.CharHidder;
+import net.sourceforge.plantuml.utils.Log;
 
 public final class AtomText extends AbstractAtom implements Atom {
 

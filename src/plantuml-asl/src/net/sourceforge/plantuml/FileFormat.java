@@ -104,8 +104,8 @@ public enum FileFormat {
 		if (this == MJPEG)
 			return ".avi";
 
-		if (this == LATEX_NO_PREAMBLE)
-			return ".latex";
+		if (this == LATEX || this == LATEX_NO_PREAMBLE)
+			return ".tex";
 
 		if (this == ANIMATED_GIF)
 			return ".gif";
@@ -157,18 +157,25 @@ public enum FileFormat {
 				return getJavaDimension(font, text);
 			}
 
+			public FileFormat getNativeFormat() {
+				return FileFormat.this;
+			}
+
 		};
 	}
 
 	private StringBounder getNormalStringBounder() {
 		return new StringBounderRaw() {
-			@Override
 			public String toString() {
 				return "FileFormat::getNormalStringBounder";
 			}
 
 			protected XDimension2D calculateDimensionInternal(UFont font, String text) {
 				return getJavaDimension(font, text);
+			}
+
+			public FileFormat getNativeFormat() {
+				return FileFormat.this;
 			}
 
 		};
@@ -183,7 +190,6 @@ public enum FileFormat {
 
 	private StringBounder getBrailleStringBounder() {
 		return new StringBounderRaw() {
-			@Override
 			public String toString() {
 				return "FileFormat::getBrailleStringBounder";
 			}
@@ -200,12 +206,16 @@ public enum FileFormat {
 			public double getDescent(UFont font, String text) {
 				return UGraphicBraille.QUANTA;
 			}
+
+			public FileFormat getNativeFormat() {
+				return FileFormat.this;
+			}
+
 		};
 	}
 
 	private StringBounder getTikzStringBounder(final TikzFontDistortion tikzFontDistortion) {
 		return new StringBounderRaw() {
-			@Override
 			public String toString() {
 				return "FileFormat::getTikzStringBounder";
 			}
@@ -220,6 +230,10 @@ public enum FileFormat {
 				final double magnify = tikzFontDistortion.getMagnify();
 				final double delta = (w2.getWidth() - w1.getWidth()) * factor * distortion;
 				return w2.withWidth(Math.max(w1.getWidth(), magnify * w2.getWidth() - delta));
+			}
+
+			public FileFormat getNativeFormat() {
+				return FileFormat.this;
 			}
 		};
 	}

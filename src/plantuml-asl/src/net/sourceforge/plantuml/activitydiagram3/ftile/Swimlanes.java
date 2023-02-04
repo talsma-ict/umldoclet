@@ -261,7 +261,7 @@ public class Swimlanes extends AbstractTextBlock implements TextBlock, Styleable
 	private LineBreakStrategy getWrap() {
 		LineBreakStrategy wrap = skinParam.swimlaneWrapTitleWidth();
 		if (wrap == LineBreakStrategy.NONE)
-			wrap = skinParam.wrapWidth();
+			wrap = style.wrapWidth();
 
 		return wrap;
 	}

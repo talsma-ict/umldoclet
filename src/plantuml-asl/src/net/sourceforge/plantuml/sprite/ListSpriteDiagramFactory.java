@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.sprite;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -42,13 +41,10 @@ import net.sourceforge.plantuml.core.UmlSource;
 public class ListSpriteDiagramFactory extends PSystemCommandFactory {
 
 	@Override
-	protected List<Command> createCommands() {
-
-		final List<Command> cmds = new ArrayList<>();
+	protected void initCommandsList(List<Command> cmds) {
 		CommonCommands.addCommonCommands1(cmds);
 		CommonCommands.addCommonCommands2(cmds);
 		cmds.add(new CommandListSprite());
-		return cmds;
 	}
 
 	@Override

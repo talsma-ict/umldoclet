@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.statediagram.command;
 
-import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.baraye.CucaDiagram;
 import net.sourceforge.plantuml.baraye.IEntity;
 import net.sourceforge.plantuml.baraye.Quark;
@@ -45,6 +44,7 @@ import net.sourceforge.plantuml.cucadiagram.Code;
 import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.statediagram.StateDiagram;
 import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
+import net.sourceforge.plantuml.utils.LineLocation;
 
 public class CommandAddField extends SingleLineCommand2<StateDiagram> {
 
@@ -92,13 +92,7 @@ public class CommandAddField extends SingleLineCommand2<StateDiagram> {
 		final String field = arg.get("FIELD", 0);
 
 		Ident ident = diagram.buildLeafIdent(codeString);
-		if (diagram.V1972()) {
-			// This is very bad. xi04 xc06
-			if (ident.parent().getLast().equals(codeString)) {
-				ident = ident.parent();
-			}
-		}
-		final Code code = diagram.V1972() ? ident : diagram.buildCode(codeString);
+		final Code code = diagram.buildCode(codeString);
 		final IEntity entity = diagram.getOrCreateLeaf(ident, code, null, null);
 
 		entity.getBodier().addFieldOrMethod(field);

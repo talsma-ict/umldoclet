@@ -82,6 +82,7 @@ public class FromSkinparamToStyle {
 
 		addConFont("header", SName.document, SName.header);
 		addConFont("footer", SName.document, SName.footer);
+		addConFont("caption", SName.document, SName.caption);
 
 		addConvert("defaultFontSize", PName.FontSize, SName.element);
 
@@ -103,6 +104,7 @@ public class FromSkinparamToStyle {
 		addConFont("SequenceGroupHeader", SName.groupHeader);
 		addConvert("SequenceBoxBorderColor", PName.LineColor, SName.box);
 		addConvert("SequenceBoxBackgroundColor", PName.BackGroundColor, SName.box);
+		addConvert("SequenceBoxFontColor", PName.FontColor, SName.box);
 		addConvert("SequenceLifeLineBorderColor", PName.LineColor, SName.lifeLine);
 		addConvert("SequenceLifeLineBackgroundColor", PName.BackGroundColor, SName.lifeLine);
 		addConvert("sequenceDividerBackgroundColor", PName.BackGroundColor, SName.separator);
@@ -113,6 +115,7 @@ public class FromSkinparamToStyle {
 
 		addConFont("note", SName.note);
 		addConvert("noteBorderThickness", PName.LineThickness, SName.note);
+		addConvert("noteBorderColor", PName.LineColor, SName.note);
 		addConvert("noteBackgroundColor", PName.BackGroundColor, SName.note);
 
 		addConvert("packageBackgroundColor", PName.BackGroundColor, SName.group);
@@ -226,6 +229,11 @@ public class FromSkinparamToStyle {
 //		addConvert("sequenceStereotypeFontColor", PName.FontColor, SName.stereotype);
 //		addConvert("sequenceStereotypeFontName", PName.FontName, SName.stereotype);
 
+		addConvert("lifelineStrategy", PName.LineStyle, SName.lifeLine);
+		addConvert("wrapWidth", PName.MaximumWidth, SName.element);
+		addConvert("HyperlinkUnderline", PName.HyperlinkUnderlineThickness, SName.element);
+
+
 	}
 
 	private static void addMagic(SName sname) {
@@ -269,7 +277,14 @@ public class FromSkinparamToStyle {
 				value = "0";
 			else if (value.equalsIgnoreCase("true"))
 				value = "3";
+		} else if (key.equals("lifelinestrategy")) {
+			if (value.equalsIgnoreCase("solid"))
+				value = "0";
+		} else if (key.equals("hyperlinkunderline")) {
+			if (value.equalsIgnoreCase("false"))
+				value = "0";
 		}
+
 		if (value.equalsIgnoreCase("right:right"))
 			value = "right";
 		if (value.equalsIgnoreCase("dotted"))

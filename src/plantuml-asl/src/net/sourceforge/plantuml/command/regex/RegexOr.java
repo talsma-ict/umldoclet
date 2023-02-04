@@ -34,8 +34,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.plantuml.StringLocated;
 import net.sourceforge.plantuml.annotation.HaxeIgnored;
+import net.sourceforge.plantuml.utils.StringLocated;
 
 public class RegexOr extends RegexComposed implements IRegex {
 

@@ -37,7 +37,6 @@ import net.sourceforge.plantuml.UrlBuilder;
 import net.sourceforge.plantuml.UrlMode;
 import net.sourceforge.plantuml.baraye.IEntity;
 import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
-import net.sourceforge.plantuml.command.BlocLines;
 import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.CommandMultilines2;
@@ -61,6 +60,7 @@ import net.sourceforge.plantuml.graphic.color.ColorParser;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
+import net.sourceforge.plantuml.utils.BlocLines;
 
 public final class CommandFactoryTipOnEntity implements SingleMultiFactoryCommand<AbstractEntityDiagram> {
 
@@ -85,13 +85,13 @@ public final class CommandFactoryTipOnEntity implements SingleMultiFactoryComman
 					RegexLeaf.spaceZeroOrMore(), //
 					new RegexLeaf("TAGS1", Stereotag.pattern() + "?"), //
 					RegexLeaf.spaceZeroOrMore(), //
-					new RegexLeaf("STEREO", "(\\<{2}.*\\>{2})?"), //
+					new RegexLeaf("STEREO", "(\\<\\<.*\\>\\>)?"), //
 					RegexLeaf.spaceZeroOrMore(), //
 					new RegexLeaf("TAGS2", Stereotag.pattern() + "?"), //
 					RegexLeaf.spaceZeroOrMore(), //
 					ColorParser.exp1(), //
 					RegexLeaf.spaceZeroOrMore(), //
-					new RegexLeaf("URL", "(" + UrlBuilder.getRegexp() + ")?"), //
+					UrlBuilder.OPTIONAL, //
 					RegexLeaf.spaceZeroOrMore(), //
 					new RegexLeaf("\\{"), //
 					RegexLeaf.end() //
@@ -108,13 +108,13 @@ public final class CommandFactoryTipOnEntity implements SingleMultiFactoryComman
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("TAGS1", Stereotag.pattern() + "?"), //
 				RegexLeaf.spaceZeroOrMore(), //
-				new RegexLeaf("STEREO", "(\\<{2}.*\\>{2})?"), //
+				new RegexLeaf("STEREO", "(\\<\\<.*\\>\\>)?"), //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("TAGS2", Stereotag.pattern() + "?"), //
 				RegexLeaf.spaceZeroOrMore(), //
 				ColorParser.exp1(), //
 				RegexLeaf.spaceZeroOrMore(), //
-				new RegexLeaf("URL", "(" + UrlBuilder.getRegexp() + ")?"), //
+				UrlBuilder.OPTIONAL, //
 				RegexLeaf.end() //
 		);
 	}
@@ -165,7 +165,7 @@ public final class CommandFactoryTipOnEntity implements SingleMultiFactoryComman
 
 		final String idShort = line0.get("ENTITY", 0);
 		final Ident identShort = diagram.buildLeafIdent(idShort);
-		final Code codeShort = diagram.V1972() ? identShort : diagram.buildCode(idShort);
+		final Code codeShort = diagram.buildCode(idShort);
 		final String member = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(line0.get("ENTITY", 1));
 		if (codeShort == null) {
 			assert false;

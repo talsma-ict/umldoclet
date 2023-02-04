@@ -33,6 +33,7 @@ package net.sourceforge.plantuml.baraye;
 import java.util.Collection;
 
 import net.sourceforge.plantuml.cucadiagram.LeafType;
+import net.sourceforge.plantuml.cucadiagram.Together;
 import net.sourceforge.plantuml.cucadiagram.dot.Neighborhood;
 import net.sourceforge.plantuml.graphic.USymbol;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
@@ -74,5 +75,9 @@ public interface ILeaf extends IEntity {
 	public void setStatic(boolean isStatic);
 
 	public boolean isStatic();
+
+	public Together getTogether();
+
+	public void setTogether(Together together);
 
 }
