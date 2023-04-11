@@ -177,8 +177,10 @@
                 </executions>
                 <configuration>
                     <excludes>
+                        <exclude>com/plantuml/api/**/*</exclude>
                         <exclude>gen/**/*</exclude>
                         <exclude>h/**/*</exclude>
+                        <exclude>net/atmp/**/*</exclude>
                         <exclude>net/sourceforge/plantuml/**/*</exclude>
                         <exclude>smetana/**/*</exclude>
                     </excludes>
