@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -46,18 +46,23 @@ import java.util.Set;
 import net.sourceforge.plantuml.code.AsciiEncoder;
 import net.sourceforge.plantuml.code.Transcoder;
 import net.sourceforge.plantuml.code.TranscoderUtil;
-import net.sourceforge.plantuml.command.regex.Matcher2;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.error.PSystemErrorPreprocessor;
 import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.preproc.Defines;
 import net.sourceforge.plantuml.preproc.FileWithSuffix;
 import net.sourceforge.plantuml.preproc2.PreprocessorModeSet;
+import net.sourceforge.plantuml.regex.Matcher2;
+import net.sourceforge.plantuml.style.ISkinSimple;
+import net.sourceforge.plantuml.text.BackSlash;
+import net.sourceforge.plantuml.text.StringLocated;
 import net.sourceforge.plantuml.tim.TimLoader;
+import net.sourceforge.plantuml.utils.LineLocationImpl;
 import net.sourceforge.plantuml.utils.StartUtils;
 import net.sourceforge.plantuml.version.Version;
 
 public class BlockUml {
+	// ::remove file when __HAXE__
 
 	private final List<StringLocated> rawSource;
 	private final List<StringLocated> data;
@@ -76,12 +81,14 @@ public class BlockUml {
 		this(convert(strings), Defines.createEmpty(), null, null, null);
 	}
 
+	// ::comment when __CORE__
 	public String getEncodedUrl() throws IOException {
 		final Transcoder transcoder = TranscoderUtil.getDefaultTranscoder();
-		final String source = getDiagram().getSource().getPlainString();
+		final String source = getDiagram().getSource().getPlainString("\n");
 		final String encoded = transcoder.encode(source);
 		return encoded;
 	}
+	// ::done
 
 	public String getFlashData() {
 		final StringBuilder sb = new StringBuilder();
@@ -139,6 +146,7 @@ public class BlockUml {
 		}
 	}
 
+	// ::comment when __CORE__
 	public String getFileOrDirname() {
 		if (OptionFlags.getInstance().isWord())
 			return null;
@@ -165,15 +173,15 @@ public class BlockUml {
 		result = result.replaceAll("\\.\\w\\w\\w$", "");
 		return result;
 	}
+	// ::done
 
 	public Diagram getDiagram() {
 		if (system == null) {
 			if (preprocessorError)
 				system = new PSystemErrorPreprocessor(data, debug);
-			else {
+			else
 				system = new PSystemBuilder().createPSystem(data, rawSource,
 						skinParam == null ? Collections.<String, String>emptyMap() : skinParam.values());
-			}
 		}
 		return system;
 	}
@@ -182,6 +190,7 @@ public class BlockUml {
 		return data;
 	}
 
+	// ::comment when __CORE__
 	private String internalEtag() {
 		try {
 			final AsciiEncoder coder = new AsciiEncoder();
@@ -200,6 +209,7 @@ public class BlockUml {
 	public String etag() {
 		return Version.etag() + internalEtag();
 	}
+	// ::done
 
 	public long lastModified() {
 		return (Version.compileTime() / 1000L / 60) * 1000L * 60 + Version.beta() * 1000L * 3600;

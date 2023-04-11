@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,11 +30,14 @@
  */
 package net.sourceforge.plantuml.activitydiagram3.ftile;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import net.sourceforge.plantuml.activitydiagram3.LinkRendering;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
 
 public class FtileMargedRight extends AbstractFtile {
 
@@ -80,6 +83,18 @@ public class FtileMargedRight extends AbstractFtile {
 
 	public void drawU(UGraphic ug) {
 		ug.draw(tile);
+	}
+
+	@Override
+	public Collection<Ftile> getMyChildren() {
+		return Collections.singleton(tile);
+	}
+
+	@Override
+	public UTranslate getTranslateFor(Ftile child, StringBounder stringBounder) {
+		if (child == tile)
+			return UTranslate.none();
+		return super.getTranslateFor(child, stringBounder);
 	}
 
 }

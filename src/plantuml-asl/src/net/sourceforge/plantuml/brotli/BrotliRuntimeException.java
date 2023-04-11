@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -43,11 +43,11 @@ package net.sourceforge.plantuml.brotli;
  */
 class BrotliRuntimeException extends RuntimeException {
 
-  BrotliRuntimeException(String message) {
-    super(message);
-  }
+	BrotliRuntimeException(String message) {
+		super(message);
+	}
 
-  BrotliRuntimeException(String message, Throwable cause) {
-    super(message, cause);
-  }
+	BrotliRuntimeException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

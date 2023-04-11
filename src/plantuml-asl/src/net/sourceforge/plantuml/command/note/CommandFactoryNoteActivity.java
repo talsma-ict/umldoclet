@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,36 +30,35 @@
  */
 package net.sourceforge.plantuml.command.note;
 
-import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.UrlBuilder;
-import net.sourceforge.plantuml.UrlMode;
+import net.sourceforge.plantuml.abel.Entity;
+import net.sourceforge.plantuml.abel.LeafType;
+import net.sourceforge.plantuml.abel.Link;
+import net.sourceforge.plantuml.abel.LinkArg;
 import net.sourceforge.plantuml.activitydiagram.ActivityDiagram;
-import net.sourceforge.plantuml.baraye.IEntity;
-import net.sourceforge.plantuml.command.BlocLines;
 import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.CommandMultilines2;
 import net.sourceforge.plantuml.command.MultilinesStrategy;
-import net.sourceforge.plantuml.command.Position;
 import net.sourceforge.plantuml.command.SingleLineCommand2;
 import net.sourceforge.plantuml.command.Trim;
-import net.sourceforge.plantuml.command.regex.IRegex;
-import net.sourceforge.plantuml.command.regex.RegexConcat;
-import net.sourceforge.plantuml.command.regex.RegexLeaf;
-import net.sourceforge.plantuml.command.regex.RegexResult;
-import net.sourceforge.plantuml.cucadiagram.Code;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.cucadiagram.Ident;
-import net.sourceforge.plantuml.cucadiagram.LeafType;
-import net.sourceforge.plantuml.cucadiagram.Link;
-import net.sourceforge.plantuml.cucadiagram.LinkArg;
-import net.sourceforge.plantuml.cucadiagram.LinkDecor;
-import net.sourceforge.plantuml.cucadiagram.LinkType;
-import net.sourceforge.plantuml.graphic.color.ColorParser;
-import net.sourceforge.plantuml.graphic.color.ColorType;
-import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
+import net.sourceforge.plantuml.decoration.LinkDecor;
+import net.sourceforge.plantuml.decoration.LinkType;
+import net.sourceforge.plantuml.klimt.color.ColorParser;
+import net.sourceforge.plantuml.klimt.color.ColorType;
+import net.sourceforge.plantuml.klimt.color.NoSuchColorException;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.plasma.Quark;
+import net.sourceforge.plantuml.regex.IRegex;
+import net.sourceforge.plantuml.regex.RegexConcat;
+import net.sourceforge.plantuml.regex.RegexLeaf;
+import net.sourceforge.plantuml.regex.RegexResult;
+import net.sourceforge.plantuml.url.Url;
+import net.sourceforge.plantuml.url.UrlBuilder;
+import net.sourceforge.plantuml.url.UrlMode;
+import net.sourceforge.plantuml.utils.BlocLines;
+import net.sourceforge.plantuml.utils.LineLocation;
+import net.sourceforge.plantuml.utils.Position;
 
 public final class CommandFactoryNoteActivity implements SingleMultiFactoryCommand<ActivityDiagram> {
 
@@ -110,19 +109,15 @@ public final class CommandFactoryNoteActivity implements SingleMultiFactoryComma
 							UrlMode.STRICT);
 					url = urlBuilder.getUrl(strings.get(0).toString());
 				}
-				if (url != null) {
+				if (url != null)
 					strings = strings.subList(1, strings.size());
-				}
-
-				// final String s = StringUtils.getMergedLines(strings);
 
 				final String codeString = diagram.getUniqueSequence("GMN");
-				final Ident ident = diagram.buildLeafIdent(codeString);
-				final Code code = diagram.V1972() ? ident : diagram.buildCode(codeString);
-				final IEntity note = diagram.createLeaf(ident, code, strings, LeafType.NOTE, null);
-				if (url != null) {
+				final Quark<Entity> quark = diagram.quarkInContext(true, codeString);
+				final Entity note = diagram.reallyCreateLeaf(quark, strings, LeafType.NOTE, null);
+				if (url != null)
 					note.addUrl(url);
-				}
+
 				return executeInternal(diagram, arg, note);
 			}
 		};
@@ -135,25 +130,24 @@ public final class CommandFactoryNoteActivity implements SingleMultiFactoryComma
 			protected CommandExecutionResult executeArg(final ActivityDiagram diagram, LineLocation location,
 					RegexResult arg) throws NoSuchColorException {
 				final String tmp = diagram.getUniqueSequence("GN");
-				final Ident ident = diagram.buildLeafIdent(tmp);
-				final Code code = diagram.V1972() ? ident : diagram.buildCode(tmp);
-				final IEntity note = diagram.createNote(ident, code, Display.getWithNewlines(arg.get("NOTE", 0)));
+				final Quark<Entity> quark = diagram.quarkInContext(true, diagram.cleanId(tmp));
+
+				final Entity note = diagram.createNote(quark, tmp, Display.getWithNewlines(arg.get("NOTE", 0)));
 				return executeInternal(diagram, arg, note);
 			}
 		};
 	}
 
-	private CommandExecutionResult executeInternal(ActivityDiagram diagram, RegexResult arg, IEntity note)
+	private CommandExecutionResult executeInternal(ActivityDiagram diagram, RegexResult arg, Entity note)
 			throws NoSuchColorException {
 
 		final String s = arg.get("COLOR", 0);
 		note.setSpecificColorTOBEREMOVED(ColorType.BACK,
 				s == null ? null : diagram.getSkinParam().getIHtmlColorSet().getColor(s));
 
-		IEntity activity = diagram.getLastEntityConsulted();
-		if (activity == null) {
+		Entity activity = diagram.getLastEntityConsulted();
+		if (activity == null)
 			activity = diagram.getStart();
-		}
 
 		final Link link;
 
@@ -162,21 +156,21 @@ public final class CommandFactoryNoteActivity implements SingleMultiFactoryComma
 
 		final LinkType type = new LinkType(LinkDecor.NONE, LinkDecor.NONE).goDashed();
 
-		if (position == Position.RIGHT) {
-			link = new Link(diagram.getIEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(), activity, note,
+		if (position == Position.RIGHT)
+			link = new Link(diagram.getEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(), activity, note,
 					type, LinkArg.noDisplay(1));
-		} else if (position == Position.LEFT) {
-			link = new Link(diagram.getIEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(), note, activity,
+		else if (position == Position.LEFT)
+			link = new Link(diagram.getEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(), note, activity,
 					type, LinkArg.noDisplay(1));
-		} else if (position == Position.BOTTOM) {
-			link = new Link(diagram.getIEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(), activity, note,
+		else if (position == Position.BOTTOM)
+			link = new Link(diagram.getEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(), activity, note,
 					type, LinkArg.noDisplay(2));
-		} else if (position == Position.TOP) {
-			link = new Link(diagram.getIEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(), note, activity,
+		else if (position == Position.TOP)
+			link = new Link(diagram.getEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(), note, activity,
 					type, LinkArg.noDisplay(2));
-		} else {
+		else
 			throw new IllegalArgumentException();
-		}
+
 		diagram.addLink(link);
 		return CommandExecutionResult.ok();
 	}

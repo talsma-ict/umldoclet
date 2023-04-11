@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -36,7 +36,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileDecorateWelding;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileEmpty;
@@ -47,12 +46,13 @@ import net.sourceforge.plantuml.activitydiagram3.gtile.Gtile;
 import net.sourceforge.plantuml.activitydiagram3.gtile.GtileAssembly;
 import net.sourceforge.plantuml.activitydiagram3.gtile.GtileEmpty;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.VerticalAlignment;
-import net.sourceforge.plantuml.graphic.color.Colors;
+import net.sourceforge.plantuml.klimt.color.Colors;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.VerticalAlignment;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
 import net.sourceforge.plantuml.sequencediagram.NoteType;
+import net.sourceforge.plantuml.style.ISkinParam;
 
 public class InstructionList extends WithNote implements Instruction, InstructionCollection {
 
@@ -87,7 +87,13 @@ public class InstructionList extends WithNote implements Instruction, Instructio
 		if (getLast() instanceof InstructionSpot)
 			return true;
 
-		return getLast() instanceof InstructionStop && ((InstructionStop) getLast()).hasNotes() == false;
+		if (getLast() instanceof InstructionStop)
+			return ((InstructionStop) getLast()).hasNotes() == false;
+
+		if (getLast() instanceof InstructionEnd)
+			return ((InstructionEnd) getLast()).hasNotes() == false;
+
+		return false;
 	}
 
 	@Override
@@ -96,6 +102,7 @@ public class InstructionList extends WithNote implements Instruction, Instructio
 		return CommandExecutionResult.ok();
 	}
 
+	// ::comment when __CORE__
 	@Override
 	public Gtile createGtile(ISkinParam skinParam, StringBounder stringBounder) {
 		if (all.size() == 0)
@@ -113,6 +120,7 @@ public class InstructionList extends WithNote implements Instruction, Instructio
 		}
 		return result;
 	}
+	// ::done
 
 	@Override
 	public Ftile createFtile(FtileFactory factory) {

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,7 +33,9 @@ package net.sourceforge.plantuml.elk.proxy.core.options;
 import net.sourceforge.plantuml.elk.proxy.Reflect;
 
 public class HierarchyHandling {
+    // ::remove folder when __HAXE__
 
-	public static final Object INCLUDE_CHILDREN = Reflect.field("org.eclipse.elk.core.options.HierarchyHandling", "INCLUDE_CHILDREN");
+	public static final Object INCLUDE_CHILDREN = Reflect.field("org.eclipse.elk.core.options.HierarchyHandling",
+			"INCLUDE_CHILDREN");
 
 }

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -36,6 +36,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class Tokens {
+	// ::remove file when __CORE__
 
 	private final List<String> keywords = new ArrayList<>();
 

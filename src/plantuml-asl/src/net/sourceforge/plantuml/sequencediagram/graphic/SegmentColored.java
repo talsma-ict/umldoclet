@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,28 +34,28 @@ import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Iterator;
 
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.SymbolContext;
+import net.sourceforge.plantuml.klimt.Fashion;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
 import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.SimpleContext2D;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 class SegmentColored {
 
 	final private Segment segment;
-	final private SymbolContext colors;
+	final private Fashion colors;
 	final private boolean shadowing;
 	final private double pos1Initial;
 
-	public static SegmentColored create(double pos1, double pos2, SymbolContext colors, boolean shadowing) {
+	public static SegmentColored create(double pos1, double pos2, Fashion colors, boolean shadowing) {
 		return new SegmentColored(new Segment(pos1, pos2), colors, shadowing, pos1);
 	}
 
-	private SegmentColored(Segment segment, SymbolContext colors, boolean shadowing, double pos1Initial) {
+	private SegmentColored(Segment segment, Fashion colors, boolean shadowing, double pos1Initial) {
 		this.segment = segment;
 		this.colors = colors;
 		this.shadowing = shadowing;

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,14 +30,14 @@
  */
 package net.sourceforge.plantuml.project.draw;
 
-import net.sourceforge.plantuml.awt.geom.XPoint2D;
-import net.sourceforge.plantuml.ugraphic.UPath;
+import net.sourceforge.plantuml.klimt.UPath;
+import net.sourceforge.plantuml.klimt.geom.XPoint2D;
 
 public class PathUtils {
 
 	public static UPath UtoRight(double width, double height, double round) {
 		final double halfRound = round / 2;
-		final UPath result = new UPath();
+		final UPath result = UPath.none();
 		result.moveTo(0, 0);
 		result.lineTo(width - halfRound, 0);
 		result.arcTo(new XPoint2D(width, halfRound), halfRound, 0, 1);
@@ -49,7 +49,7 @@ public class PathUtils {
 
 	public static UPath UtoLeft(double width, double height, double round) {
 		final double halfRound = round / 2;
-		final UPath result = new UPath();
+		final UPath result = UPath.none();
 		result.moveTo(width, height);
 		result.lineTo(halfRound, height);
 		result.arcTo(new XPoint2D(0, height - halfRound), halfRound, 0, 1);

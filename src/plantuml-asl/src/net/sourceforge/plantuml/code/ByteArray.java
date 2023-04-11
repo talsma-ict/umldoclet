@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -53,9 +53,11 @@ public class ByteArray {
 		return new String(data, 0, length, UTF_8);
 	}
 
+	// ::comment when __CORE__
 	public String toUPF9String() throws IOException {
 		return Upf9Decoder.decodeString(data, length);
 	}
+	// ::done
 
 	public int getByteAt(int i) {
 		return data[i];

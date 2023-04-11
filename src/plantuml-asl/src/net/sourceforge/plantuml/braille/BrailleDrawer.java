@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,13 +30,13 @@
  */
 package net.sourceforge.plantuml.braille;
 
-import net.sourceforge.plantuml.graphic.UDrawable;
-import net.sourceforge.plantuml.ugraphic.UEllipse;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.ULine;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.HColorSet;
+import net.sourceforge.plantuml.klimt.color.HColors;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.shape.UDrawable;
+import net.sourceforge.plantuml.klimt.shape.UEllipse;
+import net.sourceforge.plantuml.klimt.shape.ULine;
 
 public class BrailleDrawer implements UDrawable {
 
@@ -71,7 +71,7 @@ public class BrailleDrawer implements UDrawable {
 	private void drawCircle(UGraphic ug, int x, int y) {
 		final double cx = x * step;
 		final double cy = y * step;
-		ug.apply(new UTranslate(cx, cy)).draw(new UEllipse(spotSize, spotSize));
+		ug.apply(new UTranslate(cx, cy)).draw(UEllipse.build(spotSize, spotSize));
 	}
 
 }

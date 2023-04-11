@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -37,6 +37,7 @@ import java.util.List;
 import net.sourceforge.plantuml.elk.proxy.Reflect;
 
 public class ElkEdge extends ElkWithProperty {
+    // ::remove folder when __HAXE__
 
 	public ElkEdge(Object obj) {
 		super(obj);

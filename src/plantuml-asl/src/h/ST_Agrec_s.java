@@ -2,12 +2,12 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * Project Info:  http://plantuml.com
+ * Project Info:  https://plantuml.com
  * 
  * If you like this project or if you find it useful, you can support us at:
  * 
- * http://plantuml.com/patreon (only 1$ per month!)
- * http://plantuml.com/paypal
+ * https://plantuml.com/patreon (only 1$ per month!)
+ * https://plantuml.com/paypal
  * 
  * This file is part of Smetana.
  * Smetana is a partial translation of Graphviz/Dot sources from C to Java.
@@ -50,6 +50,7 @@ import smetana.core.UnsupportedStarStruct;
 import smetana.core.__ptr__;
 
 public class ST_Agrec_s extends UnsupportedStarStruct {
+    // ::remove folder when __HAXE__
 
 	public CString name;
 	public ST_Agrec_s next;

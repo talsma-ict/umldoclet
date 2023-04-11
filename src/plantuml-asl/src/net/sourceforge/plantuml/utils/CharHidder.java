@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -31,6 +31,7 @@
 package net.sourceforge.plantuml.utils;
 
 public class CharHidder {
+	// ::remove file when __HAXE__
 
 	public static String addTileAtBegin(String s) {
 		return "~" + s;

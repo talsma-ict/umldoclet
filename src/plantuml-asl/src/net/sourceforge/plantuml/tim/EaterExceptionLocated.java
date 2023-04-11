@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,7 +32,7 @@ package net.sourceforge.plantuml.tim;
 
 import java.util.Objects;
 
-import net.sourceforge.plantuml.StringLocated;
+import net.sourceforge.plantuml.text.StringLocated;
 
 public class EaterExceptionLocated extends Exception {
 

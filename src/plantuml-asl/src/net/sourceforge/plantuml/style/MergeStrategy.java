@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -31,7 +31,6 @@
 package net.sourceforge.plantuml.style;
 
 public enum MergeStrategy {
-	KEEP_EXISTING_VALUE_OF_STEREOTYPE,
-	OVERWRITE_EXISTING_VALUE;
+	KEEP_EXISTING_VALUE_OF_STEREOTYPE, OVERWRITE_EXISTING_VALUE;
 
 }

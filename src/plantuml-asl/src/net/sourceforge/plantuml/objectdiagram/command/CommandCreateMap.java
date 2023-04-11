@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,37 +30,36 @@
  */
 package net.sourceforge.plantuml.objectdiagram.command;
 
-import net.sourceforge.plantuml.FontParam;
-import net.sourceforge.plantuml.StringLocated;
-import net.sourceforge.plantuml.UrlBuilder;
-import net.sourceforge.plantuml.baraye.IEntity;
-import net.sourceforge.plantuml.baraye.ILeaf;
+import net.sourceforge.plantuml.abel.Entity;
+import net.sourceforge.plantuml.abel.LeafType;
+import net.sourceforge.plantuml.abel.Link;
+import net.sourceforge.plantuml.abel.LinkArg;
 import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
-import net.sourceforge.plantuml.command.BlocLines;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.CommandMultilines2;
 import net.sourceforge.plantuml.command.MultilinesStrategy;
 import net.sourceforge.plantuml.command.Trim;
-import net.sourceforge.plantuml.command.regex.IRegex;
-import net.sourceforge.plantuml.command.regex.RegexConcat;
-import net.sourceforge.plantuml.command.regex.RegexLeaf;
-import net.sourceforge.plantuml.command.regex.RegexOptional;
-import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.BodierMap;
-import net.sourceforge.plantuml.cucadiagram.Code;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.cucadiagram.Ident;
-import net.sourceforge.plantuml.cucadiagram.LeafType;
-import net.sourceforge.plantuml.cucadiagram.Link;
-import net.sourceforge.plantuml.cucadiagram.LinkArg;
-import net.sourceforge.plantuml.cucadiagram.LinkDecor;
-import net.sourceforge.plantuml.cucadiagram.LinkType;
-import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.graphic.color.ColorParser;
-import net.sourceforge.plantuml.graphic.color.ColorType;
-import net.sourceforge.plantuml.graphic.color.Colors;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
+import net.sourceforge.plantuml.decoration.LinkDecor;
+import net.sourceforge.plantuml.decoration.LinkType;
+import net.sourceforge.plantuml.klimt.color.ColorParser;
+import net.sourceforge.plantuml.klimt.color.ColorType;
+import net.sourceforge.plantuml.klimt.color.Colors;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.color.NoSuchColorException;
+import net.sourceforge.plantuml.klimt.creole.CreoleMode;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.font.FontParam;
+import net.sourceforge.plantuml.plasma.Quark;
+import net.sourceforge.plantuml.regex.IRegex;
+import net.sourceforge.plantuml.regex.RegexConcat;
+import net.sourceforge.plantuml.regex.RegexLeaf;
+import net.sourceforge.plantuml.regex.RegexOptional;
+import net.sourceforge.plantuml.regex.RegexResult;
+import net.sourceforge.plantuml.stereo.Stereotype;
+import net.sourceforge.plantuml.text.StringLocated;
+import net.sourceforge.plantuml.url.UrlBuilder;
+import net.sourceforge.plantuml.utils.BlocLines;
 
 public class CommandCreateMap extends CommandMultilines2<AbstractEntityDiagram> {
 
@@ -76,7 +75,7 @@ public class CommandCreateMap extends CommandMultilines2<AbstractEntityDiagram> 
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("STEREO", "(\\<\\<.+\\>\\>)?"), //
 				RegexLeaf.spaceZeroOrMore(), //
-				new RegexLeaf("URL", "(" + UrlBuilder.getRegexp() + ")?"), //
+				UrlBuilder.OPTIONAL, //
 				RegexLeaf.spaceZeroOrMore(), //
 				color().getRegex(), //
 				RegexLeaf.spaceZeroOrMore(), //
@@ -101,7 +100,7 @@ public class CommandCreateMap extends CommandMultilines2<AbstractEntityDiagram> 
 			throws NoSuchColorException {
 		lines = lines.trim().removeEmptyLines();
 		final RegexResult line0 = getStartingPattern().matcher(lines.getFirst().getTrimmed().getString());
-		final IEntity entity1 = executeArg0(diagram, line0);
+		final Entity entity1 = executeArg0(diagram, line0);
 		if (entity1 == null)
 			return CommandExecutionResult.error("No such entity");
 
@@ -118,14 +117,14 @@ public class CommandCreateMap extends CommandMultilines2<AbstractEntityDiagram> 
 				final int x = line.indexOf(linkStr);
 				final String key = line.substring(0, x).trim();
 				final String dest = line.substring(x + linkStr.length()).trim();
-				final Ident ident2 = diagram.buildLeafIdentSpecial(dest);
-				final ILeaf entity2 = diagram.getEntityFactory().getLeafStrict(ident2);
+				final Quark<Entity> ident2 = diagram.quarkInContext(true, dest);
+				final Entity entity2 = ident2.getData();
 				if (entity2 == null)
 					return CommandExecutionResult.error("No such entity " + ident2.getName());
 
 				final LinkType linkType = new LinkType(LinkDecor.ARROW, LinkDecor.NONE);
 				final int length = linkStr.length() - 2;
-				final Link link = new Link(diagram.getIEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(),
+				final Link link = new Link(diagram.getEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(),
 						entity1, entity2, linkType, LinkArg.noDisplay(length));
 				link.setPortMembers(key, null);
 				diagram.addLink(link);
@@ -134,17 +133,21 @@ public class CommandCreateMap extends CommandMultilines2<AbstractEntityDiagram> 
 		return CommandExecutionResult.ok();
 	}
 
-	private IEntity executeArg0(AbstractEntityDiagram diagram, RegexResult line0) throws NoSuchColorException {
+	private Entity executeArg0(AbstractEntityDiagram diagram, RegexResult line0) throws NoSuchColorException {
 		final String name = line0.get("NAME", 1);
-		final Ident ident = diagram.buildLeafIdent(name);
-		final Code code = diagram.V1972() ? ident : diagram.buildCode(name);
-		final String display = line0.get("NAME", 0);
-		final String stereotype = line0.get("STEREO", 0);
-		final boolean leafExist = diagram.V1972() ? diagram.leafExistSmart(ident) : diagram.leafExist(code);
-		if (leafExist)
-			return diagram.getOrCreateLeaf(diagram.buildLeafIdent(name), code, LeafType.MAP, null);
 
-		final IEntity entity = diagram.createLeaf(ident, code, Display.getWithNewlines(display), LeafType.MAP, null);
+		final Quark<Entity> quark = diagram.quarkInContext(true, diagram.cleanId(name));
+		final String displayString = line0.get("NAME", 0);
+		final String stereotype = line0.get("STEREO", 0);
+
+		if (quark.getData() != null)
+			return null;
+
+		Display display = Display.getWithNewlines(displayString);
+		if (Display.isNull(display))
+			display = Display.getWithNewlines(name).withCreoleMode(CreoleMode.SIMPLE_LINE);
+
+		final Entity entity = diagram.reallyCreateLeaf(quark, display, LeafType.MAP, null);
 		if (stereotype != null)
 			entity.setStereotype(Stereotype.build(stereotype, diagram.getSkinParam().getCircledCharacterRadius(),
 					diagram.getSkinParam().getFont(null, false, FontParam.CIRCLED_CHARACTER),

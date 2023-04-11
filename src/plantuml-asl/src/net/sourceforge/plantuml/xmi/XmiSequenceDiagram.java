@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,10 +33,11 @@ package net.sourceforge.plantuml.xmi;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import net.sourceforge.plantuml.cucadiagram.Display;
+import net.sourceforge.plantuml.klimt.creole.Display;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 
 public abstract class XmiSequenceDiagram {
+    // ::remove folder when __HAXE__
 
 	protected final SequenceDiagram diagram;
 
@@ -53,7 +54,7 @@ public abstract class XmiSequenceDiagram {
 	protected Element createElement(String tag, String[][] attributes) {
 		return setAttributes(document.createElement(tag), attributes);
 	}
-	
+
 	protected Element setAttribute(Element element, String name, String value) {
 		element.setAttribute(name, value);
 		return element;
@@ -65,7 +66,7 @@ public abstract class XmiSequenceDiagram {
 		}
 		return element;
 	}
-	
+
 	protected String getDisplayString(Display display) {
 		return String.join("\n", display.asList());
 	}

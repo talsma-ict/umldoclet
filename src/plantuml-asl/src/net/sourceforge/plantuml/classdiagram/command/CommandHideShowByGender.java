@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,31 +30,31 @@
  */
 package net.sourceforge.plantuml.classdiagram.command;
 
-import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagram;
-import net.sourceforge.plantuml.baraye.EntityUtils;
-import net.sourceforge.plantuml.baraye.IEntity;
+import net.sourceforge.plantuml.abel.Entity;
+import net.sourceforge.plantuml.abel.EntityGender;
+import net.sourceforge.plantuml.abel.EntityGenderUtils;
+import net.sourceforge.plantuml.abel.EntityPortion;
+import net.sourceforge.plantuml.abel.LeafType;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand2;
-import net.sourceforge.plantuml.command.regex.IRegex;
-import net.sourceforge.plantuml.command.regex.RegexConcat;
-import net.sourceforge.plantuml.command.regex.RegexLeaf;
-import net.sourceforge.plantuml.command.regex.RegexOptional;
-import net.sourceforge.plantuml.command.regex.RegexResult;
-import net.sourceforge.plantuml.cucadiagram.Code;
-import net.sourceforge.plantuml.cucadiagram.EntityGender;
-import net.sourceforge.plantuml.cucadiagram.EntityGenderUtils;
-import net.sourceforge.plantuml.cucadiagram.EntityPortion;
-import net.sourceforge.plantuml.cucadiagram.Ident;
-import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.descdiagram.DescriptionDiagram;
 import net.sourceforge.plantuml.objectdiagram.AbstractClassOrObjectDiagram;
+import net.sourceforge.plantuml.plasma.Quark;
+import net.sourceforge.plantuml.regex.IRegex;
+import net.sourceforge.plantuml.regex.RegexConcat;
+import net.sourceforge.plantuml.regex.RegexLeaf;
+import net.sourceforge.plantuml.regex.RegexOptional;
+import net.sourceforge.plantuml.regex.RegexResult;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
+import net.sourceforge.plantuml.utils.LineLocation;
 
 public class CommandHideShowByGender extends SingleLineCommand2<UmlDiagram> {
 
-	public CommandHideShowByGender() {
+	public static final CommandHideShowByGender ME = new CommandHideShowByGender();
+
+	private CommandHideShowByGender() {
 		super(getRegexConcat());
 	}
 
@@ -139,8 +139,10 @@ public class CommandHideShowByGender extends SingleLineCommand2<UmlDiagram> {
 		} else if (arg1.startsWith("<<")) {
 			gender = EntityGenderUtils.byStereotype(arg1);
 		} else {
-			final IEntity entity = diagram.getOrCreateLeaf(diagram.buildLeafIdent(arg1), diagram.buildCode(arg1), null,
-					null);
+			final Quark<Entity> quark = diagram.quarkInContext(true, diagram.cleanId(arg1));
+			if (quark.getData() == null)
+				return CommandExecutionResult.error("No such element " + quark.getName());
+			final Entity entity = quark.getData();
 			gender = EntityGenderUtils.byEntityAlone(entity);
 		}
 
@@ -182,20 +184,20 @@ public class CommandHideShowByGender extends SingleLineCommand2<UmlDiagram> {
 			gender = EntityGenderUtils.byStereotype(arg1);
 		} else {
 			arg1 = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg1);
-			final Ident ident = diagram.buildLeafIdent(arg1);
-			final Code code = diagram.V1972() ? ident : diagram.buildCode(arg1);
-			final IEntity entity = diagram.getOrCreateLeaf(ident, code, null, null);
+			final Quark<Entity> quark = diagram.quarkInContext(true, diagram.cleanId(arg1));
+			Entity entity = quark.getData();
+			if (entity == null)
+				return CommandExecutionResult.error("No such element " + quark.getName());
 			gender = EntityGenderUtils.byEntityAlone(entity);
 		}
 		if (gender != null) {
 			final boolean empty = arg.get("EMPTY", 0) != null;
 			final boolean emptyMembers = empty && portion == EntityPortion.MEMBER;
-			if (empty == true && emptyMembers == false) {
+			if (empty == true && emptyMembers == false)
 				gender = EntityGenderUtils.and(gender, emptyByGender(portion));
-			}
-			if (EntityUtils.groupRoot(diagram.getCurrentGroup()) == false) {
+
+			if (diagram.getCurrentGroup().isRoot() == false)
 				gender = EntityGenderUtils.and(gender, EntityGenderUtils.byPackage(diagram.getCurrentGroup()));
-			}
 
 			if (emptyMembers) {
 				diagram.hideOrShow(EntityGenderUtils.and(gender, emptyByGender(EntityPortion.FIELD)),
@@ -211,21 +213,21 @@ public class CommandHideShowByGender extends SingleLineCommand2<UmlDiagram> {
 
 	private EntityPortion getEntityPortion(String s) {
 		final String sub = StringUtils.goLowerCase(s.substring(0, 3));
-		if (sub.equals("met")) {
+		if (sub.equals("met"))
 			return EntityPortion.METHOD;
-		}
-		if (sub.equals("mem")) {
+
+		if (sub.equals("mem"))
 			return EntityPortion.MEMBER;
-		}
-		if (sub.equals("att") || sub.equals("fie")) {
+
+		if (sub.equals("att") || sub.equals("fie"))
 			return EntityPortion.FIELD;
-		}
-		if (sub.equals("cir")) {
+
+		if (sub.equals("cir"))
 			return EntityPortion.CIRCLED_CHARACTER;
-		}
-		if (sub.equals("ste")) {
+
+		if (sub.equals("ste"))
 			return EntityPortion.STEREOTYPE;
-		}
+
 		throw new IllegalArgumentException();
 	}
 

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -50,6 +50,7 @@ package net.sourceforge.plantuml.security;
  * 
  */
 public enum SecurityProfile {
+    // ::remove folder when __HAXE__
 
 	/**
 	 * Running in SANDBOX mode is completely secure. No local file can be read
@@ -100,6 +101,7 @@ public enum SecurityProfile {
 	 * @return the value
 	 */
 	static SecurityProfile init() {
+		// ::comment when __CORE__
 		final String env = SecurityUtils.getenv("PLANTUML_SECURITY_PROFILE");
 		if ("SANDBOX".equalsIgnoreCase(env))
 			return SANDBOX;
@@ -108,9 +110,12 @@ public enum SecurityProfile {
 		else if ("INTERNET".equalsIgnoreCase(env))
 			return INTERNET;
 		else if ("UNSECURE".equalsIgnoreCase(env))
+			// ::done
 			return UNSECURE;
+		// ::comment when __CORE__
 
 		return LEGACY;
+		// ::done
 	}
 
 	/**

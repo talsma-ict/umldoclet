@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,10 +30,10 @@
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
 
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.SymbolContext;
+import net.sourceforge.plantuml.klimt.Fashion;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
 import net.sourceforge.plantuml.sequencediagram.InGroupable;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
 
 public class LivingParticipantBox implements InGroupable {
 
@@ -67,9 +67,10 @@ public class LivingParticipantBox implements InGroupable {
 		final double right = lifeLine.getRightShift(y);
 		assert right >= 0 : "right=" + right;
 		final double centerX = participantBox.getCenterX(stringBounder);
-		// Log.println("AZERTY " + y + " centerX=" + centerX + " left=" + left + " right=" + right);
+		// Log.println("AZERTY " + y + " centerX=" + centerX + " left=" + left + "
+		// right=" + right);
 		// Log.println("Attention, null for segment");
-		final SymbolContext colors = lifeLine.getColors();
+		final Fashion colors = lifeLine.getColors();
 		return SegmentColored.create(centerX - left, centerX + right, colors, lifeLine.shadowing());
 	}
 

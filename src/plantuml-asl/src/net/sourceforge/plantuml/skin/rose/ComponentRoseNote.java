@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,42 +30,43 @@
  */
 package net.sourceforge.plantuml.skin.rose;
 
-import net.sourceforge.plantuml.ISkinSimple;
-import net.sourceforge.plantuml.creole.Stencil;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.SymbolContext;
-import net.sourceforge.plantuml.graphic.color.Colors;
+import net.sourceforge.plantuml.klimt.Fashion;
+import net.sourceforge.plantuml.klimt.UPath;
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.Colors;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.creole.Stencil;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.drawing.UGraphicStencil;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
 import net.sourceforge.plantuml.skin.AbstractTextualComponent;
 import net.sourceforge.plantuml.skin.Area;
+import net.sourceforge.plantuml.style.ISkinSimple;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.svek.image.Opale;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UGraphicStencil;
-import net.sourceforge.plantuml.ugraphic.UPath;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
 
 final public class ComponentRoseNote extends AbstractTextualComponent implements Stencil {
+    // ::remove folder when __HAXE__
 
 	private final double paddingX;
 	private final double paddingY;
-	private final SymbolContext symbolContext;
+	private final Fashion symbolContext;
 	private final double roundCorner;
 	private final HorizontalAlignment position;
 
 	public ComponentRoseNote(Style style, Display strings, double paddingX, double paddingY,
 			ISkinSimple spriteContainer, HorizontalAlignment textAlignment, HorizontalAlignment position,
 			Colors colors) {
-		super(style, spriteContainer.wrapWidth(), textAlignment == HorizontalAlignment.CENTER ? 15 : 6, 15, 5,
-				spriteContainer, strings, true);
+		super(style, style.wrapWidth(), textAlignment == HorizontalAlignment.CENTER ? 15 : 6, 15, 5, spriteContainer,
+				strings, true);
 		this.paddingX = paddingX;
 		this.paddingY = paddingY;
 		this.position = position;
 		this.symbolContext = style.getSymbolContext(getIHtmlColorSet(), colors);
-		this.roundCorner = style.value(PName.RoundCorner).asInt();
+		this.roundCorner = style.value(PName.RoundCorner).asInt(false);
 
 	}
 
@@ -112,7 +113,7 @@ final public class ComponentRoseNote extends AbstractTextualComponent implements
 		ug.draw(polygon);
 
 		ug.draw(Opale.getCorner(x2, roundCorner));
-		UGraphic ug2 = UGraphicStencil.create(ug, this, new UStroke());
+		UGraphic ug2 = UGraphicStencil.create(ug, this, UStroke.simple());
 
 		if (position == HorizontalAlignment.LEFT) {
 			ug2 = ug2.apply(new UTranslate(getMarginX1(), getMarginY()));

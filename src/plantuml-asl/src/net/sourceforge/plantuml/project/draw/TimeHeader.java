@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,26 +32,27 @@ package net.sourceforge.plantuml.project.draw;
 
 import java.util.Objects;
 
-import net.sourceforge.plantuml.SpriteContainerEmpty;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.color.HColorSet;
+import net.sourceforge.plantuml.klimt.color.HColors;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.FontConfiguration;
+import net.sourceforge.plantuml.klimt.font.UFont;
+import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
+import net.sourceforge.plantuml.klimt.shape.ULine;
+import net.sourceforge.plantuml.klimt.shape.URectangle;
+import net.sourceforge.plantuml.klimt.sprite.SpriteContainerEmpty;
 import net.sourceforge.plantuml.project.time.Day;
 import net.sourceforge.plantuml.project.timescale.TimeScale;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.ugraphic.UFont;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.ULine;
-import net.sourceforge.plantuml.ugraphic.URectangle;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 public abstract class TimeHeader {
+    // ::remove folder when __HAXE__
 
 	protected final double Y_POS_ROW16() {
 		return 16;
@@ -70,7 +71,8 @@ public abstract class TimeHeader {
 	protected final Day min;
 	protected final Day max;
 
-	public TimeHeader(Style timelineStyle, Style closedStyle, Day min, Day max, TimeScale timeScale, HColorSet colorSet) {
+	public TimeHeader(Style timelineStyle, Style closedStyle, Day min, Day max, TimeScale timeScale,
+			HColorSet colorSet) {
 		this.timeScale = timeScale;
 		this.min = min;
 		this.max = max;
@@ -165,13 +167,11 @@ public abstract class TimeHeader {
 
 		ug = ug.apply(HColors.none());
 		ug = ug.apply(new UTranslate(x1, getFullHeaderHeight()));
-		ug.draw(new URectangle(x2 - x1, height));
+		ug.draw(URectangle.build(x2 - x1, height));
 	}
-	
+
 	protected final UGraphic goBold(UGraphic ug) {
-		return ug.apply(HColors.BLACK).apply(new UStroke(2));
+		return ug.apply(HColors.BLACK).apply(UStroke.withThickness(2));
 	}
-
-
 
 }

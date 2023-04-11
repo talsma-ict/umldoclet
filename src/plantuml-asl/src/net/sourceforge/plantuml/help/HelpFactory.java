@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.help;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +38,8 @@ import net.sourceforge.plantuml.command.PSystemCommandFactory;
 import net.sourceforge.plantuml.core.UmlSource;
 
 public class HelpFactory extends PSystemCommandFactory {
+	// ::comment when __CORE__
+	// ::comment when __HAXE__
 
 	@Override
 	public Help createEmptyDiagram(UmlSource source, Map<String, String> skinParam) {
@@ -46,19 +47,12 @@ public class HelpFactory extends PSystemCommandFactory {
 	}
 
 	@Override
-	protected List<Command> createCommands() {
-
-		final List<Command> cmds = new ArrayList<>();
-
-		cmds.add(new CommandHelp());
+	protected void initCommandsList(List<Command> cmds) {
 		cmds.add(new CommandHelpColor());
 		cmds.add(new CommandHelpFont());
 		cmds.add(new CommandHelpKeyword());
-		cmds.add(new CommandHelpSkinparam());
 		cmds.add(new CommandHelpType());
 		cmds.add(new CommandHelpTheme());
-
-		return cmds;
 	}
 
 }

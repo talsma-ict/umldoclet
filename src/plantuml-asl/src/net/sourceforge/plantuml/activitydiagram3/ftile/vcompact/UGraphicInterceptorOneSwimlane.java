@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -40,12 +40,12 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
 import net.sourceforge.plantuml.activitydiagram3.gtile.GConnection;
 import net.sourceforge.plantuml.activitydiagram3.gtile.GPoint;
 import net.sourceforge.plantuml.activitydiagram3.gtile.Gtile;
-import net.sourceforge.plantuml.graphic.UGraphicDelegator;
-import net.sourceforge.plantuml.ugraphic.UChange;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.ULine;
-import net.sourceforge.plantuml.ugraphic.UShape;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
+import net.sourceforge.plantuml.klimt.UChange;
+import net.sourceforge.plantuml.klimt.UShape;
+import net.sourceforge.plantuml.klimt.color.HColors;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.drawing.UGraphicDelegator;
+import net.sourceforge.plantuml.klimt.shape.ULine;
 
 public class UGraphicInterceptorOneSwimlane extends UGraphicDelegator {
 
@@ -68,6 +68,7 @@ public class UGraphicInterceptorOneSwimlane extends UGraphicDelegator {
 				tile.drawU(this);
 				// drawGoto();
 			}
+			// ::comment when __CORE__
 		} else if (shape instanceof Gtile) {
 			final Gtile tile = (Gtile) shape;
 			final Set<Swimlane> swinlanes = tile.getSwimlanes();
@@ -83,7 +84,7 @@ public class UGraphicInterceptorOneSwimlane extends UGraphicDelegator {
 
 			if (point0.match(swimlane) && point1.match(swimlane))
 				connection.drawU(this);
-			
+			// ::done
 		} else if (shape instanceof Connection) {
 			final Connection connection = (Connection) shape;
 			final Ftile tile1 = connection.getFtile1();

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,8 +34,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
 
 public class Genealogy {
 
@@ -71,7 +71,7 @@ public class Genealogy {
 
 	public UTranslate getTranslate(Ftile child, StringBounder stringBounder) {
 		Ftile current = child;
-		UTranslate result = new UTranslate();
+		UTranslate result = UTranslate.none();
 		while (current != root) {
 			final Ftile father = getMyFather(current);
 			final UTranslate tr = father.getTranslateFor(current, stringBounder);

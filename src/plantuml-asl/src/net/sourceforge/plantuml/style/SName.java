@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -44,6 +44,7 @@ public enum SName {
 	boundary, //
 	box, //
 	boxless, //
+	business, //
 	caption, //
 	card, //
 	circle, //
@@ -84,8 +85,7 @@ public enum SName {
 	hexagon, //
 	highlight, //
 	interface_, //
-	json,
-	jsonDiagram, //
+	json, jsonDiagram, //
 	gitDiagram, //
 	label, //
 	leafNode, //
@@ -110,6 +110,7 @@ public enum SName {
 	rectangle, //
 	reference, //
 	referenceHeader, //
+	regex, //
 	requirement, //
 	root, //
 	rootNode, //

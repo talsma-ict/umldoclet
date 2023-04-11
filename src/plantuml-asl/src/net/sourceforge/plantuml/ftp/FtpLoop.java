@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -53,6 +53,7 @@ import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SecurityUtils;
 
 class FtpLoop implements Runnable {
+    // ::remove folder when __HAXE__
 	enum Mode {
 		ACTIF, PASSIF
 	};

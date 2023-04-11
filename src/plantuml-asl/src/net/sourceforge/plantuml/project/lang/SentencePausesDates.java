@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -39,7 +39,7 @@ import net.sourceforge.plantuml.project.time.Day;
 public class SentencePausesDates extends SentenceSimple {
 
 	public SentencePausesDates() {
-		super(new SubjectTask(), Verbs.pauses(), new ComplementDates());
+		super(SubjectTask.ME, Verbs.pauses, new ComplementDates());
 	}
 
 	@Override

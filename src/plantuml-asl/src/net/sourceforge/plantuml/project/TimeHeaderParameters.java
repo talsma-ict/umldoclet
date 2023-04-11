@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,11 +34,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.color.HColorSet;
 import net.sourceforge.plantuml.project.time.Day;
 import net.sourceforge.plantuml.project.time.DayOfWeek;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public class TimeHeaderParameters {
 
@@ -55,8 +55,8 @@ public class TimeHeaderParameters {
 	private final Set<Day> verticalSeparatorBefore;
 
 	public TimeHeaderParameters(Map<Day, HColor> colorDays, double scale, Day min, Day max, HColorSet colorSet,
-			Style timelineStyle, Style closedStyle, Locale locale, OpenClose openClose, Map<DayOfWeek, HColor> colorDaysOfWeek,
-			Set<Day> verticalSeparatorBefore) {
+			Style timelineStyle, Style closedStyle, Locale locale, OpenClose openClose,
+			Map<DayOfWeek, HColor> colorDaysOfWeek, Set<Day> verticalSeparatorBefore) {
 		this.colorDays = colorDays;
 		this.scale = scale;
 		this.min = min;

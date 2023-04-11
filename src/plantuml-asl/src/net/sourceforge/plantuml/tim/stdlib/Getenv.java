@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.security.SecurityUtils;
 import net.sourceforge.plantuml.tim.EaterException;
@@ -43,6 +42,7 @@ import net.sourceforge.plantuml.tim.TContext;
 import net.sourceforge.plantuml.tim.TFunctionSignature;
 import net.sourceforge.plantuml.tim.TMemory;
 import net.sourceforge.plantuml.tim.expression.TValue;
+import net.sourceforge.plantuml.utils.LineLocation;
 
 public class Getenv extends SimpleReturnFunction {
 
@@ -56,17 +56,22 @@ public class Getenv extends SimpleReturnFunction {
 
 	public TValue executeReturnFunction(TContext context, TMemory memory, LineLocation location, List<TValue> values,
 			Map<String, TValue> named) throws EaterException, EaterExceptionLocated {
-		if (OptionFlags.ALLOW_INCLUDE == false) {
+		// ::comment when __CORE__
+		if (OptionFlags.ALLOW_INCLUDE == false)
+			// ::done
 			return TValue.fromString("");
-		}
+		// ::comment when __CORE__
+
 		final String name = values.get(0).toString();
 		final String value = getenv(name);
 		if (value == null)
 			return TValue.fromString("");
 
 		return TValue.fromString(value);
+		// ::done
 	}
 
+	// ::comment when __CORE__
 	private String getenv(String name) {
 		// Check, if the script requests secret information.
 		// A plantuml server should have an own SecurityManager to
@@ -80,4 +85,5 @@ public class Getenv extends SimpleReturnFunction {
 
 		return System.getenv(name);
 	}
+	// ::done
 }

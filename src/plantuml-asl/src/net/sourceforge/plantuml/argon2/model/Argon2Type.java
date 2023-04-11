@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -36,5 +36,5 @@
 package net.sourceforge.plantuml.argon2.model;
 
 public enum Argon2Type {
-    Argon2d, Argon2i, Argon2id;
+	Argon2d, Argon2i, Argon2id;
 }

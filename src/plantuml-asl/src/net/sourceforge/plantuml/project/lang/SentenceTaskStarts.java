@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -31,17 +31,17 @@
 package net.sourceforge.plantuml.project.lang;
 
 import net.sourceforge.plantuml.command.CommandExecutionResult;
+import net.sourceforge.plantuml.klimt.color.HColor;
 import net.sourceforge.plantuml.project.GanttConstraint;
 import net.sourceforge.plantuml.project.GanttDiagram;
 import net.sourceforge.plantuml.project.core.Task;
 import net.sourceforge.plantuml.project.core.TaskAttribute;
 import net.sourceforge.plantuml.project.core.TaskInstant;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class SentenceTaskStarts extends SentenceSimple {
 
 	public SentenceTaskStarts() {
-		super(new SubjectTask(), Verbs.starts2(), new ComplementBeforeOrAfterOrAtTaskStartOrEnd());
+		super(SubjectTask.ME, Verbs.starts2, new ComplementBeforeOrAfterOrAtTaskStartOrEnd());
 	}
 
 	@Override

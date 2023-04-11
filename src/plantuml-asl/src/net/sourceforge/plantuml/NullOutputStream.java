@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -35,29 +35,30 @@ import java.io.OutputStream;
 
 // Modified by Maxime Sinclair
 public class NullOutputStream extends OutputStream {
+	// ::remove file when __HAXE__
 
-    /**
-     * Writes to nowhere
-     */
-    @Override
-    public void write(int b) throws IOException {
-        // Do nothing silently
-    }
+	/**
+	 * Writes to nowhere
+	 */
+	@Override
+	public void write(int b) throws IOException {
+		// Do nothing silently
+	}
 
-    /**
-     * Overridden for performance reason
-     */
-    @Override
-    public void write(byte b[]) throws IOException {
-        // Do nothing silently
-    }
+	/**
+	 * Overridden for performance reason
+	 */
+	@Override
+	public void write(byte b[]) throws IOException {
+		// Do nothing silently
+	}
 
-    /**
-     * Overridden for performance reason
-     */
-    @Override
-    public void write(byte b[], int off, int len) throws IOException {
-        // Do nothing silently
-    }
+	/**
+	 * Overridden for performance reason
+	 */
+	@Override
+	public void write(byte b[], int off, int len) throws IOException {
+		// Do nothing silently
+	}
 
 }

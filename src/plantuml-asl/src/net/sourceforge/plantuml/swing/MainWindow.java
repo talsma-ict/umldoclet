@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -74,11 +74,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.border.CompoundBorder;
 
-import net.sourceforge.plantuml.DirWatcher2;
 import net.sourceforge.plantuml.GeneratedImage;
-import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.Option;
 import net.sourceforge.plantuml.log.Logme;
+import net.sourceforge.plantuml.utils.Log;
 import net.sourceforge.plantuml.version.PSystemVersion;
 
 public class MainWindow extends JFrame {

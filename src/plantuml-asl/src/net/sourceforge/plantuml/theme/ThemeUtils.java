@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -39,19 +39,51 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import net.sourceforge.plantuml.Log;
+import net.sourceforge.plantuml.klimt.sprite.ResourcesUtils;
 import net.sourceforge.plantuml.preproc.ReadLine;
 import net.sourceforge.plantuml.preproc.ReadLineReader;
 import net.sourceforge.plantuml.preproc.Stdlib;
-import net.sourceforge.plantuml.sprite.ResourcesUtils;
+import net.sourceforge.plantuml.utils.Log;
+
+// ::uncomment when __CORE__
+//import static com.plantuml.api.cheerpj.StaticMemory.cheerpjPath;
+//import java.io.FileInputStream;
+//import java.io.FileNotFoundException;
+// ::done
 
 public class ThemeUtils {
+    // ::remove folder when __HAXE__
 
 	private static final String THEME_FILE_PREFIX = "puml-theme-";
 
 	private static final String THEME_FILE_SUFFIX = ".puml";
 
 	private static final String THEME_PATH = "themes";
+
+	// ::uncomment when __CORE__
+//	public static ReadLine getReaderTheme(String filename) throws FileNotFoundException {
+//	Log.info("Loading theme " + filename);
+//	final String fullpath = cheerpjPath + THEME_PATH + "/" + THEME_FILE_PREFIX + filename
+//			+ THEME_FILE_SUFFIX;
+//
+//	final String res = "/" + THEME_PATH + "/" + THEME_FILE_PREFIX + filename + THEME_FILE_SUFFIX;
+//	final String description = "<" + res + ">";
+//	final InputStream is = new FileInputStream(fullpath);
+//	return ReadLineReader.create(new InputStreamReader(is), description);
+//}
+	// ::done
+
+	// ::comment when __CORE__
+	public static ReadLine getReaderTheme(String filename) {
+		Log.info("Loading theme " + filename);
+		final String res = "/" + THEME_PATH + "/" + THEME_FILE_PREFIX + filename + THEME_FILE_SUFFIX;
+		final String description = "<" + res + ">";
+		final InputStream is = Stdlib.class.getResourceAsStream(res);
+		if (is == null)
+			return null;
+
+		return ReadLineReader.create(new InputStreamReader(is), description);
+	}
 
 	public static List<String> getAllThemeNames() throws IOException {
 		final Collection<String> filenames = Objects.requireNonNull(ResourcesUtils.getJarFile(THEME_PATH, false));
@@ -64,17 +96,7 @@ public class ThemeUtils {
 		Collections.sort(result);
 		return result;
 	}
-
-	public static ReadLine getReaderTheme(String filename) {
-		Log.info("Loading theme " + filename);
-		final String res = "/" + THEME_PATH + "/" + THEME_FILE_PREFIX + filename + THEME_FILE_SUFFIX;
-		final String description = "<" + res + ">";
-		final InputStream is = Stdlib.class.getResourceAsStream(res);
-		if (is == null) {
-			return null;
-		}
-		return ReadLineReader.create(new InputStreamReader(is), description);
-	}
+	// ::done
 
 	public static String getFullPath(String from, String filename) {
 		final StringBuilder sb = new StringBuilder(from);

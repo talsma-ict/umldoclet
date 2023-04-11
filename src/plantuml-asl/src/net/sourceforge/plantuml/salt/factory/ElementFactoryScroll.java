@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -31,15 +31,15 @@
 package net.sourceforge.plantuml.salt.factory;
 
 import net.sourceforge.plantuml.salt.DataSource;
-import net.sourceforge.plantuml.salt.Dictionary;
 import net.sourceforge.plantuml.salt.Positionner2;
+import net.sourceforge.plantuml.salt.SaltDictionary;
 import net.sourceforge.plantuml.salt.Terminated;
 import net.sourceforge.plantuml.salt.element.Element;
 import net.sourceforge.plantuml.salt.element.ElementPyramidScrolled;
 
 public class ElementFactoryScroll extends AbstractElementFactoryComplex {
 
-	public ElementFactoryScroll(DataSource dataSource, Dictionary dictionary) {
+	public ElementFactoryScroll(DataSource dataSource, SaltDictionary dictionary) {
 		super(dataSource, dictionary);
 	}
 
@@ -58,8 +58,9 @@ public class ElementFactoryScroll extends AbstractElementFactoryComplex {
 			positionner.add(next);
 		}
 		final Terminated<String> next = getDataSource().next();
-		return new Terminated<Element>(new ElementPyramidScrolled(positionner, getDictionary(),
-				ScrollStrategy.fromDesc(header)), next.getTerminator());
+		return new Terminated<Element>(
+				new ElementPyramidScrolled(positionner, getDictionary(), ScrollStrategy.fromDesc(header)),
+				next.getTerminator());
 	}
 
 	public boolean ready() {

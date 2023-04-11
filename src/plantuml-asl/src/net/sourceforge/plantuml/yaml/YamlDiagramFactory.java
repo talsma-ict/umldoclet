@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -35,19 +35,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.plantuml.UmlDiagramType;
+import net.sourceforge.plantuml.abel.DisplayPositioned;
 import net.sourceforge.plantuml.command.PSystemAbstractFactory;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.DiagramType;
 import net.sourceforge.plantuml.core.UmlSource;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.cucadiagram.DisplayPositioned;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.VerticalAlignment;
 import net.sourceforge.plantuml.json.JsonValue;
 import net.sourceforge.plantuml.jsondiagram.JsonDiagram;
 import net.sourceforge.plantuml.jsondiagram.StyleExtractor;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
+import net.sourceforge.plantuml.klimt.geom.VerticalAlignment;
 import net.sourceforge.plantuml.log.Logme;
+import net.sourceforge.plantuml.skin.UmlDiagramType;
+import net.sourceforge.plantuml.style.parser.StyleParsingException;
 
 public class YamlDiagramFactory extends PSystemAbstractFactory {
 
@@ -57,7 +58,7 @@ public class YamlDiagramFactory extends PSystemAbstractFactory {
 
 	@Override
 	public Diagram createSystem(UmlSource source, Map<String, String> skinParam) {
-		final List<String> highlighted = new ArrayList<>();
+		final List<Highlighted> highlighted = new ArrayList<>();
 		JsonValue yaml = null;
 		StyleExtractor styleExtractor = null;
 		try {
@@ -70,8 +71,8 @@ public class YamlDiagramFactory extends PSystemAbstractFactory {
 				if (it.hasNext() == false)
 					break;
 
-				if (line.startsWith("#highlight ")) {
-					highlighted.add(line.substring("#highlight ".length()).trim());
+				if (Highlighted.matchesDefinition(line)) {
+					highlighted.add(Highlighted.build(line));
 					continue;
 				}
 				list.add(line);
@@ -80,9 +81,13 @@ public class YamlDiagramFactory extends PSystemAbstractFactory {
 		} catch (Exception e) {
 			Logme.error(e);
 		}
-		final JsonDiagram result = new JsonDiagram(source, UmlDiagramType.YAML, yaml, highlighted);
+		final JsonDiagram result = new JsonDiagram(source, UmlDiagramType.YAML, yaml, highlighted, styleExtractor);
 		if (styleExtractor != null) {
-			styleExtractor.applyStyles(result.getSkinParam());
+			try {
+				styleExtractor.applyStyles(result.getSkinParam());
+			} catch (StyleParsingException e) {
+				Logme.error(e);
+			}
 			final String title = styleExtractor.getTitle();
 			if (title != null)
 				result.setTitle(DisplayPositioned.single(Display.getWithNewlines(title), HorizontalAlignment.CENTER,

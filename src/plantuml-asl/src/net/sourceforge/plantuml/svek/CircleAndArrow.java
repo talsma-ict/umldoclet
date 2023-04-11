@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,12 +32,12 @@ package net.sourceforge.plantuml.svek;
 
 import java.awt.geom.AffineTransform;
 
-import net.sourceforge.plantuml.awt.geom.XPoint2D;
-import net.sourceforge.plantuml.graphic.UDrawable;
-import net.sourceforge.plantuml.ugraphic.UEllipse;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UShape;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.klimt.UShape;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.geom.XPoint2D;
+import net.sourceforge.plantuml.klimt.shape.UDrawable;
+import net.sourceforge.plantuml.klimt.shape.UEllipse;
 
 class CircleAndArrow implements UDrawable {
 
@@ -72,13 +72,13 @@ class CircleAndArrow implements UDrawable {
 
 	private XPoint2D putOnCircle(XPoint2D p) {
 		p = p.transform(at);
-		final double coef = p.distance(new XPoint2D()) / radius;
+		final double coef = p.distance(new XPoint2D(0, 0)) / radius;
 		p = new XPoint2D(p.getX() / coef, p.getY() / coef);
 		return p.transform(at2);
 	}
 
 	public void drawU(UGraphic ug) {
-		final UShape circle = new UEllipse(radius * 2, radius * 2);
+		final UShape circle = UEllipse.build(radius * 2, radius * 2);
 		ug.apply(new UTranslate(center.getX() - radius, center.getY() - radius)).draw(circle);
 		// drawLine(ug, x, y, p1, p2);
 		// drawLine(ug, x, y, p3, p4);

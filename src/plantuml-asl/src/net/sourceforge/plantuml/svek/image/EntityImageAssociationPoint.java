@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,27 +30,27 @@
  */
 package net.sourceforge.plantuml.svek.image;
 
-import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.baraye.ILeaf;
-import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.abel.Entity;
+import net.sourceforge.plantuml.klimt.CopyForegroundColorToBackgroundColor;
+import net.sourceforge.plantuml.klimt.UShape;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.shape.UEllipse;
+import net.sourceforge.plantuml.style.ISkinParam;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.svek.AbstractEntityImage;
 import net.sourceforge.plantuml.svek.ShapeType;
-import net.sourceforge.plantuml.ugraphic.CopyForegroundColorToBackgroundColor;
-import net.sourceforge.plantuml.ugraphic.UEllipse;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UShape;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class EntityImageAssociationPoint extends AbstractEntityImage {
 
 	private static final int SIZE = 4;
 
-	public EntityImageAssociationPoint(ILeaf entity, ISkinParam skinParam) {
+	public EntityImageAssociationPoint(Entity entity, ISkinParam skinParam) {
 		super(entity, skinParam);
 	}
 
@@ -64,7 +64,7 @@ public class EntityImageAssociationPoint extends AbstractEntityImage {
 	}
 
 	final public void drawU(UGraphic ug) {
-		final UShape circle = new UEllipse(SIZE, SIZE);
+		final UShape circle = UEllipse.build(SIZE, SIZE);
 
 		final HColor color = getStyle().value(PName.LineColor).asColor(getSkinParam().getIHtmlColorSet());
 		ug.apply(color).apply(new CopyForegroundColorToBackgroundColor()).draw(circle);

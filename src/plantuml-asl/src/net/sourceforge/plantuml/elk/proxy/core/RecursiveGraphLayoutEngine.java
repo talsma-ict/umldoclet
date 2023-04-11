@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -35,6 +35,7 @@ import net.sourceforge.plantuml.elk.proxy.core.util.NullElkProgressMonitor;
 import net.sourceforge.plantuml.elk.proxy.graph.ElkNode;
 
 public class RecursiveGraphLayoutEngine {
+    // ::remove folder when __HAXE__
 
 	private final Object obj = Reflect.newInstance("org.eclipse.elk.core.RecursiveGraphLayoutEngine");
 

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,12 +30,12 @@
  */
 package net.sourceforge.plantuml.ebnf;
 
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.URectangle;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.HColors;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.shape.URectangle;
 
 public class ETileZeroOrMore extends ETile {
 
@@ -73,9 +73,9 @@ public class ETileZeroOrMore extends ETile {
 		final XDimension2D fullDim = calculateDimension(stringBounder);
 		if (TRACE) {
 			if (specialForAlternate)
-				ug.apply(HColors.COL_B38D22).draw(new URectangle(fullDim));
+				ug.apply(HColors.COL_B38D22).draw(URectangle.build(fullDim));
 			else
-				ug.apply(HColors.GREEN).draw(new URectangle(fullDim));
+				ug.apply(HColors.GREEN).draw(URectangle.build(fullDim));
 		}
 
 		final double linePos = getH1(stringBounder);

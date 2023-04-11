@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -35,18 +35,20 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.Locale;
 
-import net.sourceforge.plantuml.Log;
-import net.sourceforge.plantuml.awt.geom.XPoint2D;
+import net.sourceforge.plantuml.klimt.geom.XPoint2D;
 import net.sourceforge.plantuml.security.SFile;
+import net.sourceforge.plantuml.utils.Log;
 
 public class SvekUtils {
 
+	// ::comment when __CORE__
 	static public void traceString(final SFile f, String text) throws IOException {
 		Log.info("Creating intermediate file " + f.getPrintablePath());
 		try (PrintWriter pw = f.createPrintWriter()) {
 			pw.print(text);
 		}
 	}
+	// ::done
 
 	static public double getValue(String svg, int starting, String varName) {
 		final String varNameString = varName + "=\"";

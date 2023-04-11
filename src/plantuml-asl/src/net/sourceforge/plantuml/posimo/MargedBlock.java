@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,9 +30,10 @@
  */
 package net.sourceforge.plantuml.posimo;
 
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.awt.geom.XPoint2D;
-import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.Positionable;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.geom.XPoint2D;
 
 public class MargedBlock {
 
@@ -43,12 +44,13 @@ public class MargedBlock {
 
 	static private int uid = 1;
 
-	public MargedBlock(StringBounder stringBounder, IEntityImageBlock imageBlock, double marginDecorator, Cluster parent) {
+	public MargedBlock(StringBounder stringBounder, IEntityImageBlock imageBlock, double marginDecorator,
+			Cluster parent) {
 		this.imageBlock = imageBlock;
 		this.marginDecorator = marginDecorator;
 		this.imageDimension = imageBlock.getDimension(stringBounder);
-		this.block = new Block(uid++, imageDimension.getWidth() + 2 * marginDecorator, imageDimension.getHeight() + 2
-				* marginDecorator, parent);
+		this.block = new Block(uid++, imageDimension.getWidth() + 2 * marginDecorator,
+				imageDimension.getHeight() + 2 * marginDecorator, parent);
 	}
 
 	public Block getBlock() {

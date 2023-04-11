@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,25 +30,25 @@
  */
 package net.sourceforge.plantuml.skin.rose;
 
-import net.sourceforge.plantuml.ISkinSimple;
-import net.sourceforge.plantuml.LineBreakStrategy;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.SymbolContext;
-import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.klimt.Fashion;
+import net.sourceforge.plantuml.klimt.LineBreakStrategy;
+import net.sourceforge.plantuml.klimt.UPath;
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.FontConfiguration;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
+import net.sourceforge.plantuml.klimt.shape.URectangle;
 import net.sourceforge.plantuml.skin.AbstractTextualComponent;
 import net.sourceforge.plantuml.skin.Area;
+import net.sourceforge.plantuml.style.ISkinSimple;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UPath;
-import net.sourceforge.plantuml.ugraphic.URectangle;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class ComponentRoseReference extends AbstractTextualComponent {
 
@@ -57,8 +57,8 @@ public class ComponentRoseReference extends AbstractTextualComponent {
 	private final double heightFooter = 5;
 	private final double xMargin = 2;
 	private final HorizontalAlignment position;
-	private final SymbolContext symbolContextHeader;
-	private final SymbolContext symbolContextBody;
+	private final Fashion symbolContextHeader;
+	private final Fashion symbolContextBody;
 	private int roundCorner;
 
 	public ComponentRoseReference(Style style, Style styleHeader, Display stringsToDisplay, ISkinSimple spriteContainer,
@@ -68,7 +68,7 @@ public class ComponentRoseReference extends AbstractTextualComponent {
 
 		this.symbolContextHeader = styleHeader.getSymbolContext(getIHtmlColorSet());
 		this.symbolContextBody = style.getSymbolContext(getIHtmlColorSet());
-		this.roundCorner = style.value(PName.RoundCorner).asInt();
+		this.roundCorner = style.value(PName.RoundCorner).asInt(false);
 		final FontConfiguration fcHeader = styleHeader.getFontConfiguration(getIHtmlColorSet());
 		this.position = style.getHorizontalAlignment();
 
@@ -83,7 +83,7 @@ public class ComponentRoseReference extends AbstractTextualComponent {
 		final int textHeaderWidth = (int) (getHeaderWidth(stringBounder));
 		final int textHeaderHeight = (int) (getHeaderHeight(stringBounder));
 
-		URectangle rect = new URectangle(dimensionToUse.getWidth() - xMargin * 2 - symbolContextBody.getDeltaShadow(),
+		URectangle rect = URectangle.build(dimensionToUse.getWidth() - xMargin * 2 - symbolContextBody.getDeltaShadow(),
 				dimensionToUse.getHeight() - heightFooter);
 		if (this.roundCorner != 0)
 			rect = rect.rounded(this.roundCorner);
@@ -92,7 +92,7 @@ public class ComponentRoseReference extends AbstractTextualComponent {
 		ug = symbolContextBody.apply(ug);
 		ug.apply(UTranslate.dx(xMargin)).draw(rect);
 
-		final UPath corner = new UPath();
+		final UPath corner = UPath.none();
 		if (this.roundCorner == 0) {
 			corner.moveTo(0, 0);
 			corner.lineTo(textHeaderWidth, 0);
@@ -118,7 +118,7 @@ public class ComponentRoseReference extends AbstractTextualComponent {
 		ug = symbolContextHeader.apply(ug);
 		ug.apply(UTranslate.dx(xMargin)).draw(corner);
 
-		ug = ug.apply(new UStroke());
+		ug = ug.apply(UStroke.simple());
 
 		textHeader.drawU(ug.apply(new UTranslate(15, 2)));
 		final double textPos;

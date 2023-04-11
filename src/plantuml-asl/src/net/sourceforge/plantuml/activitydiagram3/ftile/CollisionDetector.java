@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -35,24 +35,22 @@ import static net.sourceforge.plantuml.utils.ObjectUtils.instanceOfAny;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.plantuml.annotation.HaxeIgnored;
-import net.sourceforge.plantuml.awt.geom.XLine2D;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.ugraphic.MinMax;
-import net.sourceforge.plantuml.ugraphic.UBackground;
-import net.sourceforge.plantuml.ugraphic.UChange;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UGraphicNo;
-import net.sourceforge.plantuml.ugraphic.ULine;
-import net.sourceforge.plantuml.ugraphic.UPolygon;
-import net.sourceforge.plantuml.ugraphic.URectangle;
-import net.sourceforge.plantuml.ugraphic.UShape;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
+import net.sourceforge.plantuml.klimt.UBackground;
+import net.sourceforge.plantuml.klimt.UChange;
+import net.sourceforge.plantuml.klimt.UShape;
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.color.HColors;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.drawing.UGraphicNo;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.MinMax;
+import net.sourceforge.plantuml.klimt.geom.XLine2D;
+import net.sourceforge.plantuml.klimt.shape.ULine;
+import net.sourceforge.plantuml.klimt.shape.UPolygon;
+import net.sourceforge.plantuml.klimt.shape.URectangle;
 
-@HaxeIgnored
 public class CollisionDetector extends UGraphicNo {
 
 	@Override
@@ -63,7 +61,7 @@ public class CollisionDetector extends UGraphicNo {
 	private final Context context;
 
 	private static CollisionDetector create(StringBounder stringBounder) {
-		return new CollisionDetector(stringBounder, new UTranslate(), new Context());
+		return new CollisionDetector(stringBounder, UTranslate.none(), new Context());
 	}
 
 	private CollisionDetector(StringBounder stringBounder, UTranslate translate, Context context) {
@@ -94,7 +92,7 @@ public class CollisionDetector extends UGraphicNo {
 					minmax.drawGray(ug);
 
 			final HColor color = HColors.BLACK;
-			ug = ug.apply(color).apply(new UStroke(5));
+			ug = ug.apply(color).apply(UStroke.withThickness(5));
 			for (Snake snake : snakes)
 				for (XLine2D line : snake.getHorizontalLines())
 					if (collision(line))

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,7 +33,6 @@ package net.sourceforge.plantuml.code;
 import java.io.IOException;
 
 public interface Transcoder {
-
 	public String encode(String text) throws IOException;
 
 	public String decode(String code) throws NoPlantumlCompressionException;

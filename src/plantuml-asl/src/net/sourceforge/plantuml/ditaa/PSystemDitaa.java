@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -41,7 +41,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.plantuml.AbstractPSystem;
-import net.sourceforge.plantuml.BackSlash;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.UmlDiagram;
@@ -52,8 +51,10 @@ import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SImageIO;
 import net.sourceforge.plantuml.svek.GraphvizCrash;
+import net.sourceforge.plantuml.text.BackSlash;
 
 public class PSystemDitaa extends AbstractPSystem {
+	// ::remove folder when __CORE__
 
 	// private ProcessingOptions processingOptions;
 	private Object processingOptions;
@@ -104,7 +105,7 @@ public class PSystemDitaa extends AbstractPSystem {
 	final protected ImageData exportDiagramNow(OutputStream os, int num, FileFormatOption fileFormat)
 			throws IOException {
 		if (fileFormat.getFileFormat() == FileFormat.ATXT) {
-			os.write(getSource().getPlainString().getBytes());
+			os.write(getSource().getPlainString(BackSlash.lineSeparator()).getBytes());
 			return ImageDataSimple.ok();
 		}
 

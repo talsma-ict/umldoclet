@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -35,13 +35,19 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class UnsupportedStarStruct implements __struct__, __ptr__ {
 
+	// ::revert when __CORE__
 	public final static AtomicInteger CPT = new AtomicInteger();
+	// public static int CPT;
+	// ::done
 	public final int UID;
-	
+
 	public static UnsupportedStarStruct SPY_ME;
 
 	public UnsupportedStarStruct() {
+		// ::revert when __CORE__
 		this.UID = CPT.incrementAndGet();
+		// this.UID = CPT++;
+		// ::done
 	}
 
 	final public __ptr__ unsupported() {
@@ -57,7 +63,7 @@ public class UnsupportedStarStruct implements __struct__, __ptr__ {
 		throw new UnsupportedOperationException(dest + " " + getClass().toString());
 	}
 
-	public Object getTheField(OFFSET virtualBytes) {
+	public Object getTheField(FieldOffset virtualBytes) {
 		throw new UnsupportedOperationException(getClass().toString());
 	}
 

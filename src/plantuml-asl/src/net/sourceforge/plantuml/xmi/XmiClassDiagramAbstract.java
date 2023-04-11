@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -49,14 +49,14 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import net.sourceforge.plantuml.baraye.IEntity;
-import net.sourceforge.plantuml.baraye.ILeaf;
+import net.sourceforge.plantuml.abel.Entity;
+import net.sourceforge.plantuml.abel.LeafType;
 import net.sourceforge.plantuml.classdiagram.ClassDiagram;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.Member;
-import net.sourceforge.plantuml.cucadiagram.Stereotype;
+import net.sourceforge.plantuml.klimt.creole.Display;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
+import net.sourceforge.plantuml.stereo.Stereotype;
+import net.sourceforge.plantuml.version.Version;
 import net.sourceforge.plantuml.xml.XmlFactories;
 
 abstract class XmiClassDiagramAbstract implements XmlDiagramTransformer {
@@ -66,9 +66,9 @@ abstract class XmiClassDiagramAbstract implements XmlDiagramTransformer {
 
 	protected final ClassDiagram classDiagram;
 	protected final Document document;
-	protected Element ownedElement;
+	protected final Element ownedElementRoot;
 
-	protected final Set<IEntity> done = new HashSet<>();
+	protected final Set<Entity> done = new HashSet<>();
 
 	public XmiClassDiagramAbstract(ClassDiagram classDiagram) throws ParserConfigurationException {
 		this.classDiagram = classDiagram;
@@ -86,10 +86,8 @@ abstract class XmiClassDiagramAbstract implements XmlDiagramTransformer {
 		final Element header = document.createElement("XMI.header");
 		xmi.appendChild(header);
 
-		final Element metamodel = document.createElement("XMI.metamodel");
-		metamodel.setAttribute("xmi.name", "UML");
-		metamodel.setAttribute("xmi.version", "1.3");
-		header.appendChild(metamodel);
+		header.appendChild(createXmiDocumentation());
+		header.appendChild(createXmiMetamodel());
 
 		final Element content = document.createElement("XMI.content");
 		xmi.appendChild(content);
@@ -100,9 +98,27 @@ abstract class XmiClassDiagramAbstract implements XmlDiagramTransformer {
 		content.appendChild(model);
 
 		// <UML:Namespace.ownedElement>
-		this.ownedElement = document.createElement("UML:Namespace.ownedElement");
-		model.appendChild(ownedElement);
+		this.ownedElementRoot = document.createElement("UML:Namespace.ownedElement");
+		model.appendChild(ownedElementRoot);
 
+	}
+
+	private Element createXmiDocumentation() {
+		final Element documentation = document.createElement("XMI.documentation");
+		final Element exporter = document.createElement("XMI.exporter");
+		exporter.setTextContent("PlantUML");
+		final Element exporterVersion = document.createElement("XMI.exporterVersion");
+		exporterVersion.setTextContent(Version.versionString());
+		documentation.appendChild(exporter);
+		documentation.appendChild(exporterVersion);
+		return documentation;
+	}
+
+	private Element createXmiMetamodel() {
+		final Element metamodel = document.createElement("XMI.metamodel");
+		metamodel.setAttribute("xmi.name", "UML");
+		metamodel.setAttribute("xmi.version", "1.4");
+		return metamodel;
 	}
 
 	final protected String forXMI(String s) {
@@ -128,19 +144,19 @@ abstract class XmiClassDiagramAbstract implements XmlDiagramTransformer {
 		transformer.transform(source, resultat);
 	}
 
-	final protected Element createEntityNode(IEntity entity) {
+	final protected Element createEntityNode(Entity entity) {
 		final Element cla = document.createElement("UML:Class");
 		if (entity.getLeafType() == LeafType.NOTE)
 			return null;
 
 		cla.setAttribute("xmi.id", entity.getUid());
 		cla.setAttribute("name", entity.getDisplay().get(0).toString());
-		final String parentCode = entity.getIdent().parent().forXmi();
 
-		if (parentCode.length() == 0)
-			cla.setAttribute("namespace", CucaDiagramXmiMaker.getModel(classDiagram));
-		else
-			cla.setAttribute("namespace", parentCode);
+//		final String parentCode = entity.getQuark().getParent().toStringPoint();
+//		if (parentCode.length() == 0)
+//			cla.setAttribute("namespace", CucaDiagramXmiMaker.getModel(classDiagram));
+//		else
+//			cla.setAttribute("namespace", parentCode);
 
 		final Stereotype stereotype = entity.getStereotype();
 		if (stereotype != null) {
@@ -159,12 +175,12 @@ abstract class XmiClassDiagramAbstract implements XmlDiagramTransformer {
 		else if (type == LeafType.INTERFACE)
 			cla.setAttribute("isInterface", "true");
 
-		if (((ILeaf) entity).isStatic())
+		if (entity.isStatic())
 			cla.setAttribute("isStatic", "true");
 
-		if (((ILeaf) entity).getVisibilityModifier() == VisibilityModifier.PRIVATE_FIELD
-				|| ((ILeaf) entity).getVisibilityModifier() == VisibilityModifier.PRIVATE_METHOD)
-			cla.setAttribute("visibility", ((ILeaf) entity).getVisibilityModifier().getXmiVisibility());
+		if (entity.getVisibilityModifier() == VisibilityModifier.PRIVATE_FIELD
+				|| entity.getVisibilityModifier() == VisibilityModifier.PRIVATE_METHOD)
+			cla.setAttribute("visibility", entity.getVisibilityModifier().getXmiVisibility());
 
 		final Element feature = document.createElement("UML:Classifier.feature");
 		cla.appendChild(feature);

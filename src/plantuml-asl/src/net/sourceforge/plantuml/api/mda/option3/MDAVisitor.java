@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -31,4 +31,6 @@
 package net.sourceforge.plantuml.api.mda.option3;
 
 public interface MDAVisitor {
+    // ::remove folder when __HAXE__
+	// ::remove folder when __CORE__
 }

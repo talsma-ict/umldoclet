@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -37,25 +37,27 @@ import java.util.ListIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.sourceforge.plantuml.ISkinParam;
+import net.atmp.InnerStrategy;
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.awt.geom.XRectangle2D;
-import net.sourceforge.plantuml.baraye.ILeaf;
-import net.sourceforge.plantuml.creole.CreoleMode;
-import net.sourceforge.plantuml.creole.Parser;
-import net.sourceforge.plantuml.creole.legacy.CreoleParser;
-import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.InnerStrategy;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.graphic.TextBlockUtils;
-import net.sourceforge.plantuml.graphic.TextBlockVertical2;
+import net.sourceforge.plantuml.abel.Entity;
+import net.sourceforge.plantuml.abel.LeafType;
+import net.sourceforge.plantuml.klimt.creole.CreoleMode;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.creole.Parser;
+import net.sourceforge.plantuml.klimt.creole.legacy.CreoleParser;
+import net.sourceforge.plantuml.klimt.font.FontConfiguration;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
+import net.sourceforge.plantuml.klimt.geom.XRectangle2D;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
+import net.sourceforge.plantuml.klimt.shape.TextBlockUtils;
+import net.sourceforge.plantuml.klimt.shape.TextBlockVertical2;
+import net.sourceforge.plantuml.style.ISkinParam;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.svek.Ports;
 import net.sourceforge.plantuml.svek.WithPorts;
+import net.sourceforge.plantuml.url.Url;
 
 public class BodyEnhanced1 extends BodyEnhancedAbstract implements TextBlock, WithPorts {
 
@@ -65,11 +67,11 @@ public class BodyEnhanced1 extends BodyEnhancedAbstract implements TextBlock, Wi
 	private final boolean lineFirst;
 	private final List<Url> urls = new ArrayList<>();
 
-	private final ILeaf entity;
+	private final Entity entity;
 	private final boolean inEllipse;
 	private final Style style;
 
-	BodyEnhanced1(HorizontalAlignment align, List<CharSequence> rawBody, ISkinParam skinParam, ILeaf entity,
+	BodyEnhanced1(HorizontalAlignment align, List<CharSequence> rawBody, ISkinParam skinParam, Entity entity,
 			Style style) {
 		super(align, style.getFontConfiguration(skinParam.getIHtmlColorSet(), entity.getColors()), style);
 		this.style = style;
@@ -83,7 +85,7 @@ public class BodyEnhanced1 extends BodyEnhancedAbstract implements TextBlock, Wi
 		this.inEllipse = false;
 	}
 
-	BodyEnhanced1(HorizontalAlignment align, Display display, ISkinParam skinParam, ILeaf entity, Style style) {
+	BodyEnhanced1(HorizontalAlignment align, Display display, ISkinParam skinParam, Entity entity, Style style) {
 		super(align, style.getFontConfiguration(skinParam.getIHtmlColorSet(), entity.getColors()), style);
 
 		this.style = style;
@@ -126,17 +128,6 @@ public class BodyEnhanced1 extends BodyEnhancedAbstract implements TextBlock, Wi
 		Display display = null;
 		for (ListIterator<CharSequence> it = rawBody2.iterator(); it.hasNext();) {
 			final CharSequence cs = it.next();
-//			if (cs instanceof EmbeddedDiagram) {
-//				if (display == null)
-//					display = Display.empty();
-//				if (display.size() > 0 || separator != 0) {
-//					blocks.add(buildTextBlock(display, separator, title, stringBounder));
-//					separator = 0;
-//					title = null;
-//					display = null;
-//				}
-//				blocks.add(TextBlockUtils.withMargin(((EmbeddedDiagram) cs).asDraw(), 2, 2));
-//			} else {
 			final String s = cs.toString();
 			if (isBlockSeparator(s)) {
 				if (display == null)

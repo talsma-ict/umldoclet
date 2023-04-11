@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,14 +30,14 @@
  */
 package net.sourceforge.plantuml.svek.extremity;
 
-import net.sourceforge.plantuml.awt.geom.XPoint2D;
-import net.sourceforge.plantuml.ugraphic.UEllipse;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.ULine;
-import net.sourceforge.plantuml.ugraphic.UPolygon;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.HColors;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.geom.XPoint2D;
+import net.sourceforge.plantuml.klimt.shape.UEllipse;
+import net.sourceforge.plantuml.klimt.shape.ULine;
+import net.sourceforge.plantuml.klimt.shape.UPolygon;
 
 class ExtremityStateLine1 extends Extremity {
 
@@ -45,12 +45,11 @@ class ExtremityStateLine1 extends Extremity {
 	private final XPoint2D dest;
 	private final double radius = 7;
 	private final double angle;
-	
+
 	@Override
 	public XPoint2D somePoint() {
 		return dest;
 	}
-
 
 	public ExtremityStateLine1(double angle, XPoint2D center) {
 		this.angle = manageround(angle);
@@ -68,9 +67,11 @@ class ExtremityStateLine1 extends Extremity {
 	}
 
 	public void drawU(UGraphic ug) {
-		ug.apply(ug.getParam().getColor().bg()).apply(new UTranslate(-radius * Math.cos(angle), -radius * Math.sin(angle))).draw(polygon);
+		ug.apply(ug.getParam().getColor().bg())
+				.apply(new UTranslate(-radius * Math.cos(angle), -radius * Math.sin(angle))).draw(polygon);
 		ug = ug.apply(HColors.WHITE.bg());
-		ug.apply(new UStroke(1.5)).apply(new UTranslate(dest.getX() - radius, dest.getY() - radius)).draw(new UEllipse(radius * 2, radius * 2));
+		ug.apply(UStroke.withThickness(1.5)).apply(new UTranslate(dest.getX() - radius, dest.getY() - radius))
+				.draw(UEllipse.build(radius * 2, radius * 2));
 		drawLine(ug, getPointOnCircle(dest.getX(), dest.getY(), Math.PI / 4),
 				getPointOnCircle(dest.getX(), dest.getY(), Math.PI + Math.PI / 4));
 		drawLine(ug, getPointOnCircle(dest.getX(), dest.getY(), -Math.PI / 4),

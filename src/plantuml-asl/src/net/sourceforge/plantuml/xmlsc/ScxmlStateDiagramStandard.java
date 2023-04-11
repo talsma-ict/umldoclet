@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -48,19 +48,17 @@ import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import net.sourceforge.plantuml.Guillemet;
-import net.sourceforge.plantuml.baraye.EntityUtils;
-import net.sourceforge.plantuml.baraye.IEntity;
-import net.sourceforge.plantuml.baraye.IGroup;
-import net.sourceforge.plantuml.baraye.ILeaf;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.cucadiagram.LeafType;
-import net.sourceforge.plantuml.cucadiagram.Link;
-import net.sourceforge.plantuml.cucadiagram.Stereotype;
+import net.sourceforge.plantuml.abel.Entity;
+import net.sourceforge.plantuml.abel.LeafType;
+import net.sourceforge.plantuml.abel.Link;
+import net.sourceforge.plantuml.klimt.creole.Display;
 import net.sourceforge.plantuml.statediagram.StateDiagram;
+import net.sourceforge.plantuml.stereo.Stereotype;
+import net.sourceforge.plantuml.text.Guillemet;
 import net.sourceforge.plantuml.xml.XmlFactories;
 
 public class ScxmlStateDiagramStandard {
+	// ::remove folder when __CORE__
 
 	private final StateDiagram diagram;
 	private final Document document;
@@ -82,45 +80,45 @@ public class ScxmlStateDiagramStandard {
 
 		document.appendChild(scxml);
 
-		for (final IEntity ent : diagram.getLeafsvalues())
-			if (EntityUtils.groupRoot(ent.getParentContainer()))
+		for (final Entity ent : diagram.getEntityFactory().leafs())
+			if (ent.getParentContainer().isRoot())
 				scxml.appendChild(createState(ent));
 
-		for (IGroup ent : diagram.getGroups(false))
-			if (EntityUtils.groupRoot(ent.getParentContainer()))
+		for (Entity ent : diagram.getEntityFactory().groups())
+			if (ent.getParentContainer().isRoot())
 				exportGroup(scxml, ent);
 
 	}
 
-	private Element exportGroup(Element dest, IGroup ent) {
+	private Element exportGroup(Element dest, Entity ent) {
 		final Element gr = createGroup(ent);
 		dest.appendChild(gr);
-		for (ILeaf leaf : ent.getLeafsDirect())
+		for (Entity leaf : ent.leafs())
 			gr.appendChild(createState(leaf));
-		for (IGroup child : ent.getChildren())
+		for (Entity child : ent.groups())
 			exportGroup(gr, child);
 		return gr;
 	}
 
 	private String getInitial() {
-		for (final IEntity ent : diagram.getLeafsvalues())
+		for (final Entity ent : diagram.getEntityFactory().leafs())
 			if (ent.getLeafType() == LeafType.CIRCLE_START)
 				return getId(ent);
 
 		return null;
 	}
 
-	private Element createGroup(IEntity entity) {
+	private Element createGroup(Entity entity) {
 		return createState(entity);
 	}
 
-	private Element createState(IEntity entity) {
+	private Element createState(Entity entity) {
 		final LeafType type = entity.getLeafType();
 
 		final Element state = document.createElement("state");
 		if (type == LeafType.NOTE) {
 			state.setAttribute("stereotype", "note");
-			state.setAttribute("id", entity.getCode().getName());
+			state.setAttribute("id", entity.getName());
 			final Display display = entity.getDisplay();
 			final StringBuilder sb = new StringBuilder();
 			for (CharSequence s : display) {
@@ -158,10 +156,8 @@ public class ScxmlStateDiagramStandard {
 
 	}
 
-	private String getId(IEntity entity) {
-		String result = entity.getDisplay().get(0).toString();
-		result = result.replaceAll("\\*", "");
-		return result;
+	private String getId(Entity entity) {
+		return entity.getName().replaceAll("\\*", "");
 	}
 
 	public void transformerXml(OutputStream os) throws TransformerException, ParserConfigurationException {

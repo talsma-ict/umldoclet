@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -37,13 +37,13 @@ import h.ST_Agedgeinfo_t;
 import h.ST_bezier;
 import h.ST_pointf;
 import h.ST_splines;
-import net.sourceforge.plantuml.awt.geom.XPoint2D;
 import net.sourceforge.plantuml.jsondiagram.Arrow;
 import net.sourceforge.plantuml.jsondiagram.Mirror;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UPath;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.klimt.UPath;
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.geom.XPoint2D;
 
 public class GitCurve {
 
@@ -87,7 +87,7 @@ public class GitCurve {
 
 	public void drawCurve(HColor color, UGraphic ug) {
 		ug = ug.apply(new UStroke(2, 2, 1));
-		final UPath path = new UPath();
+		final UPath path = UPath.none();
 
 		path.moveTo(xMirror.invGit(points.get(0)));
 

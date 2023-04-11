@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,24 +30,24 @@
  */
 package net.sourceforge.plantuml.skin.rose;
 
-import net.sourceforge.plantuml.ISkinSimple;
-import net.sourceforge.plantuml.LineBreakStrategy;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.awt.geom.XPoint2D;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.klimt.LineBreakStrategy;
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.geom.XPoint2D;
+import net.sourceforge.plantuml.klimt.shape.UEllipse;
+import net.sourceforge.plantuml.klimt.shape.ULine;
+import net.sourceforge.plantuml.klimt.shape.UPolygon;
 import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.ArrowConfiguration;
 import net.sourceforge.plantuml.skin.ArrowDecoration;
 import net.sourceforge.plantuml.skin.ArrowHead;
 import net.sourceforge.plantuml.skin.ArrowPart;
+import net.sourceforge.plantuml.style.ISkinSimple;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.ugraphic.UEllipse;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.ULine;
-import net.sourceforge.plantuml.ugraphic.UPolygon;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
 
 public class ComponentRoseSelfArrow extends AbstractComponentRoseArrow {
 
@@ -77,16 +77,16 @@ public class ComponentRoseSelfArrow extends AbstractComponentRoseArrow {
 		double x2 = area.getDeltaX1() > 0 ? -area.getDeltaX1() : 0 + 1;
 
 		final double arrowHeight = getArrowOnlyHeight(stringBounder);
-		final UEllipse circle = new UEllipse(ComponentRoseArrow.diamCircle, ComponentRoseArrow.diamCircle);
+		final UEllipse circle = UEllipse.build(ComponentRoseArrow.diamCircle, ComponentRoseArrow.diamCircle);
 		if (getArrowConfiguration().getDecoration1() == ArrowDecoration.CIRCLE) {
-			ug2.apply(new UStroke(ComponentRoseArrow.thinCircle)).apply(getForegroundColor())
+			ug2.apply(UStroke.withThickness(ComponentRoseArrow.thinCircle)).apply(getForegroundColor())
 					.apply(new UTranslate(x1 + 1 - ComponentRoseArrow.diamCircle / 2 - ComponentRoseArrow.thinCircle,
 							textHeight - ComponentRoseArrow.diamCircle / 2 - ComponentRoseArrow.thinCircle / 2))
 					.draw(circle);
 			x1 += ComponentRoseArrow.diamCircle / 2;
 		}
 		if (getArrowConfiguration().getDecoration2() == ArrowDecoration.CIRCLE) {
-			ug2.apply(new UStroke(ComponentRoseArrow.thinCircle)).apply(getForegroundColor()).apply(new UTranslate(
+			ug2.apply(UStroke.withThickness(ComponentRoseArrow.thinCircle)).apply(getForegroundColor()).apply(new UTranslate(
 					x2 - ComponentRoseArrow.diamCircle / 2 - ComponentRoseArrow.thinCircle,
 					textHeight + arrowHeight - ComponentRoseArrow.diamCircle / 2 - ComponentRoseArrow.thinCircle / 2))
 					.draw(circle);
@@ -113,10 +113,10 @@ public class ComponentRoseSelfArrow extends AbstractComponentRoseArrow {
 			ug2.apply(new UTranslate(x2, textHeight + arrowHeight)).draw(ULine.hline(xRight - x2));
 
 			if (hasStartingCrossX) {
-				ug.apply(new UStroke(2))
+				ug.apply(UStroke.withThickness(2))
 						.apply(new UTranslate(ComponentRoseArrow.spaceCrossX, textHeight - getArrowDeltaX() / 2))
 						.draw(new ULine(getArrowDeltaX(), getArrowDeltaX()));
-				ug.apply(new UStroke(2))
+				ug.apply(UStroke.withThickness(2))
 						.apply(new UTranslate(ComponentRoseArrow.spaceCrossX, textHeight + getArrowDeltaX() / 2))
 						.draw(new ULine(getArrowDeltaX(), -getArrowDeltaX()));
 			} else if (getArrowConfiguration().getDressing1().getHead() == ArrowHead.NORMAL) {
@@ -125,11 +125,11 @@ public class ComponentRoseSelfArrow extends AbstractComponentRoseArrow {
 			}
 
 			if (hasFinalCrossX) {
-				ug.apply(new UStroke(2))
+				ug.apply(UStroke.withThickness(2))
 						.apply(new UTranslate(ComponentRoseArrow.spaceCrossX,
 								textHeight - getArrowDeltaX() / 2 + arrowHeight))
 						.draw(new ULine(getArrowDeltaX(), getArrowDeltaX()));
-				ug.apply(new UStroke(2))
+				ug.apply(UStroke.withThickness(2))
 						.apply(new UTranslate(ComponentRoseArrow.spaceCrossX,
 								textHeight + getArrowDeltaX() / 2 + arrowHeight))
 						.draw(new ULine(getArrowDeltaX(), -getArrowDeltaX()));

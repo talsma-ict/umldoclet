@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,6 +33,7 @@ package net.sourceforge.plantuml.eggs;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class SentenceProducer {
+	// ::remove file when __CORE__
 
 	private final String secret;
 

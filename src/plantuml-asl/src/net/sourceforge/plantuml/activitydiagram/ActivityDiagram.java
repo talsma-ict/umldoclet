@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -35,25 +35,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import net.sourceforge.plantuml.Direction;
-import net.sourceforge.plantuml.UmlDiagramType;
-import net.sourceforge.plantuml.baraye.CucaDiagram;
-import net.sourceforge.plantuml.baraye.IEntity;
-import net.sourceforge.plantuml.baraye.ILeaf;
+import net.atmp.CucaDiagram;
+import net.sourceforge.plantuml.abel.Entity;
+import net.sourceforge.plantuml.abel.GroupType;
+import net.sourceforge.plantuml.abel.LeafType;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.UmlSource;
-import net.sourceforge.plantuml.cucadiagram.Code;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.cucadiagram.GroupType;
-import net.sourceforge.plantuml.cucadiagram.Ident;
-import net.sourceforge.plantuml.cucadiagram.LeafType;
-import net.sourceforge.plantuml.cucadiagram.NamespaceStrategy;
-import net.sourceforge.plantuml.graphic.USymbol;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.plasma.Quark;
+import net.sourceforge.plantuml.skin.UmlDiagramType;
+import net.sourceforge.plantuml.utils.Direction;
 
 public class ActivityDiagram extends CucaDiagram {
 
-	private IEntity lastEntityConsulted;
-	private IEntity lastEntityBrancheConsulted;
+	private Entity lastEntityConsulted;
+	private Entity lastEntityBrancheConsulted;
 	private ConditionalContext currentContext;
 
 	public ActivityDiagram(UmlSource source, Map<String, String> skinParam) {
@@ -61,42 +57,14 @@ public class ActivityDiagram extends CucaDiagram {
 		setNamespaceSeparator(null);
 	}
 
-	public ILeaf getOrCreateLeaf(Ident ident, Code code, LeafType type, USymbol symbol) {
-		return getOrCreateLeafDefault(Objects.requireNonNull(ident), code, type, symbol);
-	}
-
 	private String getAutoBranch() {
 		return "#" + this.getUniqueSequence();
 	}
 
-	public IEntity getOrCreate(Ident idNewLong, Code code, Display display, LeafType type) {
-		final IEntity result;
-		final boolean leafExist = this.V1972() ? leafExistSmart(idNewLong) : leafExist(code);
-		if (leafExist) {
-			result = getOrCreateLeafDefault(idNewLong, code, type, null);
-			if (result.getLeafType() != type) {
-				return null;
-			}
-		} else {
-			result = createLeaf(idNewLong, code, display, type, null);
-		}
-		updateLasts(result);
-		return result;
-	}
-	
-	@Override
-	public /*final*/ ILeaf getLeafVerySmart(Ident ident) {
-		final ILeaf result = super.getLeafVerySmart(ident);
-		updateLasts(result);
-		return result;
-	}
-
-
 	public void startIf(String optionalCodeString) {
 		final String idShort = optionalCodeString == null ? getAutoBranch() : optionalCodeString;
-		final Ident idNewLong = buildLeafIdent(idShort);
-		final Code code = this.V1972() ? idNewLong : buildCode(idShort);
-		final IEntity br = createLeaf(idNewLong, code, Display.create(""), LeafType.BRANCH, null);
+		final Quark<Entity> quark = quarkInContext(true, cleanId(idShort));
+		final Entity br = reallyCreateLeaf(quark, Display.create(""), LeafType.BRANCH, null);
 		currentContext = new ConditionalContext(currentContext, br, Direction.DOWN);
 	}
 
@@ -104,38 +72,37 @@ public class ActivityDiagram extends CucaDiagram {
 		currentContext = currentContext.getParent();
 	}
 
-	public ILeaf getStart() {
-		final Ident ident = buildLeafIdent("start");
-		final Code code = this.V1972() ? ident : buildCode("start");
-		return (ILeaf) getOrCreate(ident, code, Display.getWithNewlines("start"), LeafType.CIRCLE_START);
+	public Entity getStart() {
+		final Quark<Entity> quark = quarkInContext(true, "start");
+		if (quark.getData() == null)
+			reallyCreateLeaf(quark, Display.getWithNewlines("start"), LeafType.CIRCLE_START, null);
+
+		return quark.getData();
 	}
 
-	public ILeaf getEnd(String suppId) {
+	public Entity getEnd(String suppId) {
 		final String tmp = suppId == null ? "end" : "end$" + suppId;
-		final Ident ident = buildLeafIdent(tmp);
-		final Code code = this.V1972() ? ident : buildCode(tmp);
-		return (ILeaf) getOrCreate(ident, code, Display.getWithNewlines("end"), LeafType.CIRCLE_END);
-	}
+		final Quark<Entity> quark = quarkInContext(true, tmp);
+		if (quark.getData() == null)
+			reallyCreateLeaf(quark, Display.getWithNewlines("end"), LeafType.CIRCLE_END, null);
 
-	private void updateLasts(final IEntity result) {
-		if (result == null || result.getLeafType() == LeafType.NOTE) {
-			return;
-		}
-		this.lastEntityConsulted = result;
-		if (result.getLeafType() == LeafType.BRANCH) {
-			lastEntityBrancheConsulted = result;
-		}
+		return quark.getData();
 	}
 
 	@Override
-	public ILeaf createLeaf(Ident idNewLong, Code code, Display display, LeafType type, USymbol symbol) {
-		final ILeaf result = super.createLeaf(Objects.requireNonNull(idNewLong), code, display, type, symbol);
-		updateLasts(result);
-		return result;
+	protected void updateLasts(Entity result) {
+		if (result == null || result.getLeafType() == LeafType.NOTE)
+			return;
+
+		// System.err.println("updateLasts " + result);
+		this.lastEntityConsulted = result;
+		if (result.getLeafType() == LeafType.BRANCH)
+			lastEntityBrancheConsulted = result;
+
 	}
 
-	public IEntity createNote(Ident idNewLong, Code code, Display display) {
-		return super.createLeaf(Objects.requireNonNull(idNewLong), code, display, LeafType.NOTE, null);
+	public Entity createNote(Quark<Entity> idNewLong, String code__, Display display) {
+		return reallyCreateLeaf(Objects.requireNonNull(idNewLong), display, LeafType.NOTE, null);
 	}
 
 	final protected List<String> getDotStrings() {
@@ -144,15 +111,15 @@ public class ActivityDiagram extends CucaDiagram {
 	}
 
 	public DiagramDescription getDescription() {
-		return new DiagramDescription("(" + getLeafssize() + " activities)");
+		return new DiagramDescription("(" + getEntityFactory().leafs().size() + " activities)");
 	}
 
-	public IEntity getLastEntityConsulted() {
+	public Entity getLastEntityConsulted() {
 		return lastEntityConsulted;
 	}
 
 	@Deprecated
-	public IEntity getLastEntityBrancheConsulted() {
+	public Entity getLastEntityBrancheConsulted() {
 		return lastEntityBrancheConsulted;
 	}
 
@@ -160,41 +127,36 @@ public class ActivityDiagram extends CucaDiagram {
 		return currentContext;
 	}
 
-	public final void setLastEntityConsulted(IEntity lastEntityConsulted) {
+	public final void setLastEntityConsulted(Entity lastEntityConsulted) {
+		// System.err.println("setLastEntityConsulted " + lastEntityConsulted);
 		this.lastEntityConsulted = lastEntityConsulted;
 	}
 
-	public IEntity createInnerActivity() {
-		// Log.println("createInnerActivity A");
+	public Entity createInnerActivity() {
+
 		final String idShort = "##" + this.getUniqueSequence();
-		final Ident idNewLong = buildLeafIdent(idShort);
-		final Code code = this.V1972() ? idNewLong : buildCode(idShort);
-		gotoGroup(idNewLong, code, Display.getWithNewlines(code), GroupType.INNER_ACTIVITY, getCurrentGroup(),
-				NamespaceStrategy.SINGLE);
-		final IEntity g = getCurrentGroup();
-		// g.setRankdir(Rankdir.LEFT_TO_RIGHT);
+
+		final Quark<Entity> quark = quarkInContext(true, idShort);
+		gotoGroup(quark, Display.getWithNewlines(quark.getName()), GroupType.INNER_ACTIVITY);
+		final Entity g = getCurrentGroup();
+
 		lastEntityConsulted = null;
 		lastEntityBrancheConsulted = null;
-		// Log.println("createInnerActivity B "+getCurrentGroup());
+
 		return g;
 	}
 
 	public void concurrentActivity(String name) {
-		// Log.println("concurrentActivity A name=" + name+" "+getCurrentGroup());
-		if (getCurrentGroup().getGroupType() == GroupType.CONCURRENT_ACTIVITY) {
-			// getCurrentGroup().setRankdir(Rankdir.LEFT_TO_RIGHT);
+		if (getCurrentGroup().getGroupType() == GroupType.CONCURRENT_ACTIVITY)
 			endGroup();
-			// Log.println("endgroup");
-		}
+
 		final String idShort = "##" + this.getUniqueSequence();
-		// Log.println("concurrentActivity A name=" + name+" "+getCurrentGroup());
-		final Code code = buildCode(idShort);
-		if (getCurrentGroup().getGroupType() != GroupType.INNER_ACTIVITY) {
+
+		if (getCurrentGroup().getGroupType() != GroupType.INNER_ACTIVITY)
 			throw new IllegalStateException("type=" + getCurrentGroup().getGroupType());
-		}
-		final Ident idNewLong = buildLeafIdent(idShort);
-		gotoGroup(idNewLong, code, Display.getWithNewlines("code"), GroupType.CONCURRENT_ACTIVITY, getCurrentGroup(),
-				NamespaceStrategy.SINGLE);
+
+		final Quark<Entity> idNewLong = quarkInContext(true, idShort);
+		gotoGroup(idNewLong, Display.getWithNewlines("code"), GroupType.CONCURRENT_ACTIVITY);
 		lastEntityConsulted = null;
 		lastEntityBrancheConsulted = null;
 	}

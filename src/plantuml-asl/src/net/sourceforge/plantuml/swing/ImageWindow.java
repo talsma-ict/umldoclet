@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -29,8 +29,6 @@
  * Original Author:  Arnaud Roques
  */
 package net.sourceforge.plantuml.swing;
-
-import static net.sourceforge.plantuml.ugraphic.ImageBuilder.plainPngBuilder;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -63,13 +61,13 @@ import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
+import net.atmp.ImageBuilder;
 import net.sourceforge.plantuml.GeneratedImage;
-import net.sourceforge.plantuml.ImageSelection;
-import net.sourceforge.plantuml.graphic.GraphicStrings;
+import net.sourceforge.plantuml.klimt.shape.GraphicStrings;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
 import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.security.SImageIO;
-import net.sourceforge.plantuml.svek.TextBlockBackcolored;
 import net.sourceforge.plantuml.version.PSystemVersion;
 
 class ImageWindow extends JFrame {
@@ -200,13 +198,16 @@ class ImageWindow extends JFrame {
 		this.setFocusable(true);
 		this.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent evt) {
-				if (evt.isControlDown() && (evt.getKeyCode() == KeyEvent.VK_PLUS || evt.getKeyCode() == KeyEvent.VK_ADD)) {
+				if (evt.isControlDown()
+						&& (evt.getKeyCode() == KeyEvent.VK_PLUS || evt.getKeyCode() == KeyEvent.VK_ADD)) {
 					zoomFactor++;
 					refreshImage(false);
-				} else if (evt.isControlDown() && (evt.getKeyCode() == KeyEvent.VK_MINUS || evt.getKeyCode() == KeyEvent.VK_SUBTRACT)) {
+				} else if (evt.isControlDown()
+						&& (evt.getKeyCode() == KeyEvent.VK_MINUS || evt.getKeyCode() == KeyEvent.VK_SUBTRACT)) {
 					zoomFactor--;
 					refreshImage(false);
-				} else if (evt.isControlDown() && (evt.getKeyCode() == KeyEvent.VK_0 || evt.getKeyCode() == KeyEvent.VK_NUMPAD0)) {
+				} else if (evt.isControlDown()
+						&& (evt.getKeyCode() == KeyEvent.VK_0 || evt.getKeyCode() == KeyEvent.VK_NUMPAD0)) {
 					zoomFactor = 0;
 					refreshImage(false);
 				} else if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_RIGHT) {
@@ -328,9 +329,9 @@ class ImageWindow extends JFrame {
 			}
 		} catch (IOException ex) {
 			final String msg = "Error reading file: " + ex.toString();
-			final TextBlockBackcolored error = GraphicStrings.createForError(Arrays.asList(msg), false);
+			final TextBlock error = GraphicStrings.createForError(Arrays.asList(msg), false);
 			try {
-				final byte[] bytes = plainPngBuilder(error).writeByteArray();
+				final byte[] bytes = ImageBuilder.plainPngBuilder(error).writeByteArray();
 				image = SImageIO.read(bytes);
 			} catch (IOException e) {
 				Logme.error(e);

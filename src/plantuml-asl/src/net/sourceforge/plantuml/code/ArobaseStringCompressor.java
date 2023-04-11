@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,18 +33,19 @@ package net.sourceforge.plantuml.code;
 import java.io.IOException;
 import java.io.StringReader;
 
-import net.sourceforge.plantuml.StringLocated;
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.command.regex.Matcher2;
-import net.sourceforge.plantuml.command.regex.MyPattern;
-import net.sourceforge.plantuml.command.regex.Pattern2;
 import net.sourceforge.plantuml.preproc.ReadLine;
 import net.sourceforge.plantuml.preproc.ReadLineReader;
 import net.sourceforge.plantuml.preproc.UncommentReadLine;
+import net.sourceforge.plantuml.regex.Matcher2;
+import net.sourceforge.plantuml.regex.MyPattern;
+import net.sourceforge.plantuml.regex.Pattern2;
+import net.sourceforge.plantuml.text.StringLocated;
 
 public class ArobaseStringCompressor implements StringCompressor {
 
-	private final static Pattern2 p = MyPattern.cmpile("(?s)^[%s]*(@startuml[^\\n\\r]*)?[%s]*(.*?)[%s]*(@enduml)?[%s]*$");
+	private final static Pattern2 pattern = MyPattern
+			.cmpile("(?s)^[%s]*(@startuml[^\\n\\r]*)?[%s]*(.*?)[%s]*(@enduml)?[%s]*$");
 
 	public String compress(final String data) throws IOException {
 		final ReadLine r = new UncommentReadLine(ReadLineReader.create(new StringReader(data), "COMPRESS"));
@@ -76,7 +77,7 @@ public class ArobaseStringCompressor implements StringCompressor {
 	}
 
 	private String compressOld(String s) throws IOException {
-		final Matcher2 m = p.matcher(s);
+		final Matcher2 m = pattern.matcher(s);
 		if (m.find()) {
 			return clean(m.group(2));
 		}
@@ -107,10 +108,10 @@ public class ArobaseStringCompressor implements StringCompressor {
 	}
 
 	private String clean1(String s) {
-		final Matcher2 m = p.matcher(s);
-		if (m.matches()) {
+		final Matcher2 m = pattern.matcher(s);
+		if (m.matches())
 			return m.group(2);
-		}
+
 		return s;
 	}
 

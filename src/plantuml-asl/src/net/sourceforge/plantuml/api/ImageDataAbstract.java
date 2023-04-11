@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,9 +30,8 @@
  */
 package net.sourceforge.plantuml.api;
 
-import net.sourceforge.plantuml.annotation.HaxeIgnored;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
 import net.sourceforge.plantuml.core.ImageData;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
 
 public abstract class ImageDataAbstract implements ImageData {
 
@@ -44,8 +43,7 @@ public abstract class ImageDataAbstract implements ImageData {
 		this.width = width;
 		this.height = height;
 	}
-	
-	@HaxeIgnored
+
 	public ImageDataAbstract(XDimension2D dim) {
 		this((int) dim.getWidth(), (int) dim.getHeight());
 	}

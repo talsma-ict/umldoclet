@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,8 +30,8 @@
  */
 package net.sourceforge.plantuml.salt;
 
-
 public class Cell {
+    // ::remove folder when __HAXE__
 
 	private int minRow;
 	private int maxRow;
@@ -44,7 +44,7 @@ public class Cell {
 		minCol = col;
 		maxCol = col;
 	}
-	
+
 	public void mergeLeft() {
 		maxCol++;
 	}
@@ -64,7 +64,7 @@ public class Cell {
 	public int getMaxCol() {
 		return maxCol;
 	}
-	
+
 	public int getNbRows() {
 		return maxRow - minRow + 1;
 	}

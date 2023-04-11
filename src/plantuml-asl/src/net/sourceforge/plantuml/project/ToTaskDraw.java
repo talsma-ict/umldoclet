@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,11 +30,12 @@
  */
 package net.sourceforge.plantuml.project;
 
+import net.sourceforge.plantuml.klimt.color.HColorSet;
 import net.sourceforge.plantuml.project.core.Task;
 import net.sourceforge.plantuml.project.draw.TaskDraw;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public interface ToTaskDraw {
+    // ::remove folder when __HAXE__
 
 	public TaskDraw getTaskDraw(Task task);
 

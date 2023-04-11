@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,6 +33,7 @@ package net.sourceforge.plantuml.project.time;
 import net.sourceforge.plantuml.project.Value;
 
 public class Instant implements Comparable<Instant>, Value {
+    // ::remove folder when __HAXE__
 
 	private final long ms;
 

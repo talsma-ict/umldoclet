@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.activitydiagram3;
 
-import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactory;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileLabel;
@@ -38,7 +37,8 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
 import net.sourceforge.plantuml.activitydiagram3.gtile.Gtile;
 import net.sourceforge.plantuml.activitydiagram3.gtile.GtileEmpty;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
-import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.style.ISkinParam;
 
 public class InstructionLabel extends MonoSwimable implements Instruction {
 
@@ -53,11 +53,13 @@ public class InstructionLabel extends MonoSwimable implements Instruction {
 	public Ftile createFtile(FtileFactory factory) {
 		return new FtileLabel(factory.skinParam(), getSwimlaneIn(), name);
 	}
-	
+
+	// ::comment when __CORE__
 	@Override
 	public Gtile createGtile(ISkinParam skinParam, StringBounder stringBounder) {
 		return new GtileEmpty(stringBounder, skinParam);
 	}
+	// ::done
 
 	@Override
 	public CommandExecutionResult add(Instruction other) {

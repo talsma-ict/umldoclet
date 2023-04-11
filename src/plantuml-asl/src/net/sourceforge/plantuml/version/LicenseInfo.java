@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -42,14 +42,36 @@ import java.util.TreeSet;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.OptionFlags;
-import net.sourceforge.plantuml.SignatureUtils;
 import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.security.SImageIO;
+import net.sourceforge.plantuml.utils.Log;
+import net.sourceforge.plantuml.utils.SignatureUtils;
 
 public class LicenseInfo {
+
+	public static synchronized LicenseInfo retrieveQuick() {
+		// ::revert when __CORE__
+		if (cache == null)
+			cache = retrieveDistributor();
+
+		if (cache == null)
+			cache = retrieveNamedSlow();
+		return cache;
+		// return new LicenseInfo();
+		// ::done
+	}
+
+	public boolean isValid() {
+		// ::revert when __CORE__
+		return owner != null && System.currentTimeMillis() <= this.expirationDate;
+		// return false;
+		// ::done
+	}
+
+	// ::comment when __CORE__
+	private static LicenseInfo cache;
 
 	private final static Preferences prefs = Preferences.userNodeForPackage(LicenseInfo.class);
 	public final static LicenseInfo NONE = new LicenseInfo(LicenseType.NONE, 0, 0, null, null, null);
@@ -74,18 +96,6 @@ public class LicenseInfo {
 	public static void persistMe(String key) throws BackingStoreException {
 		prefs.sync();
 		prefs.put("license", key);
-	}
-
-	private static LicenseInfo cache;
-
-	public static synchronized LicenseInfo retrieveQuick() {
-		if (cache == null) {
-			cache = retrieveDistributor();
-		}
-		if (cache == null) {
-			cache = retrieveNamedSlow();
-		}
-		return cache;
 	}
 
 	public static boolean retrieveNamedOrDistributorQuickIsValid() {
@@ -251,10 +261,6 @@ public class LicenseInfo {
 		return owner == null;
 	}
 
-	public boolean isValid() {
-		return owner != null && System.currentTimeMillis() <= this.expirationDate;
-	}
-
 	public boolean hasExpired() {
 		return owner != null && System.currentTimeMillis() > this.expirationDate;
 	}
@@ -266,5 +272,6 @@ public class LicenseInfo {
 	public final String getContext() {
 		return context;
 	}
+	// ::done
 
 }

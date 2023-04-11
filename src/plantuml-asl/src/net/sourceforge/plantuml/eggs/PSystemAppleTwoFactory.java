@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,18 +33,18 @@ package net.sourceforge.plantuml.eggs;
 import java.io.IOException;
 
 import net.sourceforge.plantuml.AbstractPSystem;
-import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.command.PSystemSingleLineFactory;
 import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.log.Logme;
+import net.sourceforge.plantuml.utils.Log;
 
 public class PSystemAppleTwoFactory extends PSystemSingleLineFactory {
+	// ::remove file when __CORE__
 
 	@Override
 	protected AbstractPSystem executeLine(UmlSource source, String line) {
-		if (line.equalsIgnoreCase("apple //e") || line.equalsIgnoreCase("apple ][")
-				|| line.equalsIgnoreCase("apple II") || line.equalsIgnoreCase("Steve Jobs")
-				|| line.equalsIgnoreCase("Steve Wozniak")) {
+		if (line.equalsIgnoreCase("apple //e") || line.equalsIgnoreCase("apple ][") || line.equalsIgnoreCase("apple II")
+				|| line.equalsIgnoreCase("Steve Jobs") || line.equalsIgnoreCase("Steve Wozniak")) {
 			try {
 				return new PSystemAppleTwo(source);
 			} catch (IOException e) {

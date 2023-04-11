@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,9 @@
  */
 package net.sourceforge.plantuml.cucadiagram;
 
-import net.sourceforge.plantuml.baraye.ILeaf;
+import net.sourceforge.plantuml.abel.Entity;
+import net.sourceforge.plantuml.stereo.Stereotag;
+import net.sourceforge.plantuml.stereo.Stereotype;
 
 public class HideOrShow2 {
 
@@ -42,7 +44,7 @@ public class HideOrShow2 {
 		return what + " (" + show + ")";
 	}
 
-	private boolean isApplyable(ILeaf leaf) {
+	private boolean isApplyable(Entity leaf) {
 		if (what.startsWith("$"))
 			return isApplyableTag(leaf, what.substring(1));
 
@@ -52,7 +54,7 @@ public class HideOrShow2 {
 		if (isAboutUnlinked())
 			return isApplyableUnlinked(leaf);
 
-		final String fullName = leaf.getCodeGetName();
+		final String fullName = leaf.getName();
 		// System.err.println("fullName=" + fullName);
 		return match(fullName, what);
 	}
@@ -67,7 +69,7 @@ public class HideOrShow2 {
 		return what.equalsIgnoreCase("@unlinked");
 	}
 
-	private boolean isApplyableUnlinked(ILeaf leaf) {
+	private boolean isApplyableUnlinked(Entity leaf) {
 		if (leaf.isAloneAndUnlinked())
 			return true;
 
@@ -85,7 +87,7 @@ public class HideOrShow2 {
 		return false;
 	}
 
-	private boolean isApplyableTag(ILeaf leaf, String pattern) {
+	private boolean isApplyableTag(Entity leaf, String pattern) {
 		for (Stereotag tag : leaf.stereotags())
 			if (match(tag.getName(), pattern))
 				return true;
@@ -110,7 +112,7 @@ public class HideOrShow2 {
 		this.show = show;
 	}
 
-	public boolean apply(boolean hidden, ILeaf leaf) {
+	public boolean apply(boolean hidden, Entity leaf) {
 		if (isApplyable(leaf))
 			return !show;
 

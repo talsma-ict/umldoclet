@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,10 +30,11 @@
  */
 package net.sourceforge.plantuml.style;
 
-import net.sourceforge.plantuml.cucadiagram.Stereostyles;
-import net.sourceforge.plantuml.cucadiagram.Stereotype;
+import net.sourceforge.plantuml.stereo.Stereostyles;
+import net.sourceforge.plantuml.stereo.Stereotype;
 
 public interface StyleSignature {
+    // ::remove file when __HAXE__
 
 	public Style getMergedStyle(StyleBuilder styleBuilder);
 

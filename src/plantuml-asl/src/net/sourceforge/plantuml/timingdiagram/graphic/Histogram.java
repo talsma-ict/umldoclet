@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -36,30 +36,30 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.awt.geom.XPoint2D;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.AbstractTextBlock;
-import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.SymbolContext;
-import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.graphic.UDrawable;
-import net.sourceforge.plantuml.graphic.color.Colors;
+import net.sourceforge.plantuml.klimt.Fashion;
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.Colors;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.FontConfiguration;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.geom.XPoint2D;
+import net.sourceforge.plantuml.klimt.shape.AbstractTextBlock;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
+import net.sourceforge.plantuml.klimt.shape.UDrawable;
+import net.sourceforge.plantuml.klimt.shape.ULine;
+import net.sourceforge.plantuml.klimt.shape.URectangle;
+import net.sourceforge.plantuml.style.ISkinParam;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.timingdiagram.ChangeState;
 import net.sourceforge.plantuml.timingdiagram.TimeConstraint;
 import net.sourceforge.plantuml.timingdiagram.TimeTick;
 import net.sourceforge.plantuml.timingdiagram.TimingRuler;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.ULine;
-import net.sourceforge.plantuml.ugraphic.URectangle;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class Histogram implements PDrawing {
 
@@ -191,11 +191,11 @@ public class Histogram implements PDrawing {
 		return style.getStroke();
 	}
 
-	private SymbolContext getContext() {
+	private Fashion getContext() {
 		final HColor lineColor = style.value(PName.LineColor).asColor(skinParam.getIHtmlColorSet());
 		final HColor backgroundColor = style.value(PName.BackGroundColor).asColor(skinParam.getIHtmlColorSet());
 
-		return new SymbolContext(backgroundColor, lineColor).withStroke(getStroke());
+		return new Fashion(backgroundColor, lineColor).withStroke(getStroke());
 	}
 
 	public TextBlock getPart1(final double fullAvailableWidth) {
@@ -313,22 +313,22 @@ public class Histogram implements PDrawing {
 		final double minY = Math.min(pt1.getY(), pt2.getY());
 		final double maxY = Math.max(pt1.getY(), pt2.getY());
 		final XPoint2D pt = new XPoint2D(pt1.getX(), minY);
-		ug = ug.apply(new UTranslate(pt));
-		ug.draw(new URectangle(len, maxY - minY));
+		ug = ug.apply(UTranslate.point(pt));
+		ug.draw(URectangle.build(len, maxY - minY));
 		for (double x = 0; x < len; x += 5)
 			ug.apply(UTranslate.dx(x)).draw(ULine.vline(maxY - minY));
 
 	}
 
 	private void drawHLine(UGraphic ug, final XPoint2D pt, final double len) {
-		ug.apply(new UTranslate(pt)).draw(ULine.hline(len));
+		ug.apply(UTranslate.point(pt)).draw(ULine.hline(len));
 	}
 
 	private void drawVlines(UGraphic ug) {
 		if (initialState != null) {
 			final XPoint2D before = getInitialPoint();
 			final XPoint2D current = getPoints(0)[0];
-			ug.apply(new UTranslate(current)).draw(ULine.vline(before.getY() - current.getY()));
+			ug.apply(UTranslate.point(current)).draw(ULine.vline(before.getY() - current.getY()));
 		}
 		for (int i = 1; i < changes.size(); i++) {
 			if (changes.get(i - 1).isCompletelyHidden() || changes.get(i).isCompletelyHidden())
@@ -349,7 +349,7 @@ public class Histogram implements PDrawing {
 
 			final TextBlock label = getTextBlock(comment);
 			final XDimension2D dim = label.calculateDimension(ug.getStringBounder());
-			label.drawU(ug.apply(new UTranslate(ptLabel).compose(new UTranslate(2, -dim.getHeight()))));
+			label.drawU(ug.apply(UTranslate.point(ptLabel).compose(new UTranslate(2, -dim.getHeight()))));
 		}
 	}
 
@@ -373,7 +373,13 @@ public class Histogram implements PDrawing {
 	}
 
 	public double getFullHeight(StringBounder stringBounder) {
-		return getHeightForConstraints(stringBounder) + stepHeight() * (allStates.size() - 1) + getBottomMargin();
+		double height = getHeightForConstraints(stringBounder);
+
+		if (allStates.size() > 0)
+			height += stepHeight() * (allStates.size() - 1);
+
+		height += getBottomMargin();
+		return height;
 	}
 
 	private double getBottomMargin() {

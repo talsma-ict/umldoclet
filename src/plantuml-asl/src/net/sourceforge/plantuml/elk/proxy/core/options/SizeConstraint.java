@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -35,11 +35,10 @@ import net.sourceforge.plantuml.elk.proxy.Reflect;
 
 public enum SizeConstraint implements ElkObjectProxy {
 	NODE_LABELS;
-	
+
 	@Override
 	public Enum getTrueObject() {
 		return Reflect.getEnum("org.eclipse.elk.core.options.SizeConstraint", name());
 	}
-
 
 }

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,18 +33,19 @@ package net.sourceforge.plantuml.html;
 import java.io.PrintWriter;
 
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.baraye.IEntity;
-import net.sourceforge.plantuml.cucadiagram.LeafType;
-import net.sourceforge.plantuml.cucadiagram.Link;
-import net.sourceforge.plantuml.cucadiagram.LinkDecor;
+import net.sourceforge.plantuml.abel.Entity;
+import net.sourceforge.plantuml.abel.LeafType;
+import net.sourceforge.plantuml.abel.Link;
+import net.sourceforge.plantuml.decoration.LinkDecor;
 
 public final class LinkHtmlPrinter {
+    // ::remove folder when __HAXE__
 
 	private final Link link;
 	// private final Entity entity;
 	private final boolean chiral;
 
-	public LinkHtmlPrinter(Link link, IEntity entity) {
+	public LinkHtmlPrinter(Link link, Entity entity) {
 		this.link = link;
 		if (link.getEntity1() == entity) {
 			this.chiral = false;
@@ -60,9 +61,9 @@ public final class LinkHtmlPrinter {
 		final String ent2h;
 		if (chiral) {
 			ent1h = htmlLink(link.getEntity1());
-			ent2h = "<i>" + StringUtils.unicodeForHtml(link.getEntity2().getCodeGetName()) + "</i>";
+			ent2h = "<i>" + StringUtils.unicodeForHtml(link.getEntity2().getName()) + "</i>";
 		} else {
-			ent1h = "<i>" + StringUtils.unicodeForHtml(link.getEntity1().getCodeGetName()) + "</i>";
+			ent1h = "<i>" + StringUtils.unicodeForHtml(link.getEntity1().getName()) + "</i>";
 			ent2h = htmlLink(link.getEntity2());
 		}
 		String label = link.getLabel() == null ? null : StringUtils.unicodeForHtml(link.getLabel());
@@ -160,22 +161,22 @@ public final class LinkHtmlPrinter {
 		return ent1 + " " + decor1 + "-" + decor2 + " " + ent2;
 	}
 
-	static String htmlLink(IEntity ent) {
+	static String htmlLink(Entity ent) {
 		final StringBuilder sb = new StringBuilder();
 		sb.append("<a href=\"");
 		sb.append(urlOf(ent));
 		sb.append("\">");
-		sb.append(StringUtils.unicodeForHtml(ent.getCodeGetName()));
+		sb.append(StringUtils.unicodeForHtml(ent.getName()));
 		sb.append("</a>");
 		return sb.toString();
 	}
 
-	static String urlOf(IEntity ent) {
+	static String urlOf(Entity ent) {
 		if (ent.getLeafType() == LeafType.NOTE) {
 			throw new IllegalArgumentException();
 		}
-		if (ent.getCodeGetName().matches("[-\\w_ .]+")) {
-			return StringUtils.unicodeForHtml(ent.getCodeGetName()) + ".html";
+		if (ent.getName().matches("[-\\w_ .]+")) {
+			return StringUtils.unicodeForHtml(ent.getName()) + ".html";
 		}
 		return StringUtils.unicodeForHtml(ent.getUid()) + ".html";
 	}

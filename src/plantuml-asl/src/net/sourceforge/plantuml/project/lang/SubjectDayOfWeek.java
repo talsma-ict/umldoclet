@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,15 +34,20 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import net.sourceforge.plantuml.command.CommandExecutionResult;
-import net.sourceforge.plantuml.command.regex.IRegex;
-import net.sourceforge.plantuml.command.regex.RegexLeaf;
-import net.sourceforge.plantuml.command.regex.RegexResult;
+import net.sourceforge.plantuml.klimt.color.HColor;
 import net.sourceforge.plantuml.project.Failable;
 import net.sourceforge.plantuml.project.GanttDiagram;
 import net.sourceforge.plantuml.project.time.DayOfWeek;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.regex.IRegex;
+import net.sourceforge.plantuml.regex.RegexLeaf;
+import net.sourceforge.plantuml.regex.RegexResult;
 
 public class SubjectDayOfWeek implements Subject {
+
+	public static final Subject ME = new SubjectDayOfWeek();
+
+	private SubjectDayOfWeek() {
+	}
 
 	public IRegex toRegex() {
 		return new RegexLeaf("SUBJECT", "(" + DayOfWeek.getRegexString() + ")");
@@ -59,7 +64,7 @@ public class SubjectDayOfWeek implements Subject {
 
 	class AreOpen extends SentenceSimple {
 		public AreOpen() {
-			super(SubjectDayOfWeek.this, Verbs.are(), new ComplementOpen());
+			super(SubjectDayOfWeek.this, Verbs.are, new ComplementOpen());
 		}
 
 		@Override
@@ -73,7 +78,7 @@ public class SubjectDayOfWeek implements Subject {
 	class AreClose extends SentenceSimple {
 
 		public AreClose() {
-			super(SubjectDayOfWeek.this, Verbs.are(), new ComplementClose());
+			super(SubjectDayOfWeek.this, Verbs.are, new ComplementClose());
 		}
 
 		@Override
@@ -88,7 +93,7 @@ public class SubjectDayOfWeek implements Subject {
 	class InColor extends SentenceSimple {
 
 		public InColor() {
-			super(SubjectDayOfWeek.this, Verbs.isOrAre(), new ComplementInColors2());
+			super(SubjectDayOfWeek.this, Verbs.isOrAre, new ComplementInColors2());
 		}
 
 		@Override

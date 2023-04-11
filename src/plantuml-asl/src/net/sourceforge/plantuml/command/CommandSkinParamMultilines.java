@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,21 +32,24 @@ package net.sourceforge.plantuml.command;
 
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.TitledDiagram;
-import net.sourceforge.plantuml.command.regex.Matcher2;
-import net.sourceforge.plantuml.command.regex.MyPattern;
+import net.sourceforge.plantuml.regex.Matcher2;
+import net.sourceforge.plantuml.regex.MyPattern;
+import net.sourceforge.plantuml.utils.BlocLines;
 
 public class CommandSkinParamMultilines extends CommandMultilinesBracket<TitledDiagram> {
 
-	public CommandSkinParamMultilines() {
+	public static final CommandSkinParamMultilines ME = new CommandSkinParamMultilines();
+
+	private CommandSkinParamMultilines() {
 		super("^skinparam[%s]*(?:[%s]+([\\w.]*(?:\\<\\<.*\\>\\>)?[\\w.]*))?[%s]*\\{$");
 	}
 
 	@Override
 	protected boolean isLineConsistent(String line, int level) {
 		line = StringUtils.trin(line);
-		if (hasStartingQuote(line)) {
+		if (hasStartingQuote(line))
 			return true;
-		}
+
 		return SkinLoader.p1.matcher(line).matches();
 	}
 
@@ -59,9 +62,9 @@ public class CommandSkinParamMultilines extends CommandMultilinesBracket<TitledD
 		final SkinLoader skinLoader = new SkinLoader(diagram);
 
 		final Matcher2 mStart = getStartingPattern().matcher(lines.getFirst().getTrimmed().getString());
-		if (mStart.find() == false) {
+		if (mStart.find() == false)
 			throw new IllegalStateException();
-		}
+
 		final String group1 = mStart.group(1);
 
 		return skinLoader.execute(lines, group1);

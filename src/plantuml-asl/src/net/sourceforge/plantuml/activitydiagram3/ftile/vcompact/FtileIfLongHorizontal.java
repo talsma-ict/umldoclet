@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -54,18 +54,18 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.MergeStrategy;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Snake;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileDiamondInside2;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.awt.geom.XPoint2D;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.Rainbow;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.decoration.Rainbow;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.FontConfiguration;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.geom.XPoint2D;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
 import net.sourceforge.plantuml.svek.ConditionStyle;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 class FtileIfLongHorizontal extends AbstractFtile {
 
@@ -98,9 +98,7 @@ class FtileIfLongHorizontal extends AbstractFtile {
 	}
 
 	private static List<Ftile> alignDiamonds(List<Ftile> diamonds, StringBounder stringBounder) {
-		double maxOutY = 0;
-		for (Ftile diamond : diamonds)
-			maxOutY = Math.max(maxOutY, diamond.calculateDimension(stringBounder).getOutY());
+		final double maxOutY = getMaxOutY(diamonds, stringBounder);
 
 		final List<Ftile> result = new ArrayList<>();
 		for (int i = 0; i < diamonds.size(); i++) {
@@ -111,6 +109,13 @@ class FtileIfLongHorizontal extends AbstractFtile {
 			result.add(diamond);
 		}
 		return result;
+	}
+
+	private static double getMaxOutY(List<Ftile> diamonds, StringBounder stringBounder) {
+		double maxOutY = 0;
+		for (Ftile diamond : diamonds)
+			maxOutY = Math.max(maxOutY, diamond.calculateDimension(stringBounder).getOutY());
+		return maxOutY;
 	}
 
 	public Set<Swimlane> getSwimlanes() {
@@ -503,9 +508,9 @@ class FtileIfLongHorizontal extends AbstractFtile {
 			if (leftOut == null)
 				return new double[] { Double.NaN, Double.NaN };
 
-			if (current == -1) 
+			if (current == -1)
 				throw new IllegalStateException();
-			
+
 			final int first = getFirstSwimlane(stringBounder, allTiles, allSwimlanes);
 			final int last = getLastSwimlane(stringBounder, allTiles, allSwimlanes);
 			if (current < first || current > last)
@@ -655,14 +660,17 @@ class FtileIfLongHorizontal extends AbstractFtile {
 	}
 
 	private FtileGeometry calculateDimensionInternal(StringBounder stringBounder) {
+
+		final double maxOutY = getMaxOutY(diamonds, stringBounder);
+
 		XDimension2D result = new XDimension2D(0, 0);
-		for (Ftile couple : couples) 
+		for (Ftile couple : couples)
 			result = result.mergeLR(couple.calculateDimension(stringBounder));
-		
+
 		XDimension2D dimTile2 = tile2.calculateDimension(stringBounder);
 		dimTile2 = dimTile2.delta(0, getDiamondsHeight(stringBounder) / 2);
 		result = result.mergeLR(dimTile2);
-		result = result.delta(xSeparation * couples.size(), 100);
+		result = result.delta(xSeparation * couples.size(), Math.max(100, maxOutY));
 
 		return new FtileGeometry(result, result.getWidth() / 2, 0);
 	}

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -36,11 +36,12 @@ import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.SURL;
 
 public class Version {
+    // ::remove folder when __HAXE__
 
 	private static final int MAJOR_SEPARATOR = 1000000;
 
 	public static int version() {
-		return 1202214;
+		return 1202305;
 	}
 
 	public static int versionPatched() {
@@ -89,7 +90,7 @@ public class Version {
 	}
 
 	public static long compileTime() {
-		return 1670351053526L;
+		return 1679680470757L;
 	}
 
 	public static String compileTimeString() {
@@ -99,6 +100,7 @@ public class Version {
 		return new Date(Version.compileTime()).toString();
 	}
 
+	// ::comment when __CORE__
 	public static String getJarPath() {
 		try {
 			final ClassLoader loader = Version.class.getClassLoader();
@@ -117,5 +119,6 @@ public class Version {
 			return t.toString();
 		}
 	}
+	// ::done
 
 }

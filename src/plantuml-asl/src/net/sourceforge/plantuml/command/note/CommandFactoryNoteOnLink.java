@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,30 +30,30 @@
  */
 package net.sourceforge.plantuml.command.note;
 
-import net.sourceforge.plantuml.LineLocation;
+import net.atmp.CucaDiagram;
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.UrlBuilder;
-import net.sourceforge.plantuml.UrlMode;
-import net.sourceforge.plantuml.baraye.CucaDiagram;
-import net.sourceforge.plantuml.command.BlocLines;
+import net.sourceforge.plantuml.abel.CucaNote;
+import net.sourceforge.plantuml.abel.Link;
 import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.CommandMultilines2;
 import net.sourceforge.plantuml.command.MultilinesStrategy;
-import net.sourceforge.plantuml.command.Position;
 import net.sourceforge.plantuml.command.SingleLineCommand2;
 import net.sourceforge.plantuml.command.Trim;
-import net.sourceforge.plantuml.command.regex.IRegex;
-import net.sourceforge.plantuml.command.regex.RegexConcat;
-import net.sourceforge.plantuml.command.regex.RegexLeaf;
-import net.sourceforge.plantuml.command.regex.RegexResult;
-import net.sourceforge.plantuml.cucadiagram.CucaNote;
-import net.sourceforge.plantuml.cucadiagram.Link;
-import net.sourceforge.plantuml.graphic.color.ColorParser;
-import net.sourceforge.plantuml.graphic.color.ColorType;
-import net.sourceforge.plantuml.graphic.color.Colors;
-import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
+import net.sourceforge.plantuml.klimt.color.ColorParser;
+import net.sourceforge.plantuml.klimt.color.ColorType;
+import net.sourceforge.plantuml.klimt.color.Colors;
+import net.sourceforge.plantuml.klimt.color.NoSuchColorException;
+import net.sourceforge.plantuml.regex.IRegex;
+import net.sourceforge.plantuml.regex.RegexConcat;
+import net.sourceforge.plantuml.regex.RegexLeaf;
+import net.sourceforge.plantuml.regex.RegexResult;
+import net.sourceforge.plantuml.url.Url;
+import net.sourceforge.plantuml.url.UrlBuilder;
+import net.sourceforge.plantuml.url.UrlMode;
+import net.sourceforge.plantuml.utils.BlocLines;
+import net.sourceforge.plantuml.utils.LineLocation;
+import net.sourceforge.plantuml.utils.Position;
 
 public final class CommandFactoryNoteOnLink implements SingleMultiFactoryCommand<CucaDiagram> {
 
@@ -63,7 +63,7 @@ public final class CommandFactoryNoteOnLink implements SingleMultiFactoryCommand
 				RegexLeaf.spaceOneOrMore(), //
 				new RegexLeaf("POSITION", "(right|left|top|bottom)?"), //
 				RegexLeaf.spaceZeroOrMore(), //
-				new RegexLeaf("o[nf]"), //
+				new RegexLeaf("(on|of)"), //
 				RegexLeaf.spaceOneOrMore(), //
 				new RegexLeaf("link"), //
 				RegexLeaf.spaceZeroOrMore(), //
@@ -80,7 +80,7 @@ public final class CommandFactoryNoteOnLink implements SingleMultiFactoryCommand
 				RegexLeaf.spaceOneOrMore(), //
 				new RegexLeaf("POSITION", "(right|left|top|bottom)?"), //
 				RegexLeaf.spaceZeroOrMore(), //
-				new RegexLeaf("o[nf]"), //
+				new RegexLeaf("(on|of)"), //
 				RegexLeaf.spaceOneOrMore(), //
 				new RegexLeaf("link"), //
 				RegexLeaf.spaceZeroOrMore(), //
@@ -92,7 +92,8 @@ public final class CommandFactoryNoteOnLink implements SingleMultiFactoryCommand
 	}
 
 	public Command<CucaDiagram> createMultiLine(boolean withBracket) {
-		return new CommandMultilines2<CucaDiagram>(getRegexConcatMultiLine(), MultilinesStrategy.KEEP_STARTING_QUOTE, Trim.BOTH) {
+		return new CommandMultilines2<CucaDiagram>(getRegexConcatMultiLine(), MultilinesStrategy.KEEP_STARTING_QUOTE,
+				Trim.BOTH) {
 
 			@Override
 			public String getPatternEnd() {

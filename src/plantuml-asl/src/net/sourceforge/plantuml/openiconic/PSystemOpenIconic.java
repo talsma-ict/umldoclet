@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,11 +34,12 @@ import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.PlainDiagram;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.UmlSource;
-import net.sourceforge.plantuml.graphic.UDrawable;
+import net.sourceforge.plantuml.klimt.color.HColors;
+import net.sourceforge.plantuml.klimt.shape.UDrawable;
 import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 public class PSystemOpenIconic extends PlainDiagram {
+	// ::remove file when __CORE__
 
 	private final String iconName;
 	private final double factor;
@@ -59,7 +60,7 @@ public class PSystemOpenIconic extends PlainDiagram {
 		// UGraphic2 ug = fileFormat.createUGraphic(dim);
 		// ug = (UGraphic2) ug.apply(new UTranslate(10, 10));
 		// // ug = ug.apply(UChangeColor.nnn(HtmlColorUtils.BLACK));
-		// // ug.draw(new URectangle(7, 6));
+		// // ug.draw(URectangle.build(7, 6));
 		// icon.asTextBlock(HtmlColorUtils.BLACK, factor).drawU(ug);
 		// ug.writeImageTOBEMOVED(os, null, 96);
 		// return new ImageDataSimple(dim);

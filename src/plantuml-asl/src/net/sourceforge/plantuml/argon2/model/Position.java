@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -37,16 +37,15 @@ package net.sourceforge.plantuml.argon2.model;
 
 public class Position {
 
-    public int pass;
-    public int lane;
-    public int slice;
-    public int index;
+	public int pass;
+	public int lane;
+	public int slice;
+	public int index;
 
-    public Position(int pass, int lane, int slice, int index) {
-        this.pass = pass;
-        this.lane = lane;
-        this.slice = slice;
-        this.index = index;
-    }
+	public Position(int pass, int lane, int slice, int index) {
+		this.pass = pass;
+		this.lane = lane;
+		this.slice = slice;
+		this.index = index;
+	}
 }
-

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -31,7 +31,7 @@
 
 package smetana.core;
 
-public class CStarStar<O> extends UnsupportedC {
+final public class CStarStar<O> extends UnsupportedC {
 
 	private final ACCESS<O> access;
 

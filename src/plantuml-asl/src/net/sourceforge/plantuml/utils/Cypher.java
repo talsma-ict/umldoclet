@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -48,6 +48,7 @@ import java.util.regex.Pattern;
 import net.sourceforge.plantuml.log.Logme;
 
 public class Cypher {
+	// ::remove file when __HAXE__
 
 	final private static Pattern p = Pattern.compile("[\\p{L}\\p{N}]+");
 

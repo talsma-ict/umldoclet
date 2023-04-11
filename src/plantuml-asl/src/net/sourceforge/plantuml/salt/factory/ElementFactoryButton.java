@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,12 +30,12 @@
  */
 package net.sourceforge.plantuml.salt.factory;
 
-import net.sourceforge.plantuml.ISkinSimple;
+import net.sourceforge.plantuml.klimt.font.UFont;
 import net.sourceforge.plantuml.salt.DataSource;
 import net.sourceforge.plantuml.salt.Terminated;
 import net.sourceforge.plantuml.salt.element.Element;
 import net.sourceforge.plantuml.salt.element.ElementButton;
-import net.sourceforge.plantuml.ugraphic.UFont;
+import net.sourceforge.plantuml.style.ISkinSimple;
 
 public class ElementFactoryButton implements ElementFactory {
 

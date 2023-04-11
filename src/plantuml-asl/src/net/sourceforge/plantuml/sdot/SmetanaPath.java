@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -36,28 +36,29 @@ import h.ST_bezier;
 import h.ST_pointf;
 import h.ST_splines;
 import h.ST_textlabel_t;
-import net.sourceforge.plantuml.LineParam;
-import net.sourceforge.plantuml.awt.geom.XPoint2D;
+import net.sourceforge.plantuml.abel.Link;
 import net.sourceforge.plantuml.cucadiagram.ICucaDiagram;
-import net.sourceforge.plantuml.cucadiagram.Link;
-import net.sourceforge.plantuml.cucadiagram.LinkType;
-import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.graphic.UDrawable;
-import net.sourceforge.plantuml.graphic.color.ColorType;
-import net.sourceforge.plantuml.posimo.DotPath;
-import net.sourceforge.plantuml.skin.rose.Rose;
+import net.sourceforge.plantuml.decoration.LinkType;
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.ColorType;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.geom.RectangleArea;
+import net.sourceforge.plantuml.klimt.geom.XPoint2D;
+import net.sourceforge.plantuml.klimt.shape.DotPath;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
+import net.sourceforge.plantuml.klimt.shape.UDrawable;
+import net.sourceforge.plantuml.klimt.shape.URectangle;
+import net.sourceforge.plantuml.skin.LineParam;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
+import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleSignatureBasic;
+import net.sourceforge.plantuml.svek.Bibliotekon;
+import net.sourceforge.plantuml.svek.Cluster;
 import net.sourceforge.plantuml.svek.extremity.ExtremityFactory;
-import net.sourceforge.plantuml.ugraphic.UEllipse;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.URectangle;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
-import smetana.core.Macro;
+import net.sourceforge.plantuml.url.Url;
 
 public class SmetanaPath implements UDrawable {
 
@@ -68,10 +69,11 @@ public class SmetanaPath implements UDrawable {
 	private final TextBlock label;
 	private final TextBlock headLabel;
 	private final TextBlock tailLabel;
-	private final Rose rose = new Rose();
+	private final Bibliotekon bibliotekon;
 
 	public SmetanaPath(Link link, ST_Agedge_s edge, YMirror ymirror, ICucaDiagram diagram, TextBlock label,
-			TextBlock tailLabel, TextBlock headLabel) {
+			TextBlock tailLabel, TextBlock headLabel, Bibliotekon bibliotekon) {
+		this.bibliotekon = bibliotekon;
 		this.link = link;
 		this.edge = edge;
 		this.ymirror = ymirror;
@@ -86,10 +88,7 @@ public class SmetanaPath implements UDrawable {
 		if (link.isHidden())
 			return;
 
-		HColor color = StyleSignatureBasic
-				.of(SName.root, SName.element, diagram.getUmlDiagramType().getStyleName(), SName.arrow)
-				.getMergedStyle(diagram.getSkinParam().getCurrentStyleBuilder()).value(PName.LineColor)
-				.asColor(diagram.getSkinParam().getIHtmlColorSet());
+		HColor color = getStyle().value(PName.LineColor).asColor(diagram.getSkinParam().getIHtmlColorSet());
 
 		if (this.link.getColors() != null) {
 			final HColor newColor = this.link.getColors().getColor(ColorType.ARROW, ColorType.LINE);
@@ -98,19 +97,42 @@ public class SmetanaPath implements UDrawable {
 		} else if (this.link.getSpecificColor() != null)
 			color = this.link.getSpecificColor();
 
-		DotPath dotPath = getDotPath(edge);
-		if (ymirror != null && dotPath != null)
-			dotPath = ymirror.getMirrored(dotPath);
+		DotPath dotPath = getDotPathInternal();
 
 		if (dotPath != null) {
+			if (ymirror != null)
+				dotPath = ymirror.getMirrored(dotPath);
+
+			RectangleArea rectangleArea1 = null;
+			RectangleArea rectangleArea2 = null;
+			if (link.getEntity1().isGroup()) {
+				final Cluster cluster1 = bibliotekon.getCluster(link.getEntity1());
+				rectangleArea1 = cluster1.getRectangleArea();
+
+			}
+			if (link.getEntity2().isGroup()) {
+				final Cluster cluster2 = bibliotekon.getCluster(link.getEntity2());
+				rectangleArea2 = cluster2.getRectangleArea();
+			}
+
+			dotPath = dotPath.simulateCompound(rectangleArea2, rectangleArea1);
+
 			final LinkType linkType = link.getType();
 			UStroke stroke = linkType.getStroke3(diagram.getSkinParam().getThickness(LineParam.arrow, null));
 			if (link.getColors() != null && link.getColors().getSpecificLineStroke() != null)
 				stroke = link.getColors().getSpecificLineStroke();
 
+			final Url url = link.getUrl();
+			if (url != null)
+				ug.startUrl(url);
+
 			ug.apply(stroke).apply(color).draw(dotPath);
-			printExtremityAtStart(ug.apply(color));
-			printExtremityAtEnd(ug.apply(color));
+			printExtremityAtStart(dotPath, ug.apply(color));
+			printExtremityAtEnd(dotPath, ug.apply(color));
+
+			if (url != null)
+				ug.closeUrl();
+
 		}
 		if (getLabelRectangleTranslate("label") != null)
 			label.drawU(ug.apply(getLabelRectangleTranslate("label")));
@@ -125,20 +147,39 @@ public class SmetanaPath implements UDrawable {
 
 	}
 
-	private void printExtremityAtStart(UGraphic ug) {
+	private Style getStyle() {
+		return StyleSignatureBasic
+				.of(SName.root, SName.element, diagram.getUmlDiagramType().getStyleName(), SName.arrow)
+				.getMergedStyle(diagram.getSkinParam().getCurrentStyleBuilder());
+	}
+
+	public XPoint2D getStartPoint() {
+		final DotPath dotPath = getDotPathInternal();
+		XPoint2D pt = dotPath.getStartPoint();
+		if (ymirror != null)
+			pt = ymirror.getMirrored(pt);
+
+		return pt;
+	}
+
+	public XPoint2D getEndPoint() {
+		final DotPath dotPath = getDotPathInternal();
+		XPoint2D pt = dotPath.getEndPoint();
+		if (ymirror != null)
+			pt = ymirror.getMirrored(pt);
+
+		return pt;
+	}
+
+	private void printExtremityAtStart(DotPath dotPath, UGraphic ug) {
 		final ExtremityFactory extremityFactory2 = link.getType().getDecor2()
 				.getExtremityFactoryComplete(diagram.getSkinParam().getBackgroundColor());
 		if (extremityFactory2 == null)
 			return;
 
-		final ST_splines splines = getSplines(edge);
-		DotPath s = getDotPath(splines);
-		XPoint2D p0 = s.getStartPoint();
-		double startAngle = s.getStartAngle();
-		if (ymirror != null) {
-			p0 = ymirror.getMirrored(p0);
-			startAngle = -startAngle + Math.PI;
-		}
+		final XPoint2D p0 = dotPath.getStartPoint();
+		final double startAngle = dotPath.getStartAngle() + Math.PI;
+
 		try {
 			final UDrawable extremity2 = extremityFactory2.createUDrawable(p0, startAngle, null);
 			if (extremity2 != null)
@@ -150,20 +191,15 @@ public class SmetanaPath implements UDrawable {
 		}
 	}
 
-	private void printExtremityAtEnd(UGraphic ug) {
+	private void printExtremityAtEnd(DotPath dotPath, UGraphic ug) {
 		final ExtremityFactory extremityFactory1 = link.getType().getDecor1()
 				.getExtremityFactoryComplete(diagram.getSkinParam().getBackgroundColor());
 		if (extremityFactory1 == null)
 			return;
 
-		final ST_splines splines = getSplines(edge);
-		DotPath s = getDotPath(splines);
-		XPoint2D p0 = s.getEndPoint();
-		double endAngle = s.getEndAngle();
-		if (ymirror != null) {
-			p0 = ymirror.getMirrored(p0);
-			endAngle = -endAngle;
-		}
+		final XPoint2D p0 = dotPath.getEndPoint();
+		final double endAngle = dotPath.getEndAngle();
+
 		try {
 			final UDrawable extremity1 = extremityFactory1.createUDrawable(p0, endAngle, null);
 			if (extremity1 != null)
@@ -175,43 +211,37 @@ public class SmetanaPath implements UDrawable {
 		}
 	}
 
-	private void printDebug(UGraphic ug) {
-		ug = ug.apply(HColors.BLUE).apply(HColors.BLUE.bg());
-		final ST_splines splines = getSplines(edge);
-		final ST_bezier beziers = splines.list.get__(0);
-		for (int i = 0; i < beziers.size; i++) {
-			XPoint2D pt = getPoint(splines, i);
-			if (ymirror != null)
-				pt = ymirror.getMirrored(pt);
-
-			ug.apply(new UTranslate(pt).compose(new UTranslate(-1, -1))).draw(new UEllipse(3, 3));
-		}
-		if (getLabelRectangleTranslate("label") != null && getLabelURectangle() != null) {
-			ug = ug.apply(HColors.BLUE).apply(HColors.none().bg());
-			ug.apply(getLabelRectangleTranslate("label")).draw(getLabelURectangle());
-		}
-
-	}
+//	private void printDebug(UGraphic ug) {
+//		ug = ug.apply(HColors.BLUE).apply(HColors.BLUE.bg());
+//		final ST_splines splines = getSplines(edge);
+//		final ST_bezier beziers = splines.list.get__(0);
+//		for (int i = 0; i < beziers.size; i++) {
+//			XPoint2D pt = getPoint(splines, i);
+//			if (ymirror != null)
+//				pt = ymirror.getMirrored(pt);
+//
+//			ug.apply(UTranslate.point(pt).compose(new UTranslate(-1, -1))).draw(UEllipse.build(3, 3));
+//		}
+//		if (getLabelRectangleTranslate("label") != null && getLabelURectangle() != null) {
+//			ug = ug.apply(HColors.BLUE).apply(HColors.none().bg());
+//			ug.apply(getLabelRectangleTranslate("label")).draw(getLabelURectangle());
+//		}
+//
+//	}
 
 	private URectangle getLabelURectangle() {
-		final ST_Agedgeinfo_t data = (ST_Agedgeinfo_t) Macro.AGDATA(edge).castTo(ST_Agedgeinfo_t.class);
+		final ST_Agedgeinfo_t data = (ST_Agedgeinfo_t) edge.data.castTo(ST_Agedgeinfo_t.class);
 		ST_textlabel_t label = (ST_textlabel_t) data.label;
 		if (label == null)
 			return null;
 
-		final ST_pointf dimen = (ST_pointf) label.dimen;
-		final ST_pointf space = (ST_pointf) label.space;
-		final ST_pointf pos = (ST_pointf) label.pos;
-		final double x = pos.x;
-		final double y = pos.y;
-		final double width = dimen.x;
-		final double height = dimen.y;
-		return new URectangle(width, height);
+		final BoxInfo boxInfo = BoxInfo.fromTextlabel(label);
+		return URectangle.build(boxInfo.getDimension());
 	}
 
 	private UTranslate getLabelRectangleTranslate(String fieldName) {
 		// final String fieldName = "label";
-		final ST_Agedgeinfo_t data = (ST_Agedgeinfo_t) Macro.AGDATA(edge);
+		final ST_Agedgeinfo_t data = (ST_Agedgeinfo_t) edge.data;
 		ST_textlabel_t label = null;
 		if (fieldName.equals("label"))
 			label = data.label;
@@ -223,51 +253,39 @@ public class SmetanaPath implements UDrawable {
 		if (label == null)
 			return null;
 
-		final ST_pointf dimen = (ST_pointf) label.dimen;
-		final ST_pointf space = (ST_pointf) label.space;
-		final ST_pointf pos = (ST_pointf) label.pos;
-		final double x = pos.x;
-		final double y = pos.y;
-		final double width = dimen.x;
-		final double height = dimen.y;
+		final BoxInfo boxInfo = BoxInfo.fromTextlabel(label);
 
 		if (ymirror == null)
-			return new UTranslate(x - width / 2, y - height / 2);
+			return new UTranslate(boxInfo.getLowerLeft().getX(), boxInfo.getUpperRight().getY());
 
-		return ymirror.getMirrored(new UTranslate(x - width / 2, y + height / 2));
+		return ymirror.getMirrored(UTranslate.point(boxInfo.getLowerLeft()));
 	}
 
-	public DotPath getDotPath(ST_Agedge_s e) {
-		final ST_splines splines = getSplines(e);
-		return getDotPath(splines);
-	}
+	private DotPath dotPath;
 
-	private ST_splines getSplines(ST_Agedge_s e) {
-		final ST_Agedgeinfo_t data = (ST_Agedgeinfo_t) Macro.AGDATA(e);
-		final ST_splines splines = (ST_splines) data.spl;
-		return splines;
-	}
+	private DotPath getDotPathInternal() {
+		if (dotPath != null)
+			return dotPath;
 
-	private DotPath getDotPath(ST_splines splines) {
-		if (splines == null) {
-			System.err.println("ERROR, no splines for getDotPath");
-			return null;
-		}
-		DotPath result = new DotPath();
+		final ST_Agedgeinfo_t data = (ST_Agedgeinfo_t) edge.data;
+		final ST_splines splines = data.spl;
+
+		dotPath = new DotPath();
 		final ST_bezier beziers = (ST_bezier) splines.list.get__(0);
 		final XPoint2D pt1 = getPoint(splines, 0);
 		final XPoint2D pt2 = getPoint(splines, 1);
 		final XPoint2D pt3 = getPoint(splines, 2);
 		final XPoint2D pt4 = getPoint(splines, 3);
-		result = result.addCurve(pt1, pt2, pt3, pt4);
+		dotPath = dotPath.addCurve(pt1, pt2, pt3, pt4);
 		final int n = beziers.size;
 		for (int i = 4; i < n; i += 3) {
 			final XPoint2D ppt2 = getPoint(splines, i);
 			final XPoint2D ppt3 = getPoint(splines, i + 1);
 			final XPoint2D ppt4 = getPoint(splines, i + 2);
-			result = result.addCurve(ppt2, ppt3, ppt4);
+			dotPath = dotPath.addCurve(ppt2, ppt3, ppt4);
 		}
-		return result;
+
+		return dotPath;
 	}
 
 	private XPoint2D getPoint(ST_splines splines, int i) {

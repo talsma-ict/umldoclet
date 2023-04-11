@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -31,34 +31,35 @@
  */
 package net.sourceforge.plantuml.classdiagram.command;
 
-import net.sourceforge.plantuml.Direction;
-import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.UmlDiagramType;
-import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.UrlBuilder;
-import net.sourceforge.plantuml.UrlMode;
-import net.sourceforge.plantuml.baraye.IEntity;
+import net.sourceforge.plantuml.abel.Entity;
+import net.sourceforge.plantuml.abel.LeafType;
+import net.sourceforge.plantuml.abel.Link;
+import net.sourceforge.plantuml.abel.LinkArg;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand2;
-import net.sourceforge.plantuml.command.regex.RegexConcat;
-import net.sourceforge.plantuml.command.regex.RegexLeaf;
-import net.sourceforge.plantuml.command.regex.RegexOptional;
-import net.sourceforge.plantuml.command.regex.RegexOr;
-import net.sourceforge.plantuml.command.regex.RegexResult;
-import net.sourceforge.plantuml.cucadiagram.Code;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.cucadiagram.Ident;
-import net.sourceforge.plantuml.cucadiagram.Link;
-import net.sourceforge.plantuml.cucadiagram.LinkArg;
-import net.sourceforge.plantuml.cucadiagram.LinkDecor;
-import net.sourceforge.plantuml.cucadiagram.LinkType;
+import net.sourceforge.plantuml.decoration.LinkDecor;
+import net.sourceforge.plantuml.decoration.LinkType;
 import net.sourceforge.plantuml.descdiagram.command.CommandLinkElement;
 import net.sourceforge.plantuml.descdiagram.command.Labels;
-import net.sourceforge.plantuml.graphic.color.ColorParser;
-import net.sourceforge.plantuml.graphic.color.ColorType;
+import net.sourceforge.plantuml.klimt.color.ColorParser;
+import net.sourceforge.plantuml.klimt.color.ColorType;
+import net.sourceforge.plantuml.klimt.color.NoSuchColorException;
+import net.sourceforge.plantuml.klimt.creole.Display;
 import net.sourceforge.plantuml.objectdiagram.AbstractClassOrObjectDiagram;
-import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
+import net.sourceforge.plantuml.plasma.Quark;
+import net.sourceforge.plantuml.regex.IRegex;
+import net.sourceforge.plantuml.regex.RegexConcat;
+import net.sourceforge.plantuml.regex.RegexLeaf;
+import net.sourceforge.plantuml.regex.RegexOptional;
+import net.sourceforge.plantuml.regex.RegexOr;
+import net.sourceforge.plantuml.regex.RegexResult;
+import net.sourceforge.plantuml.skin.UmlDiagramType;
+import net.sourceforge.plantuml.url.Url;
+import net.sourceforge.plantuml.url.UrlBuilder;
+import net.sourceforge.plantuml.url.UrlMode;
+import net.sourceforge.plantuml.utils.Direction;
+import net.sourceforge.plantuml.utils.LineLocation;
 
 final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrObjectDiagram> {
 
@@ -96,16 +97,16 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 
 				new RegexConcat(
 						//
-						new RegexLeaf("ARROW_HEAD1",
-								"((?<=[%s])+[ox]|[)#\\[<*+^}]|\\<_|\\<\\|[\\:\\|]|[<\\[]\\||\\}o|\\}\\||\\|o|\\|\\|)?"), //
+						optionalHead("ARROW_HEAD1", "(?<=[%s])+[ox]", "[)#\\[<*+^}]_?", "\\<_?\\|[\\:\\|]", "[<\\[]\\|",
+								"\\}o", "\\}\\|", "\\|o", "\\|\\|"),
 						new RegexLeaf("ARROW_BODY1", "([-=.]+)"), //
 						new RegexLeaf("ARROW_STYLE1", "(?:\\[(" + CommandLinkElement.LINE_STYLE + ")\\])?"), //
 						new RegexLeaf("ARROW_DIRECTION", "(left|right|up|down|le?|ri?|up?|do?)?"), //
 						new RegexOptional(new RegexLeaf("INSIDE", "(0|\\(0\\)|\\(0|0\\))(?=[-=.~])")), //
 						new RegexLeaf("ARROW_STYLE2", "(?:\\[(" + CommandLinkElement.LINE_STYLE + ")\\])?"), //
 						new RegexLeaf("ARROW_BODY2", "([-=.]*)"), //
-						new RegexLeaf("ARROW_HEAD2",
-								"([ox][%s]+|:\\>\\>?|_\\>|[(#\\]>*+^\\{]|[\\|\\:]\\|\\>|\\|[>\\]]|o\\{|\\|\\{|o\\||\\|\\|)?")), //
+						optionalHead("ARROW_HEAD2", "[ox][%s]+", ":\\>\\>?", "_?\\>", "[(#\\]*+^\\{]", "[\\|:]\\|\\>",
+								"\\|[>\\]]", "o\\{", "\\|\\{", "o\\|", "\\|\\|")), //
 
 				RegexLeaf.spaceZeroOrMore(), //
 
@@ -126,7 +127,7 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 				RegexLeaf.spaceZeroOrMore(), //
 				color().getRegex(), //
 				RegexLeaf.spaceZeroOrMore(), //
-				new RegexLeaf("URL", "(" + UrlBuilder.getRegexp() + ")?"), //
+				UrlBuilder.OPTIONAL, //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexOptional( //
 						new RegexConcat( //
@@ -134,6 +135,18 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 								RegexLeaf.spaceZeroOrMore(), //
 								new RegexLeaf("LABEL_LINK", "(.+)") //
 						)), RegexLeaf.end());
+	}
+
+	private static IRegex optionalHead(String name, String... options) {
+		final StringBuilder sb = new StringBuilder();
+		sb.append("(");
+		for (String s : options) {
+			if (sb.length() > 1)
+				sb.append("|");
+			sb.append(s);
+		}
+		sb.append(")?");
+		return new RegexLeaf(name, sb.toString());
 	}
 
 	private static ColorParser color() {
@@ -151,9 +164,8 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 	@Override
 	protected CommandExecutionResult executeArg(AbstractClassOrObjectDiagram diagram, LineLocation location,
 			RegexResult arg) throws NoSuchColorException {
-
-		final String ent1String = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("ENT1", 0), "\"");
-		final String ent2String = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("ENT2", 0), "\"");
+		String ent1String = diagram.cleanId(arg.get("ENT1", 0));
+		String ent2String = diagram.cleanId(arg.get("ENT2", 0));
 		if (ent1String == null && ent2String == null)
 			return executeArgSpecial3(diagram, arg);
 
@@ -163,61 +175,33 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 		if (ent2String == null)
 			return executeArgSpecial2(diagram, arg);
 
-		Ident ident1 = diagram.buildLeafIdentSpecial2(ent1String);
-		Ident ident2 = diagram.buildLeafIdentSpecial2(ent2String);
-		Ident ident1pure = Ident.empty().add(ent1String, diagram.getNamespaceSeparator());
-		Ident ident2pure = Ident.empty().add(ent2String, diagram.getNamespaceSeparator());
-		Code code1 = diagram.V1972() ? ident1 : diagram.buildCode(ent1String);
-		Code code2 = diagram.V1972() ? ident2 : diagram.buildCode(ent2String);
-		if (isGroupButNotTheCurrentGroup(diagram, code1, ident1)
-				&& isGroupButNotTheCurrentGroup(diagram, code2, ident2)) {
-			return executePackageLink(diagram, arg);
-		}
+//		if (isGroupButNotTheCurrentGroup(diagram, ent1String) && isGroupButNotTheCurrentGroup(diagram, ent2String)) {
+//			return executePackageLink(diagram, arg);
+//		}
 
-		String port1 = diagram.getPortFor(ent1String, ident1);
-		String port2 = diagram.getPortFor(ent2String, ident2);
-
-		if (diagram.V1972()) {
-			if ("::".equals(diagram.getNamespaceSeparator())) {
-				if (removeMemberPartIdentSpecial(diagram, ident1) != null) {
-					port1 = ident1.getLast();
-					ident1 = removeMemberPartIdentSpecial(diagram, ident1);
-					code1 = ident1;
-				}
-				if (removeMemberPartIdentSpecial(diagram, ident2) != null) {
-					port2 = ident2.getLast();
-					ident2 = removeMemberPartIdentSpecial(diagram, ident2);
-					code2 = ident1;
-				}
-			} else {
-				if (removeMemberPartIdent(diagram, ident1) != null) {
-					port1 = ident1.getPortMember();
-					ident1 = removeMemberPartIdent(diagram, ident1);
-					code1 = ident1;
-				}
-				if (removeMemberPartIdent(diagram, ident2) != null) {
-					port2 = ident2.getPortMember();
-					ident2 = removeMemberPartIdent(diagram, ident2);
-					code2 = ident2;
-				}
-			}
-		} else {
-			if (port1 == null && removeMemberPartLegacy1972(diagram, ident1) != null) {
-				port1 = ident1.getPortMember();
-				code1 = removeMemberPartLegacy1972(diagram, ident1);
-				ident1 = ident1.removeMemberPart();
-			}
-			if (port2 == null && removeMemberPartLegacy1972(diagram, ident2) != null) {
-				port2 = ident2.getPortMember();
-				code2 = removeMemberPartLegacy1972(diagram, ident2);
-				ident2 = ident2.removeMemberPart();
-			}
-		}
-
-		final IEntity cl1 = getFoo1(diagram, code1, ident1, ident1pure);
-		final IEntity cl2 = getFoo1(diagram, code2, ident2, ident2pure);
-
+		String port1 = null;
+		String port2 = null;
 		final LinkType linkType = getLinkType(arg);
+		if (ent1String.contains("::") && diagram.firstWithName(ent1String) == null) {
+			port1 = diagram.getPortId(ent1String);
+			ent1String = diagram.removePortId(ent1String);
+		}
+
+		if (ent2String.contains("::") && diagram.firstWithName(ent2String) == null) {
+			port2 = diagram.getPortId(ent2String);
+			ent2String = diagram.removePortId(ent2String);
+		}
+
+		final Quark<Entity> quark1 = diagram.quarkInContext(true, ent1String);
+		final Quark<Entity> quark2 = diagram.quarkInContext(true, ent2String);
+
+		Entity cl1 = quark1.getData();
+		if (cl1 == null)
+			cl1 = diagram.reallyCreateLeaf(quark1, Display.getWithNewlines(quark1.getName()), LeafType.CLASS, null);
+		Entity cl2 = quark2.getData();
+		if (cl2 == null)
+			cl2 = diagram.reallyCreateLeaf(quark2, Display.getWithNewlines(quark2.getName()), LeafType.CLASS, null);
+
 		final Direction dir = getDirection(arg);
 		final int queue;
 		if (dir == Direction.LEFT || dir == Direction.RIGHT)
@@ -235,7 +219,7 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 				.withQuantifier(labels.getFirstLabel(), labels.getSecondLabel())
 				.withDistanceAngle(diagram.getLabeldistance(), diagram.getLabelangle()).withKal(kal1, kal2);
 
-		Link link = new Link(diagram.getIEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(), cl1, cl2,
+		Link link = new Link(diagram.getEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(), cl1, cl2,
 				linkType, linkArg);
 		if (arg.get("URL", 0) != null) {
 			final UrlBuilder urlBuilder = new UrlBuilder(diagram.getSkinParam().getValue("topurl"), UrlMode.STRICT);
@@ -257,79 +241,12 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 		return CommandExecutionResult.ok();
 	}
 
-	private IEntity getFoo1(AbstractClassOrObjectDiagram diagram, Code code, Ident ident, Ident pure) {
-		if (isGroupButNotTheCurrentGroup(diagram, code, ident)) {
-			if (diagram.V1972())
-				return diagram.getGroupVerySmart(ident);
-
-//			final Code tap = ident.toCode(diagram);
-			return diagram.getGroup(code);
-		}
-		if (diagram.V1972()) {
-			final IEntity result = pure.size() == 1 ? diagram.getLeafVerySmart(ident) : diagram.getLeafStrict(ident);
-			if (result != null)
-				return result;
-
-		}
-		return diagram.getOrCreateLeaf(ident, code, null, null);
-	}
-
-	private boolean isGroupButNotTheCurrentGroup(AbstractClassOrObjectDiagram diagram, Code code, Ident ident) {
-		if (diagram.V1972()) {
-			if (diagram.getCurrentGroup().getCodeGetName().equals(code.getName()))
-				return false;
-
-			return diagram.isGroupVerySmart(ident);
-		} else {
-			if (diagram.getCurrentGroup().getCodeGetName().equals(code.getName()))
-				return false;
-
-			return diagram.isGroup(code);
-		}
-	}
-
-	private Ident removeMemberPartIdentSpecial(AbstractClassOrObjectDiagram diagram, Ident ident) {
-		if (diagram.leafExistSmart(ident))
-			return null;
-
-		final Ident before = ident.parent();
-		if (before == null)
-			return null;
-
-		if (diagram.leafExistSmart(before) == false)
-			return null;
-
-		return before;
-	}
-
-	private Ident removeMemberPartIdent(AbstractClassOrObjectDiagram diagram, Ident ident) {
-		if (diagram.leafExistSmart(ident))
-			return null;
-
-		final Ident before = ident.removeMemberPart();
-		if (before == null)
-			return null;
-
-		if (diagram.leafExistSmart(before) == false)
-			return null;
-
-		return before;
-	}
-
-	private Code removeMemberPartLegacy1972(AbstractClassOrObjectDiagram diagram, Ident ident) {
-		if (diagram.leafExist(ident))
-			return null;
-
-		final Ident before = ident.removeMemberPart();
-		if (before == null)
-			return null;
-
-		final Code code = before.toCode(diagram);
-		if (diagram.leafExist(code) == false)
-			return null;
-
-		return code;
-	}
+//	private boolean isGroupButNotTheCurrentGroup(AbstractClassOrObjectDiagram diagram, String code) {
+//		if (diagram.getCurrentGroup().getCodeGetName().equals(code))
+//			return false;
+//
+//		return diagram.isGroup(code);
+//	}
 
 	private void addLink(AbstractClassOrObjectDiagram diagram, Link link, String weight) {
 		diagram.addLink(link);
@@ -357,10 +274,8 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 			throws NoSuchColorException {
 		final String ent1String = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("ENT1", 0), "\"");
 		final String ent2String = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("ENT2", 0), "\"");
-		final IEntity cl1 = diagram.V1972() ? diagram.getGroupVerySmart(diagram.buildLeafIdent(ent1String))
-				: diagram.getGroup(diagram.buildCode(ent1String));
-		final IEntity cl2 = diagram.V1972() ? diagram.getGroupVerySmart(diagram.buildLeafIdent(ent2String))
-				: diagram.getGroup(diagram.buildCode(ent2String));
+		final Entity cl1 = diagram.getGroup(ent1String);
+		final Entity cl2 = diagram.getGroup(ent2String);
 
 		final LinkType linkType = getLinkType(arg);
 		final Direction dir = getDirection(arg);
@@ -374,7 +289,7 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 		final String firstLabel = arg.get("FIRST_LABEL", 0);
 		final String secondLabel = arg.get("SECOND_LABEL", 0);
 		final LinkArg linkArg = LinkArg.build(labelLink, queue, diagram.getSkinParam().classAttributeIconSize() > 0);
-		final Link link = new Link(diagram.getIEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(), cl1,
+		final Link link = new Link(diagram.getEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(), cl1,
 				cl2, linkType, linkArg.withQuantifier(firstLabel, secondLabel)
 						.withDistanceAngle(diagram.getLabeldistance(), diagram.getLabelangle()));
 		link.setColors(color().getColor(arg, diagram.getSkinParam().getIHtmlColorSet()));
@@ -388,169 +303,107 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 	}
 
 	private CommandExecutionResult executeArgSpecial1(AbstractClassOrObjectDiagram diagram, RegexResult arg) {
-		if (diagram.V1972())
-			return executeArgSpecial1972Ident1(diagram, arg);
 		final String name1A = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("COUPLE1", 0));
 		final String name1B = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("COUPLE1", 1));
-		final Code clName1A = diagram.buildCode(name1A);
-		final Code clName1B = diagram.buildCode(name1B);
-		if (diagram.leafExist(clName1A) == false)
-			return CommandExecutionResult.error("No class " + clName1A);
 
-		if (diagram.leafExist(clName1B) == false)
-			return CommandExecutionResult.error("No class " + clName1B);
+		final Quark<Entity> quark1A = diagram.quarkInContext(true, name1A);
+		final Quark<Entity> quark1B = diagram.quarkInContext(true, name1B);
 
-		final String idShort = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("ENT2", 0), "\"");
-		final Code ent2 = diagram.buildCode(idShort);
-		final IEntity cl2 = diagram.getOrCreateLeaf(diagram.buildLeafIdent(idShort), ent2, null, null);
+		if (quark1A.getData() != null == false)
+			return CommandExecutionResult.error("No class " + name1A);
+
+		if (quark1B.getData() != null == false)
+			return CommandExecutionResult.error("No class " + name1B);
+
+		final Entity cl1A = quark1A.getData();
+		final Entity cl1B = quark1B.getData();
+
+		final String id2 = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("ENT2", 0), "\"");
+		final Quark<Entity> ent2 = diagram.quarkInContext(true, id2);
+
+		Entity cl2 = ent2.getData();
+		if (cl2 == null)
+			cl2 = diagram.reallyCreateLeaf(ent2, Display.getWithNewlines(ent2.getName()), LeafType.CLASS, null);
 
 		final LinkType linkType = getLinkType(arg);
 		final Display label = Display.getWithNewlines(arg.get("LABEL_LINK", 0));
 
-		final boolean result = diagram.associationClass(1, name1A, name1B, cl2, linkType, label);
+		final boolean result = diagram.associationClass(1, cl1A, cl1B, cl2, linkType, label);
 		if (result == false)
 			return CommandExecutionResult.error("Cannot have more than 2 assocications");
 
 		return CommandExecutionResult.ok();
-	}
-
-	private CommandExecutionResult executeArgSpecial1972Ident1(AbstractClassOrObjectDiagram diagram, RegexResult arg) {
-		final String name1A = arg.get("COUPLE1", 0);
-		final String name1B = arg.get("COUPLE1", 1);
-		final Ident ident1A = diagram.buildLeafIdent(name1A);
-		final Ident ident1B = diagram.buildLeafIdent(name1B);
-		if (diagram.leafExistSmart(ident1A) == false)
-			return CommandExecutionResult.error("No class " + ident1A.getName());
-
-		if (diagram.leafExistSmart(ident1B) == false)
-			return CommandExecutionResult.error("No class " + ident1B.getName());
-
-		final String idShort = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("ENT2", 0), "\"");
-		final Ident ident2 = diagram.buildLeafIdent(idShort);
-		final IEntity cl2 = diagram.getOrCreateLeaf(ident2, ident2, null, null);
-
-		final LinkType linkType = getLinkType(arg);
-		final Display label = Display.getWithNewlines(arg.get("LABEL_LINK", 0));
-
-		final boolean result = diagram.associationClass(1, name1A, name1B, cl2, linkType, label);
-		if (result == false)
-			return CommandExecutionResult.error("Cannot have more than 2 assocications");
-
-		return CommandExecutionResult.ok();
-	}
-
-	private CommandExecutionResult executeArgSpecial1972Ident2(AbstractClassOrObjectDiagram diagram, RegexResult arg) {
-		final String name2A = arg.get("COUPLE2", 0);
-		final String name2B = arg.get("COUPLE2", 1);
-		final Ident ident2A = diagram.buildLeafIdent(name2A);
-		final Ident ident2B = diagram.buildLeafIdent(name2B);
-		if (diagram.leafExistSmart(ident2A) == false)
-			return CommandExecutionResult.error("No class " + ident2A.getName());
-
-		if (diagram.leafExistSmart(ident2B) == false)
-			return CommandExecutionResult.error("No class " + ident2B.getName());
-
-		final String idShort = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("ENT1", 0), "\"");
-		final Ident ident1 = diagram.buildLeafIdent(idShort);
-		final IEntity cl1 = diagram.getOrCreateLeaf(ident1, ident1, null, null);
-
-		final LinkType linkType = getLinkType(arg);
-		final Display label = Display.getWithNewlines(arg.get("LABEL_LINK", 0));
-
-		final boolean result = diagram.associationClass(2, name2A, name2B, cl1, linkType, label);
-		if (result == false)
-			return CommandExecutionResult.error("Cannot have more than 2 assocications");
-
-		return CommandExecutionResult.ok();
-	}
-
-	private CommandExecutionResult executeArgSpecial1972Ident3(AbstractClassOrObjectDiagram diagram, RegexResult arg) {
-		final String name1A = arg.get("COUPLE1", 0);
-		final String name1B = arg.get("COUPLE1", 1);
-		final String name2A = arg.get("COUPLE2", 0);
-		final String name2B = arg.get("COUPLE2", 1);
-		final Ident ident1A = diagram.buildLeafIdent(name1A);
-		final Ident ident1B = diagram.buildLeafIdent(name1B);
-		final Ident ident2A = diagram.buildLeafIdent(name2A);
-		final Ident ident2B = diagram.buildLeafIdent(name2B);
-		if (diagram.leafExistSmart(ident1A) == false)
-			return CommandExecutionResult.error("No class " + ident1A.getName());
-
-		if (diagram.leafExistSmart(ident1B) == false)
-			return CommandExecutionResult.error("No class " + ident1B.getName());
-
-		if (diagram.leafExistSmart(ident2A) == false)
-			return CommandExecutionResult.error("No class " + ident2A.getName());
-
-		if (diagram.leafExistSmart(ident2B) == false)
-			return CommandExecutionResult.error("No class " + ident2B.getName());
-
-		final LinkType linkType = getLinkType(arg);
-		final Display label = Display.getWithNewlines(arg.get("LABEL_LINK", 0));
-
-		return diagram.associationClass(name1A, name1B, name2A, name2B, linkType, label);
-	}
-
-	private CommandExecutionResult executeArgSpecial3(AbstractClassOrObjectDiagram diagram, RegexResult arg) {
-		if (diagram.V1972())
-			return executeArgSpecial1972Ident3(diagram, arg);
-		final String name1A = arg.get("COUPLE1", 0);
-		final String name1B = arg.get("COUPLE1", 1);
-		final String name2A = arg.get("COUPLE2", 0);
-		final String name2B = arg.get("COUPLE2", 1);
-		final Code clName1A = diagram.buildCode(name1A);
-		final Code clName1B = diagram.buildCode(name1B);
-		final Code clName2A = diagram.buildCode(name2A);
-		final Code clName2B = diagram.buildCode(name2B);
-		if (diagram.leafExist(clName1A) == false)
-			return CommandExecutionResult.error("No class " + clName1A);
-
-		if (diagram.leafExist(clName1B) == false)
-			return CommandExecutionResult.error("No class " + clName1B);
-
-		if (diagram.leafExist(clName2A) == false)
-			return CommandExecutionResult.error("No class " + clName2A);
-
-		if (diagram.leafExist(clName2B) == false)
-			return CommandExecutionResult.error("No class " + clName2B);
-
-		final LinkType linkType = getLinkType(arg);
-		final Display label = Display.getWithNewlines(arg.get("LABEL_LINK", 0));
-
-		return diagram.associationClass(name1A, name1B, name2A, name2B, linkType, label);
 	}
 
 	private CommandExecutionResult executeArgSpecial2(AbstractClassOrObjectDiagram diagram, RegexResult arg) {
-		if (diagram.V1972())
-			return executeArgSpecial1972Ident2(diagram, arg);
-		final String name2A = arg.get("COUPLE2", 0);
-		final String name2B = arg.get("COUPLE2", 1);
-		final Code clName2A = diagram.buildCode(name2A);
-		final Code clName2B = diagram.buildCode(name2B);
-		if (diagram.leafExist(clName2A) == false)
-			return CommandExecutionResult.error("No class " + clName2A);
+		final String name2A = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("COUPLE2", 0));
+		final String name2B = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("COUPLE2", 1));
 
-		if (diagram.leafExist(clName2B) == false)
-			return CommandExecutionResult.error("No class " + clName2B);
+		final Quark<Entity> quark2A = diagram.quarkInContext(true, name2A);
+		final Quark<Entity> quark2B = diagram.quarkInContext(true, name2B);
 
-		final String idShort = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("ENT1", 0), "\"");
-		final Code ent1 = diagram.buildCode(idShort);
-		final IEntity cl1 = diagram.getOrCreateLeaf(diagram.buildLeafIdent(idShort), ent1, null, null);
+		if (quark2A.getData() != null == false)
+			return CommandExecutionResult.error("No class " + name2A);
+
+		if (quark2B.getData() != null == false)
+			return CommandExecutionResult.error("No class " + name2B);
+
+		final Entity cl2A = quark2A.getData();
+		final Entity cl2B = quark2B.getData();
+
+		final String id1 = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("ENT1", 0), "\"");
+		final Quark<Entity> ent1 = diagram.quarkInContext(true, id1);
+
+		Entity cl1 = (Entity) ent1.getData();
+		if (cl1 == null)
+			cl1 = diagram.reallyCreateLeaf(ent1, Display.getWithNewlines(ent1.getName()), LeafType.CLASS, null);
 
 		final LinkType linkType = getLinkType(arg);
 		final Display label = Display.getWithNewlines(arg.get("LABEL_LINK", 0));
 
-		final boolean result = diagram.associationClass(2, name2A, name2B, cl1, linkType, label);
+		final boolean result = diagram.associationClass(2, cl2A, cl2B, cl1, linkType, label);
 		if (result == false)
 			return CommandExecutionResult.error("Cannot have more than 2 assocications");
 
 		return CommandExecutionResult.ok();
 	}
 
+	private CommandExecutionResult executeArgSpecial3(AbstractClassOrObjectDiagram diagram, RegexResult arg) {
+
+		final String name1A = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("COUPLE1", 0));
+		final String name1B = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("COUPLE1", 1));
+		final String name2A = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("COUPLE2", 0));
+		final String name2B = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("COUPLE2", 1));
+
+		final Quark<Entity> quark1A = diagram.quarkInContext(true, name1A);
+		final Quark<Entity> quark1B = diagram.quarkInContext(true, name1B);
+		final Quark<Entity> quark2A = diagram.quarkInContext(true, name2A);
+		final Quark<Entity> quark2B = diagram.quarkInContext(true, name2B);
+
+		if (quark1A.getData() != null == false)
+			return CommandExecutionResult.error("No class " + name1A);
+		if (quark1B.getData() != null == false)
+			return CommandExecutionResult.error("No class " + name1B);
+		if (quark2A.getData() != null == false)
+			return CommandExecutionResult.error("No class " + name2A);
+		if (quark2B.getData() != null == false)
+			return CommandExecutionResult.error("No class " + name2B);
+
+		final Entity cl1A = (Entity) quark1A.getData();
+		final Entity cl1B = (Entity) quark1B.getData();
+		final Entity cl2A = (Entity) quark2A.getData();
+		final Entity cl2B = (Entity) quark2B.getData();
+
+		final LinkType linkType = getLinkType(arg);
+		final Display label = Display.getWithNewlines(arg.get("LABEL_LINK", 0));
+
+		return diagram.associationClass(cl1A, cl1B, cl2A, cl2B, linkType, label);
+	}
+
 	private LinkDecor getDecors1(String s) {
-		if (s == null) {
+		if (s == null)
 			return LinkDecor.NONE;
-		}
+
 		s = StringUtils.trin(s);
 		if ("<|".equals(s))
 			return LinkDecor.EXTENDS;
@@ -715,7 +568,7 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 	}
 
 	private String getArrowHead(RegexResult arg, final String key) {
-		return notNull(arg.get(key, 0));
+		return notNull(arg.get(key, 0)).replaceAll("_", "");
 	}
 
 	private String getFullArrow(RegexResult arg) {

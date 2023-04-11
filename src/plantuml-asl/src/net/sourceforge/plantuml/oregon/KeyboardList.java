@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -37,7 +37,7 @@ import java.util.Iterator;
 public class KeyboardList implements Keyboard {
 
 	private final Iterator<String> data;
-	
+
 	public KeyboardList(String... inputs) {
 		this(Arrays.asList(inputs));
 	}
@@ -45,7 +45,6 @@ public class KeyboardList implements Keyboard {
 	public KeyboardList(Collection<String> inputs) {
 		data = inputs.iterator();
 	}
-
 
 	public String input() throws NoInputException {
 		if (data.hasNext()) {

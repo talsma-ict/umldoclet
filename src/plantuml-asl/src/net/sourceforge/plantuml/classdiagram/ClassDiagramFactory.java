@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,11 +30,9 @@
  */
 package net.sourceforge.plantuml.classdiagram;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.classdiagram.command.CommandAddMethod;
 import net.sourceforge.plantuml.classdiagram.command.CommandAllowMixing;
 import net.sourceforge.plantuml.classdiagram.command.CommandCreateClass;
@@ -66,17 +64,19 @@ import net.sourceforge.plantuml.command.note.CommandFactoryNote;
 import net.sourceforge.plantuml.command.note.CommandFactoryNoteOnEntity;
 import net.sourceforge.plantuml.command.note.CommandFactoryNoteOnLink;
 import net.sourceforge.plantuml.command.note.CommandFactoryTipOnEntity;
-import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.descdiagram.command.CommandCreateElementMultilines;
 import net.sourceforge.plantuml.descdiagram.command.CommandCreateElementParenthesis;
 import net.sourceforge.plantuml.descdiagram.command.CommandNewpage;
 import net.sourceforge.plantuml.descdiagram.command.CommandPackageWithUSymbol;
+import net.sourceforge.plantuml.descdiagram.command.CommandTogether;
 import net.sourceforge.plantuml.objectdiagram.command.CommandCreateEntityObject;
 import net.sourceforge.plantuml.objectdiagram.command.CommandCreateEntityObjectMultilines;
 import net.sourceforge.plantuml.objectdiagram.command.CommandCreateJson;
 import net.sourceforge.plantuml.objectdiagram.command.CommandCreateJsonSingleLine;
 import net.sourceforge.plantuml.objectdiagram.command.CommandCreateMap;
+import net.sourceforge.plantuml.regex.RegexLeaf;
+import net.sourceforge.plantuml.skin.UmlDiagramType;
 
 public class ClassDiagramFactory extends PSystemCommandFactory {
 
@@ -86,8 +86,7 @@ public class ClassDiagramFactory extends PSystemCommandFactory {
 	}
 
 	@Override
-	protected List<Command> createCommands() {
-		final List<Command> cmds = new ArrayList<>();
+	protected void initCommandsList(List<Command> cmds) {
 		cmds.add(new CommandFootboxIgnored());
 
 		cmds.add(new CommandRankDir());
@@ -115,6 +114,7 @@ public class ClassDiagramFactory extends PSystemCommandFactory {
 		cmds.add(new CommandEndPackage());
 		cmds.add(new CommandPackageEmpty());
 		cmds.add(new CommandPackageWithUSymbol());
+		cmds.add(new CommandTogether());
 
 		cmds.add(new CommandCreateElementFull2(Mode.NORMAL_KEYWORD));
 		cmds.add(new CommandCreateElementFull2(Mode.WITH_MIX_PREFIX));
@@ -150,13 +150,9 @@ public class ClassDiagramFactory extends PSystemCommandFactory {
 
 		cmds.add(new CommandDiamondAssociation());
 
-		cmds.add(new CommandNamespaceSeparator());
-
 		cmds.add(new CommandCreateElementMultilines(0));
 		cmds.add(new CommandCreateElementMultilines(1));
 		CommonCommands.addTitleCommands(cmds);
 		CommonCommands.addCommonCommands2(cmds);
-
-		return cmds;
 	}
 }

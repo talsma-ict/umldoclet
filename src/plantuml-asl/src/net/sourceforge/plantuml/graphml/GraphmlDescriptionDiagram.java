@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -47,8 +47,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import net.sourceforge.plantuml.baraye.IEntity;
-import net.sourceforge.plantuml.cucadiagram.GroupRoot;
+import net.sourceforge.plantuml.abel.Entity;
 import net.sourceforge.plantuml.descdiagram.DescriptionDiagram;
 import net.sourceforge.plantuml.xmi.XmlDiagramTransformer;
 import net.sourceforge.plantuml.xml.XmlFactories;
@@ -76,21 +75,21 @@ public class GraphmlDescriptionDiagram implements XmlDiagramTransformer {
 		graph.setAttribute("edgedefault", "undirected");
 		graphml.appendChild(graph);
 
-		for (final IEntity ent : diagram.getLeafsvalues())
-			if (ent.getParentContainer() instanceof GroupRoot)
+		for (final Entity ent : diagram.getEntityFactory().leafs())
+			if (ent.getParentContainer().isRoot())
 				addElement(ent, graph);
 
 	}
 
-	private void addElement(IEntity tobeAdded, Element container) {
+	private void addElement(Entity tobeAdded, Element container) {
 		final Element element = createEntityNode(tobeAdded);
 		container.appendChild(element);
 
 	}
 
-	private Element createEntityNode(IEntity entity) {
+	private Element createEntityNode(Entity entity) {
 		final Element cla = document.createElement("node");
-		cla.setAttribute("id", entity.getCode().getName());
+		cla.setAttribute("id", entity.getName());
 		return cla;
 	}
 

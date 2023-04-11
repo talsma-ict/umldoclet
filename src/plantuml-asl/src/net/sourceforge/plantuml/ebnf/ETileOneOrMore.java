@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,15 +30,15 @@
  */
 package net.sourceforge.plantuml.ebnf;
 
-import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.URectangle;
-import net.sourceforge.plantuml.ugraphic.UText;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.HColors;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.FontConfiguration;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.shape.URectangle;
+import net.sourceforge.plantuml.klimt.shape.UText;
+import net.sourceforge.plantuml.style.ISkinParam;
 
 public class ETileOneOrMore extends ETile {
 
@@ -51,7 +51,7 @@ public class ETileOneOrMore extends ETile {
 	public ETileOneOrMore(ETile orig, String loop, FontConfiguration fc, ISkinParam skinParam) {
 		this.orig = orig;
 		this.fc = fc;
-		this.loop = loop == null ? null : new UText(loop, fc);
+		this.loop = loop == null ? null : UText.build(loop, fc);
 	}
 
 	public ETileOneOrMore(ETile orig) {
@@ -87,7 +87,7 @@ public class ETileOneOrMore extends ETile {
 		final StringBounder stringBounder = ug.getStringBounder();
 		final XDimension2D fullDim = calculateDimension(stringBounder);
 		if (TRACE)
-			ug.apply(HColors.RED).draw(new URectangle(fullDim));
+			ug.apply(HColors.RED).draw(URectangle.build(fullDim));
 
 		final double h1 = getH1(stringBounder);
 

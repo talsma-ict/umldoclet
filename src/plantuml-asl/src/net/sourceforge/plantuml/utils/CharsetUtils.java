@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,9 +32,8 @@ package net.sourceforge.plantuml.utils;
 
 import java.nio.charset.Charset;
 
-import net.sourceforge.plantuml.Log;
-
 public class CharsetUtils {
+	// ::remove file when __HAXE__
 
 	public static Charset charsetOrDefault(String charsetName) {
 

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -49,6 +49,7 @@ import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.security.SecurityUtils;
 
 public class CheckZipTask extends Task {
+	// ::remove folder when __CORE__
 
 	private String zipfile = null;
 	private List<FileSet> filesets = new ArrayList<>();
@@ -112,10 +113,8 @@ public class CheckZipTask extends Task {
 		if (tmp == null) {
 			throw new FileNotFoundException();
 		}
-		try (
-			final PrintWriter pw = SecurityUtils.createPrintWriter("tmp.txt");
-			final ZipInputStream zis = new ZipInputStream(tmp);
-		) {
+		try (final PrintWriter pw = SecurityUtils.createPrintWriter("tmp.txt");
+				final ZipInputStream zis = new ZipInputStream(tmp);) {
 			ZipEntry ze = zis.getNextEntry();
 			while (ze != null) {
 				final String fileName = ze.getName();

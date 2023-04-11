@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -36,7 +36,7 @@ import net.sourceforge.plantuml.salt.element.Element;
 public interface ElementFactory {
 
 	Terminated<Element> create();
-	
+
 	boolean ready();
 
 }

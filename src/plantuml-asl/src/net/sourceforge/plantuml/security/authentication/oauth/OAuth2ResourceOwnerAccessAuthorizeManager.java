@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -39,11 +39,13 @@ import net.sourceforge.plantuml.security.authentication.SecurityCredentials;
 import net.sourceforge.plantuml.security.authentication.basicauth.BasicAuthAuthorizeManager;
 
 /**
- * Authorize via principal a resource owner (from {@link SecurityCredentials} and creates a
- * {@link SecurityAuthentication} object with a bearer token secret.
+ * Authorize via principal a resource owner (from {@link SecurityCredentials}
+ * and creates a {@link SecurityAuthentication} object with a bearer token
+ * secret.
  * <p>
- * Because a pass through of username/password is an anti-pattern in OAuth2, this authorization method should be
- * avoided. However, it may be necessary in some environments to gain access with the ROPC flow.
+ * Because a pass through of username/password is an anti-pattern in OAuth2,
+ * this authorization method should be avoided. However, it may be necessary in
+ * some environments to gain access with the ROPC flow.
  *
  * @author Aljoscha Rittner
  */
@@ -68,22 +70,20 @@ public class OAuth2ResourceOwnerAccessAuthorizeManager extends AbstractOAuth2Acc
 		try {
 			SURL tokenService = SURL.create(accessTokenUri);
 
-			StringBuilder content = new StringBuilder()
-					.append("grant_type=")
-					.append(urlEncode(grantType));
+			StringBuilder content = new StringBuilder().append("grant_type=").append(urlEncode(grantType));
 			if (StringUtils.isNotEmpty(requestScope)) {
 				content.append("&scope=").append(urlEncode(requestScope));
 			}
 
 			// OAuth2 with BasicAuth via principal (standard)
-			SecurityAuthentication basicAuth = basicAuthManager.create(
-					SecurityCredentials.basicAuth(credentials.getIdentifier(), credentials.getSecret()));
+			SecurityAuthentication basicAuth = basicAuthManager
+					.create(SecurityCredentials.basicAuth(credentials.getIdentifier(), credentials.getSecret()));
 			// We need to add the principal to the form
-			content.append("&username=").append(urlEncode(username))
-					.append("&password=").append(urlEncode(new String(password)));
+			content.append("&username=").append(urlEncode(username)).append("&password=")
+					.append(urlEncode(new String(password)));
 
-			return requestAndCreateAuthFromResponse(
-					credentials.getProxy(), grantType, tokenType, tokenService, content.toString(), basicAuth);
+			return requestAndCreateAuthFromResponse(credentials.getProxy(), grantType, tokenType, tokenService,
+					content.toString(), basicAuth);
 		} finally {
 			if (password != null && password.length > 0) {
 				Arrays.fill(password, '*');

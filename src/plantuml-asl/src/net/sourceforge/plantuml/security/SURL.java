@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -67,6 +67,9 @@ import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.security.authentication.SecurityAccessInterceptor;
 import net.sourceforge.plantuml.security.authentication.SecurityAuthentication;
 import net.sourceforge.plantuml.security.authentication.SecurityCredentials;
+//::uncomment when __CORE__
+//import net.sourceforge.plantuml.FileUtils;
+//::done
 
 /**
  * Secure replacement for java.net.URL.
@@ -102,21 +105,6 @@ public class SURL {
 	 * Indicates, that we have no authentication to access the URL.
 	 */
 	public static final String WITHOUT_AUTHENTICATION = SecurityUtils.NO_CREDENTIALS;
-
-	/**
-	 * Regex to remove the UserInfo part from a URL.
-	 */
-	private static final Pattern PATTERN_USERINFO = Pattern.compile("(^https?://)([-_0-9a-zA-Z]+@)([^@]*)");
-
-	private static final ExecutorService EXE = Executors.newCachedThreadPool(new ThreadFactory() {
-		public Thread newThread(Runnable r) {
-			final Thread t = Executors.defaultThreadFactory().newThread(r);
-			t.setDaemon(true);
-			return t;
-		}
-	});
-
-	private static final Map<String, Long> BAD_HOSTS = new ConcurrentHashMap<String, Long>();
 
 	/**
 	 * Internal URL, maybe cleaned from user-token.
@@ -168,6 +156,7 @@ public class SURL {
 		if (url == null)
 			throw new MalformedURLException("URL cannot be null");
 
+		// ::comment when __CORE__
 		final String credentialId = url.getUserInfo();
 
 		if (credentialId == null || credentialId.indexOf(':') > 0)
@@ -178,8 +167,95 @@ public class SURL {
 			// Given userInfo, but without a password. We try to find SecurityCredentials
 			return new SURL(removeUserInfo(url), credentialId);
 		else
+			// ::done
 			return new SURL(url, WITHOUT_AUTHENTICATION);
 	}
+
+	// ::uncomment when __CORE__
+//	public InputStream openStream() {
+//	try {
+//		return internal.openStream();
+//	} catch (IOException e) {
+//		System.err.println("SURL::openStream " + e);
+//		return null;
+//	}
+//}
+//public byte[] getBytes() {
+//	final InputStream is = openStream();
+//	if (is != null)
+//		try {
+//			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//			FileUtils.copyInternal(is, baos, true);
+//			return baos.toByteArray();
+//		} catch (IOException e) {
+//			System.err.println("SURL::getBytes " + e);
+//		}
+//	return null;
+//}
+	// ::done
+
+	public BufferedImage readRasterImageFromURL() {
+		if (isUrlOk())
+			try {
+				final byte[] bytes = getBytes();
+				if (bytes == null || bytes.length == 0)
+					return null;
+				final ImageIcon tmp = new ImageIcon(bytes);
+				return SecurityUtils.readRasterImage(tmp);
+			} catch (Exception e) {
+				Logme.error(e);
+			}
+		return null;
+	}
+
+	/**
+	 * Check SecurityProfile to see if this URL can be opened.
+	 */
+	private boolean isUrlOk() {
+		// ::comment when __CORE__
+		if (SecurityUtils.getSecurityProfile() == SecurityProfile.SANDBOX)
+			// In SANDBOX, we cannot read any URL
+			return false;
+
+		if (SecurityUtils.getSecurityProfile() == SecurityProfile.LEGACY)
+			return true;
+
+		if (SecurityUtils.getSecurityProfile() == SecurityProfile.UNSECURE)
+			// We are UNSECURE anyway
+			return true;
+
+		if (isInUrlAllowList())
+			// ::done
+			return true;
+		// ::comment when __CORE__
+
+		if (SecurityUtils.getSecurityProfile() == SecurityProfile.INTERNET) {
+			if (forbiddenURL(cleanPath(internal.toString())))
+				return false;
+
+			final int port = internal.getPort();
+			// Using INTERNET profile, port 80 and 443 are ok
+			return port == 80 || port == 443 || port == -1;
+		}
+		return false;
+		// ::done
+	}
+
+	// ::comment when __CORE__
+	/**
+	 * Regex to remove the UserInfo part from a URL.
+	 */
+	private static final Pattern PATTERN_USERINFO = Pattern.compile("(^https?://)([-_0-9a-zA-Z]+@)([^@]*)");
+
+	private static final ExecutorService EXE = Executors.newCachedThreadPool(new ThreadFactory() {
+		public Thread newThread(Runnable r) {
+			final Thread t = Executors.defaultThreadFactory().newThread(r);
+			t.setDaemon(true);
+			return t;
+		}
+	});
+
+	private static final Map<String, Long> BAD_HOSTS = new ConcurrentHashMap<String, Long>();
 
 	/**
 	 * Creates a URL without UserInfo part and without SecurityCredentials.
@@ -208,35 +284,6 @@ public class SURL {
 	@Override
 	public String toString() {
 		return internal.toString();
-	}
-
-	/**
-	 * Check SecurityProfile to see if this URL can be opened.
-	 */
-	private boolean isUrlOk() {
-		if (SecurityUtils.getSecurityProfile() == SecurityProfile.SANDBOX)
-			// In SANDBOX, we cannot read any URL
-			return false;
-
-		if (SecurityUtils.getSecurityProfile() == SecurityProfile.LEGACY)
-			return true;
-
-		if (SecurityUtils.getSecurityProfile() == SecurityProfile.UNSECURE)
-			// We are UNSECURE anyway
-			return true;
-
-		if (isInUrlAllowList())
-			return true;
-
-		if (SecurityUtils.getSecurityProfile() == SecurityProfile.INTERNET) {
-			if (forbiddenURL(cleanPath(internal.toString())))
-				return false;
-
-			final int port = internal.getPort();
-			// Using INTERNET profile, port 80 and 443 are ok
-			return port == 80 || port == 443 || port == -1;
-		}
-		return false;
 	}
 
 	private boolean forbiddenURL(String full) {
@@ -559,20 +606,6 @@ public class SURL {
 		return null;
 	}
 
-	public BufferedImage readRasterImageFromURL() {
-		if (isUrlOk())
-			try {
-				final byte[] bytes = getBytes();
-				if (bytes == null || bytes.length == 0)
-					return null;
-				final ImageIcon tmp = new ImageIcon(bytes);
-				return SecurityUtils.readRasterImage(tmp);
-			} catch (Exception e) {
-				Logme.error(e);
-			}
-		return null;
-	}
-
 	/**
 	 * Informs, if SecurityCredentials are configured for this connection.
 	 *
@@ -655,4 +688,5 @@ public class SURL {
 
 		return url;
 	}
+	// ::done
 }

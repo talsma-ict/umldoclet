@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,14 +30,14 @@
  */
 package net.sourceforge.plantuml.sequencediagram;
 
-import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
 
 public interface InGroupable {
-	
+
 	public double getMinX(StringBounder stringBounder);
 
 	public double getMaxX(StringBounder stringBounder);
-	
+
 	public String toString(StringBounder stringBounder);
-	
+
 }

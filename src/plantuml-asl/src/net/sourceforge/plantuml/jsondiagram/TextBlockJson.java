@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,56 +34,63 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.LineBreakStrategy;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.creole.CreoleMode;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.AbstractTextBlock;
-import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.json.JsonArray;
 import net.sourceforge.plantuml.json.JsonObject;
 import net.sourceforge.plantuml.json.JsonObject.Member;
 import net.sourceforge.plantuml.json.JsonValue;
+import net.sourceforge.plantuml.klimt.LineBreakStrategy;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.creole.CreoleMode;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.FontConfiguration;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.shape.AbstractTextBlock;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
+import net.sourceforge.plantuml.klimt.shape.TextBlockUtils;
+import net.sourceforge.plantuml.klimt.shape.ULine;
+import net.sourceforge.plantuml.klimt.shape.URectangle;
+import net.sourceforge.plantuml.skin.UmlDiagramType;
+import net.sourceforge.plantuml.style.ISkinParam;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.svek.TextBlockBackcolored;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.ULine;
-import net.sourceforge.plantuml.ugraphic.URectangle;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.style.StyleBuilder;
+import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.style.StyleSignatureBasic;
+import net.sourceforge.plantuml.yaml.Highlighted;
 
 //See TextBlockMap
-public class TextBlockJson extends AbstractTextBlock implements TextBlockBackcolored {
+public class TextBlockJson extends AbstractTextBlock {
+	// ::remove folder when __HAXE__
+
+	private static final double MIN_WIDTH = 30;
+	private static final double MIN_HEIGHT = 15;
 
 	private final List<Line> lines = new ArrayList<>();
 
-	private final Style styleNode;
-	private final Style styleNodeHightlight;
-	private final Style styleNodeHeader;
-	private final Style styleNodeHeaderHighlight;
 	private final ISkinParam skinParam;
 	private double totalWidth;
 	private final JsonValue root;
 
+	private final StyleBuilder styleBuilder;
+	private final SName diagramType;
+
 	static class Line {
 		final TextBlock b1;
 		final TextBlock b2;
-		final boolean highlighted;
+		final Highlighted highlighted;
 
-		Line(TextBlock b1, TextBlock b2, boolean highlighted) {
+		Line(TextBlock b1, TextBlock b2, Highlighted highlighted) {
 			this.b1 = b1;
 			this.b2 = b2;
 			this.highlighted = highlighted;
 		}
 
-		Line(TextBlock b1, boolean highlighted) {
+		Line(TextBlock b1, Highlighted highlighted) {
 			this(b1, null, highlighted);
 		}
 
@@ -97,24 +104,18 @@ public class TextBlockJson extends AbstractTextBlock implements TextBlockBackcol
 
 	}
 
-	private HColor getBackColor() {
-		return styleNodeHightlight.value(PName.BackGroundColor).asColor(skinParam.getIHtmlColorSet());
-	}
-
-	TextBlockJson(ISkinParam skinParam, JsonValue root, List<String> allHighlighteds, Style styleNode,
-			Style styleNodeHightlight, Style styleNodeHeader, Style styleNodeHeaderHighlight) {
+	TextBlockJson(ISkinParam skinParam, JsonValue root, List<Highlighted> allHighlighteds) {
+		this.styleBuilder = skinParam.getCurrentStyleBuilder();
+		this.diagramType = skinParam.getUmlDiagramType() == UmlDiagramType.JSON ? SName.jsonDiagram : SName.yamlDiagram;
 		this.skinParam = skinParam;
-		this.styleNode = styleNode;
-		this.styleNodeHeaderHighlight = styleNodeHeaderHighlight;
-		this.styleNodeHightlight = styleNodeHightlight;
-		this.styleNodeHeader = styleNodeHeader;
+
 		this.root = root;
 		if (root instanceof JsonObject)
 			for (Member member : (JsonObject) root) {
 				final String key = member.getName();
 				final String value = getShortString(member.getValue());
 
-				final boolean highlighted = isHighlighted(key, allHighlighteds);
+				final Highlighted highlighted = isHighlighted(key, allHighlighteds);
 				final TextBlock block1 = getTextBlock(getStyleToUse(true, highlighted), key);
 				final TextBlock block2 = getTextBlock(getStyleToUse(false, highlighted), value);
 				this.lines.add(new Line(block1, block2, highlighted));
@@ -122,7 +123,7 @@ public class TextBlockJson extends AbstractTextBlock implements TextBlockBackcol
 		if (root instanceof JsonArray) {
 			int i = 0;
 			for (JsonValue value : (JsonArray) root) {
-				final boolean highlighted = isHighlighted("" + i, allHighlighteds);
+				final Highlighted highlighted = isHighlighted("" + i, allHighlighteds);
 				final TextBlock block2 = getTextBlock(getStyleToUse(false, highlighted), getShortString(value));
 				this.lines.add(new Line(block2, highlighted));
 				i++;
@@ -130,25 +131,29 @@ public class TextBlockJson extends AbstractTextBlock implements TextBlockBackcol
 		}
 	}
 
-	private Style getStyleToUse(boolean header, boolean highlighted) {
-		if (header && highlighted)
-			return styleNodeHeaderHighlight;
+	private Style getStyleToUse(boolean header, Highlighted highlighted) {
+		final StyleSignature signature;
+		if (header && highlighted != null)
+			signature = StyleSignatureBasic
+					.of(SName.root, SName.element, diagramType, SName.header, SName.node, SName.highlight)
+					.withTOBECHANGED(highlighted.getStereotype());
+		else if (highlighted != null)
+			signature = StyleSignatureBasic.of(SName.root, SName.element, diagramType, SName.node, SName.highlight)
+					.withTOBECHANGED(highlighted.getStereotype());
+		else if (header)
+			signature = StyleSignatureBasic.of(SName.root, SName.element, diagramType, SName.header, SName.node);
+		else
+			signature = StyleSignatureBasic.of(SName.root, SName.element, diagramType, SName.node);
 
-		if (highlighted)
-			return styleNodeHightlight;
-
-		if (header)
-			return styleNodeHeader;
-
-		return styleNode;
+		return signature.getMergedStyle(styleBuilder);
 	}
 
-	private boolean isHighlighted(String key, List<String> highlighted) {
-		for (String tmp : highlighted)
-			if (tmp.trim().equals("\"" + key + "\""))
-				return true;
+	private Highlighted isHighlighted(String key, List<Highlighted> highlighted) {
+		for (Highlighted tmp : highlighted)
+			if (tmp.isKeyHighlight(key))
+				return tmp;
 
-		return false;
+		return null;
 	}
 
 	public int size() {
@@ -225,8 +230,9 @@ public class TextBlockJson extends AbstractTextBlock implements TextBlockBackcol
 	}
 
 	public XDimension2D calculateDimension(StringBounder stringBounder) {
-		return new XDimension2D(getWidthColA(stringBounder) + getWidthColB(stringBounder),
-				getTotalHeight(stringBounder));
+		final double width = getWidthColA(stringBounder) + getWidthColB(stringBounder);
+		final double height = getTotalHeight(stringBounder);
+		return new XDimension2D(width, height);
 	}
 
 	public double getWidthColA(StringBounder stringBounder) {
@@ -255,18 +261,20 @@ public class TextBlockJson extends AbstractTextBlock implements TextBlockBackcol
 		final double widthColB = getWidthColB(stringBounder);
 
 		double y = 0;
+		final Style styleNode = StyleSignatureBasic.of(SName.root, SName.element, diagramType, SName.node)
+				.getMergedStyle(styleBuilder);
 		final UGraphic ugNode = styleNode.applyStrokeAndLineColor(ug, skinParam.getIHtmlColorSet());
 		for (Line line : lines) {
 			final double heightOfRow = line.getHeightOfRow(stringBounder);
 			y += heightOfRow;
 		}
 		if (y == 0)
-			y = 15;
+			y = MIN_HEIGHT;
 		if (trueWidth == 0)
-			trueWidth = 30;
+			trueWidth = MIN_WIDTH;
 
 		final double round = styleNode.value(PName.RoundCorner).asDouble();
-		final URectangle fullNodeRectangle = new URectangle(trueWidth, y).rounded(round);
+		final URectangle fullNodeRectangle = URectangle.build(trueWidth, y).rounded(round);
 		final HColor backColor = styleNode.value(PName.BackGroundColor).asColor(skinParam.getIHtmlColorSet());
 		ugNode.apply(backColor.bg()).apply(backColor).draw(fullNodeRectangle);
 
@@ -278,9 +286,14 @@ public class TextBlockJson extends AbstractTextBlock implements TextBlockBackcol
 		for (Line line : lines) {
 			final UGraphic ugline = ugSeparator.apply(UTranslate.dy(y));
 			final double heightOfRow = line.getHeightOfRow(stringBounder);
-			if (line.highlighted) {
-				final URectangle back = new URectangle(trueWidth - 2, heightOfRow).rounded(4);
-				ugline.apply(getBackColor()).apply(getBackColor().bg()).apply(new UTranslate(1.5, 0)).draw(back);
+			if (line.highlighted != null) {
+				final URectangle back = URectangle.build(trueWidth - 2, heightOfRow).rounded(4);
+				final Style styleNodeHighlight = StyleSignatureBasic
+						.of(SName.root, SName.element, diagramType, SName.node, SName.highlight)
+						.withTOBECHANGED(line.highlighted.getStereotype()).getMergedStyle(styleBuilder);
+				final HColor cellBackColor = styleNodeHighlight.value(PName.BackGroundColor)
+						.asColor(skinParam.getIHtmlColorSet());
+				ugline.apply(cellBackColor).apply(cellBackColor.bg()).apply(new UTranslate(1.5, 0)).draw(back);
 			}
 
 			if (y > 0)
@@ -306,7 +319,18 @@ public class TextBlockJson extends AbstractTextBlock implements TextBlockBackcol
 		for (Line line : lines)
 			height += line.getHeightOfRow(stringBounder);
 
+		if (height == 0)
+			return MIN_HEIGHT;
+		
 		return height;
+	}
+
+	public double[] getAllHeights(StringBounder stringBounder) {
+		final double result[] = new double[lines.size()];
+		for (int i = 0; i < lines.size(); i++)
+			result[i] = lines.get(i).getHeightOfRow(stringBounder);
+
+		return result;
 	}
 
 	private TextBlock getTextBlock(Style style, String key) {

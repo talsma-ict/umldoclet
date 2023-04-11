@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,9 +33,9 @@ package net.sourceforge.plantuml.version;
 import java.io.IOException;
 
 import net.sourceforge.plantuml.AbstractPSystem;
-import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.command.PSystemSingleLineFactory;
 import net.sourceforge.plantuml.core.UmlSource;
+import net.sourceforge.plantuml.utils.Log;
 
 public class PSystemLicenseFactory extends PSystemSingleLineFactory {
 

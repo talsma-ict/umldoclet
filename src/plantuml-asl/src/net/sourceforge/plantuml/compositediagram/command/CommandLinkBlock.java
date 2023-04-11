@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,21 +30,22 @@
  */
 package net.sourceforge.plantuml.compositediagram.command;
 
-import net.sourceforge.plantuml.LineLocation;
-import net.sourceforge.plantuml.baraye.IEntity;
+import net.sourceforge.plantuml.abel.Entity;
+import net.sourceforge.plantuml.abel.Link;
+import net.sourceforge.plantuml.abel.LinkArg;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand2;
-import net.sourceforge.plantuml.command.regex.IRegex;
-import net.sourceforge.plantuml.command.regex.RegexConcat;
-import net.sourceforge.plantuml.command.regex.RegexLeaf;
-import net.sourceforge.plantuml.command.regex.RegexOptional;
-import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.compositediagram.CompositeDiagram;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.cucadiagram.Link;
-import net.sourceforge.plantuml.cucadiagram.LinkArg;
-import net.sourceforge.plantuml.cucadiagram.LinkDecor;
-import net.sourceforge.plantuml.cucadiagram.LinkType;
+import net.sourceforge.plantuml.decoration.LinkDecor;
+import net.sourceforge.plantuml.decoration.LinkType;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.plasma.Quark;
+import net.sourceforge.plantuml.regex.IRegex;
+import net.sourceforge.plantuml.regex.RegexConcat;
+import net.sourceforge.plantuml.regex.RegexLeaf;
+import net.sourceforge.plantuml.regex.RegexOptional;
+import net.sourceforge.plantuml.regex.RegexResult;
+import net.sourceforge.plantuml.utils.LineLocation;
 
 public class CommandLinkBlock extends SingleLineCommand2<CompositeDiagram> {
 
@@ -74,8 +75,15 @@ public class CommandLinkBlock extends SingleLineCommand2<CompositeDiagram> {
 	protected CommandExecutionResult executeArg(CompositeDiagram diagram, LineLocation location, RegexResult arg) {
 		final String ent1 = arg.get("ENT1", 0);
 		final String ent2 = arg.get("ENT2", 0);
-		final IEntity cl1 = diagram.getOrCreateLeaf(diagram.buildLeafIdent(ent1), diagram.buildCode(ent1), null, null);
-		final IEntity cl2 = diagram.getOrCreateLeaf(diagram.buildLeafIdent(ent2), diagram.buildCode(ent2), null, null);
+		final Quark<Entity> quark1 = diagram.quarkInContext(true, diagram.cleanId(ent1));
+		final Quark<Entity> quark2 = diagram.quarkInContext(true, diagram.cleanId(ent2));
+		final Entity cl1 = quark1.getData();
+		if (cl1 == null)
+			return CommandExecutionResult.error("No such element " + quark1.getName());
+
+		final Entity cl2 = quark2.getData();
+		if (cl2 == null)
+			return CommandExecutionResult.error("No such element " + quark2.getName());
 
 		final String deco1 = arg.get("DECO1", 0);
 		final String deco2 = arg.get("DECO2", 0);
@@ -91,7 +99,7 @@ public class CommandLinkBlock extends SingleLineCommand2<CompositeDiagram> {
 
 		final LinkArg linkArg = LinkArg.build(Display.getWithNewlines(arg.get("DISPLAY", 0)), queue.length(),
 				diagram.getSkinParam().classAttributeIconSize() > 0);
-		final Link link = new Link(diagram.getIEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(), cl1,
+		final Link link = new Link(diagram.getEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(), cl1,
 				cl2, linkType, linkArg);
 		diagram.addLink(link);
 		return CommandExecutionResult.ok();

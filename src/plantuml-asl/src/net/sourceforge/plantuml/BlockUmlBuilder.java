@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -42,6 +42,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.plantuml.api.cheerpj.WasmLog;
+
+import net.sourceforge.plantuml.file.AParentFolderRegular;
 import net.sourceforge.plantuml.preproc.Defines;
 import net.sourceforge.plantuml.preproc.FileWithSuffix;
 import net.sourceforge.plantuml.preproc.ImportedFiles;
@@ -50,9 +53,11 @@ import net.sourceforge.plantuml.preproc.ReadLineReader;
 import net.sourceforge.plantuml.preproc.UncommentReadLine;
 import net.sourceforge.plantuml.preproc2.Preprocessor;
 import net.sourceforge.plantuml.security.SFile;
+import net.sourceforge.plantuml.text.StringLocated;
 import net.sourceforge.plantuml.utils.StartUtils;
 
 public final class BlockUmlBuilder implements DefinitionsContainer {
+	// ::remove file when __HAXE__
 
 	private final List<BlockUml> blocks = new ArrayList<>();
 	private Set<FileWithSuffix> usedFiles = new HashSet<>();
@@ -130,6 +135,7 @@ public final class BlockUmlBuilder implements DefinitionsContainer {
 				if (paused)
 					current.add(s);
 
+				WasmLog.log("...text loaded...");
 				final BlockUml uml = new BlockUml(current, defines.cloneMe(), null, this, charset);
 				usedFiles.addAll(uml.getIncluded());
 				blocks.add(uml);

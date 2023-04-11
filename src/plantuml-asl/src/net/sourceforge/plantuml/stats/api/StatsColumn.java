@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -31,12 +31,12 @@
 package net.sourceforge.plantuml.stats.api;
 
 public enum StatsColumn {
-	SESSION_ID("Session ID"), DIAGRAM_TYPE("Diagram type"), FORMAT("Format"), VERSION("Version"), STARTING("Starting"), LAST(
-			"Last"), DURATION_STRING("Duration"), PARSED_COUNT("# Parsed"), PARSED_MEAN_TIME(
-			"Mean parsing\\ntime (ms)"), PARSED_STANDARD_DEVIATION("Standard\\ndeviation (ms)"), PARSED_MAX_TIME(
-			"Max parsing\\ntime (ms)"), GENERATED_COUNT("# Generated"), GENERATED_MEAN_TIME(
-			"Mean generation\\ntime (ms)"), GENERATED_STANDARD_DEVIATION("Standard\\ndeviation (ms)"), GENERATED_MAX_TIME(
-			"Max generation\\ntime (ms)");
+    // ::remove folder when __HAXE__
+	SESSION_ID("Session ID"), DIAGRAM_TYPE("Diagram type"), FORMAT("Format"), VERSION("Version"), STARTING("Starting"),
+	LAST("Last"), DURATION_STRING("Duration"), PARSED_COUNT("# Parsed"), PARSED_MEAN_TIME("Mean parsing\\ntime (ms)"),
+	PARSED_STANDARD_DEVIATION("Standard\\ndeviation (ms)"), PARSED_MAX_TIME("Max parsing\\ntime (ms)"),
+	GENERATED_COUNT("# Generated"), GENERATED_MEAN_TIME("Mean generation\\ntime (ms)"),
+	GENERATED_STANDARD_DEVIATION("Standard\\ndeviation (ms)"), GENERATED_MAX_TIME("Max generation\\ntime (ms)");
 
 	private final String title;
 

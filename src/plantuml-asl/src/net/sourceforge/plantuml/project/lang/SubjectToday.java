@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,16 +34,22 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import net.sourceforge.plantuml.command.CommandExecutionResult;
-import net.sourceforge.plantuml.command.regex.IRegex;
-import net.sourceforge.plantuml.command.regex.RegexConcat;
-import net.sourceforge.plantuml.command.regex.RegexLeaf;
-import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.project.Failable;
 import net.sourceforge.plantuml.project.GanttDiagram;
 import net.sourceforge.plantuml.project.Today;
 import net.sourceforge.plantuml.project.time.Day;
+import net.sourceforge.plantuml.regex.IRegex;
+import net.sourceforge.plantuml.regex.RegexConcat;
+import net.sourceforge.plantuml.regex.RegexLeaf;
+import net.sourceforge.plantuml.regex.RegexResult;
 
 public class SubjectToday implements Subject {
+    // ::remove folder when __HAXE__
+
+	public static final Subject ME = new SubjectToday();
+
+	private SubjectToday() {
+	}
 
 	public IRegex toRegex() {
 		return new RegexConcat( //
@@ -62,7 +68,7 @@ public class SubjectToday implements Subject {
 	class InColor extends SentenceSimple {
 
 		public InColor() {
-			super(SubjectToday.this, Verbs.isColored(), new ComplementInColors());
+			super(SubjectToday.this, Verbs.isColored, new ComplementInColors());
 		}
 
 		@Override
@@ -79,7 +85,7 @@ public class SubjectToday implements Subject {
 	class IsDate extends SentenceSimple {
 
 		public IsDate() {
-			super(SubjectToday.this, Verbs.is(), new ComplementDate());
+			super(SubjectToday.this, Verbs.is, new ComplementDate());
 		}
 
 		@Override

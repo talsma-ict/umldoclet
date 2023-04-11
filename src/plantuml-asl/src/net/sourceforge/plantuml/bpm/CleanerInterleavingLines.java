@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -69,7 +69,8 @@ public class CleanerInterleavingLines implements GridCleaner {
 			// c++;
 			final Placeable cell1 = grid.getCell(line1, col).getData();
 			final Placeable cell2 = grid.getCell(line2, col).getData();
-			// System.err.println("cells=" + cell1 + " " + cell2 + " " + mergeable(cell1, cell2));
+			// System.err.println("cells=" + cell1 + " " + cell2 + " " + mergeable(cell1,
+			// cell2));
 			if (mergeable(cell1, cell2) == false) {
 				return false;
 			}

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,9 +30,9 @@
  */
 package net.sourceforge.plantuml.tim;
 
-import net.sourceforge.plantuml.StringLocated;
 import net.sourceforge.plantuml.preproc.EvalBoolean;
 import net.sourceforge.plantuml.preproc.Truth;
+import net.sourceforge.plantuml.text.StringLocated;
 import net.sourceforge.plantuml.tim.expression.TValue;
 
 public class EaterIfdef extends Eater {

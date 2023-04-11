@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -675,7 +675,8 @@ public class OregonBasicGame implements BasicGame {
 		if (r < 0) {
 			r = 0;
 		}
-		print(String.format("|%5d |%5d |%5d | %5d   |     %5d          |", (int) t, (int) f, (int) b, (int) c, (int) r));
+		print(String.format("|%5d |%5d |%5d | %5d   |     %5d          |", (int) t, (int) f, (int) b, (int) c,
+				(int) r));
 		print("+------+------+------+---------+--------------------+");
 		print();
 	}
@@ -863,7 +864,8 @@ public class OregonBasicGame implements BasicGame {
 	private double m;
 
 	enum ShootingWord {
-		POW, BANG, BLAM, WHOP, WHAM, ZING, ZACK, ZANG, WOOSH, BAM, ZAP, BOOM, WOW, CLANG, BOING, ZOW, PANG, ZOSH, KAZ, KOOG, ZOOP, PONG, PING, BAZ, ZONG, PAM, POOM, DOING;
+		POW, BANG, BLAM, WHOP, WHAM, ZING, ZACK, ZANG, WOOSH, BAM, ZAP, BOOM, WOW, CLANG, BOING, ZOW, PANG, ZOSH, KAZ,
+		KOOG, ZOOP, PONG, PING, BAZ, ZONG, PAM, POOM, DOING;
 
 		public static ShootingWord safeValueOf(String s) {
 			try {

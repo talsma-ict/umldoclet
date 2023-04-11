@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -39,7 +39,6 @@ import java.util.Set;
 
 import net.sourceforge.plantuml.FileSystem;
 import net.sourceforge.plantuml.FileUtils;
-import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.json.Json;
 import net.sourceforge.plantuml.json.JsonValue;
 import net.sourceforge.plantuml.json.ParseException;
@@ -52,6 +51,7 @@ import net.sourceforge.plantuml.tim.TContext;
 import net.sourceforge.plantuml.tim.TFunctionSignature;
 import net.sourceforge.plantuml.tim.TMemory;
 import net.sourceforge.plantuml.tim.expression.TValue;
+import net.sourceforge.plantuml.utils.LineLocation;
 
 /**
  * Loads JSON data from file or URL source.
@@ -164,6 +164,7 @@ public class LoadJson extends SimpleReturnFunction {
 			if (url == null)
 				throw EaterException.located("load JSON: Invalid URL " + path);
 			byteData = url.getBytes();
+			// ::comment when __CORE__
 		} else {
 			try {
 				final SFile file = FileSystem.getInstance().getFile(path);
@@ -176,6 +177,7 @@ public class LoadJson extends SimpleReturnFunction {
 				Logme.error(e);
 				throw EaterException.located("load JSON: Cannot read file " + path + ". " + e.getMessage());
 			}
+			// ::done
 		}
 
 		if (byteData == null || byteData.length == 0)

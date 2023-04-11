@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,19 +32,19 @@ package net.sourceforge.plantuml.svek;
 
 import java.util.Objects;
 
-import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.baraye.IEntity;
-import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.graphic.AbstractTextBlock;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.abel.Entity;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.shape.AbstractTextBlock;
+import net.sourceforge.plantuml.stereo.Stereotype;
+import net.sourceforge.plantuml.style.ISkinParam;
 
 public abstract class AbstractEntityImage extends AbstractTextBlock implements IEntityImage {
 
-	private final IEntity entity;
+	private final Entity entity;
 	private final ISkinParam skinParam;
 
-	public AbstractEntityImage(IEntity entity, ISkinParam skinParam) {
+	public AbstractEntityImage(Entity entity, ISkinParam skinParam) {
 		this.entity = Objects.requireNonNull(entity);
 		this.skinParam = Objects.requireNonNull(skinParam);
 	}
@@ -54,7 +54,7 @@ public abstract class AbstractEntityImage extends AbstractTextBlock implements I
 		return entity.isHidden();
 	}
 
-	protected final IEntity getEntity() {
+	protected final Entity getEntity() {
 		return entity;
 	}
 

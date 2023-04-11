@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -41,7 +41,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
-import net.sourceforge.plantuml.cucadiagram.dot.GraphvizUtils;
+import net.sourceforge.plantuml.dot.GraphvizUtils;
 import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.security.SecurityProfile;
 import net.sourceforge.plantuml.security.SecurityUtils;
@@ -51,17 +51,18 @@ import net.sourceforge.plantuml.version.PSystemVersion;
 import net.sourceforge.plantuml.version.Version;
 
 public class OptionPrint {
+	// ::remove file when __CORE__
+	// ::remove file when __HAXE__
 
 	static public void printTestDot() throws InterruptedException {
 		final List<String> result = new ArrayList<>();
 		final int errorCode = GraphvizUtils.addDotStatus(result, false);
-		for (String s : result) {
-			if (errorCode == 0) {
+		for (String s : result)
+			if (errorCode == 0)
 				System.out.println(s);
-			} else {
+			else
 				System.err.println(s);
-			}
-		}
+
 		exit(errorCode);
 	}
 
@@ -150,7 +151,8 @@ public class OptionPrint {
 		System.out.println("    -pipeimageindex N\tTo generate the Nth image with pipe option");
 		System.out.println("    -stdlib\t\tTo print standard library info");
 		System.out.println("    -extractstdlib\tTo extract PlantUML Standard Library into stdlib folder");
-		System.out.println("    -filedir xxx\tTo behave as if the PlantUML source is in this dir (only affects '-pipe' and PicoWeb 'POST /render')");
+		System.out.println(
+				"    -filedir xxx\tTo behave as if the PlantUML source is in this dir (only affects '-pipe' and PicoWeb 'POST /render')");
 		System.out.println("    -filename \"example.puml\"\tTo override %filename% variable");
 		System.out.println("    -preproc\t\tTo output preprocessor text of diagrams");
 		System.out.println("    -cypher\t\tTo cypher texts of diagrams so that you can share them");
@@ -161,35 +163,34 @@ public class OptionPrint {
 	}
 
 	static private void exit(int errorCode) throws InterruptedException {
-		if (OptionFlags.getInstance().isSystemExit() || errorCode != 0) {
+		if (OptionFlags.getInstance().isSystemExit() || errorCode != 0)
 			System.exit(errorCode);
-		}
+
 		throw new InterruptedException("exit");
 	}
 
 	public static void printLicense() throws InterruptedException {
-		for (String s : License.getCurrent().getTextFull()) {
+		for (String s : License.getCurrent().getTextFull())
 			System.out.println(s);
-		}
-		exit(0);
+		System.exit(0);
 	}
 
 	public static void printVersion() throws InterruptedException {
 		System.out.println(Version.fullDescription());
 		System.out.println("(" + License.getCurrent() + " source distribution)");
-		for (String v : interestingProperties()) {
+		for (String v : interestingProperties())
 			System.out.println(v);
-		}
-		for (String v : interestingValues()) {
+
+		for (String v : interestingValues())
 			System.out.println(v);
-		}
+
 		System.out.println();
 		final List<String> result = new ArrayList<>();
 		final int errorCode = GraphvizUtils.addDotStatus(result, false);
-		for (String s : result) {
+		for (String s : result)
 			System.out.println(s);
-		}
-		exit(errorCode);
+
+		System.exit(0);
 	}
 
 	public static Collection<String> interestingProperties() {

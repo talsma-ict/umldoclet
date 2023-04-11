@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,10 +32,10 @@ package net.sourceforge.plantuml.tim.iterator;
 
 import java.util.List;
 
-import net.sourceforge.plantuml.StringLocated;
+import net.sourceforge.plantuml.text.StringLocated;
+import net.sourceforge.plantuml.text.TLineType;
 import net.sourceforge.plantuml.tim.EaterException;
 import net.sourceforge.plantuml.tim.EaterExceptionLocated;
-import net.sourceforge.plantuml.tim.TLineType;
 
 public class CodeIteratorShortComment extends AbstractCodeIterator {
 

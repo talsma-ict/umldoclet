@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,13 +34,12 @@ import net.sourceforge.plantuml.StringUtils;
 
 public enum NotePosition {
 	LEFT, RIGHT, OVER, OVER_SEVERAL, BOTTOM, TOP;
-	
+
 	public static NotePosition defaultLeft(String s) {
 		if (s == null) {
 			return NotePosition.LEFT;
 		}
 		return NotePosition.valueOf(StringUtils.goUpperCase(s));
 	}
-
 
 }

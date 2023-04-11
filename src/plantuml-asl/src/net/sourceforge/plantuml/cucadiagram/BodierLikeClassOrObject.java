@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -36,20 +36,23 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.UrlBuilder;
-import net.sourceforge.plantuml.baraye.ILeaf;
-import net.sourceforge.plantuml.creole.Parser;
-import net.sourceforge.plantuml.creole.legacy.CreoleParser;
-import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.graphic.TextBlockLineBefore;
-import net.sourceforge.plantuml.graphic.TextBlockUtils;
+import net.sourceforge.plantuml.abel.Entity;
+import net.sourceforge.plantuml.abel.LeafType;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.creole.Parser;
+import net.sourceforge.plantuml.klimt.creole.legacy.CreoleParser;
+import net.sourceforge.plantuml.klimt.font.FontConfiguration;
+import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
+import net.sourceforge.plantuml.klimt.shape.TextBlockLineBefore;
+import net.sourceforge.plantuml.klimt.shape.TextBlockUtils;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
+import net.sourceforge.plantuml.stereo.Stereotype;
+import net.sourceforge.plantuml.style.ISkinParam;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.Style;
+import net.sourceforge.plantuml.url.UrlBuilder;
 
 public class BodierLikeClassOrObject implements Bodier {
 
@@ -58,7 +61,7 @@ public class BodierLikeClassOrObject implements Bodier {
 	private LeafType type;
 	private List<Member> methodsToDisplay;
 	private List<Member> fieldsToDisplay;
-	private ILeaf leaf;
+	private Entity leaf;
 
 	@Override
 	public void muteClassToObject() {
@@ -77,7 +80,7 @@ public class BodierLikeClassOrObject implements Bodier {
 	}
 
 	@Override
-	public void setLeaf(ILeaf leaf) {
+	public void setLeaf(Entity leaf) {
 		this.leaf = Objects.requireNonNull(leaf);
 
 	}
@@ -223,7 +226,9 @@ public class BodierLikeClassOrObject implements Bodier {
 
 		if (type == LeafType.OBJECT) {
 			if (showFields == false)
-				return new TextBlockLineBefore(style.value(PName.LineThickness).asDouble(), TextBlockUtils.empty(0, 0));
+				// return new TextBlockLineBefore(style.value(PName.LineThickness).asDouble(),
+				// TextBlockUtils.empty(0, 0));
+				return TextBlockUtils.empty(0, 0);
 
 			return BodyFactory.create1(skinParam.getDefaultTextAlignment(HorizontalAlignment.LEFT),
 					rawBodyWithoutHidden(), skinParam, stereotype, leaf, style);

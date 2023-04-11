@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -37,8 +37,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 
-import net.sourceforge.plantuml.AFile;
-import net.sourceforge.plantuml.StringLocated;
+import net.sourceforge.plantuml.file.AFile;
 import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.preproc.FileWithSuffix;
 import net.sourceforge.plantuml.preproc.ImportedFiles;
@@ -46,9 +45,11 @@ import net.sourceforge.plantuml.preproc.ReadLine;
 import net.sourceforge.plantuml.preproc.ReadLineReader;
 import net.sourceforge.plantuml.preproc2.PreprocessorUtils;
 import net.sourceforge.plantuml.security.SURL;
+import net.sourceforge.plantuml.text.StringLocated;
 import net.sourceforge.plantuml.theme.ThemeUtils;
 
 public class EaterTheme extends Eater {
+    // ::remove folder when __HAXE__
 
 	private String realName;
 	private String name;
@@ -81,11 +82,11 @@ public class EaterTheme extends Eater {
 
 	public final ReadLine getTheme() throws EaterException {
 		if (from == null) {
-			final ReadLine reader = ThemeUtils.getReaderTheme(realName);
-			if (reader != null)
-				return reader;
-
 			try {
+				final ReadLine reader = ThemeUtils.getReaderTheme(realName);
+				if (reader != null)
+					return reader;
+
 				final AFile localFile = importedFiles.getAFile(ThemeUtils.getFilename(realName));
 				if (localFile != null && localFile.isOk()) {
 					final BufferedReader br = localFile.getUnderlyingFile().openBufferedReader();

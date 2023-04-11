@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,10 +34,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import net.sourceforge.plantuml.core.ImageData;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
 
 public interface FileMaker {
 
 	ImageData createOne(OutputStream os, int index, boolean isWithMetadata) throws IOException;
+
+	void createOneGraphic(UGraphic ug);
 
 	public int getNbPages();
 }

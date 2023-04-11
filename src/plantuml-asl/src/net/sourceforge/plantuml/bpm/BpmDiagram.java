@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -37,18 +37,20 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
+import net.atmp.ImageBuilder;
 import net.sourceforge.plantuml.FileFormatOption;
-import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.UmlDiagram;
-import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.core.UmlSource;
-import net.sourceforge.plantuml.graphic.UDrawable;
-import net.sourceforge.plantuml.ugraphic.ImageBuilder;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
+import net.sourceforge.plantuml.klimt.shape.UDrawable;
+import net.sourceforge.plantuml.skin.SkinParam;
+import net.sourceforge.plantuml.skin.UmlDiagramType;
 
 public class BpmDiagram extends UmlDiagram {
+	// ::remove folder when __CORE__
 
 	private void cleanGrid(Grid grid) {
 		while (true) {
@@ -185,5 +187,10 @@ public class BpmDiagram extends UmlDiagram {
 	public CommandExecutionResult endBranch() {
 		final BpmBranch branch = branches.removeLast();
 		return addEvent(branch.getGoToEndEvent());
+	}
+
+	@Override
+	protected TextBlock getTextBlock() {
+		throw new UnsupportedOperationException();
 	}
 }

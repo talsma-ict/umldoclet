@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,7 @@
  */
 package net.sourceforge.plantuml.sequencediagram;
 
-import net.sourceforge.plantuml.Url;
+import net.sourceforge.plantuml.url.Url;
 
 public abstract class AbstractEvent implements Event {
 
@@ -45,10 +45,9 @@ public abstract class AbstractEvent implements Event {
 	public boolean hasUrl() {
 		return false;
 	}
-	
-	public final void setY(double y) {
-		
-	}
 
+	public final void setY(double y) {
+
+	}
 
 }

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -37,7 +37,8 @@ package net.sourceforge.plantuml.argon2.exception;
 
 /* dislike checked exceptions */
 class Argon2Exception extends RuntimeException {
-    Argon2Exception(String message) {
-        super(message);
-    }
+    // ::remove folder when __HAXE__
+	Argon2Exception(String message) {
+		super(message);
+	}
 }

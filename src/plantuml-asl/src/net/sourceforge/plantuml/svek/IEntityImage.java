@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,10 +30,12 @@
  */
 package net.sourceforge.plantuml.svek;
 
-import net.sourceforge.plantuml.Hideable;
-import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.abel.Hideable;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.MagneticBorder;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
 
-public interface IEntityImage extends Hideable, TextBlockBackcolored {
+public interface IEntityImage extends Hideable, TextBlock {
 
 	public static final int CORNER = 25;
 	public static final int MARGIN = 5;
@@ -44,5 +46,7 @@ public interface IEntityImage extends Hideable, TextBlockBackcolored {
 	public Margins getShield(StringBounder stringBounder);
 
 	public double getOverscanX(StringBounder stringBounder);
+
+	public MagneticBorder getMagneticBorder();
 
 }

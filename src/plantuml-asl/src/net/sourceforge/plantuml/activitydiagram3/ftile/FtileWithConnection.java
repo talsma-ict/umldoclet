@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Objects;
 
 import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileDecorate;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
 
 class FtileWithConnection extends FtileDecorate {
 

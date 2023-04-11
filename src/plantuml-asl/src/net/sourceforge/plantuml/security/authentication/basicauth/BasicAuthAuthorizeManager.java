@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -38,12 +38,13 @@ import net.sourceforge.plantuml.security.authentication.SecurityAuthorizeManager
 import net.sourceforge.plantuml.security.authentication.SecurityCredentials;
 
 /**
- * The {@link BasicAuthAuthorizeManager} creates the authentication on the fly from the credentials without
- * any access to other services.
+ * The {@link BasicAuthAuthorizeManager} creates the authentication on the fly
+ * from the credentials without any access to other services.
  *
  * @author Aljoscha Rittner
  */
 public class BasicAuthAuthorizeManager implements SecurityAuthorizeManager {
+    // ::remove folder when __HAXE__
 	@Override
 	public SecurityAuthentication create(SecurityCredentials credentials) {
 		String type = credentials.getType();

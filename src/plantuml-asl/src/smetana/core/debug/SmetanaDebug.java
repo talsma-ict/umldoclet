@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -31,44 +31,37 @@
 
 package smetana.core.debug;
 
-public class SmetanaDebug {
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-	public static boolean TRACE = false;
-	public static boolean TRACE_FINAL_CALL = false;
-	public static boolean VERY_VERBOSE = false;
-
-	private static Purify purify;
-
-	private static Purify purify() {
-		if (purify == null)
-			purify = new Purify();
-		return purify;
-	}
+public final class SmetanaDebug {
+	// ::remove folder when __HAXE__
+	static private final Map<String, String> methods = new LinkedHashMap<String, String>();
 
 	static public void LOG(String s) {
-		if (TRACE)
-			purify().logline(s);
 
 	}
 
 	static public void ENTERING(String signature, String methodName) {
-		if (TRACE)
-			purify().entering(signature, methodName);
+//		if (methods.containsKey(methodName) == false)
+//			methods.put(methodName, methodName);
+	}
+
+	static public void LIST_METHODS() {
+		int i = 0;
+		for (String s : methods.keySet()) {
+			System.err.println("i=" + i + " " + s);
+			i++;
+		}
 	}
 
 	static public void LEAVING(String signature, String methodName) {
-		if (TRACE)
-			purify().leaving(signature, methodName);
 	}
 
 	public static void reset() {
-		if (TRACE)
-			purify().reset();
 	}
 
 	public static void printMe() {
-		if (TRACE && TRACE_FINAL_CALL)
-			purify().printMe();
 	}
 
 }

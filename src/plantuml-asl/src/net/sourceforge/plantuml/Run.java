@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -52,7 +52,12 @@ import javax.swing.UIManager;
 import net.sourceforge.plantuml.code.NoPlantumlCompressionException;
 import net.sourceforge.plantuml.code.Transcoder;
 import net.sourceforge.plantuml.code.TranscoderUtil;
+import net.sourceforge.plantuml.file.FileGroup;
+import net.sourceforge.plantuml.file.SuggestedFile;
 import net.sourceforge.plantuml.ftp.FtpServer;
+import net.sourceforge.plantuml.klimt.drawing.svg.SvgGraphics;
+import net.sourceforge.plantuml.klimt.sprite.SpriteGrayLevel;
+import net.sourceforge.plantuml.klimt.sprite.SpriteUtils;
 import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.picoweb.PicoWebServer;
 import net.sourceforge.plantuml.png.MetadataTag;
@@ -60,15 +65,17 @@ import net.sourceforge.plantuml.preproc.Stdlib;
 import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.security.SImageIO;
 import net.sourceforge.plantuml.security.SecurityUtils;
-import net.sourceforge.plantuml.sprite.SpriteGrayLevel;
-import net.sourceforge.plantuml.sprite.SpriteUtils;
 import net.sourceforge.plantuml.stats.StatsUtils;
+import net.sourceforge.plantuml.swing.ClipboardLoop;
 import net.sourceforge.plantuml.swing.MainWindow;
 import net.sourceforge.plantuml.syntax.LanguageDescriptor;
 import net.sourceforge.plantuml.utils.Cypher;
+import net.sourceforge.plantuml.utils.Log;
 import net.sourceforge.plantuml.version.Version;
 
 public class Run {
+	// ::remove file when __CORE__
+	// ::remove file when __HAXE__
 
 	private static Cypher cypher;
 
@@ -76,14 +83,10 @@ public class Run {
 			throws NoPlantumlCompressionException, IOException, InterruptedException {
 		System.setProperty("log4j.debug", "false");
 		final long start = System.currentTimeMillis();
-		if (argsArray.length > 0 && argsArray[0].equalsIgnoreCase("-headless")) {
+		if (argsArray.length > 0 && argsArray[0].equalsIgnoreCase("-headless"))
 			System.setProperty("java.awt.headless", "true");
-		}
-//		if (argsArray.length > 0 && argsArray[0].equalsIgnoreCase("--de")) {
-//			debugGantt();
-//			return;
-//		}
 		saveCommandLine(argsArray);
+
 		final Option option = new Option(argsArray);
 		ProgressBar.setEnable(option.isTextProgressBar());
 		if (OptionFlags.getInstance().isClipboardLoop()) {
@@ -145,9 +148,9 @@ public class Run {
 		}
 
 		forceOpenJdkResourceLoad();
-		if (option.getPreprocessorOutputMode() == OptionPreprocOutputMode.CYPHER) {
+		if (option.getPreprocessorOutputMode() == OptionPreprocOutputMode.CYPHER)
 			cypher = new LanguageDescriptor().getCypher();
-		}
+
 		final ErrorStatus error = ErrorStatus.init();
 		boolean forceQuit = false;
 		if (OptionFlags.getInstance().isGui()) {
@@ -159,9 +162,9 @@ public class Run {
 			File dir = null;
 			if (list.size() == 1) {
 				final File f = new File(list.get(0));
-				if (f.exists() && f.isDirectory()) {
+				if (f.exists() && f.isDirectory())
 					dir = f;
-				}
+
 			}
 			try {
 				new MainWindow(option, dir);
@@ -176,9 +179,9 @@ public class Run {
 			managePipe(option, error);
 			forceQuit = true;
 		} else if (option.isFailfast2()) {
-			if (option.isSplash()) {
+			if (option.isSplash())
 				Splash.createSplash();
-			}
+
 			final long start2 = System.currentTimeMillis();
 			option.setCheckOnly(true);
 			manageAllFiles(option, error);
@@ -187,14 +190,14 @@ public class Run {
 				final double duration = (System.currentTimeMillis() - start2) / 1000.0;
 				Log.error("Check Duration = " + duration + " seconds");
 			}
-			if (error.hasError() == false) {
+			if (error.hasError() == false)
 				manageAllFiles(option, error);
-			}
+
 			forceQuit = true;
 		} else {
-			if (option.isSplash()) {
+			if (option.isSplash())
 				Splash.createSplash();
-			}
+
 			manageAllFiles(option, error);
 			forceQuit = true;
 		}
@@ -205,16 +208,15 @@ public class Run {
 		}
 
 		if (OptionFlags.getInstance().isGui() == false) {
-			if (error.hasError() || error.isNoData()) {
+			if (error.hasError() || error.isNoData())
 				option.getStdrpt().finalMessage(error);
-			}
-			if (error.hasError()) {
-				System.exit(error.getExitCode());
-			}
 
-			if (forceQuit && OptionFlags.getInstance().isSystemExit()) {
+			if (error.hasError())
+				System.exit(error.getExitCode());
+
+			if (forceQuit && OptionFlags.getInstance().isSystemExit())
 				System.exit(0);
-			}
+
 		}
 	}
 
@@ -329,7 +331,8 @@ public class Run {
 	}
 
 	private static void goPicoweb(Option option) throws IOException {
-		PicoWebServer.startServer(option.getPicowebPort(), option.getPicowebBindAddress(), option.getPicowebEnableStop());
+		PicoWebServer.startServer(option.getPicowebPort(), option.getPicowebBindAddress(),
+				option.getPicowebEnableStop());
 	}
 
 	public static void printFonts() {
@@ -454,19 +457,8 @@ public class Run {
 			throws IOException, InterruptedException {
 		Log.info("Working on " + f.getPath());
 		if (OptionFlags.getInstance().isExtractFromMetadata()) {
-			System.out.println("------------------------");
-			System.out.println(f);
-			// new Metadata().readAndDisplayMetadata(f);
-			System.out.println();
 			error.goOk();
-			final String data = new MetadataTag(f, "plantuml").getData();
-			// File file = SecurityUtils.File("tmp.txt");
-			// PrintWriter pw = SecurityUtils.PrintWriter(file, "UTF-8");
-			// pw.println(NastyEncoder.fromISO_8859_1(data));
-			// pw.close();
-
-			System.out.println(data);
-			System.out.println("------------------------");
+			extractMetadata(f);
 			return;
 		}
 		final ISourceFileReader sourceFileReader;
@@ -570,16 +562,28 @@ public class Run {
 		error.goOk();
 	}
 
-//	public static void debugGantt() {
-//		final Locale locale = Locale.GERMAN;
-//		for (java.time.Month month : java.time.Month.values()) {
-//			System.err.println("Testing locale " + locale + " " + month);
-//			for (TextStyle style : TextStyle.values()) {
-//				final String s = month.getDisplayName(style, locale);
-//				System.err.println(style + " --> '" + s + "'");
-//
-//			}
-//		}
-//	}
+	private static void extractMetadata(File f) throws IOException {
+		System.out.println("------------------------");
+		System.out.println(f);
+		System.out.println();
+		if (f.getName().endsWith(".svg")) {
+			final SFile file = SFile.fromFile(f);
+			final String svg = FileUtils.readFile(file);
+			final int idx = svg.lastIndexOf(SvgGraphics.META_HEADER);
+			if (idx > 0) {
+				String part = svg.substring(idx + SvgGraphics.META_HEADER.length());
+				final int idxEnd = part.indexOf("]");
+				if (idxEnd > 0) {
+					part = part.substring(0, idxEnd);
+					final String decoded = TranscoderUtil.getDefaultTranscoderProtected().decode(part);
+					System.err.println(decoded);
+				}
+			}
+		} else {
+			final String data = new MetadataTag(f, "plantuml").getData();
+			System.out.println(data);
+		}
+		System.out.println("------------------------");
+	}
 
 }

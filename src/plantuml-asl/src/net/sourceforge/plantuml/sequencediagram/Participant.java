@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,23 +33,24 @@ package net.sourceforge.plantuml.sequencediagram;
 import java.util.Objects;
 import java.util.Set;
 
-import net.sourceforge.plantuml.SpecificBackcolorable;
-import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.cucadiagram.EntityPortion;
-import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.graphic.SymbolContext;
-import net.sourceforge.plantuml.graphic.color.ColorType;
-import net.sourceforge.plantuml.graphic.color.Colors;
+import net.sourceforge.plantuml.abel.EntityPortion;
+import net.sourceforge.plantuml.abel.SpecificBackcolorable;
+import net.sourceforge.plantuml.klimt.Fashion;
+import net.sourceforge.plantuml.klimt.color.ColorType;
+import net.sourceforge.plantuml.klimt.color.Colors;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.stereo.Stereotype;
 import net.sourceforge.plantuml.style.MergeStrategy;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleBuilder;
 import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.style.WithStyle;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.url.Url;
 
 public class Participant implements SpecificBackcolorable, WithStyle {
+    // ::remove folder when __HAXE__
 
 	private final String code;
 	private Display display;
@@ -134,14 +135,14 @@ public class Participant implements SpecificBackcolorable, WithStyle {
 		return initialLife;
 	}
 
-	private SymbolContext liveBackcolors;
+	private Fashion liveBackcolors;
 
-	public final void incInitialLife(SymbolContext colors) {
+	public final void incInitialLife(Fashion colors) {
 		initialLife++;
 		this.liveBackcolors = colors;
 	}
 
-	public SymbolContext getLiveSpecificBackColors() {
+	public Fashion getLiveSpecificBackColors() {
 		return liveBackcolors;
 	}
 

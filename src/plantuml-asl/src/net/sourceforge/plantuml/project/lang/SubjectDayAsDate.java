@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,25 +34,30 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import net.sourceforge.plantuml.command.CommandExecutionResult;
-import net.sourceforge.plantuml.command.regex.IRegex;
-import net.sourceforge.plantuml.command.regex.RegexConcat;
-import net.sourceforge.plantuml.command.regex.RegexLeaf;
-import net.sourceforge.plantuml.command.regex.RegexOr;
-import net.sourceforge.plantuml.command.regex.RegexResult;
+import net.sourceforge.plantuml.klimt.color.HColor;
 import net.sourceforge.plantuml.project.Failable;
 import net.sourceforge.plantuml.project.GanttDiagram;
 import net.sourceforge.plantuml.project.time.Day;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.regex.IRegex;
+import net.sourceforge.plantuml.regex.RegexConcat;
+import net.sourceforge.plantuml.regex.RegexLeaf;
+import net.sourceforge.plantuml.regex.RegexOr;
+import net.sourceforge.plantuml.regex.RegexResult;
 
 public class SubjectDayAsDate implements Subject {
 
+	public static final Subject ME = new SubjectDayAsDate();
+
+	private SubjectDayAsDate() {
+	}
+
 	public Failable<Day> getMe(GanttDiagram project, RegexResult arg) {
-		if (arg.get("BDAY", 0) != null) {
+		if (arg.get("BDAY", 0) != null)
 			return Failable.ok(resultB(arg));
-		}
-		if (arg.get("ECOUNT", 0) != null) {
+
+		if (arg.get("ECOUNT", 0) != null)
 			return Failable.ok(resultE(project, arg));
-		}
+
 		throw new IllegalStateException();
 
 	}
@@ -76,7 +81,7 @@ public class SubjectDayAsDate implements Subject {
 	class Close extends SentenceSimple {
 
 		public Close() {
-			super(SubjectDayAsDate.this, Verbs.isOrAre(), new ComplementClose());
+			super(SubjectDayAsDate.this, Verbs.isOrAre, new ComplementClose());
 		}
 
 		@Override
@@ -88,7 +93,7 @@ public class SubjectDayAsDate implements Subject {
 
 	class Open extends SentenceSimple {
 		public Open() {
-			super(SubjectDayAsDate.this, Verbs.isOrAre(), new ComplementOpen());
+			super(SubjectDayAsDate.this, Verbs.isOrAre, new ComplementOpen());
 		}
 
 		@Override
@@ -101,7 +106,7 @@ public class SubjectDayAsDate implements Subject {
 	class InColor extends SentenceSimple {
 
 		public InColor() {
-			super(SubjectDayAsDate.this, Verbs.isOrAre(), new ComplementInColors2());
+			super(SubjectDayAsDate.this, Verbs.isOrAre, new ComplementInColors2());
 		}
 
 		@Override

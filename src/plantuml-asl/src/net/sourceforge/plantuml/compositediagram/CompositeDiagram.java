@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -31,34 +31,29 @@
 package net.sourceforge.plantuml.compositediagram;
 
 import java.util.Map;
-import java.util.Objects;
 
-import net.sourceforge.plantuml.UmlDiagramType;
-import net.sourceforge.plantuml.baraye.IEntity;
 import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
 import net.sourceforge.plantuml.core.UmlSource;
-import net.sourceforge.plantuml.cucadiagram.Code;
-import net.sourceforge.plantuml.cucadiagram.Ident;
-import net.sourceforge.plantuml.cucadiagram.LeafType;
-import net.sourceforge.plantuml.graphic.USymbol;
+import net.sourceforge.plantuml.skin.UmlDiagramType;
 
 public class CompositeDiagram extends AbstractEntityDiagram {
+	// ::remove folder when __HAXE__
 
 	public CompositeDiagram(UmlSource source, Map<String, String> skinParam) {
 		super(source, UmlDiagramType.COMPOSITE, skinParam);
 	}
 
-	@Override
-	public IEntity getOrCreateLeaf(Ident ident, Code code, LeafType type, USymbol symbol) {
-		Objects.requireNonNull(ident);
-		// final Ident idNewLong = buildLeafIdent(id);
-		if (type == null) {
-			if (isGroup(code)) {
-				return getGroup(code);
-			}
-			return getOrCreateLeafDefault(ident, code, LeafType.BLOCK, symbol);
-		}
-		return getOrCreateLeafDefault(ident, code, type, symbol);
-	}
+//	@Override
+//	protected IEntity getOrCreateLeaf2(Quark ident, Quark code, LeafType type, USymbol symbol) {
+//		Objects.requireNonNull(ident);
+//		// final Ident idNewLong = buildLeafIdent(id);
+//		if (type == null) {
+//			if (isGroup(code.getName())) {
+//				return getGroup(code.getName());
+//			}
+//			return reallyCreateLeaf(ident, Display.getWithNewlines(code.getName()), LeafType.BLOCK, symbol);
+//		}
+//		return reallyCreateLeaf(ident, Display.getWithNewlines(code.getName()), type, symbol);
+//	}
 
 }

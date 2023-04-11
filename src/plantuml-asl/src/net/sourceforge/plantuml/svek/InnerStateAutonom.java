@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,16 +30,18 @@
  */
 package net.sourceforge.plantuml.svek;
 
-import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.graphic.AbstractTextBlock;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.TextBlock;
+import java.util.Objects;
+
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.shape.AbstractTextBlock;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
 import net.sourceforge.plantuml.svek.image.EntityImageState;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.url.Url;
 
 public final class InnerStateAutonom extends AbstractTextBlock implements IEntityImage {
 
@@ -58,7 +60,7 @@ public final class InnerStateAutonom extends AbstractTextBlock implements IEntit
 	public InnerStateAutonom(IEntityImage im, TextBlock title, TextBlock attribute, HColor borderColor,
 			HColor backColor, Url url, boolean withSymbol, UStroke stroke, double rounded, double shadowing,
 			HColor bodyColor) {
-		this.im = im;
+		this.im = Objects.requireNonNull(im);
 		this.withSymbol = withSymbol;
 		this.title = title;
 		this.borderColor = borderColor;
@@ -78,7 +80,7 @@ public final class InnerStateAutonom extends AbstractTextBlock implements IEntit
 		final double marginForFields = attr.getHeight() > 0 ? IEntityImage.MARGIN : 0;
 
 		final double titreHeight = IEntityImage.MARGIN + text.getHeight() + IEntityImage.MARGIN_LINE;
-		// final HColor foo = im.getBackcolor();
+
 		final RoundedContainer r = new RoundedContainer(total, titreHeight, attr.getHeight() + marginForFields,
 				borderColor, backColor, bodyColor, stroke, rounded, shadowing);
 

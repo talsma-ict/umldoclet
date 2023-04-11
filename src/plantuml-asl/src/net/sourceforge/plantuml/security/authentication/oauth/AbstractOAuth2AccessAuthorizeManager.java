@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -51,10 +51,13 @@ import net.sourceforge.plantuml.security.authentication.SecurityAuthorizeManager
  * @author Aljoscha Rittner
  */
 public abstract class AbstractOAuth2AccessAuthorizeManager implements SecurityAuthorizeManager {
+    // ::remove folder when __HAXE__
 
 	/**
-	 * Default headers for token service access.<p>
+	 * Default headers for token service access.
+	 * <p>
 	 * Initialize with:
+	 * 
 	 * <pre>
 	 * "Content-Type"="application/x-www-form-urlencoded; charset=UTF-8"
 	 * "Accept"="application/json"
@@ -135,7 +138,8 @@ public abstract class AbstractOAuth2AccessAuthorizeManager implements SecurityAu
 	}
 
 	/**
-	 * Calls the endpoint to load the token response and create a SecurityAuthentication.
+	 * Calls the endpoint to load the token response and create a
+	 * SecurityAuthentication.
 	 *
 	 * @param proxy        Proxy for the access
 	 * @param grantType    grant type
@@ -145,8 +149,7 @@ public abstract class AbstractOAuth2AccessAuthorizeManager implements SecurityAu
 	 * @param basicAuth    principal basicAuth
 	 * @return the authentication object to access resources (or null)
 	 */
-	protected SecurityAuthentication requestAndCreateAuthFromResponse(
-			Proxy proxy, String grantType, String tokenType,
+	protected SecurityAuthentication requestAndCreateAuthFromResponse(Proxy proxy, String grantType, String tokenType,
 			SURL tokenService, String content, SecurityAuthentication basicAuth) {
 		byte[] bytes = tokenService.getBytesOnPost(proxy, basicAuth, content, headers());
 		if (bytes != null) {

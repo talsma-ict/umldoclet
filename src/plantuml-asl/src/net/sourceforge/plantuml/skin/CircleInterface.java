@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,13 +30,13 @@
  */
 package net.sourceforge.plantuml.skin;
 
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.UDrawable;
-import net.sourceforge.plantuml.ugraphic.UEllipse;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.shape.UDrawable;
+import net.sourceforge.plantuml.klimt.shape.UEllipse;
 
 public class CircleInterface implements UDrawable {
 
@@ -53,10 +53,10 @@ public class CircleInterface implements UDrawable {
 	}
 
 	public void drawU(UGraphic ug) {
-		final UEllipse head = new UEllipse(headDiam, headDiam);
-		
-		ug.apply(new UStroke(thickness)).apply(backgroundColor.bg())
-		.apply(foregroundColor).apply(new UTranslate(thickness, thickness)).draw(head);
+		final UEllipse head = UEllipse.build(headDiam, headDiam);
+
+		ug.apply(UStroke.withThickness(thickness)).apply(backgroundColor.bg()).apply(foregroundColor)
+				.apply(new UTranslate(thickness, thickness)).draw(head);
 	}
 
 	public double getPreferredWidth(StringBounder stringBounder) {

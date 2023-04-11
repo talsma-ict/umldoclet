@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,7 +32,10 @@ package net.sourceforge.plantuml;
 
 import java.util.Objects;
 
+import net.sourceforge.plantuml.utils.LineLocation;
+
 public class ErrorUml {
+	// ::remove file when __HAXE__
 
 	private final String error;
 	private final ErrorUmlType type;

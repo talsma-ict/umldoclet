@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -37,8 +37,8 @@ import net.sourceforge.plantuml.security.authentication.SecurityAuthorizeManager
 import net.sourceforge.plantuml.security.authentication.SecurityCredentials;
 
 /**
- * The {@link TokenAuthAuthorizeManager} creates the authentication on the fly from the credentials without
- * any access to other services.
+ * The {@link TokenAuthAuthorizeManager} creates the authentication on the fly
+ * from the credentials without any access to other services.
  *
  * @author Aljoscha Rittner
  */

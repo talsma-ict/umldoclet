@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -37,28 +37,36 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import net.sourceforge.plantuml.Guillemet;
-import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.baraye.IEntity;
-import net.sourceforge.plantuml.baraye.ILeaf;
+import net.sourceforge.plantuml.abel.Entity;
+import net.sourceforge.plantuml.abel.EntityPortion;
+import net.sourceforge.plantuml.abel.Link;
 import net.sourceforge.plantuml.cucadiagram.BodyFactory;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.cucadiagram.EntityPortion;
-import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.PortionShower;
-import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.SymbolContext;
-import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.graphic.TextBlockUtils;
-import net.sourceforge.plantuml.graphic.USymbol;
-import net.sourceforge.plantuml.graphic.USymbols;
-import net.sourceforge.plantuml.graphic.color.ColorType;
-import net.sourceforge.plantuml.graphic.color.Colors;
+import net.sourceforge.plantuml.decoration.symbol.USymbol;
+import net.sourceforge.plantuml.decoration.symbol.USymbolActorBusiness;
+import net.sourceforge.plantuml.decoration.symbol.USymbols;
+import net.sourceforge.plantuml.klimt.Fashion;
+import net.sourceforge.plantuml.klimt.Shadowable;
+import net.sourceforge.plantuml.klimt.UGroupType;
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.ColorType;
+import net.sourceforge.plantuml.klimt.color.Colors;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.drawing.UGraphicStencil;
+import net.sourceforge.plantuml.klimt.font.FontConfiguration;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
+import net.sourceforge.plantuml.klimt.geom.MagneticBorder;
+import net.sourceforge.plantuml.klimt.geom.MagneticBorderNone;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
+import net.sourceforge.plantuml.klimt.shape.TextBlockUtils;
+import net.sourceforge.plantuml.klimt.shape.UComment;
+import net.sourceforge.plantuml.stereo.Stereotype;
+import net.sourceforge.plantuml.style.ISkinParam;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
@@ -68,14 +76,8 @@ import net.sourceforge.plantuml.svek.Bibliotekon;
 import net.sourceforge.plantuml.svek.Margins;
 import net.sourceforge.plantuml.svek.ShapeType;
 import net.sourceforge.plantuml.svek.SvekNode;
-import net.sourceforge.plantuml.ugraphic.Shadowable;
-import net.sourceforge.plantuml.ugraphic.UComment;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UGraphicStencil;
-import net.sourceforge.plantuml.ugraphic.UGroupType;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.text.Guillemet;
+import net.sourceforge.plantuml.url.Url;
 import net.sourceforge.plantuml.utils.MathUtils;
 
 public class EntityImageDescription extends AbstractEntityImage {
@@ -96,9 +98,9 @@ public class EntityImageDescription extends AbstractEntityImage {
 	private final boolean useRankSame;
 	private final boolean fixCircleLabelOverlapping;
 	private final Bibliotekon bibliotekon;
-	private final SymbolContext ctx;
+	private final Fashion ctx;
 
-	public EntityImageDescription(ILeaf entity, ISkinParam skinParam2, PortionShower portionShower,
+	public EntityImageDescription(Entity entity, ISkinParam skinParam2, PortionShower portionShower,
 			Collection<Link> links, SName styleName, Bibliotekon bibliotekon) {
 		super(entity, entity.getColors().mute(skinParam2));
 		this.useRankSame = getSkinParam().useRankSame();
@@ -123,8 +125,13 @@ public class EntityImageDescription extends AbstractEntityImage {
 
 		final Colors colors = entity.getColors();
 
-		final StyleSignatureBasic tmp = StyleSignatureBasic.of(SName.root, SName.element, styleName, symbol.getSName(),
-				SName.title);
+		final StyleSignatureBasic tmp;
+		if (symbol instanceof USymbolActorBusiness)
+			tmp = StyleSignatureBasic.of(SName.root, SName.element, styleName, SName.actor, SName.business,
+					SName.title);
+		else
+			tmp = StyleSignatureBasic.of(SName.root, SName.element, styleName, symbol.getSName(), SName.title);
+
 		final Stereotype stereotype = entity.getStereotype();
 		final Style styleTitle = tmp.withTOBECHANGED(stereotype).getMergedStyle(getSkinParam().getCurrentStyleBuilder())
 				.eventuallyOverride(colors);
@@ -152,16 +159,16 @@ public class EntityImageDescription extends AbstractEntityImage {
 
 		assert getStereo() == stereotype;
 
-		ctx = new SymbolContext(backcolor, forecolor).withStroke(stroke).withShadow(deltaShadow).withCorner(roundCorner,
+		ctx = new Fashion(backcolor, forecolor).withStroke(stroke).withShadow(deltaShadow).withCorner(roundCorner,
 				diagonalCorner);
 
-		final Display codeDisplay = Display.getWithNewlines(entity.getCodeGetName());
+		final Display codeDisplay = Display.getWithNewlines(entity.getName());
 		if ((entity.getDisplay().equalsLike(codeDisplay) && symbol.getSName() == SName.package_)
 				|| entity.getDisplay().isWhite())
 			desc = TextBlockUtils.empty(style.value(PName.MinimumWidth).asDouble(), 0);
 		else
-			desc = BodyFactory.create3(entity.getDisplay(), getSkinParam(), defaultAlign, fcTitle,
-					getSkinParam().wrapWidth(), styleTitle);
+			desc = BodyFactory.create3(entity.getDisplay(), getSkinParam(), defaultAlign, fcTitle, style.wrapWidth(),
+					styleTitle);
 
 		stereo = TextBlockUtils.empty(0, 0);
 
@@ -183,7 +190,7 @@ public class EntityImageDescription extends AbstractEntityImage {
 
 	}
 
-	private USymbol getUSymbol(ILeaf entity) {
+	private USymbol getUSymbol(Entity entity) {
 		final USymbol result = entity.getUSymbol() == null ? getSkinParam().componentStyle().toUSymbol()
 				: entity.getUSymbol();
 		return Objects.requireNonNull(result);
@@ -205,13 +212,13 @@ public class EntityImageDescription extends AbstractEntityImage {
 		if (hideText == false)
 			return Margins.NONE;
 
-		if (isThereADoubleLink((ILeaf) getEntity(), links))
+		if (isThereADoubleLink((Entity) getEntity(), links))
 			return Margins.NONE;
 
-		if (fixCircleLabelOverlapping == false && hasSomeHorizontalLinkVisible((ILeaf) getEntity(), links))
+		if (fixCircleLabelOverlapping == false && hasSomeHorizontalLinkVisible((Entity) getEntity(), links))
 			return Margins.NONE;
 
-		if (hasSomeHorizontalLinkDoubleDecorated((ILeaf) getEntity(), links))
+		if (hasSomeHorizontalLinkDoubleDecorated((Entity) getEntity(), links))
 			return Margins.NONE;
 
 		final XDimension2D dimStereo = stereo.calculateDimension(stringBounder);
@@ -226,7 +233,7 @@ public class EntityImageDescription extends AbstractEntityImage {
 		return new Margins(suppX / 2, suppX / 2, y, y);
 	}
 
-	private boolean hasSomeHorizontalLinkVisible(ILeaf leaf, Collection<Link> links) {
+	private boolean hasSomeHorizontalLinkVisible(Entity leaf, Collection<Link> links) {
 		for (Link link : links)
 			if (link.getLength() == 1 && link.contains(leaf) && link.isInvis() == false)
 				return true;
@@ -234,11 +241,11 @@ public class EntityImageDescription extends AbstractEntityImage {
 		return false;
 	}
 
-	private boolean isThereADoubleLink(ILeaf leaf, Collection<Link> links) {
-		final Set<IEntity> others = new HashSet<>();
+	private boolean isThereADoubleLink(Entity leaf, Collection<Link> links) {
+		final Set<Entity> others = new HashSet<>();
 		for (Link link : links) {
 			if (link.contains(leaf)) {
-				final IEntity other = link.getOther(leaf);
+				final Entity other = link.getOther(leaf);
 				final boolean changed = others.add(other);
 				if (changed == false)
 					return true;
@@ -248,7 +255,7 @@ public class EntityImageDescription extends AbstractEntityImage {
 		return false;
 	}
 
-	private boolean hasSomeHorizontalLinkDoubleDecorated(ILeaf leaf, Collection<Link> links) {
+	private boolean hasSomeHorizontalLinkDoubleDecorated(Entity leaf, Collection<Link> links) {
 		for (Link link : links)
 			if (link.getLength() == 1 && link.contains(leaf) && link.getType().isDoubleDecorated())
 				return true;
@@ -257,10 +264,10 @@ public class EntityImageDescription extends AbstractEntityImage {
 	}
 
 	final public void drawU(UGraphic ug) {
-		ug.draw(new UComment("entity " + getEntity().getCodeGetName()));
+		ug.draw(new UComment("entity " + getEntity().getName()));
 		final Map<UGroupType, String> typeIDent = new EnumMap<>(UGroupType.class);
-		typeIDent.put(UGroupType.CLASS, "elem " + getEntity().getCode() + " selected");
-		typeIDent.put(UGroupType.ID, "elem_" + getEntity().getCode());
+		typeIDent.put(UGroupType.CLASS, "elem " + getEntity().getName() + " selected");
+		typeIDent.put(UGroupType.ID, "elem_" + getEntity().getName());
 		ug.startGroup(typeIDent);
 
 		if (url != null)
@@ -319,5 +326,27 @@ public class EntityImageDescription extends AbstractEntityImage {
 			return MathUtils.max(-posx1, -posx2, 0);
 		}
 		return 0;
+	}
+
+	@Override
+	public MagneticBorder getMagneticBorder() {
+		if (shapeType == ShapeType.FOLDER)
+			return asSmall.getMagneticBorder();
+//			return new MagneticBorder() {
+//
+//				@Override
+//				public UTranslate getForceAt(StringBounder stringBounder, XPoint2D pt) {
+//					if ((pt.getX() >= 0 && pt.getX() <= 0 + calculateDimension(stringBounder).getWidth()
+//							&& pt.getY() <= 0)) {
+//						final XDimension2D dimName = getNameDimension(stringBounder);
+//						if (pt.getX() < 0 + dimName.getWidth())
+//							return UTranslate.none();
+//
+//						return new UTranslate(0, dimName.getHeight() + 4);
+//					}
+//					return UTranslate.none();
+//				}
+//			};
+		return new MagneticBorderNone();
 	}
 }

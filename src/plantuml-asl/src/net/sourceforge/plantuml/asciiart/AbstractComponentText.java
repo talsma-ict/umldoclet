@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,20 +30,21 @@
  */
 package net.sourceforge.plantuml.asciiart;
 
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleSignatureBasic;
 
 public abstract class AbstractComponentText implements Component {
+	// ::remove folder when __CORE__
 
 	public final XDimension2D getPreferredDimension(StringBounder stringBounder) {
 		final double w = getPreferredWidth(stringBounder);
 		final double h = getPreferredHeight(stringBounder);
 		return new XDimension2D(w, h);
 	}
-	
+
 	public Style[] getUsedStyles() {
 		throw new UnsupportedOperationException();
 	}
@@ -51,6 +52,5 @@ public abstract class AbstractComponentText implements Component {
 	public StyleSignatureBasic getStyleSignature() {
 		throw new UnsupportedOperationException();
 	}
-
 
 }

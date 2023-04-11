@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -62,6 +62,8 @@ import java.io.OutputStream;
  */
 
 public class AnimatedGifEncoder {
+	// ::remove file when __CORE__
+	// ::remove file when __HAXE__
 
 	protected int width; // image size
 

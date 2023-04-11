@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -35,8 +35,7 @@ import net.sourceforge.plantuml.preproc.ImportedFiles;
 public interface PreprocessorModeSet {
 
 	public ImportedFiles getImportedFiles();
-	
-	public String getCharset();
 
+	public String getCharset();
 
 }

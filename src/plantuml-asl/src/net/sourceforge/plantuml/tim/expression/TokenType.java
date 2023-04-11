@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,11 +30,12 @@
  */
 package net.sourceforge.plantuml.tim.expression;
 
+import net.sourceforge.plantuml.text.TLineType;
 import net.sourceforge.plantuml.tim.Eater;
 import net.sourceforge.plantuml.tim.EaterException;
-import net.sourceforge.plantuml.tim.TLineType;
 
 public enum TokenType {
+    // ::remove folder when __HAXE__
 	QUOTED_STRING, JSON_DATA, OPERATOR, OPEN_PAREN_MATH, COMMA, CLOSE_PAREN_MATH, NUMBER, PLAIN_TEXT, SPACES,
 	FUNCTION_NAME, OPEN_PAREN_FUNC, CLOSE_PAREN_FUNC;
 

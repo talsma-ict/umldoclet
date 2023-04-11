@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,19 +33,21 @@ package net.sourceforge.plantuml.syntax;
 import java.util.Collections;
 import java.util.List;
 
-import net.sourceforge.plantuml.BackSlash;
 import net.sourceforge.plantuml.BlockUml;
 import net.sourceforge.plantuml.ErrorUml;
-import net.sourceforge.plantuml.LineLocation;
-import net.sourceforge.plantuml.LineLocationImpl;
 import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.SourceStringReader;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.error.PSystemError;
 import net.sourceforge.plantuml.preproc.Defines;
+import net.sourceforge.plantuml.text.BackSlash;
+import net.sourceforge.plantuml.utils.LineLocation;
+import net.sourceforge.plantuml.utils.LineLocationImpl;
 
 public class SyntaxChecker {
+    // ::remove folder when __HAXE__
+	// ::remove file when __CORE__
 
 	public static SyntaxResult checkSyntax(List<String> source) {
 		final StringBuilder sb = new StringBuilder();
@@ -94,7 +96,6 @@ public class SyntaxChecker {
 			result.setSystemError(sys);
 			for (ErrorUml er : sys.getErrorsUml())
 				result.addErrorText(er.getError());
-
 		} else {
 			result.setDescription(system.getDescription().getDescription());
 		}
@@ -135,21 +136,19 @@ public class SyntaxChecker {
 
 	private static int lastLineNumber(String source) {
 		int result = 0;
-		for (int i = 0; i < source.length(); i++) {
-			if (source.charAt(i) == '\n') {
+		for (int i = 0; i < source.length(); i++)
+			if (source.charAt(i) == '\n')
 				result++;
-			}
-		}
+
 		return result;
 	}
 
 	private static LineLocation lastLineNumber2(String source) {
 		LineLocationImpl result = new LineLocationImpl("", null).oneLineRead();
-		for (int i = 0; i < source.length(); i++) {
-			if (source.charAt(i) == '\n') {
+		for (int i = 0; i < source.length(); i++)
+			if (source.charAt(i) == '\n')
 				result = result.oneLineRead();
-			}
-		}
+
 		return result;
 	}
 }

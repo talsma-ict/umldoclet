@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -37,30 +37,30 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.plantuml.BackSlash;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.PlainDiagram;
-import net.sourceforge.plantuml.SpriteContainerEmpty;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.awt.geom.XPoint2D;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.UmlSource;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.graphic.UDrawable;
-import net.sourceforge.plantuml.ugraphic.UFont;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UPolygon;
-import net.sourceforge.plantuml.ugraphic.URectangle;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
-import net.sourceforge.plantuml.ugraphic.color.HColorSimple;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.color.HColorSet;
+import net.sourceforge.plantuml.klimt.color.HColorSimple;
+import net.sourceforge.plantuml.klimt.color.HColors;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.FontConfiguration;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.font.UFont;
+import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.geom.XPoint2D;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
+import net.sourceforge.plantuml.klimt.shape.UDrawable;
+import net.sourceforge.plantuml.klimt.shape.UPolygon;
+import net.sourceforge.plantuml.klimt.shape.URectangle;
+import net.sourceforge.plantuml.klimt.sprite.SpriteContainerEmpty;
+import net.sourceforge.plantuml.text.BackSlash;
 
 // http://www.redblobgames.com/grids/hexagons/
 public class PSystemColors extends PlainDiagram implements UDrawable {
@@ -142,7 +142,7 @@ public class PSystemColors extends PlainDiagram implements UDrawable {
 	private void drawOneHexa(UGraphic ug, String colorName, int i, int j, UPolygon hexa) {
 		final HColor color = colors.getColorOrWhite(colorName);
 		ug = applyColor(ug, color);
-		ug = ug.apply(new UTranslate(centerHexa(i, j)));
+		ug = ug.apply(UTranslate.point(centerHexa(i, j)));
 		ug.draw(hexa);
 
 		final UFont font = UFont.sansSerif(14).bold();
@@ -239,7 +239,7 @@ public class PSystemColors extends PlainDiagram implements UDrawable {
 		for (String name : colors.names()) {
 			UGraphic tmp = getPositioned(ug, i, j);
 			final HColor color = colors.getColorOrWhite(name);
-			applyColor(tmp, color).draw(new URectangle(rectangleWidth, rectangleHeight));
+			applyColor(tmp, color).draw(URectangle.build(rectangleWidth, rectangleHeight));
 			final TextBlock tt = getTextName(font, name, color);
 			final XDimension2D dimText = tt.calculateDimension(ug.getStringBounder());
 			final double dy = (rectangleHeight - dimText.getHeight()) / 2;
@@ -254,7 +254,7 @@ public class PSystemColors extends PlainDiagram implements UDrawable {
 
 	private TextBlock getTextName(final UFont font, String name, final HColor color) {
 		final HColor opposite = color.opposite();
-		final FontConfiguration fc = FontConfiguration.create(font, opposite, HColors.BLUE, new UStroke());
+		final FontConfiguration fc = FontConfiguration.create(font, opposite, HColors.BLUE, UStroke.simple());
 		final TextBlock tt = Display.getWithNewlines(name).create(fc, HorizontalAlignment.CENTER,
 				new SpriteContainerEmpty());
 		return tt;

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -37,9 +37,9 @@ public class SvgCommandLetter implements SvgCommand {
 	final private char letter;
 
 	public SvgCommandLetter(String letter) {
-		if (letter.matches("[mlhvzsacqtMLHVZSACQT]") == false) 
+		if (letter.matches("[mlhvzsacqtMLHVZSACQT]") == false)
 			throw new IllegalArgumentException(letter);
-		
+
 		this.letter = letter.charAt(0);
 	}
 

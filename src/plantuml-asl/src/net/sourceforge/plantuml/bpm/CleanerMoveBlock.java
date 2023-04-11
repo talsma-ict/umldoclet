@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -29,7 +29,6 @@
  * Original Author:  Arnaud Roques
  */
 package net.sourceforge.plantuml.bpm;
-
 
 public class CleanerMoveBlock implements GridCleaner {
 

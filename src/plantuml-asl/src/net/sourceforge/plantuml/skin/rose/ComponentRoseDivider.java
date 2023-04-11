@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,22 +30,22 @@
  */
 package net.sourceforge.plantuml.skin.rose;
 
-import net.sourceforge.plantuml.ISkinSimple;
-import net.sourceforge.plantuml.LineBreakStrategy;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.klimt.LineBreakStrategy;
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
+import net.sourceforge.plantuml.klimt.shape.ULine;
+import net.sourceforge.plantuml.klimt.shape.URectangle;
 import net.sourceforge.plantuml.skin.AbstractTextualComponent;
 import net.sourceforge.plantuml.skin.Area;
+import net.sourceforge.plantuml.style.ISkinSimple;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.ULine;
-import net.sourceforge.plantuml.ugraphic.URectangle;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class ComponentRoseDivider extends AbstractTextualComponent {
 
@@ -64,7 +64,7 @@ public class ComponentRoseDivider extends AbstractTextualComponent {
 		this.background = style.value(PName.BackGroundColor).asColor(getIHtmlColorSet());
 		this.borderColor = style.value(PName.LineColor).asColor(getIHtmlColorSet());
 		this.stroke = style.getStroke();
-		this.roundCorner = style.value(PName.RoundCorner).asInt();
+		this.roundCorner = style.value(PName.RoundCorner).asInt(false);
 		this.shadow = style.value(PName.Shadowing).asDouble();
 
 		this.empty = stringsToDisplay.get(0).length() == 0;
@@ -90,7 +90,7 @@ public class ComponentRoseDivider extends AbstractTextualComponent {
 
 			ug = ug.apply(borderColor);
 			ug = ug.apply(stroke);
-			final URectangle rect = new URectangle(textWidth + deltaX, textHeight).rounded(roundCorner);
+			final URectangle rect = URectangle.build(textWidth + deltaX, textHeight).rounded(roundCorner);
 			rect.setDeltaShadow(shadow);
 
 			ug.apply(new UTranslate(xpos, ypos)).draw(rect);
@@ -105,15 +105,15 @@ public class ComponentRoseDivider extends AbstractTextualComponent {
 	}
 
 	private void drawRectLong(UGraphic ug, double width) {
-		final URectangle rectLong = new URectangle(width, 3).rounded(roundCorner);
+		final URectangle rectLong = URectangle.build(width, 3).rounded(roundCorner);
 		rectLong.setDeltaShadow(shadow);
 
-		ug = ug.apply(new UStroke());
+		ug = ug.apply(UStroke.simple());
 		ug.draw(rectLong);
 	}
 
 	private void drawDoubleLine(UGraphic ug, final double width) {
-		ug = ug.apply(new UStroke(stroke.getThickness() / 2)).apply(borderColor);
+		ug = ug.apply(UStroke.withThickness(stroke.getThickness() / 2)).apply(borderColor);
 		final ULine line = ULine.hline(width);
 		ug.apply(UTranslate.dy(-1)).draw(line);
 		ug.apply(UTranslate.dy(2)).draw(line);

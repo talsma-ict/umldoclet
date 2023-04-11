@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -35,14 +35,15 @@ import java.math.BigInteger;
 import net.sourceforge.plantuml.StringUtils;
 
 public class EggUtils {
+	// ::remove file when __CORE__
 
 	public static String fromByteArrays(byte data[]) {
 		final StringBuilder sb = new StringBuilder();
 		for (byte b : data) {
 			final String hex = Integer.toHexString(b & 0xFF);
-			if (hex.length() == 1) {
+			if (hex.length() == 1)
 				sb.append('0');
-			}
+
 			sb.append(hex);
 		}
 		return sb.toString();
@@ -50,9 +51,9 @@ public class EggUtils {
 
 	public static byte[] toByteArrays(String s) {
 		final byte[] result = new byte[s.length() / 2];
-		for (int i = 0; i < result.length; i++) {
+		for (int i = 0; i < result.length; i++)
 			result[i] = (byte) Integer.parseInt(s.substring(i * 2, i * 2 + 2), 16);
-		}
+
 		return result;
 	}
 
@@ -66,7 +67,6 @@ public class EggUtils {
 			if (num != -1) {
 				result = result.multiply(twentySix);
 				result = result.add(BigInteger.valueOf(num));
-
 			}
 		}
 		return result;
@@ -75,9 +75,8 @@ public class EggUtils {
 
 	private static int convertChar(char c) {
 		c = StringUtils.goLowerCase(c);
-		if (c >= 'a' && c <= 'z') {
+		if (c >= 'a' && c <= 'z')
 			return c - 'a';
-		}
 		return -1;
 	}
 
@@ -86,10 +85,8 @@ public class EggUtils {
 		int pos = 0;
 		for (int i = 0; i < result.length; i++) {
 			result[i] = (byte) (data[i] ^ key[pos++]);
-			if (pos == key.length) {
+			if (pos == key.length)
 				pos = 0;
-			}
-
 		}
 		return result;
 	}

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -35,8 +35,11 @@ import java.io.PrintStream;
 
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.error.PSystemError;
+import net.sourceforge.plantuml.utils.Log;
 
 public class StdrptPipe0 implements Stdrpt {
+	// ::remove file when __CORE__
+	// ::remove file when __HAXE__
 
 	public void printInfo(final PrintStream output, final Diagram sys) {
 		if (sys instanceof PSystemError) {
@@ -51,12 +54,12 @@ public class StdrptPipe0 implements Stdrpt {
 	}
 
 	public void finalMessage(ErrorStatus error) {
-		if (error.hasError()) {
+		if (error.hasError())
 			Log.error("Some diagram description contains errors");
-		}
-		if (error.isNoData()) {
+
+		if (error.isNoData())
 			Log.error("No diagram found");
-		}
+
 	}
 
 	public void errorLine(int lineError, File file) {

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -37,7 +37,8 @@ import net.sourceforge.plantuml.security.authentication.SecurityAccessIntercepto
 import net.sourceforge.plantuml.security.authentication.SecurityAuthentication;
 
 /**
- * Applies from {@link SecurityAuthentication} data an OAuth2 Authorization access header.
+ * Applies from {@link SecurityAuthentication} data an OAuth2 Authorization
+ * access header.
  *
  * @author Aljoscha Rittner
  */

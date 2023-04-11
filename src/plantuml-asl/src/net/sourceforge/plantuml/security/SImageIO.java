@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -45,14 +45,17 @@ import javax.imageio.stream.ImageOutputStream;
 
 public class SImageIO {
 
+	// ::comment when __CORE__
 	public static ImageOutputStream createImageOutputStream(OutputStream os) throws IOException {
 		return javax.imageio.ImageIO.createImageOutputStream(os);
 	}
+	// ::done
 
 	public static void write(RenderedImage image, String format, OutputStream os) throws IOException {
 		javax.imageio.ImageIO.write(image, format, os);
 	}
 
+	// ::comment when __CORE__
 	public static void write(RenderedImage image, String format, SFile file) throws IOException {
 		javax.imageio.ImageIO.write(image, format, file.conv());
 	}
@@ -64,6 +67,7 @@ public class SImageIO {
 	public static BufferedImage read(SFile file) throws IOException {
 		return javax.imageio.ImageIO.read(file.conv());
 	}
+	// ::done
 
 	public static BufferedImage read(InputStream is) throws IOException {
 		return javax.imageio.ImageIO.read(is);
@@ -73,14 +77,15 @@ public class SImageIO {
 		return javax.imageio.ImageIO.read(new ByteArrayInputStream(bytes));
 	}
 
+	// ::comment when __CORE__
 	public static ImageInputStream createImageInputStream(SFile file) throws IOException {
 		return javax.imageio.ImageIO.createImageInputStream(file.conv());
 	}
 
 	public static ImageInputStream createImageInputStream(Object obj) throws IOException {
-		if (obj instanceof SFile) {
+		if (obj instanceof SFile)
 			obj = ((SFile) obj).conv();
-		}
+
 		return javax.imageio.ImageIO.createImageInputStream(obj);
 	}
 
@@ -95,5 +100,6 @@ public class SImageIO {
 	public static Iterator<ImageWriter> getImageWritersBySuffix(String string) {
 		return javax.imageio.ImageIO.getImageWritersBySuffix(string);
 	}
+	// ::done
 
 }

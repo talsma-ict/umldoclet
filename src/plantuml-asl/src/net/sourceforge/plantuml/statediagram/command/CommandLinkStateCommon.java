@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -31,30 +31,29 @@
  */
 package net.sourceforge.plantuml.statediagram.command;
 
-import net.sourceforge.plantuml.Direction;
-import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.UmlDiagramType;
-import net.sourceforge.plantuml.baraye.IEntity;
+import net.sourceforge.plantuml.abel.Entity;
+import net.sourceforge.plantuml.abel.LeafType;
+import net.sourceforge.plantuml.abel.Link;
+import net.sourceforge.plantuml.abel.LinkArg;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand2;
-import net.sourceforge.plantuml.command.regex.IRegex;
-import net.sourceforge.plantuml.command.regex.RegexLeaf;
-import net.sourceforge.plantuml.command.regex.RegexResult;
-import net.sourceforge.plantuml.cucadiagram.Code;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.cucadiagram.Ident;
-import net.sourceforge.plantuml.cucadiagram.LeafType;
-import net.sourceforge.plantuml.cucadiagram.Link;
-import net.sourceforge.plantuml.cucadiagram.LinkArg;
-import net.sourceforge.plantuml.cucadiagram.LinkDecor;
-import net.sourceforge.plantuml.cucadiagram.LinkType;
-import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.graphic.color.ColorType;
+import net.sourceforge.plantuml.decoration.LinkDecor;
+import net.sourceforge.plantuml.decoration.LinkType;
+import net.sourceforge.plantuml.klimt.color.ColorType;
+import net.sourceforge.plantuml.klimt.color.NoSuchColorException;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.plasma.Quark;
+import net.sourceforge.plantuml.regex.IRegex;
+import net.sourceforge.plantuml.regex.RegexLeaf;
+import net.sourceforge.plantuml.regex.RegexResult;
 import net.sourceforge.plantuml.statediagram.StateDiagram;
-import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
+import net.sourceforge.plantuml.stereo.Stereotype;
+import net.sourceforge.plantuml.utils.Direction;
+import net.sourceforge.plantuml.utils.LineLocation;
 
 abstract class CommandLinkStateCommon extends SingleLineCommand2<StateDiagram> {
+    // ::remove folder when __HAXE__
 
 	CommandLinkStateCommon(IRegex pattern) {
 		super(pattern);
@@ -71,12 +70,12 @@ abstract class CommandLinkStateCommon extends SingleLineCommand2<StateDiagram> {
 		final String ent1 = arg.get("ENT1", 0);
 		final String ent2 = arg.get("ENT2", 0);
 
-		final IEntity cl1 = getEntityStart(diagram, ent1);
+		final Entity cl1 = getEntityStart(diagram, ent1);
 		if (cl1 == null)
 			return CommandExecutionResult
 					.error("The state " + ent1 + " has been created in a concurrent state : it cannot be used here.");
 
-		final IEntity cl2 = getEntityEnd(diagram, ent2);
+		final Entity cl2 = getEntityEnd(diagram, ent2);
 		if (cl2 == null)
 			return CommandExecutionResult
 					.error("The state " + ent2 + " has been created in a concurrent state : it cannot be used here.");
@@ -111,13 +110,12 @@ abstract class CommandLinkStateCommon extends SingleLineCommand2<StateDiagram> {
 
 		final Display label = Display.getWithNewlines(arg.get("LABEL", 0));
 		final LinkArg linkArg = LinkArg.build(label, lenght, diagram.getSkinParam().classAttributeIconSize() > 0);
-		Link link = new Link(diagram.getIEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(), cl1, cl2,
+		Link link = new Link(diagram.getEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(), cl1, cl2,
 				linkType, linkArg);
 		if (dir == Direction.LEFT || dir == Direction.UP)
 			link = link.getInv();
 
 		link.applyStyle(arg.getLazzy("ARROW_STYLE", 0));
-		link.setUmlDiagramType(UmlDiagramType.STATE);
 		diagram.addLink(link);
 
 		return CommandExecutionResult.ok();
@@ -135,45 +133,51 @@ abstract class CommandLinkStateCommon extends SingleLineCommand2<StateDiagram> {
 		return null;
 	}
 
-	private IEntity getEntityStart(StateDiagram diagram, final String codeString) {
-		if (codeString.startsWith("[*]"))
+	private Entity getEntityStart(StateDiagram diagram, final String code) {
+		if (code.startsWith("[*]"))
 			return diagram.getStart();
 
-		return getFoo1(diagram, codeString);
+		return getEntity(diagram, code);
 	}
 
-	private IEntity getEntityEnd(StateDiagram diagram, final String codeString) {
-		if (codeString.startsWith("[*]"))
+	private Entity getEntityEnd(StateDiagram diagram, final String code) {
+		if (code.startsWith("[*]"))
 			return diagram.getEnd();
 
-		return getFoo1(diagram, codeString);
+		return getEntity(diagram, code);
 	}
 
-	private IEntity getFoo1(StateDiagram diagram, final String codeString) {
-		if (codeString.equalsIgnoreCase("[H]"))
+	private Entity getEntity(StateDiagram diagram, final String code) {
+		if (code.equalsIgnoreCase("[H]"))
 			return diagram.getHistorical();
 
-		if (codeString.endsWith("[H]"))
-			return diagram.getHistorical(codeString.substring(0, codeString.length() - 3));
+		if (code.endsWith("[H]"))
+			return diagram.getHistorical(code.substring(0, code.length() - 3));
 
-		if (codeString.equalsIgnoreCase("[H*]"))
+		if (code.equalsIgnoreCase("[H*]"))
 			return diagram.getDeepHistory();
 
-		if (codeString.endsWith("[H*]"))
-			return diagram.getDeepHistory(codeString.substring(0, codeString.length() - 4));
+		if (code.endsWith("[H*]"))
+			return diagram.getDeepHistory(code.substring(0, code.length() - 4));
 
-		if (codeString.startsWith("=") && codeString.endsWith("=")) {
-			final String codeString1 = removeEquals(codeString);
-			final Ident ident1 = diagram.buildLeafIdent(codeString1);
-			final Code code1 = diagram.V1972() ? ident1 : diagram.buildCode(codeString1);
-			return diagram.getOrCreateLeaf(ident1, code1, LeafType.SYNCHRO_BAR, null);
+		if (code.startsWith("=") && code.endsWith("=")) {
+			final String codeString1 = removeEquals(code);
+			final Quark<Entity> quark = diagram.quarkInContext(true, diagram.cleanId(codeString1));
+			if (quark.getData() != null)
+				return quark.getData();
+			return diagram.reallyCreateLeaf(quark, Display.getWithNewlines(quark), LeafType.SYNCHRO_BAR, null);
 		}
-		final Ident ident = diagram.buildLeafIdent(codeString);
-		final Code code = diagram.V1972() ? ident : diagram.buildCode(codeString);
-		if (diagram.checkConcurrentStateOk(ident, code) == false)
+
+		if (diagram.getCurrentGroup().getName().equals(code))
+			return diagram.getCurrentGroup();
+
+		final Quark<Entity> quark = diagram.quarkInContext(true, diagram.cleanId(code));
+		if (diagram.checkConcurrentStateOk(quark) == false)
 			return null;
 
-		return diagram.getOrCreateLeaf(ident, code, null, null);
+		if (quark.getData() != null)
+			return quark.getData();
+		return diagram.reallyCreateLeaf(quark, Display.getWithNewlines(quark.getName()), LeafType.STATE, null);
 	}
 
 	private String removeEquals(String code) {

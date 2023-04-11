@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,31 +33,31 @@ package net.sourceforge.plantuml.activitydiagram3;
 import java.util.Collection;
 import java.util.Objects;
 
-import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.LineBreakStrategy;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactory;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
 import net.sourceforge.plantuml.activitydiagram3.ftile.WeldingPoint;
 import net.sourceforge.plantuml.activitydiagram3.gtile.Gtile;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
-import net.sourceforge.plantuml.creole.CreoleMode;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.Rainbow;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.graphic.TextBlockUtils;
-import net.sourceforge.plantuml.graphic.color.Colors;
+import net.sourceforge.plantuml.decoration.Rainbow;
+import net.sourceforge.plantuml.klimt.LineBreakStrategy;
+import net.sourceforge.plantuml.klimt.color.Colors;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.creole.CreoleMode;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.font.FontConfiguration;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
+import net.sourceforge.plantuml.klimt.shape.TextBlockUtils;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
 import net.sourceforge.plantuml.sequencediagram.NoteType;
+import net.sourceforge.plantuml.style.ISkinParam;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleBuilder;
 import net.sourceforge.plantuml.style.StyleSignatureBasic;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class Branch {
 
@@ -73,7 +73,9 @@ public class Branch {
 	private final HColor color;
 
 	private Ftile ftile;
+	// ::comment when __CORE__
 	private Gtile gtile;
+	// ::done
 
 	public StyleSignatureBasic getDefaultStyleDefinitionArrow() {
 		return StyleSignatureBasic.of(SName.root, SName.element, SName.activityDiagram, SName.arrow);
@@ -94,8 +96,9 @@ public class Branch {
 		this.labelPositive = Objects.requireNonNull(labelPositive);
 
 		final Style style = getDefaultStyleDefinitionDiamond().getMergedStyle(styleBuilder);
-		this.color = color == null ? style.value(PName.BackGroundColor).asColor(
-				styleBuilder.getSkinParam().getIHtmlColorSet()) : color;
+		this.color = color == null
+				? style.value(PName.BackGroundColor).asColor(styleBuilder.getSkinParam().getIHtmlColorSet())
+				: color;
 
 		this.list = new InstructionList(swimlane);
 	}
@@ -125,9 +128,11 @@ public class Branch {
 		this.ftile = factory.decorateOut(list.createFtile(factory), inlinkRendering);
 	}
 
+	// ::comment when __CORE__
 	public void updateGtile(ISkinParam skinParam, StringBounder stringBounder) {
 		this.gtile = list.createGtile(skinParam, stringBounder);
 	}
+	// ::done
 
 	public Collection<? extends Swimlane> getSwimlanes() {
 		return list.getSwimlanes();
@@ -181,13 +186,17 @@ public class Branch {
 		return ftile;
 	}
 
+	// ::comment when __CORE__
 	public Gtile getGtile() {
 		return gtile;
 	}
+	// ::done
 
 	public ISkinParam skinParam() {
+		// ::comment when __CORE__
 		if (gtile != null)
 			return gtile.skinParam();
+		// ::done
 		return ftile.skinParam();
 	}
 

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -37,6 +37,7 @@ import java.util.zip.Inflater;
 
 @Deprecated
 public class CompressionZlibAttic implements Compression {
+	// ::remove file when __CORE__
 
 	private static boolean USE_ZOPFLI = false;
 	private static final int COMPRESSION_LEVEL = 9;

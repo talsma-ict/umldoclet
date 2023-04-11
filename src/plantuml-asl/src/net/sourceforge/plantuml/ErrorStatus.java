@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -67,12 +67,12 @@ public class ErrorStatus {
 	}
 
 	public int getExitCode() {
-		if (isNoData()) {
+		if (isNoData()) 
 			return 100;
-		}
-		if (hasErrors) {
+		
+		if (hasErrors) 
 			return 200;
-		}
+		
 		return 0;
 	}
 

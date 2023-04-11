@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -37,25 +37,28 @@ import net.sourceforge.plantuml.security.authentication.SecurityAccessIntercepto
 import net.sourceforge.plantuml.security.authentication.SecurityAuthentication;
 
 /**
- * Applies from {@link SecurityAuthentication} data plain token authentication access headers. This is a raw header
- * injection with static data.
+ * Applies from {@link SecurityAuthentication} data plain token authentication
+ * access headers. This is a raw header injection with static data.
  *
  * @author Aljoscha Rittner
  */
 public class TokenAuthAccessInterceptor implements SecurityAccessInterceptor {
+    // ::remove folder when __HAXE__
 
 	/**
-	 * Applies from {@link SecurityAuthentication} data plain token authentication access headers.
+	 * Applies from {@link SecurityAuthentication} data plain token authentication
+	 * access headers.
 	 * <p>
 	 * Expects headers.* key value pairs to pass it directly to the connection.
 	 *
-	 * @param authentication the determined authentication data to authorize for the endpoint access
+	 * @param authentication the determined authentication data to authorize for the
+	 *                       endpoint access
 	 * @param connection     the connection to the endpoint
 	 */
 	@Override
 	public void apply(SecurityAuthentication authentication, URLConnection connection) {
 
-		for (Map.Entry<String, Object> header : authentication.getTokens().entrySet() ) {
+		for (Map.Entry<String, Object> header : authentication.getTokens().entrySet()) {
 			if (!header.getKey().startsWith("headers.") || header.getValue() == null) {
 				continue;
 			}

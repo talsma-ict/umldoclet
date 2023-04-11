@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,38 +30,55 @@
  */
 package net.sourceforge.plantuml;
 
-import static net.sourceforge.plantuml.ugraphic.ImageBuilder.imageBuilder;
+import static net.atmp.ImageBuilder.imageBuilder;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Objects;
 
-import net.sourceforge.plantuml.command.BlocLines;
+import net.atmp.ImageBuilder;
+import net.sourceforge.plantuml.abel.DisplayPositioned;
+import net.sourceforge.plantuml.abel.DisplayPositionned;
 import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.ProtectedCommand;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.core.UmlSource;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.cucadiagram.DisplayPositioned;
-import net.sourceforge.plantuml.cucadiagram.DisplayPositionned;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.VerticalAlignment;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.ColorMapper;
+import net.sourceforge.plantuml.klimt.color.NoSuchColorException;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.FontConfiguration;
+import net.sourceforge.plantuml.klimt.font.UFont;
+import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
+import net.sourceforge.plantuml.klimt.geom.VerticalAlignment;
+import net.sourceforge.plantuml.klimt.shape.UText;
 import net.sourceforge.plantuml.stats.StatsUtilsIncrement;
 import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
-import net.sourceforge.plantuml.ugraphic.ImageBuilder;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
-import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
+import net.sourceforge.plantuml.text.BackSlash;
+import net.sourceforge.plantuml.utils.BlocLines;
 import net.sourceforge.plantuml.version.License;
 import net.sourceforge.plantuml.version.Version;
 
 public abstract class AbstractPSystem implements Diagram {
+	// ::remove file when __HAXE__
 
 	private final UmlSource source;
 	private Scale scale;
 	private int splitPagesHorizontal = 1;
 	private int splitPagesVertical = 1;
+
+	private String namespaceSeparator = null;
+
+	public void setNamespaceSeparator(String namespaceSeparator) {
+		this.namespaceSeparator = namespaceSeparator;
+	}
+
+	final public String getNamespaceSeparator() {
+		return namespaceSeparator;
+	}
 
 	public AbstractPSystem(UmlSource source) {
 		this.source = Objects.requireNonNull(source);
@@ -73,22 +90,24 @@ public abstract class AbstractPSystem implements Diagram {
 		toAppend.append(Version.versionString());
 		toAppend.append("(" + Version.compileTimeString() + ")\n");
 		toAppend.append("(" + License.getCurrent() + " source distribution)\n");
+		// ::comment when __CORE__
 		for (String name : OptionPrint.interestingProperties()) {
 			toAppend.append(name);
 			toAppend.append(BackSlash.CHAR_NEWLINE);
 		}
+		// ::done
 		return toAppend.toString();
 	}
 
 	final public String getMetadata() {
-		if (source == null) {
+		if (source == null) 
 			return getVersion();
-		}
-		final String rawString = source.getRawString();
-		final String plainString = source.getPlainString();
-		if (rawString != null && rawString.equals(plainString)) {
+		
+		final String rawString = source.getRawString("\n");
+		final String plainString = source.getPlainString("\n");
+		if (rawString != null && rawString.equals(plainString)) 
 			return rawString + BackSlash.NEWLINE + getVersion();
-		}
+		
 		return rawString + BackSlash.NEWLINE + plainString + BackSlash.NEWLINE + getVersion();
 	}
 
@@ -97,9 +116,9 @@ public abstract class AbstractPSystem implements Diagram {
 	}
 
 	final public long seed() {
-		if (source == null) {
+		if (source == null) 
 			return 42;
-		}
+		
 		return getSource().seed();
 	}
 
@@ -126,9 +145,9 @@ public abstract class AbstractPSystem implements Diagram {
 	}
 
 	public DisplayPositionned getTitle() {
-		if (source == null) {
+		if (source == null) 
 			return DisplayPositioned.single(Display.empty(), HorizontalAlignment.CENTER, VerticalAlignment.TOP);
-		}
+		
 		return DisplayPositioned.single(source.getTitle(), HorizontalAlignment.CENTER, VerticalAlignment.TOP);
 	}
 
@@ -173,10 +192,12 @@ public abstract class AbstractPSystem implements Diagram {
 //			}
 			return exportDiagramNow(os, index, fileFormatOption);
 		} finally {
-			if (OptionFlags.getInstance().isEnableStats()) {
+			// ::comment when __CORE__
+			if (OptionFlags.getInstance().isEnableStats())
 				StatsUtilsIncrement.onceMoreGenerate(System.currentTimeMillis() - now, getClass(),
 						fileFormatOption.getFileFormat());
-			}
+
+			// ::done
 		}
 	}
 
@@ -209,6 +230,14 @@ public abstract class AbstractPSystem implements Diagram {
 	@Override
 	public Display getTitleDisplay() {
 		return null;
+	}
+
+	@Override
+	public void exportDiagramGraphic(UGraphic ug) {
+		final UFont font = UFont.monospaced(14);
+		final FontConfiguration fc = FontConfiguration.blackBlueTrue(font);
+		final UText text = UText.build("Not implemented yet for " + getClass().getName(), fc);
+		ug.apply(new UTranslate(10, 10)).draw(text);
 	}
 
 }

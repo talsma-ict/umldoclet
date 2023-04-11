@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -29,6 +29,8 @@
  * Original Author:  Arnaud Roques
  */
 package net.sourceforge.plantuml.posimo;
+
+import net.sourceforge.plantuml.klimt.geom.Positionable;
 
 public interface Clusterable extends Positionable {
 

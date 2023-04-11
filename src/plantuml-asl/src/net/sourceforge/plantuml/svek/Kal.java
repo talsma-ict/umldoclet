@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,24 +30,24 @@
  */
 package net.sourceforge.plantuml.svek;
 
-import net.sourceforge.plantuml.Direction;
-import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.baraye.EntityImp;
-import net.sourceforge.plantuml.creole.CreoleMode;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.cucadiagram.Link;
-import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.graphic.UDrawable;
+import net.sourceforge.plantuml.abel.Entity;
+import net.sourceforge.plantuml.abel.Link;
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.HColors;
+import net.sourceforge.plantuml.klimt.creole.CreoleMode;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.FontConfiguration;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
+import net.sourceforge.plantuml.klimt.shape.UDrawable;
+import net.sourceforge.plantuml.klimt.shape.URectangle;
+import net.sourceforge.plantuml.style.ISkinParam;
 import net.sourceforge.plantuml.svek.extremity.Extremity;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.URectangle;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
+import net.sourceforge.plantuml.utils.Direction;
 
 public class Kal implements UDrawable {
 
@@ -56,11 +56,11 @@ public class Kal implements UDrawable {
 	private XDimension2D dim;
 	private UTranslate translate;
 	private final SvekLine svekLine;
-	private final EntityImp entity;
+	private final Entity entity;
 	private final Link link;
 
-	public Kal(SvekLine svekLine, String text, FontConfiguration font, ISkinParam skinParam, EntityImp entity,
-			Link link, StringBounder stringBounder) {
+	public Kal(SvekLine svekLine, String text, FontConfiguration font, ISkinParam skinParam, Entity entity, Link link,
+			StringBounder stringBounder) {
 		this.svekLine = svekLine;
 		this.entity = entity;
 		this.link = link;
@@ -98,9 +98,9 @@ public class Kal implements UDrawable {
 
 	@Override
 	public void drawU(UGraphic ug) {
-		final URectangle rect = new URectangle(dim);
+		final URectangle rect = URectangle.build(dim);
 		ug = ug.apply(getTranslate());
-		ug.apply(HColors.WHITE.bg()).apply(HColors.BLACK).apply(new UStroke(0.5)).draw(rect);
+		ug.apply(HColors.WHITE.bg()).apply(HColors.BLACK).apply(UStroke.withThickness(0.5)).draw(rect);
 		textBlock.drawU(ug.apply(new UTranslate(2, 1)));
 	}
 

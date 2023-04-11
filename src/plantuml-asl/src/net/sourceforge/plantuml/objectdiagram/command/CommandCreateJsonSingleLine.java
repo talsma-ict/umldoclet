@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,29 +30,29 @@
  */
 package net.sourceforge.plantuml.objectdiagram.command;
 
-import net.sourceforge.plantuml.FontParam;
-import net.sourceforge.plantuml.LineLocation;
-import net.sourceforge.plantuml.UrlBuilder;
-import net.sourceforge.plantuml.baraye.IEntity;
+import net.sourceforge.plantuml.abel.Entity;
+import net.sourceforge.plantuml.abel.LeafType;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand2;
-import net.sourceforge.plantuml.command.regex.IRegex;
-import net.sourceforge.plantuml.command.regex.RegexConcat;
-import net.sourceforge.plantuml.command.regex.RegexLeaf;
-import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.BodierJSon;
-import net.sourceforge.plantuml.cucadiagram.Code;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.cucadiagram.Ident;
-import net.sourceforge.plantuml.cucadiagram.LeafType;
-import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.graphic.color.ColorParser;
-import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.json.Json.DefaultHandler;
 import net.sourceforge.plantuml.json.JsonParser;
 import net.sourceforge.plantuml.json.JsonValue;
+import net.sourceforge.plantuml.klimt.color.ColorParser;
+import net.sourceforge.plantuml.klimt.color.ColorType;
+import net.sourceforge.plantuml.klimt.color.NoSuchColorException;
+import net.sourceforge.plantuml.klimt.creole.CreoleMode;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.font.FontParam;
 import net.sourceforge.plantuml.objectdiagram.AbstractClassOrObjectDiagram;
-import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
+import net.sourceforge.plantuml.plasma.Quark;
+import net.sourceforge.plantuml.regex.IRegex;
+import net.sourceforge.plantuml.regex.RegexConcat;
+import net.sourceforge.plantuml.regex.RegexLeaf;
+import net.sourceforge.plantuml.regex.RegexResult;
+import net.sourceforge.plantuml.stereo.Stereotype;
+import net.sourceforge.plantuml.url.UrlBuilder;
+import net.sourceforge.plantuml.utils.LineLocation;
 
 public class CommandCreateJsonSingleLine extends SingleLineCommand2<AbstractClassOrObjectDiagram> {
 
@@ -68,7 +68,7 @@ public class CommandCreateJsonSingleLine extends SingleLineCommand2<AbstractClas
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("STEREO", "(\\<\\<.+\\>\\>)?"), //
 				RegexLeaf.spaceZeroOrMore(), //
-				new RegexLeaf("URL", "(" + UrlBuilder.getRegexp() + ")?"), //
+				UrlBuilder.OPTIONAL, //
 				RegexLeaf.spaceZeroOrMore(), //
 				ColorParser.exp1(), //
 				RegexLeaf.spaceZeroOrMore(), //
@@ -81,7 +81,7 @@ public class CommandCreateJsonSingleLine extends SingleLineCommand2<AbstractClas
 			RegexResult arg) throws NoSuchColorException {
 		final String name = arg.get("NAME", 1);
 		final String data = arg.get("DATA", 0);
-		final IEntity entity1 = executeArg0(diagram, arg);
+		final Entity entity1 = executeArg0(diagram, arg);
 		if (entity1 == null)
 			return CommandExecutionResult.error("No such entity");
 
@@ -105,25 +105,29 @@ public class CommandCreateJsonSingleLine extends SingleLineCommand2<AbstractClas
 		}
 	}
 
-	private IEntity executeArg0(AbstractClassOrObjectDiagram diagram, RegexResult line0) throws NoSuchColorException {
+	private Entity executeArg0(AbstractClassOrObjectDiagram diagram, RegexResult line0) throws NoSuchColorException {
 		final String name = line0.get("NAME", 1);
-		final Ident ident = diagram.buildLeafIdent(name);
-		final Code code = diagram.V1972() ? ident : diagram.buildCode(name);
-		final String display = line0.get("NAME", 0);
-		final String stereotype = line0.get("STEREO", 0);
-		final boolean leafExist = diagram.V1972() ? diagram.leafExistSmart(ident) : diagram.leafExist(code);
-		if (leafExist)
-			return diagram.getOrCreateLeaf(diagram.buildLeafIdent(name), code, LeafType.JSON, null);
 
-		final IEntity entity = diagram.createLeaf(ident, code, Display.getWithNewlines(display), LeafType.JSON, null);
+		final Quark<Entity> quark = diagram.quarkInContext(false, diagram.cleanId(name));
+		if (quark.getData() != null)
+			return null;
+
+		final String displayString = line0.get("NAME", 0);
+		final String stereotype = line0.get("STEREO", 0);
+
+		Display display = Display.getWithNewlines(displayString);
+		if (Display.isNull(display))
+			display = Display.getWithNewlines(name).withCreoleMode(CreoleMode.SIMPLE_LINE);
+
+		final Entity entity = diagram.reallyCreateLeaf(quark, display, LeafType.JSON, null);
 		if (stereotype != null)
 			entity.setStereotype(Stereotype.build(stereotype, diagram.getSkinParam().getCircledCharacterRadius(),
 					diagram.getSkinParam().getFont(null, false, FontParam.CIRCLED_CHARACTER),
 					diagram.getSkinParam().getIHtmlColorSet()));
 
 		final String s = line0.get("COLOR", 0);
-		entity.setSpecificColorTOBEREMOVED(ColorType.BACK, s == null ? null
-				: diagram.getSkinParam().getIHtmlColorSet().getColor(s));
+		entity.setSpecificColorTOBEREMOVED(ColorType.BACK,
+				s == null ? null : diagram.getSkinParam().getIHtmlColorSet().getColor(s));
 		return entity;
 	}
 

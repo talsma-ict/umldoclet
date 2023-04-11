@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -31,11 +31,11 @@
 package net.sourceforge.plantuml.code;
 
 public class TranscoderUtil {
-
 	public static Transcoder getDefaultTranscoder() {
 		return new TranscoderSmart();
 	}
 
+	// ::comment when __CORE__
 	public static Transcoder getDefaultTranscoderProtected() {
 		return new TranscoderSmartProtected();
 	}
@@ -44,5 +44,6 @@ public class TranscoderUtil {
 	public static Transcoder getDefaultTranscoderProtectedPure() {
 		return getDefaultTranscoderProtected();
 	}
+	// ::done
 
 }

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,8 +33,8 @@ package net.sourceforge.plantuml.error;
 import java.util.List;
 
 import net.sourceforge.plantuml.ErrorUml;
-import net.sourceforge.plantuml.StringLocated;
 import net.sourceforge.plantuml.core.UmlSource;
+import net.sourceforge.plantuml.text.StringLocated;
 
 public class PSystemErrorV2 extends PSystemError {
 

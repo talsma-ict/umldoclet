@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,21 +33,18 @@ package net.sourceforge.plantuml.cucadiagram;
 import java.io.IOException;
 import java.util.Collection;
 
+import net.atmp.ImageBuilder;
 import net.sourceforge.plantuml.Annotated;
 import net.sourceforge.plantuml.FileFormatOption;
-import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.Pragma;
-import net.sourceforge.plantuml.UmlDiagramType;
-import net.sourceforge.plantuml.baraye.EntityFactory;
-import net.sourceforge.plantuml.baraye.IGroup;
-import net.sourceforge.plantuml.baraye.ILeaf;
+import net.sourceforge.plantuml.abel.EntityFactory;
+import net.sourceforge.plantuml.abel.Link;
 import net.sourceforge.plantuml.core.UmlSource;
+import net.sourceforge.plantuml.skin.Pragma;
+import net.sourceforge.plantuml.skin.UmlDiagramType;
+import net.sourceforge.plantuml.style.ISkinParam;
 import net.sourceforge.plantuml.style.StyleBuilder;
-import net.sourceforge.plantuml.ugraphic.ImageBuilder;
 
 public interface ICucaDiagram extends GroupHierarchy, PortionShower, Annotated {
-
-	boolean V1972();
 
 	ISkinParam getSkinParam();
 
@@ -69,21 +66,15 @@ public interface ICucaDiagram extends GroupHierarchy, PortionShower, Annotated {
 
 	String getFlashData();
 
-	Collection<ILeaf> getLeafsvalues();
-
 	ImageBuilder createImageBuilder(FileFormatOption fileFormatOption) throws IOException;
 
 	String getNamespaceSeparator();
-
-	boolean mergeIntricated();
-
-	Collection<IGroup> getGroups(boolean b);
 
 	UmlSource getSource();
 
 	String[] getDotStringSkek();
 
-	boolean isAutarkic(IGroup g);
+	// boolean isAutarkic(Entity g);
 
 	int getUniqueSequence();
 

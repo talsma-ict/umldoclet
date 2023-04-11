@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,15 +33,16 @@ package net.sourceforge.plantuml.salt.factory;
 import java.util.Arrays;
 import java.util.List;
 
-import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.klimt.font.UFont;
 import net.sourceforge.plantuml.salt.DataSource;
 import net.sourceforge.plantuml.salt.Terminated;
 import net.sourceforge.plantuml.salt.element.Element;
 import net.sourceforge.plantuml.salt.element.ElementRadioCheckbox;
-import net.sourceforge.plantuml.ugraphic.UFont;
+import net.sourceforge.plantuml.style.ISkinSimple;
 
 public class ElementFactoryCheckboxOff implements ElementFactory {
+    // ::remove folder when __HAXE__
 
 	final private DataSource dataSource;
 	final private ISkinSimple spriteContainer;

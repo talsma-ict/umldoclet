@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,19 +30,20 @@
  */
 package net.sourceforge.plantuml.mda;
 
+import net.sourceforge.plantuml.abel.Entity;
 import net.sourceforge.plantuml.api.mda.option2.MDAEntity;
-import net.sourceforge.plantuml.baraye.ILeaf;
 
 public class MDAEntityImpl implements MDAEntity {
+    // ::remove folder when __HAXE__
 
-	private final ILeaf leaf;
+	private final Entity leaf;
 
-	public MDAEntityImpl(ILeaf leaf) {
+	public MDAEntityImpl(Entity leaf) {
 		this.leaf = leaf;
 	}
 
 	public String getName() {
-		return leaf.getCodeGetName();
+		return leaf.getName();
 	}
 
 }

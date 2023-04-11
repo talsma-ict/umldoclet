@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -35,14 +35,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.sourceforge.plantuml.BackSlash;
-import net.sourceforge.plantuml.LineLocation;
-import net.sourceforge.plantuml.StringLocated;
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.command.regex.Matcher2;
-import net.sourceforge.plantuml.command.regex.MyPattern;
-import net.sourceforge.plantuml.command.regex.Pattern2;
-import net.sourceforge.plantuml.cucadiagram.Display;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.regex.Matcher2;
+import net.sourceforge.plantuml.regex.MyPattern;
+import net.sourceforge.plantuml.regex.Pattern2;
+import net.sourceforge.plantuml.text.BackSlash;
+import net.sourceforge.plantuml.text.StringLocated;
+import net.sourceforge.plantuml.utils.LineLocation;
 import net.sourceforge.plantuml.utils.StartUtils;
 import net.sourceforge.plantuml.version.IteratorCounter2;
 import net.sourceforge.plantuml.version.IteratorCounter2Impl;
@@ -154,33 +154,37 @@ final public class UmlSource {
 //		return Collections.unmodifiableCollection(rawSource).iterator();
 //	}
 
+	
+	@Deprecated()
+	public String getPlainString() {
+		return getPlainString("\n");
+	}
+
 	/**
-	 * Return the source as a single String with <code>\n</code> as line separator.
+	 * Return the source as a single String.
 	 *
 	 * @return the whole diagram source
 	 */
-	public String getPlainString() {
+	public String getPlainString(String separator) {
 		final StringBuilder sb = new StringBuilder();
 		for (StringLocated s : source) {
 			sb.append(s.getString());
-			sb.append('\r');
-			sb.append(BackSlash.CHAR_NEWLINE);
+			sb.append(separator);
 		}
 		return sb.toString();
 	}
 
-	public String getRawString() {
+	public String getRawString(String separator) {
 		final StringBuilder sb = new StringBuilder();
 		for (StringLocated s : rawSource) {
 			sb.append(s.getString());
-			sb.append('\r');
-			sb.append(BackSlash.CHAR_NEWLINE);
+			sb.append(separator);
 		}
 		return sb.toString();
 	}
 
 	public long seed() {
-		return StringUtils.seed(getPlainString());
+		return StringUtils.seed(getPlainString("\n"));
 	}
 
 	public String getLine(LineLocation n) {

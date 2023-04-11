@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -42,26 +42,33 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import net.sourceforge.plantuml.emoji.data.Dummy;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
 import net.sourceforge.plantuml.log.Logme;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 // Emojji from https://twemoji.twitter.com/
 // Shorcut from https://api.github.com/emojis
 
+// ::uncomment when __CORE__
+//import static com.plantuml.api.cheerpj.StaticMemory.cheerpjPath;
+//import java.io.FileInputStream;
+// ::done
+
 public class Emoji {
+	// ::remove folder when __HAXE__
 	private final static Map<String, Emoji> ALL = new HashMap<>();
 
 	static {
 		final InputStream is = Dummy.class.getResourceAsStream("emoji.txt");
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
-			String s = null;
-			while ((s = br.readLine()) != null) {
-				new Emoji(s);
+		if (is != null)
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+				String s = null;
+				while ((s = br.readLine()) != null)
+					new Emoji(s);
+
+			} catch (IOException e) {
+				Logme.error(e);
 			}
-		} catch (IOException e) {
-			Logme.error(e);
-		}
 	}
 
 	public static Map<String, Emoji> getAll() {
@@ -106,8 +113,14 @@ public class Emoji {
 			return;
 
 		final List<String> data = new ArrayList<String>();
+		// ::uncomment when __CORE__
+//		final String fullpath = cheerpjPath + "emoji/" + unicode + ".svg";
+//		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fullpath)))) {
+		// ::done
+		// ::comment when __CORE__
 		try (BufferedReader br = new BufferedReader(
 				new InputStreamReader(Dummy.class.getResourceAsStream(unicode + ".svg")))) {
+			// ::done
 			final String singleLine = br.readLine();
 			data.add(singleLine);
 		}

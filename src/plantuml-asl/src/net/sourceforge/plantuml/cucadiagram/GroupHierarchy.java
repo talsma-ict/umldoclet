@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,13 +32,13 @@ package net.sourceforge.plantuml.cucadiagram;
 
 import java.util.Collection;
 
-import net.sourceforge.plantuml.baraye.IGroup;
+import net.sourceforge.plantuml.abel.Entity;
 
 public interface GroupHierarchy {
 
-	public IGroup getRootGroup();
+	public Entity getRootGroup();
 
-	public Collection<IGroup> getChildrenGroups(IGroup parent);
+	public Collection<Entity> getChildrenGroups(Entity parent);
 
-	public boolean isEmpty(IGroup g);
+	public boolean isEmpty(Entity g);
 }

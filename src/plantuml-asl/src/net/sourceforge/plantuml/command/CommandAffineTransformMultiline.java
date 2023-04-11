@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -31,10 +31,13 @@
 package net.sourceforge.plantuml.command;
 
 import net.sourceforge.plantuml.TitledDiagram;
+import net.sourceforge.plantuml.utils.BlocLines;
 
 public class CommandAffineTransformMultiline extends CommandMultilines<TitledDiagram> {
 
-	public CommandAffineTransformMultiline() {
+	public static final CommandAffineTransformMultiline ME = new CommandAffineTransformMultiline();
+
+	private CommandAffineTransformMultiline() {
 		super("^!transformation[%s]+\\{[%s]*$");
 	}
 

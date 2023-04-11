@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,19 +30,21 @@
  */
 package net.sourceforge.plantuml.objectdiagram.command;
 
-import net.sourceforge.plantuml.LineLocation;
-import net.sourceforge.plantuml.baraye.IEntity;
+import net.sourceforge.plantuml.abel.Entity;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand2;
-import net.sourceforge.plantuml.command.regex.IRegex;
-import net.sourceforge.plantuml.command.regex.RegexConcat;
-import net.sourceforge.plantuml.command.regex.RegexLeaf;
-import net.sourceforge.plantuml.command.regex.RegexResult;
+import net.sourceforge.plantuml.klimt.color.NoSuchColorException;
 import net.sourceforge.plantuml.objectdiagram.AbstractClassOrObjectDiagram;
+import net.sourceforge.plantuml.plasma.Quark;
+import net.sourceforge.plantuml.regex.IRegex;
+import net.sourceforge.plantuml.regex.RegexConcat;
+import net.sourceforge.plantuml.regex.RegexLeaf;
+import net.sourceforge.plantuml.regex.RegexResult;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
-import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
+import net.sourceforge.plantuml.utils.LineLocation;
 
 public class CommandAddData extends SingleLineCommand2<AbstractClassOrObjectDiagram> {
+    // ::remove folder when __HAXE__
 
 	public CommandAddData() {
 		super(getRegexConcat());
@@ -61,13 +63,15 @@ public class CommandAddData extends SingleLineCommand2<AbstractClassOrObjectDiag
 	protected CommandExecutionResult executeArg(AbstractClassOrObjectDiagram diagram, LineLocation location,
 			RegexResult arg) throws NoSuchColorException {
 		final String name = arg.get("NAME", 0);
-		final IEntity entity = diagram.getOrCreateLeaf(diagram.buildLeafIdent(name), diagram.buildCode(name), null,
-				null);
+		final Quark<Entity> quark = diagram.quarkInContext(true, diagram.cleanId(name));
+		final Entity entity = quark.getData();
+		if (entity == null)
+			return CommandExecutionResult.error("No such entity " + quark.getName());
 
 		final String field = arg.get("DATA", 0);
-		if (field.length() > 0 && VisibilityModifier.isVisibilityCharacter(field)) {
+		if (field.length() > 0 && VisibilityModifier.isVisibilityCharacter(field))
 			diagram.setVisibilityModifierPresent(true);
-		}
+
 		entity.getBodier().addFieldOrMethod(field);
 		return CommandExecutionResult.ok();
 	}

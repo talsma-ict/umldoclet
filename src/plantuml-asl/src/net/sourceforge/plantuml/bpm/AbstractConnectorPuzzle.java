@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,6 +34,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 abstract class AbstractConnectorPuzzle implements ConnectorPuzzle {
+    // ::remove folder when __HAXE__
 
 	private final EnumSet<Where> connections = EnumSet.noneOf(Where.class);
 

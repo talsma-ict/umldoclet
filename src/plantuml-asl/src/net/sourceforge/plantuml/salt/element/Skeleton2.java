@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,10 +33,10 @@ package net.sourceforge.plantuml.salt.element;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.ULine;
-import net.sourceforge.plantuml.ugraphic.URectangle;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.shape.ULine;
+import net.sourceforge.plantuml.klimt.shape.URectangle;
 
 public class Skeleton2 {
 
@@ -55,7 +55,7 @@ public class Skeleton2 {
 
 		void drawHline(UGraphic ug) {
 			final double xpos = getXStartForLevel(level);
-			ug.apply(new UTranslate(xpos + sizeX - 1, ypos - 1)).draw(new URectangle(2, 2));
+			ug.apply(new UTranslate(xpos + sizeX - 1, ypos - 1)).draw(URectangle.build(2, 2));
 			ug.apply(new UTranslate(xpos, ypos)).draw(ULine.hline(sizeX));
 		}
 
@@ -119,10 +119,12 @@ public class Skeleton2 {
 	//
 	// private void drawChild(UGraphic ug, Entry parent, Entry child) {
 	// final double dy = child.ypos - parent.ypos - 2;
-	// ug.apply(new UTranslate(parent.xpos + 1, parent.ypos + 3)).draw(ULine.dy(dy));
+	// ug.apply(new UTranslate(parent.xpos + 1, parent.ypos +
+	// 3)).draw(ULine.dy(dy));
 	//
 	// final double dx = child.xpos - parent.xpos - 2;
-	// ug.apply(new UTranslate(parent.xpos + 1, child.ypos + 1)).draw(new ULine(dx, 0));
+	// ug.apply(new UTranslate(parent.xpos + 1, child.ypos + 1)).draw(new ULine(dx,
+	// 0));
 	//
 	// }
 

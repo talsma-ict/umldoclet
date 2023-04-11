@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,19 +30,17 @@
  */
 package net.sourceforge.plantuml.flowdiagram;
 
-import static net.sourceforge.plantuml.ugraphic.ImageBuilder.imageBuilder;
+import static net.atmp.ImageBuilder.imageBuilder;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.atmp.ImageBuilder;
+import net.atmp.InnerStrategy;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.UmlDiagram;
-import net.sourceforge.plantuml.UmlDiagramType;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.awt.geom.XPoint2D;
-import net.sourceforge.plantuml.awt.geom.XRectangle2D;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.core.UmlSource;
@@ -53,20 +51,26 @@ import net.sourceforge.plantuml.golem.Tile;
 import net.sourceforge.plantuml.golem.TileArea;
 import net.sourceforge.plantuml.golem.TileGeometry;
 import net.sourceforge.plantuml.golem.TilesField;
-import net.sourceforge.plantuml.graphic.InnerStrategy;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.klimt.UShape;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.color.HColors;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.MagneticBorder;
+import net.sourceforge.plantuml.klimt.geom.MagneticBorderNone;
+import net.sourceforge.plantuml.klimt.geom.MinMax;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.geom.XPoint2D;
+import net.sourceforge.plantuml.klimt.geom.XRectangle2D;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
+import net.sourceforge.plantuml.klimt.shape.UEllipse;
+import net.sourceforge.plantuml.klimt.shape.ULine;
+import net.sourceforge.plantuml.skin.UmlDiagramType;
 import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
-import net.sourceforge.plantuml.ugraphic.ImageBuilder;
-import net.sourceforge.plantuml.ugraphic.MinMax;
-import net.sourceforge.plantuml.ugraphic.UEllipse;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.ULine;
-import net.sourceforge.plantuml.ugraphic.UShape;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 public class FlowDiagram extends UmlDiagram implements TextBlock {
+    // ::remove folder when __HAXE__
 
 	private static double SINGLE_SIZE_X = 100;
 	private static double SINGLE_SIZE_Y = 35;
@@ -152,7 +156,7 @@ public class FlowDiagram extends UmlDiagram implements TextBlock {
 		}
 		ug = ug.apply(HColors.MY_RED);
 		ug = ug.apply(HColors.MY_RED.bg());
-		final UShape arrow = new UEllipse(7, 7);
+		final UShape arrow = UEllipse.build(7, 7);
 		for (Path p : field.getPaths()) {
 			final TileArea start = p.getStart();
 			final TileArea dest = p.getDest();
@@ -218,5 +222,20 @@ public class FlowDiagram extends UmlDiagram implements TextBlock {
 	@Override
 	public ClockwiseTopRightBottomLeft getDefaultMargins() {
 		return ClockwiseTopRightBottomLeft.same(0);
+	}
+
+	@Override
+	protected TextBlock getTextBlock() {
+		return this;
+	}
+
+	@Override
+	public MagneticBorder getMagneticBorder() {
+		return new MagneticBorderNone();
+	}
+
+	@Override
+	public HColor getBackcolor() {
+		return null;
 	}
 }

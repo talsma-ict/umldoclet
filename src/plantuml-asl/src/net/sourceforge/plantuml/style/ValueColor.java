@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,14 +30,15 @@
  */
 package net.sourceforge.plantuml.style;
 
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.color.HColorSet;
 
 public class ValueColor extends ValueAbstract {
+    // ::remove file when __HAXE__
 
 	private final HColor color;
 	private final int priority;
-	
+
 	@Override
 	public String toString() {
 		return color.toString();

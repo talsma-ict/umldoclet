@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -35,10 +35,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
 import net.sourceforge.plantuml.utils.MathUtils;
 
 public class GtileTopDown extends AbstractGtile {
@@ -74,7 +74,7 @@ public class GtileTopDown extends AbstractGtile {
 	}
 
 	protected UTranslate supplementaryMove() {
-		return new UTranslate();
+		return UTranslate.none();
 	}
 
 	@Override
@@ -111,9 +111,9 @@ public class GtileTopDown extends AbstractGtile {
 
 	@Override
 	public XDimension2D calculateDimension(StringBounder stringBounder) {
-		final XDimension2D corner1 = getPos1().getTranslated(dim1);
-		final XDimension2D corner2 = getPos2().getTranslated(dim2);
-		return MathUtils.max(corner1, corner2);
+		final XDimension2D corner1 = dim1.applyTranslate(getPos1());
+		final XDimension2D corner2 = dim2.applyTranslate(getPos2());
+		return MathUtils.maxDim(corner1, corner2);
 	}
 
 	public Set<Swimlane> getSwimlanes() {

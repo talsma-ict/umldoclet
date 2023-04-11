@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -38,25 +38,28 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
+import net.atmp.PixelImage;
 import net.sourceforge.plantuml.core.Diagram;
-import net.sourceforge.plantuml.creole.Neutron;
-import net.sourceforge.plantuml.creole.atom.Atom;
-import net.sourceforge.plantuml.graphic.AbstractTextBlock;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.Line;
-import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.klimt.AffineTransformType;
+import net.sourceforge.plantuml.klimt.UShape;
+import net.sourceforge.plantuml.klimt.creole.Neutron;
+import net.sourceforge.plantuml.klimt.creole.atom.Atom;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.shape.AbstractTextBlock;
+import net.sourceforge.plantuml.klimt.shape.Line;
+import net.sourceforge.plantuml.klimt.shape.UImage;
+import net.sourceforge.plantuml.klimt.shape.UImageSvg;
 import net.sourceforge.plantuml.log.Logme;
 import net.sourceforge.plantuml.preproc.Defines;
 import net.sourceforge.plantuml.security.SImageIO;
-import net.sourceforge.plantuml.ugraphic.AffineTransformType;
-import net.sourceforge.plantuml.ugraphic.PixelImage;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UImage;
-import net.sourceforge.plantuml.ugraphic.UImageSvg;
-import net.sourceforge.plantuml.ugraphic.UShape;
+import net.sourceforge.plantuml.style.ISkinSimple;
+import net.sourceforge.plantuml.text.StringLocated;
 
 public class EmbeddedDiagram extends AbstractTextBlock implements Line, Atom {
+	// ::remove file when __HAXE__
 
 	public static final String EMBEDDED_START = "{{";
 	public static final String EMBEDDED_END = "}}";
@@ -72,8 +75,8 @@ public class EmbeddedDiagram extends AbstractTextBlock implements Line, Atom {
 		if (s.equals(EMBEDDED_START))
 			return "uml";
 
-		if (s.equals(EMBEDDED_START))
-			return "uml";
+		if (s.equals(EMBEDDED_START + "ditaa"))
+			return "ditaa";
 
 		if (s.equals(EMBEDDED_START + "uml"))
 			return "uml";
@@ -148,6 +151,11 @@ public class EmbeddedDiagram extends AbstractTextBlock implements Line, Atom {
 
 	public XDimension2D calculateDimension(StringBounder stringBounder) {
 		try {
+			if (stringBounder.matchesProperty("SVG")) {
+				final String imageSvg = getImageSvg();
+				final UImageSvg svg = new UImageSvg(imageSvg, 1);
+				return new XDimension2D(svg.getWidth(), svg.getHeight());
+			}
 			final BufferedImage im = getImage();
 			return new XDimension2D(im.getWidth(), im.getHeight());
 		} catch (IOException e) {

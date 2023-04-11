@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class TimeLineSimple implements TimeLine {
+    // ::remove folder when __HAXE__
 
 	private final List<Long> events = new ArrayList<>();
 

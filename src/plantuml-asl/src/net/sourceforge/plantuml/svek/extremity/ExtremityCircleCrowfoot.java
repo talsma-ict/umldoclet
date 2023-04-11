@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,11 +32,11 @@ package net.sourceforge.plantuml.svek.extremity;
 
 import java.awt.geom.AffineTransform;
 
-import net.sourceforge.plantuml.awt.geom.XPoint2D;
-import net.sourceforge.plantuml.ugraphic.UEllipse;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.ULine;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.geom.XPoint2D;
+import net.sourceforge.plantuml.klimt.shape.UEllipse;
+import net.sourceforge.plantuml.klimt.shape.ULine;
 
 class ExtremityCircleCrowfoot extends Extremity {
 
@@ -73,7 +73,7 @@ class ExtremityCircleCrowfoot extends Extremity {
 		drawLine(ug, contact.getX(), contact.getY(), base, right);
 		drawLine(ug, contact.getX(), contact.getY(), base, middle);
 		ug.apply(new UTranslate(contact.getX() + circleBase.getX() - radius,
-				contact.getY() + circleBase.getY() - radius)).draw(new UEllipse(2 * radius, 2 * radius));
+				contact.getY() + circleBase.getY() - radius)).draw(UEllipse.build(2 * radius, 2 * radius));
 	}
 
 	static private void drawLine(UGraphic ug, double x, double y, XPoint2D p1, XPoint2D p2) {

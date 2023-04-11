@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -54,6 +54,7 @@ public interface BasicCharArea {
 	List<String> getLines();
 
 	void drawHLine(char c, int line, int col1, int col2);
+
 	void drawHLine(char c, int line, int col1, int col2, char ifFound, char thenUse);
 
 	void drawVLine(char c, int col, int line1, int line2);

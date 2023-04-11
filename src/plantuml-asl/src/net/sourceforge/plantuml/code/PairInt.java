@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -31,6 +31,7 @@
 package net.sourceforge.plantuml.code;
 
 public class PairInt {
+	// ::remove file when __CORE__
 
 	private final int x;
 	private final int y;

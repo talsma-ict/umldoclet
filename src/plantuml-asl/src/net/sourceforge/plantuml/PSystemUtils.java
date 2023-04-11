@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -39,17 +39,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import net.sourceforge.plantuml.baraye.CucaDiagram;
+import net.atmp.CucaDiagram;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.ImageData;
+import net.sourceforge.plantuml.file.SuggestedFile;
 import net.sourceforge.plantuml.html.CucaDiagramHtmlMaker;
+import net.sourceforge.plantuml.klimt.color.HColors;
 import net.sourceforge.plantuml.png.PngSplitter;
 import net.sourceforge.plantuml.project.GanttDiagram;
 import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
+import net.sourceforge.plantuml.skin.SplitParam;
+import net.sourceforge.plantuml.utils.Log;
 
 public class PSystemUtils {
+	// ::remove file when __CORE__
+	// ::remove file when __HAXE__
 
 	public static List<FileImageData> exportDiagrams(Diagram system, SuggestedFile suggested,
 			FileFormatOption fileFormatOption) throws IOException {
@@ -59,6 +64,7 @@ public class PSystemUtils {
 	public static List<FileImageData> exportDiagrams(Diagram system, SuggestedFile suggestedFile,
 			FileFormatOption fileFormatOption, boolean checkMetadata) throws IOException {
 
+		// ::comment when __CORE__
 		final SFile existingFile = suggestedFile.getFile(0);
 		if (checkMetadata && fileFormatOption.getFileFormat().doesSupportMetadata() && existingFile.exists()) {
 			// && system.getNbImages() == 1) {
@@ -69,6 +75,7 @@ public class PSystemUtils {
 				return Arrays.asList(new FileImageData(existingFile, null));
 			}
 		}
+		// ::done
 
 		if (system instanceof NewpagedDiagram)
 			return exportDiagramsNewpaged((NewpagedDiagram) system, suggestedFile, fileFormatOption);
@@ -76,8 +83,10 @@ public class PSystemUtils {
 		if (system instanceof SequenceDiagram)
 			return exportDiagramsSequence((SequenceDiagram) system, suggestedFile, fileFormatOption);
 
+		// ::comment when __CORE__
 		if (system instanceof CucaDiagram && fileFormatOption.getFileFormat() == FileFormat.HTML)
 			return createFilesHtml((CucaDiagram) system, suggestedFile);
+		// ::done
 
 		return exportDiagramsDefault(system, suggestedFile, fileFormatOption);
 	}
@@ -140,10 +149,12 @@ public class PSystemUtils {
 			} finally {
 				fos.close();
 			}
+			// ::comment when __CORE__
 			if (cmap != null && cmap.containsCMapData())
 				system.exportCmap(suggestedFile, i, cmap);
 
 			Log.info("File size : " + f.length());
+			// ::done
 			result.add(new FileImageData(f, cmap));
 		}
 		return result;
@@ -194,8 +205,10 @@ public class PSystemUtils {
 		if (imageData == null)
 			return emptyList();
 
+		// ::comment when __CORE__
 		if (imageData.containsCMapData() && system instanceof UmlDiagram)
 			((UmlDiagram) system).exportCmap(suggestedFile, 0, imageData);
+		// ::done
 
 		if (system instanceof TitledDiagram && fileFormatOption.getFileFormat() == FileFormat.PNG)
 			return splitPng((TitledDiagram) system, suggestedFile, imageData, fileFormatOption);

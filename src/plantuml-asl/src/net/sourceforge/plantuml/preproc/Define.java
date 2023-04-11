@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -35,8 +35,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.sourceforge.plantuml.AParentFolder;
-import net.sourceforge.plantuml.BackSlash;
+import net.sourceforge.plantuml.file.AParentFolder;
+import net.sourceforge.plantuml.text.BackSlash;
 import net.sourceforge.plantuml.tim.expression.TValue;
 
 public class Define {

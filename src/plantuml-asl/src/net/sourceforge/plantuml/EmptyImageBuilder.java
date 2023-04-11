@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -40,15 +40,13 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.plantuml.cucadiagram.dot.GraphvizUtils;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.ugraphic.UAntiAliasing;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
-import net.sourceforge.plantuml.ugraphic.g2d.UGraphicG2d;
+import net.sourceforge.plantuml.dot.GraphvizUtils;
+import net.sourceforge.plantuml.klimt.UAntiAliasing;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.utils.Log;
 
 public class EmptyImageBuilder {
+	// ::remove file when __HAXE__
 
 	private final BufferedImage im;
 	private final Graphics2D g2d;
@@ -68,6 +66,7 @@ public class EmptyImageBuilder {
 		if (width <= 0 || height <= 0)
 			throw new IllegalArgumentException("width and height must be positive");
 
+		// ::comment when __CORE__
 		if (width > GraphvizUtils.getenvImageLimit()) {
 			Log.info("Width too large " + width + ". You should set PLANTUML_LIMIT_SIZE");
 			width = GraphvizUtils.getenvImageLimit();
@@ -76,6 +75,7 @@ public class EmptyImageBuilder {
 			Log.info("Height too large " + height + ". You should set PLANTUML_LIMIT_SIZE");
 			height = GraphvizUtils.getenvImageLimit();
 		}
+		// ::done
 		this.background = background;
 		this.stringBounder = stringBounder;
 		Log.info("Creating image " + width + "x" + height);
@@ -163,11 +163,11 @@ public class EmptyImageBuilder {
 		return g2d;
 	}
 
-	public UGraphicG2d getUGraphicG2d() {
-		final HColor back = HColors.simple(background);
-		final UGraphicG2d result = new UGraphicG2d(back, ColorMapper.IDENTITY, stringBounder, g2d, 1.0);
-		result.setBufferedImage(im);
-		return result;
-	}
+//	public UGraphicG2d getUGraphicG2d(FileFormat format) {
+//		final HColor back = HColors.simple(background);
+//		final UGraphicG2d result = new UGraphicG2d(back, ColorMapper.IDENTITY, stringBounder, g2d, 1.0, format);
+//		result.setBufferedImage(im);
+//		return result;
+//	}
 
 }

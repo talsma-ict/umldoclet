@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,13 +32,13 @@ package net.sourceforge.plantuml.asciiart;
 
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.drawing.txt.UGraphicTxt;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
 import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.Context2D;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.txt.UGraphicTxt;
 
 public class ComponentTextReference extends AbstractComponentText {
 
@@ -80,8 +80,8 @@ public class ComponentTextReference extends AbstractComponentText {
 			charArea.drawVLine('!', width - 1, 1, height);
 			charArea.drawHLine('~', height - 1, 1, width - 1);
 		}
-		
-		final Display text = stringsToDisplay.subList(1,stringsToDisplay.size());
+
+		final Display text = stringsToDisplay.subList(1, stringsToDisplay.size());
 
 		charArea.drawStringsLRUnicode(text.asList(), 2, 3);
 	}

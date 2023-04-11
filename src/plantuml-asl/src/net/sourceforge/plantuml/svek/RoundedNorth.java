@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,13 +30,13 @@
  */
 package net.sourceforge.plantuml.svek;
 
-import net.sourceforge.plantuml.graphic.UDrawable;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UPath;
-import net.sourceforge.plantuml.ugraphic.URectangle;
-import net.sourceforge.plantuml.ugraphic.UShape;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.klimt.UPath;
+import net.sourceforge.plantuml.klimt.UShape;
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.shape.UDrawable;
+import net.sourceforge.plantuml.klimt.shape.URectangle;
 
 public final class RoundedNorth implements UDrawable {
 
@@ -63,9 +63,9 @@ public final class RoundedNorth implements UDrawable {
 
 		final UShape header;
 		if (rounded == 0) {
-			header = new URectangle(width, height);
+			header = URectangle.build(width, height);
 		} else {
-			final UPath path = new UPath();
+			final UPath path = UPath.none();
 			path.moveTo(rounded / 2, 0);
 			path.lineTo(width - rounded / 2, 0);
 			path.arcTo(rounded / 2, rounded / 2, 0, 0, 1, width, rounded / 2);
@@ -76,7 +76,7 @@ public final class RoundedNorth implements UDrawable {
 			path.closePath();
 			header = path;
 		}
-		ug.apply(new UStroke()).apply(backColor).apply(backColor.bg()).draw(header);
+		ug.apply(UStroke.simple()).apply(backColor).apply(backColor.bg()).draw(header);
 
 	}
 }

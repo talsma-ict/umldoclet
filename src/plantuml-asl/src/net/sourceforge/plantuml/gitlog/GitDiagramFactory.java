@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,11 +33,11 @@ package net.sourceforge.plantuml.gitlog;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.plantuml.StringLocated;
 import net.sourceforge.plantuml.command.PSystemAbstractFactory;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.DiagramType;
 import net.sourceforge.plantuml.core.UmlSource;
+import net.sourceforge.plantuml.text.StringLocated;
 
 public class GitDiagramFactory extends PSystemAbstractFactory {
 

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,11 +30,11 @@
  */
 package net.sourceforge.plantuml.jsondiagram;
 
-import net.sourceforge.plantuml.awt.geom.XPoint2D;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.ULine;
-import net.sourceforge.plantuml.ugraphic.UPath;
-import net.sourceforge.plantuml.ugraphic.UStroke;
+import net.sourceforge.plantuml.klimt.UPath;
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.geom.XPoint2D;
+import net.sourceforge.plantuml.klimt.shape.ULine;
 
 public class Arrow {
 
@@ -47,22 +47,21 @@ public class Arrow {
 	}
 
 	public void drawArrow(UGraphic ug) {
-		ug = ug.apply(new UStroke());
+		ug = ug.apply(UStroke.simple());
 
-		final ULine p1p2 = new ULine(p1, p2);
+		final ULine p1p2 = ULine.create(p1, p2);
 		final double dist = p1.distance(p2);
 
 		final double alpha = Math.atan2(p1p2.getDX(), p1p2.getDY());
 
 		final double factor = .4;
 		final double factor2 = .3;
-		
+
 		final XPoint2D p3 = getPoint(p1, alpha + Math.PI / 2, dist * factor);
 		final XPoint2D p4 = getPoint(p1, alpha - Math.PI / 2, dist * factor);
 		final XPoint2D p11 = getPoint(p1, alpha, dist * factor2);
 
-		
-		final UPath path = new UPath();
+		final UPath path = UPath.none();
 		path.moveTo(p4);
 		path.lineTo(p11);
 		path.lineTo(p3);

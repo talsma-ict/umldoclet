@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,6 +34,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class TelnetServer {
+    // ::remove folder when __HAXE__
+	// ::remove folder when __CORE__
 	public static void main(String args[]) throws Exception {
 		final ServerSocket server = new ServerSocket(4242);
 		while (true) {

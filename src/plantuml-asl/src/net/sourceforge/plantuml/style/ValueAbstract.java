@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,11 +30,12 @@
  */
 package net.sourceforge.plantuml.style;
 
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.color.HColorSet;
+import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
 
 public abstract class ValueAbstract implements Value {
+    // ::remove file when __HAXE__
 
 	public String asString() {
 		throw new UnsupportedOperationException("Class=" + getClass());
@@ -44,7 +45,7 @@ public abstract class ValueAbstract implements Value {
 		throw new UnsupportedOperationException("Class=" + getClass());
 	}
 
-	public int asInt() {
+	public int asInt(boolean minusOneIfError) {
 		throw new UnsupportedOperationException("Class=" + getClass());
 	}
 

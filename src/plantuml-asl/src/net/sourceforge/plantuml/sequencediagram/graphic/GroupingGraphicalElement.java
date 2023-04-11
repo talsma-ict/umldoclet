@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,7 +32,7 @@ package net.sourceforge.plantuml.sequencediagram.graphic;
 
 import java.util.Objects;
 
-import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
 import net.sourceforge.plantuml.sequencediagram.InGroupableList;
 
 abstract class GroupingGraphicalElement extends GraphicalElement {
@@ -45,9 +45,8 @@ abstract class GroupingGraphicalElement extends GraphicalElement {
 	}
 
 	final public double getActualWidth(StringBounder stringBounder) {
-		return Math.max(getPreferredWidth(stringBounder),
-				inGroupableList.getMaxX(stringBounder) - inGroupableList.getMinX(stringBounder) + 2
-						* InGroupableList.MARGIN10);
+		return Math.max(getPreferredWidth(stringBounder), inGroupableList.getMaxX(stringBounder)
+				- inGroupableList.getMinX(stringBounder) + 2 * InGroupableList.MARGIN10);
 	}
 
 	@Override

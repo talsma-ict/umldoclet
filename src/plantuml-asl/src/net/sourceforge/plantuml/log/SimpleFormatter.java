@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -36,6 +36,7 @@ import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
 public class SimpleFormatter extends Formatter {
+    // ::remove folder when __HAXE__
 
 	@Override
 	public synchronized String format(LogRecord record) {

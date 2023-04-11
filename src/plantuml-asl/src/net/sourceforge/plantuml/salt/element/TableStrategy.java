@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -31,7 +31,8 @@
 package net.sourceforge.plantuml.salt.element;
 
 public enum TableStrategy {
-	DRAW_NONE(' '), DRAW_OUTSIDE('+'), DRAW_OUTSIDE_WITH_TITLE('^'), DRAW_HORIZONTAL('-'), DRAW_VERTICAL('!'), DRAW_ALL('#');
+	DRAW_NONE(' '), DRAW_OUTSIDE('+'), DRAW_OUTSIDE_WITH_TITLE('^'), DRAW_HORIZONTAL('-'), DRAW_VERTICAL('!'),
+	DRAW_ALL('#');
 
 	private final char c;
 

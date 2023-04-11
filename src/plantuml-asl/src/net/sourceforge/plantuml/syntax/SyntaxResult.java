@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -37,11 +37,12 @@ import java.util.Collections;
 import java.util.TreeSet;
 
 import net.sourceforge.plantuml.FileFormatOption;
-import net.sourceforge.plantuml.LineLocation;
-import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.error.PSystemError;
+import net.sourceforge.plantuml.skin.UmlDiagramType;
+import net.sourceforge.plantuml.utils.LineLocation;
 
 public class SyntaxResult {
+	// ::remove file when __CORE__
 
 	private UmlDiagramType umlDiagramType;
 	private boolean isError;
@@ -97,9 +98,9 @@ public class SyntaxResult {
 
 	public void generateDiagramDescriptionForError(OutputStream os, FileFormatOption fileFormatOption)
 			throws IOException {
-		if (systemError == null) {
+		if (systemError == null)
 			throw new IllegalStateException();
-		}
+
 		systemError.exportDiagram(os, 0, fileFormatOption);
 	}
 

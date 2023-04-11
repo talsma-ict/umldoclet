@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,22 +33,29 @@ package net.sourceforge.plantuml.svek.image;
 import java.util.EnumMap;
 import java.util.Map;
 
-import net.sourceforge.plantuml.Direction;
-import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.LineConfigurable;
-import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.awt.geom.XRectangle2D;
-import net.sourceforge.plantuml.baraye.EntityImp;
-import net.sourceforge.plantuml.baraye.ILeaf;
-import net.sourceforge.plantuml.creole.Stencil;
-import net.sourceforge.plantuml.cucadiagram.EntityPortion;
-import net.sourceforge.plantuml.cucadiagram.LeafType;
+import net.atmp.InnerStrategy;
+import net.sourceforge.plantuml.abel.Entity;
+import net.sourceforge.plantuml.abel.EntityPortion;
+import net.sourceforge.plantuml.abel.LeafType;
+import net.sourceforge.plantuml.abel.LineConfigurable;
 import net.sourceforge.plantuml.cucadiagram.PortionShower;
-import net.sourceforge.plantuml.graphic.InnerStrategy;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.graphic.color.ColorType;
+import net.sourceforge.plantuml.klimt.Shadowable;
+import net.sourceforge.plantuml.klimt.UGroupType;
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.ColorType;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.color.HColors;
+import net.sourceforge.plantuml.klimt.creole.Stencil;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.drawing.UGraphicStencil;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.geom.XRectangle2D;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
+import net.sourceforge.plantuml.klimt.shape.UComment;
+import net.sourceforge.plantuml.klimt.shape.URectangle;
+import net.sourceforge.plantuml.style.ISkinParam;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
@@ -59,16 +66,8 @@ import net.sourceforge.plantuml.svek.Margins;
 import net.sourceforge.plantuml.svek.Ports;
 import net.sourceforge.plantuml.svek.ShapeType;
 import net.sourceforge.plantuml.svek.WithPorts;
-import net.sourceforge.plantuml.ugraphic.Shadowable;
-import net.sourceforge.plantuml.ugraphic.UComment;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UGraphicStencil;
-import net.sourceforge.plantuml.ugraphic.UGroupType;
-import net.sourceforge.plantuml.ugraphic.URectangle;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
+import net.sourceforge.plantuml.url.Url;
+import net.sourceforge.plantuml.utils.Direction;
 
 public class EntityImageClass extends AbstractEntityImage implements Stencil, WithPorts {
 
@@ -81,7 +80,7 @@ public class EntityImageClass extends AbstractEntityImage implements Stencil, Wi
 
 	final private LineConfigurable lineConfig;
 
-	public EntityImageClass(ILeaf entity, ISkinParam skinParam, PortionShower portionShower) {
+	public EntityImageClass(Entity entity, ISkinParam skinParam, PortionShower portionShower) {
 		super(entity, entity.getColors().mute(skinParam));
 		this.leafType = entity.getLeafType();
 		this.lineConfig = entity;
@@ -117,10 +116,10 @@ public class EntityImageClass extends AbstractEntityImage implements Stencil, Wi
 	private double getKalWidth() {
 		double widthUp = 0;
 		double widthDown = 0;
-		for (Kal kal : ((EntityImp) getEntity()).getKals(Direction.UP))
+		for (Kal kal : ((Entity) getEntity()).getKals(Direction.UP))
 			widthUp += kal.getDimension().getWidth();
 
-		for (Kal kal : ((EntityImp) getEntity()).getKals(Direction.DOWN))
+		for (Kal kal : ((Entity) getEntity()).getKals(Direction.DOWN))
 			widthDown += kal.getDimension().getWidth();
 
 		return Math.max(widthUp, widthDown);
@@ -139,13 +138,13 @@ public class EntityImageClass extends AbstractEntityImage implements Stencil, Wi
 	}
 
 	final public void drawU(UGraphic ug) {
-		ug.draw(new UComment("class " + getEntity().getCodeGetName()));
+		ug.draw(new UComment("class " + getEntity().getName()));
 		if (url != null)
 			ug.startUrl(url);
 
 		final Map<UGroupType, String> typeIDent = new EnumMap<>(UGroupType.class);
-		typeIDent.put(UGroupType.CLASS, "elem " + getEntity().getCode() + " selected");
-		typeIDent.put(UGroupType.ID, "elem_" + getEntity().getCode());
+		typeIDent.put(UGroupType.CLASS, "elem " + getEntity().getName() + " selected");
+		typeIDent.put(UGroupType.ID, "elem_" + getEntity().getName());
 		ug.startGroup(typeIDent);
 		drawInternal(ug);
 		ug.closeGroup();
@@ -176,8 +175,8 @@ public class EntityImageClass extends AbstractEntityImage implements Stencil, Wi
 
 		final double widthTotal = dimTotal.getWidth();
 		final double heightTotal = dimTotal.getHeight();
-		final Shadowable rect = new URectangle(widthTotal, heightTotal).rounded(roundCorner)
-				.withCommentAndCodeLine(getEntity().getCodeGetName(), getEntity().getCodeLine());
+		final Shadowable rect = URectangle.build(widthTotal, heightTotal).rounded(roundCorner)
+				.withCommentAndCodeLine(getEntity().getName(), getEntity().getCodeLine());
 
 		double shadow = 0;
 
@@ -208,14 +207,14 @@ public class EntityImageClass extends AbstractEntityImage implements Stencil, Wi
 		UGraphic ugHeader = ug;
 		if (roundCorner == 0 && headerBackcolor != null && backcolor.equals(headerBackcolor) == false) {
 			ug.apply(stroke).draw(rect);
-			final Shadowable rect2 = new URectangle(widthTotal, dimHeader.getHeight());
+			final Shadowable rect2 = URectangle.build(widthTotal, dimHeader.getHeight());
 			rect2.setDeltaShadow(0);
 			ugHeader = ugHeader.apply(headerBackcolor.bg());
 			ugHeader.apply(stroke).draw(rect2);
 		} else if (roundCorner != 0 && headerBackcolor != null && backcolor.equals(headerBackcolor) == false) {
 			ug.apply(stroke).draw(rect);
-			final Shadowable rect2 = new URectangle(widthTotal, dimHeader.getHeight()).rounded(roundCorner);
-			final URectangle rect3 = new URectangle(widthTotal, roundCorner / 2);
+			final Shadowable rect2 = URectangle.build(widthTotal, dimHeader.getHeight()).rounded(roundCorner);
+			final URectangle rect3 = URectangle.build(widthTotal, roundCorner / 2);
 			rect2.setDeltaShadow(0);
 			rect3.setDeltaShadow(0);
 			ugHeader = ugHeader.apply(headerBackcolor.bg()).apply(headerBackcolor);
@@ -244,7 +243,7 @@ public class EntityImageClass extends AbstractEntityImage implements Stencil, Wi
 	}
 
 	public ShapeType getShapeType() {
-		if (((ILeaf) getEntity()).getPortShortNames().size() > 0)
+		if (getEntity().getPortShortNames().size() > 0)
 			return ShapeType.RECTANGLE_HTML_FOR_PORTS;
 
 		return ShapeType.RECTANGLE;
@@ -252,7 +251,7 @@ public class EntityImageClass extends AbstractEntityImage implements Stencil, Wi
 
 	@Override
 	public Margins getShield(StringBounder stringBounder) {
-		return ((ILeaf) getEntity()).getMargins();
+		return getEntity().getMargins();
 	}
 
 	public double getStartingX(StringBounder stringBounder, double y) {

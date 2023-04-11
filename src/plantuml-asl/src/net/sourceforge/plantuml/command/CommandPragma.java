@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,19 +32,21 @@ package net.sourceforge.plantuml.command;
 
 import java.util.StringTokenizer;
 
-import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.TitledDiagram;
-import net.sourceforge.plantuml.command.regex.IRegex;
-import net.sourceforge.plantuml.command.regex.RegexConcat;
-import net.sourceforge.plantuml.command.regex.RegexLeaf;
-import net.sourceforge.plantuml.command.regex.RegexOptional;
-import net.sourceforge.plantuml.command.regex.RegexResult;
-import net.sourceforge.plantuml.cucadiagram.dot.GraphvizUtils;
+import net.sourceforge.plantuml.dot.GraphvizUtils;
+import net.sourceforge.plantuml.regex.IRegex;
+import net.sourceforge.plantuml.regex.RegexConcat;
+import net.sourceforge.plantuml.regex.RegexLeaf;
+import net.sourceforge.plantuml.regex.RegexOptional;
+import net.sourceforge.plantuml.regex.RegexResult;
+import net.sourceforge.plantuml.utils.LineLocation;
 
 public class CommandPragma extends SingleLineCommand2<TitledDiagram> {
 
-	public CommandPragma() {
+	public static final CommandPragma ME = new CommandPragma();
+
+	private CommandPragma() {
 		super(getRegexConcat());
 	}
 
@@ -71,23 +73,25 @@ public class CommandPragma extends SingleLineCommand2<TitledDiagram> {
 			}
 		} else {
 			system.getPragma().define(name, value);
-			if (name.equalsIgnoreCase("graphviz_dot") && value.equalsIgnoreCase("jdot")) {
+			// ::comment when __CORE__
+			if (name.equalsIgnoreCase("graphviz_dot") && value.equalsIgnoreCase("jdot"))
 				return CommandExecutionResult.error(
 						"This directive has been renamed to '!pragma layout smetana'. Please update your diagram.");
-			}
-			if (name.equalsIgnoreCase("graphviz_dot")) {
+
+			if (name.equalsIgnoreCase("graphviz_dot"))
 				return CommandExecutionResult.error("This directive has been renamed to '!pragma layout " + value
 						+ "'. Please update your diagram.");
-			}
-			if (name.equalsIgnoreCase("layout") && value.equalsIgnoreCase("smetana")) {
+
+			if (name.equalsIgnoreCase("layout") && value.equalsIgnoreCase("smetana"))
 				system.setUseSmetana(true);
-			}
-			if (name.equalsIgnoreCase("layout") && value.equalsIgnoreCase("elk")) {
+
+			if (name.equalsIgnoreCase("layout") && value.equalsIgnoreCase("elk"))
 				system.setUseElk(true);
-			}
-			if (name.equalsIgnoreCase("layout") && value.equalsIgnoreCase(GraphvizUtils.VIZJS)) {
+
+			if (name.equalsIgnoreCase("layout") && value.equalsIgnoreCase(GraphvizUtils.VIZJS))
 				system.getSkinParam().setUseVizJs(true);
-			}
+			// ::done
+
 		}
 		return CommandExecutionResult.ok();
 	}

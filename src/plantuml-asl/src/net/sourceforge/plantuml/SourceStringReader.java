@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -31,7 +31,7 @@
 package net.sourceforge.plantuml;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static net.sourceforge.plantuml.ugraphic.ImageBuilder.plainImageBuilder;
+import static net.atmp.ImageBuilder.plainImageBuilder;
 import static net.sourceforge.plantuml.utils.CharsetUtils.charsetOrDefault;
 
 import java.io.IOException;
@@ -42,17 +42,17 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import net.sourceforge.plantuml.annotation.HaxeIgnored;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
-import net.sourceforge.plantuml.graphic.GraphicStrings;
+import net.sourceforge.plantuml.klimt.shape.GraphicStrings;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
 import net.sourceforge.plantuml.preproc.Defines;
 import net.sourceforge.plantuml.security.SFile;
-import net.sourceforge.plantuml.svek.TextBlockBackcolored;
+import net.sourceforge.plantuml.utils.Log;
 
-@HaxeIgnored
 public class SourceStringReader {
+	// ::remove file when __HAXE__
 
 	final private List<BlockUml> blocks;
 
@@ -110,6 +110,7 @@ public class SourceStringReader {
 		return outputImage(os, 0);
 	}
 
+	// ::comment when __CORE__
 	@Deprecated
 	public String generateImage(SFile f) throws IOException {
 		return outputImage(f).getDescription();
@@ -120,6 +121,7 @@ public class SourceStringReader {
 			return outputImage(os, 0);
 		}
 	}
+	// ::done
 
 	@Deprecated
 	public String generateImage(OutputStream os, FileFormatOption fileFormatOption) throws IOException {
@@ -224,7 +226,7 @@ public class SourceStringReader {
 	}
 
 	public ImageData noStartumlFound(OutputStream os, FileFormatOption fileFormatOption) throws IOException {
-		final TextBlockBackcolored error = GraphicStrings.createForError(Arrays.asList("No @startuml/@enduml found"),
+		final TextBlock error = GraphicStrings.createForError(Arrays.asList("No @startuml/@enduml found"),
 				fileFormatOption.isUseRedForError());
 
 		return plainImageBuilder(error, fileFormatOption).write(os);

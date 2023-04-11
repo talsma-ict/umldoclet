@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,11 +33,12 @@ package net.sourceforge.plantuml.ebnf;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
 
 public class ETileConcatenation extends ETile {
+    // ::remove folder when __HAXE__
 
 	private final double marginx = 20;
 	private final List<ETile> tiles = new ArrayList<>();
@@ -45,6 +46,10 @@ public class ETileConcatenation extends ETile {
 	@Override
 	public void push(ETile tile) {
 		tiles.add(0, tile);
+	}
+
+	public void overideFirst(ETile tile) {
+		tiles.set(0, tile);
 	}
 
 	@Override
@@ -97,6 +102,10 @@ public class ETileConcatenation extends ETile {
 				width += marginx;
 		}
 		return width;
+	}
+
+	public ETile getFirst() {
+		return tiles.get(0);
 	}
 
 }

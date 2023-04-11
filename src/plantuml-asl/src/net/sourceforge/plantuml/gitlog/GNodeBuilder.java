@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 public class GNodeBuilder {
+    // ::remove folder when __HAXE__
 
 	private final List<GNode> all = new ArrayList<>();
 

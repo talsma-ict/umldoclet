@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,14 +34,19 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import net.sourceforge.plantuml.command.CommandExecutionResult;
-import net.sourceforge.plantuml.command.regex.IRegex;
-import net.sourceforge.plantuml.command.regex.RegexLeaf;
-import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.project.Failable;
 import net.sourceforge.plantuml.project.GanttDiagram;
 import net.sourceforge.plantuml.project.time.Day;
+import net.sourceforge.plantuml.regex.IRegex;
+import net.sourceforge.plantuml.regex.RegexLeaf;
+import net.sourceforge.plantuml.regex.RegexResult;
 
 public class SubjectProject implements Subject {
+
+	public static final Subject ME = new SubjectProject();
+
+	private SubjectProject() {
+	}
 
 	public IRegex toRegex() {
 		return new RegexLeaf("SUBJECT", "project");
@@ -58,7 +63,7 @@ public class SubjectProject implements Subject {
 	class Starts extends SentenceSimple {
 
 		public Starts() {
-			super(SubjectProject.this, Verbs.starts(), new ComplementDate());
+			super(SubjectProject.this, Verbs.starts, new ComplementDate());
 		}
 
 		@Override

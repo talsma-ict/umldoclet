@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -37,7 +37,7 @@ import net.sourceforge.plantuml.project.core.Task;
 public class SentenceIsDeleted extends SentenceSimple {
 
 	public SentenceIsDeleted() {
-		super(new SubjectTask(), Verbs.isDeleted(), new ComplementEmpty());
+		super(SubjectTask.ME, Verbs.isDeleted, new ComplementEmpty());
 	}
 
 	@Override

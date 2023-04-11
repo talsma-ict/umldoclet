@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.plantuml.salt.DataSource;
-import net.sourceforge.plantuml.salt.Dictionary;
+import net.sourceforge.plantuml.salt.SaltDictionary;
 import net.sourceforge.plantuml.salt.Terminated;
 import net.sourceforge.plantuml.salt.element.Element;
 import net.sourceforge.plantuml.salt.element.ElementImage;
@@ -42,9 +42,9 @@ import net.sourceforge.plantuml.salt.element.ElementImage;
 public class ElementFactoryImage implements ElementFactory {
 
 	final private DataSource dataSource;
-	final private Dictionary dictionary;
+	final private SaltDictionary dictionary;
 
-	public ElementFactoryImage(DataSource dataSource, Dictionary dictionary) {
+	public ElementFactoryImage(DataSource dataSource, SaltDictionary dictionary) {
 		this.dataSource = dataSource;
 		this.dictionary = dictionary;
 	}

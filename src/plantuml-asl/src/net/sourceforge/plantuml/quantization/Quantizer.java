@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,9 +34,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Set;
 
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
+import net.sourceforge.plantuml.klimt.color.ColorMapper;
 
 public final class Quantizer {
+	// ::remove folder when __CORE__
 	private static final int MAX_COLOR_COUNT = 256;
 
 	private static QImage quantizeNow(QImage image) throws IOException {

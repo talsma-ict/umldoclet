@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,6 +33,7 @@ package net.sourceforge.plantuml.dedication;
 import java.math.BigInteger;
 
 public class BlumBlumShub {
+	// ::remove folder when __CORE__
 
 	private static final BigInteger two = BigInteger.valueOf(2L);
 

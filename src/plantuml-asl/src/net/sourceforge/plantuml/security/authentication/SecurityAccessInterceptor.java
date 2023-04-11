@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,16 +33,20 @@ package net.sourceforge.plantuml.security.authentication;
 import java.net.URLConnection;
 
 /**
- * The security access interceptor applies the authentication information to a HTTP connection. This can be a
- * user/password combination for BasicAuth or a bearer token for OAuth2.
+ * The security access interceptor applies the authentication information to a
+ * HTTP connection. This can be a user/password combination for BasicAuth or a
+ * bearer token for OAuth2.
  *
  * @author Aljoscha Rittner
  */
 public interface SecurityAccessInterceptor {
+    // ::remove folder when __HAXE__
+    // ::remove folder when __CORE__
 	/**
 	 * Applies to a connection the authentication information.
 	 *
-	 * @param authentication the determined authentication data to authorize for the endpoint access
+	 * @param authentication the determined authentication data to authorize for the
+	 *                       endpoint access
 	 * @param connection     the connection to the endpoint
 	 */
 	void apply(SecurityAuthentication authentication, URLConnection connection);

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,19 +34,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import net.sourceforge.plantuml.ISkinSimple;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.ugraphic.UFont;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.ULine;
-import net.sourceforge.plantuml.ugraphic.UPolygon;
-import net.sourceforge.plantuml.ugraphic.URectangle;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.HColors;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.font.UFont;
+import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
+import net.sourceforge.plantuml.klimt.shape.ULine;
+import net.sourceforge.plantuml.klimt.shape.UPolygon;
+import net.sourceforge.plantuml.klimt.shape.URectangle;
+import net.sourceforge.plantuml.style.ISkinSimple;
 
 public class ElementDroplist extends AbstractElementText implements Element {
 
@@ -88,7 +88,7 @@ public class ElementDroplist extends AbstractElementText implements Element {
 		ug = ug.apply(getBlack());
 
 		if (zIndex == 0) {
-			ug.apply(getColorEE().bg()).draw(new URectangle(dim.getWidth() - 1, dim.getHeight() - 1));
+			ug.apply(getColorEE().bg()).draw(URectangle.build(dim.getWidth() - 1, dim.getHeight() - 1));
 			drawText(ug, 2, 2);
 			final double xline = dim.getWidth() - box;
 			ug.apply(UTranslate.dx(xline)).draw(ULine.vline(dim.getHeight() - 1));
@@ -106,7 +106,7 @@ public class ElementDroplist extends AbstractElementText implements Element {
 			final XDimension2D dimOpen = openDrop.calculateDimension(ug.getStringBounder()).atLeast(dim.getWidth() - 1,
 					0);
 			ug = ug.apply(UTranslate.dy(dim.getHeight() - 1));
-			ug.apply(getColorEE().bg()).draw(new URectangle(dimOpen.getWidth() - 1, dimOpen.getHeight() - 1));
+			ug.apply(getColorEE().bg()).draw(URectangle.build(dimOpen.getWidth() - 1, dimOpen.getHeight() - 1));
 			openDrop.drawU(ug);
 		}
 	}

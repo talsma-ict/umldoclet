@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -46,13 +46,14 @@ import java.util.Random;
 
 import net.sourceforge.plantuml.FileUtils;
 import net.sourceforge.plantuml.OptionPrint;
-import net.sourceforge.plantuml.SignatureUtils;
 import net.sourceforge.plantuml.dedication.Dedication;
 import net.sourceforge.plantuml.dedication.QBlock;
 import net.sourceforge.plantuml.dedication.TurningBytes;
 import net.sourceforge.plantuml.log.Logme;
+import net.sourceforge.plantuml.utils.SignatureUtils;
 
 public class PLSSignature {
+	// ::remove file when __CORE__
 
 	private final int type;
 	private final byte[] sha;
@@ -163,8 +164,8 @@ public class PLSSignature {
 		return ll;
 	}
 
-	public static LicenseInfo retrieveNamed(String sig, String key, boolean doCheck) throws NoSuchAlgorithmException,
-			InvalidKeySpecException, IOException {
+	public static LicenseInfo retrieveNamed(String sig, String key, boolean doCheck)
+			throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
 		byte[] block = decode(key);
 		xor(block, SignatureUtils.getSHA512raw(SignatureUtils.salting(sig, getSalt(sig))));
 		final PLSSignature sig2 = PLSSignature.fromRaw512(block);

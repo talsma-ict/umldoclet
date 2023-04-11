@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -35,8 +35,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.plantuml.BackSlash;
-import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.command.PSystemAbstractFactory;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.DiagramType;
@@ -44,6 +42,11 @@ import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.json.Json;
 import net.sourceforge.plantuml.json.JsonValue;
 import net.sourceforge.plantuml.json.ParseException;
+import net.sourceforge.plantuml.log.Logme;
+import net.sourceforge.plantuml.skin.UmlDiagramType;
+import net.sourceforge.plantuml.style.parser.StyleParsingException;
+import net.sourceforge.plantuml.text.BackSlash;
+import net.sourceforge.plantuml.yaml.Highlighted;
 
 public class JsonDiagramFactory extends PSystemAbstractFactory {
 
@@ -53,7 +56,7 @@ public class JsonDiagramFactory extends PSystemAbstractFactory {
 
 	@Override
 	public Diagram createSystem(UmlSource source, Map<String, String> skinParam) {
-		final List<String> highlighted = new ArrayList<>();
+		final List<Highlighted> highlighted = new ArrayList<>();
 		StyleExtractor styleExtractor = null;
 		JsonValue json;
 		try {
@@ -67,8 +70,8 @@ public class JsonDiagramFactory extends PSystemAbstractFactory {
 					break;
 
 				if (line.startsWith("#")) {
-					if (line.startsWith("#highlight ")) {
-						highlighted.add(line.substring("#highlight ".length()).trim());
+					if (Highlighted.matchesDefinition(line)) {
+						highlighted.add(Highlighted.build(line));
 						continue;
 					}
 				} else {
@@ -80,9 +83,13 @@ public class JsonDiagramFactory extends PSystemAbstractFactory {
 		} catch (ParseException e) {
 			json = null;
 		}
-		final JsonDiagram result = new JsonDiagram(source, UmlDiagramType.JSON, json, highlighted);
+		final JsonDiagram result = new JsonDiagram(source, UmlDiagramType.JSON, json, highlighted, styleExtractor);
 		if (styleExtractor != null)
-			styleExtractor.applyStyles(result.getSkinParam());
+			try {
+				styleExtractor.applyStyles(result.getSkinParam());
+			} catch (StyleParsingException e) {
+				Logme.error(e);
+			}
 
 		return result;
 	}

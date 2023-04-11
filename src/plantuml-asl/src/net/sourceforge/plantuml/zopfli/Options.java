@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -49,30 +49,25 @@ Author: eustas.ru@gmail.com (Eugene Klyuchnikov)
 package net.sourceforge.plantuml.zopfli;
 
 public class Options {
-  public static enum BlockSplitting {
-    FIRST,
-    LAST,
-    NONE
-  }
+	public static enum BlockSplitting {
+		FIRST, LAST, NONE
+	}
 
-  public static enum OutputFormat {
-    DEFLATE,
-    GZIP,
-    ZLIB
-  }
+	public static enum OutputFormat {
+		DEFLATE, GZIP, ZLIB
+	}
 
-  public final int numIterations;
-  public final BlockSplitting blockSplitting;
-  public final OutputFormat outputType;
+	public final int numIterations;
+	public final BlockSplitting blockSplitting;
+	public final OutputFormat outputType;
 
-  public Options(OutputFormat outputType, BlockSplitting blockSplitting,
-      int numIterations) {
-    this.outputType = outputType;
-    this.blockSplitting = blockSplitting;
-    this.numIterations = numIterations;
-  }
+	public Options(OutputFormat outputType, BlockSplitting blockSplitting, int numIterations) {
+		this.outputType = outputType;
+		this.blockSplitting = blockSplitting;
+		this.numIterations = numIterations;
+	}
 
-  public Options() {
-    this(OutputFormat.GZIP, BlockSplitting.FIRST, 15);
-  }
+	public Options() {
+		this(OutputFormat.GZIP, BlockSplitting.FIRST, 15);
+	}
 }

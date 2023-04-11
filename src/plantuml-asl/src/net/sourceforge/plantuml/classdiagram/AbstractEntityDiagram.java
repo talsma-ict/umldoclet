@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -36,12 +36,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.plantuml.UmlDiagramType;
-import net.sourceforge.plantuml.baraye.CucaDiagram;
+import net.atmp.CucaDiagram;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.UmlSource;
+import net.sourceforge.plantuml.skin.UmlDiagramType;
 
 public abstract class AbstractEntityDiagram extends CucaDiagram {
+	// ::remove folder when __HAXE__
 
 	public AbstractEntityDiagram(UmlSource source, UmlDiagramType type, Map<String, String> orig) {
 		super(source, type, orig);
@@ -60,7 +61,7 @@ public abstract class AbstractEntityDiagram extends CucaDiagram {
 	}
 
 	final public DiagramDescription getDescription() {
-		final StringBuilder result = new StringBuilder("(" + getLeafssize() + " entities");
+		final StringBuilder result = new StringBuilder("(" + getEntityFactory().leafs().size() + " entities");
 		if (getSource() != null) {
 			final String id = getSource().getId();
 			if (id != null) {

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,11 +30,11 @@
  */
 package net.sourceforge.plantuml.svek.extremity;
 
-import net.sourceforge.plantuml.awt.geom.XPoint2D;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UPolygon;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.color.HColors;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.geom.XPoint2D;
+import net.sourceforge.plantuml.klimt.shape.UPolygon;
 
 class ExtremityTriangle extends Extremity {
 
@@ -48,7 +48,8 @@ class ExtremityTriangle extends Extremity {
 		return contact;
 	}
 
-	public ExtremityTriangle(XPoint2D p1, double angle, boolean fill, HColor backgroundColor, int xWing, int yAperture) {
+	public ExtremityTriangle(XPoint2D p1, double angle, boolean fill, HColor backgroundColor, int xWing,
+			int yAperture) {
 		this.backgroundColor = backgroundColor;
 		this.fill = fill;
 		this.contact = new XPoint2D(p1.getX(), p1.getY());

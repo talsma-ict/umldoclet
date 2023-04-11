@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,10 +30,11 @@
  */
 package net.sourceforge.plantuml.nwdiag.core;
 
+import net.sourceforge.plantuml.klimt.color.HColor;
 import net.sourceforge.plantuml.nwdiag.next.NStage;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class Network implements NStackable {
+    // ::remove folder when __HAXE__
 
 	private final String name;
 	private String description;
@@ -48,7 +49,7 @@ public class Network implements NStackable {
 
 	@Override
 	public String toString() {
-		return name;
+		return name + " visible=" + visible;
 	}
 
 	private boolean isEven() {
@@ -83,9 +84,9 @@ public class Network implements NStackable {
 	}
 
 	public final String getDisplayName() {
-		if (this.description == null) 
+		if (this.description == null)
 			return name;
-		
+
 		return this.description;
 	}
 

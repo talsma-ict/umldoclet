@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,17 +30,18 @@
  */
 package net.sourceforge.plantuml;
 
-import static net.sourceforge.plantuml.graphic.GraphicStrings.createBlackOnWhite;
+import static net.sourceforge.plantuml.klimt.shape.GraphicStrings.createBlackOnWhite;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.plantuml.core.UmlSource;
-import net.sourceforge.plantuml.graphic.GraphicPosition;
-import net.sourceforge.plantuml.graphic.UDrawable;
+import net.sourceforge.plantuml.klimt.geom.GraphicPosition;
+import net.sourceforge.plantuml.klimt.shape.UDrawable;
 
 public abstract class PlainStringsDiagram extends PlainDiagram {
+	// ::remove file when __HAXE__
 
 	protected BufferedImage image = null;
 	protected GraphicPosition imagePosition = null;

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,6 +33,7 @@ package net.sourceforge.plantuml.code;
 import net.sourceforge.plantuml.StringUtils;
 
 public class ArobaseStringCompressor2 implements StringCompressor {
+	// ::remove file when __CORE__
 
 	public String compress(String data) {
 		return clean2(data);

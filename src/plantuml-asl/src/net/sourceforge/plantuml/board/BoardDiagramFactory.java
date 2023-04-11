@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.board;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -41,15 +40,14 @@ import net.sourceforge.plantuml.core.DiagramType;
 import net.sourceforge.plantuml.core.UmlSource;
 
 public class BoardDiagramFactory extends PSystemCommandFactory {
+	// ::remove folder when __CORE__
 
 	public BoardDiagramFactory() {
 		super(DiagramType.BOARD);
 	}
 
 	@Override
-	protected List<Command> createCommands() {
-
-		final List<Command> cmds = new ArrayList<>();
+	protected void initCommandsList(List<Command> cmds) {
 		CommonCommands.addCommonCommands1(cmds);
 		cmds.add(new CommandBoardPlus());
 		// cmds.add(new CommandMindMapTabulation());
@@ -58,8 +56,6 @@ public class BoardDiagramFactory extends PSystemCommandFactory {
 //		cmds.add(new CommandMindMapRoot());
 //		cmds.add(new CommandMindMapPlus());
 //		cmds.add(new CommandMindMapDirection());
-
-		return cmds;
 	}
 
 	@Override

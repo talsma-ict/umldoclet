@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -31,15 +31,18 @@
 package net.sourceforge.plantuml.command;
 
 import net.sourceforge.plantuml.TitledDiagram;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.cucadiagram.DisplayPositioned;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.VerticalAlignment;
-import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
+import net.sourceforge.plantuml.abel.DisplayPositioned;
+import net.sourceforge.plantuml.klimt.color.NoSuchColorException;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
+import net.sourceforge.plantuml.klimt.geom.VerticalAlignment;
+import net.sourceforge.plantuml.utils.BlocLines;
 
 public class CommandMultilinesTitle extends CommandMultilines<TitledDiagram> {
 
-	public CommandMultilinesTitle() {
+	public static final CommandMultilinesTitle ME = new CommandMultilinesTitle();
+
+	private CommandMultilinesTitle() {
 		super("^title$");
 	}
 
@@ -53,7 +56,8 @@ public class CommandMultilinesTitle extends CommandMultilines<TitledDiagram> {
 		lines = lines.removeEmptyColumns();
 		final Display strings = lines.toDisplay();
 		if (strings.size() > 0) {
-			diagram.setTitle(DisplayPositioned.single(strings.replaceBackslashT(), HorizontalAlignment.CENTER, VerticalAlignment.TOP));
+			diagram.setTitle(DisplayPositioned.single(strings.replaceBackslashT(), HorizontalAlignment.CENTER,
+					VerticalAlignment.TOP));
 			return CommandExecutionResult.ok();
 		}
 		return CommandExecutionResult.error("No title defined");

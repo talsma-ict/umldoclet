@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,10 +32,10 @@ package net.sourceforge.plantuml.nwdiag;
 
 import java.util.Set;
 
-import net.sourceforge.plantuml.graphic.UDrawable;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UPath;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
+import net.sourceforge.plantuml.klimt.UPath;
+import net.sourceforge.plantuml.klimt.color.HColors;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.shape.UDrawable;
 
 public class VerticalLine implements UDrawable {
 
@@ -53,7 +53,7 @@ public class VerticalLine implements UDrawable {
 		ug = ug.apply(HColors.none().bg());
 		boolean drawn = false;
 		double current = y1;
-		UPath path = new UPath();
+		UPath path = UPath.none();
 		path.moveTo(0, current);
 		for (Double step : skip) {
 			if (step < y1) {
@@ -71,7 +71,7 @@ public class VerticalLine implements UDrawable {
 				}
 			}
 			ug.draw(path);
-			path = new UPath();
+			path = UPath.none();
 			current = step + 9;
 			path.moveTo(0, current);
 			if (current >= y2) {

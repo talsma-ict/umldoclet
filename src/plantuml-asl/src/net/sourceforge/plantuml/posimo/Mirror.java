@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -42,7 +42,7 @@ public class Mirror {
 		if (v < 0 || v > max) {
 			throw new IllegalArgumentException();
 		}
-		//return v;
+		// return v;
 		return max - v;
 	}
 

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -58,8 +58,7 @@ public enum NoteStyle {
 	}
 
 	public StyleSignatureBasic getDefaultStyleDefinition() {
-		return StyleSignatureBasic.of(SName.root, SName.element, SName.sequenceDiagram,
-				SName.note);
+		return StyleSignatureBasic.of(SName.root, SName.element, SName.sequenceDiagram, SName.note);
 	}
 
 }

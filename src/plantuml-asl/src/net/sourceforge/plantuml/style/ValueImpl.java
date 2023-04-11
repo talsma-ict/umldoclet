@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,12 +33,13 @@ package net.sourceforge.plantuml.style;
 import java.awt.Font;
 import java.util.Objects;
 
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.color.HColorSet;
+import net.sourceforge.plantuml.klimt.color.HColors;
+import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
 
 public class ValueImpl implements Value {
+    // ::remove file when __HAXE__
 
 	private final DarkString value;
 
@@ -107,11 +108,11 @@ public class ValueImpl implements Value {
 		return "true".equalsIgnoreCase(value.getValue1());
 	}
 
-	public int asInt() {
+	public int asInt(boolean minusOneIfError) {
 		String s = value.getValue1();
 		s = s.replaceAll("[^0-9]", "");
 		if (s.length() == 0)
-			return 0;
+			return minusOneIfError ? -1 : 0;
 		return Integer.parseInt(s);
 	}
 

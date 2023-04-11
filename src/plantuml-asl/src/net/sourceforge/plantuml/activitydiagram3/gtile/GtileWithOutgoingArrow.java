@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,8 +33,8 @@ package net.sourceforge.plantuml.activitydiagram3.gtile;
 import java.util.Collection;
 import java.util.Collections;
 
-import net.sourceforge.plantuml.graphic.TextBlockUtils;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.shape.TextBlockUtils;
 
 public class GtileWithOutgoingArrow extends GtileWithMargin implements Gtile {
 

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,13 +30,14 @@
  */
 package net.sourceforge.plantuml.svek;
 
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.SymbolContext;
-import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.graphic.USymbol;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.decoration.symbol.USymbol;
+import net.sourceforge.plantuml.klimt.Fashion;
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.geom.RectangleArea;
+import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
 
 public class ClusterDecoration {
 
@@ -45,14 +46,14 @@ public class ClusterDecoration {
 	final private TextBlock title;
 	final private TextBlock stereo;
 
-	final private ClusterPosition clusterPosition;
+	final private RectangleArea rectangleArea;
 
 	public ClusterDecoration(PackageStyle style, USymbol symbol, TextBlock title, TextBlock stereo,
-			ClusterPosition clusterPosition, UStroke stroke) {
+			RectangleArea rectangleArea, UStroke stroke) {
 		this.symbol = guess(symbol, style);
 		this.stereo = stereo;
 		this.title = title;
-		this.clusterPosition = clusterPosition;
+		this.rectangleArea = rectangleArea;
 		this.defaultStroke = stroke;
 	}
 
@@ -65,14 +66,14 @@ public class ClusterDecoration {
 
 	public void drawU(UGraphic ug, HColor backColor, HColor borderColor, double shadowing, double roundCorner,
 			HorizontalAlignment titleAlignment, HorizontalAlignment stereoAlignment, double diagonalCorner) {
-		final SymbolContext biColor = new SymbolContext(backColor, borderColor);
+		final Fashion biColor = new Fashion(backColor, borderColor);
 		if (symbol == null)
 			throw new UnsupportedOperationException();
 
-		final SymbolContext symbolContext = biColor.withShadow(shadowing).withStroke(defaultStroke)
-				.withCorner(roundCorner, diagonalCorner);
-		symbol.asBig(title, titleAlignment, stereo, clusterPosition.getWidth(), clusterPosition.getHeight(),
-				symbolContext, stereoAlignment).drawU(ug.apply(clusterPosition.getPosition()));
+		final Fashion symbolContext = biColor.withShadow(shadowing).withStroke(defaultStroke).withCorner(roundCorner,
+				diagonalCorner);
+		symbol.asBig(title, titleAlignment, stereo, rectangleArea.getWidth(), rectangleArea.getHeight(),
+				symbolContext, stereoAlignment).drawU(ug.apply(rectangleArea.getPosition()));
 	}
 
 }

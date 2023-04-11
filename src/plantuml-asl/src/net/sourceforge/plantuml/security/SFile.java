@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -253,6 +253,7 @@ public class SFile implements Comparable<SFile> {
 	 * Check SecurityProfile to see if this file can be open.
 	 */
 	private boolean isFileOk() {
+		// ::comment when __CORE__
 		if (SecurityUtils.getSecurityProfile() == SecurityProfile.SANDBOX)
 			// In SANDBOX, we cannot read any files
 			return false;
@@ -289,6 +290,7 @@ public class SFile implements Comparable<SFile> {
 				return false;
 
 		}
+		// ::done
 		return true;
 	}
 
@@ -309,12 +311,14 @@ public class SFile implements Comparable<SFile> {
 	 * @throws IOException If an I/O error occurs, which is possible because the
 	 *                     check the pathname may require filesystem queries
 	 */
+	// ::comment when __CORE__
 	private boolean isDenied() throws IOException {
 		SFile securityPath = SecurityUtils.getSecurityPath();
 		if (securityPath == null)
 			return false;
 		return getSanitizedPath().startsWith(securityPath.getSanitizedPath());
 	}
+	// ::done
 
 	/**
 	 * Returns a sanitized, canonical and normalized Path to a file.
@@ -345,9 +349,11 @@ public class SFile implements Comparable<SFile> {
 		// https://stackoverflow.com/questions/18743790/can-java-load-images-with-transparency
 		if (isFileOk())
 			try {
+				// ::comment when __CORE__
 				if (internal.getName().endsWith(".webp"))
 					return readWebp();
 				else
+					// ::done
 					return SecurityUtils.readRasterImage(new ImageIcon(this.getAbsolutePath()));
 			} catch (Exception e) {
 				Logme.error(e);
@@ -355,6 +361,7 @@ public class SFile implements Comparable<SFile> {
 		return null;
 	}
 
+	// ::comment when __CORE__
 	private BufferedImage readWebp() throws IOException {
 		try (InputStream is = openFile()) {
 			final int riff = read32(is);
@@ -400,6 +407,7 @@ public class SFile implements Comparable<SFile> {
 			return null;
 		}
 	}
+	// ::done
 
 	public BufferedReader openBufferedReader() {
 		if (isFileOk()) {
@@ -426,6 +434,7 @@ public class SFile implements Comparable<SFile> {
 		return null;
 	}
 
+	// ::comment when __CORE__
 	// Writing
 	public BufferedOutputStream createBufferedOutputStream() throws FileNotFoundException {
 		return new BufferedOutputStream(new FileOutputStream(internal));
@@ -458,5 +467,6 @@ public class SFile implements Comparable<SFile> {
 	public PrintStream createPrintStream(Charset charset) throws FileNotFoundException, UnsupportedEncodingException {
 		return new PrintStream(internal, charset.name());
 	}
+	// ::done
 
 }

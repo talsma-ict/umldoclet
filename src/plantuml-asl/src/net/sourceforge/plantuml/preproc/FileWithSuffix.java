@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -42,11 +42,11 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import net.sourceforge.plantuml.AFile;
-import net.sourceforge.plantuml.AFileRegular;
-import net.sourceforge.plantuml.AParentFolder;
-import net.sourceforge.plantuml.Log;
+import net.sourceforge.plantuml.file.AFile;
+import net.sourceforge.plantuml.file.AFileRegular;
+import net.sourceforge.plantuml.file.AParentFolder;
 import net.sourceforge.plantuml.security.SFile;
+import net.sourceforge.plantuml.utils.Log;
 
 public class FileWithSuffix {
 

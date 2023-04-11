@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,10 +30,10 @@
  */
 package net.sourceforge.plantuml.tim;
 
-import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.tim.expression.TValue;
 import net.sourceforge.plantuml.tim.expression.TokenStack;
 import net.sourceforge.plantuml.tim.iterator.CodePosition;
+import net.sourceforge.plantuml.utils.LineLocation;
 
 public class ExecutionContextWhile {
 
@@ -55,7 +55,8 @@ public class ExecutionContextWhile {
 		return new ExecutionContextWhile(whileExpression, codePosition);
 	}
 
-	public TValue conditionValue(LineLocation location, TContext context, TMemory memory) throws EaterException, EaterExceptionLocated {
+	public TValue conditionValue(LineLocation location, TContext context, TMemory memory)
+			throws EaterException, EaterExceptionLocated {
 		return whileExpression.getResult(location, context, memory);
 	}
 

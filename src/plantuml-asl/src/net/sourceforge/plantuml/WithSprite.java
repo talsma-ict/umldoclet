@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -31,9 +31,10 @@
 package net.sourceforge.plantuml;
 
 import net.sourceforge.plantuml.core.Diagram;
-import net.sourceforge.plantuml.sprite.Sprite;
+import net.sourceforge.plantuml.klimt.sprite.Sprite;
 
 public interface WithSprite extends Diagram {
+	// ::remove file when __HAXE__
 
 	public void addSprite(String name, Sprite sprite);
 }

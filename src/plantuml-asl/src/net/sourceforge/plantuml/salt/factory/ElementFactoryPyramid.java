@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,8 +32,8 @@ package net.sourceforge.plantuml.salt.factory;
 
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.salt.DataSource;
-import net.sourceforge.plantuml.salt.Dictionary;
 import net.sourceforge.plantuml.salt.Positionner2;
+import net.sourceforge.plantuml.salt.SaltDictionary;
 import net.sourceforge.plantuml.salt.Terminated;
 import net.sourceforge.plantuml.salt.Terminator;
 import net.sourceforge.plantuml.salt.element.Element;
@@ -43,7 +43,7 @@ import net.sourceforge.plantuml.salt.element.TableStrategy;
 
 public class ElementFactoryPyramid extends AbstractElementFactoryComplex {
 
-	public ElementFactoryPyramid(DataSource dataSource, Dictionary dictionary) {
+	public ElementFactoryPyramid(DataSource dataSource, SaltDictionary dictionary) {
 		super(dataSource, dictionary);
 	}
 

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,14 +30,15 @@
  */
 package net.sourceforge.plantuml.braille;
 
-import net.sourceforge.plantuml.ugraphic.UCenteredCharacter;
-import net.sourceforge.plantuml.ugraphic.UDriver;
-import net.sourceforge.plantuml.ugraphic.UParam;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
+import net.sourceforge.plantuml.klimt.UParam;
+import net.sourceforge.plantuml.klimt.color.ColorMapper;
+import net.sourceforge.plantuml.klimt.drawing.UDriver;
+import net.sourceforge.plantuml.klimt.shape.UCenteredCharacter;
 
 public class DriverCenteredCharacterBraille implements UDriver<UCenteredCharacter, BrailleGrid> {
 
-	public void draw(UCenteredCharacter characterCircled, double x, double y, ColorMapper mapper, UParam param, BrailleGrid grid) {
+	public void draw(UCenteredCharacter characterCircled, double x, double y, ColorMapper mapper, UParam param,
+			BrailleGrid grid) {
 		final double xpos = x;
 		final double ypos = y;
 

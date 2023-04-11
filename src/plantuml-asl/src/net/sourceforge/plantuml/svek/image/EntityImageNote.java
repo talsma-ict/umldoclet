@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,31 +34,37 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 
-import net.sourceforge.plantuml.ColorParam;
-import net.sourceforge.plantuml.CornerParam;
-import net.sourceforge.plantuml.Direction;
-import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.SkinParamBackcolored;
-import net.sourceforge.plantuml.UmlDiagramType;
-import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.awt.geom.XLine2D;
-import net.sourceforge.plantuml.awt.geom.XPoint2D;
-import net.sourceforge.plantuml.baraye.IEntity;
-import net.sourceforge.plantuml.baraye.ILeaf;
-import net.sourceforge.plantuml.creole.Stencil;
+import net.sourceforge.plantuml.abel.Entity;
+import net.sourceforge.plantuml.abel.Link;
 import net.sourceforge.plantuml.cucadiagram.BodyFactory;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.graphic.TextBlockEmpty;
-import net.sourceforge.plantuml.graphic.color.ColorType;
-import net.sourceforge.plantuml.graphic.color.Colors;
-import net.sourceforge.plantuml.posimo.DotPath;
+import net.sourceforge.plantuml.klimt.UGroupType;
+import net.sourceforge.plantuml.klimt.UPath;
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.ColorType;
+import net.sourceforge.plantuml.klimt.color.Colors;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.creole.Stencil;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.drawing.UGraphicStencil;
+import net.sourceforge.plantuml.klimt.font.FontConfiguration;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.geom.XLine2D;
+import net.sourceforge.plantuml.klimt.geom.XPoint2D;
+import net.sourceforge.plantuml.klimt.shape.DotPath;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
+import net.sourceforge.plantuml.klimt.shape.TextBlockEmpty;
+import net.sourceforge.plantuml.sdot.SmetanaPath;
+import net.sourceforge.plantuml.skin.ColorParam;
+import net.sourceforge.plantuml.skin.CornerParam;
+import net.sourceforge.plantuml.skin.SkinParamBackcolored;
+import net.sourceforge.plantuml.skin.UmlDiagramType;
 import net.sourceforge.plantuml.skin.rose.Rose;
+import net.sourceforge.plantuml.stereo.Stereotype;
+import net.sourceforge.plantuml.style.ISkinParam;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
@@ -68,13 +74,8 @@ import net.sourceforge.plantuml.svek.AbstractEntityImage;
 import net.sourceforge.plantuml.svek.ShapeType;
 import net.sourceforge.plantuml.svek.SvekLine;
 import net.sourceforge.plantuml.svek.SvekNode;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UGraphicStencil;
-import net.sourceforge.plantuml.ugraphic.UGroupType;
-import net.sourceforge.plantuml.ugraphic.UPath;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.url.Url;
+import net.sourceforge.plantuml.utils.Direction;
 
 public class EntityImageNote extends AbstractEntityImage implements Stencil {
 
@@ -90,7 +91,7 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 
 	private final TextBlock textBlock;
 
-	public EntityImageNote(ILeaf entity, ISkinParam skinParam, UmlDiagramType umlDiagramType) {
+	public EntityImageNote(Entity entity, ISkinParam skinParam, UmlDiagramType umlDiagramType) {
 		super(entity, getSkin(getISkinParam(skinParam, entity), entity));
 		this.skinParam = getISkinParam(skinParam, entity);
 
@@ -113,18 +114,18 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 			textBlock = new TextBlockEmpty();
 		else
 			textBlock = BodyFactory.create3(strings, getSkinParam(), horizontalAlignment, fontConfiguration,
-					getSkinParam().wrapWidth(), style);
+					style.wrapWidth(), style);
 
 	}
 
-	private static ISkinParam getISkinParam(ISkinParam skinParam, IEntity entity) {
+	private static ISkinParam getISkinParam(ISkinParam skinParam, Entity entity) {
 		if (entity.getColors() != null)
 			return entity.getColors().mute(skinParam);
 
 		return skinParam;
 	}
 
-	static ISkinParam getSkin(ISkinParam skinParam, IEntity entity) {
+	static ISkinParam getSkin(ISkinParam skinParam, Entity entity) {
 		final Stereotype stereotype = entity.getStereotype();
 		HColor back = entity.getColors().getColor(ColorType.BACK);
 		if (back != null)
@@ -189,39 +190,68 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 		final Url url = getEntity().getUrl99();
 
 		final Map<UGroupType, String> typeIDent = new EnumMap<>(UGroupType.class);
-		typeIDent.put(UGroupType.CLASS, "elem " + getEntity().getCode() + " selected");
-		typeIDent.put(UGroupType.ID, "elem_" + getEntity().getCode());
+		typeIDent.put(UGroupType.CLASS, "elem " + getEntity().getName() + " selected");
+		typeIDent.put(UGroupType.ID, "elem_" + getEntity().getName());
 		ug.startGroup(typeIDent);
 
 		if (url != null)
 			ug.startUrl(url);
 
-		final UGraphic ug2 = UGraphicStencil.create(ug, this, new UStroke());
-		if (opaleLine == null || opaleLine.isOpale() == false) {
+		final UGraphic ug2 = UGraphicStencil.create(ug, this, UStroke.simple());
+		if (opaleLink != null) {
+			final StringBounder stringBounder = ug.getStringBounder();
+
+			final SmetanaPath smetanaEdged = smetanaPathes.get(opaleLink);
+			final UTranslate move = new UTranslate(-node.getMinX(), -node.getMinY());
+
+			final XPoint2D startPoint = move.getTranslated(smetanaEdged.getStartPoint());
+			final XPoint2D endPoint = move.getTranslated(smetanaEdged.getEndPoint());
+
+			final UTranslate force1 = getMagneticBorder().getForceAt(stringBounder, smetanaEdged.getStartPoint());
+			final UTranslate force2 = other.getMagneticBorder().getForceAt(stringBounder, smetanaEdged.getEndPoint());
+
+			final double textWidth = getTextWidth(stringBounder);
+			final double textHeight = getTextHeight(stringBounder);
+			final XPoint2D center = new XPoint2D(textWidth / 2, textHeight / 2);
+
+			XPoint2D pp1 = force2.getTranslated(startPoint);
+			XPoint2D pp2 = force1.getTranslated(endPoint);
+			if (pp1.distance(center) < pp2.distance(center)) {
+				pp1 = force1.getTranslated(endPoint);
+				pp2 = force2.getTranslated(startPoint);
+			}
+
+			final Direction strategy = getOpaleStrategy(textWidth, textHeight, pp2);
+			final Opale opale = new Opale(shadowing, borderColor, noteBackgroundColor, textBlock, true, getStroke());
+			opale.setRoundCorner(getRoundCorner());
+			opale.setOpale(strategy, pp2, pp1);
+			final UGraphic stroked = applyStroke(ug2);
+			opale.drawU(Colors.applyStroke(stroked, getEntity().getColors()));
+
+		} else if (opaleLine == null || opaleLine.isOpale() == false) {
 			drawNormal(ug2);
 		} else {
 			final StringBounder stringBounder = ug.getStringBounder();
 			DotPath path = opaleLine.getDotPath();
+
+			final UTranslate force1 = getMagneticBorder().getForceAt(stringBounder, path.getStartPoint());
+			final UTranslate force2 = other.getMagneticBorder().getForceAt(stringBounder, path.getEndPoint());
+
 			path.moveSvek(-node.getMinX(), -node.getMinY());
-			XPoint2D p1 = path.getStartPoint();
-			XPoint2D p2 = path.getEndPoint();
+
 			final double textWidth = getTextWidth(stringBounder);
 			final double textHeight = getTextHeight(stringBounder);
 			final XPoint2D center = new XPoint2D(textWidth / 2, textHeight / 2);
-			if (p1.distance(center) > p2.distance(center)) {
+			if (path.getStartPoint().distance(center) > path.getEndPoint().distance(center))
 				path = path.reverse();
-				p1 = path.getStartPoint();
-				// p2 = path.getEndPoint();
-			}
-			final Direction strategy = getOpaleStrategy(textWidth, textHeight, p1);
-			final XPoint2D pp1 = path.getStartPoint();
-			final XPoint2D pp2 = path.getEndPoint();
-			final XPoint2D newRefpp2 = move(pp2, node.getMinX(), node.getMinY());
-			final XPoint2D projection = move(other.projection(newRefpp2, stringBounder), -node.getMinX(),
-					-node.getMinY());
+
+			final Direction strategy = getOpaleStrategy(textWidth, textHeight, path.getStartPoint());
+			final XPoint2D pp1 = force1.getTranslated(path.getStartPoint());
+			final XPoint2D pp2 = force2.getTranslated(path.getEndPoint());
+
 			final Opale opale = new Opale(shadowing, borderColor, noteBackgroundColor, textBlock, true, getStroke());
 			opale.setRoundCorner(getRoundCorner());
-			opale.setOpale(strategy, pp1, projection);
+			opale.setOpale(strategy, pp1, pp2);
 			final UGraphic stroked = applyStroke(ug2);
 			opale.drawU(Colors.applyStroke(stroked, getEntity().getColors()));
 		}
@@ -233,10 +263,6 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 
 	private double getRoundCorner() {
 		return skinParam.getRoundCorner(CornerParam.DEFAULT, null);
-	}
-
-	private static XPoint2D move(XPoint2D pt, double dx, double dy) {
-		return new XPoint2D(pt.getX() + dx, pt.getY() + dy);
 	}
 
 	private void drawNormal(UGraphic ug) {
@@ -307,13 +333,22 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 	}
 
 	private SvekLine opaleLine;
+	private Link opaleLink;
 	private SvekNode node;
 	private SvekNode other;
+	private Map<Link, SmetanaPath> smetanaPathes;
 
 	public void setOpaleLine(SvekLine line, SvekNode node, SvekNode other) {
 		this.opaleLine = line;
 		this.node = node;
 		this.other = Objects.requireNonNull(other);
+	}
+
+	public void setOpaleLink(Link link, SvekNode node, SvekNode other, Map<Link, SmetanaPath> edges) {
+		this.opaleLink = link;
+		this.node = node;
+		this.other = Objects.requireNonNull(other);
+		this.smetanaPathes = edges;
 	}
 
 	public double getStartingX(StringBounder stringBounder, double y) {

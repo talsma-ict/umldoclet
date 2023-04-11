@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,7 +30,6 @@
  */
 package net.sourceforge.plantuml.descdiagram;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -47,8 +46,6 @@ import net.sourceforge.plantuml.command.PSystemCommandFactory;
 import net.sourceforge.plantuml.command.note.CommandFactoryNote;
 import net.sourceforge.plantuml.command.note.CommandFactoryNoteOnEntity;
 import net.sourceforge.plantuml.command.note.CommandFactoryNoteOnLink;
-import net.sourceforge.plantuml.command.regex.RegexLeaf;
-import net.sourceforge.plantuml.command.regex.RegexOr;
 import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.descdiagram.command.CommandArchimate;
 import net.sourceforge.plantuml.descdiagram.command.CommandArchimateMultilines;
@@ -57,9 +54,12 @@ import net.sourceforge.plantuml.descdiagram.command.CommandCreateElementMultilin
 import net.sourceforge.plantuml.descdiagram.command.CommandLinkElement;
 import net.sourceforge.plantuml.descdiagram.command.CommandNewpage;
 import net.sourceforge.plantuml.descdiagram.command.CommandPackageWithUSymbol;
+import net.sourceforge.plantuml.descdiagram.command.CommandTogether;
 import net.sourceforge.plantuml.objectdiagram.command.CommandCreateJson;
 import net.sourceforge.plantuml.objectdiagram.command.CommandCreateJsonSingleLine;
 import net.sourceforge.plantuml.objectdiagram.command.CommandCreateMap;
+import net.sourceforge.plantuml.regex.RegexLeaf;
+import net.sourceforge.plantuml.regex.RegexOr;
 
 public class DescriptionDiagramFactory extends PSystemCommandFactory {
 
@@ -69,11 +69,8 @@ public class DescriptionDiagramFactory extends PSystemCommandFactory {
 	}
 
 	@Override
-	protected List<Command> createCommands() {
-		final List<Command> cmds = new ArrayList<>();
-
+	protected void initCommandsList(List<Command> cmds) {
 		cmds.add(new CommandFootboxIgnored());
-		cmds.add(new CommandNamespaceSeparator());
 		cmds.add(new CommandRankDir());
 		cmds.add(new CommandNewpage(this));
 		CommonCommands.addCommonCommands1(cmds);
@@ -81,8 +78,10 @@ public class DescriptionDiagramFactory extends PSystemCommandFactory {
 		cmds.add(new CommandLinkElement());
 		cmds.add(new CommandHideShow2());
 		cmds.add(new CommandRemoveRestore());
-		//
+
 		cmds.add(new CommandPackageWithUSymbol());
+		cmds.add(new CommandTogether());
+
 		cmds.add(new CommandEndPackage());
 		final CommandFactoryNote factoryNoteCommand = new CommandFactoryNote();
 		cmds.add(factoryNoteCommand.createMultiLine(false));
@@ -121,8 +120,6 @@ public class DescriptionDiagramFactory extends PSystemCommandFactory {
 		cmds.add(new CommandArchimate());
 		cmds.add(new CommandArchimateMultilines());
 		cmds.add(new CommandCreateDomain());
-
-		return cmds;
 	}
 
 }

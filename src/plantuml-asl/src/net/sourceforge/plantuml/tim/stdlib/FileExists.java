@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.tim.EaterException;
@@ -43,6 +42,7 @@ import net.sourceforge.plantuml.tim.TContext;
 import net.sourceforge.plantuml.tim.TFunctionSignature;
 import net.sourceforge.plantuml.tim.TMemory;
 import net.sourceforge.plantuml.tim.expression.TValue;
+import net.sourceforge.plantuml.utils.LineLocation;
 
 public class FileExists extends SimpleReturnFunction {
 
@@ -56,11 +56,15 @@ public class FileExists extends SimpleReturnFunction {
 
 	public TValue executeReturnFunction(TContext context, TMemory memory, LineLocation location, List<TValue> values,
 			Map<String, TValue> named) throws EaterException, EaterExceptionLocated {
-		if (OptionFlags.ALLOW_INCLUDE == false) {
+		// ::comment when __CORE__
+		if (OptionFlags.ALLOW_INCLUDE == false)
+			// ::done
 			return TValue.fromBoolean(false);
-		}
+		// ::comment when __CORE__
+
 		final String path = values.get(0).toString();
 		return TValue.fromBoolean(fileExists(path));
+		// ::done
 	}
 
 	private boolean fileExists(String path) {

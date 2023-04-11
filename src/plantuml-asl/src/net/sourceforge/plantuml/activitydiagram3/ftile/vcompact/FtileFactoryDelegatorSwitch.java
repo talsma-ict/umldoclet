@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,7 +33,6 @@ package net.sourceforge.plantuml.activitydiagram3.ftile.vcompact;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.plantuml.LineBreakStrategy;
 import net.sourceforge.plantuml.activitydiagram3.Branch;
 import net.sourceforge.plantuml.activitydiagram3.LinkRendering;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
@@ -48,17 +47,18 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.cond.FtileSwitch
 import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileDecorateInLabel;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileDecorateOutLabel;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileDiamondInside;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.creole.CreoleMode;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.Rainbow;
-import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.graphic.TextBlockUtils;
+import net.sourceforge.plantuml.decoration.Rainbow;
+import net.sourceforge.plantuml.klimt.LineBreakStrategy;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.creole.CreoleMode;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.font.FontConfiguration;
+import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
+import net.sourceforge.plantuml.klimt.shape.TextBlockUtils;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class FtileFactoryDelegatorSwitch extends FtileFactoryDelegator {
 
@@ -126,8 +126,9 @@ public class FtileFactoryDelegatorSwitch extends FtileFactoryDelegator {
 		lineBreak = style.wrapWidth();
 		final FontConfiguration fcDiamond = style.getFontConfiguration(skinParam().getIHtmlColorSet());
 		final HColor borderColor = style.value(PName.LineColor).asColor(skinParam().getIHtmlColorSet());
-		final HColor backColor = branch0.getColor() == null ? style.value(PName.BackGroundColor)
-				.asColor(skinParam().getIHtmlColorSet()) : branch0.getColor();
+		final HColor backColor = branch0.getColor() == null
+				? style.value(PName.BackGroundColor).asColor(skinParam().getIHtmlColorSet())
+				: branch0.getColor();
 
 		final TextBlock tbTest;
 		if (Display.isNull(test) || test.isWhite())
@@ -143,8 +144,9 @@ public class FtileFactoryDelegatorSwitch extends FtileFactoryDelegator {
 
 		final Style style = getDefaultStyleDefinitionDiamond().getMergedStyle(skinParam().getCurrentStyleBuilder());
 		final HColor borderColor = style.value(PName.LineColor).asColor(skinParam().getIHtmlColorSet());
-		final HColor backColor = branch0.getColor() == null ? style.value(PName.BackGroundColor)
-				.asColor(skinParam().getIHtmlColorSet()) : branch0.getColor();
+		final HColor backColor = branch0.getColor() == null
+				? style.value(PName.BackGroundColor).asColor(skinParam().getIHtmlColorSet())
+				: branch0.getColor();
 
 		return new FtileDiamondInside(TextBlockUtils.empty(0, 0), branch0.skinParam(), backColor, borderColor,
 				swimlane);

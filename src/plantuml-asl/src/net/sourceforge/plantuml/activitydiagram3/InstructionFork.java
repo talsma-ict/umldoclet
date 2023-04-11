@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactory;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
@@ -45,13 +44,14 @@ import net.sourceforge.plantuml.activitydiagram3.gtile.Gtile;
 import net.sourceforge.plantuml.activitydiagram3.gtile.GtileSplit;
 import net.sourceforge.plantuml.activitydiagram3.gtile.Gtiles;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.Rainbow;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.VerticalAlignment;
-import net.sourceforge.plantuml.graphic.color.Colors;
+import net.sourceforge.plantuml.decoration.Rainbow;
+import net.sourceforge.plantuml.klimt.color.Colors;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.VerticalAlignment;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
 import net.sourceforge.plantuml.sequencediagram.NoteType;
+import net.sourceforge.plantuml.style.ISkinParam;
 
 public class InstructionFork extends WithNote implements Instruction {
 
@@ -93,6 +93,7 @@ public class InstructionFork extends WithNote implements Instruction {
 		return getLastList().add(ins);
 	}
 
+	// ::comment when __CORE__
 	@Override
 	public Gtile createGtile(ISkinParam skinParam, StringBounder stringBounder) {
 		final List<Gtile> all = new ArrayList<>();
@@ -105,6 +106,7 @@ public class InstructionFork extends WithNote implements Instruction {
 
 		return new GtileSplit(all, swimlaneIn, getInLinkRenderingColor(skinParam).getColor());
 	}
+	// ::done
 
 	private Rainbow getInLinkRenderingColor(ISkinParam skinParam) {
 		Rainbow color;
@@ -120,7 +122,8 @@ public class InstructionFork extends WithNote implements Instruction {
 		}
 		Ftile result = factory.createParallel(all, style, label, swimlaneIn, swimlaneOut);
 		if (getPositionedNotes().size() > 0) {
-			result = FtileWithNoteOpale.create(result, getPositionedNotes(), skinParam, false, VerticalAlignment.CENTER);
+			result = FtileWithNoteOpale.create(result, getPositionedNotes(), skinParam, false,
+					VerticalAlignment.CENTER);
 		}
 		return result;
 	}

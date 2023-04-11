@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,20 +32,20 @@ package net.sourceforge.plantuml.nwdiag.next;
 
 import java.util.List;
 
-import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.MinMax;
+import net.sourceforge.plantuml.klimt.shape.URectangle;
 import net.sourceforge.plantuml.nwdiag.core.Network;
 import net.sourceforge.plantuml.nwdiag.core.NwGroup;
+import net.sourceforge.plantuml.style.ISkinParam;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleBuilder;
 import net.sourceforge.plantuml.style.StyleSignatureBasic;
-import net.sourceforge.plantuml.ugraphic.MinMax;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.URectangle;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class GridTextBlockDecorated extends GridTextBlockSimple {
 
@@ -102,7 +102,7 @@ public class GridTextBlockDecorated extends GridTextBlockSimple {
 			double x = 0;
 			for (int j = 0; j < data.getNbCols(); j++) {
 				final double colWidth = colWidth(stringBounder, j);
-				final LinkedElement element = data.get(i, j);
+				final NServerDraw element = data.get(i, j);
 				if (element != null && group.contains(element.getServer())) {
 					final MinMax minMax = element.getMinMax(stringBounder, colWidth, lineHeight)
 							.translate(new UTranslate(x, y));
@@ -112,15 +112,14 @@ public class GridTextBlockDecorated extends GridTextBlockSimple {
 			}
 			y += lineHeight;
 		}
-		if (size != null) {
+		if (size != null)
 			group.drawGroup(ug, size, skinParam);
-		}
 
 	}
 
 	private boolean isThereALink(int j, Network network) {
 		for (int i = 0; i < data.getNbLines(); i++) {
-			final LinkedElement element = data.get(i, j);
+			final NServerDraw element = data.get(i, j);
 			if (element != null && element.isLinkedTo(network))
 				return true;
 
@@ -140,15 +139,15 @@ public class GridTextBlockDecorated extends GridTextBlockSimple {
 			final Network network = getNetwork(i);
 			computeMixMax(data.getLine(i), stringBounder, network);
 
-			final URectangle rect = new URectangle(network.getXmax() - network.getXmin(), NETWORK_THIN);
+			final double width = Math.max(GridTextBlockSimple.MINIMUM_WIDTH, network.getXmax() - network.getXmin());
+			final URectangle rect = URectangle.build(width, NETWORK_THIN);
 
 			UGraphic ug2 = ug.apply(new UTranslate(network.getXmin(), y));
 			final StyleBuilder styleBuilder = getSkinParam().getCurrentStyleBuilder();
 			final Style style = getStyleDefinitionNetwork(SName.network).getMergedStyle(styleBuilder);
 			final double deltaShadow = style.value(PName.Shadowing).asDouble();
 			ug2 = ug2.apply(style.value(PName.LineColor).asColor(getSkinParam().getIHtmlColorSet()));
-			ug2 = ug2.apply(style.value(PName.BackGroundColor)
-					.asColor(getSkinParam().getIHtmlColorSet()).bg());
+			ug2 = ug2.apply(style.value(PName.BackGroundColor).asColor(getSkinParam().getIHtmlColorSet()).bg());
 
 			rect.setDeltaShadow(deltaShadow);
 			if (network != null && network.getColor() != null)
@@ -164,7 +163,7 @@ public class GridTextBlockDecorated extends GridTextBlockSimple {
 		}
 	}
 
-	private void computeMixMax(LinkedElement line[], StringBounder stringBounder, Network network) {
+	private void computeMixMax(NServerDraw line[], StringBounder stringBounder, Network network) {
 		double x = 0;
 		double xmin = network.isFullWidth() ? 0 : -1;
 		double xmax = 0;

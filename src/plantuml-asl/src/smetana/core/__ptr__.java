@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -37,7 +37,7 @@ public interface __ptr__  {
 
 	public __ptr__ castTo(Class dest);
 	
-	public Object getTheField(OFFSET bytes);
+	public Object getTheField(FieldOffset bytes);
 	
 	public __ptr__ unsupported();
 	

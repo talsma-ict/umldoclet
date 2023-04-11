@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,6 +32,7 @@ package net.sourceforge.plantuml.sequencediagram;
 
 public enum GroupingType {
 	START, ELSE, END;
+
 	public static GroupingType getType(String s) {
 		if (s.equalsIgnoreCase("opt")) {
 			return GroupingType.START;

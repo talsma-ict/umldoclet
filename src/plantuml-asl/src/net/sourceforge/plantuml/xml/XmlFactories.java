@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -38,11 +38,13 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 
 public class XmlFactories {
+    // ::remove folder when __HAXE__
 
 	private XmlFactories() {
 	}
 
-	// This class uses the "initialization-on-demand holder" idiom to provide thread-safe
+	// This class uses the "initialization-on-demand holder" idiom to provide
+	// thread-safe
 	// lazy initialization of expensive factories.
 	// (see https://stackoverflow.com/a/8297830/1848731)
 

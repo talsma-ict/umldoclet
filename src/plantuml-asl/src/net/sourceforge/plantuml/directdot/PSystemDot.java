@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,14 +30,13 @@
  */
 package net.sourceforge.plantuml.directdot;
 
-import static net.sourceforge.plantuml.ugraphic.ImageBuilder.plainImageBuilder;
+import static net.atmp.ImageBuilder.plainImageBuilder;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 
 import net.sourceforge.plantuml.AbstractPSystem;
-import net.sourceforge.plantuml.CounterOutputStream;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.FileImageData;
 import net.sourceforge.plantuml.StringUtils;
@@ -45,14 +44,15 @@ import net.sourceforge.plantuml.api.ImageDataSimple;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.core.UmlSource;
-import net.sourceforge.plantuml.cucadiagram.dot.ExeState;
-import net.sourceforge.plantuml.cucadiagram.dot.Graphviz;
-import net.sourceforge.plantuml.cucadiagram.dot.GraphvizUtils;
-import net.sourceforge.plantuml.cucadiagram.dot.ProcessState;
-import net.sourceforge.plantuml.graphic.GraphicStrings;
-import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.dot.ExeState;
+import net.sourceforge.plantuml.dot.Graphviz;
+import net.sourceforge.plantuml.dot.GraphvizUtils;
+import net.sourceforge.plantuml.dot.ProcessState;
+import net.sourceforge.plantuml.klimt.shape.GraphicStrings;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
 
 public class PSystemDot extends AbstractPSystem {
+	// ::remove folder when __CORE__
 
 	private final String data;
 
@@ -73,10 +73,7 @@ public class PSystemDot extends AbstractPSystem {
 		if (graphviz.getExeState() != ExeState.OK) {
 			final TextBlock result = GraphicStrings
 					.createForError(Arrays.asList("There is an issue with your Dot/Graphviz installation"), false);
-			return plainImageBuilder(result, fileFormat)
-					.seed(seed())
-					.status(FileImageData.CRASH)
-					.write(os);
+			return plainImageBuilder(result, fileFormat).seed(seed()).status(FileImageData.CRASH).write(os);
 		}
 		final CounterOutputStream counter = new CounterOutputStream(os);
 		final ProcessState state = graphviz.createFile3(counter);
@@ -85,10 +82,7 @@ public class PSystemDot extends AbstractPSystem {
 		// }
 		if (counter.getLength() == 0 || state.differs(ProcessState.TERMINATED_OK())) {
 			final TextBlock result = GraphicStrings.createForError(Arrays.asList("GraphViz has crashed"), false);
-			return plainImageBuilder(result, fileFormat)
-					.seed(seed())
-					.status(FileImageData.CRASH)
-					.write(os);
+			return plainImageBuilder(result, fileFormat).seed(seed()).status(FileImageData.CRASH).write(os);
 		}
 
 		return ImageDataSimple.ok();

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,37 +30,37 @@
  */
 package net.sourceforge.plantuml.command.note;
 
-import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.UrlBuilder;
-import net.sourceforge.plantuml.UrlMode;
-import net.sourceforge.plantuml.baraye.IEntity;
+import net.sourceforge.plantuml.abel.Entity;
+import net.sourceforge.plantuml.abel.LeafType;
+import net.sourceforge.plantuml.abel.Link;
+import net.sourceforge.plantuml.abel.LinkArg;
 import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
-import net.sourceforge.plantuml.command.BlocLines;
 import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.CommandMultilines2;
 import net.sourceforge.plantuml.command.MultilinesStrategy;
-import net.sourceforge.plantuml.command.Position;
 import net.sourceforge.plantuml.command.Trim;
-import net.sourceforge.plantuml.command.regex.IRegex;
-import net.sourceforge.plantuml.command.regex.RegexConcat;
-import net.sourceforge.plantuml.command.regex.RegexLeaf;
-import net.sourceforge.plantuml.command.regex.RegexResult;
-import net.sourceforge.plantuml.cucadiagram.Code;
-import net.sourceforge.plantuml.cucadiagram.Ident;
-import net.sourceforge.plantuml.cucadiagram.LeafType;
-import net.sourceforge.plantuml.cucadiagram.Link;
-import net.sourceforge.plantuml.cucadiagram.LinkArg;
-import net.sourceforge.plantuml.cucadiagram.LinkDecor;
-import net.sourceforge.plantuml.cucadiagram.LinkType;
-import net.sourceforge.plantuml.cucadiagram.Stereotag;
-import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.graphic.color.ColorParser;
-import net.sourceforge.plantuml.graphic.color.ColorType;
-import net.sourceforge.plantuml.graphic.color.Colors;
-import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
+import net.sourceforge.plantuml.decoration.LinkDecor;
+import net.sourceforge.plantuml.decoration.LinkType;
+import net.sourceforge.plantuml.klimt.color.ColorParser;
+import net.sourceforge.plantuml.klimt.color.ColorType;
+import net.sourceforge.plantuml.klimt.color.Colors;
+import net.sourceforge.plantuml.klimt.color.NoSuchColorException;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.plasma.Quark;
+import net.sourceforge.plantuml.regex.IRegex;
+import net.sourceforge.plantuml.regex.RegexConcat;
+import net.sourceforge.plantuml.regex.RegexLeaf;
+import net.sourceforge.plantuml.regex.RegexResult;
+import net.sourceforge.plantuml.skin.ColorParam;
+import net.sourceforge.plantuml.stereo.Stereotag;
+import net.sourceforge.plantuml.stereo.Stereotype;
+import net.sourceforge.plantuml.url.Url;
+import net.sourceforge.plantuml.url.UrlBuilder;
+import net.sourceforge.plantuml.url.UrlMode;
+import net.sourceforge.plantuml.utils.BlocLines;
+import net.sourceforge.plantuml.utils.Position;
 
 public final class CommandFactoryTipOnEntity implements SingleMultiFactoryCommand<AbstractEntityDiagram> {
 
@@ -85,13 +85,13 @@ public final class CommandFactoryTipOnEntity implements SingleMultiFactoryComman
 					RegexLeaf.spaceZeroOrMore(), //
 					new RegexLeaf("TAGS1", Stereotag.pattern() + "?"), //
 					RegexLeaf.spaceZeroOrMore(), //
-					new RegexLeaf("STEREO", "(\\<{2}.*\\>{2})?"), //
+					new RegexLeaf("STEREO", "(\\<\\<.*\\>\\>)?"), //
 					RegexLeaf.spaceZeroOrMore(), //
 					new RegexLeaf("TAGS2", Stereotag.pattern() + "?"), //
 					RegexLeaf.spaceZeroOrMore(), //
 					ColorParser.exp1(), //
 					RegexLeaf.spaceZeroOrMore(), //
-					new RegexLeaf("URL", "(" + UrlBuilder.getRegexp() + ")?"), //
+					UrlBuilder.OPTIONAL, //
 					RegexLeaf.spaceZeroOrMore(), //
 					new RegexLeaf("\\{"), //
 					RegexLeaf.end() //
@@ -108,13 +108,13 @@ public final class CommandFactoryTipOnEntity implements SingleMultiFactoryComman
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("TAGS1", Stereotag.pattern() + "?"), //
 				RegexLeaf.spaceZeroOrMore(), //
-				new RegexLeaf("STEREO", "(\\<{2}.*\\>{2})?"), //
+				new RegexLeaf("STEREO", "(\\<\\<.*\\>\\>)?"), //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("TAGS2", Stereotag.pattern() + "?"), //
 				RegexLeaf.spaceZeroOrMore(), //
 				ColorParser.exp1(), //
 				RegexLeaf.spaceZeroOrMore(), //
-				new RegexLeaf("URL", "(" + UrlBuilder.getRegexp() + ")?"), //
+				UrlBuilder.OPTIONAL, //
 				RegexLeaf.end() //
 		);
 	}
@@ -164,29 +164,30 @@ public final class CommandFactoryTipOnEntity implements SingleMultiFactoryComman
 		final String pos = line0.get("POSITION", 0);
 
 		final String idShort = line0.get("ENTITY", 0);
-		final Ident identShort = diagram.buildLeafIdent(idShort);
-		final Code codeShort = diagram.V1972() ? identShort : diagram.buildCode(idShort);
 		final String member = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(line0.get("ENTITY", 1));
-		if (codeShort == null) {
-			assert false;
+
+		final Quark<Entity> quark = diagram.quarkInContext(true, idShort);
+		final Entity cl1 = quark.getData();
+		if (cl1 == null)
 			return CommandExecutionResult.error("Nothing to note to");
-		}
-		final IEntity cl1 = diagram.getOrCreateLeaf(identShort, codeShort, null, null);
+
 		final Position position = Position.valueOf(StringUtils.goUpperCase(pos))
 				.withRankdir(diagram.getSkinParam().getRankdir());
 
-		final Ident identTip = diagram.buildLeafIdent(idShort + "$$$" + position.name());
-		IEntity tips = diagram.getLeafStrict(identTip);
+		final String tmp = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(idShort + "$$$" + position.name());
+		final Quark<Entity> identTip = diagram.quarkInContext(true, tmp);
+		Entity tips = identTip.getData();
+
 		if (tips == null) {
-			tips = diagram.getOrCreateLeaf(identTip, identTip.toCode(diagram), LeafType.TIPS, null);
+			tips = diagram.reallyCreateLeaf(identTip, Display.getWithNewlines(""), LeafType.TIPS, null);
 			final LinkType type = new LinkType(LinkDecor.NONE, LinkDecor.NONE).getInvisible();
 			final Link link;
 			if (position == Position.RIGHT)
-				link = new Link(diagram.getIEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(), cl1,
-						(IEntity) tips, type, LinkArg.noDisplay(1));
+				link = new Link(diagram.getEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(), cl1,
+						(Entity) tips, type, LinkArg.noDisplay(1));
 			else
-				link = new Link(diagram.getIEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(),
-						(IEntity) tips, cl1, type, LinkArg.noDisplay(1));
+				link = new Link(diagram.getEntityFactory(), diagram.getSkinParam().getCurrentStyleBuilder(),
+						(Entity) tips, cl1, type, LinkArg.noDisplay(1));
 
 			diagram.addLink(link);
 		}

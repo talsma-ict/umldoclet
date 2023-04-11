@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -37,6 +37,7 @@ import java.io.IOException;
 import net.sourceforge.plantuml.log.Logme;
 
 public class Upf9Encoder {
+	// ::remove file when __CORE__
 
 	private Upf9Encoder() {
 

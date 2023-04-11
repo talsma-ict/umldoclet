@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -56,72 +56,71 @@ package net.sourceforge.plantuml.json;
 
 import java.io.IOException;
 
-
 @SuppressWarnings("serial") // use default serial UID
 class JsonNumber extends JsonValue {
 
-  private final String string;
+	private final String string;
 
-  JsonNumber(String string) {
-    if (string == null) {
-      throw new NullPointerException("string is null");
-    }
-    this.string = string;
-  }
+	JsonNumber(String string) {
+		if (string == null) {
+			throw new NullPointerException("string is null");
+		}
+		this.string = string;
+	}
 
-  @Override
-  public String toString() {
-    return string;
-  }
+	@Override
+	public String toString() {
+		return string;
+	}
 
-  @Override
-  void write(JsonWriter writer) throws IOException {
-    writer.writeNumber(string);
-  }
+	@Override
+	void write(JsonWriter writer) throws IOException {
+		writer.writeNumber(string);
+	}
 
-  @Override
-  public boolean isNumber() {
-    return true;
-  }
+	@Override
+	public boolean isNumber() {
+		return true;
+	}
 
-  @Override
-  public int asInt() {
-    return Integer.parseInt(string, 10);
-  }
+	@Override
+	public int asInt() {
+		return Integer.parseInt(string, 10);
+	}
 
-  @Override
-  public long asLong() {
-    return Long.parseLong(string, 10);
-  }
+	@Override
+	public long asLong() {
+		return Long.parseLong(string, 10);
+	}
 
-  @Override
-  public float asFloat() {
-    return Float.parseFloat(string);
-  }
+	@Override
+	public float asFloat() {
+		return Float.parseFloat(string);
+	}
 
-  @Override
-  public double asDouble() {
-    return Double.parseDouble(string);
-  }
+	@Override
+	public double asDouble() {
+		return Double.parseDouble(string);
+	}
 
-  @Override
-  public int hashCode() {
-    return string.hashCode();
-  }
+	@Override
+	public int hashCode() {
+		return string.hashCode();
+	}
 
-  @Override
-  public boolean equals(Object object) {
-    if (this == object) {
-      return true;
-    }
-    if (object == null) {
-      return false;
-    }
-    if (getClass() != object.getClass()) {
-      return false;
-    }
-    JsonNumber other = (JsonNumber)object;
-    return string.equals(other.string);
-  }
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) {
+			return true;
+		}
+		if (object == null) {
+			return false;
+		}
+		if (getClass() != object.getClass()) {
+			return false;
+		}
+		JsonNumber other = (JsonNumber) object;
+		return string.equals(other.string);
+	}
 
 }

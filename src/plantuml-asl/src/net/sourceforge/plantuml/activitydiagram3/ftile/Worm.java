@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -37,20 +37,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import net.sourceforge.plantuml.Direction;
-import net.sourceforge.plantuml.awt.geom.XLine2D;
-import net.sourceforge.plantuml.awt.geom.XPoint2D;
-import net.sourceforge.plantuml.cucadiagram.LinkStyle;
-import net.sourceforge.plantuml.graphic.HtmlColorAndStyle;
+import net.sourceforge.plantuml.decoration.HtmlColorAndStyle;
+import net.sourceforge.plantuml.decoration.LinkStyle;
+import net.sourceforge.plantuml.klimt.Arrows;
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.compress.CompressionMode;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.geom.MinMax;
+import net.sourceforge.plantuml.klimt.geom.XLine2D;
+import net.sourceforge.plantuml.klimt.geom.XPoint2D;
+import net.sourceforge.plantuml.klimt.shape.ULine;
+import net.sourceforge.plantuml.klimt.shape.UPolygon;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.ugraphic.MinMax;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.ULine;
-import net.sourceforge.plantuml.ugraphic.UPolygon;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.comp.CompressionMode;
+import net.sourceforge.plantuml.utils.Direction;
 
 public class Worm implements Iterable<XPoint2D> {
 
@@ -100,7 +101,7 @@ public class Worm implements Iterable<XPoint2D> {
 		for (int i = 0; i < points.size() - 1; i++) {
 			final XPoint2D p1 = points.get(i);
 			final XPoint2D p2 = points.get(i + 1);
-			final XLine2D line = new XLine2D(p1, p2);
+			final XLine2D line = XLine2D.line(p1, p2);
 			if (drawn == false && emphasizeDirection != null && Direction.fromVector(p1, p2) == emphasizeDirection) {
 				drawLine(ug, line, emphasizeDirection);
 				drawn = true;
@@ -120,20 +121,20 @@ public class Worm implements Iterable<XPoint2D> {
 		ug = ug.apply(arrowHeadColor.bg());
 
 		if (startDecoration != null) {
-			ug = ug.apply(new UStroke(1.5));
+			ug = ug.apply(UStroke.withThickness(1.5));
 			final XPoint2D start = points.get(0);
 			if (ignoreForCompression)
 				startDecoration.setCompressionMode(CompressionMode.ON_X);
 
-			ug.apply(new UTranslate(start)).apply(new UStroke()).draw(startDecoration);
+			ug.apply(UTranslate.point(start)).apply(UStroke.simple()).draw(startDecoration);
 		}
 		if (endDecoration != null) {
-			ug = ug.apply(new UStroke(1.5));
+			ug = ug.apply(UStroke.withThickness(1.5));
 			final XPoint2D end = points.get(points.size() - 1);
 			if (ignoreForCompression)
 				endDecoration.setCompressionMode(CompressionMode.ON_X);
 
-			ug.apply(new UTranslate(end)).apply(new UStroke()).draw(endDecoration);
+			ug.apply(UTranslate.point(end)).apply(UStroke.simple()).draw(endDecoration);
 		}
 	}
 

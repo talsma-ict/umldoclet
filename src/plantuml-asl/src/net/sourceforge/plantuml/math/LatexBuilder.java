@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -38,9 +38,9 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.Icon;
 
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.ugraphic.MutableImage;
-import net.sourceforge.plantuml.ugraphic.UImageSvg;
+import net.sourceforge.plantuml.klimt.MutableImage;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.shape.UImageSvg;
 
 public class LatexBuilder implements ScientificEquation {
 
@@ -94,6 +94,7 @@ public class LatexBuilder implements ScientificEquation {
 			this.icon = icon;
 		}
 
+		@Override
 		public BufferedImage getImage() {
 			if (cache == null) {
 				cache = new BufferedImage((int) (icon.getIconWidth() * scale), (int) (icon.getIconHeight() * scale),
@@ -126,6 +127,11 @@ public class LatexBuilder implements ScientificEquation {
 		@Override
 		public MutableImage monochrome() {
 			return this;
+		}
+
+		@Override
+		public double getScale() {
+			return scale;
 		}
 
 	}

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,26 +30,26 @@
  */
 package net.sourceforge.plantuml.ebnf;
 
-import net.sourceforge.plantuml.Direction;
-import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vcompact.FloatingNote;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.awt.geom.XPoint2D;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.graphic.TextBlockUtils;
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.color.HColorSet;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.FontConfiguration;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.geom.XPoint2D;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
+import net.sourceforge.plantuml.klimt.shape.TextBlockUtils;
+import net.sourceforge.plantuml.klimt.shape.URectangle;
+import net.sourceforge.plantuml.klimt.shape.UText;
+import net.sourceforge.plantuml.style.ISkinParam;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.URectangle;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.UText;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
+import net.sourceforge.plantuml.utils.Direction;
 
 public class ETileBox extends ETile {
 
@@ -63,13 +63,17 @@ public class ETileBox extends ETile {
 	private String commentAbove;
 	private String commentBelow;
 
+	public ETileBox mergeWith(ETileBox other) {
+		return new ETileBox(this.value + other.value, symbol, fc, style, colorSet, skinParam);
+	}
+
 	public ETileBox(String value, Symbol symbol, FontConfiguration fc, Style style, HColorSet colorSet,
 			ISkinParam skinParam) {
 		this.symbol = symbol;
 		this.skinParam = skinParam;
 		this.value = value;
 		this.fc = fc;
-		this.utext = new UText(value, fc);
+		this.utext = UText.build(value, fc);
 		this.style = style;
 		this.colorSet = colorSet;
 	}
@@ -146,18 +150,18 @@ public class ETileBox extends ETile {
 		final double posxBox = (dim.getWidth() - dimBox.getWidth()) / 2;
 
 		if (symbol == Symbol.TERMINAL_STRING1 || symbol == Symbol.TERMINAL_STRING2) {
-			final URectangle rect = new URectangle(dimBox);
-			ug.apply(new UTranslate(posxBox, posy)).apply(lineColor).apply(new UStroke(0.5)).draw(rect);
+			final URectangle rect = URectangle.build(dimBox);
+			ug.apply(new UTranslate(posxBox, posy)).apply(lineColor).apply(UStroke.withThickness(0.5)).draw(rect);
 		} else if (symbol == Symbol.SPECIAL_SEQUENCE) {
-			final URectangle rect = new URectangle(dimBox);
+			final URectangle rect = URectangle.build(dimBox);
 			ug.apply(new UTranslate(posxBox, posy)).apply(lineColor).apply(new UStroke(5, 5, 1)).draw(rect);
-//			final URectangle rect1 = new URectangle(dimBox.delta(2)).rounded(12);
-//			final URectangle rect2 = new URectangle(dimBox.delta(-2)).rounded(8);
+//			final URectangle rect1 = URectangle.build(dimBox.delta(2)).rounded(12);
+//			final URectangle rect2 = URectangle.build(dimBox.delta(-2)).rounded(8);
 //			ug.apply(new UTranslate(posxBox - 1, posy - 1)).apply(lineColor).apply(new UStroke(5.0, 5.0, 1.0)).draw(rect1);
-//			ug.apply(new UTranslate(posxBox + 1, posy + 1)).apply(lineColor).apply(new UStroke(0.5)).draw(rect2);
+//			ug.apply(new UTranslate(posxBox + 1, posy + 1)).apply(lineColor).apply(UStroke.withThickness(0.5)).draw(rect2);
 		} else {
-			final URectangle rect = new URectangle(dimBox).rounded(10);
-			ug.apply(new UTranslate(posxBox, posy)).apply(lineColor).apply(backgroundColor.bg()).apply(new UStroke(1.5))
+			final URectangle rect = URectangle.build(dimBox).rounded(10);
+			ug.apply(new UTranslate(posxBox, posy)).apply(lineColor).apply(backgroundColor.bg()).apply(UStroke.withThickness(1.5))
 					.draw(rect);
 		}
 
@@ -218,6 +222,10 @@ public class ETileBox extends ETile {
 	@Override
 	protected String getRepetitionLabel() {
 		return value;
+	}
+
+	public final Symbol getSymbol() {
+		return symbol;
 	}
 
 }

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -35,9 +35,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import net.sourceforge.plantuml.Log;
+import net.sourceforge.plantuml.utils.Log;
 
 public class MagicTable {
+    // ::remove folder when __HAXE__
 
 	static enum Oc {
 		USED, NEAR
@@ -195,8 +196,8 @@ public class MagicTable {
 			final MagicTable mt = new MagicTable();
 			final int v = MagicTable.size(rnd, mt);
 			if (v > max) {
-				Log.println("v="+v);
-				Log.println("mt="+mt.getAllUsed());
+				Log.println("v=" + v);
+				Log.println("mt=" + mt.getAllUsed());
 				max = v;
 			}
 		}
@@ -214,8 +215,8 @@ public class MagicTable {
 				final MagicTable mt = new MagicTable();
 				final int v = MagicTable.size(rnd, mt);
 				if (v > max) {
-					Log.println("v="+v);
-					Log.println("mt="+mt.getAllUsed());
+					Log.println("v=" + v);
+					Log.println("mt=" + mt.getAllUsed());
 					max = v;
 				}
 			}

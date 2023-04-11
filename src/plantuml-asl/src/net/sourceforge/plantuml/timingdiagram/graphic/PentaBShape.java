@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,27 +30,27 @@
  */
 package net.sourceforge.plantuml.timingdiagram.graphic;
 
-import net.sourceforge.plantuml.graphic.SymbolContext;
-import net.sourceforge.plantuml.graphic.UDrawable;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UPath;
-import net.sourceforge.plantuml.ugraphic.UPolygon;
+import net.sourceforge.plantuml.klimt.Fashion;
+import net.sourceforge.plantuml.klimt.UPath;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.shape.UDrawable;
+import net.sourceforge.plantuml.klimt.shape.UPolygon;
 
 public class PentaBShape implements UDrawable {
 
 	private final double width;
 	private final double height;
-	private final SymbolContext context;
+	private final Fashion context;
 
 	private final double delta = 12;
 
-	private PentaBShape(double width, double height, SymbolContext context) {
+	private PentaBShape(double width, double height, Fashion context) {
 		this.width = width;
 		this.height = height;
 		this.context = context;
 	}
 
-	public static PentaBShape create(double width, double height, SymbolContext context) {
+	public static PentaBShape create(double width, double height, Fashion context) {
 		return new PentaBShape(width, height, context);
 	}
 
@@ -64,7 +64,7 @@ public class PentaBShape implements UDrawable {
 
 		context.withForeColor(context.getBackColor()).apply(ug).draw(polygon);
 
-		final UPath path = new UPath();
+		final UPath path = UPath.none();
 		path.moveTo(width, 0);
 		path.lineTo(delta, 0);
 		path.lineTo(0, height / 2);

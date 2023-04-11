@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -38,34 +38,42 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import net.sourceforge.plantuml.AlignmentParam;
-import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.UmlDiagramType;
-import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.awt.geom.XPoint2D;
-import net.sourceforge.plantuml.baraye.EntityImp;
-import net.sourceforge.plantuml.baraye.EntityUtils;
-import net.sourceforge.plantuml.baraye.IEntity;
-import net.sourceforge.plantuml.baraye.IGroup;
-import net.sourceforge.plantuml.command.Position;
-import net.sourceforge.plantuml.cucadiagram.CucaNote;
-import net.sourceforge.plantuml.cucadiagram.EntityPosition;
+import net.sourceforge.plantuml.abel.CucaNote;
+import net.sourceforge.plantuml.abel.Entity;
+import net.sourceforge.plantuml.abel.EntityPosition;
+import net.sourceforge.plantuml.abel.Together;
 import net.sourceforge.plantuml.cucadiagram.ICucaDiagram;
-import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.cucadiagram.dot.GraphvizVersion;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.graphic.USymbol;
-import net.sourceforge.plantuml.graphic.USymbols;
-import net.sourceforge.plantuml.graphic.color.ColorType;
-import net.sourceforge.plantuml.graphic.color.Colors;
-import net.sourceforge.plantuml.posimo.Moveable;
+import net.sourceforge.plantuml.decoration.symbol.USymbol;
+import net.sourceforge.plantuml.decoration.symbol.USymbols;
+import net.sourceforge.plantuml.dot.GraphvizVersion;
+import net.sourceforge.plantuml.klimt.UGroupType;
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.ColorType;
+import net.sourceforge.plantuml.klimt.color.Colors;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.color.HColorSet;
+import net.sourceforge.plantuml.klimt.color.HColors;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.Moveable;
+import net.sourceforge.plantuml.klimt.geom.RectangleArea;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.geom.XPoint2D;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
+import net.sourceforge.plantuml.klimt.shape.UComment;
+import net.sourceforge.plantuml.klimt.shape.ULine;
+import net.sourceforge.plantuml.skin.AlignmentParam;
+import net.sourceforge.plantuml.skin.ComponentStyle;
+import net.sourceforge.plantuml.skin.UmlDiagramType;
+import net.sourceforge.plantuml.stereo.Stereotype;
+import net.sourceforge.plantuml.style.ISkinParam;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
@@ -74,15 +82,8 @@ import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.svek.image.EntityImageNoteLink;
 import net.sourceforge.plantuml.svek.image.EntityImageState;
 import net.sourceforge.plantuml.svek.image.EntityImageStateCommon;
-import net.sourceforge.plantuml.ugraphic.UComment;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UGroupType;
-import net.sourceforge.plantuml.ugraphic.ULine;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorSet;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
+import net.sourceforge.plantuml.url.Url;
+import net.sourceforge.plantuml.utils.Position;
 
 public class Cluster implements Moveable {
 
@@ -92,7 +93,7 @@ public class Cluster implements Moveable {
 	public final static String CENTER_ID = "za";
 
 	private final Cluster parentCluster;
-	private final IGroup group;
+	private final Entity group;
 	private final List<SvekNode> nodes = new ArrayList<>();
 	private final List<Cluster> children = new ArrayList<>();
 	private final int color;
@@ -109,7 +110,7 @@ public class Cluster implements Moveable {
 	private XPoint2D xyNoteTop;
 	private XPoint2D xyNoteBottom;
 
-	private ClusterPosition clusterPosition;
+	private RectangleArea rectangleArea;
 
 	public void moveSvek(double deltaX, double deltaY) {
 		if (this.xyNoteTop != null)
@@ -118,8 +119,8 @@ public class Cluster implements Moveable {
 			this.xyNoteBottom = this.xyNoteBottom.move(deltaX, deltaY);
 		if (this.xyTitle != null)
 			this.xyTitle = this.xyTitle.move(deltaX, deltaY);
-		if (this.clusterPosition != null)
-			this.clusterPosition = this.clusterPosition.move(deltaX, deltaY);
+		if (this.rectangleArea != null)
+			this.rectangleArea = this.rectangleArea.move(deltaX, deltaY);
 
 	}
 
@@ -132,12 +133,12 @@ public class Cluster implements Moveable {
 		return Collections.unmodifiableSet(result);
 	}
 
-	public Cluster(ICucaDiagram diagram, ColorSequence colorSequence, ISkinParam skinParam, IGroup root) {
+	public Cluster(ICucaDiagram diagram, ColorSequence colorSequence, ISkinParam skinParam, Entity root) {
 		this(diagram, null, colorSequence, skinParam, root);
 	}
 
 	private Cluster(ICucaDiagram diagram, Cluster parentCluster, ColorSequence colorSequence, ISkinParam skinParam,
-			IGroup group) {
+			Entity group) {
 		if (group == null)
 			throw new IllegalStateException();
 
@@ -187,15 +188,18 @@ public class Cluster implements Moveable {
 			shs.put(node.getUid(), node);
 		}
 
-		for (SvekLine l : lines) {
+		for (SvekLine l : lines)
 			if (l.isInverted()) {
 				final SvekNode sh = shs.get(l.getStartUidPrefix());
-				if (sh != null && sh.getEntityPosition() == EntityPosition.NORMAL)
+				if (sh != null && isNormalPosition(sh))
 					firsts.add(0, sh);
 			}
-		}
 
 		return firsts;
+	}
+
+	private boolean isNormalPosition(final SvekNode sh) {
+		return sh.getEntityPosition() == EntityPosition.NORMAL;
 	}
 
 	private List<SvekNode> getNodesOrderedWithoutTop(Collection<SvekLine> lines) {
@@ -204,20 +208,19 @@ public class Cluster implements Moveable {
 
 		for (final Iterator<SvekNode> it = all.iterator(); it.hasNext();) {
 			final SvekNode sh = it.next();
-			if (sh.getEntityPosition() != EntityPosition.NORMAL) {
+			if (isNormalPosition(sh) == false) {
 				it.remove();
 				continue;
 			}
 			shs.put(sh.getUid(), sh);
 		}
 
-		for (SvekLine l : lines) {
+		for (SvekLine l : lines)
 			if (l.isInverted()) {
 				final SvekNode sh = shs.get(l.getStartUidPrefix());
 				if (sh != null)
 					all.remove(sh);
 			}
-		}
 
 		return all;
 	}
@@ -227,18 +230,18 @@ public class Cluster implements Moveable {
 	}
 
 	public Cluster createChild(ClusterHeader clusterHeader, ColorSequence colorSequence, ISkinParam skinParam,
-			IGroup g) {
+			Entity g) {
 		final Cluster child = new Cluster(diagram, this, colorSequence, skinParam, g);
 		child.clusterHeader = clusterHeader;
 		this.children.add(child);
 		return child;
 	}
 
-	public final Set<IGroup> getGroups() {
+	public final Set<Entity> getGroups() {
 		return Collections.singleton(group);
 	}
 
-	final IGroup getGroup() {
+	final Entity getGroup() {
 		return group;
 	}
 
@@ -250,8 +253,8 @@ public class Cluster implements Moveable {
 		return clusterHeader.getTitleAndAttributeHeight();
 	}
 
-	public ClusterPosition getClusterPosition() {
-		return clusterPosition;
+	public RectangleArea getRectangleArea() {
+		return rectangleArea;
 	}
 
 	public void setTitlePosition(XPoint2D pos) {
@@ -274,18 +277,18 @@ public class Cluster implements Moveable {
 		return StyleSignatureBasic.of(SName.root, SName.element, diagramStyleName, SName.group, symbol.getSName());
 	}
 
-	public void drawU(UGraphic ug, UmlDiagramType umlDiagramType, ISkinParam skinParam2unused) {
+	public void drawU(UGraphic ug, UmlDiagramType umlDiagramType) {
 		if (group.isHidden())
 			return;
 
 		if (diagram.getPragma().useKermor()) {
 			if (xyNoteTop != null)
-				getCucaNote(Position.TOP).drawU(ug.apply(new UTranslate(xyNoteTop)));
+				getCucaNote(Position.TOP).drawU(ug.apply(UTranslate.point(xyNoteTop)));
 			if (xyNoteBottom != null)
-				getCucaNote(Position.BOTTOM).drawU(ug.apply(new UTranslate(xyNoteBottom)));
+				getCucaNote(Position.BOTTOM).drawU(ug.apply(UTranslate.point(xyNoteBottom)));
 		}
 
-		final String fullName = group.getCodeGetName();
+		final String fullName = group.getName();
 		if (fullName.startsWith("##") == false)
 			ug.draw(new UComment("cluster " + fullName));
 
@@ -298,7 +301,11 @@ public class Cluster implements Moveable {
 			borderColor = group.getColors().getColor(ColorType.LINE);
 		else
 			borderColor = style.value(PName.LineColor).asColor(skinParam.getIHtmlColorSet());
-		final double rounded = style.value(PName.RoundCorner).asDouble();
+		double rounded = style.value(PName.RoundCorner).asDouble();
+
+		if (skinParam.strictUmlStyle())
+			rounded = 0;
+
 		final double diagonalCorner = style.value(PName.DiagonalCorner).asDouble();
 
 		ug.startGroup(Collections.singletonMap(UGroupType.ID, "cluster_" + fullName));
@@ -332,7 +339,7 @@ public class Cluster implements Moveable {
 					group.getUSymbol(), skinParam.getCurrentStyleBuilder(), skinParam.getIHtmlColorSet());
 
 			final ClusterDecoration decoration = new ClusterDecoration(packageStyle, group.getUSymbol(),
-					clusterHeader.getTitle(), clusterHeader.getStereo(), clusterPosition, stroke);
+					clusterHeader.getTitle(), clusterHeader.getStereo(), rectangleArea, stroke);
 			decoration.drawU(ug, backColor, borderColor, shadowing, rounded,
 					skinParam.getHorizontalAlignment(AlignmentParam.packageTitleAlignment, null, false, null),
 					skinParam.getStereotypeAlignment(), diagonalCorner);
@@ -355,7 +362,7 @@ public class Cluster implements Moveable {
 				skinParam.getCurrentStyleBuilder());
 	}
 
-	static public UStroke getStrokeInternal(IGroup group, Style style) {
+	static public UStroke getStrokeInternal(Entity group, Style style) {
 		final Colors colors = group.getColors();
 		if (colors.getSpecificLineStroke() != null)
 			return colors.getSpecificLineStroke();
@@ -364,43 +371,47 @@ public class Cluster implements Moveable {
 	}
 
 	void manageEntryExitPoint(StringBounder stringBounder) {
-		final Collection<ClusterPosition> insides = new ArrayList<>();
+		final Collection<RectangleArea> insides = new ArrayList<>();
 		final List<XPoint2D> points = new ArrayList<>();
 		for (SvekNode sh : nodes)
-			if (sh.getEntityPosition() == EntityPosition.NORMAL)
-				insides.add(sh.getClusterPosition());
+			if (isNormalPosition(sh))
+				insides.add(sh.getRectangleArea());
 			else
-				points.add(sh.getClusterPosition().getPointCenter());
+				points.add(sh.getRectangleArea().getPointCenter());
 
 		for (Cluster in : children)
-			insides.add(in.getClusterPosition());
+			if (in.getRectangleArea() == null)
+				System.err.println("Frontier null for " + in);
+			else
+				insides.add(in.getRectangleArea());
 
-		final FrontierCalculator frontierCalculator = new FrontierCalculator(getClusterPosition(), insides, points);
+		final FrontierCalculator frontierCalculator = new FrontierCalculator(getRectangleArea(), insides, points,
+				skinParam.getRankdir());
 		if (getTitleAndAttributeWidth() > 0 && getTitleAndAttributeHeight() > 0)
 			frontierCalculator.ensureMinWidth(getTitleAndAttributeWidth() + 10);
 
-		this.clusterPosition = frontierCalculator.getSuggestedPosition();
+		this.rectangleArea = frontierCalculator.getSuggestedPosition();
 
 		final double widthTitle = clusterHeader.getTitle().calculateDimension(stringBounder).getWidth();
-		final double minX = clusterPosition.getMinX();
-		final double minY = clusterPosition.getMinY();
-		this.xyTitle = new XPoint2D(minX + ((clusterPosition.getWidth() - widthTitle) / 2), minY + IEntityImage.MARGIN);
+		final double minX = rectangleArea.getMinX();
+		final double minY = rectangleArea.getMinY();
+		this.xyTitle = new XPoint2D(minX + ((rectangleArea.getWidth() - widthTitle) / 2), minY + IEntityImage.MARGIN);
 	}
 
 	private void drawSwinLinesState(UGraphic ug, HColor borderColor) {
 		clusterHeader.getTitle().drawU(ug.apply(UTranslate.dx(xyTitle.x)));
 
-		final ULine line = ULine.vline(clusterPosition.getHeight());
+		final ULine line = ULine.vline(rectangleArea.getHeight());
 		ug = ug.apply(borderColor);
-		ug.apply(UTranslate.dx(clusterPosition.getMinX())).draw(line);
-		ug.apply(UTranslate.dx(clusterPosition.getMaxX())).draw(line);
+		ug.apply(UTranslate.dx(rectangleArea.getMinX())).draw(line);
+		ug.apply(UTranslate.dx(rectangleArea.getMaxX())).draw(line);
 
 	}
 
 	// GroupPngMakerState
 
 	private void drawUState(UGraphic ug, UmlDiagramType umlDiagramType, double rounded, double shadowing) {
-		final XDimension2D total = clusterPosition.getDimension();
+		final XDimension2D total = rectangleArea.getDimension();
 		final double suppY = clusterHeader.getTitle().calculateDimension(ug.getStringBounder()).getHeight()
 				+ IEntityImage.MARGIN;
 
@@ -417,7 +428,7 @@ public class Cluster implements Moveable {
 		final HColor imgBackcolor = EntityImageStateCommon.getStyleStateBody(group, skinParam)
 				.value(PName.BackGroundColor).asColor(skinParam.getIHtmlColorSet());
 
-		final TextBlock attribute = ((EntityImp) group).getStateHeader(skinParam);
+		final TextBlock attribute = ((Entity) group).getStateHeader(skinParam);
 		final double attributeHeight = attribute.calculateDimension(ug.getStringBounder()).getHeight();
 		if (total.getWidth() == 0) {
 			System.err.println("Cluster::drawUState issue");
@@ -431,32 +442,53 @@ public class Cluster implements Moveable {
 		final RoundedContainer r = new RoundedContainer(total, suppY,
 				attributeHeight + (attributeHeight > 0 ? IEntityImage.MARGIN : 0), borderColor, backColor, imgBackcolor,
 				stroke, rounded, shadowing);
-		r.drawU(ug.apply(clusterPosition.getPosition()));
+		r.drawU(ug.apply(rectangleArea.getPosition()));
 
-		clusterHeader.getTitle().drawU(ug.apply(new UTranslate(xyTitle)));
+		clusterHeader.getTitle().drawU(ug.apply(UTranslate.point(xyTitle)));
 
 		if (attributeHeight > 0)
-			attribute.drawU(ug.apply(new UTranslate(clusterPosition.getMinX() + IEntityImage.MARGIN,
-					clusterPosition.getMinY() + suppY + IEntityImage.MARGIN / 2.0)));
+			attribute.drawU(ug.apply(new UTranslate(rectangleArea.getMinX() + IEntityImage.MARGIN,
+					rectangleArea.getMinY() + suppY + IEntityImage.MARGIN / 2.0)));
 
 		final Stereotype stereotype = group.getStereotype();
 		final boolean withSymbol = stereotype != null && stereotype.isWithOOSymbol();
 		if (withSymbol)
-			EntityImageState.drawSymbol(ug.apply(borderColor), clusterPosition.getMaxX(), clusterPosition.getMaxY());
+			EntityImageState.drawSymbol(ug.apply(borderColor), rectangleArea.getMaxX(), rectangleArea.getMaxY());
 
 	}
 
 	public void setPosition(XPoint2D min, XPoint2D max) {
-		this.clusterPosition = new ClusterPosition(min, max);
+		this.rectangleArea = RectangleArea.build(min, max);
 	}
 
+	// ::comment when __CORE__
 	public boolean printCluster1(StringBuilder sb, Collection<SvekLine> lines, StringBounder stringBounder) {
 		final List<SvekNode> tmp = getNodesOrderedTop(lines);
 		if (tmp.size() == 0)
 			return false;
 		for (SvekNode node : tmp)
 			node.appendShape(sb, stringBounder);
+
 		return true;
+
+	}
+
+	private int togetherCounter = 0;
+
+	private void printTogether(Together together, StringBuilder sb, List<SvekNode> nodesOrderedWithoutTop,
+			StringBounder stringBounder, Collection<SvekLine> lines, DotMode dotMode, GraphvizVersion graphvizVersion,
+			UmlDiagramType type) {
+		sb.append("subgraph " + getClusterId() + "t" + togetherCounter + " {\n");
+		for (SvekNode node : nodesOrderedWithoutTop)
+			if (node.getTogether() == together)
+				node.appendShape(sb, stringBounder);
+
+		for (Cluster child : children)
+			if (child.group.getTogether() == together)
+				child.printInternal(sb, lines, stringBounder, dotMode, graphvizVersion, type);
+
+		sb.append("}\n");
+		togetherCounter++;
 
 	}
 
@@ -464,17 +496,31 @@ public class Cluster implements Moveable {
 			DotMode dotMode, GraphvizVersion graphvizVersion, UmlDiagramType type) {
 
 		SvekNode added = null;
-		for (SvekNode node : getNodesOrderedWithoutTop(lines)) {
-			node.appendShape(sb, stringBounder);
+		final Collection<Together> togethers = new LinkedHashSet<>();
+		final List<SvekNode> nodesOrderedWithoutTop = getNodesOrderedWithoutTop(lines);
+		for (SvekNode node : nodesOrderedWithoutTop) {
+			final Together together = node.getTogether();
+			if (together == null)
+				node.appendShape(sb, stringBounder);
+			else
+				togethers.add(together);
+
 			added = node;
 		}
+		for (Cluster child : children)
+			if (child.group.getTogether() != null)
+				togethers.add(child.group.getTogether());
+
+		for (Together together : togethers)
+			printTogether(together, sb, nodesOrderedWithoutTop, stringBounder, lines, dotMode, graphvizVersion, type);
 
 		if (skinParam.useRankSame() && dotMode != DotMode.NO_LEFT_RIGHT_AND_XLABEL
 				&& graphvizVersion.ignoreHorizontalLinks() == false)
 			appendRankSame(sb, lines);
 
-		for (Cluster child : getChildren())
-			child.printInternal(sb, lines, stringBounder, dotMode, graphvizVersion, type);
+		for (Cluster child : children)
+			if (child.group.getTogether() == null)
+				child.printInternal(sb, lines, stringBounder, dotMode, graphvizVersion, type);
 
 		return added;
 	}
@@ -486,10 +532,10 @@ public class Cluster implements Moveable {
 		if (tmp.size() == 0) {
 			sb.append(getClusterId() + "empty [shape=point,label=\"\"];");
 			SvekUtils.println(sb);
-		} else
-			for (SvekNode node : tmp) {
+		} else {
+			for (SvekNode node : tmp)
 				node.appendShape(sb, stringBounder);
-			}
+		}
 
 		for (Cluster child : getChildren())
 			child.printInternal(sb, lines, stringBounder, dotMode, graphvizVersion, type);
@@ -506,6 +552,7 @@ public class Cluster implements Moveable {
 			SvekUtils.println(sb);
 		}
 	}
+	// ::done
 
 	private Set<String> getRankSame(Collection<SvekLine> lines) {
 		final Set<String> rankSame = new HashSet<>();
@@ -537,7 +584,7 @@ public class Cluster implements Moveable {
 		return "cluster" + color;
 	}
 
-	static String getSpecialPointId(IEntity group) {
+	static String getSpecialPointId(Entity group) {
 		return CENTER_ID + group.getUid();
 	}
 
@@ -568,31 +615,17 @@ public class Cluster implements Moveable {
 	}
 
 	private final HColor getBackColor(UmlDiagramType umlDiagramType, Style style) {
-		if (EntityUtils.groupRoot(group))
+		if (group.isRoot())
 			return null;
 
 		final HColor result = group.getColors().getColor(ColorType.BACK);
 		if (result != null)
 			return result;
 
-		final Stereotype stereo = group.getStereotype();
-
 		return style.value(PName.BackGroundColor).asColor(skinParam.getIHtmlColorSet());
-
-//		final USymbol sym = group.getUSymbol() == null ? USymbols.PACKAGE : group.getUSymbol();
-//		final ColorParam backparam = umlDiagramType == UmlDiagramType.ACTIVITY ? ColorParam.partitionBackground
-//				: sym.getColorParamBack();
-//		final HColor c1 = skinParam.getHtmlColor(backparam, stereo, false);
-//		if (c1 != null)
-//			return c1;
-//
-//		if (parentCluster == null)
-//			return null;
-//
-//		return parentCluster.getBackColor(umlDiagramType, style);
 	}
 
-	boolean isClusterOf(IEntity ent) {
+	boolean isClusterOf(Entity ent) {
 		if (ent.isGroup() == false)
 			return false;
 
@@ -612,18 +645,18 @@ public class Cluster implements Moveable {
 		return backColor;
 	}
 
-	double checkFolderPosition(XPoint2D pt, StringBounder stringBounder) {
-		if (getClusterPosition().isPointJustUpper(pt)) {
-
-			final XDimension2D dimTitle = clusterHeader.getTitle().calculateDimension(stringBounder);
-
-			if (pt.getX() < getClusterPosition().getMinX() + dimTitle.getWidth())
-				return 0;
-
-			return getClusterPosition().getMinY() - pt.getY() + dimTitle.getHeight();
-		}
-		return 0;
-	}
+//	double checkFolderPosition(XPoint2D pt, StringBounder stringBounder) {
+//		if (getClusterPosition().isPointJustUpper(pt)) {
+//
+//			final XDimension2D dimTitle = clusterHeader.getTitle().calculateDimension(stringBounder);
+//
+//			if (pt.getX() < getClusterPosition().getMinX() + dimTitle.getWidth())
+//				return 0;
+//
+//			return getClusterPosition().getMinY() - pt.getY() + dimTitle.getHeight();
+//		}
+//		return 0;
+//	}
 
 	public final int getColorNoteTop() {
 		return colorNoteTop;

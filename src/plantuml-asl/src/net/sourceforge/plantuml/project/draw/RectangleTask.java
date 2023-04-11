@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -35,14 +35,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.color.HColors;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.shape.ULine;
+import net.sourceforge.plantuml.klimt.shape.URectangle;
 import net.sourceforge.plantuml.sequencediagram.graphic.Segment;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.ULine;
-import net.sourceforge.plantuml.ugraphic.URectangle;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 public class RectangleTask {
 
@@ -69,12 +69,12 @@ public class RectangleTask {
 		if (widthCompletion == -1 || widthCompletion == 0) {
 			if (widthCompletion == 0)
 				ug = ug.apply(documentBackground.bg());
-			final URectangle rect = new URectangle(width, height);
+			final URectangle rect = URectangle.build(width, height);
 			ug.draw(rect);
 		} else {
-			final URectangle rect1 = new URectangle(widthCompletion, height);
+			final URectangle rect1 = URectangle.build(widthCompletion, height);
 			ug.draw(rect1);
-			final URectangle rect2 = new URectangle(width - widthCompletion, height);
+			final URectangle rect2 = URectangle.build(width - widthCompletion, height);
 			ug.apply(documentBackground.bg()).apply(UTranslate.dx(widthCompletion)).draw(rect2);
 		}
 	}
@@ -96,7 +96,7 @@ public class RectangleTask {
 		final Segment segment = segments.get(0);
 
 		final double width = segment.getLength();
-		final URectangle partial = new URectangle(width, height).rounded(round);
+		final URectangle partial = URectangle.build(width, height).rounded(round);
 		if (completion == 100 || completion == 0) {
 			if (completion == 0)
 				ug = ug.apply(documentBackground.bg());
@@ -108,8 +108,7 @@ public class RectangleTask {
 				ug.apply(UTranslate.dx(segment.getPos1())).draw(partial);
 		} else {
 			final double x1 = width * completion / 100;
-			ug.apply(HColors.none()).apply(UTranslate.dx(segment.getPos1()))
-					.draw(PathUtils.UtoLeft(x1, height, round));
+			ug.apply(HColors.none()).apply(UTranslate.dx(segment.getPos1())).draw(PathUtils.UtoLeft(x1, height, round));
 			ug.apply(documentBackground.bg()).apply(HColors.none()).apply(UTranslate.dx(segment.getPos1() + x1))
 					.draw(PathUtils.UtoRight(width * (100 - completion) / 100, height, round));
 			ug.apply(HColors.none().bg()).apply(UTranslate.dx(segment.getPos1())).draw(partial);

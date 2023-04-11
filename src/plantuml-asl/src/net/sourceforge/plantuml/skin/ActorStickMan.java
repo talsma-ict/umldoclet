@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,18 +30,18 @@
  */
 package net.sourceforge.plantuml.skin;
 
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.awt.geom.XPoint2D;
-import net.sourceforge.plantuml.graphic.AbstractTextBlock;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.SymbolContext;
-import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.ugraphic.UEllipse;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.ULine;
-import net.sourceforge.plantuml.ugraphic.UPath;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
+import net.sourceforge.plantuml.klimt.Fashion;
+import net.sourceforge.plantuml.klimt.UPath;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.HColors;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.geom.XPoint2D;
+import net.sourceforge.plantuml.klimt.shape.AbstractTextBlock;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
+import net.sourceforge.plantuml.klimt.shape.UEllipse;
+import net.sourceforge.plantuml.klimt.shape.ULine;
 
 public class ActorStickMan extends AbstractTextBlock implements TextBlock {
 
@@ -52,10 +52,10 @@ public class ActorStickMan extends AbstractTextBlock implements TextBlock {
 	private final double legsY = 15;
 	private final double headDiam = 16;
 
-	private final SymbolContext symbolContext;
+	private final Fashion symbolContext;
 	private final boolean actorBusiness;
 
-	ActorStickMan(SymbolContext symbolContext, boolean actorBusiness) {
+	ActorStickMan(Fashion symbolContext, boolean actorBusiness) {
 		this.symbolContext = symbolContext;
 		this.actorBusiness = actorBusiness;
 	}
@@ -64,10 +64,10 @@ public class ActorStickMan extends AbstractTextBlock implements TextBlock {
 
 		final double startX = Math.max(armsLenght, legsX) - headDiam / 2.0 + thickness();
 
-		final UEllipse head = new UEllipse(headDiam, headDiam);
+		final UEllipse head = UEllipse.build(headDiam, headDiam);
 		final double centerX = startX + headDiam / 2;
 
-		final UPath path = new UPath();
+		final UPath path = UPath.none();
 		path.moveTo(0, 0);
 		path.lineTo(0, bodyLenght);
 		path.moveTo(-armsLenght, armsY);
@@ -93,7 +93,7 @@ public class ActorStickMan extends AbstractTextBlock implements TextBlock {
 		final double alpha = 21 * Math.PI / 64;
 		final XPoint2D p1 = getOnCircle(Math.PI / 4 + alpha);
 		final XPoint2D p2 = getOnCircle(Math.PI / 4 - alpha);
-		ug = ug.apply(new UTranslate(p1));
+		ug = ug.apply(UTranslate.point(p1));
 		ug.draw(new ULine(p2.getX() - p1.getX(), p2.getY() - p1.getY()));
 	}
 

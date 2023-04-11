@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,14 +30,14 @@
  */
 package net.sourceforge.plantuml.svek;
 
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.ULine;
-import net.sourceforge.plantuml.ugraphic.URectangle;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.color.HColors;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.shape.ULine;
+import net.sourceforge.plantuml.klimt.shape.URectangle;
 
 public final class RoundedContainer {
 
@@ -69,13 +69,13 @@ public final class RoundedContainer {
 
 	public void drawU(UGraphic ug) {
 		ug = ug.apply(backColor.bg()).apply(borderColor).apply(stroke);
-		final URectangle rect = new URectangle(dim.getWidth(), dim.getHeight()).rounded(rounded);
+		final URectangle rect = URectangle.build(dim.getWidth(), dim.getHeight()).rounded(rounded);
 
 		if (shadowing > 0) {
 			rect.setDeltaShadow(shadowing);
 			ug.apply(HColors.transparent().bg()).draw(rect);
 			rect.setDeltaShadow(0);
-			
+
 		}
 		final double headerHeight = titleHeight + attributeHeight;
 

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -40,7 +40,7 @@ import net.sourceforge.plantuml.project.core.TaskInstant;
 public class SentenceEnds extends SentenceSimple {
 
 	public SentenceEnds() {
-		super(new SubjectTask(), Verbs.ends(), new ComplementBeforeOrAfterOrAtTaskStartOrEnd());
+		super(SubjectTask.ME, Verbs.ends, new ComplementBeforeOrAfterOrAtTaskStartOrEnd());
 	}
 
 	@Override

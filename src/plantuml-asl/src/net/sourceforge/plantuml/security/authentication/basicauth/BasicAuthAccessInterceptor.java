@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,23 +33,26 @@ package net.sourceforge.plantuml.security.authentication.basicauth;
 import java.net.URLConnection;
 
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.code.Base64Coder;
 import net.sourceforge.plantuml.security.authentication.SecurityAccessInterceptor;
 import net.sourceforge.plantuml.security.authentication.SecurityAuthentication;
+import net.sourceforge.plantuml.utils.Base64Coder;
 
 /**
- * Applies from {@link SecurityAuthentication} data a BasicAuth authentication access header.
+ * Applies from {@link SecurityAuthentication} data a BasicAuth authentication
+ * access header.
  *
  * @author Aljoscha Rittner
  */
 public class BasicAuthAccessInterceptor implements SecurityAccessInterceptor {
 
 	/**
-	 * Applies from {@link SecurityAuthentication} data a BasicAuth authentication access header.
+	 * Applies from {@link SecurityAuthentication} data a BasicAuth authentication
+	 * access header.
 	 * <p>
 	 * Expects "identifier" and "secret" to build a Authorization header.
 	 *
-	 * @param authentication the determined authentication data to authorize for the endpoint access
+	 * @param authentication the determined authentication data to authorize for the
+	 *                       endpoint access
 	 * @param connection     the connection to the endpoint
 	 */
 	@Override

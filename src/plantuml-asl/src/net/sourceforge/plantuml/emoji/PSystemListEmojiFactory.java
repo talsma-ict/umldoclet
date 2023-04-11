@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -36,6 +36,7 @@ import net.sourceforge.plantuml.command.PSystemSingleLineFactory;
 import net.sourceforge.plantuml.core.UmlSource;
 
 public class PSystemListEmojiFactory extends PSystemSingleLineFactory {
+	// ::remove file when __CORE__
 
 	@Override
 	protected AbstractPSystem executeLine(UmlSource source, String line) {

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,16 +32,16 @@ package net.sourceforge.plantuml.help;
 
 import java.io.IOException;
 
-import net.sourceforge.plantuml.LineLocation;
-import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand2;
-import net.sourceforge.plantuml.command.regex.IRegex;
-import net.sourceforge.plantuml.command.regex.RegexConcat;
-import net.sourceforge.plantuml.command.regex.RegexLeaf;
-import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.log.Logme;
+import net.sourceforge.plantuml.regex.IRegex;
+import net.sourceforge.plantuml.regex.RegexConcat;
+import net.sourceforge.plantuml.regex.RegexLeaf;
+import net.sourceforge.plantuml.regex.RegexResult;
 import net.sourceforge.plantuml.theme.ThemeUtils;
+import net.sourceforge.plantuml.utils.LineLocation;
+import net.sourceforge.plantuml.utils.Log;
 
 public class CommandHelpTheme extends SingleLineCommand2<Help> {
 
@@ -59,9 +59,6 @@ public class CommandHelpTheme extends SingleLineCommand2<Help> {
 	@Override
 	protected CommandExecutionResult executeArg(Help diagram, LineLocation location, RegexResult arg) {
 		diagram.add("<b>Help on themes");
-		diagram.add(" ");
-		diagram.add("The code of this command is located in <i>net.sourceforge.plantuml.help</i> package.");
-		diagram.add("You may improve it on <i>https://github.com/plantuml/plantuml/tree/master/src/net/sourceforge/plantuml/help</i>");
 		diagram.add(" ");
 		diagram.add(" The possible themes are :");
 

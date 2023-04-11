@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,22 +32,22 @@ package net.sourceforge.plantuml.svek.image;
 
 import java.util.Collections;
 
-import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.baraye.IEntity;
-import net.sourceforge.plantuml.creole.CreoleMode;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.ugraphic.UEllipse;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UGroupType;
-import net.sourceforge.plantuml.ugraphic.ULine;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.abel.Entity;
+import net.sourceforge.plantuml.klimt.UGroupType;
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.creole.CreoleMode;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.FontConfiguration;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
+import net.sourceforge.plantuml.klimt.shape.UEllipse;
+import net.sourceforge.plantuml.klimt.shape.ULine;
+import net.sourceforge.plantuml.stereo.Stereotype;
+import net.sourceforge.plantuml.style.ISkinParam;
 
 public class EntityImageState extends EntityImageStateCommon {
 
@@ -63,7 +63,7 @@ public class EntityImageState extends EntityImageStateCommon {
 	final static private double smallMarginX = 7;
 	final static private double smallMarginY = 4;
 
-	public EntityImageState(IEntity entity, ISkinParam skinParam) {
+	public EntityImageState(Entity entity, ISkinParam skinParam) {
 		super(entity, skinParam);
 
 		final Stereotype stereotype = entity.getStereotype();
@@ -75,12 +75,13 @@ public class EntityImageState extends EntityImageStateCommon {
 				.getFontConfiguration(getSkinParam().getIHtmlColorSet());
 
 		this.fields = list.create8(fieldsFontConfiguration, HorizontalAlignment.LEFT, skinParam, CreoleMode.FULL,
-				skinParam.wrapWidth());
+				getStyleState().wrapWidth());
 
 	}
 
 	public XDimension2D calculateDimension(StringBounder stringBounder) {
-		final XDimension2D dim = title.calculateDimension(stringBounder).mergeTB(fields.calculateDimension(stringBounder));
+		final XDimension2D dim = title.calculateDimension(stringBounder)
+				.mergeTB(fields.calculateDimension(stringBounder));
 		double heightSymbol = 0;
 		if (withSymbol)
 			heightSymbol += 2 * smallRadius + smallMarginY;
@@ -90,7 +91,7 @@ public class EntityImageState extends EntityImageStateCommon {
 	}
 
 	final public void drawU(UGraphic ug) {
-		ug.startGroup(Collections.singletonMap(UGroupType.ID, getEntity().getIdent().toString(".")));
+		ug.startGroup(Collections.singletonMap(UGroupType.ID, getEntity().getQuark().toStringPoint()));
 		if (url != null)
 			ug.startUrl(url);
 
@@ -130,7 +131,7 @@ public class EntityImageState extends EntityImageStateCommon {
 	public static void drawSymbol(UGraphic ug, double xSymbol, double ySymbol) {
 		xSymbol -= 4 * smallRadius + smallLine + smallMarginX;
 		ySymbol -= 2 * smallRadius + smallMarginY;
-		final UEllipse small = new UEllipse(2 * smallRadius, 2 * smallRadius);
+		final UEllipse small = UEllipse.build(2 * smallRadius, 2 * smallRadius);
 		ug.apply(new UTranslate(xSymbol, ySymbol)).draw(small);
 		ug.apply(new UTranslate(xSymbol + smallLine + 2 * smallRadius, ySymbol)).draw(small);
 		ug.apply(new UTranslate(xSymbol + 2 * smallRadius, ySymbol + smallLine)).draw(ULine.hline(smallLine));

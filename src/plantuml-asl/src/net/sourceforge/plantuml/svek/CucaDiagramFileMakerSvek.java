@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -37,20 +37,21 @@ import java.util.List;
 
 import net.sourceforge.plantuml.AnnotatedBuilder;
 import net.sourceforge.plantuml.AnnotatedWorker;
-import net.sourceforge.plantuml.BaseFile;
 import net.sourceforge.plantuml.FileFormatOption;
-import net.sourceforge.plantuml.NamedOutputStream;
-import net.sourceforge.plantuml.UmlDiagramType;
+import net.sourceforge.plantuml.abel.Link;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.cucadiagram.ICucaDiagram;
-import net.sourceforge.plantuml.cucadiagram.Link;
-import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramSimplifierActivity;
-import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramSimplifierState;
-import net.sourceforge.plantuml.cucadiagram.dot.DotData;
-import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.dot.CucaDiagramSimplifierActivity;
+import net.sourceforge.plantuml.dot.CucaDiagramSimplifierState;
+import net.sourceforge.plantuml.dot.DotData;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
 import net.sourceforge.plantuml.log.Logme;
+import net.sourceforge.plantuml.skin.UmlDiagramType;
 
 public final class CucaDiagramFileMakerSvek implements CucaDiagramFileMaker {
+	// ::remove file when __CORE__
 
 	private final ICucaDiagram diagram;
 
@@ -68,14 +69,18 @@ public final class CucaDiagramFileMakerSvek implements CucaDiagramFileMaker {
 		}
 	}
 
+	@Override
+	public void createOneGraphic(UGraphic ug) {
+		throw new UnsupportedOperationException();
+	}
+
 	private GeneralImageBuilder createDotDataImageBuilder(DotMode dotMode, StringBounder stringBounder) {
 		final DotData dotData = new DotData(diagram.getEntityFactory().getRootGroup(), getOrderedLinks(),
-				diagram.getLeafsvalues(), diagram.getUmlDiagramType(), diagram.getSkinParam(), diagram, diagram,
-				diagram.getEntityFactory(), diagram.isHideEmptyDescriptionForState(), dotMode,
+				diagram.getEntityFactory().leafs(), diagram.getUmlDiagramType(), diagram.getSkinParam(), diagram,
+				diagram, diagram.getEntityFactory(), diagram.isHideEmptyDescriptionForState(), dotMode,
 				diagram.getNamespaceSeparator(), diagram.getPragma());
-		final boolean intricated = diagram.mergeIntricated();
-		return new GeneralImageBuilder(intricated, dotData, diagram.getEntityFactory(), diagram.getSource(),
-				diagram.getPragma(), stringBounder, diagram.getUmlDiagramType().getStyleName());
+		return new GeneralImageBuilder(dotData, diagram.getEntityFactory(), diagram.getSource(), diagram.getPragma(),
+				stringBounder, diagram.getUmlDiagramType().getStyleName());
 
 	}
 
@@ -92,10 +97,10 @@ public final class CucaDiagramFileMakerSvek implements CucaDiagramFileMaker {
 		if (fileFormatOption.isDebugSvek() && os instanceof NamedOutputStream)
 			basefile = ((NamedOutputStream) os).getBasefile();
 
-		TextBlockBackcolored result = svek2.buildImage(basefile, diagram.getDotStringSkek());
+		TextBlock result = svek2.buildImage(basefile, diagram.getDotStringSkek(), fileFormatOption.isDebugSvek());
 		if (result instanceof GraphvizCrash) {
 			svek2 = createDotDataImageBuilder(DotMode.NO_LEFT_RIGHT_AND_XLABEL, stringBounder);
-			result = svek2.buildImage(basefile, diagram.getDotStringSkek());
+			result = svek2.buildImage(basefile, diagram.getDotStringSkek(), fileFormatOption.isDebugSvek());
 		}
 		// TODO There is something strange with the left margin of mainframe, I think
 		// because AnnotatedWorker is used here

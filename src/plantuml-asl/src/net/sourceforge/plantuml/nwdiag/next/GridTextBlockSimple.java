@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,17 +30,22 @@
  */
 package net.sourceforge.plantuml.nwdiag.next;
 
-import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.awt.geom.XRectangle2D;
-import net.sourceforge.plantuml.graphic.InnerStrategy;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.ugraphic.MinMax;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.atmp.InnerStrategy;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.MagneticBorder;
+import net.sourceforge.plantuml.klimt.geom.MagneticBorderNone;
+import net.sourceforge.plantuml.klimt.geom.MinMax;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.geom.XRectangle2D;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
+import net.sourceforge.plantuml.style.ISkinParam;
 
 public class GridTextBlockSimple implements TextBlock {
+
+	public static final double MINIMUM_WIDTH = 70;
 
 	protected final NwArray data;
 	private final ISkinParam skinParam;
@@ -101,7 +106,7 @@ public class GridTextBlockSimple implements TextBlock {
 		for (int j = 0; j < data.getNbCols(); j++)
 			width += colWidth(stringBounder, j);
 
-		return new XDimension2D(width, height);
+		return new XDimension2D(Math.max(MINIMUM_WIDTH, width), height);
 	}
 
 	public XRectangle2D getInnerPosition(String member, StringBounder stringBounder, InnerStrategy strategy) {
@@ -112,12 +117,22 @@ public class GridTextBlockSimple implements TextBlock {
 		throw new UnsupportedOperationException(getClass().toString());
 	}
 
-	public void add(int i, int j, LinkedElement value) {
+	public void add(int i, int j, NServerDraw value) {
 		data.set(i, j, value);
 	}
 
 	protected final ISkinParam getSkinParam() {
 		return skinParam;
+	}
+
+	@Override
+	public MagneticBorder getMagneticBorder() {
+		return new MagneticBorderNone();
+	}
+
+	@Override
+	public HColor getBackcolor() {
+		return null;
 	}
 
 }

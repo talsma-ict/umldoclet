@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -32,17 +32,17 @@ package net.sourceforge.plantuml.activitydiagram;
 
 import java.util.Objects;
 
-import net.sourceforge.plantuml.Direction;
-import net.sourceforge.plantuml.baraye.IEntity;
-import net.sourceforge.plantuml.cucadiagram.LeafType;
+import net.sourceforge.plantuml.abel.Entity;
+import net.sourceforge.plantuml.abel.LeafType;
+import net.sourceforge.plantuml.utils.Direction;
 
 public class ConditionalContext {
 
-	private final IEntity branch;
+	private final Entity branch;
 	private final Direction direction;
 	private final ConditionalContext parent;
 
-	public ConditionalContext(ConditionalContext parent, IEntity branch, Direction direction) {
+	public ConditionalContext(ConditionalContext parent, Entity branch, Direction direction) {
 		this.branch = Objects.requireNonNull(branch);
 		if (branch.getLeafType() != LeafType.BRANCH) {
 			throw new IllegalArgumentException();
@@ -59,7 +59,7 @@ public class ConditionalContext {
 		return parent;
 	}
 
-	public final IEntity getBranch() {
+	public final Entity getBranch() {
 		return branch;
 	}
 

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -38,7 +38,7 @@ import net.sourceforge.plantuml.project.core.Task;
 public class SentenceLasts extends SentenceSimple {
 
 	public SentenceLasts() {
-		super(new SubjectTask(), Verbs.lasts(), new ComplementSeveralDays());
+		super(SubjectTask.ME, Verbs.lasts, new ComplementSeveralDays());
 	}
 
 	@Override

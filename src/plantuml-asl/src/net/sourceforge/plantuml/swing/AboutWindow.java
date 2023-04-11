@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -50,16 +50,14 @@ import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.CompoundBorder;
 
-import net.sourceforge.plantuml.StringLocated;
 import net.sourceforge.plantuml.core.UmlSource;
+import net.sourceforge.plantuml.text.StringLocated;
 import net.sourceforge.plantuml.version.PSystemVersion;
 import net.sourceforge.plantuml.version.Version;
 
 class AboutWindow extends JFrame {
+	// ::remove folder when __CORE__
 
-	/*
-	 * - the PlantUML version - the Dot version - the PlantUML authors - the PlantUML license
-	 */
 	public AboutWindow() {
 		super();
 		setIconImage(PSystemVersion.getPlantumlSmallIcon2());
@@ -116,12 +114,14 @@ class AboutWindow extends JFrame {
 	}
 
 	private JComponent getInfoVersion() {
-		final PSystemVersion p1 = PSystemVersion.createShowVersion2(UmlSource.create(new ArrayList<StringLocated>(), false));
+		final PSystemVersion p1 = PSystemVersion
+				.createShowVersion2(UmlSource.create(new ArrayList<StringLocated>(), false));
 		return getJComponent(skip(p1.getLines()));
 	}
 
 	private JComponent getInfoAuthors() {
-		final PSystemVersion p1 = PSystemVersion.createShowAuthors2(UmlSource.create(new ArrayList<StringLocated>(), false));
+		final PSystemVersion p1 = PSystemVersion
+				.createShowAuthors2(UmlSource.create(new ArrayList<StringLocated>(), false));
 		return getJComponent(skip(p1.getLines()));
 	}
 

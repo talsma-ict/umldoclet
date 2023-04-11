@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -33,8 +33,8 @@ package net.sourceforge.plantuml.svek;
 import java.util.Collections;
 import java.util.List;
 
-import net.sourceforge.plantuml.Log;
-import net.sourceforge.plantuml.awt.geom.XPoint2D;
+import net.sourceforge.plantuml.klimt.geom.XPoint2D;
+import net.sourceforge.plantuml.utils.Log;
 
 class PointListIteratorImpl implements PointListIterator {
 
@@ -44,9 +44,9 @@ class PointListIteratorImpl implements PointListIterator {
 	static PointListIterator create(SvgResult svg, int lineColor) {
 		final PointListIteratorImpl result = new PointListIteratorImpl(svg);
 		final int idx = svg.getIndexFromColor(lineColor);
-		if (idx == -1) {
+		if (idx == -1)
 			result.pos = -1;
-		}
+
 		return result;
 	}
 
@@ -61,16 +61,21 @@ class PointListIteratorImpl implements PointListIterator {
 	}
 
 	public boolean hasNext() {
-		return true;
+		return pos != -2;
 	}
 
 	public List<XPoint2D> next() {
 		if (pos == -1) {
+			pos = -2;
 			return Collections.emptyList();
 		}
+
 		try {
 			final List<XPoint2D> result = svg.substring(pos).extractList(SvgResult.POINTS_EQUALS);
-			pos = svg.indexOf(SvgResult.POINTS_EQUALS, pos) + SvgResult.POINTS_EQUALS.length() + 1;
+			if (result.size() == 0)
+				pos = -2;
+			else
+				pos = svg.indexOf(SvgResult.POINTS_EQUALS, pos) + SvgResult.POINTS_EQUALS.length() + 1;
 			return result;
 		} catch (StringIndexOutOfBoundsException e) {
 			Log.error("Error " + e);

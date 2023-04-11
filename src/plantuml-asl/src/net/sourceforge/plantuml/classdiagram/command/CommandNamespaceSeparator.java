@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,19 +30,21 @@
  */
 package net.sourceforge.plantuml.classdiagram.command;
 
-import net.sourceforge.plantuml.LineLocation;
-import net.sourceforge.plantuml.baraye.CucaDiagram;
+import net.sourceforge.plantuml.AbstractPSystem;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand2;
-import net.sourceforge.plantuml.command.regex.IRegex;
-import net.sourceforge.plantuml.command.regex.RegexConcat;
-import net.sourceforge.plantuml.command.regex.RegexLeaf;
-import net.sourceforge.plantuml.command.regex.RegexOr;
-import net.sourceforge.plantuml.command.regex.RegexResult;
+import net.sourceforge.plantuml.regex.IRegex;
+import net.sourceforge.plantuml.regex.RegexConcat;
+import net.sourceforge.plantuml.regex.RegexLeaf;
+import net.sourceforge.plantuml.regex.RegexOr;
+import net.sourceforge.plantuml.regex.RegexResult;
+import net.sourceforge.plantuml.utils.LineLocation;
 
-public class CommandNamespaceSeparator extends SingleLineCommand2<CucaDiagram> {
+public class CommandNamespaceSeparator extends SingleLineCommand2<AbstractPSystem> {
 
-	public CommandNamespaceSeparator() {
+	public static final CommandNamespaceSeparator ME = new CommandNamespaceSeparator();
+
+	private CommandNamespaceSeparator() {
 		super(getRegexConcat());
 	}
 
@@ -59,13 +61,13 @@ public class CommandNamespaceSeparator extends SingleLineCommand2<CucaDiagram> {
 	}
 
 	@Override
-	protected CommandExecutionResult executeArg(CucaDiagram diagram, LineLocation location, RegexResult arg) {
+	protected CommandExecutionResult executeArg(AbstractPSystem diagram, LineLocation location, RegexResult arg) {
 		final String s = arg.get("SEPARATOR", 0);
-		if ("none".equalsIgnoreCase(s)) {
+		if ("none".equalsIgnoreCase(s))
 			diagram.setNamespaceSeparator(null);
-		} else {
+		else
 			diagram.setNamespaceSeparator(s);
-		}
+
 		return CommandExecutionResult.ok();
 	}
 }

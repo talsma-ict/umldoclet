@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -44,6 +44,7 @@ import java.io.Closeable;
 import java.io.IOException;
 
 public class OutputStreamProtected implements Closeable {
+    // ::remove folder when __HAXE__
 
 	public static final int MAX_OUTPUT_SIZE = 1 * 1024 * 1024;
 

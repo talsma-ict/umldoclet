@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -36,8 +36,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This indicates that an element will be stable over PlantUML version.
- * Third party tools can then use it safely.
+ * This indicates that an element will be stable over PlantUML version. Third
+ * party tools can then use it safely.
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target({ ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.TYPE })

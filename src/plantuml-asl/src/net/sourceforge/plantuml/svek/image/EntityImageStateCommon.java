@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,26 +30,25 @@
  */
 package net.sourceforge.plantuml.svek.image;
 
-import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.LineConfigurable;
-import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.baraye.EntityImp;
-import net.sourceforge.plantuml.baraye.IEntity;
-import net.sourceforge.plantuml.creole.CreoleMode;
-import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.graphic.color.ColorType;
+import net.sourceforge.plantuml.abel.Entity;
+import net.sourceforge.plantuml.abel.LineConfigurable;
+import net.sourceforge.plantuml.klimt.color.ColorType;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.creole.CreoleMode;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.FontConfiguration;
+import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
+import net.sourceforge.plantuml.klimt.shape.URectangle;
+import net.sourceforge.plantuml.style.ISkinParam;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleSignatureBasic;
 import net.sourceforge.plantuml.svek.AbstractEntityImage;
 import net.sourceforge.plantuml.svek.ShapeType;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.URectangle;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.url.Url;
 
 public abstract class EntityImageStateCommon extends AbstractEntityImage {
 
@@ -58,41 +57,36 @@ public abstract class EntityImageStateCommon extends AbstractEntityImage {
 
 	final protected LineConfigurable lineConfig;
 
-	public EntityImageStateCommon(IEntity entity, ISkinParam skinParam) {
+	public EntityImageStateCommon(Entity entity, ISkinParam skinParam) {
 		super(entity, skinParam);
 
 		this.lineConfig = entity;
 
-		final FontConfiguration titleFontConfiguration = getStyleStateTitle(entity, skinParam).getFontConfiguration(
-				getSkinParam().getIHtmlColorSet(), entity.getColors());
+		final FontConfiguration titleFontConfiguration = getStyleStateTitle(entity, skinParam)
+				.getFontConfiguration(getSkinParam().getIHtmlColorSet(), entity.getColors());
 
 		this.title = entity.getDisplay().create8(titleFontConfiguration, HorizontalAlignment.CENTER, skinParam,
-				CreoleMode.FULL, skinParam.wrapWidth());
+				CreoleMode.FULL, getStyleState().wrapWidth());
 		this.url = entity.getUrl99();
 
 	}
 
-	public static Style getStyleStateTitle(IEntity group, ISkinParam skinParam) {
+	public static Style getStyleStateTitle(Entity group, ISkinParam skinParam) {
 		return StyleSignatureBasic.of(SName.root, SName.element, SName.stateDiagram, SName.state, SName.title)
 				.withTOBECHANGED(group.getStereotype()).getMergedStyle(skinParam.getCurrentStyleBuilder());
 	}
 
-	public static Style getStyleStateHeader(IEntity group, ISkinParam skinParam) {
+	public static Style getStyleStateHeader(Entity group, ISkinParam skinParam) {
 		return StyleSignatureBasic.of(SName.root, SName.element, SName.stateDiagram, SName.state, SName.header)
 				.withTOBECHANGED(group.getStereotype()).getMergedStyle(skinParam.getCurrentStyleBuilder());
 	}
 
-	public static Style getStyleStateHeader(EntityImp group, ISkinParam skinParam) {
-		return StyleSignatureBasic.of(SName.root, SName.element, SName.stateDiagram, SName.state, SName.header)
-				.withTOBECHANGED(group.getStereotype()).getMergedStyle(skinParam.getCurrentStyleBuilder());
-	}
-
-	public static Style getStyleState(IEntity group, ISkinParam skinParam) {
+	public static Style getStyleState(Entity group, ISkinParam skinParam) {
 		return StyleSignatureBasic.of(SName.root, SName.element, SName.stateDiagram, SName.state)
 				.withTOBECHANGED(group.getStereotype()).getMergedStyle(skinParam.getCurrentStyleBuilder());
 	}
 
-	public static Style getStyleStateBody(IEntity group, ISkinParam skinParam) {
+	public static Style getStyleStateBody(Entity group, ISkinParam skinParam) {
 		return StyleSignatureBasic.of(SName.root, SName.element, SName.stateDiagram, SName.stateBody)
 				.withTOBECHANGED(group.getStereotype()).getMergedStyle(skinParam.getCurrentStyleBuilder());
 	}
@@ -114,7 +108,7 @@ public abstract class EntityImageStateCommon extends AbstractEntityImage {
 		final double corner = getStyleState().value(PName.RoundCorner).asDouble();
 		final double deltaShadow = getStyleState().value(PName.Shadowing).asDouble();
 
-		final URectangle rect = new URectangle(dimTotal).rounded(corner);
+		final URectangle rect = URectangle.build(dimTotal).rounded(corner);
 		rect.setDeltaShadow(deltaShadow);
 		return rect;
 	}

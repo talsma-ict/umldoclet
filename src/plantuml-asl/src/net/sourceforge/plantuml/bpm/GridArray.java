@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,15 +30,15 @@
  */
 package net.sourceforge.plantuml.bpm;
 
-import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.awt.geom.XPoint2D;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.UDrawable;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.ULine;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.HColors;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.geom.XPoint2D;
+import net.sourceforge.plantuml.klimt.shape.UDrawable;
+import net.sourceforge.plantuml.klimt.shape.ULine;
+import net.sourceforge.plantuml.style.ISkinParam;
 
 public class GridArray implements UDrawable {
 
@@ -165,7 +165,7 @@ public class GridArray implements UDrawable {
 	private void drawArrow(UGraphic ug, XPoint2D pt1, XPoint2D pt2) {
 		ug = ug.apply(HColors.BLUE);
 		final ULine line = new ULine(pt2.getX() - pt1.getX(), pt2.getY() - pt1.getY());
-		ug.apply(new UTranslate(pt1)).draw(line);
+		ug.apply(UTranslate.point(pt1)).draw(line);
 	}
 
 	private XPoint2D getCenterOf(StringBounder stringBounder, int c, int l) {

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,14 +30,14 @@
  */
 package net.sourceforge.plantuml.ebnf;
 
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.ugraphic.CopyForegroundColorToBackgroundColor;
-import net.sourceforge.plantuml.ugraphic.UEllipse;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UStroke;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.klimt.CopyForegroundColorToBackgroundColor;
+import net.sourceforge.plantuml.klimt.UStroke;
+import net.sourceforge.plantuml.klimt.UTranslate;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.shape.UEllipse;
 
 public class ETileWithCircles extends ETile {
 
@@ -71,16 +71,16 @@ public class ETileWithCircles extends ETile {
 	public void drawU(UGraphic ug) {
 		final double linePos = getH1(ug.getStringBounder());
 		final XDimension2D fullDim = calculateDimension(ug.getStringBounder());
-		ug = ug.apply(lineColor).apply(new UStroke(1.5));
+		ug = ug.apply(lineColor).apply(UStroke.withThickness(1.5));
 		orig.drawU(ug.apply(UTranslate.dx(deltax)));
 
-		final UEllipse circle = new UEllipse(SIZE, SIZE);
+		final UEllipse circle = UEllipse.build(SIZE, SIZE);
 
-		ug.apply(new UStroke(2)).apply(new UTranslate(0, linePos - SIZE / 2)).draw(circle);
-		ug.apply(new UStroke(1)).apply(new CopyForegroundColorToBackgroundColor())
+		ug.apply(UStroke.withThickness(2)).apply(new UTranslate(0, linePos - SIZE / 2)).draw(circle);
+		ug.apply(UStroke.withThickness(1)).apply(new CopyForegroundColorToBackgroundColor())
 				.apply(new UTranslate(fullDim.getWidth() - SIZE / 2, linePos - SIZE / 2)).draw(circle);
 
-		ug = ug.apply(new UStroke(1.5));
+		ug = ug.apply(UStroke.withThickness(1.5));
 		drawHlineDirected(ug, linePos, SIZE, deltax, 0.5);
 		drawHlineDirected(ug, linePos, fullDim.getWidth() - deltax, fullDim.getWidth() - SIZE / 2, 0.5);
 	}

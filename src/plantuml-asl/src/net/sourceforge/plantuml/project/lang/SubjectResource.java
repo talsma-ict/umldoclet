@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,18 +34,23 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import net.sourceforge.plantuml.command.CommandExecutionResult;
-import net.sourceforge.plantuml.command.regex.IRegex;
-import net.sourceforge.plantuml.command.regex.RegexConcat;
-import net.sourceforge.plantuml.command.regex.RegexLeaf;
-import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.project.DaysAsDates;
 import net.sourceforge.plantuml.project.Failable;
 import net.sourceforge.plantuml.project.GanttDiagram;
 import net.sourceforge.plantuml.project.core.Resource;
 import net.sourceforge.plantuml.project.time.Day;
 import net.sourceforge.plantuml.project.time.DayOfWeek;
+import net.sourceforge.plantuml.regex.IRegex;
+import net.sourceforge.plantuml.regex.RegexConcat;
+import net.sourceforge.plantuml.regex.RegexLeaf;
+import net.sourceforge.plantuml.regex.RegexResult;
 
 public class SubjectResource implements Subject {
+
+	public static final Subject ME = new SubjectResource();
+
+	private SubjectResource() {
+	}
 
 	public Failable<Resource> getMe(GanttDiagram project, RegexResult arg) {
 		final String s = arg.get("RESOURCE", 0);
@@ -65,7 +70,7 @@ public class SubjectResource implements Subject {
 	public class IsOffDate extends SentenceSimple {
 
 		public IsOffDate() {
-			super(SubjectResource.this, Verbs.isOff(), new ComplementDate());
+			super(SubjectResource.this, Verbs.isOff, new ComplementDate());
 		}
 
 		@Override
@@ -81,7 +86,7 @@ public class SubjectResource implements Subject {
 	public class IsOffDates extends SentenceSimple {
 
 		public IsOffDates() {
-			super(SubjectResource.this, Verbs.isOff(), new ComplementDates());
+			super(SubjectResource.this, Verbs.isOff, new ComplementDates());
 		}
 
 		@Override
@@ -98,7 +103,7 @@ public class SubjectResource implements Subject {
 	public class IsOffDayOfWeek extends SentenceSimple {
 
 		public IsOffDayOfWeek() {
-			super(SubjectResource.this, Verbs.isOff(), new ComplementDayOfWeek());
+			super(SubjectResource.this, Verbs.isOff, new ComplementDayOfWeek());
 		}
 
 		@Override
@@ -113,7 +118,7 @@ public class SubjectResource implements Subject {
 	public class IsOnDate extends SentenceSimple {
 
 		public IsOnDate() {
-			super(SubjectResource.this, Verbs.isOn(), new ComplementDate());
+			super(SubjectResource.this, Verbs.isOn, new ComplementDate());
 		}
 
 		@Override
@@ -129,7 +134,7 @@ public class SubjectResource implements Subject {
 	public class IsOnDates extends SentenceSimple {
 
 		public IsOnDates() {
-			super(SubjectResource.this, Verbs.isOn(), new ComplementDates());
+			super(SubjectResource.this, Verbs.isOn, new ComplementDates());
 		}
 
 		@Override

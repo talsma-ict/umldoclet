@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -31,8 +31,8 @@
 package net.sourceforge.plantuml.security.authentication;
 
 /**
- * Indicates that the implementing object contains sensitive data, which can be erased
- * using the {@code eraseCredentials} method.
+ * Indicates that the implementing object contains sensitive data, which can be
+ * erased using the {@code eraseCredentials} method.
  *
  * @author Aljoscha Rittner
  */

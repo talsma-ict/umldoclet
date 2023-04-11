@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,6 +34,8 @@ import java.io.IOException;
 import java.util.List;
 
 public interface ISourceFileReader {
+	// ::remove file when __CORE__
+	// ::remove file when __HAXE__
 
 	public List<GeneratedImage> getGeneratedImages() throws IOException;
 

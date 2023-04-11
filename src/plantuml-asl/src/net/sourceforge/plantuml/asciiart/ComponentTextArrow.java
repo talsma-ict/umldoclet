@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -35,10 +35,12 @@ import java.util.regex.Pattern;
 
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.awt.geom.XPoint2D;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.drawing.txt.UGraphicTxt;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.geom.XPoint2D;
 import net.sourceforge.plantuml.sequencediagram.MessageNumber;
 import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.ArrowComponent;
@@ -46,8 +48,6 @@ import net.sourceforge.plantuml.skin.ArrowConfiguration;
 import net.sourceforge.plantuml.skin.ArrowDirection;
 import net.sourceforge.plantuml.skin.ComponentType;
 import net.sourceforge.plantuml.skin.Context2D;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.txt.UGraphicTxt;
 
 public class ComponentTextArrow extends AbstractComponentText implements ArrowComponent {
 
@@ -87,7 +87,8 @@ public class ComponentTextArrow extends AbstractComponentText implements ArrowCo
 		if (fileFormat == FileFormat.UTXT) {
 			final Pattern pattern = Pattern.compile("\\<b\\>([0-9]+)\\</b\\>");
 			final Matcher matcher = pattern.matcher(s);
-			final StringBuffer result = new StringBuffer(); // Can't be switched to StringBuilder in order to support Java 8
+			final StringBuffer result = new StringBuffer(); // Can't be switched to StringBuilder in order to support
+															// Java 8
 			while (matcher.find()) {
 				final String num = matcher.group(1);
 				final String replace = StringUtils.toInternalBoldNumber(num);

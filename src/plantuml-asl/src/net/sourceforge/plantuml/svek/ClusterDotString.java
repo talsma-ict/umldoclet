@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -39,17 +39,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import net.sourceforge.plantuml.AlignmentParam;
-import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.UmlDiagramType;
-import net.sourceforge.plantuml.cucadiagram.EntityPosition;
-import net.sourceforge.plantuml.cucadiagram.dot.GraphvizVersion;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.USymbols;
+import net.sourceforge.plantuml.abel.EntityPosition;
+import net.sourceforge.plantuml.decoration.symbol.USymbols;
+import net.sourceforge.plantuml.dot.GraphvizVersion;
+import net.sourceforge.plantuml.klimt.font.StringBounder;
+import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
+import net.sourceforge.plantuml.skin.AlignmentParam;
+import net.sourceforge.plantuml.skin.UmlDiagramType;
+import net.sourceforge.plantuml.style.ISkinParam;
 
 public class ClusterDotString {
+	// ::remove file when __CORE__
 
 	private final Cluster cluster;
 	private final ISkinParam skinParam;
@@ -60,12 +61,24 @@ public class ClusterDotString {
 		this.skinParam = skinParam;
 	}
 
+	private boolean isPacked() {
+		return cluster.getGroup().isPacked();
+	}
+
 	void printInternal(StringBuilder sb, Collection<SvekLine> lines, StringBounder stringBounder, DotMode dotMode,
 			GraphvizVersion graphvizVersion, UmlDiagramType type) {
 		if (cluster.diagram.getPragma().useKermor()) {
 			new ClusterDotStringKermor(cluster, skinParam).printInternal(sb, lines, stringBounder, dotMode,
 					graphvizVersion, type);
 			return;
+		}
+		final boolean packed = isPacked();
+
+		if (packed) {
+			cluster.printCluster1(sb, lines, stringBounder);
+			final SvekNode added = cluster.printCluster2(sb, lines, stringBounder, dotMode, graphvizVersion, type);
+			return;
+
 		}
 		final boolean thereALinkFromOrToGroup2 = isThereALinkFromOrToGroup(lines);
 		boolean thereALinkFromOrToGroup1 = thereALinkFromOrToGroup2;
@@ -148,6 +161,8 @@ public class ClusterDotString {
 			SvekUtils.println(sb);
 		}
 		SvekUtils.println(sb);
+
+		// -----------
 		cluster.printCluster1(sb, lines, stringBounder);
 
 		final SvekNode added = cluster.printCluster2(sb, lines, stringBounder, dotMode, graphvizVersion, type);
@@ -160,6 +175,8 @@ public class ClusterDotString {
 				sb.append(empty() + " [shape=point,width=.01,label=\"\"];");
 			}
 		SvekUtils.println(sb);
+
+		// -----------
 
 		sb.append("}");
 		if (protection1)

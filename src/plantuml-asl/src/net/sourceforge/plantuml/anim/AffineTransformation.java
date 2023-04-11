@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -37,11 +37,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.awt.geom.XDimension2D;
-import net.sourceforge.plantuml.awt.geom.XPoint2D;
-import net.sourceforge.plantuml.ugraphic.MinMax;
+import net.sourceforge.plantuml.klimt.geom.MinMax;
+import net.sourceforge.plantuml.klimt.geom.XDimension2D;
+import net.sourceforge.plantuml.klimt.geom.XPoint2D;
 
 public class AffineTransformation {
+    // ::remove folder when __HAXE__
+	// ::remove folder when __CORE__
 
 	static private final Pattern rotate = Pattern.compile("rotate\\s+(-?\\d+\\.?\\d*)");
 	static private final Pattern shear = Pattern.compile("shear\\s+(-?\\d+\\.?\\d*)\\s+(-?\\d+\\.?\\d*)");
@@ -138,12 +140,12 @@ public class AffineTransformation {
 	public MinMax getMinMax(XDimension2D rect) {
 		MinMax result = MinMax.getEmpty(false);
 		final AffineTransform tmp = getAffineTransform(rect);
-		
+
 		result = result.addPoint(new XPoint2D(0, 0).transform(tmp));
 		result = result.addPoint(new XPoint2D(0, rect.getHeight()).transform(tmp));
 		result = result.addPoint(new XPoint2D(rect.getWidth(), 0).transform(tmp));
 		result = result.addPoint(new XPoint2D(rect.getWidth(), rect.getHeight()).transform(tmp));
-		
+
 		return result;
 	}
 

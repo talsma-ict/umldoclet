@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -30,21 +30,20 @@
  */
 package net.sourceforge.plantuml.statediagram.command;
 
-import net.sourceforge.plantuml.LineLocation;
-import net.sourceforge.plantuml.baraye.CucaDiagram;
-import net.sourceforge.plantuml.baraye.IEntity;
-import net.sourceforge.plantuml.baraye.Quark;
+import net.sourceforge.plantuml.abel.Entity;
+import net.sourceforge.plantuml.abel.LeafType;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand2;
-import net.sourceforge.plantuml.command.regex.IRegex;
-import net.sourceforge.plantuml.command.regex.RegexConcat;
-import net.sourceforge.plantuml.command.regex.RegexLeaf;
-import net.sourceforge.plantuml.command.regex.RegexOr;
-import net.sourceforge.plantuml.command.regex.RegexResult;
-import net.sourceforge.plantuml.cucadiagram.Code;
-import net.sourceforge.plantuml.cucadiagram.Ident;
+import net.sourceforge.plantuml.klimt.color.NoSuchColorException;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.plasma.Quark;
+import net.sourceforge.plantuml.regex.IRegex;
+import net.sourceforge.plantuml.regex.RegexConcat;
+import net.sourceforge.plantuml.regex.RegexLeaf;
+import net.sourceforge.plantuml.regex.RegexOr;
+import net.sourceforge.plantuml.regex.RegexResult;
 import net.sourceforge.plantuml.statediagram.StateDiagram;
-import net.sourceforge.plantuml.ugraphic.color.NoSuchColorException;
+import net.sourceforge.plantuml.utils.LineLocation;
 
 public class CommandAddField extends SingleLineCommand2<StateDiagram> {
 
@@ -63,46 +62,26 @@ public class CommandAddField extends SingleLineCommand2<StateDiagram> {
 				new RegexLeaf("FIELD", "(.*)"), RegexLeaf.end());
 	}
 
-	private CommandExecutionResult executeArgQuark(StateDiagram diagram, LineLocation location, RegexResult arg)
-			throws NoSuchColorException {
-		final String codeString = arg.getLazzy("CODE", 0);
-
-		final Quark quark = diagram.currentQuark();
-		Quark child = quark.childIfExists(codeString);
-		if (child == null && quark.getName().equals(codeString))
-			child = quark;
-		if (child == null)
-			child = quark.child(codeString);
-
-		final IEntity entity = diagram.getOrCreateLeaf(child, child, null, null);
-
-		final String field = arg.get("FIELD", 0);
-
-		entity.getBodier().addFieldOrMethod(field);
-		return CommandExecutionResult.ok();
-	}
-
 	@Override
 	protected CommandExecutionResult executeArg(StateDiagram diagram, LineLocation location, RegexResult arg)
 			throws NoSuchColorException {
-		if (CucaDiagram.QUARK)
-			return executeArgQuark(diagram, location, arg);
-
 		final String codeString = arg.getLazzy("CODE", 0);
-		final String field = arg.get("FIELD", 0);
 
-		Ident ident = diagram.buildLeafIdent(codeString);
-		if (diagram.V1972()) {
-			// This is very bad. xi04 xc06
-			if (ident.parent().getLast().equals(codeString)) {
-				ident = ident.parent();
-			}
-		}
-		final Code code = diagram.V1972() ? ident : diagram.buildCode(codeString);
-		final IEntity entity = diagram.getOrCreateLeaf(ident, code, null, null);
+		final Quark<Entity> quark;
+		if (diagram.getCurrentGroup().getName().equals(codeString))
+			quark = diagram.getCurrentGroup().getQuark();
+		else
+			quark = diagram.quarkInContext(true, diagram.cleanId(codeString));
+
+		Entity entity = quark.getData();
+		if (entity == null)
+			entity = diagram.reallyCreateLeaf(quark, Display.getWithNewlines(quark), LeafType.STATE, null);
+
+		final String field = arg.get("FIELD", 0);
 
 		entity.getBodier().addFieldOrMethod(field);
 		return CommandExecutionResult.ok();
+
 	}
 
 }

@@ -2,7 +2,7 @@
  * PlantUML : a free UML diagram generator
  * ========================================================================
  *
- * (C) Copyright 2009-2023, Arnaud Roques
+ * (C) Copyright 2009-2024, Arnaud Roques
  *
  * Project Info:  https://plantuml.com
  * 
@@ -34,33 +34,40 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
+import net.atmp.ImageBuilder;
+import net.sourceforge.plantuml.abel.DisplayPositioned;
+import net.sourceforge.plantuml.abel.DisplayPositionned;
 import net.sourceforge.plantuml.anim.Animation;
 import net.sourceforge.plantuml.anim.AnimationDecoder;
 import net.sourceforge.plantuml.api.ApiStable;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.UmlSource;
-import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.cucadiagram.DisplayPositioned;
-import net.sourceforge.plantuml.cucadiagram.DisplayPositionned;
 import net.sourceforge.plantuml.cucadiagram.DisplaySection;
-import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.VerticalAlignment;
-import net.sourceforge.plantuml.sprite.Sprite;
+import net.sourceforge.plantuml.klimt.color.ColorMapper;
+import net.sourceforge.plantuml.klimt.color.ColorOrder;
+import net.sourceforge.plantuml.klimt.color.HColor;
+import net.sourceforge.plantuml.klimt.color.HColors;
+import net.sourceforge.plantuml.klimt.creole.Display;
+import net.sourceforge.plantuml.klimt.drawing.UGraphic;
+import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
+import net.sourceforge.plantuml.klimt.geom.VerticalAlignment;
+import net.sourceforge.plantuml.klimt.shape.TextBlock;
+import net.sourceforge.plantuml.klimt.sprite.Sprite;
+import net.sourceforge.plantuml.skin.Pragma;
+import net.sourceforge.plantuml.skin.SkinParam;
+import net.sourceforge.plantuml.skin.UmlDiagramType;
 import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
+import net.sourceforge.plantuml.style.ISkinParam;
 import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleBuilder;
 import net.sourceforge.plantuml.style.StyleLoader;
 import net.sourceforge.plantuml.style.StyleSignatureBasic;
-import net.sourceforge.plantuml.ugraphic.ImageBuilder;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
-import net.sourceforge.plantuml.ugraphic.color.ColorOrder;
-import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColors;
 
 public abstract class TitledDiagram extends AbstractPSystem implements Diagram, Annotated {
+	// ::remove file when __HAXE__
 
 	public static boolean FORCE_SMETANA = false;
 	public static boolean FORCE_ELK = false;
@@ -76,7 +83,9 @@ public abstract class TitledDiagram extends AbstractPSystem implements Diagram, 
 
 	private final SkinParam skinParam;
 
+	// ::comment when __CORE__
 	private Animation animation;
+	// ::done
 
 	private final Pragma pragma = new Pragma();
 
@@ -122,51 +131,7 @@ public abstract class TitledDiagram extends AbstractPSystem implements Diagram, 
 
 		getSkinParam().setDefaultSkin(filename);
 		return CommandExecutionResult.ok();
-		// final String res = "/skin/" + filename + ".skin";
-		// final InputStream internalIs = UmlDiagram.class.getResourceAsStream(res);
-		// if (internalIs != null) {
-		// final BlocLines lines2 = BlocLines.load(internalIs, new
-		// LineLocationImpl(filename, null));
-		// return loadSkinInternal(lines2);
-		// }
-		// if (OptionFlags.ALLOW_INCLUDE == false) {
-		// return CommandExecutionResult.ok();
-		// }
-		// final File f = FileSystem.getInstance().getFile(filename + ".skin");
-		// if (f == null || f.exists() == false || f.canRead() == false) {
-		// return CommandExecutionResult.error("Cannot load skin from " + filename);
-		// }
-		// final BlocLines lines = BlocLines.load(f, new LineLocationImpl(f.getName(),
-		// null));
-		// return loadSkinInternal(lines);
 	}
-
-	// private CommandExecutionResult loadSkinInternal(final BlocLines lines) {
-	// final CommandSkinParam cmd1 = new CommandSkinParam();
-	// final CommandSkinParamMultilines cmd2 = new CommandSkinParamMultilines();
-	// for (int i = 0; i < lines.size(); i++) {
-	// final BlocLines ext1 = lines.subList(i, i + 1);
-	// if (cmd1.isValid(ext1) == CommandControl.OK) {
-	// cmd1.execute(this, ext1);
-	// } else if (cmd2.isValid(ext1) == CommandControl.OK_PARTIAL) {
-	// i = tryMultilines(cmd2, i, lines);
-	// }
-	// }
-	// return CommandExecutionResult.ok();
-	// }
-
-//	private int tryMultilines(CommandSkinParamMultilines cmd2, int i, BlocLines lines) {
-//		for (int j = i + 1; j <= lines.size(); j++) {
-//			final BlocLines ext1 = lines.subList(i, j);
-//			if (cmd2.isValid(ext1) == CommandControl.OK) {
-//				cmd2.execute(this, ext1);
-//				return j;
-//			} else if (cmd2.isValid(ext1) == CommandControl.NOT_OK) {
-//				return j;
-//			}
-//		}
-//		return i;
-//	}
 
 	final public void setTitle(DisplayPositioned title) {
 		if (title.isNull() || title.getDisplay().isWhite())
@@ -240,6 +205,7 @@ public abstract class TitledDiagram extends AbstractPSystem implements Diagram, 
 		if (FORCE_SMETANA)
 			return true;
 		return useSmetana;
+		// return true;
 	}
 
 	@Override
@@ -247,6 +213,7 @@ public abstract class TitledDiagram extends AbstractPSystem implements Diagram, 
 		return ClockwiseTopRightBottomLeft.same(10);
 	}
 
+	// ::comment when __CORE__
 	final public void setAnimation(Iterable<CharSequence> animationData) {
 //		try {
 		final AnimationDecoder animationDecoder = new AnimationDecoder(animationData);
@@ -259,6 +226,7 @@ public abstract class TitledDiagram extends AbstractPSystem implements Diagram, 
 	final public Animation getAnimation() {
 		return animation;
 	}
+	// ::done
 
 	@Override
 	public ImageBuilder createImageBuilder(FileFormatOption fileFormatOption) throws IOException {
@@ -299,6 +267,14 @@ public abstract class TitledDiagram extends AbstractPSystem implements Diagram, 
 
 		return ColorMapper.reverse(order);
 
+	}
+
+	protected abstract TextBlock getTextBlock();
+
+	@Override
+	public void exportDiagramGraphic(UGraphic ug) {
+		final TextBlock textBlock = getTextBlock();
+		textBlock.drawU(ug);
 	}
 
 }
