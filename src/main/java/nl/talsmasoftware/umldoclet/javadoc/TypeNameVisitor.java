@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022 Talsma ICT
+ * Copyright 2016-2023 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package nl.talsmasoftware.umldoclet.javadoc;
 import nl.talsmasoftware.umldoclet.uml.TypeName;
 
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.QualifiedNameable;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
@@ -75,17 +76,18 @@ final class TypeNameVisitor extends SimpleTypeVisitor9<TypeName, Void> {
     public TypeName visitPrimitive(PrimitiveType primitiveType, Void parameter) {
         // "byte", "char", "short", "int", "long", "float", "double", "boolean"
         final String primitive = primitiveType.getKind().name().toLowerCase();
-        return new TypeName(primitive, primitive);
+        return new TypeName(null, primitive, primitive);
     }
 
     @Override
     public TypeName visitNoType(NoType noType, Void parameter) {
         // "void", "package", "module", "none"
         final String none = noType.getKind().name().toLowerCase();
-        return new TypeName(none, none);
+        return new TypeName(null, none, none);
     }
 
     @Override
+
     public TypeName visitDeclared(DeclaredType declaredType, Void parameter) {
         final Element el = declaredType.asElement();
         final String simpleName = el.getSimpleName().toString();
@@ -94,7 +96,17 @@ final class TypeNameVisitor extends SimpleTypeVisitor9<TypeName, Void> {
         final TypeName[] generics = declaredType.getTypeArguments().stream()
                 .map(generic -> _visit(generic, parameter))
                 .toArray(TypeName[]::new);
-        return new TypeName(simpleName, qualifiedName, generics);
+        final String packagename;
+
+        Element enclosingElement = el.getEnclosingElement();
+        if (enclosingElement.getKind().isInterface() || enclosingElement.getKind().isClass())
+        {
+            packagename = visit(enclosingElement.asType()).packagename;
+        } else {
+            int dot = qualifiedName.lastIndexOf('.');
+            packagename = dot > 0 ? qualifiedName.substring(0, dot) : null;
+        }
+        return new TypeName(packagename, simpleName, qualifiedName, generics);
     }
 
     @Override
@@ -115,7 +127,6 @@ final class TypeNameVisitor extends SimpleTypeVisitor9<TypeName, Void> {
         TypeMirror lowerBound = typeVariable.getLowerBound();
         if (lowerBound != null && !NO_KNOWN_TYPES.contains(lowerBound.getKind())) {
             return TypeName.Variable.superBound(typeVariable.toString(), _visit(lowerBound, parameter));
-
         }
 
         return defaultAction(typeVariable, parameter);
@@ -136,7 +147,8 @@ final class TypeNameVisitor extends SimpleTypeVisitor9<TypeName, Void> {
         String qualified = tp.toString();
         int lt = qualified.lastIndexOf('<');
         int dot = (lt < 0 ? qualified : qualified.substring(0, lt)).lastIndexOf('.');
-        return new TypeName(qualified.substring(dot + 1), qualified);
+        String packagename = dot < 0 ? null : qualified.substring(0, dot);
+        return new TypeName(packagename, qualified.substring(dot + 1), qualified);
     }
 
 }

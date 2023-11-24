@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022 Talsma ICT
+ * Copyright 2016-2023 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,11 +70,12 @@ public class Issue124PropertiesAsFieldsTest {
     @Test
     public void testPropertiesAsFieldsForPackageDiagram() {
         String umlFileName = StandardJavaBean.class.getPackageName().replace('.', '/') + "/package.puml";
+        String nameInPackage = StandardJavaBean.class.getPackageName() + "::" + StandardJavaBean.class.getSimpleName();
         String uml = TestUtil.read(new File(outputdir, umlFileName));
         assertThat(uml, containsString("+stringValue: String"));
         assertThat(uml, containsString("+intValue: int"));
         assertThat(uml, containsString("+booleanValue: boolean"));
-        assertThat(uml, containsString("StandardJavaBean --> StandardJavaBean: child"));
+        assertThat(uml, containsString(nameInPackage + " --> " + nameInPackage + ": child"));
 
         assertThat(uml, not(containsString("getStringValue(")));
         assertThat(uml, not(containsString("setStringValue(")));

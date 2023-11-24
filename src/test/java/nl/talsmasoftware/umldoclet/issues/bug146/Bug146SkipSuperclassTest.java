@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022 Talsma ICT
+ * Copyright 2016-2023 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,8 +52,8 @@ public class Bug146SkipSuperclassTest {
     @Test
     public void testPackageProtectedSuperclassShouldBeSkipped() {
         assertThat(packageUml, allOf(
-                containsString("java.util.AbstractList <|-- PublicTestClass"),
-                not(containsString("PackageProtectedSuperclass <|-- PublicTestClass"))
+                containsString("java.util::AbstractList <|-- " + getClass().getPackageName() + "::PublicTestClass"),
+                not(containsString("PackageProtectedSuperclass"))
         ));
         assertThat(classUml, allOf(
                 containsString(

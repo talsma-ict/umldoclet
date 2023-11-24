@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022 Talsma ICT
+ * Copyright 2016-2023 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,7 +63,6 @@ public abstract class Diagram extends UMLNode {
         IndentingPrintWriter indented = output.indent();
         writeCustomDirectives(config.customPlantumlDirectives(), indented);
         writeChildrenTo(indented);
-        indented.newline();
         writeFooterTo(indented);
         output.append("@enduml").newline();
         return output;
@@ -71,6 +70,9 @@ public abstract class Diagram extends UMLNode {
 
     protected <IPW extends IndentingPrintWriter> IPW writeCustomDirectives(List<String> customDirectives, IPW output) {
         customDirectives.forEach(output::println);
+        if (!customDirectives.isEmpty()) {
+            output.newline();
+        }
         return output;
     }
 
