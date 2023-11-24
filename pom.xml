@@ -66,6 +66,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.release>9</maven.compiler.release>
+        <plantuml-asl.version>1.2023.12</plantuml-asl.version>
 
         <!-- Plant UML apache-licensed sources: https://sourceforge.net/projects/plantuml/files/ -->
         <plantuml-asl.directory>${project.basedir}/src/plantuml-asl</plantuml-asl.directory>
@@ -104,6 +105,7 @@
                     <include>LICENSE</include>
                 </includes>
             </resource>
+<!--
             <resource>
                 <directory>${plantuml-asl.directory}/src</directory>
                 <includes>
@@ -118,6 +120,8 @@
                     <include>net/sourceforge/plantuml/windowsdot/*.dat</include>
                 </includes>
             </resource>
+-->
+<!--
             <resource>
                 <directory>${plantuml-asl.directory}</directory>
                 <includes>
@@ -128,8 +132,10 @@
                     <include>svg/**/*.css</include>
                 </includes>
             </resource>
+-->
         </resources>
         <plugins>
+<!--
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -147,6 +153,30 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.1</version>
+                <executions>
+                    <execution>
+                        <id>shade-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <artifactSet>
+                        <includes>
+                            <include>net.sourceforge.plantuml:plantuml-asl</include>
+                        </includes>
+                    </artifactSet>
+                    <minimizeJar>true</minimizeJar>
+                    <!-- TODO exclude unused packages and resources to save space. -->
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -175,6 +205,7 @@
                         </goals>
                     </execution>
                 </executions>
+<!--
                 <configuration>
                     <excludes>
                         <exclude>gen/**/*</exclude>
@@ -183,6 +214,7 @@
                         <exclude>smetana/**/*</exclude>
                     </excludes>
                 </configuration>
+-->
             </plugin>
             <plugin>
                 <groupId>org.eluder.coveralls</groupId>
@@ -267,8 +299,10 @@
                                 <artifactId>umldoclet</artifactId>
                                 <version>${project.version}</version>
                             </docletArtifact>
+<!--
                             <sourcepath>${project.build.sourceDirectory}:${plantuml-asl.directory}/src</sourcepath>
                             <excludePackageNames>gen.*:h:net.sourceforge.*:smetana.*</excludePackageNames>
+-->
                             <additionalOptions>
                                 <additionalOption>-createPumlFiles</additionalOption>
                                 <additionalOption>-failOnCyclicPackageDependencies true</additionalOption>
@@ -303,13 +337,21 @@
     </build>
 
     <dependencies>
-        <dependency> <!-- Required to compile 'net.sourceforge.plantuml.ant.*' -->
+<!--
+        <dependency> &lt;!&ndash; Required to compile 'net.sourceforge.plantuml.ant.*' &ndash;&gt;
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
             <version>1.10.14</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
+-->
+        <dependency>
+            <groupId>net.sourceforge.plantuml</groupId>
+            <artifactId>plantuml-asl</artifactId>
+            <version>${plantuml-asl.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>findbugs-annotations</artifactId>
