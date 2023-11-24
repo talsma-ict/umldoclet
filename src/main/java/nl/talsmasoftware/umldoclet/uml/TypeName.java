@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022 Talsma ICT
+ * Copyright 2016-2023 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,11 +36,13 @@ import static java.util.Objects.requireNonNull;
  * @author Sjoerd Talsma
  */
 public class TypeName {
+    public final String packagename;
     public final String simple;
     public final String qualified;
     private final TypeName[] generics;
 
-    public TypeName(String simpleName, String qualifiedName, TypeName... generics) {
+    public TypeName(String packagename, String simpleName, String qualifiedName, TypeName... generics) {
+        this.packagename = packagename;
         this.simple = simpleName;
         this.qualified = requireNonNull(qualifiedName, "Type has no qualified name");
         this.generics = generics.clone();
@@ -54,16 +56,21 @@ public class TypeName {
         return display != null && display.name().startsWith("QUALIFIED");
     }
 
+    public String getQualified(String separator) {
+        int plen = packagename == null ? 0 : packagename.length();
+        if (qualified.length() > plen && plen > 0 && separator != null && !separator.isEmpty()) {
+            return packagename + separator + qualified.substring(plen + 1);
+        }
+        return qualified;
+    }
+
     protected String toUml(TypeDisplay display, Namespace namespace) {
         StringBuilder output = new StringBuilder();
         if (display == null) display = TypeDisplay.SIMPLE;
         if (!TypeDisplay.NONE.equals(display)) try {
 
             if (namespace != null && this.qualified.startsWith(namespace.name + ".")) {
-                String name = this.qualified.substring(namespace.name.length() + 1);
-                // Workaround for PlantUML problem with namespace and inner classes
-                if (name.indexOf('.') > 0) name = this.qualified;
-                output.append(name);
+                output.append(this.qualified.substring(namespace.name.length() + 1));
             } else if (isQualified(display)) {
                 output.append(this.qualified);
             } else {
@@ -120,7 +127,7 @@ public class TypeName {
 
     public static class Array extends TypeName {
         private Array(TypeName componentType) {
-            super(componentType.simple, componentType.qualified, componentType.generics);
+            super(componentType.packagename, componentType.simple, componentType.qualified, componentType.generics);
         }
 
         public static Array of(TypeName componentType) {
@@ -138,7 +145,7 @@ public class TypeName {
         private final boolean isExtends;
 
         private Variable(String variable, TypeName bound, boolean isExtends) {
-            super(bound.simple, bound.qualified, bound.generics);
+            super(bound.packagename, bound.simple, bound.qualified, bound.generics);
             this.variable = variable;
             this.isExtends = isExtends;
         }

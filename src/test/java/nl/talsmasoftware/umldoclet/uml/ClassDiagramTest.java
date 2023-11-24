@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022 Talsma ICT
+ * Copyright 2016-2023 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,14 +65,14 @@ public class ClassDiagramTest {
         Type bar = new Type(
                 new Namespace(null, "foo.bar", null),
                 Type.Classification.CLASS,
-                new TypeName("Bar", "foo.bar.Bar"));
+                new TypeName("foo.bar", "Bar", "foo.bar.Bar"));
 
         ClassDiagram classDiagram = new ClassDiagram(config, bar);
 
         // Add Superclass com.foo.Foo
         Type foo = new Type(new Namespace(null, "foo", null),
                 Type.Classification.CLASS,
-                new TypeName("Foo", "foo.Foo"));
+                new TypeName("foo", "Foo", "foo.Foo"));
         classDiagram.addChild(foo);
         classDiagram.addChild(new Reference(
                 Reference.from("foo.Foo", null),

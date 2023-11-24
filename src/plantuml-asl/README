@@ -1,1 +1,0 @@
-Go to http://plantuml.com for product info

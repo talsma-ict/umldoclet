@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022 Talsma ICT
+ * Copyright 2016-2023 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public class Bug107DefaultPackageTest {
         ), is(0));
 
         String uml = TestUtil.read(new File("target/issues/107/package.puml"));
-        assertThat(uml, containsString("namespace unnamed"));
+        assertThat(uml, containsString("package unnamed"));
         assertThat(uml, containsString("class Foo"));
     }
 

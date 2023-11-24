@@ -66,6 +66,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.release>9</maven.compiler.release>
+        <plantuml-asl.version>1.2023.12</plantuml-asl.version>
 
         <!-- Plant UML apache-licensed sources: https://sourceforge.net/projects/plantuml/files/ -->
         <plantuml-asl.directory>${project.basedir}/src/plantuml-asl</plantuml-asl.directory>
@@ -85,6 +86,7 @@
         <maven-javadoc-plugin.version>3.6.2</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version>
         <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
+        <maven-shade-plugin.version>3.5.1</maven-shade-plugin.version>
         <build-helper-maven-plugin.version>3.4.0</build-helper-maven-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
         <license-maven-plugin.version>4.3</license-maven-plugin.version>
@@ -104,49 +106,30 @@
                     <include>LICENSE</include>
                 </includes>
             </resource>
-            <resource>
-                <directory>${plantuml-asl.directory}/src</directory>
-                <includes>
-                    <include>net/sourceforge/plantuml/**/*.png</include>
-                    <include>net/sourceforge/plantuml/openiconic/data/**/*.txt</include>
-                    <include>net/sourceforge/plantuml/openiconic/data/**/*.svg</include>
-                    <include>net/sourceforge/plantuml/emoji/data/**/*.txt</include>
-                    <include>net/sourceforge/plantuml/emoji/data/**/*.svg</include>
-                    <include>sprites/archimate/**/*.png</include>
-                    <include>net/sourceforge/plantuml/math/**/*.js</include>
-                    <include>net/sourceforge/plantuml/utils/**/*.txt</include>
-                    <include>net/sourceforge/plantuml/windowsdot/*.dat</include>
-                </includes>
-            </resource>
-            <resource>
-                <directory>${plantuml-asl.directory}</directory>
-                <includes>
-                    <include>stdlib/**/*.repx</include>
-                    <include>skin/**/*.skin</include>
-                    <include>themes/**/*.puml</include>
-                    <include>svg/**/*.js</include>
-                    <include>svg/**/*.css</include>
-                </includes>
-            </resource>
         </resources>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>${build-helper-maven-plugin.version}</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>${maven-shade-plugin.version}</version>
                 <executions>
                     <execution>
-                        <phase>generate-sources</phase>
+                        <id>shade-dependencies</id>
+                        <phase>package</phase>
                         <goals>
-                            <goal>add-source</goal>
+                            <goal>shade</goal>
                         </goals>
-                        <configuration>
-                            <sources>
-                                <source>${plantuml-asl.directory}/src</source>
-                            </sources>
-                        </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <artifactSet>
+                        <includes>
+                            <include>net.sourceforge.plantuml:plantuml-asl</include>
+                        </includes>
+                    </artifactSet>
+                    <minimizeJar>true</minimizeJar>
+                    <!-- TODO exclude unused packages and resources to save space. -->
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -175,14 +158,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <excludes>
-                        <exclude>gen/**/*</exclude>
-                        <exclude>h/**/*</exclude>
-                        <exclude>net/sourceforge/plantuml/**/*</exclude>
-                        <exclude>smetana/**/*</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.eluder.coveralls</groupId>
@@ -267,8 +242,6 @@
                                 <artifactId>umldoclet</artifactId>
                                 <version>${project.version}</version>
                             </docletArtifact>
-                            <sourcepath>${project.build.sourceDirectory}:${plantuml-asl.directory}/src</sourcepath>
-                            <excludePackageNames>gen.*:h:net.sourceforge.*:smetana.*</excludePackageNames>
                             <additionalOptions>
                                 <additionalOption>-createPumlFiles</additionalOption>
                                 <additionalOption>-failOnCyclicPackageDependencies true</additionalOption>
@@ -303,13 +276,12 @@
     </build>
 
     <dependencies>
-        <dependency> <!-- Required to compile 'net.sourceforge.plantuml.ant.*' -->
-            <groupId>org.apache.ant</groupId>
-            <artifactId>ant</artifactId>
-            <version>1.10.14</version>
-            <scope>provided</scope>
-            <optional>true</optional>
+        <dependency>
+            <groupId>net.sourceforge.plantuml</groupId>
+            <artifactId>plantuml-asl</artifactId>
+            <version>${plantuml-asl.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>findbugs-annotations</artifactId>

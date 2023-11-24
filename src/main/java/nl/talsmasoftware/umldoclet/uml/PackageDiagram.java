@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022 Talsma ICT
+ * Copyright 2016-2023 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,12 @@
 package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
@@ -25,6 +29,8 @@ import static java.util.Objects.requireNonNull;
  * @author Sjoerd Talsma
  */
 public class PackageDiagram extends Diagram {
+    private static final String SEPARATOR_DIRECTIVE = "set separator ";
+    public static final String SEPARATOR = "::";
 
     final String moduleName;
     final String packageName;
@@ -34,6 +40,14 @@ public class PackageDiagram extends Diagram {
         super(config);
         this.packageName = requireNonNull(packageName, "Package name is <null>.");
         this.moduleName = moduleName;
+    }
+
+    @Override
+    protected <IPW extends IndentingPrintWriter> IPW writeCustomDirectives(List<String> customDirectives, IPW output) {
+        final List<String> directives = new ArrayList<>(customDirectives == null ? Collections.emptyList() : customDirectives);
+        directives.removeIf(directive -> directive.startsWith(SEPARATOR_DIRECTIVE));
+        directives.add(SEPARATOR_DIRECTIVE + SEPARATOR);
+        return super.writeCustomDirectives(directives, output);
     }
 
     @Override

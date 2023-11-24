@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022 Talsma ICT
+ * Copyright 2016-2023 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ public class Namespace extends UMLNode {
 
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-        writeNameTo(output.append("namespace").whitespace()).append('{').newline();
+        writeNameTo(output.append("package").whitespace()).append('{').newline();
         writeChildrenTo(output.indent());
         output.append('}').newline();
         return output;

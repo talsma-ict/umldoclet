@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022 Talsma ICT
+ * Copyright 2016-2023 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,19 +62,19 @@ public class Issue30JavaBeanPropertiesTest {
         );
         String uml = TestUtil.read(new File("target/issues/30/" + packageAsPath + "/package.puml"));
 
-        String name = getClass().getName();
         String simpleName = getClass().getSimpleName();
+        String nameInPackage = getClass().getPackageName() + "::" + simpleName;
 
         // someProperty should have been replaced by referene:
         assertThat(uml, not(containsString("+getSomeProperty()")));
         assertThat(uml, not(containsString("+setSomeProperty")));
         assertThat(uml, either(containsString(simpleName + " --> " + simpleName + ": someProperty"))
-                .or(containsString(name + " --> " + name + ": someProperty")));
+                .or(containsString(nameInPackage + " --> " + nameInPackage + ": someProperty")));
 
         // someValue must not be replaced by reference:
         assertThat(uml, containsString("+getSomeValue(Boolean): " + simpleName));
         assertThat(uml, not(either(containsString(simpleName + " --> " + simpleName + ": someValue"))
-                .or(containsString(name + " --> " + name + ": someValue"))));
+                .or(containsString(nameInPackage + " --> " + nameInPackage + ": someValue"))));
     }
 
 }

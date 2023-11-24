@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022 Talsma ICT
+ * Copyright 2016-2023 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,20 @@
  */
 package nl.talsmasoftware.umldoclet.uml.util;
 
-import nl.talsmasoftware.umldoclet.uml.*;
+import nl.talsmasoftware.umldoclet.uml.Field;
+import nl.talsmasoftware.umldoclet.uml.Method;
+import nl.talsmasoftware.umldoclet.uml.Namespace;
+import nl.talsmasoftware.umldoclet.uml.Type;
 import nl.talsmasoftware.umldoclet.uml.Type.Classification;
+import nl.talsmasoftware.umldoclet.uml.TypeName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class UmlPostProcessorsTest {
@@ -77,6 +84,7 @@ public class UmlPostProcessorsTest {
     private static TypeName typeName(String qualified) {
         int lastDot = qualified.lastIndexOf('.');
         String simpleName = lastDot >= 0 ? qualified.substring(lastDot + 1) : qualified;
-        return new TypeName(simpleName, qualified);
+        String packagename = lastDot > 0 ? qualified.substring(0, lastDot) : null;
+        return new TypeName(packagename, simpleName, qualified);
     }
 }
