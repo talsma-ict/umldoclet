@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright 2016-2023 Talsma ICT
+    Copyright 2016-2024 Talsma ICT
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -75,7 +75,7 @@
         <junit.version>5.10.1</junit.version>
         <hamcrest.version>2.2</hamcrest.version>
         <mockito.version>5.8.0</mockito.version>
-        <slf4j.version>2.0.10</slf4j.version>
+        <slf4j.version>2.0.11</slf4j.version>
         <logback.version>1.4.14</logback.version>
         <maven-invoker.version>3.2.0</maven-invoker.version>
 
