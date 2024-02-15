@@ -68,9 +68,6 @@
         <maven.compiler.release>9</maven.compiler.release>
         <plantuml-asl.version>1.2024.1</plantuml-asl.version>
 
-        <!-- Plant UML apache-licensed sources: https://sourceforge.net/projects/plantuml/files/ -->
-        <plantuml-asl.directory>${project.basedir}/src/plantuml-asl</plantuml-asl.directory>
-
         <!-- test -->
         <junit.version>5.10.2</junit.version>
         <hamcrest.version>2.2</hamcrest.version>
