@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022 Talsma ICT
+ * Copyright 2016-2024 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,6 +53,9 @@ import static nl.talsmasoftware.umldoclet.logging.Message.PLANTUML_COPYRIGHT;
  * @author Sjoerd Talsma
  */
 public class UMLDoclet extends StandardDoclet {
+    static {
+        System.setProperty("java.awt.headless", "true");
+    }
 
     private final DocletConfig config;
 

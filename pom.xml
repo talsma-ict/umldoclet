@@ -124,6 +124,14 @@
                             <include>net.sourceforge.plantuml:plantuml-asl</include>
                         </includes>
                     </artifactSet>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/MANIFEST.MF</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
                     <minimizeJar>true</minimizeJar>
                     <!-- TODO exclude unused packages and resources to save space. -->
                 </configuration>
