@@ -18,7 +18,6 @@ package nl.talsmasoftware.umldoclet;
 import jdk.javadoc.doclet.DocletEnvironment;
 import jdk.javadoc.doclet.Reporter;
 import jdk.javadoc.doclet.StandardDoclet;
-import net.sourceforge.plantuml.version.Version;
 import nl.talsmasoftware.umldoclet.html.HtmlPostprocessor;
 import nl.talsmasoftware.umldoclet.javadoc.DocletConfig;
 import nl.talsmasoftware.umldoclet.javadoc.UMLFactory;
@@ -117,7 +116,7 @@ public class UMLDoclet extends StandardDoclet {
     @Override
     public boolean run(DocletEnvironment environment) {
         config.logger().info(DOCLET_COPYRIGHT, DOCLET_VERSION);
-        config.logger().info(PLANTUML_COPYRIGHT, Version.versionString());
+        config.logger().info(PLANTUML_COPYRIGHT);
 
         // First generate Standard HTML documentation
 
