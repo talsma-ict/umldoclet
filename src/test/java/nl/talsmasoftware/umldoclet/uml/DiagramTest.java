@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022 Talsma ICT
+ * Copyright 2016-2024 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
-import net.sourceforge.plantuml.version.Version;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
 import nl.talsmasoftware.umldoclet.logging.Message;
@@ -116,7 +115,7 @@ public class DiagramTest {
         StringWriter output = new StringWriter();
         Diagram testDiagram = new TestDiagram(config, new File("target/test-classes/custom-directive.puml"));
         IndentingPrintWriter writer = IndentingPrintWriter.wrap(output, Indentation.NONE);
-        String footer = logger.localize(Message.DOCLET_UML_FOOTER, Message.DOCLET_VERSION, Version.versionString());
+        String footer = logger.localize(Message.DOCLET_UML_FOOTER, Message.DOCLET_VERSION);
 
         // execute
         testDiagram.writeTo(writer);
@@ -138,7 +137,7 @@ public class DiagramTest {
         StringWriter output = new StringWriter();
         Diagram testDiagram = new TestDiagram(config, new File("target/test-classes/custom-directive.puml"));
         IndentingPrintWriter writer = IndentingPrintWriter.wrap(output, Indentation.NONE);
-        String footer = logger.localize(Message.DOCLET_UML_FOOTER, Message.DOCLET_VERSION, Version.versionString());
+        String footer = logger.localize(Message.DOCLET_UML_FOOTER, Message.DOCLET_VERSION);
 
         // execute
         testDiagram.writeTo(writer);

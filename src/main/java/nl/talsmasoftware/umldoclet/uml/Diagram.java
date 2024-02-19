@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2023 Talsma ICT
+ * Copyright 2016-2024 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,10 +78,7 @@ public abstract class Diagram extends UMLNode {
 
     private <IPW extends IndentingPrintWriter> IPW writeFooterTo(IPW output) {
         output.append("center footer").whitespace()
-                .append(config.logger().localize(
-                        Message.DOCLET_UML_FOOTER,
-                        Message.DOCLET_VERSION,
-                        net.sourceforge.plantuml.version.Version.versionString()))
+                .append(config.logger().localize(Message.DOCLET_UML_FOOTER, Message.DOCLET_VERSION))
                 .newline();
         return output;
     }
