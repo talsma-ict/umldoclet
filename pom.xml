@@ -81,7 +81,7 @@
         <maven-failsafe-plugin.version>3.2.5</maven-failsafe-plugin.version>
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
-        <maven-gpg-plugin.version>3.2.0</maven-gpg-plugin.version>
+        <maven-gpg-plugin.version>3.2.1</maven-gpg-plugin.version>
         <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
         <maven-shade-plugin.version>3.5.2</maven-shade-plugin.version>
         <build-helper-maven-plugin.version>3.4.0</build-helper-maven-plugin.version>
