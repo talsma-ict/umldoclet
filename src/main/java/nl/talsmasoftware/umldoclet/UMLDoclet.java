@@ -143,30 +143,35 @@ public class UMLDoclet extends StandardDoclet {
         UMLFactory factory = new UMLFactory(config, docEnv);
         return Stream.concat(
                 docEnv.getIncludedElements().stream()
-                        .map(element -> generateDiagram(factory, element))
+                        .map(element -> factory.generateDiagram(element))
                         .filter(Objects::nonNull),
                 Stream.of(generatePackageDependencyDiagram(docEnv)));
     }
 
-    private Diagram generateDiagram(UMLFactory factory, Element element) {
-        if (element instanceof PackageElement) {
-            return factory.createPackageDiagram((PackageElement) element);
-        } else if (element instanceof TypeElement && (element.getKind().isClass() || element.getKind().isInterface())) {
-            return factory.createClassDiagram((TypeElement) element);
-        }
-        return null;
-    }
+//    private Diagram generateDiagram(UMLFactory factory, Element element) {
+//        if (element instanceof PackageElement) {
+//            return factory.createPackageDiagram((PackageElement) element);
+//        } else if (element instanceof TypeElement && (element.getKind().isClass() || element.getKind().isInterface())) {
+//            return factory.createClassDiagram((TypeElement) element);
+//        }
+//        return null;
+//    }
 
     private DependencyDiagram generatePackageDependencyDiagram(DocletEnvironment docEnv) {
         DependenciesElementScanner scanner = new DependenciesElementScanner(docEnv, config);
         Set<PackageDependency> packageDependencies = scanner.scan(docEnv.getIncludedElements(), null);
-        detectPackageDependencyCycles(packageDependencies);
+        config.detectPackageDependencyCycles(packageDependencies);
         DependencyDiagram dependencyDiagram = new DependencyDiagram(config, scanner.getModuleName(), "package-dependencies.puml");
         packageDependencies.forEach(dep -> dependencyDiagram.addPackageDependency(dep.fromPackage, dep.toPackage));
         return dependencyDiagram;
     }
 
-    private Set<PackageDependencyCycle> detectPackageDependencyCycles(Set<PackageDependency> packageDependencies) {
+    /**
+     * To remove Feature Envy method detectPackageDependencyCycles as it is more members of the type: DocletConfig,
+     *     this method is moved to DocletConfig class.
+     */
+
+/*    private Set<PackageDependencyCycle> detectPackageDependencyCycles(Set<PackageDependency> packageDependencies) {
         Set<PackageDependencyCycle> cycles = PackageDependencyCycle.detectCycles(packageDependencies);
         if (!cycles.isEmpty()) {
             String cyclesString = cycles.stream().map(cycle -> " - " + cycle).collect(joining(lineSeparator(), lineSeparator(), ""));
@@ -177,5 +182,5 @@ public class UMLDoclet extends StandardDoclet {
             }
         }
         return cycles;
-    }
+    }*/
 }

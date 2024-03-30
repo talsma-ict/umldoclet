@@ -23,6 +23,8 @@ import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
 import nl.talsmasoftware.umldoclet.configuration.MethodConfig;
 import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
 import nl.talsmasoftware.umldoclet.configuration.Visibility;
+import nl.talsmasoftware.umldoclet.javadoc.dependencies.PackageDependency;
+import nl.talsmasoftware.umldoclet.javadoc.dependencies.PackageDependencyCycle;
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.logging.Message;
 import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
@@ -40,8 +42,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static java.lang.System.lineSeparator;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
+import static java.util.stream.Collectors.joining;
 import static nl.talsmasoftware.umldoclet.configuration.ImageConfig.Format.SVG;
 import static nl.talsmasoftware.umldoclet.configuration.Visibility.PACKAGE_PRIVATE;
 import static nl.talsmasoftware.umldoclet.configuration.Visibility.PROTECTED;
@@ -241,6 +245,23 @@ public class DocletConfig implements Configuration {
         Set<Visibility> visibility = parseVisibility(value);
         fieldConfig.visibilities = visibility;
         methodConfig.visibilities = visibility;
+    }
+
+    /**
+     * To remove Feature Envy method detectPackageDependencyCycles as it is more members of the type: DocletConfig,
+     *     this method is moved to this class from UMLDoclet class.
+     */
+    public Set<PackageDependencyCycle> detectPackageDependencyCycles(Set<PackageDependency> packageDependencies) {
+        Set<PackageDependencyCycle> cycles = PackageDependencyCycle.detectCycles(packageDependencies);
+        if (!cycles.isEmpty()) {
+            String cyclesString = cycles.stream().map(cycle -> " - " + cycle).collect(joining(lineSeparator(), lineSeparator(), ""));
+            if (this.failOnCyclicPackageDependencies()) {
+                this.logger().error(Message.WARNING_PACKAGE_DEPENDENCY_CYCLES, cyclesString);
+            } else {
+                this.logger().warn(Message.WARNING_PACKAGE_DEPENDENCY_CYCLES, cyclesString);
+            }
+        }
+        return cycles;
     }
 
     final class ImageCfg implements ImageConfig {

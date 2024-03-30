@@ -65,9 +65,16 @@ public class Namespace extends UMLNode {
         return output;
     }
 
-    public boolean contains(TypeName typeName) {
+    /**
+     * To break Cyclically-dependent Modularization between Namespace and TypeName and to
+     * change bidirectional association to unidirectional association NamespaceService class
+     * is created with contains method.
+     */
+
+/*    public boolean contains(TypeName typeName) {
         return typeName != null && typeName.qualified.startsWith(this.name + ".");
     }
+*/
 
     @Override
     public int hashCode() {
