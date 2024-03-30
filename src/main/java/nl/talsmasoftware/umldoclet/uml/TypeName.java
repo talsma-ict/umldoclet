@@ -56,9 +56,15 @@ public class TypeName {
         return display != null && display.name().startsWith("QUALIFIED");
     }
 
+    /**
+     * Introduced this two condition explaining variables to remove Complex Condition in getQualified method.
+     */
     public String getQualified(String separator) {
         int plen = packagename == null ? 0 : packagename.length();
-        if (qualified.length() > plen && plen > 0 && separator != null && !separator.isEmpty()) {
+        boolean hasValidLengths = qualified.length() > plen && plen > 0;
+        boolean hasValidSeparator = separator != null && !separator.isEmpty();
+
+        if (hasValidLengths && hasValidSeparator) {
             return packagename + separator + qualified.substring(plen + 1);
         }
         return qualified;
