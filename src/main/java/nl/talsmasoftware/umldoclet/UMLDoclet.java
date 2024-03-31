@@ -143,19 +143,22 @@ public class UMLDoclet extends StandardDoclet {
         UMLFactory factory = new UMLFactory(config, docEnv);
         return Stream.concat(
                 docEnv.getIncludedElements().stream()
-                        .map(element -> generateDiagram(factory, element))
+                        .map(element -> factory.generateDiagram(element))
                         .filter(Objects::nonNull),
                 Stream.of(generatePackageDependencyDiagram(docEnv)));
     }
 
-    private Diagram generateDiagram(UMLFactory factory, Element element) {
+    /**
+     * generateDiagram method is moved into UMLFactory class.
+     */
+    /*private Diagram generateDiagram(UMLFactory factory, Element element) {
         if (element instanceof PackageElement) {
             return factory.createPackageDiagram((PackageElement) element);
         } else if (element instanceof TypeElement && (element.getKind().isClass() || element.getKind().isInterface())) {
             return factory.createClassDiagram((TypeElement) element);
         }
         return null;
-    }
+    }*/
 
     private DependencyDiagram generatePackageDependencyDiagram(DocletEnvironment docEnv) {
         DependenciesElementScanner scanner = new DependenciesElementScanner(docEnv, config);
