@@ -24,6 +24,7 @@ import nl.talsmasoftware.umldoclet.javadoc.UMLFactory;
 import nl.talsmasoftware.umldoclet.javadoc.dependencies.DependenciesElementScanner;
 import nl.talsmasoftware.umldoclet.javadoc.dependencies.PackageDependency;
 import nl.talsmasoftware.umldoclet.javadoc.dependencies.PackageDependencyCycle;
+import nl.talsmasoftware.umldoclet.javadoc.dependencies.PackageDependencyCycleDetector;
 import nl.talsmasoftware.umldoclet.logging.Message;
 import nl.talsmasoftware.umldoclet.uml.DependencyDiagram;
 import nl.talsmasoftware.umldoclet.uml.Diagram;
@@ -160,22 +161,27 @@ public class UMLDoclet extends StandardDoclet {
     private DependencyDiagram generatePackageDependencyDiagram(DocletEnvironment docEnv) {
         DependenciesElementScanner scanner = new DependenciesElementScanner(docEnv, config);
         Set<PackageDependency> packageDependencies = scanner.scan(docEnv.getIncludedElements(), null);
-        detectPackageDependencyCycles(packageDependencies);
+        new PackageDependencyCycleDetector(config).detectPackageDependencyCycles(packageDependencies);
         DependencyDiagram dependencyDiagram = new DependencyDiagram(config, scanner.getModuleName(), "package-dependencies.puml");
         packageDependencies.forEach(dep -> dependencyDiagram.addPackageDependency(dep.fromPackage, dep.toPackage));
         return dependencyDiagram;
     }
 
-    private Set<PackageDependencyCycle> detectPackageDependencyCycles(Set<PackageDependency> packageDependencies) {
-        Set<PackageDependencyCycle> cycles = PackageDependencyCycle.detectCycles(packageDependencies);
-        if (!cycles.isEmpty()) {
-            String cyclesString = cycles.stream().map(cycle -> " - " + cycle).collect(joining(lineSeparator(), lineSeparator(), ""));
-            if (config.failOnCyclicPackageDependencies()) {
-                config.logger().error(Message.WARNING_PACKAGE_DEPENDENCY_CYCLES, cyclesString);
-            } else {
-                config.logger().warn(Message.WARNING_PACKAGE_DEPENDENCY_CYCLES, cyclesString);
-            }
-        }
-        return cycles;
-    }
+    /**
+     * To remove Feature Envy method detectPackageDependencyCycles as it is more members of the type: DocletConfig,
+     *     this method is moved to separate class - PackageDependencyCycleDetector.
+     */
+
+//    private Set<PackageDependencyCycle> detectPackageDependencyCycles(Set<PackageDependency> packageDependencies) {
+//        Set<PackageDependencyCycle> cycles = PackageDependencyCycle.detectCycles(packageDependencies);
+//        if (!cycles.isEmpty()) {
+//            String cyclesString = cycles.stream().map(cycle -> " - " + cycle).collect(joining(lineSeparator(), lineSeparator(), ""));
+//            if (config.failOnCyclicPackageDependencies()) {
+//                config.logger().error(Message.WARNING_PACKAGE_DEPENDENCY_CYCLES, cyclesString);
+//            } else {
+//                config.logger().warn(Message.WARNING_PACKAGE_DEPENDENCY_CYCLES, cyclesString);
+//            }
+//        }
+//        return cycles;
+//    }
 }
