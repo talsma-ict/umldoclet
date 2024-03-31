@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022 Talsma ICT
+ * Copyright 2016-2024 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,9 @@ public class JavaBeanProperty {
     private Field field;
     private Method getter;
     private Method setter;
+
+    private static final int startIndexGetSet = 3;
+    private static final int startIndexIs = 2;
 
     private JavaBeanProperty(String name) {
         this.name = name;
@@ -171,15 +174,19 @@ public class JavaBeanProperty {
      * {@code "get"}, {@code "is"} or {@code "set"}.
      * @see #propertyNameOf(TypeMember)
      */
+
+    /**
+     * Introduced startIndexGetSet, startIndexIs constants to remove Magic numbers.
+     */
     private static Optional<String> propertyNameOfAccessor(Method method) {
         Optional<String> propertyName = Optional.empty();
         if (!method.isStatic && !method.isAbstract) {
             if (isGetterMethod(method) || isSetterMethod(method)) {
                 // Method name without 'get' / 'set' decapitalized
-                propertyName = Optional.of(decapitalize(method.name.substring(3)));
+                propertyName = Optional.of(decapitalize(method.name.substring(startIndexGetSet)));
             } else if (isBooleanGetterMethod(method)) {
                 // Method name without 'is' decapitalized
-                propertyName = Optional.of(decapitalize(method.name.substring(2)));
+                propertyName = Optional.of(decapitalize(method.name.substring(startIndexIs)));
             }
         }
         return propertyName;
