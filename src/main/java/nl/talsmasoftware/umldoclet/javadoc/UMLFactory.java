@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2023 Talsma ICT
+ * Copyright 2016-2024 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -457,7 +457,7 @@ public class UMLFactory {
                         Reference.from(type.getName().getQualified(separator), null),
                         "--|>",
                         Reference.to(superclassName.getQualified(separator), null)));
-                if (!namespace.contains(superclassName)) {
+                if (!NamespaceService.contains(namespace, superclassName)) {
                     addForeignType(foreignTypes, superclassElement);
                 }
             }
@@ -472,7 +472,7 @@ public class UMLFactory {
                         interfaceRefTypeFrom(type),
                         Reference.to(interfaceName.getQualified(separator), null)));
                 // TODO Figure out what to do IF the interface is found BUT has a different typename
-                if (!namespace.contains(interfaceName)) {
+                if (!NamespaceService.contains(namespace, interfaceName)) {
                     addForeignType(foreignTypes, env.getTypeUtils().asElement(interfaceType));
                 }
             }
@@ -497,7 +497,7 @@ public class UMLFactory {
                 .forEach(field -> {
                     String fieldName = field.getSimpleName().toString();
                     TypeNameWithCardinality fieldType = typeNameWithCardinality.apply(field.asType());
-                    if (namespace.contains(fieldType.typeName)) {
+                    if (NamespaceService.contains(namespace, fieldType.typeName)) {
                         addReference(references, new Reference(
                                 Reference.from(type.getName().getQualified(separator), null),
                                 "-->",
@@ -516,7 +516,7 @@ public class UMLFactory {
                     String propertyName = propertyName(method);
                     if (propertyName != null) {
                         TypeNameWithCardinality returnType = typeNameWithCardinality.apply(propertyType(method));
-                        if (namespace.contains(returnType.typeName)) {
+                        if (NamespaceService.contains(namespace, returnType.typeName)) {
                             addReference(references, new Reference(
                                     Reference.from(type.getName().getQualified(separator), null),
                                     "-->",

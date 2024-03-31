@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2023 Talsma ICT
+ * Copyright 2016-2024 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,9 +65,14 @@ public class Namespace extends UMLNode {
         return output;
     }
 
-    public boolean contains(TypeName typeName) {
+    /**
+     * To break Cyclically-dependent Modularization between Namespace and TypeName and to
+     * change bidirectional association to unidirectional association NamespaceService class
+     * is created with contains method.
+     */
+/*    public boolean contains(TypeName typeName) {
         return typeName != null && typeName.qualified.startsWith(this.name + ".");
-    }
+    }*/
 
     @Override
     public int hashCode() {
