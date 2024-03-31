@@ -24,6 +24,7 @@ import nl.talsmasoftware.umldoclet.javadoc.UMLFactory;
 import nl.talsmasoftware.umldoclet.javadoc.dependencies.DependenciesElementScanner;
 import nl.talsmasoftware.umldoclet.javadoc.dependencies.PackageDependency;
 import nl.talsmasoftware.umldoclet.javadoc.dependencies.PackageDependencyCycle;
+import nl.talsmasoftware.umldoclet.javadoc.dependencies.PackageDependencyCycleDetector;
 import nl.talsmasoftware.umldoclet.logging.Message;
 import nl.talsmasoftware.umldoclet.uml.DependencyDiagram;
 import nl.talsmasoftware.umldoclet.uml.Diagram;
@@ -160,13 +161,16 @@ public class UMLDoclet extends StandardDoclet {
     private DependencyDiagram generatePackageDependencyDiagram(DocletEnvironment docEnv) {
         DependenciesElementScanner scanner = new DependenciesElementScanner(docEnv, config);
         Set<PackageDependency> packageDependencies = scanner.scan(docEnv.getIncludedElements(), null);
-        detectPackageDependencyCycles(packageDependencies);
+        new PackageDependencyCycleDetector(config).detectPackageDependencyCycles(packageDependencies);
         DependencyDiagram dependencyDiagram = new DependencyDiagram(config, scanner.getModuleName(), "package-dependencies.puml");
         packageDependencies.forEach(dep -> dependencyDiagram.addPackageDependency(dep.fromPackage, dep.toPackage));
         return dependencyDiagram;
     }
 
-    private Set<PackageDependencyCycle> detectPackageDependencyCycles(Set<PackageDependency> packageDependencies) {
+    /**
+     * generateDiagram method is moved into UMLFactory class.
+     */
+/*    private Set<PackageDependencyCycle> detectPackageDependencyCycles(Set<PackageDependency> packageDependencies) {
         Set<PackageDependencyCycle> cycles = PackageDependencyCycle.detectCycles(packageDependencies);
         if (!cycles.isEmpty()) {
             String cyclesString = cycles.stream().map(cycle -> " - " + cycle).collect(joining(lineSeparator(), lineSeparator(), ""));
@@ -177,5 +181,5 @@ public class UMLDoclet extends StandardDoclet {
             }
         }
         return cycles;
-    }
+    }*/
 }
