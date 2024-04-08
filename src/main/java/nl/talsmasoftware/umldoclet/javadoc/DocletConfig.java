@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022 Talsma ICT
+ * Copyright 2016-2024 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -211,7 +211,12 @@ public class DocletConfig implements Configuration {
 
     @Override
     public List<String> customPlantumlDirectives() {
-        return customPlantumlDirectives;
+        List<String> customDirectives = new ArrayList<>(customPlantumlDirectives.size() + 1);
+        if (customPlantumlDirectives.stream().noneMatch(directive -> directive.startsWith("!pragma layout"))) {
+            customDirectives.add("!pragma layout smetana");
+        }
+        customDirectives.addAll(customPlantumlDirectives);
+        return customDirectives;
     }
 
     @Override
