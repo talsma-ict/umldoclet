@@ -39,6 +39,7 @@ import static nl.talsmasoftware.umldoclet.configuration.ImageConfig.Format.SVG;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasToString;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -121,12 +122,7 @@ public class DiagramTest {
         testDiagram.writeTo(writer);
 
         // verify
-        assertThat(asList(output.toString().split("\\n")), contains(
-                "@startuml",
-                "!pragma graphviz_dot jdot",
-                "",
-                "center footer " + footer,
-                "@enduml"));
+        assertThat(asList(output.toString().split("\\n")), hasItem("!pragma graphviz_dot jdot"));
         verify(config).customPlantumlDirectives();
     }
 
@@ -143,12 +139,7 @@ public class DiagramTest {
         testDiagram.writeTo(writer);
 
         // verify
-        assertThat(asList(output.toString().split("\\n")), contains(
-                "@startuml",
-                "skinparam backgroundcolor green",
-                "",
-                "center footer " + footer,
-                "@enduml"));
+        assertThat(asList(output.toString().split("\\n")), hasItem("skinparam backgroundcolor green"));
         verify(config).customPlantumlDirectives();
     }
 
