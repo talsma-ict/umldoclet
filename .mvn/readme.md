@@ -6,10 +6,10 @@ This directory contains metadata specific to the maven build for this project.
 ## Installing or upgrading the Maven and wrapper version
 
 ```
-mvn -N io.takari:maven:<version>:wrapper
+mvn wrapper:wrapper
 ```
 
-The latest version can be found on https://github.com/takari/maven-wrapper
+The latest version can be found on https://github.com/apache/maven-wrapper
 
 ## Copyright license header template
 
