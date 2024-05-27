@@ -71,10 +71,10 @@
         <!-- test -->
         <junit.version>5.10.2</junit.version>
         <hamcrest.version>2.2</hamcrest.version>
-        <mockito.version>5.11.0</mockito.version>
+        <mockito.version>5.12.0</mockito.version>
         <slf4j.version>2.0.13</slf4j.version>
         <logback.version>1.5.6</logback.version>
-        <maven-invoker.version>3.2.0</maven-invoker.version>
+        <maven-invoker.version>3.3.0</maven-invoker.version>
 
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
@@ -86,7 +86,7 @@
         <maven-shade-plugin.version>3.5.3</maven-shade-plugin.version>
         <build-helper-maven-plugin.version>3.4.0</build-helper-maven-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
-        <license-maven-plugin.version>4.3</license-maven-plugin.version>
+        <license-maven-plugin.version>4.5</license-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
         <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
     </properties>
@@ -303,7 +303,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>1.19.7</version>
+            <version>1.19.8</version>
             <scope>test</scope>
         </dependency>
         <dependency>
