@@ -77,7 +77,7 @@ public abstract class Diagram extends UMLNode {
     }
 
     private <IPW extends IndentingPrintWriter> IPW writeFooterTo(IPW output) {
-        output.append("center footer").whitespace()
+        output.append("center footer").whitespace().append("\\n")
                 .append(config.logger().localize(Message.DOCLET_UML_FOOTER, Message.DOCLET_VERSION))
                 .newline();
         return output;
