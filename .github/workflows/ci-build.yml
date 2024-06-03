@@ -53,7 +53,7 @@ jobs:
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
       - name: Publish test coverage
         if: env.COVERALLS_REPO_TOKEN != null
-        run: ./mvnw --batch-mode -DrepoToken=${{ env.COVERALLS_REPO_TOKEN }} jacoco:report coveralls:report
+        run: ./mvnw --batch-mode -DrepoToken=${{ env.COVERALLS_REPO_TOKEN }} org.jacoco:jacoco-maven-plugin:report org.eluder.coveralls:coveralls-maven-plugin:report
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
 
