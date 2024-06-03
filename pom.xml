@@ -24,15 +24,19 @@
 
     <!-- Artifact identification -->
     <groupId>nl.talsmasoftware</groupId>
-    <artifactId>umldoclet</artifactId>
+    <artifactId>umldoclet-parent</artifactId>
     <version>2.1.3-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <!-- Project information -->
-    <name>UML doclet</name>
+    <name>UML doclet (parent)</name>
     <description>Doclet for the JavaDoc tool that generates UML diagrams from the code.</description>
     <url>https://github.com/talsma-ict/umldoclet</url>
     <inceptionYear>2016</inceptionYear>
+
+    <modules>
+        <module>umldoclet</module>
+    </modules>
 
     <licenses>
         <license>
@@ -42,344 +46,22 @@
         </license>
     </licenses>
 
-    <organization>
-        <name>Talsma ICT</name>
-        <url>https://github.com/talsma-ict/</url>
-    </organization>
-
-    <developers>
-        <developer>
-            <id>sjoerd</id>
-            <name>Sjoerd Talsma</name>
-            <url>https://github.com/sjoerdtalsma</url>
-        </developer>
-    </developers>
-
-    <scm>
-        <url>https://github.com/talsma-ict/umldoclet.git</url>
-        <connection>scm:git:git://github.com/talsma-ict/umldoclet.git</connection>
-        <developerConnection>scm:git:https://github.com/talsma-ict/umldoclet.git</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.release>9</maven.compiler.release>
-        <plantuml-asl.version>1.2024.5</plantuml-asl.version>
-
-        <!-- test -->
-        <junit.version>5.10.2</junit.version>
-        <hamcrest.version>2.2</hamcrest.version>
-        <mockito.version>5.12.0</mockito.version>
-        <slf4j.version>2.0.13</slf4j.version>
-        <logback.version>1.5.6</logback.version>
-        <maven-invoker.version>3.3.0</maven-invoker.version>
-
-        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
-        <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
-        <maven-failsafe-plugin.version>3.2.5</maven-failsafe-plugin.version>
-        <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
-        <maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
-        <maven-gpg-plugin.version>3.2.4</maven-gpg-plugin.version>
-        <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
-        <maven-shade-plugin.version>3.5.3</maven-shade-plugin.version>
-        <build-helper-maven-plugin.version>3.4.0</build-helper-maven-plugin.version>
-        <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
-        <license-maven-plugin.version>4.5</license-maven-plugin.version>
-        <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
-        <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
-    </properties>
-
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-            <resource>
-                <directory>${project.basedir}</directory>
-                <includes>
-                    <include>LICENSE</include>
-                </includes>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>${maven-shade-plugin.version}</version>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.1.1</version>
                 <executions>
                     <execution>
-                        <id>shade-dependencies</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
+                        <id>default-deploy</id>
+                        <phase>none</phase>
                     </execution>
                 </executions>
                 <configuration>
-                    <artifactSet>
-                        <includes>
-                            <include>net.sourceforge.plantuml:plantuml-asl</include>
-                        </includes>
-                    </artifactSet>
-                    <filters>
-                        <filter>
-                            <artifact>*:*</artifact>
-                            <excludes>
-                                <exclude>META-INF/MANIFEST.MF</exclude>
-                            </excludes>
-                        </filter>
-                    </filters>
-                    <minimizeJar>true</minimizeJar>
-                    <!-- TODO exclude unused packages and resources to save space. -->
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>${maven-failsafe-plugin.version}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>prepare-jacoco-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.eluder.coveralls</groupId>
-                <artifactId>coveralls-maven-plugin</artifactId>
-                <version>${coveralls-maven-plugin.version}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>javax.xml.bind</groupId>
-                        <artifactId>jaxb-api</artifactId>
-                        <version>2.3.1</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>com.mycila</groupId>
-                <artifactId>license-maven-plugin</artifactId>
-                <version>${license-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>check-license-headers</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <header>${project.basedir}/.mvn/license/header.txt</header>
-                    <properties>
-                        <owner>${project.organization.name}</owner>
-                    </properties>
-                    <mapping>
-                        <java>SLASHSTAR_STYLE</java>
-                    </mapping>
-                    <includes>
-                        <include>pom.xml</include>
-                        <include>src/main/java/**</include>
-                        <include>src/test/java/**</include>
-                    </includes>
-                    <excludes>
-                        <exclude>**/*.md</exclude>
-                        <exclude>**/*.puml</exclude>
-                        <exclude>**/*.svg</exclude>
-                    </excludes>
-                    <strictCheck>true</strictCheck>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.mycila</groupId>
-                        <artifactId>license-maven-plugin-git</artifactId>
-                        <version>${license-maven-plugin.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>${maven-source-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${maven-javadoc-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
-                            <docletArtifact>
-                                <groupId>nl.talsmasoftware</groupId>
-                                <artifactId>umldoclet</artifactId>
-                                <version>${project.version}</version>
-                            </docletArtifact>
-                            <additionalOptions>
-                                <additionalOption>-createPumlFiles</additionalOption>
-                                <additionalOption>-failOnCyclicPackageDependencies true</additionalOption>
-                            </additionalOptions>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>${maven-release-plugin.version}</version>
-                <configuration>
-                    <useReleaseProfile>false</useReleaseProfile>
-                    <releaseProfiles>release</releaseProfiles>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <tagNameFormat>@{project.version}</tagNameFormat>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>${nexus-staging-maven-plugin.version}</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
-    <dependencies>
-        <dependency>
-            <groupId>net.sourceforge.plantuml</groupId>
-            <artifactId>plantuml-asl</artifactId>
-            <version>${plantuml-asl.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>findbugs-annotations</artifactId>
-            <version>3.0.1</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>1.19.8</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest</artifactId>
-            <version>${hamcrest.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>${mockito.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jul-to-slf4j</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven.shared</groupId>
-            <artifactId>maven-invoker</artifactId>
-            <version>${maven-invoker.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
-
-    <profiles>
-        <profile>
-            <id>release</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>${maven-gpg-plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                                <configuration>
-                                    <gpgArguments>
-                                        <gpgArgument>--batch</gpgArgument>
-                                        <gpgArgument>--pinentry-mode</gpgArgument>
-                                        <gpgArgument>loopback</gpgArgument>
-                                    </gpgArguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>
