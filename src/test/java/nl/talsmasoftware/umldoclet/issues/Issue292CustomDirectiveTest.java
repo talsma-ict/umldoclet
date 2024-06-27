@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022 Talsma ICT
+ * Copyright 2016-2024 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ public class Issue292CustomDirectiveTest {
                 "-d", outputDir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet", "--create-puml-files",
-                "--uml-custom-directive", "!pragma graphviz_dot jdot",
+                "--uml-custom-directive", "skinparam handwritten true",
                 "src/test/java/" + classAsPath + ".java"
         );
         classUml = TestUtil.read(new File(outputDir, classAsPath + ".puml"));
@@ -50,18 +50,18 @@ public class Issue292CustomDirectiveTest {
     }
 
     @Test
-    public void testPragmaInClassDiagram() {
-        assertThat(classUml, containsString("!pragma graphviz_dot jdot"));
+    public void testCustomDirectiveInClassDiagram() {
+        assertThat(classUml, containsString("skinparam handwritten true"));
     }
 
     @Test
-    public void testPragmaInPackageDiagram() {
-        assertThat(packageUml, containsString("!pragma graphviz_dot jdot"));
+    public void testCustomDirectiveInPackageDiagram() {
+        assertThat(packageUml, containsString("skinparam handwritten true"));
     }
 
     @Test
-    public void testPragmaInPackageDependenciesDiagram() {
-        assertThat(packageDependenciesUml, containsString("!pragma graphviz_dot jdot"));
+    public void testCustomDirectiveInPackageDependenciesDiagram() {
+        assertThat(packageDependenciesUml, containsString("skinparam handwritten true"));
     }
 
 }

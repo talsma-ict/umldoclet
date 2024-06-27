@@ -248,8 +248,9 @@
                                 <version>${project.version}</version>
                             </docletArtifact>
                             <additionalOptions>
-                                <additionalOption>-createPumlFiles</additionalOption>
-                                <additionalOption>-failOnCyclicPackageDependencies true</additionalOption>
+                                <additionalOption>--create-puml-files</additionalOption>
+                                <additionalOption>--fail-on-cyclic-package-dependencies true</additionalOption>
+                                <!--<additionalOption>&#45;&#45;uml-custom-directive "skinparam handwritten true"</additionalOption>-->
                             </additionalOptions>
                         </configuration>
                     </execution>
