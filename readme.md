@@ -43,9 +43,6 @@ To use the UML Doclet, the following is required.
   For versions of javadoc from earlier JDKs, please use the [latest `1.x` UML Doclet version][v1.x].
   If you compile your java 8 or older javadocs with a more recent JDK (Javadoc version 9 or higher),
   you need to use the 2.x version.
-- An installed version of [graphviz](http://plantuml.com/graphviz-dot),
-  at least until [pure java visualization](https://github.com/talsma-ict/umldoclet/issues/51) works.
-  Graphviz needs to be compiled with [libexpat][libexpat] support.
 - The UML Doclet, the [usage page][usage] shows how.
   An apache-licensed version of [PlantUML][plantuml] is already included in the umldoclet jar.
 
