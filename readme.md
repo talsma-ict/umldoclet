@@ -58,10 +58,10 @@ or on [github](https://github.com/talsma-ict/umldoclet/releases).
 
 ## Feedback
 
-- We welcome [new issues](https://github.com/talsma-ict/umldoclet/issues/new) :+1:.
-  Please search the [current issues](https://github.com/talsma-ict/umldoclet/issues) however,
-  otherwise you might file a duplicate.
-- Please provide an example when sending in bugs if at all possible.
+- We welcome [new issues](https://github.com/talsma-ict/umldoclet/issues/new).
+  Please search the [current issues](https://github.com/talsma-ict/umldoclet/issues)
+  to avoid filing a duplicate.
+- If at all possible, please provide an example when sending in bugs.
   This will make fixing them that much easier!
   
 ## Contributing
@@ -72,7 +72,7 @@ or on [github](https://github.com/talsma-ict/umldoclet/releases).
 
 - First of all a big thanks to [Arnaud Roques](https://github.com/arnaudroques),
   the developer of the excellent [PlantUML project](https://github.com/plantuml/plantuml) 
-  without whom this project wouldn't exist! :clap:
+  without whom this project wouldn't exist!
 - And of course thank _you_ for using UML Doclet.
   I hope it may be of benefit to your project!
 
