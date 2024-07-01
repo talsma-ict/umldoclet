@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022 Talsma ICT
+ * Copyright 2016-2024 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -154,8 +154,8 @@ public interface Configuration {
      * Custom directives to include in rendered PlantUML diagram sources.
      * <p>
      * Custom directives are rendered as-is at the top of each PlantUML diagram.
-     * For example, to use jdot for rendering,
-     * use the {@code "!pragma graphviz_dot jdot"} custom directive.
+     * For example, to render handwritten diagrams,
+     * use the {@code "skinparam handwritten true"} custom directive.
      *
      * @return Any custom PlantUML directives.
      */

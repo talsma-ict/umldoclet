@@ -37,7 +37,6 @@ import static java.util.Collections.singletonList;
 import static nl.talsmasoftware.umldoclet.configuration.ImageConfig.Format.PNG;
 import static nl.talsmasoftware.umldoclet.configuration.ImageConfig.Format.SVG;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasToString;
@@ -112,7 +111,7 @@ public class DiagramTest {
     @Test
     public void testCustomDirective() {
         // prepare
-        when(config.customPlantumlDirectives()).thenReturn(singletonList("!pragma graphviz_dot jdot"));
+        when(config.customPlantumlDirectives()).thenReturn(singletonList("skinparam handwritten true"));
         StringWriter output = new StringWriter();
         Diagram testDiagram = new TestDiagram(config, new File("target/test-classes/custom-directive.puml"));
         IndentingPrintWriter writer = IndentingPrintWriter.wrap(output, Indentation.NONE);
@@ -122,7 +121,7 @@ public class DiagramTest {
         testDiagram.writeTo(writer);
 
         // verify
-        assertThat(asList(output.toString().split("\\n")), hasItem("!pragma graphviz_dot jdot"));
+        assertThat(asList(output.toString().split("\\n")), hasItem("skinparam handwritten true"));
         verify(config).customPlantumlDirectives();
     }
 

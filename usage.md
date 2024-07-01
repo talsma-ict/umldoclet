@@ -171,10 +171,10 @@ The rest of this section lists various options that are specific to the UML docl
 #### -plantumlServerUrl &lt;url&gt;
 
 Base URL for the PlantUML server.  
-Bypass the built-in internal PlantUML version that requires graphviz to be installed,
-but use a running plantuml-server instead to generate UML diagrams.
+Bypass the built-in internal PlantUML version and
+use a remote plantuml-server instead to generate UML diagrams.
 
-You can run a plantuml-server using docker:
+You can locally run a plantuml-server using docker:
 
 ```shell
 docker run -d -p 8080:8080 plantuml/plantuml-server:latest
