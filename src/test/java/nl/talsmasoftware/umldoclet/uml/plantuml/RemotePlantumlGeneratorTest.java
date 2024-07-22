@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022 Talsma ICT
+ * Copyright 2016-2024 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ class RemotePlantumlGeneratorTest {
     static final String testUml = "@startuml\r\nBob -> Alice : hello\r\n@enduml";
 
     @Container
-    GenericContainer plantumlServer = new GenericContainer(DockerImageName.parse("plantuml/plantuml-server"))
+    static final GenericContainer PLANTUML_SERVER = new GenericContainer(DockerImageName.parse("plantuml/plantuml-server"))
             .withExposedPorts(8080);
 
     PlantumlGenerator subject;
@@ -50,7 +50,7 @@ class RemotePlantumlGeneratorTest {
     @BeforeEach
     void setUp() {
         subject = new RemotePlantumlGenerator(String.format("http://%s:%s/",
-                plantumlServer.getHost(), plantumlServer.getMappedPort(8080)));
+                PLANTUML_SERVER.getHost(), PLANTUML_SERVER.getMappedPort(8080)));
     }
 
     @Test
