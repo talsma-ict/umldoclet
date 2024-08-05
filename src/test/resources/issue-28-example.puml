@@ -2,6 +2,7 @@
 ' Example link usage within class diagrams
 ' Found at: http://plantuml.sourceforge.net/qa/?qa=90/web-links-in-generated-images-e-g-using-image-maps
 
+!pragma layout smetana
 
 class Dummy [[http://www.yahoo.com]]
 Object <|-- Foo

@@ -1,5 +1,7 @@
 @startuml
     ' Diagram containing nested name-space definition: java.util and java.util.function
+    !pragma layout smetana
+
     namespace issues {
         interface issues.MySupplier<T>
 
