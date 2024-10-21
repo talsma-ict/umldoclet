@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022 Talsma ICT
+ * Copyright 2016-2024 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,9 @@ final class LocalizedReporter implements Reporter, Logger {
 
     @Override
     public void debug(Object key, Object... args) {
-        log(Diagnostic.Kind.OTHER, key, args);
+        if (config.verbose) {
+            log(Diagnostic.Kind.NOTE, key, args);
+        }
     }
 
     @Override
@@ -80,15 +82,13 @@ final class LocalizedReporter implements Reporter, Logger {
 
     private Object[] localizeArgs(Object... args) {
         for (int i = 0; i < args.length; i++) {
-            if (args[i] instanceof Message) args[i] = ((Message) args[i]).toString(locale);
+            if (args[i] instanceof Message) args[i] = localize((Message) args[i]);
         }
         return args;
     }
 
     private boolean mustPrint(Diagnostic.Kind kind) {
-        Diagnostic.Kind threshold = config.quiet ? Diagnostic.Kind.WARNING
-                : config.verbose ? Diagnostic.Kind.OTHER
-                : Diagnostic.Kind.NOTE;
+        Diagnostic.Kind threshold = config.quiet ? Diagnostic.Kind.WARNING : Diagnostic.Kind.NOTE;
         return kind != null && kind.compareTo(threshold) <= 0;
     }
 

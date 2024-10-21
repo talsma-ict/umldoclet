@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022 Talsma ICT
+ * Copyright 2016-2024 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,8 @@ import javax.lang.model.element.Element;
 import javax.tools.Diagnostic;
 import java.util.Locale;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.stringContainsInOrder;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -77,7 +79,7 @@ public class LocalizedReporterTest {
         config.verbose = true;
         localizedReporter.debug(Message.DOCLET_COPYRIGHT, "1.2.3");
 
-        verify(mockReporter).print(eq(Diagnostic.Kind.OTHER),
+        verify(mockReporter).print(eq(Diagnostic.Kind.NOTE),
                 eq("UML Doclet (C) Copyright Talsma ICT, version: 1.2.3."));
     }
 
@@ -87,7 +89,7 @@ public class LocalizedReporterTest {
         config.verbose = true;
         localizedReporter.debug(Message.DOCLET_COPYRIGHT, "1.2.3");
 
-        verify(mockReporter).print(eq(Diagnostic.Kind.OTHER),
+        verify(mockReporter).print(eq(Diagnostic.Kind.NOTE),
                 eq("UML Doclet (C) Copyright Talsma ICT, versie: 1.2.3."));
     }
 
@@ -96,7 +98,7 @@ public class LocalizedReporterTest {
         config.verbose = true;
         localizedReporter.debug("The {1} jumps over the {0}", "lazy dog", "quick brown fox");
 
-        verify(mockReporter).print(eq(Diagnostic.Kind.OTHER),
+        verify(mockReporter).print(eq(Diagnostic.Kind.NOTE),
                 eq("The quick brown fox jumps over the lazy dog"));
     }
 
@@ -175,4 +177,9 @@ public class LocalizedReporterTest {
                 eq("Test print message + element"));
     }
 
+    @Test
+    void testLocalizeMessageParameter() {
+        String result = localizedReporter.localize(Message.INFO_GENERATING_FILE, Message.PLANTUML_COPYRIGHT);
+        assertThat(result, stringContainsInOrder("Generating", "This software uses PlantUML"));
+    }
 }
