@@ -131,6 +131,7 @@
                                 <exclude>META-INF/MANIFEST.MF</exclude>
                                 <exclude>**/plantuml/bpm/**.*</exclude>
                                 <exclude>**/plantuml/dedication/**.*</exclude>
+                                <exclude>**/plantuml/openiconic/**.*</exclude>
                                 <exclude>**/plantuml/windowsdot/**.*</exclude>
                                 <exclude>sprites/archimate/**.*</exclude>
                             </excludes>

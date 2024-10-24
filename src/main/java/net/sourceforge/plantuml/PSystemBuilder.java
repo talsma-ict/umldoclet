@@ -232,8 +232,8 @@ public class PSystemBuilder {
 		factories.add(new PSystemSkinparameterListFactory());
 		factories.add(new PSystemListFontsFactory());
 		factories.add(new PSystemListEmojiFactory());
-		factories.add(new PSystemOpenIconicFactory());
-		factories.add(new PSystemListOpenIconicFactory());
+//		factories.add(new PSystemOpenIconicFactory());
+//		factories.add(new PSystemListOpenIconicFactory());
 //		factories.add(new PSystemListInternalSpritesFactory());
 		factories.add(new PSystemSaltFactory(DiagramType.UML));
 		factories.add(new PSystemSaltFactory(DiagramType.SALT));
