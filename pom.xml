@@ -132,6 +132,7 @@
                                 <exclude>**/plantuml/bpm/**.*</exclude>
                                 <exclude>**/plantuml/dedication/**.*</exclude>
                                 <exclude>**/plantuml/directdot/**.*</exclude>
+                                <exclude>**/plantuml/mindmap/**.*</exclude>
                                 <exclude>**/plantuml/nwdiag/**.*</exclude>
                                 <exclude>**/plantuml/openiconic/**.*</exclude>
                                 <exclude>**/plantuml/salt/**.*</exclude>
