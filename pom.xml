@@ -135,6 +135,7 @@
                                 <exclude>**/plantuml/salt/**.*</exclude>
                                 <exclude>**/plantuml/windowsdot/**.*</exclude>
                                 <exclude>sprites/archimate/**.*</exclude>
+                                <exclude>stdlib/**.*</exclude>
                             </excludes>
                         </filter>
                     </filters>
