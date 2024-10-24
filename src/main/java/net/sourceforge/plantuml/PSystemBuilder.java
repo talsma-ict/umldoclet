@@ -212,8 +212,8 @@ public class PSystemBuilder {
 	private static final List<PSystemFactory> factories = new ArrayList<>();
 
 	static {
-		factories.add(new PSystemWelcomeFactory());
-		factories.add(new PSystemColorsFactory());
+//		factories.add(new PSystemWelcomeFactory());
+//		factories.add(new PSystemColorsFactory());
 		factories.add(new SequenceDiagramFactory());
 		factories.add(new ClassDiagramFactory());
 		factories.add(new ActivityDiagramFactory());
@@ -243,7 +243,7 @@ public class PSystemBuilder {
 //		factories.add(new NwDiagramFactory(DiagramType.UML));
 //		factories.add(new NwDiagramFactory(DiagramType.NW));
 //		factories.add(new MindMapDiagramFactory());
-		factories.add(new WBSDiagramFactory());
+//		factories.add(new WBSDiagramFactory());
 
 		// ::uncomment when __CORE__
 		// factories.add(new PSystemSudokuFactory());
@@ -253,17 +253,17 @@ public class PSystemBuilder {
 		factories.add(new PSystemDefinitionFactory());
 //		factories.add(new ListSpriteDiagramFactory());
 //		factories.add(new StdlibDiagramFactory());
-		factories.add(new PSystemMathFactory(DiagramType.MATH));
-		factories.add(new PSystemLatexFactory(DiagramType.LATEX));
+//		factories.add(new PSystemMathFactory(DiagramType.MATH));
+//		factories.add(new PSystemLatexFactory(DiagramType.LATEX));
 //		factories.add(new PSystemCreoleFactory());
-		factories.add(new PSystemEggFactory());
-		factories.add(new PSystemAppleTwoFactory());
-		factories.add(new PSystemRIPFactory());
-		if (SecurityUtils.getSecurityProfile() == SecurityProfile.UNSECURE)
-			factories.add(new PSystemPathFactory());
+//		factories.add(new PSystemEggFactory());
+//		factories.add(new PSystemAppleTwoFactory());
+//		factories.add(new PSystemRIPFactory());
+//		if (SecurityUtils.getSecurityProfile() == SecurityProfile.UNSECURE)
+//			factories.add(new PSystemPathFactory());
 		factories.add(new PSystemOregonFactory());
 
-		factories.add(new PSystemCharlieFactory());
+//		factories.add(new PSystemCharlieFactory());
 
 		factories.add(new GanttDiagramFactory());
 		factories.add(new ChronologyDiagramFactory());
