@@ -238,8 +238,8 @@ public class PSystemBuilder {
 //		factories.add(new PSystemSaltFactory(DiagramType.UML));
 //		factories.add(new PSystemSaltFactory(DiagramType.SALT));
 		// ::comment when __CORE__
-		factories.add(new PSystemDotFactory(DiagramType.DOT));
-		factories.add(new PSystemDotFactory(DiagramType.UML));
+//		factories.add(new PSystemDotFactory(DiagramType.DOT));
+//		factories.add(new PSystemDotFactory(DiagramType.UML));
 		factories.add(new NwDiagramFactory(DiagramType.UML));
 		factories.add(new NwDiagramFactory(DiagramType.NW));
 		factories.add(new MindMapDiagramFactory());
