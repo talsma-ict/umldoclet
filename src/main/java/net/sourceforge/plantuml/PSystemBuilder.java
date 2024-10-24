@@ -240,8 +240,8 @@ public class PSystemBuilder {
 		// ::comment when __CORE__
 //		factories.add(new PSystemDotFactory(DiagramType.DOT));
 //		factories.add(new PSystemDotFactory(DiagramType.UML));
-		factories.add(new NwDiagramFactory(DiagramType.UML));
-		factories.add(new NwDiagramFactory(DiagramType.NW));
+//		factories.add(new NwDiagramFactory(DiagramType.UML));
+//		factories.add(new NwDiagramFactory(DiagramType.NW));
 		factories.add(new MindMapDiagramFactory());
 		factories.add(new WBSDiagramFactory());
 

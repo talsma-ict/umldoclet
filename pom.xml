@@ -131,7 +131,8 @@
                                 <exclude>META-INF/MANIFEST.MF</exclude>
                                 <exclude>**/plantuml/bpm/**.*</exclude>
                                 <exclude>**/plantuml/dedication/**.*</exclude>
-                                <excluse>**/plantuml/directdot/**.*</excluse>
+                                <exclude>**/plantuml/directdot/**.*</exclude>
+                                <exclude>**/plantuml/nwdiag/**.*</exclude>
                                 <exclude>**/plantuml/openiconic/**.*</exclude>
                                 <exclude>**/plantuml/salt/**.*</exclude>
                                 <exclude>**/plantuml/windowsdot/**.*</exclude>
