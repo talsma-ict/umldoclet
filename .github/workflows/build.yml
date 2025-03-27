@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [ 'develop', 'master', 'main' ]
   push:
-    branches: [ 'develop', 'master', 'main', 'task/simplify-build' ]
+    branches: [ 'develop', 'master', 'main' ]
 
 jobs:
   build:
