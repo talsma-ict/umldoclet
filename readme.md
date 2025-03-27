@@ -1,7 +1,6 @@
 [![CI build][ci-img]][ci]
 [![Maven Version][maven-img]][maven]
 [![Javadoc][javadoc-img]][javadoc]
-[![Codebeat badge][codebeat-img]][codebeat]
 [![Coverage Status][coveralls-img]][coveralls]
 
 # UMLDoclet
@@ -86,8 +85,6 @@ or on [github](https://github.com/talsma-ict/umldoclet/releases).
   [coveralls]: <https://coveralls.io/github/talsma-ict/umldoclet>
   [codacy-img]: <https://api.codacy.com/project/badge/Grade/b191c058492e466cb7044c1d53123d9a>
   [codacy]: <https://www.codacy.com/app/talsma-ict/umldoclet?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=talsma-ict/umldoclet&amp;utm_campaign=Badge_Grade>
-  [codebeat-img]: <https://codebeat.co/badges/527487b4-62c8-40a2-8229-8341fec95c7b>
-  [codebeat]: <https://codebeat.co/projects/github-com-talsma-ict-umldoclet-develop>
   [maven-img]: <https://img.shields.io/maven-central/v/nl.talsmasoftware/umldoclet>
   [maven]: <http://mvnrepository.com/artifact/nl.talsmasoftware/umldoclet>
   [javadoc-img]: <https://www.javadoc.io/badge/nl.talsmasoftware/umldoclet.svg>
