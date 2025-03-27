@@ -1,6 +1,7 @@
 [![CI build][ci-img]][ci]
 [![Maven Version][maven-img]][maven]
 [![Javadoc][javadoc-img]][javadoc]
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=talsma-ict_umldoclet&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=talsma-ict_umldoclet)
 [![Coverage Status][coveralls-img]][coveralls]
 
 # UMLDoclet
