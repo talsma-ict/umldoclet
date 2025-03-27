@@ -1,5 +1,0 @@
-src/test/
-
-# PlantUML sources are not ours and shouldn't be inspected.
-src/plantuml-asl/
-
