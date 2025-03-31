@@ -33,7 +33,7 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
       - name: Pre-cache maven plugins and dependencies
-        run: ./mvnw --batch-mode --no-snapshot-updates dependency:resolve-plugins -Plicense-check -Pmaven-central -Psonar
+        run: ./mvnw --batch-mode --no-snapshot-updates -Dsilent dependency:resolve-plugins -Plicense-check -Pmaven-central -Psonar
       - name: Build with Maven
         run: ./mvnw --batch-mode clean verify
         env:
