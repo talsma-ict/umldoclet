@@ -1,4 +1,3 @@
-[![CI build][ci-img]][ci]
 [![Maven Version][maven-img]][maven]
 [![Javadoc][javadoc-img]][javadoc]
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=talsma-ict_umldoclet&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=talsma-ict_umldoclet)
@@ -80,8 +79,6 @@ or on [github](https://github.com/talsma-ict/umldoclet/releases).
 
 - [Apache 2.0 license](./LICENSE)
 
-  [ci-img]: https://github.com/talsma-ict/umldoclet/actions/workflows/ci-build.yml/badge.svg
-  [ci]: https://github.com/talsma-ict/umldoclet/actions/workflows/ci-build.yml
   [coveralls-img]: <https://coveralls.io/repos/github/talsma-ict/umldoclet/badge.svg>
   [coveralls]: <https://coveralls.io/github/talsma-ict/umldoclet>
   [codacy-img]: <https://api.codacy.com/project/badge/Grade/b191c058492e466cb7044c1d53123d9a>
