@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Set up Maven Central deployment
+      - name: Set up JDK and Maven Central deployment
         uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -31,8 +31,8 @@ jobs:
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
       - name: Publish to Apache Maven Central
-        run: ./mvnw --batch-mode --no-snapshot-updates deploy -DskipTests -DskipLicenseCheck
         env:
           MAVEN_CENTRAL_USERNAME: ${{ secrets.SONATYPE_USER }}
           MAVEN_CENTRAL_TOKEN: ${{ secrets.SONATYPE_PASSWORD }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: ./mvnw --batch-mode --no-snapshot-updates deploy -DskipTests -DskipLicenseCheck

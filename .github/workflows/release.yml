@@ -1,0 +1,77 @@
+name: Release
+
+on:
+  push:
+    branches: [ 'release/*' ]
+
+jobs:
+  build:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Determine version
+        id: get_version
+        shell: bash
+        env:
+          BRANCH: ${{ github.head_ref || github.ref_name }}
+        run: |
+          if [[ ${BRANCH##*/} =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9\.]+)*(\+[A-Za-z0-9\.\-]+)?$ ]]; then
+            echo "BRANCH=${BRANCH}" >> $GITHUB_ENV
+            echo "VERSION=${BRANCH##*/}" >> $GITHUB_ENV
+          else
+            echo "::error::Not a valid version: ${BRANCH##*/}"
+            exit 1
+          fi
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: |
+            8
+            21
+          mvn-toolchain-id: |
+            jdk8
+            jdk21
+          cache: maven
+          server-id: central
+          server-username: MAVEN_CENTRAL_USERNAME
+          server-password: MAVEN_CENTRAL_TOKEN
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+      - name: Set version
+        run: ./mvnw --batch-mode versions:set versions:commit -DnewVersion="${VERSION}" -DprocessAllModules=true
+      - name: Commit and tag new version
+        run: |
+          git config user.name "Talsma CI"
+          git config user.email "ci-user@talsma-ict.nl"
+          git commit -sam "Release: Set project version to ${VERSION}"
+          git tag -m "Release version ${VERSION}" "${VERSION}"
+          git push --follow-tags
+      - name: Deploy release
+        env:
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.SONATYPE_USER }}
+          MAVEN_CENTRAL_TOKEN: ${{ secrets.SONATYPE_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: ./mvnw --batch-mode clean license:format deploy
+      - name: Create Github release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.VERSION }}
+          name: Release ${{ env.VERSION }}
+          draft: true
+          files: |
+            target/*.jar
+            target/*.jar.asc
+      - name: Set next snapshot version
+        run: |
+          read base minor suffix <<<$(echo "${VERSION}" | perl -pe 's/^(.*?)([0-9]+)([^0-9]*)$/\1 \2 \3/')
+          nextSnapshot="${base}$((minor+1))${suffix}-SNAPSHOT"
+          ./mvnw --batch-mode versions:set versions:commit -DnewVersion="${nextSnapshot}" -DprocessAllModules=true
+          git commit -sam "Release: Set next project version to ${nextSnapshot}"
+          git push --follow-tags
+      - name: Create post-release merge request
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: gh pr create --head ${BRANCH} --title "Merge release ${VERSION} to main branch" --body 'Created by Github action'

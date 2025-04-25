@@ -35,9 +35,9 @@ jobs:
       - name: Pre-cache maven plugins and dependencies
         run: ./mvnw --batch-mode --no-snapshot-updates -Dsilent dependency:resolve-plugins -Plicense-check -Pmaven-central -Psonar
       - name: Build with Maven
-        run: ./mvnw --batch-mode clean verify
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./mvnw --batch-mode clean verify
       - name: Coveralls
         uses: coverallsapp/github-action@v2
         with:
