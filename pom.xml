@@ -441,29 +441,33 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <header>${project.basedir}/.mvn/license/header.txt</header>
+                            <strictCheck>true</strictCheck>
                             <properties>
                                 <owner>${project.organization.name}</owner>
                             </properties>
                             <mapping>
                                 <java>SLASHSTAR_STYLE</java>
                             </mapping>
-                            <excludes>
-                                <exclude>.codacy.yml</exclude>
-                                <exclude>.gitignore</exclude>
-                                <exclude>.github/**</exclude>
-                                <exclude>.mvn/**</exclude>
-                                <exclude>.lift/**</exclude>
-                                <exclude>mvnw*</exclude>
-                                <exclude>**/.idea/**</exclude>
-                                <exclude>LICENSE</exclude>
-                                <exclude>**/*.md</exclude>
-                                <exclude>**/*.puml</exclude>
-                                <exclude>**/*.svg</exclude>
-                                <exclude>src/main/resources/**</exclude>
-                                <exclude>src/test/resources/**</exclude>
-                            </excludes>
-                            <strictCheck>true</strictCheck>
+                            <licenseSets>
+                                <licenseSet>
+                                    <header>${project.basedir}/.mvn/license/header.txt</header>
+                                    <excludes>
+                                        <exclude>.codacy.yml</exclude>
+                                        <exclude>.gitignore</exclude>
+                                        <exclude>.github/**</exclude>
+                                        <exclude>.mvn/**</exclude>
+                                        <exclude>.lift/**</exclude>
+                                        <exclude>mvnw*</exclude>
+                                        <exclude>**/.idea/**</exclude>
+                                        <exclude>LICENSE</exclude>
+                                        <exclude>**/*.md</exclude>
+                                        <exclude>**/*.puml</exclude>
+                                        <exclude>**/*.svg</exclude>
+                                        <exclude>src/main/resources/**</exclude>
+                                        <exclude>src/test/resources/**</exclude>
+                                    </excludes>
+                                </licenseSet>
+                            </licenseSets>
                         </configuration>
                     </plugin>
                 </plugins>
