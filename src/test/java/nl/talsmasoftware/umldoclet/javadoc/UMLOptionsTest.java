@@ -16,7 +16,8 @@
 package nl.talsmasoftware.umldoclet.javadoc;
 
 import jdk.javadoc.doclet.Doclet;
-import net.sourceforge.plantuml.OptionFlags;
+import net.sourceforge.plantuml.cli.GlobalConfig;
+import net.sourceforge.plantuml.cli.GlobalConfigKey;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
@@ -53,7 +54,7 @@ public class UMLOptionsTest {
         umlTimeoutOption.process("--uml-timeout", singletonList("1800"));
 
         // verify
-        assertThat(OptionFlags.getInstance().getTimeoutMs(), is(1000L * 1800));
+        assertThat(GlobalConfig.getInstance().value(GlobalConfigKey.TIMEOUT_MS), is(1000L * 1800));
     }
 
     @Test
