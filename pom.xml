@@ -199,6 +199,7 @@
                                     <artifact>*:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/MANIFEST.MF</exclude>
+                                        <exclude>stdlib/**</exclude>
                                         <!-- Exclude more unused packages and resources to save space. -->
                                     </excludes>
                                 </filter>
