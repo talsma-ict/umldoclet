@@ -17,7 +17,8 @@ package nl.talsmasoftware.umldoclet.javadoc;
 
 import jdk.javadoc.doclet.Doclet;
 import jdk.javadoc.doclet.Doclet.Option.Kind;
-import net.sourceforge.plantuml.OptionFlags;
+import net.sourceforge.plantuml.cli.GlobalConfig;
+import net.sourceforge.plantuml.cli.GlobalConfigKey;
 import nl.talsmasoftware.umldoclet.UMLDoclet;
 
 import java.util.Arrays;
@@ -127,7 +128,7 @@ final class UMLOptions {
     private void setTimeout(List<String> timeout) {
         try {
             int timeoutSeconds = Integer.parseInt(timeout.get(0));
-            OptionFlags.getInstance().setTimeoutMs(1000L * timeoutSeconds);
+            GlobalConfig.getInstance().put(GlobalConfigKey.TIMEOUT_MS, timeoutSeconds * 1000L);
         } catch (RuntimeException rte) {
             throw new IllegalArgumentException("Unrecognized timeout value: seconds expected, received: " + timeout, rte);
         }
