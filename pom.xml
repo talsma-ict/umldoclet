@@ -202,6 +202,7 @@
                                         <exclude>stdlib/**</exclude>
                                         <exclude>sprites/archimate/**</exclude>
                                         <exclude>net/sourceforge/plantuml/fun/**</exclude>
+                                        <exclude>net/sourceforge/plantuml/vizjs/**</exclude>
                                         <exclude>net/sourceforge/plantuml/windowsdot/**</exclude>
                                         <!-- Exclude more unused packages and resources to save space. -->
                                     </excludes>
