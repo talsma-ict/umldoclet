@@ -200,6 +200,7 @@
                                     <excludes>
                                         <exclude>META-INF/MANIFEST.MF</exclude>
                                         <exclude>stdlib/**</exclude>
+                                        <exclude>sprites/archimate/**</exclude>
                                         <!-- Exclude more unused packages and resources to save space. -->
                                     </excludes>
                                 </filter>
