@@ -201,6 +201,7 @@
                                         <exclude>META-INF/MANIFEST.MF</exclude>
                                         <exclude>stdlib/**</exclude>
                                         <exclude>sprites/archimate/**</exclude>
+                                        <exclude>**/plantuml/argon2/**</exclude>
                                         <exclude>**/plantuml/fun/**</exclude>
                                         <exclude>**/plantuml/nwdiag/core/**</exclude>
                                         <exclude>**/plantuml/nwdiag/next/**</exclude>
