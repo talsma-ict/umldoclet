@@ -241,6 +241,13 @@
                                         <exclude>**/plantuml/emoji/U*.*</exclude>
                                         <exclude>**/plantuml/ftp/**</exclude>
                                         <exclude>**/plantuml/fun/**</exclude>
+                                        <exclude>**/plantuml/salt/element/**</exclude>
+                                        <exclude>**/plantuml/salt/factory/**</exclude>
+                                        <exclude>**/plantuml/salt/C*.*</exclude>
+                                        <exclude>**/plantuml/salt/D*.*</exclude>
+                                        <exclude>**/plantuml/salt/Po*.*</exclude>
+                                        <exclude>**/plantuml/salt/S*.*</exclude>
+                                        <exclude>**/plantuml/salt/T*.*</exclude>
                                         <exclude>**/plantuml/nwdiag/core/**</exclude>
                                         <exclude>**/plantuml/nwdiag/next/**</exclude>
                                         <exclude>**/plantuml/nwdiag/C*.*</exclude>
