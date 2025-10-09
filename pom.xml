@@ -204,6 +204,7 @@
                                         <exclude>**/plantuml/argon2/**</exclude>
                                         <exclude>**/plantuml/asciiart/**</exclude>
                                         <exclude>**/plantuml/bpm/**</exclude>
+                                        <exclude>**/plantuml/braille/**</exclude>
                                         <exclude>**/plantuml/fun/**</exclude>
                                         <exclude>**/plantuml/nwdiag/core/**</exclude>
                                         <exclude>**/plantuml/nwdiag/next/**</exclude>
