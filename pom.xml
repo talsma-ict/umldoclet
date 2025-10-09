@@ -239,6 +239,7 @@
                                         <exclude>**/plantuml/emoji/G*.*</exclude>
                                         <exclude>**/plantuml/emoji/S*.*</exclude>
                                         <exclude>**/plantuml/emoji/U*.*</exclude>
+                                        <exclude>**/plantuml/ftp/**</exclude>
                                         <exclude>**/plantuml/fun/**</exclude>
                                         <exclude>**/plantuml/nwdiag/core/**</exclude>
                                         <exclude>**/plantuml/nwdiag/next/**</exclude>
