@@ -169,12 +169,14 @@
                 <artifactId>maven-shade-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>shade-dependencies</id>
+                        <id>shade-full-plantuml-jar</id>
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>full</shadedClassifierName>
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
@@ -186,14 +188,12 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>experimental-smaller-jar</id>
+                        <id>shade-smaller-plantuml-jar</id>
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <shadedArtifactAttached>true</shadedArtifactAttached>
-                            <shadedClassifierName>smaller</shadedClassifierName>
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
