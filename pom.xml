@@ -201,10 +201,14 @@
                                         <exclude>META-INF/MANIFEST.MF</exclude>
                                         <exclude>stdlib/**</exclude>
                                         <exclude>sprites/archimate/**</exclude>
-                                        <exclude>net/sourceforge/plantuml/fun/**</exclude>
-                                        <exclude>net/sourceforge/plantuml/swing/**</exclude>
-                                        <exclude>net/sourceforge/plantuml/vizjs/**</exclude>
-                                        <exclude>net/sourceforge/plantuml/windowsdot/**</exclude>
+                                        <exclude>**/plantuml/fun/**</exclude>
+                                        <exclude>**/plantuml/nwdiag/core/**</exclude>
+                                        <exclude>**/plantuml/nwdiag/next/**</exclude>
+                                        <exclude>**/plantuml/nwdiag/C*.*</exclude>
+                                        <exclude>**/plantuml/nwdiag/V*.*</exclude>
+                                        <exclude>**/plantuml/swing/**</exclude>
+                                        <exclude>**/plantuml/vizjs/**</exclude>
+                                        <exclude>**/plantuml/windowsdot/**</exclude>
                                         <!-- Exclude more unused packages and resources to save space. -->
                                     </excludes>
                                 </filter>
