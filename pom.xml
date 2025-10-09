@@ -258,6 +258,19 @@
                                         <exclude>**/plantuml/openiconic/S*.*</exclude>
                                         <exclude>**/plantuml/swing/**</exclude>
                                         <exclude>**/plantuml/vizjs/**</exclude>
+                                        <exclude>**/plantuml/wbs/C*.*</exclude>
+                                        <exclude>**/plantuml/wbs/F*.*</exclude>
+                                        <exclude>**/plantuml/wbs/I*.*</exclude>
+                                        <exclude>**/plantuml/wbs/WBSL*.*</exclude>
+                                        <exclude>**/plantuml/wbs/WBST*.*</exclude>
+                                        <exclude>**/plantuml/wbs/WE*.*</exclude>
+                                        <exclude>**/plantuml/wire/C*.*</exclude>
+                                        <exclude>**/plantuml/wire/S*.*</exclude>
+                                        <exclude>**/plantuml/wire/WA*.*</exclude>
+                                        <exclude>**/plantuml/wire/WB*.*</exclude>
+                                        <exclude>**/plantuml/wire/WL*.*</exclude>
+                                        <exclude>**/plantuml/wire/WO*.*</exclude>
+                                        <exclude>**/plantuml/wire/WP*.*</exclude>
                                         <exclude>**/plantuml/windowsdot/**</exclude>
                                         <!-- Exclude more unused packages and resources to save space. -->
                                     </excludes>
