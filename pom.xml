@@ -207,6 +207,7 @@
                                         <exclude>**/plantuml/braille/**</exclude>
                                         <exclude>**/plantuml/dedication/**</exclude>
                                         <exclude>**/plantuml/dot/**</exclude>
+                                        <exclude>**/plantuml/ebnf/**</exclude>
                                         <exclude>**/plantuml/fun/**</exclude>
                                         <exclude>**/plantuml/nwdiag/core/**</exclude>
                                         <exclude>**/plantuml/nwdiag/next/**</exclude>
