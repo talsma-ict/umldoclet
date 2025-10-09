@@ -206,6 +206,10 @@
                                         <exclude>**/plantuml/nwdiag/next/**</exclude>
                                         <exclude>**/plantuml/nwdiag/C*.*</exclude>
                                         <exclude>**/plantuml/nwdiag/V*.*</exclude>
+                                        <exclude>**/plantuml/openiconic/data/**</exclude>
+                                        <exclude>**/plantuml/openiconic/M*.*</exclude>
+                                        <exclude>**/plantuml/openiconic/O*.*</exclude>
+                                        <exclude>**/plantuml/openiconic/S*.*</exclude>
                                         <exclude>**/plantuml/swing/**</exclude>
                                         <exclude>**/plantuml/vizjs/**</exclude>
                                         <exclude>**/plantuml/windowsdot/**</exclude>
