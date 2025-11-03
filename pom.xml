@@ -223,9 +223,6 @@
                                         <exclude>**/plantuml/chronology/Co*.*</exclude>
                                         <exclude>**/plantuml/chronology/S*.*</exclude>
                                         <exclude>**/plantuml/chronology/T*.*</exclude>
-                                        <exclude>**/plantuml/filesdiagram/FE*.*</exclude>
-                                        <exclude>**/plantuml/filesdiagram/FilesL*.*</exclude>
-                                        <exclude>**/plantuml/filesdiagram/FilesT*.*</exclude>
                                         <exclude>**/plantuml/dedication/5*.*</exclude>
                                         <exclude>**/plantuml/dedication/8*.*</exclude>
                                         <exclude>**/plantuml/dedication/a*.*</exclude>
@@ -253,8 +250,17 @@
                                         <exclude>**/plantuml/emoji/G*.*</exclude>
                                         <exclude>**/plantuml/emoji/S*.*</exclude>
                                         <exclude>**/plantuml/emoji/U*.*</exclude>
+                                        <exclude>**/plantuml/filesdiagram/FE*.*</exclude>
+                                        <exclude>**/plantuml/filesdiagram/FilesL*.*</exclude>
+                                        <exclude>**/plantuml/filesdiagram/FilesT*.*</exclude>
                                         <exclude>**/plantuml/ftp/**</exclude>
                                         <exclude>**/plantuml/fun/**</exclude>
+                                        <exclude>**/plantuml/gitlog/C*.*</exclude>
+                                        <exclude>**/plantuml/gitlog/GitC*.*</exclude>
+                                        <exclude>**/plantuml/gitlog/GitT*.*</exclude>
+                                        <exclude>**/plantuml/gitlog/Gn*.*</exclude>
+                                        <exclude>**/plantuml/gitlog/M*.*</exclude>
+                                        <exclude>**/plantuml/gitlog/S*.*</exclude>
                                         <exclude>**/plantuml/salt/element/**</exclude>
                                         <exclude>**/plantuml/salt/factory/**</exclude>
                                         <exclude>**/plantuml/salt/C*.*</exclude>
