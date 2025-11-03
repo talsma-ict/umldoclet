@@ -261,11 +261,16 @@
                                         <exclude>**/plantuml/gitlog/Gn*.*</exclude>
                                         <exclude>**/plantuml/gitlog/M*.*</exclude>
                                         <exclude>**/plantuml/gitlog/S*.*</exclude>
-                                        <exclude>**/jsondiagram/A*.*</exclude>
-                                        <exclude>**/jsondiagram/JsonC*.*</exclude>
-                                        <exclude>**/jsondiagram/M*.*</exclude>
-                                        <exclude>**/jsondiagram/S*.*</exclude>
-                                        <exclude>**/jsondiagram/T*.*</exclude>
+                                        <exclude>**/plantuml/jsondiagram/A*.*</exclude>
+                                        <exclude>**/plantuml/jsondiagram/JsonC*.*</exclude>
+                                        <exclude>**/plantuml/jsondiagram/M*.*</exclude>
+                                        <exclude>**/plantuml/jsondiagram/S*.*</exclude>
+                                        <exclude>**/plantuml/jsondiagram/T*.*</exclude>
+                                        <exclude>**/plantuml/math/A*.*</exclude>
+                                        <exclude>**/plantuml/math/C*.*</exclude>
+                                        <exclude>**/plantuml/math/L*.*</exclude>
+                                        <exclude>**/plantuml/math/S*.*</exclude>
+                                        <exclude>**/plantuml/math/T*.*</exclude>
                                         <exclude>**/plantuml/salt/element/**</exclude>
                                         <exclude>**/plantuml/salt/factory/**</exclude>
                                         <exclude>**/plantuml/salt/C*.*</exclude>
