@@ -294,6 +294,7 @@
                                         <exclude>**/plantuml/salt/Po*.*</exclude>
                                         <exclude>**/plantuml/salt/S*.*</exclude>
                                         <exclude>**/plantuml/salt/T*.*</exclude>
+                                        <exclude>**/plantuml/stats/**</exclude>
                                         <exclude>**/plantuml/nwdiag/core/**</exclude>
                                         <exclude>**/plantuml/nwdiag/next/**</exclude>
                                         <exclude>**/plantuml/nwdiag/C*.*</exclude>
