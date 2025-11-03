@@ -220,6 +220,9 @@
                                         <exclude>**/plantuml/bpm/P*.*</exclude>
                                         <exclude>**/plantuml/braille/**</exclude>
                                         <exclude>**/plantuml/cheneer/command/**</exclude>
+                                        <exclude>**/plantuml/chronology/Co*.*</exclude>
+                                        <exclude>**/plantuml/chronology/S*.*</exclude>
+                                        <exclude>**/plantuml/chronology/T*.*</exclude>
                                         <exclude>**/plantuml/dedication/5*.*</exclude>
                                         <exclude>**/plantuml/dedication/8*.*</exclude>
                                         <exclude>**/plantuml/dedication/a*.*</exclude>
