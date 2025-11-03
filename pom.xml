@@ -278,6 +278,11 @@
                                         <exclude>**/plantuml/mindmap/MindMap.*</exclude>
                                         <exclude>**/plantuml/mindmap/S*.*</exclude>
                                         <exclude>**/plantuml/mindmap/T*.*</exclude>
+                                        <exclude>**/plantuml/oregon/B*.*</exclude>
+                                        <exclude>**/plantuml/oregon/K*.*</exclude>
+                                        <exclude>**/plantuml/oregon/N*.*</exclude>
+                                        <exclude>**/plantuml/oregon/O*.*</exclude>
+                                        <exclude>**/plantuml/oregon/S*.*</exclude>
                                         <exclude>**/plantuml/salt/element/**</exclude>
                                         <exclude>**/plantuml/salt/factory/**</exclude>
                                         <exclude>**/plantuml/salt/C*.*</exclude>
