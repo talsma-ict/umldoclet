@@ -223,6 +223,9 @@
                                         <exclude>**/plantuml/chronology/Co*.*</exclude>
                                         <exclude>**/plantuml/chronology/S*.*</exclude>
                                         <exclude>**/plantuml/chronology/T*.*</exclude>
+                                        <exclude>**/plantuml/filesdiagram/FE*.*</exclude>
+                                        <exclude>**/plantuml/filesdiagram/FilesL*.*</exclude>
+                                        <exclude>**/plantuml/filesdiagram/FilesT*.*</exclude>
                                         <exclude>**/plantuml/dedication/5*.*</exclude>
                                         <exclude>**/plantuml/dedication/8*.*</exclude>
                                         <exclude>**/plantuml/dedication/a*.*</exclude>
