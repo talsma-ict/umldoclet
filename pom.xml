@@ -283,6 +283,10 @@
                                         <exclude>**/plantuml/oregon/N*.*</exclude>
                                         <exclude>**/plantuml/oregon/O*.*</exclude>
                                         <exclude>**/plantuml/oregon/S*.*</exclude>
+                                        <exclude>**/plantuml/regexdiagram/C*.*</exclude>
+                                        <exclude>**/plantuml/regexdiagram/G*.*</exclude>
+                                        <exclude>**/plantuml/regexdiagram/R*.*</exclude>
+                                        <exclude>**/plantuml/regexdiagram/S*.*</exclude>
                                         <exclude>**/plantuml/salt/element/**</exclude>
                                         <exclude>**/plantuml/salt/factory/**</exclude>
                                         <exclude>**/plantuml/salt/C*.*</exclude>
