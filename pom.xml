@@ -271,6 +271,13 @@
                                         <exclude>**/plantuml/math/L*.*</exclude>
                                         <exclude>**/plantuml/math/S*.*</exclude>
                                         <exclude>**/plantuml/math/T*.*</exclude>
+                                        <exclude>**/plantuml/mindmap/B*.*</exclude>
+                                        <exclude>**/plantuml/mindmap/C*.*</exclude>
+                                        <exclude>**/plantuml/mindmap/F*.*</exclude>
+                                        <exclude>**/plantuml/mindmap/I*.*</exclude>
+                                        <exclude>**/plantuml/mindmap/MindMap.*</exclude>
+                                        <exclude>**/plantuml/mindmap/S*.*</exclude>
+                                        <exclude>**/plantuml/mindmap/T*.*</exclude>
                                         <exclude>**/plantuml/salt/element/**</exclude>
                                         <exclude>**/plantuml/salt/factory/**</exclude>
                                         <exclude>**/plantuml/salt/C*.*</exclude>
