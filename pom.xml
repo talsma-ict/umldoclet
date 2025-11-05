@@ -169,11 +169,167 @@
                 <artifactId>maven-shade-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>shade-dependencies</id>
+                        <id>shade-full-plantuml-jar</id>
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
+                        <configuration>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>full</shadedClassifierName>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>shade-smaller-plantuml-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                        <exclude>stdlib/**</exclude>
+                                        <exclude>sprites/archimate/**</exclude>
+                                        <exclude>**/plantuml/activitydiagram/command/**</exclude>
+                                        <exclude>**/plantuml/activitydiagram/C*.*</exclude>
+                                        <exclude>**/plantuml/argon2/**</exclude>
+                                        <exclude>**/plantuml/asciiart/**</exclude>
+                                        <exclude>**/plantuml/board/A*.*</exclude>
+                                        <exclude>**/plantuml/board/BA*.*</exclude>
+                                        <exclude>**/plantuml/board/BN*.*</exclude>
+                                        <exclude>**/plantuml/board/C*.*</exclude>
+                                        <exclude>**/plantuml/board/P*.*</exclude>
+                                        <exclude>**/plantuml/bpm/A*.*</exclude>
+                                        <exclude>**/plantuml/bpm/BpmB*.*</exclude>
+                                        <exclude>**/plantuml/bpm/BpmE*.*</exclude>
+                                        <exclude>**/plantuml/bpm/C*.*</exclude>
+                                        <exclude>**/plantuml/bpm/G*.*</exclude>
+                                        <exclude>**/plantuml/bpm/L*.*</exclude>
+                                        <exclude>**/plantuml/bpm/N*.*</exclude>
+                                        <exclude>**/plantuml/bpm/P*.*</exclude>
+                                        <exclude>**/plantuml/braille/**</exclude>
+                                        <exclude>**/plantuml/cheneer/command/**</exclude>
+                                        <exclude>**/plantuml/chronology/Co*.*</exclude>
+                                        <exclude>**/plantuml/chronology/S*.*</exclude>
+                                        <exclude>**/plantuml/chronology/T*.*</exclude>
+                                        <exclude>**/plantuml/dedication/5*.*</exclude>
+                                        <exclude>**/plantuml/dedication/8*.*</exclude>
+                                        <exclude>**/plantuml/dedication/a*.*</exclude>
+                                        <exclude>**/plantuml/dedication/b*.*</exclude>
+                                        <exclude>**/plantuml/dedication/B*.*</exclude>
+                                        <exclude>**/plantuml/dedication/d*.*</exclude>
+                                        <exclude>**/plantuml/dedication/D*.*</exclude>
+                                        <exclude>**/plantuml/dedication/f*.*</exclude>
+                                        <exclude>**/plantuml/dedication/l*.*</exclude>
+                                        <exclude>**/plantuml/dedication/n*.*</exclude>
+                                        <exclude>**/plantuml/dedication/N*.*</exclude>
+                                        <exclude>**/plantuml/dedication/Q*.*</exclude>
+                                        <exclude>**/plantuml/dedication/R*.*</exclude>
+                                        <exclude>**/plantuml/dedication/T*.*</exclude>
+                                        <exclude>**/plantuml/ebnf/B*.*</exclude>
+                                        <exclude>**/plantuml/ebnf/C*.*</exclude>
+                                        <exclude>**/plantuml/ebnf/E*.*</exclude>
+                                        <exclude>**/plantuml/ebnf/S*.*</exclude>
+                                        <exclude>**/plantuml/ebnf/T*.*</exclude>
+                                        <exclude>**/plantuml/ebnf/U*.*</exclude>
+                                        <exclude>**/plantuml/ebnf/Z*.*</exclude>
+                                        <exclude>**/plantuml/emoji/data/**</exclude>
+                                        <exclude>**/plantuml/emoji/C*.*</exclude>
+                                        <exclude>**/plantuml/emoji/E*.*</exclude>
+                                        <exclude>**/plantuml/emoji/G*.*</exclude>
+                                        <exclude>**/plantuml/emoji/S*.*</exclude>
+                                        <exclude>**/plantuml/emoji/U*.*</exclude>
+                                        <exclude>**/plantuml/filesdiagram/FE*.*</exclude>
+                                        <exclude>**/plantuml/filesdiagram/FilesL*.*</exclude>
+                                        <exclude>**/plantuml/filesdiagram/FilesT*.*</exclude>
+                                        <exclude>**/plantuml/ftp/**</exclude>
+                                        <exclude>**/plantuml/fun/**</exclude>
+                                        <exclude>**/plantuml/gitlog/C*.*</exclude>
+                                        <exclude>**/plantuml/gitlog/GitC*.*</exclude>
+                                        <exclude>**/plantuml/gitlog/GitT*.*</exclude>
+                                        <exclude>**/plantuml/gitlog/Gn*.*</exclude>
+                                        <exclude>**/plantuml/gitlog/M*.*</exclude>
+                                        <exclude>**/plantuml/gitlog/S*.*</exclude>
+                                        <exclude>**/plantuml/jsondiagram/A*.*</exclude>
+                                        <exclude>**/plantuml/jsondiagram/JsonC*.*</exclude>
+                                        <exclude>**/plantuml/jsondiagram/M*.*</exclude>
+                                        <exclude>**/plantuml/jsondiagram/S*.*</exclude>
+                                        <exclude>**/plantuml/jsondiagram/T*.*</exclude>
+                                        <exclude>**/plantuml/klimt/drawing/eps/**</exclude>
+                                        <exclude>**/plantuml/klimt/drawing/tikz/**</exclude>
+                                        <exclude>**/plantuml/klimt/drawing/visio/**</exclude>
+                                        <exclude>**/plantuml/math/A*.*</exclude>
+                                        <exclude>**/plantuml/math/C*.*</exclude>
+                                        <exclude>**/plantuml/math/L*.*</exclude>
+                                        <exclude>**/plantuml/math/S*.*</exclude>
+                                        <exclude>**/plantuml/math/T*.*</exclude>
+                                        <exclude>**/plantuml/mindmap/B*.*</exclude>
+                                        <exclude>**/plantuml/mindmap/C*.*</exclude>
+                                        <exclude>**/plantuml/mindmap/F*.*</exclude>
+                                        <exclude>**/plantuml/mindmap/I*.*</exclude>
+                                        <exclude>**/plantuml/mindmap/MindMap.*</exclude>
+                                        <exclude>**/plantuml/mindmap/S*.*</exclude>
+                                        <exclude>**/plantuml/mindmap/T*.*</exclude>
+                                        <exclude>**/plantuml/nwdiag/core/**</exclude>
+                                        <exclude>**/plantuml/nwdiag/next/**</exclude>
+                                        <exclude>**/plantuml/nwdiag/C*.*</exclude>
+                                        <exclude>**/plantuml/nwdiag/V*.*</exclude>
+                                        <exclude>**/plantuml/openiconic/data/**</exclude>
+                                        <exclude>**/plantuml/openiconic/M*.*</exclude>
+                                        <exclude>**/plantuml/openiconic/O*.*</exclude>
+                                        <exclude>**/plantuml/openiconic/S*.*</exclude>
+                                        <exclude>**/plantuml/oregon/B*.*</exclude>
+                                        <exclude>**/plantuml/oregon/K*.*</exclude>
+                                        <exclude>**/plantuml/oregon/N*.*</exclude>
+                                        <exclude>**/plantuml/oregon/O*.*</exclude>
+                                        <exclude>**/plantuml/oregon/S*.*</exclude>
+                                        <exclude>**/plantuml/regexdiagram/C*.*</exclude>
+                                        <exclude>**/plantuml/regexdiagram/G*.*</exclude>
+                                        <exclude>**/plantuml/regexdiagram/R*.*</exclude>
+                                        <exclude>**/plantuml/regexdiagram/S*.*</exclude>
+                                        <exclude>**/plantuml/salt/element/**</exclude>
+                                        <exclude>**/plantuml/salt/factory/**</exclude>
+                                        <exclude>**/plantuml/salt/C*.*</exclude>
+                                        <exclude>**/plantuml/salt/D*.*</exclude>
+                                        <exclude>**/plantuml/salt/Po*.*</exclude>
+                                        <exclude>**/plantuml/salt/S*.*</exclude>
+                                        <exclude>**/plantuml/salt/T*.*</exclude>
+                                        <exclude>**/plantuml/stats/**</exclude>
+                                        <exclude>**/plantuml/swing/**</exclude>
+                                        <exclude>**/plantuml/tikz/**</exclude>
+                                        <exclude>**/plantuml/vizjs/**</exclude>
+                                        <exclude>**/plantuml/wbs/C*.*</exclude>
+                                        <exclude>**/plantuml/wbs/F*.*</exclude>
+                                        <exclude>**/plantuml/wbs/I*.*</exclude>
+                                        <exclude>**/plantuml/wbs/WBSL*.*</exclude>
+                                        <exclude>**/plantuml/wbs/WBST*.*</exclude>
+                                        <exclude>**/plantuml/wbs/WE*.*</exclude>
+                                        <exclude>**/plantuml/wire/C*.*</exclude>
+                                        <exclude>**/plantuml/wire/S*.*</exclude>
+                                        <exclude>**/plantuml/wire/WA*.*</exclude>
+                                        <exclude>**/plantuml/wire/WB*.*</exclude>
+                                        <exclude>**/plantuml/wire/WL*.*</exclude>
+                                        <exclude>**/plantuml/wire/WO*.*</exclude>
+                                        <exclude>**/plantuml/wire/WP*.*</exclude>
+                                        <exclude>**/plantuml/windowsdot/**</exclude>
+                                        <exclude>**/plantuml/xmi/**</exclude>
+                                        <exclude>**/plantuml/zopfli/**</exclude>
+                                        <!-- Excludes more unused packages and resources to save space. -->
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
                     </execution>
                 </executions>
                 <configuration>
@@ -182,16 +338,7 @@
                             <include>net.sourceforge.plantuml:plantuml-asl</include>
                         </includes>
                     </artifactSet>
-                    <filters>
-                        <filter>
-                            <artifact>*:*</artifact>
-                            <excludes>
-                                <exclude>META-INF/MANIFEST.MF</exclude>
-                            </excludes>
-                        </filter>
-                    </filters>
                     <minimizeJar>true</minimizeJar>
-                    <!-- TODO exclude unused packages and resources to save space. -->
                 </configuration>
             </plugin>
         </plugins>
