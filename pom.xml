@@ -266,6 +266,9 @@
                                         <exclude>**/plantuml/jsondiagram/M*.*</exclude>
                                         <exclude>**/plantuml/jsondiagram/S*.*</exclude>
                                         <exclude>**/plantuml/jsondiagram/T*.*</exclude>
+                                        <exclude>**/plantuml/klimt/drawing/eps/**</exclude>
+                                        <exclude>**/plantuml/klimt/drawing/tikz/**</exclude>
+                                        <exclude>**/plantuml/klimt/drawing/visio/**</exclude>
                                         <exclude>**/plantuml/math/A*.*</exclude>
                                         <exclude>**/plantuml/math/C*.*</exclude>
                                         <exclude>**/plantuml/math/L*.*</exclude>
