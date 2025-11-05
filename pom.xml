@@ -325,7 +325,7 @@
                                         <exclude>**/plantuml/windowsdot/**</exclude>
                                         <exclude>**/plantuml/xmi/**</exclude>
                                         <exclude>**/plantuml/zopfli/**</exclude>
-                                        <!-- Exclude more unused packages and resources to save space. -->
+                                        <!-- Excludes more unused packages and resources to save space. -->
                                     </excludes>
                                 </filter>
                             </filters>
