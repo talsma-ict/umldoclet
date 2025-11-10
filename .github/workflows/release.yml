@@ -56,7 +56,7 @@ jobs:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: ./mvnw --batch-mode clean license:format deploy
       - name: Create Github release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@6da8fa9354ddfdc4aeace5fc48d7f679b5214090 # v2.4.1
         with:
           tag_name: ${{ env.VERSION }}
           name: Release ${{ env.VERSION }}
