@@ -46,5 +46,15 @@ public class ClassWithDeprecatedItems {
         return deprecatedFieldByJavadoc;
     }
 
+    /**
+     * Deprecated static method.
+     *
+     * @return Nothing, always throws an exception.
+     * @deprecated Static method deprecation.
+     */
+    @Deprecated
+    public static Object deprecatedStaticMethod() {
+        throw new UnsupportedOperationException("Not implemented.");
+    }
 
 }

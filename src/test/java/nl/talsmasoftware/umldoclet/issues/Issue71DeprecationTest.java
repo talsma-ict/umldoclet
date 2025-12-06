@@ -41,6 +41,9 @@ public class Issue71DeprecationTest {
     @Deprecated
     public String deprecatedByAnnotation;
 
+    @Deprecated
+    public static String deprecatedStaticField;
+
     /**
      * @deprecated Testing deprecation by JavaDoc tag with a comment.
      */
@@ -55,6 +58,14 @@ public class Issue71DeprecationTest {
      * @deprecated Testing deprecation by JavaDoc tag with a comment.
      */
     public void getDeprecatedByJavadocTag() {
+        // Empty method to test UML generation.
+    }
+
+    /**
+     * @deprecated Testing deprecation of static method.
+     */
+    @Deprecated
+    public static void deprecatedStaticMethod() {
         // Empty method to test UML generation.
     }
 
