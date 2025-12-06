@@ -74,6 +74,7 @@
         <mockito.version>5.20.0</mockito.version>
         <slf4j.version>2.0.17</slf4j.version>
         <logback.version>1.5.21</logback.version>
+        <testcontainers.version>2.0.2</testcontainers.version>
         <maven-invoker.version>3.3.0</maven-invoker.version>
     </properties>
 
@@ -432,8 +433,8 @@
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>1.21.3</version>
+            <artifactId>testcontainers-junit-jupiter</artifactId>
+            <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
