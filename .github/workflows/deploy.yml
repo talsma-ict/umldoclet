@@ -20,10 +20,10 @@ jobs:
           distribution: temurin
           java-version: |
             8
-            21
+            25
           mvn-toolchain-id: |
             jdk8
-            jdk21
+            jdk25
           cache: maven
           server-id: central
           server-username: MAVEN_CENTRAL_USERNAME

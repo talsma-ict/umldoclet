@@ -21,10 +21,10 @@ jobs:
           distribution: temurin
           java-version: |
             8
-            21
+            25
           mvn-toolchain-id: |
             jdk8
-            jdk21
+            jdk25
           cache: maven
       - name: Cache Sonar packages
         uses: actions/cache@v5
