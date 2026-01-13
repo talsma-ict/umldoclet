@@ -25,15 +25,21 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
-/**
- * @author Sjoerd Talsma
- */
+/// Package diagram.
+///
+/// UML helper class to render a [Diagram] for a java package.
+///
+/// @author Sjoerd Talsma
 public class PackageDiagram extends Diagram {
+    /// Constant for the `set separator` UML directive.
     private static final String SEPARATOR_DIRECTIVE = "set separator ";
+    ///  Separator to define with the `set deparator` UML directive.
     public static final String SEPARATOR = "::";
 
-    final String moduleName;
-    final String packageName;
+    ///  The module name, if applicable.
+    private final String moduleName;
+    ///  The package name (required).
+    private final String packageName;
     private File pumlFile = null;
 
     public PackageDiagram(Configuration config, String packageName, String moduleName) {
