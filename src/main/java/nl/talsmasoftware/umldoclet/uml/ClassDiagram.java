@@ -25,11 +25,16 @@ public class ClassDiagram extends Diagram {
 
     private File pumlFile = null;
 
+    /// Creates a new UML diagram for a single class.
+    ///
+    /// @param config The configuration to use.
+    /// @param type   The type to generate the diagram for.
     public ClassDiagram(Configuration config, Type type) {
         super(config);
         addChild(type);
     }
 
+    /// @return The type for which this diagram is generated.
     public Type getType() {
         return getChildren().stream()
                 .filter(Type.class::isInstance).map(Type.class::cast)

@@ -33,6 +33,11 @@ public abstract class TypeMember extends UMLNode {
     public boolean isStatic;
     public boolean isDeprecated;
 
+    /// Creates a new type member.
+    ///
+    /// @param containingType The type that contains this member.
+    /// @param name           The name of the member.
+    /// @param type           The type of the member.
     protected TypeMember(Type containingType, String name, TypeName type) {
         super(containingType);
         this.name = requireNonNull(name, "Member name is <null>.").trim();
@@ -40,14 +45,23 @@ public abstract class TypeMember extends UMLNode {
         this.type = type;
     }
 
+    /// @return The visibility of this member.
     public Visibility getVisibility() {
         return visibility == null ? Visibility.PUBLIC : visibility;
     }
 
+    /// Sets the visibility of this member.
+    ///
+    /// @param visibility The visibility to set.
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
     }
 
+    /// Writes the type of this member to the output.
+    ///
+    /// @param output The output to write to.
+    /// @param <IPW>  The type of the output object.
+    /// @return The same output instance for method chaining.
     protected <IPW extends IndentingPrintWriter> IPW writeTypeTo(IPW output) {
         if (type != null) {
             output.append(": ").append(type.toString());
@@ -55,12 +69,21 @@ public abstract class TypeMember extends UMLNode {
         return output;
     }
 
+    /// Replaces a parameterized type with another type.
+    ///
+    /// @param from The type to replace.
+    /// @param to   The new type.
     void replaceParameterizedType(TypeName from, TypeName to) {
         if (from != null && from.equals(this.type)) {
             this.type = to;
         }
     }
 
+    /// Writes the parameters of this member to the output.
+    ///
+    /// @param output The output to write to.
+    /// @param <IPW>  The type of the output object.
+    /// @return The same output instance for method chaining.
     protected <IPW extends IndentingPrintWriter> IPW writeParametersTo(IPW output) {
         return output;
     }

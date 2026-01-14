@@ -20,14 +20,35 @@ package nl.talsmasoftware.umldoclet.logging;
 /// @author Sjoerd Talsma
 public interface Logger {
 
+    /// Localizes a message using the logger's locale.
+    ///
+    /// @param key  The message key to localize.
+    /// @param args The arguments to format the message with.
+    /// @return The localized and formatted message.
     String localize(Message key, Object... args);
 
+    /// Logs a debug message.
+    ///
+    /// @param message The message to log.
+    /// @param args    The arguments to format the message with.
     void debug(Object message, Object... args);
 
+    /// Logs an informational message.
+    ///
+    /// @param key  The message key to log.
+    /// @param args The arguments to format the message with.
     void info(Message key, Object... args);
 
+    /// Logs a warning message.
+    ///
+    /// @param key  The message key to log.
+    /// @param args The arguments to format the message with.
     void warn(Message key, Object... args);
 
+    /// Logs an error message.
+    ///
+    /// @param key  The message key to log.
+    /// @param args The arguments to format the message with.
     void error(Message key, Object... args);
 
 }

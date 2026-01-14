@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,12 @@ import java.io.OutputStream;
 
 import static nl.talsmasoftware.umldoclet.uml.plantuml.RemotePlantumlGenerator.HTTP_URLS;
 
+/// Generator that can convert PlantUML source code into a diagram in various formats.
 public interface PlantumlGenerator {
+    /// Factory method to get the appropriate [PlantumlGenerator] based on the configuration.
+    ///
+    /// @param configuration The configuration to use.
+    /// @return The appropriate [PlantumlGenerator].
     static PlantumlGenerator getPlantumlGenerator(Configuration configuration) {
         return configuration.plantumlServerUrl()
                 .filter(url -> HTTP_URLS.matcher(url).find())
@@ -31,6 +36,12 @@ public interface PlantumlGenerator {
                 .orElseGet(BuiltinPlantumlGenerator::new);
     }
 
+    /// Generates a diagram from the given PlantUML source code.
+    ///
+    /// @param plantumlSource The PlantUML source code to generate a diagram from.
+    /// @param format         The format of the diagram to generate.
+    /// @param out            The output stream to write the diagram to.
+    /// @throws IOException If an I/O error occurs.
     void generatePlantumlDiagramFromSource(String plantumlSource, FileFormat format, OutputStream out) throws IOException;
 
 }

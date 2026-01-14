@@ -24,13 +24,30 @@ import java.util.Optional;
 import static java.util.Locale.ENGLISH;
 import static java.util.Objects.requireNonNull;
 
+/// Model object for a Type in an UML diagram.
+///
+/// A type represents a class, interface, enum, or annotation.
+///
+/// @author Sjoerd Talsma
 public class Type extends UMLNode {
-        /// Classification of a UML Type.
+    /// Classification of a UML Type.
     ///
     /// @author Sjoerd Talsma
     public enum Classification {
-        ENUM, INTERFACE, ANNOTATION, ABSTRACT_CLASS, CLASS;
+        /// An enumeration type.
+        ENUM,
+        /// An interface type.
+        INTERFACE,
+        /// An annotation type.
+        ANNOTATION,
+        /// An abstract class.
+        ABSTRACT_CLASS,
+        /// A regular class.
+        CLASS;
 
+        /// Returns the UML representation of this classification.
+        ///
+        /// @return The UML representation.
         public String toUml() {
             return name().toLowerCase(ENGLISH).replace('_', ' ');
         }
@@ -43,6 +60,11 @@ public class Type extends UMLNode {
     private boolean includePackagename;
     private Link link;
 
+    /// Creates a new type.
+    ///
+    /// @param namespace      The package namespace this type belongs to.
+    /// @param classification The classification of this type.
+    /// @param name           The name of this type.
     public Type(Namespace namespace, Classification classification, TypeName name) {
         this(namespace, classification, name, false, false, null);
     }
@@ -58,10 +80,14 @@ public class Type extends UMLNode {
         if (children != null) children.forEach(this::addChild);
     }
 
+    /// @return The name of this type.
     public TypeName getName() {
         return name;
     }
 
+    /// Updates the generic type variables of this type.
+    ///
+    /// @param name The new name including potentially updated generic type variables.
     public void updateGenericTypeVariables(TypeName name) {
         if (name != null && name.qualified.equals(this.name.qualified)) {
             final TypeName[] generics = this.name.getGenerics();
@@ -83,23 +109,32 @@ public class Type extends UMLNode {
         return link;
     }
 
+    /// Marks this type as deprecated.
+    ///
+    /// @return This type instance.
     public Type deprecated() {
         this.isDeprecated = true;
         return this;
     }
 
+    /// Sets whether the package name should be included in the type name.
+    ///
+    /// @param include `true` if the package name should be included.
     public void setIncludePackagename(boolean include) {
         this.includePackagename = include;
     }
 
+    /// @return The module name of this type, if available.
     public Optional<String> getModulename() {
         return packageNamespace.getModuleName();
     }
 
+    /// @return The package name of this type.
     public String getPackagename() {
         return packageNamespace.name;
     }
 
+    /// @return The classification of this type.
     public Classification getClassfication() {
         return classfication;
     }

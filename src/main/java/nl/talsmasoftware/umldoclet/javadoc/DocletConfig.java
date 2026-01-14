@@ -47,6 +47,10 @@ import static nl.talsmasoftware.umldoclet.configuration.Visibility.PACKAGE_PRIVA
 import static nl.talsmasoftware.umldoclet.configuration.Visibility.PROTECTED;
 import static nl.talsmasoftware.umldoclet.configuration.Visibility.PUBLIC;
 
+/// Configuration for the UML doclet.
+///
+/// This class implements the [Configuration] interface and provides access to all settings
+/// used by the doclet, which are populated from the command-line options.
 public class DocletConfig implements Configuration {
 
     private final UMLOptions options;
@@ -112,15 +116,24 @@ public class DocletConfig implements Configuration {
 
     private Indentation indentation = Indentation.DEFAULT;
 
+    /// Creates a new doclet configuration.
     public DocletConfig() {
         this.options = new UMLOptions(this);
         this.reporter = new LocalizedReporter(this, null, null);
     }
 
+    /// Initializes the doclet configuration with the given locale and reporter.
+    ///
+    /// @param locale   The locale to use for localization.
+    /// @param reporter The reporter to use for logging.
     public void init(Locale locale, Reporter reporter) {
         this.reporter = new LocalizedReporter(this, reporter, locale);
     }
 
+    /// Merges the UML-specific options with the standard options.
+    ///
+    /// @param standardOptions The standard options from the standard doclet.
+    /// @return The merged set of options.
     public Set<Doclet.Option> mergeOptionsWith(Set<? extends Doclet.Option> standardOptions) {
         return options.mergeWith(standardOptions);
     }

@@ -78,14 +78,21 @@ public class IndentingWriter extends Writer {
                 : new IndentingWriter(delegate, newIndentation, lastWritten, addWhitespace.get());
     }
 
+    /// @return The indentation used by this writer.
     protected Indentation getIndentation() {
         return indentation;
     }
 
+    /// Returns a new indenting writer with the indentation level increased by one.
+    ///
+    /// @return A new indenting writer with increased indentation.
     public IndentingWriter indent() {
         return withIndentation(getIndentation().increase());
     }
 
+    /// Returns a new indenting writer with the indentation level decreased by one.
+    ///
+    /// @return A new indenting writer with decreased indentation.
     public IndentingWriter unindent() {
         return withIndentation(getIndentation().decrease());
     }

@@ -112,15 +112,15 @@ public final class Indentation implements CharSequence, Serializable {
         return resolve(width, ch, level);
     }
 
-        /// @return hashCode of this indentation object.
+        /// @return The hash code of this indentation object.
     public int hashCode() {
         return Objects.hash(width, ch, level);
     }
 
-        /// Whether the other object represents the exact same indentation object.
+    /// Compares this indentation with another object for equality.
     ///
-    /// @param other The other indentation object to compare with.
-    /// @return `true` if the other object is the same indentation object.
+    /// @param other The other object to compare with.
+    /// @return `true` if the other object is an [Indentation] with the same width, character, and level.
     public boolean equals(Object other) {
         return this == other || (other instanceof Indentation
                 && width == ((Indentation) other).width

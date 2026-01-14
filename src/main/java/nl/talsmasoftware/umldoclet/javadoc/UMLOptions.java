@@ -48,11 +48,15 @@ import static java.util.stream.Collectors.toList;
 /// face at runtime when the standard configuration implementation changes.
 ///
 /// @author Sjoerd Talsma
+/// Supported options for the UML doclet.
 final class UMLOptions {
     private final DocletConfig config;
     private final Set<Doclet.Option> standardOptions;
     private final Set<Doclet.Option> options;
 
+    /// Creates new UML options.
+    ///
+    /// @param config The doclet configuration to use.
     UMLOptions(DocletConfig config) {
         this(config, null);
     }
@@ -100,6 +104,10 @@ final class UMLOptions {
         this.options.add(new Option("--uml-timeout -umlTimeout", 1, Kind.STANDARD, this::setTimeout));
     }
 
+    /// Merges the UML options with the given standard options.
+    ///
+    /// @param standardOptions The standard options to merge with.
+    /// @return The merged set of options.
     Set<Doclet.Option> mergeWith(final Set<? extends Doclet.Option> standardOptions) {
         if (standardOptions == null || standardOptions.isEmpty()) return this.options;
         Set<Doclet.Option> copy = new UMLOptions(config, standardOptions).options;

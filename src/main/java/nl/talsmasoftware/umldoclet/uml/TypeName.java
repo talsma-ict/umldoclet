@@ -39,6 +39,12 @@ public class TypeName {
     public final String qualified;
     private final TypeName[] generics;
 
+    /// Creates a new type name.
+    ///
+    /// @param packagename   The name of the package.
+    /// @param simpleName    The simple name of the type.
+    /// @param qualifiedName The qualified name of the type.
+    /// @param generics      The generic type parameters.
     public TypeName(String packagename, String simpleName, String qualifiedName, TypeName... generics) {
         this.packagename = packagename;
         this.simple = simpleName;
@@ -46,6 +52,7 @@ public class TypeName {
         this.generics = generics.clone();
     }
 
+    /// @return The generic type parameters.
     public TypeName[] getGenerics() {
         return generics.clone();
     }
@@ -54,6 +61,10 @@ public class TypeName {
         return display != null && display.name().startsWith("QUALIFIED");
     }
 
+    /// Returns the qualified name with a custom separator.
+    ///
+    /// @param separator The separator to use.
+    /// @return The qualified name with the custom separator.
     public String getQualified(String separator) {
         int plen = packagename == null ? 0 : packagename.length();
         if (qualified.length() > plen && plen > 0 && separator != null && !separator.isEmpty()) {
@@ -62,6 +73,11 @@ public class TypeName {
         return qualified;
     }
 
+    /// Returns the UML representation of this type name.
+    ///
+    /// @param display   The display mode.
+    /// @param namespace The namespace to use for relative names.
+    /// @return The UML representation.
     protected String toUml(TypeDisplay display, Namespace namespace) {
         StringBuilder output = new StringBuilder();
         if (display == null) display = TypeDisplay.SIMPLE;
@@ -123,11 +139,16 @@ public class TypeName {
         return toUml(TypeDisplay.SIMPLE, null);
     }
 
+    /// Representation of an array type.
     public static class Array extends TypeName {
         private Array(TypeName componentType) {
             super(componentType.packagename, componentType.simple, componentType.qualified, componentType.generics);
         }
 
+        /// Creates a new array type for the given component type.
+        ///
+        /// @param componentType The component type of the array.
+        /// @return The array type.
         public static Array of(TypeName componentType) {
             return new Array(requireNonNull(componentType, "Component type of array is <null>."));
         }
@@ -138,6 +159,7 @@ public class TypeName {
         }
     }
 
+    /// Representation of a type variable (generic parameter).
     public static class Variable extends TypeName {
         private final String variable;
         private final boolean isExtends;
@@ -148,10 +170,20 @@ public class TypeName {
             this.isExtends = isExtends;
         }
 
+        /// Creates a new type variable with an `extends` bound.
+        ///
+        /// @param variable The name of the variable.
+        /// @param bound    The upper bound.
+        /// @return The type variable.
         public static Variable extendsBound(String variable, TypeName bound) {
             return new Variable(variable, requireNonNull(bound, "Upper bound is <null>."), true);
         }
 
+        /// Creates a new type variable with a `super` bound.
+        ///
+        /// @param variable The name of the variable.
+        /// @param bound    The lower bound.
+        /// @return The type variable.
         public static Variable superBound(String variable, TypeName bound) {
             return new Variable(variable, requireNonNull(bound, "Lower bound is <null>."), false);
         }

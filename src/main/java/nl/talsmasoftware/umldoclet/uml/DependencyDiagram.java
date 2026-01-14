@@ -33,6 +33,11 @@ public class DependencyDiagram extends Diagram {
     private String pumlFileName;
     private File pumlFile = null;
 
+    /// Creates a new dependency diagram.
+    ///
+    /// @param config       The configuration to use.
+    /// @param moduleName   The name of the module, if applicable.
+    /// @param pumlFileName The name of the PlantUML file to generate.
     public DependencyDiagram(Configuration config, String moduleName, String pumlFileName) {
         super(config);
         this.moduleName = moduleName;
@@ -46,6 +51,10 @@ public class DependencyDiagram extends Diagram {
         return exclusionFiltered.isEmpty() ? children : exclusionFiltered;
     }
 
+    /// Adds a package dependency to the diagram.
+    ///
+    /// @param fromPackage The name of the package that depends on another package.
+    /// @param toPackage   The name of the package that is being depended upon.
     public void addPackageDependency(String fromPackage, String toPackage) {
         if (fromPackage != null && toPackage != null) {
             this.addChild(new Reference(

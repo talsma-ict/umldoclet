@@ -49,14 +49,23 @@ public abstract class UMLNode {
         this.parent = parent;
     }
 
+    /// @return The parent node of this UML node.
     public UMLNode getParent() {
         return parent;
     }
 
+    /// Sets the parent node of this UML node.
+    ///
+    /// @param parent The parent node to set.
     public void setParent(UMLNode parent) {
         this.parent = parent;
     }
 
+    /// Finds a parent node of a particular type.
+    ///
+    /// @param nodeType The type of parent node to find.
+    /// @param <U>      The type of parent node to find.
+    /// @return The parent node of the specified type, if found.
     protected <U extends UMLNode> Optional<U> findParent(Class<U> nodeType) {
         final Set<UMLNode> traversed = newSetFromMap(new IdentityHashMap<>());
         for (UMLNode parent = getParent();
@@ -67,6 +76,7 @@ public abstract class UMLNode {
         return Optional.empty();
     }
 
+    /// @return The children of this UML node (unmodifiable).
     public List<UMLNode> getChildren() {
         return unmodifiableList(children);
     }

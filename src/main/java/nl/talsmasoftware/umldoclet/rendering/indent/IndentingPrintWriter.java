@@ -67,14 +67,23 @@ public class IndentingPrintWriter extends PrintWriter {
                 : new IndentingPrintWriter(out, indentation);
     }
 
+    /// Returns a new indenting print writer with the indentation level increased by one.
+    ///
+    /// @return A new indenting print writer with increased indentation.
     public IndentingPrintWriter indent() {
         return withIndentation(getIndentation().increase());
     }
 
+    /// Returns a new indenting print writer with the indentation level decreased by one.
+    ///
+    /// @return A new indenting print writer with decreased indentation.
     public IndentingPrintWriter unindent() {
         return withIndentation(getIndentation().decrease());
     }
 
+    /// Adds a single whitespace character to the output, but only if the previous character was not a whitespace character.
+    ///
+    /// @return Reference to this print writer for method chaining.
     public IndentingPrintWriter whitespace() {
         try {
             if (out instanceof IndentingWriter) ((IndentingWriter) out).whitespace();
@@ -85,6 +94,9 @@ public class IndentingPrintWriter extends PrintWriter {
         }
     }
 
+    /// Adds a newline character to the output.
+    ///
+    /// @return Reference to this print writer for method chaining.
     public IndentingPrintWriter newline() {
         super.println();
         return this;

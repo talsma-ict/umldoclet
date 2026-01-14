@@ -15,8 +15,7 @@
  */
 /// Configuration guiding the details the way UML is generated.
 ///
-///
-/// The {@linkplain nl.talsmasoftware.umldoclet.configuration.Configuration} is specified as an interface,
+/// The [Configuration] is specified as an interface,
 /// so can be implemented in different ways; in our situation this will be populated by various `Doclet.Options`,
 /// defined in the `nl.talsmasoftware.umldoclet.javadoc` package.
 package nl.talsmasoftware.umldoclet.configuration;

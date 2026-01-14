@@ -42,6 +42,11 @@ public class PackageDiagram extends Diagram {
     private final String packageName;
     private File pumlFile = null;
 
+    /// Creates a new UML diagram for a package.
+    ///
+    /// @param config      The configuration to use.
+    /// @param packageName The name of the package.
+    /// @param moduleName  The name of the module, if applicable.
     public PackageDiagram(Configuration config, String packageName, String moduleName) {
         super(config);
         this.packageName = requireNonNull(packageName, "Package name is <null>.");

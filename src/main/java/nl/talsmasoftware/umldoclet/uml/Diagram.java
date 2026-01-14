@@ -43,7 +43,11 @@ import static nl.talsmasoftware.umldoclet.util.FileUtils.ensureParentDir;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.withoutExtension;
 
-/// Abstract UML Diagram class.
+/// Base class for all diagrams.
+///
+/// A diagram is a [UMLNode] that can be rendered to a PlantUML source file and then to a diagram image.
+///
+/// @author Sjoerd Talsma
 public abstract class Diagram extends UMLNode {
 
     private final Configuration config;
@@ -51,6 +55,9 @@ public abstract class Diagram extends UMLNode {
     private final FileFormat[] formats;
     private File diagramBaseFile;
 
+    /// Creates a new diagram.
+    ///
+    /// @param config The configuration to use.
     protected Diagram(Configuration config) {
         super(null);
         this.config = requireNonNull(config, "Configuration is <null>");
@@ -72,6 +79,12 @@ public abstract class Diagram extends UMLNode {
         return output;
     }
 
+    /// Writes custom directives to the diagram.
+    ///
+    /// @param customDirectives The custom directives to write.
+    /// @param output           The output to write to.
+    /// @param <IPW>            The type of the output object.
+    /// @return The same output instance for method chaining.
     protected <IPW extends IndentingPrintWriter> IPW writeCustomDirectives(List<String> customDirectives, IPW output) {
         customDirectives.forEach(output::println);
         if (!customDirectives.isEmpty()) {
@@ -80,6 +93,11 @@ public abstract class Diagram extends UMLNode {
         return output;
     }
 
+    /// Writes the footer to the diagram.
+    ///
+    /// @param output The output to write to.
+    /// @param <IPW>  The type of the output object.
+    /// @return The same output instance for method chaining.
     private <IPW extends IndentingPrintWriter> IPW writeFooterTo(IPW output) {
         String footerText = config.logger().localize(Message.DOCLET_UML_FOOTER, Message.DOCLET_VERSION);
         String footerLink = "https://github.com/talsma-ict/umldoclet";
@@ -95,6 +113,8 @@ public abstract class Diagram extends UMLNode {
         return output;
     }
 
+    /// @return The configuration used by this diagram.
+    @Override
     public Configuration getConfiguration() {
         return config;
     }
@@ -132,6 +152,7 @@ public abstract class Diagram extends UMLNode {
         return new File(base.getParent(), base.getName() + format.getFileSuffix());
     }
 
+    /// Renders this diagram to the configured output formats.
     public void render() {
         try {
             // 1. Render UML sources
@@ -151,6 +172,10 @@ public abstract class Diagram extends UMLNode {
         }
     }
 
+    /// Renders the PlantUML source for this diagram.
+    ///
+    /// @return The PlantUML source code.
+    /// @throws IOException If an I/O error occurs.
     private String renderPlantumlSource() throws IOException {
         if (config.renderPumlFile()) {
             return writePlantumlSourceToFile();

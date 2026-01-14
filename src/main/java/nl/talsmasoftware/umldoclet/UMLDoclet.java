@@ -56,13 +56,13 @@ public class UMLDoclet extends StandardDoclet {
 
     private final DocletConfig config;
 
-        /// Default constructor, as required by {@linkplain jdk.javadoc.doclet.Doclet} specification.
+    /// Default constructor, as required by {@linkplain jdk.javadoc.doclet.Doclet} specification.
     public UMLDoclet() {
         super();
         this.config = new DocletConfig();
     }
 
-        /// Initializes the {@linkplain Locale} and {@linkplain Reporter} to be used by
+    /// Initializes the {@linkplain Locale} and {@linkplain Reporter} to be used by
     /// this doclet.
     ///
     /// @param locale   The locale to be used by this doclet.
@@ -73,14 +73,14 @@ public class UMLDoclet extends StandardDoclet {
         super.init(locale, reporter);
     }
 
-        /// @return The name of this doclet, minus the `"Doclet"` suffix
+    /// @return The name of this doclet, minus the `"Doclet"` suffix
     /// since the {@linkplain StandardDoclet} also returns just `"Standard"` as its name.
     @Override
     public String getName() {
         return "UML";
     }
 
-        /// Returns all supported options. This includes the options from the {@linkplain StandardDoclet}.
+    /// Returns all supported options. This includes the options from the [StandardDoclet].
     ///
     /// @return The set containing all supported options
     @Override
@@ -88,15 +88,13 @@ public class UMLDoclet extends StandardDoclet {
         return config.mergeOptionsWith(super.getSupportedOptions());
     }
 
-        /// Perform the main doclet functionality, processing all included elements.
+    /// Perform the main doclet functionality, processing all included elements.
     ///
+    /// For each included class, a [ClassDiagram][nl.talsmasoftware.umldoclet.uml.ClassDiagram] is generated.
+    /// For each included package, a [PackageDiagram][nl.talsmasoftware.umldoclet.uml.PackageDiagram] is genrated.
+    /// Also, a [DependencyDiagram] is generated, containing all dependencies that were detected.
     ///
-    /// For each included class, a {@linkplain nl.talsmasoftware.umldoclet.uml.ClassDiagram} is generated.
-    /// For each included package, a {@linkplain nl.talsmasoftware.umldoclet.uml.PackageDiagram} is genrated.
-    /// Also, a {@linkplain DependencyDiagram} is generated, containing all dependencies that were detected.
-    ///
-    ///
-    /// Depending on the {@linkplain nl.talsmasoftware.umldoclet.configuration.Configuration},
+    /// Depending on the [Configuration][nl.talsmasoftware.umldoclet.configuration.Configuration],
     /// diagram images or `.puml` plantuml source files are generated.
     ///
     /// @param environment The doclet environment from which essential information can be extracted

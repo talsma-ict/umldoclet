@@ -19,11 +19,16 @@ import nl.talsmasoftware.umldoclet.configuration.MethodConfig;
 import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
+/// Model object for the parameters of a method in a UML diagram.
+///
 /// @author Sjoerd Talsma
 public class Parameters extends UMLNode {
 
     private boolean varargs = false;
 
+    /// Creates a new parameters node.
+    ///
+    /// @param parent The parent method node.
     public Parameters(UMLNode parent) {
         super(parent);
     }
@@ -33,11 +38,20 @@ public class Parameters extends UMLNode {
         if (child instanceof Parameter) super.addChild(child);
     }
 
+    /// Adds a parameter to this collection.
+    ///
+    /// @param name The name of the parameter.
+    /// @param type The type of the parameter.
+    /// @return Reference to this parameters node for method chaining.
     public Parameters add(String name, TypeName type) {
         addChild(new Parameter(name, type));
         return this;
     }
 
+    /// Sets whether the last parameter is a varargs parameter.
+    ///
+    /// @param varargs `true` if the last parameter is a varargs parameter.
+    /// @return Reference to this parameters node for method chaining.
     public Parameters varargs(boolean varargs) {
         this.varargs = varargs;
         return this;
@@ -60,6 +74,10 @@ public class Parameters extends UMLNode {
         return output;
     }
 
+    /// Replaces a parameterized type with another type in all parameters.
+    ///
+    /// @param from The type to replace.
+    /// @param to   The new type.
     void replaceParameterizedType(TypeName from, TypeName to) {
         if (from != null) {
             getChildren().stream()
@@ -69,6 +87,7 @@ public class Parameters extends UMLNode {
         }
     }
 
+    /// A single parameter in a method.
     public class Parameter extends UMLNode {
         private final String name;
         private TypeName type;

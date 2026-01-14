@@ -53,10 +53,18 @@ public enum Message {
 
     private final String key = name().toLowerCase(ENGLISH).replace('_', '.');
 
+    /// Returns the localized message for the default locale.
+    ///
+    /// @return The localized message.
+    @Override
     public String toString() {
         return toString(null);
     }
 
+    /// Returns the localized message for the given locale.
+    ///
+    /// @param locale The locale to localize the message for.
+    /// @return The localized message.
     public String toString(Locale locale) {
         final String bundleName = UMLDoclet.class.getName();
         final ResourceBundle bundle = getBundle(bundleName, locale == null ? Locale.getDefault() : locale);
