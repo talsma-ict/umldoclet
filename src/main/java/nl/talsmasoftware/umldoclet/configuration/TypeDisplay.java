@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,36 +15,26 @@
  */
 package nl.talsmasoftware.umldoclet.configuration;
 
-/**
- * How a type name is rendered in UML.
- *
- * <dl>
- * <dt>{@code NONE}</dt><dd>Omit the type</dd>
- * <dt>{@code SIMPLE}</dt><dd>Use the simple type name (without its containing package)</dd>
- * <dt>{@code QUALIFIED}</dt><dd>Use the qualified type name</dd>
- * <dt>{@code QUALIFIED_GENERICS}</dt><dd>Use the qualified type name, also for its generic types</dd>
- * </dl>
- *
- * @author Sjoerd Talsma
- */
+/// How a type name is rendered in UML.
+///
+/// <dl>
+/// <dt>`NONE`</dt><dd>Omit the type</dd>
+/// <dt>`SIMPLE`</dt><dd>Use the simple type name (without its containing package)</dd>
+/// <dt>`QUALIFIED`</dt><dd>Use the qualified type name</dd>
+/// <dt>`QUALIFIED_GENERICS`</dt><dd>Use the qualified type name, also for its generic types</dd>
+/// </dl>
+///
+/// @author Sjoerd Talsma
 public enum TypeDisplay {
-    /**
-     * Omit the type name.
-     */
+        /// Omit the type name.
     NONE,
 
-    /**
-     * Use the simple type name without the containing package.
-     */
+        /// Use the simple type name without the containing package.
     SIMPLE,
 
-    /**
-     * Use the qualified type name.
-     */
+        /// Use the qualified type name.
     QUALIFIED,
 
-    /**
-     * Use the qualified type name, also for its generic type variables.
-     */
+        /// Use the qualified type name, also for its generic type variables.
     QUALIFIED_GENERICS
 }

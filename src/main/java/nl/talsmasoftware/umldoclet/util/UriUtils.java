@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,28 +19,22 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
 
-/**
- * Utility class for manipulating URI's
- *
- * @author Sjoerd Talsma
- */
+/// Utility class for manipulating URI's
+///
+/// @author Sjoerd Talsma
 public final class UriUtils {
-    /**
-     * For simple roll-our-own hex encoding.
-     */
+        /// For simple roll-our-own hex encoding.
     private static final char[] HEX = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
     private UriUtils() {
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * This method adds a 'component' to the path of an URI.
-     *
-     * @param uri       The URI to add a path component to
-     * @param component The component to add to the end of the uri path, separated by a slash ({@code '/'}) character
-     * @return The new URI
-     */
+        /// This method adds a 'component' to the path of an URI.
+    ///
+    /// @param uri       The URI to add a path component to
+    /// @param component The component to add to the end of the uri path, separated by a slash (`'/'`) character
+    /// @return The new URI
     public static URI addPathComponent(URI uri, String component) {
         if (uri != null && component != null) try {
             return new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(),
@@ -53,20 +47,18 @@ public final class UriUtils {
         return uri;
     }
 
-    /**
-     * This method adds a query parameter to an existing URI and takes care of proper encoding etc.
-     * <p>
-     * Since query parameters are scheme-specific, this method only applies to URI's with the following schemes:
-     * <ol>
-     * <li>{@code "http"}</li>
-     * <li>{@code "https"}</li>
-     * </ol>
-     *
-     * @param uri   The URI to add an HTTP parameter to
-     * @param name  The name of the parameter to add
-     * @param value The value of the parameter to add
-     * @return The URI to which a parameter may have been added
-     */
+        /// This method adds a query parameter to an existing URI and takes care of proper encoding etc.
+    ///
+    /// Since query parameters are scheme-specific, this method only applies to URI's with the following schemes:
+    /// <ol>
+    /// <li>`"http"`</li>
+    /// <li>`"https"`</li>
+    /// </ol>
+    ///
+    /// @param uri   The URI to add an HTTP parameter to
+    /// @param name  The name of the parameter to add
+    /// @param value The value of the parameter to add
+    /// @return The URI to which a parameter may have been added
     public static URI addHttpParam(URI uri, String name, String value) {
         if (uri != null && name != null && value != null && ("http".equals(uri.getScheme()) || "https".equals(uri.getScheme()))) {
             final String base = uri.toASCIIString();
@@ -98,23 +90,19 @@ public final class UriUtils {
         return left.endsWith(sep) || right.startsWith(sep) ? left + right : left + separator + right;
     }
 
-    /**
-     * In the <a href="http://tools.ietf.org/html/rfc3986">URI specification (RFC-3986)</a>,
-     * unreserved characters are defined as {@code ALPHA / DIGIT / "-" / "." / "_" / "~"}.
-     *
-     * @param ch The character to examine.
-     * @return Whether the character is an unreserved
-     */
+        /// In the <a href="http://tools.ietf.org/html/rfc3986">URI specification (RFC-3986)</a>,
+    /// unreserved characters are defined as `ALPHA / DIGIT / "-" / "." / "_" / "~"`.
+    ///
+    /// @param ch The character to examine.
+    /// @return Whether the character is an unreserved
     private static boolean isUnreserved(char ch) {
         return Character.isLetterOrDigit(ch) || ch == '-' || ch == '.' || ch == '_' || ch == '~';
     }
 
-    /**
-     * Appends the byte as percent-encoded hex value (three characters).
-     *
-     * @param builder The builder to append to
-     * @param value   the type to be appended as percent-encoded
-     */
+        /// Appends the byte as percent-encoded hex value (three characters).
+    ///
+    /// @param builder The builder to append to
+    /// @param value   the type to be appended as percent-encoded
     private static void appendEscapedByte(StringBuilder builder, byte value) {
         builder.append('%');
         builder.append(HEX[(value >> 4) & 0x0f]);

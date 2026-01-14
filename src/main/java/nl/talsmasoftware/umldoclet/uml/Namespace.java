@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,11 @@ import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
-/**
- * UML namespace
- * <p>
- * This corresponds to a 'package' in the Java world.
- *
- * @author Sjoerd Talsma
- */
+/// UML namespace
+///
+/// This corresponds to a 'package' in the Java world.
+///
+/// @author Sjoerd Talsma
 public class Namespace extends UMLNode {
 
     private final String moduleName;
@@ -43,15 +41,13 @@ public class Namespace extends UMLNode {
         return Optional.ofNullable(moduleName);
     }
 
-    /**
-     * Adds the package name to the diagram.
-     * Re: bug 107: If the package name is empty (i.e. the 'default' package),
-     * render {@code "unnamed"} because an empty name is not valid in PlantUML.
-     *
-     * @param output The output to append the package name to.
-     * @param <IPW>  The type of the output object.
-     * @return The same output instance for method chaining.
-     */
+        /// Adds the package name to the diagram.
+    /// Re: bug 107: If the package name is empty (i.e. the 'default' package),
+    /// render `"unnamed"` because an empty name is not valid in PlantUML.
+    ///
+    /// @param output The output to append the package name to.
+    /// @param <IPW>  The type of the output object.
+    /// @return The same output instance for method chaining.
     private <IPW extends IndentingPrintWriter> IPW writeNameTo(IPW output) {
         output.append(name.isEmpty() ? "unnamed" : name).whitespace();
         return output;

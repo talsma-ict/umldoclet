@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,9 @@ import java.util.Collection;
 
 import static java.util.Objects.requireNonNull;
 
-/**
- * Postprocesses the HTML output from the standard doclet to add UML diagrams.
- *
- * @author Sjoerd Talsma
- */
+/// Postprocesses the HTML output from the standard doclet to add UML diagrams.
+///
+/// @author Sjoerd Talsma
 public class HtmlPostprocessor {
     private final Configuration config;
 

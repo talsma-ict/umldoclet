@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,11 +22,9 @@ import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
-/**
- * Model object for a Field or Method in a UML class.
- *
- * @author Sjoerd Talsma
- */
+/// Model object for a Field or Method in a UML class.
+///
+/// @author Sjoerd Talsma
 public abstract class TypeMember extends UMLNode {
 
     public final String name;

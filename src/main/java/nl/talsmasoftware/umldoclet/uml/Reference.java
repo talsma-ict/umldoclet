@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,18 +27,16 @@ import static java.util.Collections.emptySet;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toCollection;
 
-/**
- * Reference between two types.
- * <p>
- * The following reference types are currently supported:
- * <ul>
- * <li>The 'extends' reference: {@code "--|>"}</li>
- * <li>The 'implements' reference: {@code "..|>"}</li>
- * <li>The 'inner class' reference: {@code "+--"}</li>
- * </ul>
- *
- * @author Sjoerd Talsma
- */
+/// Reference between two types.
+///
+/// The following reference types are currently supported:
+/// <ul>
+/// <li>The 'extends' reference: `"--|>"`</li>
+/// <li>The 'implements' reference: `"..|>"`</li>
+/// <li>The 'inner class' reference: `"+--"`</li>
+/// </ul>
+///
+/// @author Sjoerd Talsma
 public class Reference extends UMLNode {
     public final Side from;
     public final Side to;
@@ -89,9 +87,7 @@ public class Reference extends UMLNode {
                 this.notes);
     }
 
-    /**
-     * @return The canonical type that can be used for equality matching.
-     */
+        /// @return The canonical type that can be used for equality matching.
     public Reference canonical() {
         return type.startsWith("<-") || type.startsWith("<..")
                 || type.endsWith("-|>") || type.endsWith("..|>")
@@ -113,12 +109,10 @@ public class Reference extends UMLNode {
         return output;
     }
 
-    /**
-     * Returns whether or not this reference contains the requested type.
-     *
-     * @param typeName The name of a type to check.
-     * @return Whether either {@code from} or {@code to} matches {@code typeName}.
-     */
+        /// Returns whether or not this reference contains the requested type.
+    ///
+    /// @param typeName The name of a type to check.
+    /// @return Whether either `from` or `to` matches `typeName`.
     public boolean contains(TypeName typeName) {
         return from.matches(typeName) || to.matches(typeName);
     }
@@ -200,13 +194,11 @@ public class Reference extends UMLNode {
             return toString(null);
         }
 
-        /**
-         * The index of the searched character or the length of the string if not found.
-         *
-         * @param value The string to search in
-         * @param ch    The character to search for
-         * @return The index of the character in the string or the length of the string if not found.
-         */
+                /// The index of the searched character or the length of the string if not found.
+        ///
+        /// @param value The string to search in
+        /// @param ch    The character to search for
+        /// @return The index of the character in the string or the length of the string if not found.
         private static int indexOrLengthOf(String value, char ch) {
             int idx = value.indexOf(ch);
             return idx >= 0 ? idx : value.length();

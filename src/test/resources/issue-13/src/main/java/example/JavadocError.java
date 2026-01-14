@@ -2,8 +2,6 @@ package example;
 
 public class JavadocError {
 
-    /**
-     * @return some field
-     */
+        /// @return some field
     public String someField;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,9 +36,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-/**
- * @author Sjoerd Talsma
- */
+/// @author Sjoerd Talsma
 public class LocalizedReporterTest {
     private static final Locale NL = new Locale("nl", "NL");
     private static Locale defaultLocale;

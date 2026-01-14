@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,18 +19,14 @@ import nl.talsmasoftware.umldoclet.uml.Type;
 
 import java.util.function.Consumer;
 
-/**
- * Utility class providing postprocessing functionality for generated UML models.
- */
+/// Utility class providing postprocessing functionality for generated UML models.
 public class UmlPostProcessors {
 
-    /**
-     * A post-processor for a uml {@linkplain Type} to replace getter and setter
-     * {@linkplain nl.talsmasoftware.umldoclet.uml.Method methods}
-     * into {@linkplain nl.talsmasoftware.umldoclet.uml.Field fields}.
-     *
-     * @return The postprocessor that updates types.
-     */
+        /// A post-processor for a uml {@linkplain Type} to replace getter and setter
+    /// {@linkplain nl.talsmasoftware.umldoclet.uml.Method methods}
+    /// into {@linkplain nl.talsmasoftware.umldoclet.uml.Field fields}.
+    ///
+    /// @return The postprocessor that updates types.
     public Consumer<Type> javaBeanPropertiesAsFieldsPostProcessor() {
         return type -> JavaBeanProperty.detectFrom(type).forEach(JavaBeanProperty::replaceGetterAndSetterByField);
     }

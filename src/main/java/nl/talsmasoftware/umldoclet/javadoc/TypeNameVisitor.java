@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,11 +35,9 @@ import java.util.EnumSet;
 import java.util.IdentityHashMap;
 import java.util.Set;
 
-/**
- * The UML type name implemented as {@link TypeVisitor}.
- *
- * @author Sjoerd Talsma
- */
+/// The UML type name implemented as [TypeVisitor].
+///
+/// @author Sjoerd Talsma
 final class TypeNameVisitor extends SimpleTypeVisitor9<TypeName, Void> {
     private static final EnumSet<TypeKind> NO_KNOWN_TYPES = EnumSet.of(
             TypeKind.VOID, TypeKind.NONE, TypeKind.NULL, TypeKind.ERROR, TypeKind.OTHER);
@@ -52,16 +50,14 @@ final class TypeNameVisitor extends SimpleTypeVisitor9<TypeName, Void> {
     private static ThreadLocal<Set<TypeMirror>> VISITED = ThreadLocal.withInitial(
             () -> Collections.newSetFromMap(new IdentityHashMap<>()));
 
-    /**
-     * Internal variant of {@link #visit(TypeMirror, Object)} for calls from inside this visitor itself.
-     * <p>
-     * Main purpose of this method is to limit the endless recursion that would result for types such as
-     * {@code <T extends Comparable<T>>}
-     *
-     * @param type      The type to visit.
-     * @param parameter The parameter (ignored by our visitor).
-     * @return The type name
-     */
+        /// Internal variant of [#visit(TypeMirror, Object)] for calls from inside this visitor itself.
+    ///
+    /// Main purpose of this method is to limit the endless recursion that would result for types such as
+    /// `<T extends Comparable<T>>`
+    ///
+    /// @param type      The type to visit.
+    /// @param parameter The parameter (ignored by our visitor).
+    /// @return The type name
     private TypeName _visit(TypeMirror type, Void parameter) {
         if (VISITED.get().add(type)) try {
             return super.visit(type, parameter);

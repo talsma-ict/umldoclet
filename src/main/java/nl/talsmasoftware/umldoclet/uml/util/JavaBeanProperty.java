@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,17 +33,15 @@ import static java.lang.Character.isUpperCase;
 import static java.lang.Character.toLowerCase;
 import static java.util.Collections.emptySet;
 
-/**
- * Class representing a property of a Java Bean.
- *
- * <p>
- * Each java bean contains properties that have getter and setter methods allowing access to a single field.
- *
- * <p>
- * Also see: <a href="https://en.wikipedia.org/wiki/JavaBeans">JavaBeans definition on Wikipedia</a>
- * or the <a href="http://www.oracle.com/technetwork/java/javase/documentation/spec-136004.html">Official
- * JavaBeans 1.01 Specification</a>.
- */
+/// Class representing a property of a Java Bean.
+///
+///
+/// Each java bean contains properties that have getter and setter methods allowing access to a single field.
+///
+///
+/// Also see: <a href="https://en.wikipedia.org/wiki/JavaBeans">JavaBeans definition on Wikipedia</a>
+/// or the <a href="http://www.oracle.com/technetwork/java/javase/documentation/spec-136004.html">Official
+/// JavaBeans 1.01 Specification</a>.
 public class JavaBeanProperty {
     private final String name;
 
@@ -55,20 +53,18 @@ public class JavaBeanProperty {
         this.name = name;
     }
 
-    /**
-     * This method detects the JavaBean properties from the uml {@linkplain Type} model of a Java class.
-     *
-     * <p>
-     * The following will be detected as <a href="https://en.wikipedia.org/wiki/JavaBeans">JavaBean</a> property:
-     * <ul>
-     *     <li>A public {@linkplain Field}</li>
-     *     <li>A public getter {@linkplain Method} (including isXyz() boolean getters)</li>
-     *     <li>A public setter {@linkplain Method}</li>
-     * </ul>
-     *
-     * @param type The uml model of a java type.
-     * @return The detected JavaBean poperties in that type.
-     */
+        /// This method detects the JavaBean properties from the uml {@linkplain Type} model of a Java class.
+    ///
+    ///
+    /// The following will be detected as <a href="https://en.wikipedia.org/wiki/JavaBeans">JavaBean</a> property:
+    /// <ul>
+    /// <li>A public {@linkplain Field}</li>
+    /// <li>A public getter {@linkplain Method} (including isXyz() boolean getters)</li>
+    /// <li>A public setter {@linkplain Method}</li>
+    /// </ul>
+    ///
+    /// @param type The uml model of a java type.
+    /// @return The detected JavaBean poperties in that type.
     public static Collection<JavaBeanProperty> detectFrom(Type type) {
         if (type == null) return emptySet();
         final Map<String, JavaBeanProperty> propertiesByName = new LinkedHashMap<>();
@@ -82,18 +78,16 @@ public class JavaBeanProperty {
         return propertiesByName.values();
     }
 
-    /**
-     * This method checks if a type member matches the JavaBean propertyName convention and returns the
-     * property name if it does.
-     *
-     * <p>
-     * {@linkplain Field} names are returned as-is.
-     * For getter/setter {@linkplain Method methods} the {@code "get"},  {@code "is"} or {@code "set"} prefix
-     * is removed and the initial character of the remaining string is converted to lowercase.
-     *
-     * @param member The type member to evaluate.
-     * @return The property name if the typemember is either a Field or a JavaBean getter/setter method.
-     */
+        /// This method checks if a type member matches the JavaBean propertyName convention and returns the
+    /// property name if it does.
+    ///
+    ///
+    /// {@linkplain Field} names are returned as-is.
+    /// For getter/setter {@linkplain Method methods} the `"get"`,  `"is"` or `"set"` prefix
+    /// is removed and the initial character of the remaining string is converted to lowercase.
+    ///
+    /// @param member The type member to evaluate.
+    /// @return The property name if the typemember is either a Field or a JavaBean getter/setter method.
     private static Optional<String> propertyNameOf(TypeMember member) {
         Optional<String> propertyName = Optional.empty();
         if (member instanceof Field) {
@@ -104,19 +98,17 @@ public class JavaBeanProperty {
         return propertyName;
     }
 
-    /**
-     * Adds a detected {@linkplain Field} or {@linkplain Method} to the property.
-     *
-     * <p>
-     * A javabean property normally consist of a private {@linkplain Field} and public getter and setter
-     * {@linkplain Method methods}.
-     *
-     * <p>
-     * This method assumes that the member conforms to the correct naming convention for JavaBeans,
-     * no additional checks are performed.
-     *
-     * @param member The member to add to this property.
-     */
+        /// Adds a detected {@linkplain Field} or {@linkplain Method} to the property.
+    ///
+    ///
+    /// A javabean property normally consist of a private {@linkplain Field} and public getter and setter
+    /// {@linkplain Method methods}.
+    ///
+    ///
+    /// This method assumes that the member conforms to the correct naming convention for JavaBeans,
+    /// no additional checks are performed.
+    ///
+    /// @param member The member to add to this property.
     private void add(TypeMember member) {
         if (member instanceof Field) {
             this.field = (Field) member;
@@ -129,13 +121,11 @@ public class JavaBeanProperty {
         }
     }
 
-    /**
-     * Remove the getter and setter methods from the parent and replace them with a field.
-     *
-     * <p>
-     * <strong>Note:</strong> this method modifies the {@linkplain Type} parent in-place and therefore
-     * is <strong>not</strong>> considered thread-safe!
-     */
+        /// Remove the getter and setter methods from the parent and replace them with a field.
+    ///
+    ///
+    /// <strong>Note:</strong> this method modifies the {@linkplain Type} parent in-place and therefore
+    /// is <strong>not</strong>> considered thread-safe!
     void replaceGetterAndSetterByField() {
         if (getter != null && setter != null) {
             // Convert the getter into a field for UML rendering purposes.
@@ -147,30 +137,26 @@ public class JavaBeanProperty {
         }
     }
 
-    /**
-     * Test whether the {@linkplain #propertyNameOf(TypeMember) property name of} the specified UML node
-     * matches the {@code name} of property.
-     *
-     * <p>
-     * Although the method accepts any {@linkplain UMLNode} argument, only {@linkplain Field} and {@linkplain Method}
-     * instances can ever obtain a positive result.
-     *
-     * @param node The UML node to check
-     * @return {@code true} if this node is a {@linkplain Field} or {@linkplain Method} corresponding to this
-     * JavaBean property.
-     */
+        /// Test whether the {@linkplain #propertyNameOf(TypeMember) property name of} the specified UML node
+    /// matches the `name` of property.
+    ///
+    ///
+    /// Although the method accepts any {@linkplain UMLNode} argument, only {@linkplain Field} and {@linkplain Method}
+    /// instances can ever obtain a positive result.
+    ///
+    /// @param node The UML node to check
+    /// @return `true` if this node is a {@linkplain Field} or {@linkplain Method} corresponding to this
+    /// JavaBean property.
     private boolean isSameProperty(UMLNode node) {
         return node instanceof TypeMember && propertyNameOf((TypeMember) node).filter(name::equals).isPresent();
     }
 
-    /**
-     * Implements the {@linkplain #propertyNameOf(TypeMember) 'property name of'} evaluation for methods.
-     *
-     * @param method The getter/setter method to return the property name of.
-     * @return The property name of the getter/setter method or {@code empty()} if the method did not start with
-     * {@code "get"}, {@code "is"} or {@code "set"}.
-     * @see #propertyNameOf(TypeMember)
-     */
+        /// Implements the {@linkplain #propertyNameOf(TypeMember) 'property name of'} evaluation for methods.
+    ///
+    /// @param method The getter/setter method to return the property name of.
+    /// @return The property name of the getter/setter method or `empty()` if the method did not start with
+    /// `"get"`, `"is"` or `"set"`.
+    /// @see #propertyNameOf(TypeMember)
     private static Optional<String> propertyNameOfAccessor(Method method) {
         Optional<String> propertyName = Optional.empty();
         if (!method.isStatic && !method.isAbstract) {
@@ -197,16 +183,14 @@ public class JavaBeanProperty {
         return method.name.startsWith("set") && parameterCount(method) == 1;
     }
 
-    /**
-     * Counts the parameters of a typemember.
-     *
-     * <p>
-     * This method is only practically useful for {@linkplain Method} members. This counting method may become obsolete
-     * after a suitable simplification of method parameters.
-     *
-     * @param method The method to count the parameters of.
-     * @return The total number of children in {@code Parameters} children of the member.
-     */
+        /// Counts the parameters of a typemember.
+    ///
+    ///
+    /// This method is only practically useful for {@linkplain Method} members. This counting method may become obsolete
+    /// after a suitable simplification of method parameters.
+    ///
+    /// @param method The method to count the parameters of.
+    /// @return The total number of children in `Parameters` children of the member.
     private static int parameterCount(Method method) {
         return method.getChildren().stream()
                 .filter(Parameters.class::isInstance)
@@ -214,12 +198,10 @@ public class JavaBeanProperty {
                 .sum();
     }
 
-    /**
-     * Changes the first character of the string into a lowercase character.
-     *
-     * @param value The value to decapitalize.
-     * @return The decapitalized value.
-     */
+        /// Changes the first character of the string into a lowercase character.
+    ///
+    /// @param value The value to decapitalize.
+    /// @return The decapitalized value.
     private static String decapitalize(String value) {
         if (value != null && !value.isEmpty() && isUpperCase(value.charAt(0))) {
             char[] chars = value.toCharArray();
@@ -229,15 +211,13 @@ public class JavaBeanProperty {
         return value;
     }
 
-    /**
-     * Determines whether the type is a boolean type.
-     *
-     * <p>
-     * This should be either the primitive {@code boolean} or the {@code java.lang.Boolean} wrapper.
-     *
-     * @param type The type to check if it represents a boolean.
-     * @return {@code true} if the type is a boolean type, otherwise {@code false}.
-     */
+        /// Determines whether the type is a boolean type.
+    ///
+    ///
+    /// This should be either the primitive `boolean` or the `java.lang.Boolean` wrapper.
+    ///
+    /// @param type The type to check if it represents a boolean.
+    /// @return `true` if the type is a boolean type, otherwise `false`.
     private static boolean isBooleanType(TypeName type) {
         return type != null && ("boolean".equals(type.qualified) || "java.lang.Boolean".equals(type.qualified));
     }

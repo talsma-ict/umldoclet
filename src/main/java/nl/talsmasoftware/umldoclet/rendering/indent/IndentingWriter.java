@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,13 +23,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static java.lang.Character.isWhitespace;
 import static java.util.Objects.requireNonNull;
 
-/**
- * Writer implementation that will indent each new line with a specified number of whitespace
- * characters (four by default).
- * The writing itself can be delegated to any other {@link Writer} implementation.
- *
- * @author Sjoerd Talsma
- */
+/// Writer implementation that will indent each new line with a specified number of whitespace
+/// characters (four by default).
+/// The writing itself can be delegated to any other [Writer] implementation.
+///
+/// @author Sjoerd Talsma
 public class IndentingWriter extends Writer {
 
     private final Appendable delegate;
@@ -51,34 +49,30 @@ public class IndentingWriter extends Writer {
         this.addWhitespace.set(addWhitespace);
     }
 
-    /**
-     * Returns an indenting writer around the given <code>delegate</code>.<br>
-     * If the <code>delegate</code> writer is already an indenting writer, it will simply be returned
-     * {@link #withIndentation(Indentation) with the specified indentation}.<br>
-     * If the <code>delegate</code> writer is not yet an indending writer, a new indenting writer class will be created
-     * to wrap the delegate using the specified <code>indentation</code>.
-     *
-     * @param delegate    The delegate to turn into an indenting writer.
-     * @param indentation The indentation to use for the indenting writer
-     *                    (optional, specify <code>null</code> to use the default indentation).
-     * @return The indenting delegate writer.
-     * @see Indentation#DEFAULT
-     */
+        /// Returns an indenting writer around the given `delegate`.
+    /// If the `delegate` writer is already an indenting writer, it will simply be returned
+    /// [#withIndentation(Indentation) with the specified indentation].
+    /// If the `delegate` writer is not yet an indending writer, a new indenting writer class will be created
+    /// to wrap the delegate using the specified `indentation`.
+    ///
+    /// @param delegate    The delegate to turn into an indenting writer.
+    /// @param indentation The indentation to use for the indenting writer
+    /// (optional, specify `null` to use the default indentation).
+    /// @return The indenting delegate writer.
+    /// @see Indentation#DEFAULT
     public static IndentingWriter wrap(Appendable delegate, Indentation indentation) {
         return delegate instanceof IndentingWriter
                 ? ((IndentingWriter) delegate).withIndentation(indentation)
                 : new IndentingWriter(delegate, indentation);
     }
 
-    /**
-     * Returns an indenting writer with the new indentation.
-     * <p>
-     * Please note: Already written lines will not be modified to accomodate the new indentation.
-     *
-     * @param newIndentation The new indentation to apply to this writer (optional).
-     * @return Either this writer if the indentation is already correct,
-     * or a new IndentingWriter with the adapted indentation.
-     */
+        /// Returns an indenting writer with the new indentation.
+    ///
+    /// Please note: Already written lines will not be modified to accomodate the new indentation.
+    ///
+    /// @param newIndentation The new indentation to apply to this writer (optional).
+    /// @return Either this writer if the indentation is already correct,
+    /// or a new IndentingWriter with the adapted indentation.
     public IndentingWriter withIndentation(Indentation newIndentation) {
         return newIndentation == null || this.indentation.equals(newIndentation) ? this
                 : new IndentingWriter(delegate, newIndentation, lastWritten, addWhitespace.get());
@@ -96,26 +90,22 @@ public class IndentingWriter extends Writer {
         return withIndentation(getIndentation().decrease());
     }
 
-    /**
-     * Makes sure there is at least one whitespace character between the last charater and the next.
-     * <p>
-     * This method attempts to avoid appending a whitespace character if it knows the last character was in fact a
-     * whitespace character.
-     * The whitespace character will also not be written until there are other characters that need to be written.
-     *
-     * @return Reference to this writer for chaining purposes.
-     */
+        /// Makes sure there is at least one whitespace character between the last charater and the next.
+    ///
+    /// This method attempts to avoid appending a whitespace character if it knows the last character was in fact a
+    /// whitespace character.
+    /// The whitespace character will also not be written until there are other characters that need to be written.
+    ///
+    /// @return Reference to this writer for chaining purposes.
     public IndentingWriter whitespace() {
         addWhitespace.set(true);
         return this;
     }
 
-    /**
-     * Tests whether the character is an end-of-line character.
-     *
-     * @param ch The character to be tested.
-     * @return <code>true</code> if the character was an end-of-line character, <code>false</code> otherwise.
-     */
+        /// Tests whether the character is an end-of-line character.
+    ///
+    /// @param ch The character to be tested.
+    /// @return `true` if the character was an end-of-line character, `false` otherwise.
     private static boolean isEol(char ch) {
         return ch == '\r' || ch == '\n';
     }

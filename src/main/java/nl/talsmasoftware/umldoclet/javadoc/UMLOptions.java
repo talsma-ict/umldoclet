@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,18 +38,16 @@ import static java.util.Locale.ENGLISH;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
-/**
- * Type that serves as an 'anti-corruption' facade between our Doclet
- * and the {@code internal} configuration of the StandardDoclet.
- * <p>
- * Although we want to apply the standard configuration options that make
- * sense to the UML doclet, we don't want to re-implement all standard options.
- * <p>
- * However, we also don't want to have the UML Doclet blow up in our
- * face at runtime when the standard configuration implementation changes.
- *
- * @author Sjoerd Talsma
- */
+/// Type that serves as an 'anti-corruption' facade between our Doclet
+/// and the `internal` configuration of the StandardDoclet.
+///
+/// Although we want to apply the standard configuration options that make
+/// sense to the UML doclet, we don't want to re-implement all standard options.
+///
+/// However, we also don't want to have the UML Doclet blow up in our
+/// face at runtime when the standard configuration implementation changes.
+///
+/// @author Sjoerd Talsma
 final class UMLOptions {
     private final DocletConfig config;
     private final Set<Doclet.Option> standardOptions;
@@ -109,13 +107,11 @@ final class UMLOptions {
         return copy;
     }
 
-    /**
-     * Split a value on comma and semicolon ({@code ','} and {@code ';'}) and trim each value,
-     * then collect each non-empty value into a list.
-     *
-     * @param value The value to split into a list.
-     * @return The split value as a list.
-     */
+        /// Split a value on comma and semicolon (`','` and `';'`) and trim each value,
+    /// then collect each non-empty value into a list.
+    ///
+    /// @param value The value to split into a list.
+    /// @return The split value as a list.
     private static List<String> splitToList(String value) {
         return value == null || value.isEmpty() ? emptyList()
                 : Stream.of(value.split("[,;]")).map(String::trim).filter(s -> !s.isEmpty()).collect(toList());

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,14 +23,12 @@ import java.util.ResourceBundle;
 import static java.util.Locale.ENGLISH;
 import static java.util.ResourceBundle.getBundle;
 
-/**
- * The resource messages used by the doclet.
- * <p>
- * The enumeration is chosen so we can easily test whether all messages
- * are contained by the resource bundle.
- *
- * @author Sjoerd Talsma
- */
+/// The resource messages used by the doclet.
+///
+/// The enumeration is chosen so we can easily test whether all messages
+/// are contained by the resource bundle.
+///
+/// @author Sjoerd Talsma
 public enum Message {
     DOCLET_VERSION,
     DOCLET_COPYRIGHT,

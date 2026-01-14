@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,9 @@
  */
 package nl.talsmasoftware.umldoclet.logging;
 
-/**
- * Basic {@code Logger} interface to avoid dependencies on the {@code jdk.logger} module or {@code Slf4J}.
- *
- * @author Sjoerd Talsma
- */
+/// Basic `Logger` interface to avoid dependencies on the `jdk.logger` module or `Slf4J`.
+///
+/// @author Sjoerd Talsma
 public interface Logger {
 
     String localize(Message key, Object... args);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,20 +21,18 @@ import java.io.IOException;
 
 import static java.util.Objects.requireNonNull;
 
-/**
- * Class representing a type name.
- *
- * <p>
- * This is less simple than it sounds: A type basically has a 'qualified name' and a 'simple name'
- * (these may be equal).
- *
- * <p>
- * Also, if the type is a generic type, the actual type parameters can be seen as 'part' of the name:
- * The names of {@code List<String>} and {@code List<Integer>} are different, while in Java the actual
- * types are equal (due to erasure of the generic type).
- *
- * @author Sjoerd Talsma
- */
+/// Class representing a type name.
+///
+///
+/// This is less simple than it sounds: A type basically has a 'qualified name' and a 'simple name'
+/// (these may be equal).
+///
+///
+/// Also, if the type is a generic type, the actual type parameters can be seen as 'part' of the name:
+/// The names of `List<String>` and `List<Integer>` are different, while in Java the actual
+/// types are equal (due to erasure of the generic type).
+///
+/// @author Sjoerd Talsma
 public class TypeName {
     public final String packagename;
     public final String simple;

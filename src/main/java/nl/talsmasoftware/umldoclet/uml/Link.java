@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,9 @@ import java.util.stream.Stream;
 
 import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
 
-/**
- * Class for rendering links in the generated UML
- *
- * @author Sjoerd Talsma
- */
+/// Class for rendering links in the generated UML
+///
+/// @author Sjoerd Talsma
 public class Link extends UMLNode {
     private static final ThreadLocal<String> LINK_FROM = new ThreadLocal<>();
 
@@ -76,14 +74,12 @@ public class Link extends UMLNode {
         return Optional.empty();
     }
 
-    /**
-     * Sets the base path where relative links should be rendered from.
-     * <p>
-     * This setting is configured on a per-thread basis.
-     *
-     * @param basePath The base path to define relative links from.
-     * @return whether the base path was modified or not
-     */
+        /// Sets the base path where relative links should be rendered from.
+    ///
+    /// This setting is configured on a per-thread basis.
+    ///
+    /// @param basePath The base path to define relative links from.
+    /// @return whether the base path was modified or not
     public static boolean linkFrom(String basePath) {
         if (Objects.equals(basePath, LINK_FROM.get())) return false;
         if (basePath == null) LINK_FROM.remove();

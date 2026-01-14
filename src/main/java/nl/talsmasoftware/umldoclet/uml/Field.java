@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,9 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import static nl.talsmasoftware.umldoclet.uml.Type.Classification.ENUM;
 
-/**
- * Model object for a Field in an UML class.
- *
- * @author Sjoerd Talsma
- */
+/// Model object for a Field in an UML class.
+///
+/// @author Sjoerd Talsma
 public class Field extends TypeMember {
 
     public Field(Type containingType, String name, TypeName type) {

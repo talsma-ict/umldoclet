@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,9 +43,7 @@ import static nl.talsmasoftware.umldoclet.util.FileUtils.ensureParentDir;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.withoutExtension;
 
-/**
- * Abstract UML Diagram class.
- */
+/// Abstract UML Diagram class.
 public abstract class Diagram extends UMLNode {
 
     private final Configuration config;
@@ -101,20 +99,16 @@ public abstract class Diagram extends UMLNode {
         return config;
     }
 
-    /**
-     * Determine the physical file location for the plantuml output.
-     *
-     * <p>This will even be called if {@code -createPumlFiles} is not enabled,
-     * to determine the {@code diagram base file}.
-     *
-     * @return The physical file for the plantuml output.
-     */
+        /// Determine the physical file location for the plantuml output.
+    ///
+    /// This will even be called if `-createPumlFiles` is not enabled,
+    /// to determine the `diagram base file`.
+    ///
+    /// @return The physical file for the plantuml output.
     protected abstract File getPlantUmlFile();
 
-    /**
-     * @return The diagram file without extension.
-     * @see #getDiagramFile(FileFormat)
-     */
+        /// @return The diagram file without extension.
+    /// @see #getDiagramFile(FileFormat)
     private File getDiagramBaseFile() {
         if (diagramBaseFile == null) {
             File destinationDir = new File(config.destinationDirectory());
@@ -129,12 +123,10 @@ public abstract class Diagram extends UMLNode {
         return diagramBaseFile;
     }
 
-    /**
-     * The diagram file in the specified format.
-     *
-     * @param format The diagram file format.
-     * @return The diagram file.
-     */
+        /// The diagram file in the specified format.
+    ///
+    /// @param format The diagram file format.
+    /// @return The diagram file.
     private File getDiagramFile(FileFormat format) {
         File base = getDiagramBaseFile();
         return new File(base.getParent(), base.getName() + format.getFileSuffix());
@@ -203,12 +195,10 @@ public abstract class Diagram extends UMLNode {
                 .collect(joining(",", ".[", "]"));
     }
 
-    /**
-     * Static utility method to convert an image format to PlantUML {@linkplain FileFormat} with the same name.
-     *
-     * @param format The image format to convert into PlantUML fileformat.
-     * @return The PlantUML file format.
-     */
+        /// Static utility method to convert an image format to PlantUML {@linkplain FileFormat} with the same name.
+    ///
+    /// @param format The image format to convert into PlantUML fileformat.
+    /// @return The PlantUML file format.
     private FileFormat toFileFormat(ImageConfig.Format format) {
         try {
             switch (format) {

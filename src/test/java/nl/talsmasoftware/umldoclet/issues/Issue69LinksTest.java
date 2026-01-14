@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.stringContainsInOrder;
 
-/**
- * @author Sjoerd Talsma
- */
+/// @author Sjoerd Talsma
 public class Issue69LinksTest {
     static final File testoutput = new File("target/issues/69");
     static final String packageAsPath = Issue69LinksTest.class.getPackageName().replace('.', '/');

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,7 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
-/**
- * UML diagram representing the dependencies between the documented Java packages.
- */
+/// UML diagram representing the dependencies between the documented Java packages.
 public class DependencyDiagram extends Diagram {
     private static final String BACKGROUNDCOLOR_DIRECTIVE = "skinparam backgroundcolor";
     private static final String DEFAULT_BACKGROUNDCOLOR = "transparent";

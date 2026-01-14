@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,16 +32,14 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
-/**
- * Part of an UML diagram that can render itself to the diagram by
- * {@linkplain #writeTo(IndentingPrintWriter) writing to} an indenting writer.
- * It serves as a reusable base-class for all specific UML nodes.
- *
- * <p>
- * UML nodes are capable of rendering themselves to {@link IndentingPrintWriter}.
- *
- * @author Sjoerd Talsma
- */
+/// Part of an UML diagram that can render itself to the diagram by
+/// {@linkplain #writeTo(IndentingPrintWriter) writing to} an indenting writer.
+/// It serves as a reusable base-class for all specific UML nodes.
+///
+///
+/// UML nodes are capable of rendering themselves to [IndentingPrintWriter].
+///
+/// @author Sjoerd Talsma
 public abstract class UMLNode {
 
     private UMLNode parent;
@@ -73,13 +71,11 @@ public abstract class UMLNode {
         return unmodifiableList(children);
     }
 
-    /**
-     * Returns all children that are an instance of a particular type.
-     *
-     * @param type The type of {@code UMLNode} to return (required, non-null).
-     * @param <T>  The type of children to obtain.
-     * @return The filtered list of children of this uml node (unmodifiable).
-     */
+        /// Returns all children that are an instance of a particular type.
+    ///
+    /// @param type The type of `UMLNode` to return (required, non-null).
+    /// @param <T>  The type of children to obtain.
+    /// @return The filtered list of children of this uml node (unmodifiable).
     public <T extends UMLNode> List<T> getChildren(Class<T> type) {
         return unmodifiableList(getChildren().stream().filter(type::isInstance).map(type::cast).collect(toList()));
     }
@@ -99,39 +95,31 @@ public abstract class UMLNode {
                 .orElseThrow(() -> new IllegalStateException("Cannot obtain configuration!"));
     }
 
-    /**
-     * Renders this object to the given indenting {@code output}.
-     *
-     * @param <IPW>  The subclass of indenting print writer being written to.
-     * @param output The output to render this object to.
-     * @return A reference to the output for method chaining purposes.
-     */
+        /// Renders this object to the given indenting `output`.
+    ///
+    /// @param <IPW>  The subclass of indenting print writer being written to.
+    /// @param output The output to render this object to.
+    /// @return A reference to the output for method chaining purposes.
     protected abstract <IPW extends IndentingPrintWriter> IPW writeTo(IPW output);
 
-    /**
-     * Helper method to write all children to the specified output.
-     *
-     * @param <IPW>  The subclass of indenting print writer being written to.
-     * @param output The output to write the children to.
-     * @return A reference to the output for method chaining purposes.
-     */
+        /// Helper method to write all children to the specified output.
+    ///
+    /// @param <IPW>  The subclass of indenting print writer being written to.
+    /// @param output The output to write the children to.
+    /// @return A reference to the output for method chaining purposes.
     protected <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
         getChildren().forEach(child -> child.writeTo(output));
         return output;
     }
 
-    /**
-     * Renders the entire content of this renderer and returns it as a String value.
-     *
-     * @return The rendered content of this renderer.
-     */
+        /// Renders the entire content of this renderer and returns it as a String value.
+    ///
+    /// @return The rendered content of this renderer.
     public String toString() {
         return writeTo(IndentingPrintWriter.wrap(new StringWriter(), indentation())).toString();
     }
 
-    /**
-     * @return never-null indentation for use in toString
-     */
+        /// @return never-null indentation for use in toString
     private Indentation indentation() {
         try {
             return requireNonNull(getConfiguration().indentation());

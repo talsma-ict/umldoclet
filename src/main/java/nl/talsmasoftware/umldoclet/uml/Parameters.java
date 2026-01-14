@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,7 @@ import nl.talsmasoftware.umldoclet.configuration.MethodConfig;
 import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
-/**
- * @author Sjoerd Talsma
- */
+/// @author Sjoerd Talsma
 public class Parameters extends UMLNode {
 
     private boolean varargs = false;

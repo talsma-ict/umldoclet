@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,30 +26,26 @@ import java.util.Set;
 
 import static java.util.stream.Collectors.joining;
 
-/**
- * A cycle of dependencies.
- *
- * <p>
- * Package Dependencies can form a cycle if the chain of package dependencies somehow 'return' to the
- * initial package. For example if you have three packages {@code a}, {@code b} and {@code c} and the following
- * dependencies: {@code a -> b}, {@code b -> c}, they will form a cycle if you somehow create a dependency back to
- * {@code a}, e.g. {@code b -> a} or {@code c -> a}.
- *
- * @author Sjoerd Talsma
- */
+/// A cycle of dependencies.
+///
+///
+/// Package Dependencies can form a cycle if the chain of package dependencies somehow 'return' to the
+/// initial package. For example if you have three packages `a`, `b` and `c` and the following
+/// dependencies: `a -> b`, `b -> c`, they will form a cycle if you somehow create a dependency back to
+/// `a`, e.g. `b -> a` or `c -> a`.
+///
+/// @author Sjoerd Talsma
 public class PackageDependencyCycle extends AbstractList<PackageDependency> implements RandomAccess {
 
     private final PackageDependency[] cycle;
 
-    /**
-     * Create a new dependency cycle object.
-     *
-     * <p>
-     * This constructor validates that the specified package dependencies actually form a cycle and will throw
-     * an {@link IllegalArgumentException} if they do not form an actual cycle.
-     *
-     * @param dependencies The package dependencies that form a cycle.
-     */
+        /// Create a new dependency cycle object.
+    ///
+    ///
+    /// This constructor validates that the specified package dependencies actually form a cycle and will throw
+    /// an [IllegalArgumentException] if they do not form an actual cycle.
+    ///
+    /// @param dependencies The package dependencies that form a cycle.
     public PackageDependencyCycle(PackageDependency... dependencies) {
         if (dependencies.length < 1) {
             throw new IllegalArgumentException("A dependency cycle may not be empty.");
@@ -65,16 +61,14 @@ public class PackageDependencyCycle extends AbstractList<PackageDependency> impl
         }
     }
 
-    /**
-     * Detect cycles in a collection of dependencies.
-     *
-     * <p>
-     * First the collection of dependencies is converted to a list of dependency <em>chains</em>.
-     * Next, the dependency chains are selected from all chains and returned as a new set.
-     *
-     * @param dependencies The package dependencies to detect dependency cycles from.
-     * @return A set with all found dependency cycles.
-     */
+        /// Detect cycles in a collection of dependencies.
+    ///
+    ///
+    /// First the collection of dependencies is converted to a list of dependency <em>chains</em>.
+    /// Next, the dependency chains are selected from all chains and returned as a new set.
+    ///
+    /// @param dependencies The package dependencies to detect dependency cycles from.
+    /// @return A set with all found dependency cycles.
     public static Set<PackageDependencyCycle> detectCycles(Iterable<PackageDependency> dependencies) {
         List<PackageDependency[]> chains = new LinkedList<>();
         for (PackageDependency dependency : dependencies) {

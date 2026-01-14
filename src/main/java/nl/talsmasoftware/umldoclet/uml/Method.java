@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,25 +20,19 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.util.Objects;
 
-/**
- * UML representation of a method.
- *
- * @author Sjoerd Talsma
- */
+/// UML representation of a method.
+///
+/// @author Sjoerd Talsma
 public class Method extends TypeMember {
 
-    /**
-     * If this method is an abstract method.
-     */
+        /// If this method is an abstract method.
     public boolean isAbstract;
 
-    /**
-     * Create a new method in the containing type with a specific name and return type.
-     *
-     * @param containingType The containing type the member is part of.
-     * @param name           The name of the method.
-     * @param returnType     The name of the return type.
-     */
+        /// Create a new method in the containing type with a specific name and return type.
+    ///
+    /// @param containingType The containing type the member is part of.
+    /// @param name           The name of the method.
+    /// @param returnType     The name of the return type.
     public Method(Type containingType, String name, TypeName returnType) {
         super(containingType, name, returnType);
     }
@@ -56,12 +50,10 @@ public class Method extends TypeMember {
         return parameters;
     }
 
-    /**
-     * Add a parameter to this method.
-     *
-     * @param name The name of the parameter.
-     * @param type The type of the parameter.
-     */
+        /// Add a parameter to this method.
+    ///
+    /// @param name The name of the parameter.
+    /// @param type The type of the parameter.
     public void addParameter(String name, TypeName type) {
         getOrCreateParameters().add(name, type);
     }

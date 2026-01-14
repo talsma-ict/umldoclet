@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Configuration guiding the details the way UML is generated.
- *
- * <p>
- * The {@linkplain nl.talsmasoftware.umldoclet.configuration.Configuration} is specified as an interface,
- * so can be implemented in different ways; in our situation this will be populated by various {@code Doclet.Options},
- * defined in the {@code nl.talsmasoftware.umldoclet.javadoc} package.
- */
+/// Configuration guiding the details the way UML is generated.
+///
+///
+/// The {@linkplain nl.talsmasoftware.umldoclet.configuration.Configuration} is specified as an interface,
+/// so can be implemented in different ways; in our situation this will be populated by various `Doclet.Options`,
+/// defined in the `nl.talsmasoftware.umldoclet.javadoc` package.
 package nl.talsmasoftware.umldoclet.configuration;

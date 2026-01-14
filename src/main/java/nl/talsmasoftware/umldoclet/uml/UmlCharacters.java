@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,9 @@ package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
-/**
- * A literal piece of UML.
- *
- * @author Sjoerd Talsma
- */
+/// A literal piece of UML.
+///
+/// @author Sjoerd Talsma
 public class UmlCharacters extends UMLNode {
     public static final UmlCharacters EMPTY = new UmlCharacters("");
     public static final UmlCharacters NEWLINE = new UmlLine("");

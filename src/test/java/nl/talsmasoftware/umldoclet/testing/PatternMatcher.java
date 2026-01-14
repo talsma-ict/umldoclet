@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,11 +23,9 @@ import java.util.regex.Pattern;
 
 import static java.util.Objects.requireNonNull;
 
-/**
- * A hamcrest matcher that matches regular expression patterns.
- *
- * @author Sjoerd Talsma
- */
+/// A hamcrest matcher that matches regular expression patterns.
+///
+/// @author Sjoerd Talsma
 public class PatternMatcher extends TypeSafeMatcher<String> {
     private final Pattern pattern;
     private final boolean fullMatch;

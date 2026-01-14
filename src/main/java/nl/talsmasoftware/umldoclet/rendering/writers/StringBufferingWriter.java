@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,43 +18,35 @@ package nl.talsmasoftware.umldoclet.rendering.writers;
 import java.io.StringWriter;
 import java.io.Writer;
 
-/**
- * Delegates to another {@link Writer} retaining a {@link StringBuffer} of all written characters.
- *
- * <p>
- * Manipulating the contained StringBuffer is not thread-safe.
- *
- * @author Sjoerd Talsma
- */
+/// Delegates to another [Writer] retaining a [StringBuffer] of all written characters.
+///
+///
+/// Manipulating the contained StringBuffer is not thread-safe.
+///
+/// @author Sjoerd Talsma
 public class StringBufferingWriter extends DelegatingWriter {
 
-    /**
-     * Constructor. Creates a new writer that delegates to the given writer and also retains a
-     * {@link StringBuffer} of all written characters.
-     *
-     * @param delegate The delegate writer to write to.
-     */
+        /// Constructor. Creates a new writer that delegates to the given writer and also retains a
+    /// [StringBuffer] of all written characters.
+    ///
+    /// @param delegate The delegate writer to write to.
     public StringBufferingWriter(Writer delegate) {
         super(new StringWriter(), delegate);
     }
 
-    /**
-     * A buffer of the written characters.
-     *
-     * <p>
-     * Changes to this buffer do not propagate towards the delegate writer.
-     * Furthermore, write operations on this writer and buffer changes are not considered
-     * thread-safe and should be avoided.
-     *
-     * @return A StringBuffer of the written characters.
-     */
+        /// A buffer of the written characters.
+    ///
+    ///
+    /// Changes to this buffer do not propagate towards the delegate writer.
+    /// Furthermore, write operations on this writer and buffer changes are not considered
+    /// thread-safe and should be avoided.
+    ///
+    /// @return A StringBuffer of the written characters.
     public StringBuffer getBuffer() {
         return ((StringWriter) delegates.get(0)).getBuffer();
     }
 
-    /**
-     * @return The name of this class plus the wrapped delegate writer.
-     */
+        /// @return The name of this class plus the wrapped delegate writer.
     @Override
     public String toString() {
         return getClass().getSimpleName() + '{' + delegates.get(1) + '}';

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Package containing an internal minimal logging abstraction that can be easily mapped to common logging frameworks
- * (such as {@code java.util.logging} or {@code Slf4J}) but also to the Javadoc {@code Reporter}.
- *
- * <p>
- * All formal logging {@linkplain nl.talsmasoftware.umldoclet.logging.Message messages}
- * are included as enumeration to ensure a resource is provided for each of them.
- * This makes internationalization of the doclet easier and safer.
- */
+/// Package containing an internal minimal logging abstraction that can be easily mapped to common logging frameworks
+/// (such as `java.util.logging` or `Slf4J`) but also to the Javadoc `Reporter`.
+///
+///
+/// All formal logging {@linkplain nl.talsmasoftware.umldoclet.logging.Message messages}
+/// are included as enumeration to ensure a resource is provided for each of them.
+/// This makes internationalization of the doclet easier and safer.
 package nl.talsmasoftware.umldoclet.logging;

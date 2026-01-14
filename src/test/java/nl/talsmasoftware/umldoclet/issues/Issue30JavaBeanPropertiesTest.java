@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,11 +27,9 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.either;
 import static org.hamcrest.Matchers.not;
 
-/**
- * Test correct substitution of JavaBean properties by UML references.
- *
- * @author Sjoerd Talsma
- */
+/// Test correct substitution of JavaBean properties by UML references.
+///
+/// @author Sjoerd Talsma
 public class Issue30JavaBeanPropertiesTest {
 
     // Method that should not be seen as a bean property.

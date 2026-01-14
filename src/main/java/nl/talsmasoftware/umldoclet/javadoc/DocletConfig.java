@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,60 +54,44 @@ public class DocletConfig implements Configuration {
 
     String plantumlServerUrl = null;
 
-    /**
-     * The name of the delegate doclet to use for the main documentation task.
-     * <p>
-     * Set to {@code StandardDoclet.class.getName()} by default.
-     */
+        /// The name of the delegate doclet to use for the main documentation task.
+    ///
+    /// Set to `StandardDoclet.class.getName()` by default.
     String delegateDoclet = "jdk.javadoc.doclet.StandardDoclet";
 
-    /**
-     * Destination directory where documentation is generated.
-     * <p>
-     * Set by (Standard) doclet option {@code -d}, default is {@code ""} meaning the current directory.
-     */
+        /// Destination directory where documentation is generated.
+    ///
+    /// Set by (Standard) doclet option `-d`, default is `""` meaning the current directory.
     String destDirName = "";
 
-    /**
-     * Whether or not to render PlantUML {@code .puml} files.
-     * <p>
-     * Set by option {@code -createPumlFiles}, default is {@code false}.
-     */
+        /// Whether or not to render PlantUML `.puml` files.
+    ///
+    /// Set by option `-createPumlFiles`, default is `false`.
     boolean renderPumlFile = false;
 
-    /**
-     * Whether the doclet should run more quite (errors must still be displayed).
-     * <p>
-     * Set by (Standard) doclet option {@code -quiet}, default is {@code false}.
-     */
+        /// Whether the doclet should run more quite (errors must still be displayed).
+    ///
+    /// Set by (Standard) doclet option `-quiet`, default is `false`.
     boolean quiet = false;
 
-    /**
-     * When not quiet, should the doclet be extra verbose?
-     * <p>
-     * Set by (our own) doclet option {@code -verbose}, default is {@code false}.
-     */
+        /// When not quiet, should the doclet be extra verbose?
+    ///
+    /// Set by (our own) doclet option `-verbose`, default is `false`.
     boolean verbose = false;
 
-    /**
-     * Option to provide explicit encoding for the written PlantUML files.
-     * <p>
-     * Otherwise, the {@link #htmlCharset()} is used.
-     */
+        /// Option to provide explicit encoding for the written PlantUML files.
+    ///
+    /// Otherwise, the [#htmlCharset()] is used.
     String umlencoding;
 
-    /**
-     * Option for Standard doclet's HTML encoding.
-     * <p>
-     * This takes precedence over the {@code -encoding} setting which is about the source files.
-     */
+        /// Option for Standard doclet's HTML encoding.
+    ///
+    /// This takes precedence over the `-encoding` setting which is about the source files.
     String docencoding;
 
-    /**
-     * Option for Standard doclet's source encoding.
-     * <p>
-     * This is here because the Standard doclet uses this for HTML output if no {@code -docencoding} is specified.
-     */
+        /// Option for Standard doclet's source encoding.
+    ///
+    /// This is here because the Standard doclet uses this for HTML output if no `-docencoding` is specified.
     String encoding;
 
     final ImageCfg images = new ImageCfg();
@@ -252,12 +236,10 @@ public class DocletConfig implements Configuration {
         String directory = null;
         Collection<Format> formats = null;
 
-        /**
-         * Directory where UML images are generated.
-         * <p>
-         * Set by doclet option {@code -umlImageDirectory}, default is {@code empty} meaning relative to the generated
-         * documentation itself.
-         */
+                /// Directory where UML images are generated.
+        ///
+        /// Set by doclet option `-umlImageDirectory`, default is `empty` meaning relative to the generated
+        /// documentation itself.
         @Override
         public Optional<String> directory() {
             return Optional.ofNullable(directory);

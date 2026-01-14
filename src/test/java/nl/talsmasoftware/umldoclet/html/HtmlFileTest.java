@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,9 +60,7 @@ public class HtmlFileTest {
         assertThat(newTempFile.getName(), endsWith(".html"));
     }
 
-    /**
-     * In reality all HtmlFile instances should have the {@code .html} extension
-     */
+        /// In reality all HtmlFile instances should have the `.html` extension
     @Test
     public void testTempfileForFileWithoutExtension() throws IOException {
         Configuration config = mock(Configuration.class);

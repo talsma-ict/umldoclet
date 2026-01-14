@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,24 +28,20 @@ import java.util.regex.Pattern;
 import static java.lang.Math.max;
 import static java.util.Arrays.asList;
 
-/**
- * Contains static utility methods for files.
- *
- * @author Sjoerd Talsma
- */
+/// Contains static utility methods for files.
+///
+/// @author Sjoerd Talsma
 public final class FileUtils {
 
     private FileUtils() {
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * Returns the relative path from one file to another.
-     *
-     * @param from The source file.
-     * @param to   The target file.
-     * @return The relative path from the source to the target file.
-     */
+        /// Returns the relative path from one file to another.
+    ///
+    /// @param from The source file.
+    /// @param to   The target file.
+    /// @return The relative path from the source to the target file.
     public static String relativePath(File from, File to) {
         if (from == null || to == null) {
             return null;
@@ -75,15 +71,13 @@ public final class FileUtils {
         }
     }
 
-    /**
-     * Ensure that the parent directory exists for the specified file.
-     * <p>
-     * This will attempt to create the parent directory if it does not exist yet.
-     *
-     * @param file The file verify directory existence for.
-     * @return The specified file.
-     * @throws IllegalStateException in case the parent directory did not yet exist and could not be created either.
-     */
+        /// Ensure that the parent directory exists for the specified file.
+    ///
+    /// This will attempt to create the parent directory if it does not exist yet.
+    ///
+    /// @param file The file verify directory existence for.
+    /// @return The specified file.
+    /// @throws IllegalStateException in case the parent directory did not yet exist and could not be created either.
     public static File ensureParentDir(File file) {
         if (file != null && !file.getParentFile().isDirectory() && !file.getParentFile().mkdirs()) {
             throw new IllegalStateException("Can't create directory \"" + file.getParent() + "\".");
@@ -91,13 +85,11 @@ public final class FileUtils {
         return file;
     }
 
-    /**
-     * Shortcut implementation that determines the substring after the last Windows or *nix
-     * path separator.
-     *
-     * @param path The path to return filename of.
-     * @return The part of the specified part after the last slash or backslash.
-     */
+        /// Shortcut implementation that determines the substring after the last Windows or *nix
+    /// path separator.
+    ///
+    /// @param path The path to return filename of.
+    /// @return The part of the specified part after the last slash or backslash.
     public static String fileNameOf(String path) {
         return path.substring(max(path.lastIndexOf('/'), path.lastIndexOf('\\')) + 1);
     }
@@ -113,19 +105,17 @@ public final class FileUtils {
         return path;
     }
 
-    /**
-     * Opens a reader to the specified URI.
-     * <p>
-     * If the call {@code uri.toURL().openStream()} succeeds, a reader is wrapped and returned.
-     * Otherwise, if the URI is absolute, an attempt is made to open it as a file. If this also fails,
-     * a last effort is made to open the uri relative to the specified {@code basedir} directory.
-     *
-     * @param basedir     The base directory to use if the URI turns out to be a relative file link.
-     * @param uri         The URI to read from.
-     * @param charsetName The character set to use for reading.
-     * @return The opened reader.
-     * @throws IOException in case the call to {@code uri.toURL().openStream()} threw an I/O Exception.
-     */
+        /// Opens a reader to the specified URI.
+    ///
+    /// If the call `uri.toURL().openStream()` succeeds, a reader is wrapped and returned.
+    /// Otherwise, if the URI is absolute, an attempt is made to open it as a file. If this also fails,
+    /// a last effort is made to open the uri relative to the specified `basedir` directory.
+    ///
+    /// @param basedir     The base directory to use if the URI turns out to be a relative file link.
+    /// @param uri         The URI to read from.
+    /// @param charsetName The character set to use for reading.
+    /// @return The opened reader.
+    /// @throws IOException in case the call to `uri.toURL().openStream()` threw an I/O Exception.
     public static Reader openReaderTo(String basedir, URI uri, String charsetName) throws IOException {
         if ("file".equals(uri.getScheme()) || uri.getScheme() == null) {
             File f = uri.isAbsolute() ? new File(uri) : new File(uri.toASCIIString());

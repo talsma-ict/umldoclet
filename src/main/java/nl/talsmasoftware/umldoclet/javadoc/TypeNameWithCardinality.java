@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,11 +31,9 @@ import java.util.function.Function;
 import static java.util.Collections.singleton;
 import static java.util.Objects.requireNonNull;
 
-/**
- * Simple data object containing a (possibly) derived type name with a cardinality.
- *
- * @author Sjoerd Talsma
- */
+/// Simple data object containing a (possibly) derived type name with a cardinality.
+///
+/// @author Sjoerd Talsma
 final class TypeNameWithCardinality {
 
     final TypeName typeName;
@@ -46,17 +44,15 @@ final class TypeNameWithCardinality {
         this.cardinality = cardinality;
     }
 
-    /**
-     * Returns a function that applies the TypeNameVisitor, but also:
-     * <ol>
-     * <li>Checks if a type is an {@code Array}, {@code Iterable} or {@code Stream} to return the type argument with cardinality {@code "*"}</li>
-     * <li>Checks if a type is a Java 8 or Guava {@code Optional} object to return the type argument with cardinality {@code "0..1"}</li>
-     * <li>Otherwise, the name of the actual type is returned with cardinality {@code null}</li>
-     * </ol>
-     *
-     * @param typeUtils The type utils to use for supertype introspection (required).
-     * @return The function to return TypeName with cardinality for use in same-package references.
-     */
+        /// Returns a function that applies the TypeNameVisitor, but also:
+    /// <ol>
+    /// <li>Checks if a type is an `Array`, `Iterable` or `Stream` to return the type argument with cardinality `"*"`</li>
+    /// <li>Checks if a type is a Java 8 or Guava `Optional` object to return the type argument with cardinality `"0..1"`</li>
+    /// <li>Otherwise, the name of the actual type is returned with cardinality `null`</li>
+    /// </ol>
+    ///
+    /// @param typeUtils The type utils to use for supertype introspection (required).
+    /// @return The function to return TypeName with cardinality for use in same-package references.
     static Function<TypeMirror, TypeNameWithCardinality> function(final Types typeUtils) {
         requireNonNull(typeUtils, "Type utils are <null>.");
         return type -> {

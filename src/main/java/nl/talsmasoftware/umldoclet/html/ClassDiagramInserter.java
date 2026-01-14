@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,21 +21,19 @@ import java.io.File;
 
 import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
 
-/**
- * Abstraction for a generated class diagram file.
- *
- * <p>
- * The {@link #matches(HtmlFile)} method determines whether
- * a found {@code HTML} file corresponds to this class diagram
- * and if so, a postprocessor should be run for it.
- *
- * <p>
- * Furthermore, this class 'knows' where (in the HTML) to insert the
- * UML diagram and how to do it. The {@link #newInserter(String)} method
- * provides such an {@link Postprocessor.Inserter inserter} to the postprocessor.
- *
- * @author Sjoerd Talsma
- */
+/// Abstraction for a generated class diagram file.
+///
+///
+/// The [#matches(HtmlFile)] method determines whether
+/// a found `HTML` file corresponds to this class diagram
+/// and if so, a postprocessor should be run for it.
+///
+///
+/// Furthermore, this class 'knows' where (in the HTML) to insert the
+/// UML diagram and how to do it. The [#newInserter(String)] method
+/// provides such an [Postprocessor.Inserter inserter] to the postprocessor.
+///
+/// @author Sjoerd Talsma
 final class ClassDiagramInserter extends DiagramFile {
 
     private final String extension;
@@ -77,13 +75,11 @@ final class ClassDiagramInserter extends DiagramFile {
             this.insertAsObject = insertAsObject;
         }
 
-        /**
-         * Processes a single line from the {@code HTML} and inserts the image in the correct line and clears the
-         * 'float' style at the correct place.
-         *
-         * @param line A single line from the {@code HTML} to be processed.
-         * @return The processed line
-         */
+                /// Processes a single line from the `HTML` and inserts the image in the correct line and clears the
+        /// 'float' style at the correct place.
+        ///
+        /// @param line A single line from the `HTML` to be processed.
+        /// @return The processed line
         @Override
         String process(String line) {
             if (!inserted) {
@@ -110,10 +106,8 @@ final class ClassDiagramInserter extends DiagramFile {
             return line;
         }
 
-        /**
-         * @return The {@code <img>} tag for this diagram including styling,
-         * or an {@code <object>} tag for {@code SVG} diagrams to enable their links.
-         */
+                /// @return The `<img>` tag for this diagram including styling,
+        /// or an `<object>` tag for `SVG` diagrams to enable their links.
         private String getImageTag() {
             String style = " style=\"max-width:60%;float:right;\"";
             if (insertAsObject) { // Render SVG images as objects to make their links work
@@ -122,13 +116,11 @@ final class ClassDiagramInserter extends DiagramFile {
             return "<img src=\"" + relativePath + "\" alt=\"" + getDiagramName() + " UML Diagram\"" + style + "/>";
         }
 
-        /**
-         * Add {@code style="clear: right;"} to the {@code summary} div and return the new line.
-         * If the line doesn't contain the summary div, returns {@code null}.
-         *
-         * @param line The line to check for the right place to add clear:right style to.
-         * @return The modified line with the added style or {@code null} if the line was not the right place to do so.
-         */
+                /// Add `style="clear: right;"` to the `summary` div and return the new line.
+        /// If the line doesn't contain the summary div, returns `null`.
+        ///
+        /// @param line The line to check for the right place to add clear:right style to.
+        /// @return The modified line with the added style or `null` if the line was not the right place to do so.
         private String addClearRightStyle(String line) {
             final String summaryDiv = "<div class=\"summary\"";
             int idx = line.indexOf(summaryDiv);
@@ -137,9 +129,7 @@ final class ClassDiagramInserter extends DiagramFile {
             return line.substring(0, ins) + " style=\"clear:right;\"" + line.substring(ins);
         }
 
-        /**
-         * @return The diagram name to use for the IMG alt tag
-         */
+                /// @return The diagram name to use for the IMG alt tag
         private String getDiagramName() {
             String name = relativePath.substring(relativePath.lastIndexOf('/') + 1);
             int dotIdx = name.lastIndexOf('.');

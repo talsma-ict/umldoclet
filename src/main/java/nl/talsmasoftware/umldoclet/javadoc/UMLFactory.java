@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,16 +41,14 @@ import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 import static javax.lang.model.element.ElementKind.ENUM;
 
-/**
- * One big factory to produce UML from analyzed Javadoc elements.
- * <p>
- * TODO: This should be refactored into ClassDiagram and PackageDiagram visitor implementations.
- * This increases flexibility in supporting future language features however may introduce additional risk
- * with regard to unbounded recursion (see <a href="https://github.com/talsma-ict/umldoclet/issues/75">Issue 75</a>
- * for example).
- *
- * @author Sjoerd Talsma
- */
+/// One big factory to produce UML from analyzed Javadoc elements.
+///
+/// TODO: This should be refactored into ClassDiagram and PackageDiagram visitor implementations.
+/// This increases flexibility in supporting future language features however may introduce additional risk
+/// with regard to unbounded recursion (see <a href="https://github.com/talsma-ict/umldoclet/issues/75">Issue 75</a>
+/// for example).
+///
+/// @author Sjoerd Talsma
 public class UMLFactory {
 
     private static final UmlPostProcessors POST_PROCESSORS = new UmlPostProcessors();
@@ -176,17 +174,15 @@ public class UMLFactory {
         return classDiagram;
     }
 
-    /**
-     * Determine whether a superclass is included in the documentation.
-     *
-     * <p>
-     * Introduced to fix <a href="https://github.com/talsma-ict/umldoclet/issues/146">issue 146</a>:
-     * skip superclass if not included in the documentation.
-     *
-     * @param superclass The superclass to test.
-     * @return {@code true} if the superclass is within the documented javadoc part,
-     * or if its modifiers have the 'right' accesibility. See {#148} for accessibility details.
-     */
+        /// Determine whether a superclass is included in the documentation.
+    ///
+    ///
+    /// Introduced to fix <a href="https://github.com/talsma-ict/umldoclet/issues/146">issue 146</a>:
+    /// skip superclass if not included in the documentation.
+    ///
+    /// @param superclass The superclass to test.
+    /// @return `true` if the superclass is within the documented javadoc part,
+    /// or if its modifiers have the 'right' accesibility. See {#148} for accessibility details.
     private boolean includeSuperclass(TypeElement superclass) {
         if (env.isIncluded(superclass)) return true;
         // TODO Make configurable:
@@ -309,13 +305,11 @@ public class UMLFactory {
                 : Visibility.PACKAGE_PRIVATE;
     }
 
-    /**
-     * Creates an 'empty' type (i.e. without any fields, constructors or methods)
-     *
-     * @param containingPackage The containing package of the type (optional, will be obtained from typeElement if null).
-     * @param type              The type element to create a Type object for.
-     * @return The empty Type object.
-     */
+        /// Creates an 'empty' type (i.e. without any fields, constructors or methods)
+    ///
+    /// @param containingPackage The containing package of the type (optional, will be obtained from typeElement if null).
+    /// @param type              The type element to create a Type object for.
+    /// @return The empty Type object.
     private Type createType(Namespace containingPackage, TypeElement type) {
         requireNonNull(type, "Type element is <null>.");
         if (containingPackage == null) containingPackage = packageOf(type);
