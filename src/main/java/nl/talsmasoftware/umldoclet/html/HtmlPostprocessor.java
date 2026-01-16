@@ -30,10 +30,18 @@ import static java.util.Objects.requireNonNull;
 public class HtmlPostprocessor {
     private final Configuration config;
 
+    /// Creates a new HTML postprocessor.
+    ///
+    /// @param config The configuration to use.
     public HtmlPostprocessor(Configuration config) {
         this.config = requireNonNull(config, "Configuration is <null>.");
     }
 
+    /// Performs the postprocessing of the generated HTML documentation.
+    ///
+    /// This method scans the destination directory for HTML files and inserts the appropriate UML diagrams.
+    ///
+    /// @return `true` if the postprocessing was successful.
     public boolean postProcessHtml() {
         try {
             final File destinationDir = new File(config.destinationDirectory());

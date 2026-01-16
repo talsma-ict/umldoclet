@@ -23,14 +23,14 @@ import java.util.Optional;
 ///
 /// @author Sjoerd Talsma
 public final class UriUtils {
-        /// For simple roll-our-own hex encoding.
+    /// For simple roll-our-own hex encoding.
     private static final char[] HEX = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
     private UriUtils() {
         throw new UnsupportedOperationException();
     }
 
-        /// This method adds a 'component' to the path of an URI.
+    /// This method adds a 'component' to the path of an URI.
     ///
     /// @param uri       The URI to add a path component to
     /// @param component The component to add to the end of the uri path, separated by a slash (`'/'`) character
@@ -47,7 +47,7 @@ public final class UriUtils {
         return uri;
     }
 
-        /// This method adds a query parameter to an existing URI and takes care of proper encoding etc.
+    /// This method adds a query parameter to an existing URI and takes care of proper encoding etc.
     ///
     /// Since query parameters are scheme-specific, this method only applies to URI's with the following schemes:
     /// <ol>
@@ -90,7 +90,7 @@ public final class UriUtils {
         return left.endsWith(sep) || right.startsWith(sep) ? left + right : left + separator + right;
     }
 
-        /// In the <a href="http://tools.ietf.org/html/rfc3986">URI specification (RFC-3986)</a>,
+    /// In the [URI specification (RFC-3986)](http://tools.ietf.org/html/rfc3986),
     /// unreserved characters are defined as `ALPHA / DIGIT / "-" / "." / "_" / "~"`.
     ///
     /// @param ch The character to examine.
@@ -99,7 +99,7 @@ public final class UriUtils {
         return Character.isLetterOrDigit(ch) || ch == '-' || ch == '.' || ch == '_' || ch == '~';
     }
 
-        /// Appends the byte as percent-encoded hex value (three characters).
+    /// Appends the byte as percent-encoded hex value (three characters).
     ///
     /// @param builder The builder to append to
     /// @param value   the type to be appended as percent-encoded

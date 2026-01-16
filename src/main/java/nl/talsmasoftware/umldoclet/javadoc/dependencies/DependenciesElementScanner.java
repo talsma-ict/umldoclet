@@ -19,7 +19,13 @@ import jdk.javadoc.doclet.DocletEnvironment;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.logging.Message;
 
-import javax.lang.model.element.*;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.ModuleElement;
+import javax.lang.model.element.PackageElement;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.TypeParameterElement;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementScanner9;
 import java.util.LinkedHashSet;
@@ -40,12 +46,12 @@ public class DependenciesElementScanner extends ElementScanner9<Set<PackageDepen
 
     private String moduleName = null;
 
-        /// Constructor to create a new package dependencies scanner.
+    /// Constructor to create a new package dependencies scanner.
     ///
     /// The scanner is stateful, the set of package dependencies is collected in the (mutable) [#DEFAULT_VALUE] set.
     ///
     /// @param docEnv The doclet environment (required, non-null).
-    /// This is needed to evalutate whether visited elements are included in the documentation.
+    ///               This is needed to evalutate whether visited elements are included in the documentation.
     /// @param config The doclet configuration (required, non-null).
     public DependenciesElementScanner(DocletEnvironment docEnv, Configuration config) {
         super(new LinkedHashSet<>());
@@ -53,7 +59,7 @@ public class DependenciesElementScanner extends ElementScanner9<Set<PackageDepen
         this.config = requireNonNull(config, "Configuration is <null>");
     }
 
-        /// @return The modulename if found, otherwise `null`.
+    /// @return The modulename if found, otherwise `null`.
     public String getModuleName() {
         return moduleName;
     }
@@ -64,14 +70,14 @@ public class DependenciesElementScanner extends ElementScanner9<Set<PackageDepen
         return super.visitModule(visitedModule, fromPackage);
     }
 
-        /// Visit a package to evalutate all dependencies from its elements to other packages.
+    /// Visit a package to evalutate all dependencies from its elements to other packages.
     ///
     /// All elements within the package are visited, with the new `fromPackage` set to the qualified name of
     /// this visited package.
     ///
     /// @param visitedPackage The visited package.
     /// @param fromPackage    The 'from' package (possibly from parent elements).
-    /// Ignored in this method, as the scan will continue from the visited package.
+    ///                       Ignored in this method, as the scan will continue from the visited package.
     /// @return The found package dependencies after scanning the visited package.
     @Override
     public Set<PackageDependency> visitPackage(PackageElement visitedPackage, String fromPackage) {
@@ -84,7 +90,7 @@ public class DependenciesElementScanner extends ElementScanner9<Set<PackageDepen
         return super.visitPackage(visitedPackage, packageName);
     }
 
-        /// Visit a type element to add their package dependencies to the current set.
+    /// Visit a type element to add their package dependencies to the current set.
     ///
     /// First, the package of the superclass is added as a dependency.
     /// Then, the package of each implemented interface is added as a dependency.
@@ -105,7 +111,7 @@ public class DependenciesElementScanner extends ElementScanner9<Set<PackageDepen
         return super.visitType(visitedType, pkg);
     }
 
-        /// Visit a variable element (field, constant or method parameter) to add its package dependency to the current set.
+    /// Visit a variable element (field, constant or method parameter) to add its package dependency to the current set.
     ///
     /// The package of the <em>type</em> of the variable is added as a package dependency.
     ///
@@ -118,7 +124,7 @@ public class DependenciesElementScanner extends ElementScanner9<Set<PackageDepen
         return super.visitVariable(visitedVariable, fromPackage);
     }
 
-        /// Visit an executable element (method, constructor or initializer) to add its package dependency to the current set.
+    /// Visit an executable element (method, constructor or initializer) to add its package dependency to the current set.
     ///
     /// First, the package of the <em>return type</em> of the executable is added as a package dependency.
     /// Then, the packages of all thrown exception types are added as package dependencies.
@@ -134,7 +140,7 @@ public class DependenciesElementScanner extends ElementScanner9<Set<PackageDepen
         return super.visitExecutable(visitedExecutable, fromPackage); // will add the argument dependencies
     }
 
-        /// Visit a type parameter element (a generic) to add its package dependency to the current set.
+    /// Visit a type parameter element (a generic) to add its package dependency to the current set.
     ///
     /// First, the package of the <em>generic type</em> is added as a package dependency.
     /// Then, the packages of all declared bounds are added as package dependencies.
@@ -149,7 +155,7 @@ public class DependenciesElementScanner extends ElementScanner9<Set<PackageDepen
         return super.visitTypeParameter(visitedTypeParameter, fromPackage);
     }
 
-        /// Overrides visiting any <em>unknown</em> element.
+    /// Overrides visiting any <em>unknown</em> element.
     ///
     /// The default visitor throws exception on unknown elements, this visitor just returns the current package
     /// dependencies (without adding any).

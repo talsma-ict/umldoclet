@@ -53,8 +53,8 @@ public class Type extends UMLNode {
         }
     }
 
-    private Namespace packageNamespace;
-    private Classification classfication;
+    private final Namespace packageNamespace;
+    private final Classification classfication;
     private TypeName name;
     private boolean isDeprecated;
     private boolean includePackagename;

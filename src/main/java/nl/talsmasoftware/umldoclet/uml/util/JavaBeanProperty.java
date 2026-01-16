@@ -39,9 +39,8 @@ import static java.util.Collections.emptySet;
 /// Each java bean contains properties that have getter and setter methods allowing access to a single field.
 ///
 ///
-/// Also see: <a href="https://en.wikipedia.org/wiki/JavaBeans">JavaBeans definition on Wikipedia</a>
-/// or the <a href="http://www.oracle.com/technetwork/java/javase/documentation/spec-136004.html">Official
-/// JavaBeans 1.01 Specification</a>.
+/// Also see: [JavaBeans definition on Wikipedia](https://en.wikipedia.org/wiki/JavaBeans)
+/// or the [Official JavaBeans 1.01 Specification](http://www.oracle.com/technetwork/java/javase/documentation/spec-136004.html).
 public class JavaBeanProperty {
     private final String name;
 
@@ -53,15 +52,14 @@ public class JavaBeanProperty {
         this.name = name;
     }
 
-        /// This method detects the JavaBean properties from the uml {@linkplain Type} model of a Java class.
+    /// This method detects the JavaBean properties from the uml {@linkplain Type} model of a Java class.
     ///
     ///
-    /// The following will be detected as <a href="https://en.wikipedia.org/wiki/JavaBeans">JavaBean</a> property:
-    /// <ul>
-    /// <li>A public {@linkplain Field}</li>
-    /// <li>A public getter {@linkplain Method} (including isXyz() boolean getters)</li>
-    /// <li>A public setter {@linkplain Method}</li>
-    /// </ul>
+    /// The following will be detected as [JavaBean](https://en.wikipedia.org/wiki/JavaBeans) property:
+    ///
+    /// - A public [Field]
+    /// - A public getter [Method] (including `isXyz()` boolean getters)
+    /// - A public setter [Method]
     ///
     /// @param type The uml model of a java type.
     /// @return The detected JavaBean poperties in that type.
@@ -78,7 +76,7 @@ public class JavaBeanProperty {
         return propertiesByName.values();
     }
 
-        /// This method checks if a type member matches the JavaBean propertyName convention and returns the
+    /// This method checks if a type member matches the JavaBean propertyName convention and returns the
     /// property name if it does.
     ///
     ///
@@ -98,7 +96,7 @@ public class JavaBeanProperty {
         return propertyName;
     }
 
-        /// Adds a detected {@linkplain Field} or {@linkplain Method} to the property.
+    /// Adds a detected {@linkplain Field} or {@linkplain Method} to the property.
     ///
     ///
     /// A javabean property normally consist of a private {@linkplain Field} and public getter and setter
@@ -121,7 +119,7 @@ public class JavaBeanProperty {
         }
     }
 
-        /// Remove the getter and setter methods from the parent and replace them with a field.
+    /// Remove the getter and setter methods from the parent and replace them with a field.
     ///
     ///
     /// <strong>Note:</strong> this method modifies the {@linkplain Type} parent in-place and therefore
@@ -137,7 +135,7 @@ public class JavaBeanProperty {
         }
     }
 
-        /// Test whether the {@linkplain #propertyNameOf(TypeMember) property name of} the specified UML node
+    /// Test whether the {@linkplain #propertyNameOf(TypeMember) property name of} the specified UML node
     /// matches the `name` of property.
     ///
     ///
@@ -151,7 +149,7 @@ public class JavaBeanProperty {
         return node instanceof TypeMember && propertyNameOf((TypeMember) node).filter(name::equals).isPresent();
     }
 
-        /// Implements the {@linkplain #propertyNameOf(TypeMember) 'property name of'} evaluation for methods.
+    /// Implements the {@linkplain #propertyNameOf(TypeMember) 'property name of'} evaluation for methods.
     ///
     /// @param method The getter/setter method to return the property name of.
     /// @return The property name of the getter/setter method or `empty()` if the method did not start with
@@ -183,7 +181,7 @@ public class JavaBeanProperty {
         return method.name.startsWith("set") && parameterCount(method) == 1;
     }
 
-        /// Counts the parameters of a typemember.
+    /// Counts the parameters of a typemember.
     ///
     ///
     /// This method is only practically useful for {@linkplain Method} members. This counting method may become obsolete
@@ -198,7 +196,7 @@ public class JavaBeanProperty {
                 .sum();
     }
 
-        /// Changes the first character of the string into a lowercase character.
+    /// Changes the first character of the string into a lowercase character.
     ///
     /// @param value The value to decapitalize.
     /// @return The decapitalized value.
@@ -211,7 +209,7 @@ public class JavaBeanProperty {
         return value;
     }
 
-        /// Determines whether the type is a boolean type.
+    /// Determines whether the type is a boolean type.
     ///
     ///
     /// This should be either the primitive `boolean` or the `java.lang.Boolean` wrapper.

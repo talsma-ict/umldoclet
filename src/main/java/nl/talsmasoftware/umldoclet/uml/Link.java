@@ -74,7 +74,7 @@ public class Link extends UMLNode {
         return Optional.empty();
     }
 
-        /// Sets the base path where relative links should be rendered from.
+    /// Sets the base path where relative links should be rendered from.
     ///
     /// This setting is configured on a per-thread basis.
     ///

@@ -39,7 +39,7 @@ public class PackageDependencyCycle extends AbstractList<PackageDependency> impl
 
     private final PackageDependency[] cycle;
 
-        /// Create a new dependency cycle object.
+    /// Create a new dependency cycle object.
     ///
     ///
     /// This constructor validates that the specified package dependencies actually form a cycle and will throw
@@ -61,7 +61,7 @@ public class PackageDependencyCycle extends AbstractList<PackageDependency> impl
         }
     }
 
-        /// Detect cycles in a collection of dependencies.
+    /// Detect cycles in a collection of dependencies.
     ///
     ///
     /// First the collection of dependencies is converted to a list of dependency <em>chains</em>.

@@ -49,7 +49,7 @@ public class IndentingWriter extends Writer {
         this.addWhitespace.set(addWhitespace);
     }
 
-        /// Returns an indenting writer around the given `delegate`.
+    /// Returns an indenting writer around the given `delegate`.
     /// If the `delegate` writer is already an indenting writer, it will simply be returned
     /// [#withIndentation(Indentation) with the specified indentation].
     /// If the `delegate` writer is not yet an indending writer, a new indenting writer class will be created
@@ -57,7 +57,7 @@ public class IndentingWriter extends Writer {
     ///
     /// @param delegate    The delegate to turn into an indenting writer.
     /// @param indentation The indentation to use for the indenting writer
-    /// (optional, specify `null` to use the default indentation).
+    ///                    (optional, specify `null` to use the default indentation).
     /// @return The indenting delegate writer.
     /// @see Indentation#DEFAULT
     public static IndentingWriter wrap(Appendable delegate, Indentation indentation) {
@@ -66,7 +66,7 @@ public class IndentingWriter extends Writer {
                 : new IndentingWriter(delegate, indentation);
     }
 
-        /// Returns an indenting writer with the new indentation.
+    /// Returns an indenting writer with the new indentation.
     ///
     /// Please note: Already written lines will not be modified to accomodate the new indentation.
     ///
@@ -97,7 +97,7 @@ public class IndentingWriter extends Writer {
         return withIndentation(getIndentation().decrease());
     }
 
-        /// Makes sure there is at least one whitespace character between the last charater and the next.
+    /// Makes sure there is at least one whitespace character between the last charater and the next.
     ///
     /// This method attempts to avoid appending a whitespace character if it knows the last character was in fact a
     /// whitespace character.
@@ -109,7 +109,7 @@ public class IndentingWriter extends Writer {
         return this;
     }
 
-        /// Tests whether the character is an end-of-line character.
+    /// Tests whether the character is an end-of-line character.
     ///
     /// @param ch The character to be tested.
     /// @return `true` if the character was an end-of-line character, `false` otherwise.

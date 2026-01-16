@@ -75,7 +75,7 @@ final class ClassDiagramInserter extends DiagramFile {
             this.insertAsObject = insertAsObject;
         }
 
-                /// Processes a single line from the `HTML` and inserts the image in the correct line and clears the
+        /// Processes a single line from the `HTML` and inserts the image in the correct line and clears the
         /// 'float' style at the correct place.
         ///
         /// @param line A single line from the `HTML` to be processed.
@@ -106,7 +106,7 @@ final class ClassDiagramInserter extends DiagramFile {
             return line;
         }
 
-                /// @return The `<img>` tag for this diagram including styling,
+        /// @return The `<img>` tag for this diagram including styling,
         /// or an `<object>` tag for `SVG` diagrams to enable their links.
         private String getImageTag() {
             String style = " style=\"max-width:60%;float:right;\"";
@@ -116,7 +116,7 @@ final class ClassDiagramInserter extends DiagramFile {
             return "<img src=\"" + relativePath + "\" alt=\"" + getDiagramName() + " UML Diagram\"" + style + "/>";
         }
 
-                /// Add `style="clear: right;"` to the `summary` div and return the new line.
+        /// Add `style="clear: right;"` to the `summary` div and return the new line.
         /// If the line doesn't contain the summary div, returns `null`.
         ///
         /// @param line The line to check for the right place to add clear:right style to.
@@ -129,7 +129,7 @@ final class ClassDiagramInserter extends DiagramFile {
             return line.substring(0, ins) + " style=\"clear:right;\"" + line.substring(ins);
         }
 
-                /// @return The diagram name to use for the IMG alt tag
+        /// @return The diagram name to use for the IMG alt tag
         private String getDiagramName() {
             String name = relativePath.substring(relativePath.lastIndexOf('/') + 1);
             int dotIdx = name.lastIndexOf('.');

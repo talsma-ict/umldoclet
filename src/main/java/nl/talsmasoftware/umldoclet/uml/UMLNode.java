@@ -81,7 +81,7 @@ public abstract class UMLNode {
         return unmodifiableList(children);
     }
 
-        /// Returns all children that are an instance of a particular type.
+    /// Returns all children that are an instance of a particular type.
     ///
     /// @param type The type of `UMLNode` to return (required, non-null).
     /// @param <T>  The type of children to obtain.
@@ -105,14 +105,14 @@ public abstract class UMLNode {
                 .orElseThrow(() -> new IllegalStateException("Cannot obtain configuration!"));
     }
 
-        /// Renders this object to the given indenting `output`.
+    /// Renders this object to the given indenting `output`.
     ///
     /// @param <IPW>  The subclass of indenting print writer being written to.
     /// @param output The output to render this object to.
     /// @return A reference to the output for method chaining purposes.
     protected abstract <IPW extends IndentingPrintWriter> IPW writeTo(IPW output);
 
-        /// Helper method to write all children to the specified output.
+    /// Helper method to write all children to the specified output.
     ///
     /// @param <IPW>  The subclass of indenting print writer being written to.
     /// @param output The output to write the children to.
@@ -122,14 +122,14 @@ public abstract class UMLNode {
         return output;
     }
 
-        /// Renders the entire content of this renderer and returns it as a String value.
+    /// Renders the entire content of this renderer and returns it as a String value.
     ///
     /// @return The rendered content of this renderer.
     public String toString() {
         return writeTo(IndentingPrintWriter.wrap(new StringWriter(), indentation())).toString();
     }
 
-        /// @return never-null indentation for use in toString
+    /// @return never-null indentation for use in toString
     private Indentation indentation() {
         try {
             return requireNonNull(getConfiguration().indentation());

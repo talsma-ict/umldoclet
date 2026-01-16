@@ -45,7 +45,7 @@ import static javax.lang.model.element.ElementKind.ENUM;
 ///
 /// TODO: This should be refactored into ClassDiagram and PackageDiagram visitor implementations.
 /// This increases flexibility in supporting future language features however may introduce additional risk
-/// with regard to unbounded recursion (see <a href="https://github.com/talsma-ict/umldoclet/issues/75">Issue 75</a>
+/// with regard to unbounded recursion (see [Issue 75](https://github.com/talsma-ict/umldoclet/issues/75)
 /// for example).
 ///
 /// @author Sjoerd Talsma
@@ -174,10 +174,10 @@ public class UMLFactory {
         return classDiagram;
     }
 
-        /// Determine whether a superclass is included in the documentation.
+    /// Determine whether a superclass is included in the documentation.
     ///
     ///
-    /// Introduced to fix <a href="https://github.com/talsma-ict/umldoclet/issues/146">issue 146</a>:
+    /// Introduced to fix [issue 146](https://github.com/talsma-ict/umldoclet/issues/146):
     /// skip superclass if not included in the documentation.
     ///
     /// @param superclass The superclass to test.
@@ -305,7 +305,7 @@ public class UMLFactory {
                 : Visibility.PACKAGE_PRIVATE;
     }
 
-        /// Creates an 'empty' type (i.e. without any fields, constructors or methods)
+    /// Creates an 'empty' type (i.e. without any fields, constructors or methods)
     ///
     /// @param containingPackage The containing package of the type (optional, will be obtained from typeElement if null).
     /// @param type              The type element to create a Type object for.

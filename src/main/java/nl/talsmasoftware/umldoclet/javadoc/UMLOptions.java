@@ -115,7 +115,7 @@ final class UMLOptions {
         return copy;
     }
 
-        /// Split a value on comma and semicolon (`','` and `';'`) and trim each value,
+    /// Split a value on comma and semicolon (`','` and `';'`) and trim each value,
     /// then collect each non-empty value into a list.
     ///
     /// @param value The value to split into a list.

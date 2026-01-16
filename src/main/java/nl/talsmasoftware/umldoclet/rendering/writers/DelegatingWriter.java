@@ -28,10 +28,10 @@ import static java.util.Objects.requireNonNull;
 ///
 /// @author Sjoerd Talsma
 public class DelegatingWriter extends Writer {
-        /// The list of [Writer delegate writers] to write to.
+    /// The list of [Writer delegate writers] to write to.
     protected final List<Writer> delegates;
 
-        /// Constructor. Creates a new writer that writes to all provided delegates when written to.
+    /// Constructor. Creates a new writer that writes to all provided delegates when written to.
     ///
     /// @param delegates The delegates to write to.
     public DelegatingWriter(Writer... delegates) {
@@ -42,13 +42,13 @@ public class DelegatingWriter extends Writer {
         this.delegates = unmodifiableList(writers);
     }
 
-        /// Delegates the write operation to all delegates and merges any occurred exceptions into a single [IOException].
+    /// Delegates the write operation to all delegates and merges any occurred exceptions into a single [IOException].
     ///
     /// @param cbuf The buffer containing the characters to be written.
     /// @param off  The offset index to write from.
     /// @param len  The number of characters to write.
     /// @throws IOException in case at least one of the delegate writers threw an exception while writing.
-    /// <em>Please note:</em> It is very well possible that other delegates were succesfully written.
+    ///                     <em>Please note:</em> It is very well possible that other delegates were succesfully written.
     @Override
     public void write(char[] cbuf, int off, int len) throws IOException {
         List<Exception> writeExceptions = new ArrayList<>(delegates.size());
@@ -64,7 +64,7 @@ public class DelegatingWriter extends Writer {
         }
     }
 
-        /// Delegates the flush operation to all delegates and merges any occurred exceptions into a single [IOException].
+    /// Delegates the flush operation to all delegates and merges any occurred exceptions into a single [IOException].
     ///
     /// @throws IOException in case at least one of the delegate writers threw an exception while flushing.
     @Override
@@ -82,10 +82,10 @@ public class DelegatingWriter extends Writer {
         }
     }
 
-        /// Delegates the close operation to all delegates and merges any occurred exceptions into a single [IOException].
+    /// Delegates the close operation to all delegates and merges any occurred exceptions into a single [IOException].
     ///
     /// @throws IOException in case at least one of the delegate writers threw an exception while closing.
-    /// <em>Please note:</em> Attempts are made to close all delegates.
+    ///                     <em>Please note:</em> Attempts are made to close all delegates.
     @Override
     public void close() throws IOException {
         List<Exception> closeExceptions = new ArrayList<>(delegates.size());
@@ -101,7 +101,7 @@ public class DelegatingWriter extends Writer {
         }
     }
 
-        /// Creates a single [IOException] merging potentially multiple cause exceptions into it.
+    /// Creates a single [IOException] merging potentially multiple cause exceptions into it.
     /// Having this as a separate method helps avoiding unnecessary wrapping for the 'single exception' case.
     ///
     /// Only in case a non-`IO` checked exception or multiple exceptions occurred,
@@ -109,7 +109,7 @@ public class DelegatingWriter extends Writer {
     /// `"Error [ACTIONVERB] N delegate writers!` whatever may be the case.
     ///
     /// @param actionVerb A verb describing the action, e.g. `"writing"`, `"flushing"`
-    /// or `"closing"`.
+    ///                   or `"closing"`.
     /// @param exceptions The exceptions to merge into one IOException.
     /// @return The merged IOException.
     private IOException mergeExceptions(String actionVerb, Collection<Exception> exceptions) {
@@ -128,7 +128,7 @@ public class DelegatingWriter extends Writer {
         return ioe;
     }
 
-        /// @return The classname plus the delegate writers.
+    /// @return The classname plus the delegate writers.
     @Override
     public String toString() {
         return getClass().getSimpleName() + delegates;

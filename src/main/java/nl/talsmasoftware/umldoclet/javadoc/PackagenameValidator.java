@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class PackagenameValidator implements Predicate<String> {
     private static final Pattern PACKAGENAME_PATTERN = Pattern.compile("([a-zA-Z_]+(\\.[a-zA-Z_]+)*)?");
 
-        /// Validate a candidate java package name.
+    /// Validate a candidate java package name.
     ///
     /// @param candidatePackageName the candidate package name to be validated.
     /// @return Whether the given name is a valid java package name.

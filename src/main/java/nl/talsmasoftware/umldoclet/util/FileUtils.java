@@ -37,7 +37,7 @@ public final class FileUtils {
         throw new UnsupportedOperationException();
     }
 
-        /// Returns the relative path from one file to another.
+    /// Returns the relative path from one file to another.
     ///
     /// @param from The source file.
     /// @param to   The target file.
@@ -71,7 +71,7 @@ public final class FileUtils {
         }
     }
 
-        /// Ensure that the parent directory exists for the specified file.
+    /// Ensure that the parent directory exists for the specified file.
     ///
     /// This will attempt to create the parent directory if it does not exist yet.
     ///
@@ -85,7 +85,7 @@ public final class FileUtils {
         return file;
     }
 
-        /// Shortcut implementation that determines the substring after the last Windows or *nix
+    /// Shortcut implementation that determines the substring after the last Windows or *nix
     /// path separator.
     ///
     /// @param path The path to return filename of.
@@ -94,6 +94,10 @@ public final class FileUtils {
         return path.substring(max(path.lastIndexOf('/'), path.lastIndexOf('\\')) + 1);
     }
 
+    /// Returns the specified path without its file extension.
+    ///
+    /// @param path The path to remove the extension from.
+    /// @return The path without the extension.
     public static String withoutExtension(String path) {
         if (path != null) {
             int lastDot = path.lastIndexOf('.');
@@ -105,7 +109,7 @@ public final class FileUtils {
         return path;
     }
 
-        /// Opens a reader to the specified URI.
+    /// Opens a reader to the specified URI.
     ///
     /// If the call `uri.toURL().openStream()` succeeds, a reader is wrapped and returned.
     /// Otherwise, if the URI is absolute, an attempt is made to open it as a file. If this also fails,
@@ -125,6 +129,11 @@ public final class FileUtils {
         return new InputStreamReader(uri.toURL().openStream(), charsetName);
     }
 
+    /// Returns whether the specified file has the given extension.
+    ///
+    /// @param file      The file to check.
+    /// @param extension The extension to check for.
+    /// @return `true` if the file has the extension, `false` otherwise.
     public static boolean hasExtension(Object file, String extension) {
         if (file == null || extension == null) return false;
         return endsWithIgnoreCase(file.toString(), extension.startsWith(".") ? extension : '.' + extension);

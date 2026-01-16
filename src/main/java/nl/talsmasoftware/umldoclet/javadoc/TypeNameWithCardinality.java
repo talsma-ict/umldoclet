@@ -44,7 +44,7 @@ final class TypeNameWithCardinality {
         this.cardinality = cardinality;
     }
 
-        /// Returns a function that applies the TypeNameVisitor, but also:
+    /// Returns a function that applies the TypeNameVisitor, but also:
     /// <ol>
     /// <li>Checks if a type is an `Array`, `Iterable` or `Stream` to return the type argument with cardinality `"*"`</li>
     /// <li>Checks if a type is a Java 8 or Guava `Optional` object to return the type argument with cardinality `"0..1"`</li>

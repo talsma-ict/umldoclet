@@ -119,7 +119,7 @@ public abstract class Diagram extends UMLNode {
         return config;
     }
 
-        /// Determine the physical file location for the plantuml output.
+    /// Determine the physical file location for the plantuml output.
     ///
     /// This will even be called if `-createPumlFiles` is not enabled,
     /// to determine the `diagram base file`.
@@ -127,7 +127,7 @@ public abstract class Diagram extends UMLNode {
     /// @return The physical file for the plantuml output.
     protected abstract File getPlantUmlFile();
 
-        /// @return The diagram file without extension.
+    /// @return The diagram file without extension.
     /// @see #getDiagramFile(FileFormat)
     private File getDiagramBaseFile() {
         if (diagramBaseFile == null) {
@@ -143,7 +143,7 @@ public abstract class Diagram extends UMLNode {
         return diagramBaseFile;
     }
 
-        /// The diagram file in the specified format.
+    /// The diagram file in the specified format.
     ///
     /// @param format The diagram file format.
     /// @return The diagram file.
@@ -220,7 +220,7 @@ public abstract class Diagram extends UMLNode {
                 .collect(joining(",", ".[", "]"));
     }
 
-        /// Static utility method to convert an image format to PlantUML {@linkplain FileFormat} with the same name.
+    /// Static utility method to convert an image format to PlantUML {@linkplain FileFormat} with the same name.
     ///
     /// @param format The image format to convert into PlantUML fileformat.
     /// @return The PlantUML file format.

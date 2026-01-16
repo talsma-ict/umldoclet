@@ -54,7 +54,7 @@ final class DiagramCollector extends SimpleFileVisitor<Path> {
                 .map(imagesDir -> new File(config.destinationDirectory(), imagesDir));
     }
 
-        /// Collects all generated diagram files by walking the specified path.
+    /// Collects all generated diagram files by walking the specified path.
     ///
     /// @return The collected diagrams
     /// @throws IOException In case there were I/O errors walking the path

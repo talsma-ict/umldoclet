@@ -29,8 +29,8 @@ public class DependencyDiagram extends Diagram {
     private static final String BACKGROUNDCOLOR_DIRECTIVE = "skinparam backgroundcolor";
     private static final String DEFAULT_BACKGROUNDCOLOR = "transparent";
 
-    private String moduleName;
-    private String pumlFileName;
+    private final String moduleName;
+    private final String pumlFileName;
     private File pumlFile = null;
 
     /// Creates a new dependency diagram.

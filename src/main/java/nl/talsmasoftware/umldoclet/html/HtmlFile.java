@@ -48,6 +48,10 @@ final class HtmlFile {
         return file != null && file.isFile() && file.canRead() && file.getName().endsWith(".html");
     }
 
+    /// Processes this HTML file to insert UML diagrams.
+    ///
+    /// @param diagrams The diagrams to consider for insertion.
+    /// @return `true` if any diagram was inserted into this HTML file.
     boolean process(Collection<DiagramFile> diagrams) {
         return diagrams.stream()
                 .filter(diagram -> diagram.matches(this))

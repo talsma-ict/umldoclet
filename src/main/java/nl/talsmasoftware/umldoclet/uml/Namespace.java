@@ -41,7 +41,7 @@ public class Namespace extends UMLNode {
         return Optional.ofNullable(moduleName);
     }
 
-        /// Adds the package name to the diagram.
+    /// Adds the package name to the diagram.
     /// Re: bug 107: If the package name is empty (i.e. the 'default' package),
     /// render `"unnamed"` because an empty name is not valid in PlantUML.
     ///

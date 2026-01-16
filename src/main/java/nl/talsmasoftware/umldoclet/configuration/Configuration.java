@@ -23,15 +23,15 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Optional;
 
-/// Configuration that influences <em>how</em> UML should be rendered.
+/// Configuration that influences *how* UML should be rendered.
 ///
 /// @author Sjoerd Talsma
 public interface Configuration {
 
-        /// The base URL of the <a href="https://www.plantuml.com/plantuml">PlantUML server</a> to generate diagrams with.
+    /// The base URL of the [PlantUML server](https://www.plantuml.com/plantuml) to generate diagrams with.
     ///
     /// Please note that it is not recommended to use the public, central PlantUML server at
-    /// <a href="https://www.plantuml.com/plantuml">https://www.plantuml.com/plantuml</a>.
+    /// [https://www.plantuml.com/plantuml](https://www.plantuml.com/plantuml).
     /// Although not strictly forbidden by the author of PlantUML, using the central server to generate your
     /// javadoc diagrams is causing additional load on the central server and is a lot slower than running your own
     /// local server.
@@ -45,7 +45,7 @@ public interface Configuration {
     /// @return The base URL of the PlantUML online server to use.
     Optional<String> plantumlServerUrl();
 
-        /// The name of the doclet to delegate main documentation to
+    /// The name of the doclet to delegate main documentation to
     /// or [Optional#empty] if no delegation is wanted.
     ///
     /// @return The name of the doclet to delegate main documentation to
@@ -54,46 +54,46 @@ public interface Configuration {
     @Deprecated(since = "2.0.21", forRemoval = true)
     Optional<String> delegateDocletName();
 
-        /// Configured logger for this doclet.
+    /// Configured logger for this doclet.
     ///
     /// This is a simple, custom logging implementation so we do not have to introduce an external dependency.
     ///
     /// @return The logger for this application
     Logger logger();
 
-        /// The indentation configuration for generated PlantUML source files.
+    /// The indentation configuration for generated PlantUML source files.
     ///
     /// @return The indentation configuration.
     Indentation indentation();
 
-        /// Destination directory for JavaDoc and UML diagrams, or the empty string `""` to use the current directory.
+    /// Destination directory for JavaDoc and UML diagrams, or the empty string `""` to use the current directory.
     ///
     /// @return Destination directory for JavaDoc and UML diagrams, or the empty string `""` for the current directory.
     String destinationDirectory();
 
-        /// Whether PlantUML source files are generated.
+    /// Whether PlantUML source files are generated.
     ///
     /// PlantUML source files have the `.puml` filename extension.
     ///
     /// @return `true` if PlantUML source files must be generated, otherwise `false`.
     boolean renderPumlFile();
 
-        /// Configuration for generated images.
+    /// Configuration for generated images.
     ///
     /// @return Configuration for generated images.
     ImageConfig images();
 
-        /// Configuration for generated UML fields.
+    /// Configuration for generated UML fields.
     ///
     /// @return UML field configuration.
     FieldConfig fields();
 
-        /// Configuration for generated UML methods.
+    /// Configuration for generated UML methods.
     ///
     /// @return UML method configuration.
     MethodConfig methods();
 
-        /// Names of types that are excluded as reference.
+    /// Names of types that are excluded as reference.
     ///
     /// Types can be any java type, such as classes and interfaces.
     ///
@@ -102,27 +102,27 @@ public interface Configuration {
     /// @return The types (classes, interfaces) that are excluded as references.
     List<String> excludedTypeReferences();
 
-        /// Names of packages that are excluded as package dependencies.
+    /// Names of packages that are excluded as package dependencies.
     ///
-    /// The specified package names <em>and any subpackages</em> will be excluded from package dependency diagrams.
+    /// The specified package names *and any subpackages* will be excluded from package dependency diagrams.
     ///
     /// @return The packages (including subpackages) excluded from the package dependencies.
     List<String> excludedPackageDependencies();
 
-        /// Whether a detected package dependency cycle must result in an error (instead of a warning).
+    /// Whether a detected package dependency cycle must result in an error (instead of a warning).
     ///
     /// @return `true` if a detected package dependency cycle must be considered as an error,
     /// or `false` if it should be reported as merely a warning.
     boolean failOnCyclicPackageDependencies();
 
-        /// Resolves an external link to the specified type.
+    /// Resolves an external link to the specified type.
     ///
     /// @param packageName The package of the type.
     /// @param type        The type name within the package.
     /// @return The external link, if resolved.
     Optional<URI> resolveExternalLinkToType(String packageName, String type);
 
-        /// Custom directives to include in rendered PlantUML diagram sources.
+    /// Custom directives to include in rendered PlantUML diagram sources.
     ///
     /// Custom directives are rendered as-is at the top of each PlantUML diagram.
     /// For example, to render handwritten diagrams,
@@ -131,7 +131,7 @@ public interface Configuration {
     /// @return Any custom PlantUML directives.
     List<String> customPlantumlDirectives();
 
-        /// The UML character set can be explicitly configured with the `"-umlEncoding"` option.
+    /// The UML character set can be explicitly configured with the `"-umlEncoding"` option.
     ///
     /// If this is not explicitly set, the {@linkplain #htmlCharset()} will also be used
     /// for the `PlantUML` source files.
@@ -142,14 +142,13 @@ public interface Configuration {
     /// @return The charset to use for PlantUML source files (`".puml"` files).
     Charset umlCharset();
 
-        /// The `HTML` character set is determined the same way the `Standard` doclet uses,
+    /// The `HTML` character set is determined the same way the `Standard` doclet uses,
     /// as we delegate the initial rendering to it:
-    /// <ol>
-    /// <li>use the `"-docencoding"` if set,</li>
-    /// <li>otherwise the source encoding (`"-encoding"`)</li>
-    /// <li>finally, if no encodings are specified at all,
-    /// the `default platform encoding` is used as implicit fallback.</li>
-    /// </ol>
+    ///
+    /// 1. use the `"-docencoding"` if set,
+    /// 2. otherwise the source encoding (`"-encoding"`)
+    /// 3. finally, if no encodings are specified at all,
+    ///    the `default platform encoding` is used as implicit fallback.
     ///
     /// @return The charset used for Javadoc HTML files.
     Charset htmlCharset();

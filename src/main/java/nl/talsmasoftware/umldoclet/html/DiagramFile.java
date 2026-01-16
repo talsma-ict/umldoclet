@@ -31,7 +31,7 @@ abstract class DiagramFile {
         this.format = format;
     }
 
-        /// Evaluate whether this diagram matches with the specified HTML file.
+    /// Evaluate whether this diagram matches with the specified HTML file.
     ///
     /// @param htmlFile The html file being visited.
     /// @return Whether the diagram should be inserted in the specified HTML file.

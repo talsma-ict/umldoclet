@@ -26,7 +26,7 @@ import java.io.Writer;
 /// @author Sjoerd Talsma
 public class StringBufferingWriter extends DelegatingWriter {
 
-        /// Constructor. Creates a new writer that delegates to the given writer and also retains a
+    /// Constructor. Creates a new writer that delegates to the given writer and also retains a
     /// [StringBuffer] of all written characters.
     ///
     /// @param delegate The delegate writer to write to.
@@ -34,7 +34,7 @@ public class StringBufferingWriter extends DelegatingWriter {
         super(new StringWriter(), delegate);
     }
 
-        /// A buffer of the written characters.
+    /// A buffer of the written characters.
     ///
     ///
     /// Changes to this buffer do not propagate towards the delegate writer.
@@ -46,7 +46,7 @@ public class StringBufferingWriter extends DelegatingWriter {
         return ((StringWriter) delegates.get(0)).getBuffer();
     }
 
-        /// @return The name of this class plus the wrapped delegate writer.
+    /// @return The name of this class plus the wrapped delegate writer.
     @Override
     public String toString() {
         return getClass().getSimpleName() + '{' + delegates.get(1) + '}';

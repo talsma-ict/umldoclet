@@ -22,46 +22,45 @@ import java.util.Optional;
 ///
 /// @author Sjoerd Talsma
 public interface ImageConfig {
-        /// Supported image formats.
+    /// Supported image formats.
     enum Format {
-                /// Render UML diagrams as SVG
-        /// (<a href="https://wikipedia.org/wiki/Scalable_Vector_Graphics">scalable vector graphics</a>) images.
+        /// Render UML diagrams as SVG
+        /// ([scalable vector graphics](https://wikipedia.org/wiki/Scalable_Vector_Graphics)) images.
         ///
         /// This format is the default and recommended format, as they have the following advantages over the other
         /// formats:
-        /// <ul>
-        /// <li>Size. UML diagrams can be represented as compact SVG images.
-        /// <li>Scalability. SVG images can be scaled almost without limits.
-        /// <li>Links. SVG images allow us to embed links in the UML diagrams.
-        /// </ul>
+        ///
+        /// - Size: UML diagrams can be represented as compact SVG images.
+        /// - Scalability: SVG images can be scaled almost without limits.
+        /// - Links: SVG images allow us to embed links in the UML diagrams.
         SVG(".svg"),
 
-                /// Generate the same diagram as the [#SVG] option, but embed it as plain <em>&lt;img&gt;</em> tags
+        /// Generate the same diagram as the [#SVG] option, but embed it as plain `<img>` tags
         /// in the Javadoc HTML instead of SVG objects.
         ///
         /// This allows loading the documentation in tools like Microsoft Word and keeping the images,
         /// where embedded SVG objects are problematic.
         ///
         /// It is recommended as a fallback option if the default [#SVG] option is giving you issues.
-        /// Links <em>will</em> be embedded inside the SVG images, but will <em>not</em> be clickable
+        /// Links *will* be embedded inside the SVG images, but will *not* be clickable
         /// in most browsers when included as image tag.
         SVG_IMG(".svg"),
 
-                /// Render UML diagrams as PNG
-        /// (<a href="https://wikipedia.org/wiki/Portable_Network_Graphics">Portable Network Graphics</a>) images.
+        /// Render UML diagrams as PNG
+        /// ([Portable Network Graphics](https://wikipedia.org/wiki/Portable_Network_Graphics)) images.
         ///
         /// This is a raster-graphics format that supports lossless compression. This format is usually only used if
         /// [#SVG] is not an option. Raster images do not automatically scale and their file size is substantially
         /// larger than [#SVG].
         PNG(".png"),
 
-                /// Render UML diagrams as EPS
-        /// (<a href="https://wikipedia.org/wiki/Encapsulated_PostScript">Encapsulated Postscript</a>) images.
+        /// Render UML diagrams as EPS
+        /// ([Encapsulated Postscript](https://wikipedia.org/wiki/Encapsulated_PostScript)) images.
         ///
         /// This format is most appropriate for print.
         EPS(".eps");
 
-                /// The file extension for images of this format.
+        /// The file extension for images of this format.
         public final String fileExtension;
 
         Format(String fileExtension) {
@@ -69,7 +68,7 @@ public interface ImageConfig {
         }
     }
 
-        /// A separate directory where all UML diagram images are generated, if explicitly specified.
+    /// A separate directory where all UML diagram images are generated, if explicitly specified.
     ///
     /// If not configured (i.e. [Optional#empty()]), the image will be generated within the same directory als
     /// the corresponding javadoc HTML.
@@ -77,7 +76,7 @@ public interface ImageConfig {
     /// @return The image directory for UML diagrams, if explicitly specified.
     Optional<String> directory();
 
-        /// Image format(s) to generate UML diagrams in.
+    /// Image format(s) to generate UML diagrams in.
     ///
     /// By default `SVG` images will be generated because they are a lot smaller than for instance `PNG`
     /// images and they can include links to Javadoc `HTML` pages.

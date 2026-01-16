@@ -18,7 +18,6 @@ package nl.talsmasoftware.umldoclet.javadoc;
 import nl.talsmasoftware.umldoclet.uml.TypeName;
 
 import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.QualifiedNameable;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
@@ -47,10 +46,10 @@ final class TypeNameVisitor extends SimpleTypeVisitor9<TypeName, Void> {
     private TypeNameVisitor() {
     }
 
-    private static ThreadLocal<Set<TypeMirror>> VISITED = ThreadLocal.withInitial(
+    private static final ThreadLocal<Set<TypeMirror>> VISITED = ThreadLocal.withInitial(
             () -> Collections.newSetFromMap(new IdentityHashMap<>()));
 
-        /// Internal variant of [#visit(TypeMirror, Object)] for calls from inside this visitor itself.
+    /// Internal variant of [#visit(TypeMirror, Object)] for calls from inside this visitor itself.
     ///
     /// Main purpose of this method is to limit the endless recursion that would result for types such as
     /// `<T extends Comparable<T>>`
@@ -95,8 +94,7 @@ final class TypeNameVisitor extends SimpleTypeVisitor9<TypeName, Void> {
         final String packagename;
 
         Element enclosingElement = el.getEnclosingElement();
-        if (enclosingElement.getKind().isInterface() || enclosingElement.getKind().isClass())
-        {
+        if (enclosingElement.getKind().isInterface() || enclosingElement.getKind().isClass()) {
             packagename = visit(enclosingElement.asType()).packagename;
         } else {
             int dot = qualifiedName.lastIndexOf('.');

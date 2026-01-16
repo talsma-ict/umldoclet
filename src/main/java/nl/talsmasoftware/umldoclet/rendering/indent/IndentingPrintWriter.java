@@ -34,14 +34,14 @@ public class IndentingPrintWriter extends PrintWriter {
         super(IndentingWriter.wrap(writer, indentation));
     }
 
-        /// Returns an indenting printwriter around the given `delegate`.
+    /// Returns an indenting printwriter around the given `delegate`.
     /// If the `delegate` printwriter is already an indenting printwriter, it will simply be returned as-is.
     /// If the `delegate` printwriter is not yet an indending printwriter, a new indenting printwriter class
     /// will be created to wrap the delegate using the specified `indentation`.
     ///
     /// @param delegate    The delegate to turn into an indenting printwriter.
     /// @param indentation The indentation to use for the indenting printwriter
-    /// (optional, specify `null` to use the default indentation).
+    ///                    (optional, specify `null` to use the default indentation).
     /// @return The indenting delegate writer.
     /// @see Indentation#DEFAULT
     public static IndentingPrintWriter wrap(Appendable delegate, Indentation indentation) {
@@ -54,7 +54,7 @@ public class IndentingPrintWriter extends PrintWriter {
         return (IndentingWriter) super.out;
     }
 
-        /// The indentation; must be non-`null` in all practical instances of this object.
+    /// The indentation; must be non-`null` in all practical instances of this object.
     ///
     /// @return The indentation (non-`null`).
     private Indentation getIndentation() {

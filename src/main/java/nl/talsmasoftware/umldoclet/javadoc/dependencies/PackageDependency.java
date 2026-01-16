@@ -30,15 +30,15 @@ import static java.util.Objects.requireNonNull;
 /// @author Sjoerd Talsma
 public class PackageDependency {
 
-        /// The qualified name of the depending package.
+    /// The qualified name of the depending package.
     /// This package contains at least one element that has a dependency on an element in the [#toPackage].
     public final String fromPackage;
 
-        /// The qualified name of the depended-upon package.
+    /// The qualified name of the depended-upon package.
     /// This package contains at least one element that is needed by an element in the [#fromPackage].
     public final String toPackage;
 
-        /// Create a new package dependency object.
+    /// Create a new package dependency object.
     ///
     /// @param fromPackage The package that has a dependency on another package.
     /// @param toPackage   The package that is depended upon.
@@ -47,13 +47,13 @@ public class PackageDependency {
         this.toPackage = requireNonNull(toPackage, "No 'to' package defined for dependency.");
     }
 
-        /// @return Hashcode implementation based on the [#fromPackage] and [#toPackage] values.
+    /// @return Hashcode implementation based on the [#fromPackage] and [#toPackage] values.
     @Override
     public int hashCode() {
         return Objects.hash(fromPackage, toPackage);
     }
 
-        /// Equal implementation based on the [#fromPackage] and [#toPackage] values.
+    /// Equal implementation based on the [#fromPackage] and [#toPackage] values.
     ///
     /// @param other The other object to compare with.
     /// @return `true` if the other object is also a [PackageDependency] and contains
@@ -66,7 +66,7 @@ public class PackageDependency {
         );
     }
 
-        /// @return Human-readable representation of this package dependency.
+    /// @return Human-readable representation of this package dependency.
     @Override
     public String toString() {
         return fromPackage + "->" + toPackage;

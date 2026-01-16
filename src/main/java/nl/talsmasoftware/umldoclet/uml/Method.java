@@ -25,10 +25,10 @@ import java.util.Objects;
 /// @author Sjoerd Talsma
 public class Method extends TypeMember {
 
-        /// If this method is an abstract method.
+    /// If this method is an abstract method.
     public boolean isAbstract;
 
-        /// Create a new method in the containing type with a specific name and return type.
+    /// Create a new method in the containing type with a specific name and return type.
     ///
     /// @param containingType The containing type the member is part of.
     /// @param name           The name of the method.
@@ -50,7 +50,7 @@ public class Method extends TypeMember {
         return parameters;
     }
 
-        /// Add a parameter to this method.
+    /// Add a parameter to this method.
     ///
     /// @param name The name of the parameter.
     /// @param type The type of the parameter.

@@ -44,7 +44,7 @@ import static nl.talsmasoftware.umldoclet.logging.Message.ERROR_UNANTICIPATED_ER
 import static nl.talsmasoftware.umldoclet.logging.Message.ERROR_UNSUPPORTED_DELEGATE_DOCLET;
 import static nl.talsmasoftware.umldoclet.logging.Message.PLANTUML_COPYRIGHT;
 
-/// UML doclet that generates <a href="http://plantuml.com">PlantUML</a> class diagrams from your java code just as
+/// UML doclet that generates [PlantUML](http://plantuml.com) class diagrams from your java code just as
 /// easily as creating proper JavaDoc comments.
 /// It actually extends JavaDoc's [StandardDoclet] doclet to generate the regular HTML documentation.
 ///

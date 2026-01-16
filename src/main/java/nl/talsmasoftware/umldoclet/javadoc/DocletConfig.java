@@ -58,42 +58,42 @@ public class DocletConfig implements Configuration {
 
     String plantumlServerUrl = null;
 
-        /// The name of the delegate doclet to use for the main documentation task.
+    /// The name of the delegate doclet to use for the main documentation task.
     ///
     /// Set to `StandardDoclet.class.getName()` by default.
     String delegateDoclet = "jdk.javadoc.doclet.StandardDoclet";
 
-        /// Destination directory where documentation is generated.
+    /// Destination directory where documentation is generated.
     ///
     /// Set by (Standard) doclet option `-d`, default is `""` meaning the current directory.
     String destDirName = "";
 
-        /// Whether or not to render PlantUML `.puml` files.
+    /// Whether or not to render PlantUML `.puml` files.
     ///
     /// Set by option `-createPumlFiles`, default is `false`.
     boolean renderPumlFile = false;
 
-        /// Whether the doclet should run more quite (errors must still be displayed).
+    /// Whether the doclet should run more quite (errors must still be displayed).
     ///
     /// Set by (Standard) doclet option `-quiet`, default is `false`.
     boolean quiet = false;
 
-        /// When not quiet, should the doclet be extra verbose?
+    /// When not quiet, should the doclet be extra verbose?
     ///
     /// Set by (our own) doclet option `-verbose`, default is `false`.
     boolean verbose = false;
 
-        /// Option to provide explicit encoding for the written PlantUML files.
+    /// Option to provide explicit encoding for the written PlantUML files.
     ///
     /// Otherwise, the [#htmlCharset()] is used.
     String umlencoding;
 
-        /// Option for Standard doclet's HTML encoding.
+    /// Option for Standard doclet's HTML encoding.
     ///
     /// This takes precedence over the `-encoding` setting which is about the source files.
     String docencoding;
 
-        /// Option for Standard doclet's source encoding.
+    /// Option for Standard doclet's source encoding.
     ///
     /// This is here because the Standard doclet uses this for HTML output if no `-docencoding` is specified.
     String encoding;
@@ -114,7 +114,7 @@ public class DocletConfig implements Configuration {
 
     List<String> customPlantumlDirectives = new ArrayList<>();
 
-    private Indentation indentation = Indentation.DEFAULT;
+    private final Indentation indentation = Indentation.DEFAULT;
 
     /// Creates a new doclet configuration.
     public DocletConfig() {
@@ -249,7 +249,7 @@ public class DocletConfig implements Configuration {
         String directory = null;
         Collection<Format> formats = null;
 
-                /// Directory where UML images are generated.
+        /// Directory where UML images are generated.
         ///
         /// Set by doclet option `-umlImageDirectory`, default is `empty` meaning relative to the generated
         /// documentation itself.

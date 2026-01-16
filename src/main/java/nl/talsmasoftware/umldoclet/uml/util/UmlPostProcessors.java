@@ -22,7 +22,7 @@ import java.util.function.Consumer;
 /// Utility class providing postprocessing functionality for generated UML models.
 public class UmlPostProcessors {
 
-        /// A post-processor for a uml {@linkplain Type} to replace getter and setter
+    /// A post-processor for a uml {@linkplain Type} to replace getter and setter
     /// {@linkplain nl.talsmasoftware.umldoclet.uml.Method methods}
     /// into {@linkplain nl.talsmasoftware.umldoclet.uml.Field fields}.
     ///

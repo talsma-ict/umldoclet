@@ -30,11 +30,10 @@ import static java.util.stream.Collectors.toCollection;
 /// Reference between two types.
 ///
 /// The following reference types are currently supported:
-/// <ul>
-/// <li>The 'extends' reference: `"--|>"`</li>
-/// <li>The 'implements' reference: `"..|>"`</li>
-/// <li>The 'inner class' reference: `"+--"`</li>
-/// </ul>
+///
+/// - The 'extends' reference: `"--|>"`
+/// - The 'implements' reference: `"..|>"`
+/// - The 'inner class' reference: `"+--"`
 ///
 /// @author Sjoerd Talsma
 public class Reference extends UMLNode {
@@ -87,7 +86,7 @@ public class Reference extends UMLNode {
                 this.notes);
     }
 
-        /// @return The canonical type that can be used for equality matching.
+    /// @return The canonical type that can be used for equality matching.
     public Reference canonical() {
         return type.startsWith("<-") || type.startsWith("<..")
                 || type.endsWith("-|>") || type.endsWith("..|>")
@@ -109,7 +108,7 @@ public class Reference extends UMLNode {
         return output;
     }
 
-        /// Returns whether or not this reference contains the requested type.
+    /// Returns whether or not this reference contains the requested type.
     ///
     /// @param typeName The name of a type to check.
     /// @return Whether either `from` or `to` matches `typeName`.
@@ -194,7 +193,7 @@ public class Reference extends UMLNode {
             return toString(null);
         }
 
-                /// The index of the searched character or the length of the string if not found.
+        /// The index of the searched character or the length of the string if not found.
         ///
         /// @param value The string to search in
         /// @param ch    The character to search for

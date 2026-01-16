@@ -28,7 +28,7 @@ import javax.lang.model.util.SimpleElementVisitor9;
 final class PackageElementVisitor extends SimpleElementVisitor9<String, Void> {
     static final PackageElementVisitor INSTANCE = new PackageElementVisitor();
 
-        /// When visiting a package element, we found the String we are looking for, so return the qualified name
+    /// When visiting a package element, we found the String we are looking for, so return the qualified name
     /// as a new {@linkplain String} instance.
     ///
     /// @param e     The package element visited.
@@ -39,7 +39,7 @@ final class PackageElementVisitor extends SimpleElementVisitor9<String, Void> {
         return e.getQualifiedName().toString();
     }
 
-        /// The default action is visiting the enclosing element until we reach the package element.
+    /// The default action is visiting the enclosing element until we reach the package element.
     ///
     /// @param e     A non-package element being visited
     /// @param aVoid ignored
@@ -51,7 +51,7 @@ final class PackageElementVisitor extends SimpleElementVisitor9<String, Void> {
         return enclosingElement == null ? null : visit(enclosingElement, aVoid);
     }
 
-        /// When we reach an unknown element we just visit the enclosing element too (same as the default action).
+    /// When we reach an unknown element we just visit the enclosing element too (same as the default action).
     ///
     /// @param e     The unknown element being visited
     /// @param aVoid ignored
