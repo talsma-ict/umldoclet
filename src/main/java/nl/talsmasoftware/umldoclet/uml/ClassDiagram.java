@@ -34,6 +34,8 @@ public class ClassDiagram extends Diagram {
         addChild(type);
     }
 
+    /// Return the type information of the class for which this diagram is generated.
+    ///
     /// @return The type for which this diagram is generated.
     public Type getType() {
         return getChildren().stream()
@@ -41,12 +43,19 @@ public class ClassDiagram extends Diagram {
                 .findFirst().orElseThrow(() -> new IllegalStateException("No Type defined in Class diagram!"));
     }
 
+    /// Adds a new child to this class diagram.
+    ///
+    /// @param child The child to add to this diagram.
     @Override
     public void addChild(UMLNode child) {
         super.addChild(child);
         if (child instanceof Type) ((Type) child).setIncludePackagename(true);
     }
 
+    /// Write the child UML nodes for the diagram.
+    ///
+    /// @param output The output to write to.
+    /// @return The output for chaining purposes.
     @Override
     protected <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
         output.append("set namespaceSeparator none").newline()
@@ -56,6 +65,9 @@ public class ClassDiagram extends Diagram {
         return super.writeChildrenTo(output);
     }
 
+    /// Returns the file for the PlantUML code.
+    ///
+    /// @return The file containing the PlantUML code.
     @Override
     protected File getPlantUmlFile() {
         if (pumlFile == null) {

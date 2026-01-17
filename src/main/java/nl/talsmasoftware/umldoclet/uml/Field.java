@@ -24,6 +24,11 @@ import static nl.talsmasoftware.umldoclet.uml.Type.Classification.ENUM;
 /// @author Sjoerd Talsma
 public class Field extends TypeMember {
 
+    /// Constructor for a new field.
+    ///
+    /// @param containingType Name of the containing type.
+    /// @param name           Name of the field.
+    /// @param type           The type of the field.
     public Field(Type containingType, String name, TypeName type) {
         super(containingType, name, type);
     }
@@ -35,12 +40,21 @@ public class Field extends TypeMember {
                 && ((Type) getParent()).getName().equals(type);
     }
 
+
+    /// Write the field to the UML output.
+    ///
+    /// @param output The output to write to.
+    /// @return The output for chaining purposes.
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         if (!getConfiguration().fields().include(getVisibility())) return output;
         return super.writeTo(output);
     }
 
+    /// Write the type to the UML output.
+    ///
+    /// @param output The output to write to.
+    /// @return The output for chaining purposes.
     @Override
     protected <IPW extends IndentingPrintWriter> IPW writeTypeTo(IPW output) {
         return isEnumType() ? output : super.writeTypeTo(output);

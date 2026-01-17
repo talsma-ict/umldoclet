@@ -33,7 +33,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
 /// Part of an UML diagram that can render itself to the diagram by
-/// {@linkplain #writeTo(IndentingPrintWriter) writing to} an indenting writer.
+/// [writing to][#writeTo(IndentingPrintWriter)] an indenting writer.
 /// It serves as a reusable base-class for all specific UML nodes.
 ///
 ///
@@ -45,10 +45,15 @@ public abstract class UMLNode {
     private UMLNode parent;
     private final List<UMLNode> children = new ArrayList<>();
 
+    /// Constructor for a new UML node with reference to its `parent`.
+    ///
+    /// @param parent The parent for this node, or `null` for the root node for a diagram.
     protected UMLNode(UMLNode parent) {
         this.parent = parent;
     }
 
+    ///  Returns the parent node of this UML node, or `null` if there is none.
+    ///
     /// @return The parent node of this UML node.
     public UMLNode getParent() {
         return parent;
@@ -76,7 +81,9 @@ public abstract class UMLNode {
         return Optional.empty();
     }
 
-    /// @return The children of this UML node (unmodifiable).
+    /// Returns the children of this UML node.
+    ///
+    /// @return The children of this UML node as unmodifiable list.
     public List<UMLNode> getChildren() {
         return unmodifiableList(children);
     }
@@ -90,15 +97,25 @@ public abstract class UMLNode {
         return unmodifiableList(getChildren().stream().filter(type::isInstance).map(type::cast).collect(toList()));
     }
 
+    /// Add a child to this node.
+    ///
+    /// @param child The child node to add to this node.
     public void addChild(UMLNode child) {
         children.add(child);
         child.setParent(this);
     }
 
+    /// Remove children if they meet the specified condition.
+    ///
+    /// @param condition The condition to check children with. They get removed if the condition returns `true`.
+    /// @return `true` if at least 1 child was removed, otherwise `false`.
     public boolean removeChildren(Predicate<? super UMLNode> condition) {
         return children.removeIf(condition);
     }
 
+    /// Obtain the doclet configuration from the diagram this node is part of
+    ///
+    /// @return The doclet configuration.
     protected Configuration getConfiguration() {
         return findParent(Diagram.class)
                 .map(Diagram::getConfiguration)

@@ -51,7 +51,7 @@ public class DependenciesElementScanner extends ElementScanner9<Set<PackageDepen
     /// The scanner is stateful, the set of package dependencies is collected in the (mutable) [#DEFAULT_VALUE] set.
     ///
     /// @param docEnv The doclet environment (required, non-null).
-    ///               This is needed to evalutate whether visited elements are included in the documentation.
+    ///                                           This is needed to evalutate whether visited elements are included in the documentation.
     /// @param config The doclet configuration (required, non-null).
     public DependenciesElementScanner(DocletEnvironment docEnv, Configuration config) {
         super(new LinkedHashSet<>());
@@ -59,11 +59,18 @@ public class DependenciesElementScanner extends ElementScanner9<Set<PackageDepen
         this.config = requireNonNull(config, "Configuration is <null>");
     }
 
+    /// Return the module name if found, otherwise `null`.
+    ///
     /// @return The modulename if found, otherwise `null`.
     public String getModuleName() {
         return moduleName;
     }
 
+    /// Visit callback method for module.
+    ///
+    /// @param visitedModule The module.
+    /// @param fromPackage   The package where the dependency originated.
+    /// @return The resulting package dependencies.
     @Override
     public Set<PackageDependency> visitModule(ModuleElement visitedModule, String fromPackage) {
         moduleName = visitedModule.getQualifiedName().toString();
@@ -77,7 +84,7 @@ public class DependenciesElementScanner extends ElementScanner9<Set<PackageDepen
     ///
     /// @param visitedPackage The visited package.
     /// @param fromPackage    The 'from' package (possibly from parent elements).
-    ///                       Ignored in this method, as the scan will continue from the visited package.
+    ///                                                                   Ignored in this method, as the scan will continue from the visited package.
     /// @return The found package dependencies after scanning the visited package.
     @Override
     public Set<PackageDependency> visitPackage(PackageElement visitedPackage, String fromPackage) {

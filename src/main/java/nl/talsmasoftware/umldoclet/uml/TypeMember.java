@@ -45,6 +45,8 @@ public abstract class TypeMember extends UMLNode {
         this.type = type;
     }
 
+    /// Return the visibility of this member.
+    ///
     /// @return The visibility of this member.
     public Visibility getVisibility() {
         return visibility == null ? Visibility.PUBLIC : visibility;
@@ -88,6 +90,10 @@ public abstract class TypeMember extends UMLNode {
         return output;
     }
 
+    /// Write this type member to the UML diagram.
+    ///
+    /// @param output The output to write to.
+    /// @return The output for chaining purposes.
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         if (isStatic) output.append("{static}").whitespace();
@@ -113,11 +119,18 @@ public abstract class TypeMember extends UMLNode {
         }
     }
 
+    /// The hashcode for this type member.
+    ///
+    /// @return The hashcode for this type member.
     @Override
     public int hashCode() {
         return Objects.hash(getParent(), name);
     }
 
+    /// Determine equality with another object.
+    ///
+    /// @param other The other object to compare with.
+    /// @return Whether this object is equal to the other object.
     @Override
     public boolean equals(Object other) {
         return this == other || (other != null && getClass().equals(other.getClass())

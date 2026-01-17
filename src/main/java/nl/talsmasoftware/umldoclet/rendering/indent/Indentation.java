@@ -95,11 +95,17 @@ public final class Indentation implements CharSequence, Serializable {
                 : new Indentation(width, ch, level);
     }
 
+    /// Return an indentation instance with the level increased by one.
+    ///
     /// @return An indentation instance with the level increased by one.
     public Indentation increase() {
         return resolve(width, ch, level + 1);
     }
 
+    /// Return an indentation instance with the level decreased by one.
+    ///
+    /// If the level is already `0`, it will _not_ be decreased further.
+    ///
     /// @return An indentation instance with the level decreased by one (if there was indentation left to decrease).
     public Indentation decrease() {
         return level == 0 ? this : resolve(width, ch, level - 1);
@@ -129,11 +135,17 @@ public final class Indentation implements CharSequence, Serializable {
         );
     }
 
+    /// The number of characters in this indentation.
+    ///
+    /// @return The length in characters for this indentation level.
     @Override
     public int length() {
         return value.length();
     }
 
+    /// Return the character at the requested index.
+    ///
+    /// @return The character at the requested index.
     @Override
     public char charAt(int index) {
         return value.charAt(index);
