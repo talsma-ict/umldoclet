@@ -21,7 +21,11 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 ///
 /// @author Sjoerd Talsma
 public class UmlCharacters extends UMLNode {
+    /// Constant for empty characters.
+    ///
+    /// This can be used if a non-`null` [UMLNode] is required, but no output should be rendered
     public static final UmlCharacters EMPTY = new UmlCharacters("");
+    /// UML node for a new line.
     public static final UmlCharacters NEWLINE = new UmlLine("");
 
     private final String content;
@@ -31,6 +35,10 @@ public class UmlCharacters extends UMLNode {
         this.content = content;
     }
 
+    /// Writes the literal UML characters to the output.
+    ///
+    /// @param output The output to write to.
+    /// @return The output for chaining purposes.
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         output.append(content);
@@ -42,6 +50,10 @@ public class UmlCharacters extends UMLNode {
             super(line);
         }
 
+        /// Writes the contained characters to the output, followed by a newline.
+        ///
+        /// @param output The output to write to.
+        /// @return The output for chaining purposes.
         @Override
         public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
             super.writeTo(output).newline();

@@ -75,6 +75,7 @@ public class Reference extends UMLNode {
     ///
     /// @param qualifiedName The qualified name of the 'from' element.
     /// @param cardinality   Optional cardinality of this side of the reference.
+    /// @return The new 'from' side.
     public static Side from(String qualifiedName, String cardinality) {
         return new Side(qualifiedName, cardinality, true);
     }
@@ -83,6 +84,7 @@ public class Reference extends UMLNode {
     ///
     /// @param qualifiedName The qualified name of the 'to' element.
     /// @param cardinality   Optional cardinality of this side of the reference.
+    /// @return The new 'to' side.
     public static Side to(String qualifiedName, String cardinality) {
         return new Side(qualifiedName, cardinality, false);
     }

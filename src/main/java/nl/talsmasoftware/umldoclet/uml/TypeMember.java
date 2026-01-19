@@ -27,10 +27,15 @@ import static java.util.Objects.requireNonNull;
 /// @author Sjoerd Talsma
 public abstract class TypeMember extends UMLNode {
 
+    /// Name of the type member.
     public final String name;
+    /// Type of the type member.
     public TypeName type;
+    /// Visibility of the type member.
     private Visibility visibility;
+    /// Whether the member is a static field or method.
     public boolean isStatic;
+    /// Whether the member is deprecated.
     public boolean isDeprecated;
 
     /// Creates a new type member.

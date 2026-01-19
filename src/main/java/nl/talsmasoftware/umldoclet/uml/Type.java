@@ -80,6 +80,8 @@ public class Type extends UMLNode {
         if (children != null) children.forEach(this::addChild);
     }
 
+    /// Return the name of this type.
+    ///
     /// @return The name of this type.
     public TypeName getName() {
         return name;
@@ -124,16 +126,24 @@ public class Type extends UMLNode {
         this.includePackagename = include;
     }
 
+    /// Return the module name of this type, or [Optional#empty()] if no module name was set.
+    ///
     /// @return The module name of this type, if available.
     public Optional<String> getModulename() {
         return packageNamespace.getModuleName();
     }
 
+    /// Return the package name of this type.
+    ///
+    /// Package name is required, although it may be _empty_ for the unnamed package.
+    ///
     /// @return The package name of this type.
     public String getPackagename() {
         return packageNamespace.name;
     }
 
+    /// Return the classification of this type.
+    ///
     /// @return The classification of this type.
     public Classification getClassfication() {
         return classfication;
@@ -153,6 +163,10 @@ public class Type extends UMLNode {
         return output;
     }
 
+    /// Write the type to the UML output.
+    ///
+    /// @param output The output to write to.
+    /// @return The output for chaining purposes.
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         output.append(classfication.toUml()).whitespace();
@@ -164,6 +178,10 @@ public class Type extends UMLNode {
         return output;
     }
 
+    /// Writes the type members to the UML.
+    ///
+    /// @param output The output to write the children to.
+    /// @return The output for chaining purposes.
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
         if (!getChildren().isEmpty() && !Classification.ANNOTATION.equals(classfication)) {
@@ -174,11 +192,17 @@ public class Type extends UMLNode {
         return output;
     }
 
+    /// Returns a hashcode for this type, based on its [name][#getName()].
+    ///
+    /// @return hashcode based on the type [name][#getName()].
     @Override
     public int hashCode() {
         return name.hashCode();
     }
 
+    /// Determine equality with another object.
+    ///
+    /// @return `true` if the other object is also a type with the same name, or `false` otherwise.
     @Override
     public boolean equals(Object other) {
         return this == other || (other instanceof Type && this.name.equals(((Type) other).name));

@@ -52,6 +52,8 @@ public class TypeName {
         this.generics = generics.clone();
     }
 
+    /// Return the generic type parameters.
+    ///
     /// @return The generic type parameters.
     public TypeName[] getGenerics() {
         return generics.clone();
@@ -122,11 +124,18 @@ public class TypeName {
                 || value.equalsIgnoreCase("<i");
     }
 
+    /// Calculate hashcode based on the qualified type name.
+    ///
+    /// @return hashcode from the [qualified type name][#getQualified(String)].
     @Override
     public int hashCode() {
         return qualified.hashCode();
     }
 
+    /// Whether the specified `other` object is equal to this type name.
+    ///
+    /// @param other The object to compare this type name to.
+    /// @return `true` if the other object is also a type name with the same qualified name.
     @Override
     public boolean equals(Object other) {
         return this == other || (other != null && getClass().equals(other.getClass())
@@ -134,6 +143,9 @@ public class TypeName {
         );
     }
 
+    /// Return the type name as it would show up in the UML diagram.
+    ///
+    /// @return The 'simple' type name as shown in UML.
     @Override
     public String toString() {
         return toUml(TypeDisplay.SIMPLE, null);
@@ -153,6 +165,13 @@ public class TypeName {
             return new Array(requireNonNull(componentType, "Component type of array is <null>."));
         }
 
+        /// Renders this type name to UML.
+        ///
+        /// This is the 'plain' type name with `[]` added as suffix.
+        ///
+        /// @param display The type name display options.
+        /// @param namespace The namespace as context from were the name was rendered.
+        /// @return The type name for use in UML.
         @Override
         protected String toUml(TypeDisplay display, Namespace namespace) {
             return super.toUml(display, namespace) + "[]";

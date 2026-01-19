@@ -56,16 +56,25 @@ public class UMLFactory {
     private static final Predicate<UMLNode> IS_ABSTRACT_METHOD = node ->
             node instanceof Method && ((Method) node).isAbstract;
 
+    /// The UML Doclet configuration.
     final Configuration config;
     private final DocletEnvironment env;
     private final Function<TypeMirror, TypeNameWithCardinality> typeNameWithCardinality;
 
+    /// Constructor for a new UML Factory.
+    ///
+    /// @param config The configuration to apply.
+    /// @param env    The doclet environment.
     public UMLFactory(Configuration config, DocletEnvironment env) {
         this.config = requireNonNull(config, "Configuration is <null>.");
         this.env = requireNonNull(env, "Doclet environment is <null>.");
         this.typeNameWithCardinality = TypeNameWithCardinality.function(env.getTypeUtils());
     }
 
+    /// Create a class diagram from the specified class element.
+    ///
+    /// @param classElement The class to create a class diagram for.
+    /// @return The created [ClassDiagram].
     public Diagram createClassDiagram(TypeElement classElement) {
         Type type = createAndPopulateType(null, classElement);
         ClassDiagram classDiagram = new ClassDiagram(config, type);
@@ -191,6 +200,10 @@ public class UMLFactory {
                 || superclass.getModifiers().contains(Modifier.PROTECTED);
     }
 
+    /// Create a package diagram for the given package element.
+    ///
+    /// @param packageElement The package to create a package diagram for.
+    /// @return The created [PackageDiagram].
     public Diagram createPackageDiagram(PackageElement packageElement) {
         final ModuleElement module = env.getElementUtils().getModuleOf(packageElement);
         PackageDiagram packageDiagram = new PackageDiagram(config, packageElement.getQualifiedName().toString(),
@@ -283,6 +296,7 @@ public class UMLFactory {
         constructor.addChild(createParameters(executableElement.getParameters()));
         return constructor;
     }
+
 
     Method createMethod(Type containingType, ExecutableElement executableElement) {
         Set<Modifier> modifiers = requireNonNull(executableElement, "Executable element is <null>.").getModifiers();
