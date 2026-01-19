@@ -36,6 +36,10 @@ public class IndentingWriter extends Writer {
     private final AtomicBoolean addWhitespace = new AtomicBoolean(false);
     private char lastWritten = '\n';
 
+    /// Constructor for new [Writer] with indentation.
+    ///
+    /// @param delegate The delegate to write to.
+    /// @param indentation The indentation for the writer at the 'current' position.
     protected IndentingWriter(Appendable delegate, Indentation indentation) {
         this(delegate, indentation, '\n', false);
         // maybe attempt to support extraction of 'lastWritten' from some types of writers?
@@ -57,7 +61,7 @@ public class IndentingWriter extends Writer {
     ///
     /// @param delegate    The delegate to turn into an indenting writer.
     /// @param indentation The indentation to use for the indenting writer
-    ///                    (optional, specify `null` to use the default indentation).
+    ///                                       (optional, specify `null` to use the default indentation).
     /// @return The indenting delegate writer.
     /// @see Indentation#DEFAULT
     public static IndentingWriter wrap(Appendable delegate, Indentation indentation) {
@@ -78,6 +82,8 @@ public class IndentingWriter extends Writer {
                 : new IndentingWriter(delegate, newIndentation, lastWritten, addWhitespace.get());
     }
 
+    /// Return the current indentation of the writer.
+    ///
     /// @return The indentation used by this writer.
     protected Indentation getIndentation() {
         return indentation;

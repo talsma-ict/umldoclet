@@ -38,6 +38,10 @@ public class Link extends UMLNode {
         this.target = target;
     }
 
+    /// Create a link to the specified type.
+    ///
+    /// @param type The type to link to.
+    /// @return The link to the relative HTML file or external reference.
     public static Link forType(Type type) {
         final String destinationDirectory = type.getConfiguration().destinationDirectory();
         final String packageName = type.getPackagename();
@@ -49,6 +53,10 @@ public class Link extends UMLNode {
         return new Link(type, target.orElse(null));
     }
 
+    /// Create a link for the specified package.
+    ///
+    /// @param namespace The package
+    /// @return The link to the relative HTML file or external reference.
     public static Link forPackage(Namespace namespace) {
         final String destinationDirectory = namespace.getConfiguration().destinationDirectory();
         final String moduleName = namespace.getModuleName().orElse(null);

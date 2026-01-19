@@ -28,20 +28,31 @@ import static java.util.Objects.requireNonNull;
 /// @author Sjoerd Talsma
 public class Namespace extends UMLNode {
 
+    /// The module containing the package, if known. Otherwise `null`.
     private final String moduleName;
+    /// The name of this [Namespace] (or java 'package').
     public final String name;
 
+    /// Constructor for java package.
+    ///
+    /// @param parent     The parent, this should be a package, module or diagram.
+    /// @param name       The name of this namespace.
+    /// @param moduleName The name of the module this package belongs to (if known, otherwise `null`).
     public Namespace(UMLNode parent, String name, String moduleName) {
         super(parent);
         this.name = requireNonNull(name, "Package name is <null>.").trim();
         this.moduleName = moduleName;
     }
 
+    /// Return the module name this package belongs to if known, otherwise [Optional#empty()].
+    ///
+    /// @return The module name this package belongs to.
     public Optional<String> getModuleName() {
         return Optional.ofNullable(moduleName);
     }
 
     /// Adds the package name to the diagram.
+    ///
     /// Re: bug 107: If the package name is empty (i.e. the 'default' package),
     /// render `"unnamed"` because an empty name is not valid in PlantUML.
     ///
@@ -53,6 +64,10 @@ public class Namespace extends UMLNode {
         return output;
     }
 
+    /// Write the java package to the diagram output.
+    ///
+    /// @param output The output to write to.
+    /// @return The output for chaining purposes.
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         writeNameTo(output.append("package").whitespace()).append('{').newline();
@@ -61,15 +76,26 @@ public class Namespace extends UMLNode {
         return output;
     }
 
+    /// Check whether this package contains the specified type.
+    ///
+    /// @param typeName The name of the type to check.
+    /// @return `true` if the specified type is contained in this package, otherwise `false`.
     public boolean contains(TypeName typeName) {
         return typeName != null && typeName.qualified.startsWith(this.name + ".");
     }
 
+    /// Hashcode for the package. This is based on the package name.
+    ///
+    /// @return hashcode for the package.
     @Override
     public int hashCode() {
         return name.hashCode();
     }
 
+    /// Return whether this package equals another object.
+    ///
+    /// @param other The object to compare this namespace to.
+    /// @return `true` if and only if the other object is also a [Namespace] instance and has the same name.
     @Override
     public boolean equals(Object other) {
         return this == other || (other instanceof Namespace && name.equals(((Namespace) other).name));

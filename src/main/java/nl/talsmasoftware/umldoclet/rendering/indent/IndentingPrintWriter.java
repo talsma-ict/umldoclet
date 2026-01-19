@@ -30,6 +30,10 @@ import static java.util.Objects.requireNonNull;
 /// @author Sjoerd Talsma
 public class IndentingPrintWriter extends PrintWriter {
 
+    /// Constructor for new [PrintWriter] with indentation.
+    ///
+    /// @param writer Delegate writer to send output to.
+    /// @param indentation Initial indentation to start out on.
     protected IndentingPrintWriter(Appendable writer, Indentation indentation) {
         super(IndentingWriter.wrap(writer, indentation));
     }
@@ -50,6 +54,9 @@ public class IndentingPrintWriter extends PrintWriter {
                 : new IndentingPrintWriter(delegate, indentation);
     }
 
+    /// Return the delegate writer as an [IndentingWriter].
+    ///
+    /// @return Delegate writer.
     protected IndentingWriter getDelegate() {
         return (IndentingWriter) super.out;
     }
@@ -102,21 +109,44 @@ public class IndentingPrintWriter extends PrintWriter {
         return this;
     }
 
+    /// Append the specified character sequence.
+    ///
+    /// When printing new lines, the writer will apply the current [indentation][#getIndentation()].
+    ///
+    /// @param csq The character sequence to append.
+    /// @return Reference to this indenting [PrintWriter] for chaining purposes.
     @Override
     public IndentingPrintWriter append(CharSequence csq) {
         return (IndentingPrintWriter) super.append(csq);
     }
 
+    /// Append the specified characters.
+    ///
+    /// When printing new lines, the writer will apply the current [indentation][#getIndentation()].
+    ///
+    /// @param csq The character sequence to append.
+    /// @param start The index of the first character to be appended.
+    /// @param end The index after the last character to append.
+    /// @return Reference to this indenting [PrintWriter] for chaining purposes.
     @Override
     public IndentingPrintWriter append(CharSequence csq, int start, int end) {
         return (IndentingPrintWriter) super.append(csq, start, end);
     }
 
+    /// Append a single character.
+    ///
+    /// When printing the first character on an empty line, the writer will apply the current [indentation][#getIndentation()].
+    ///
+    /// @param c The character to append.
+    /// @return Reference to this indenting [PrintWriter] for chaining purposes.
     @Override
     public IndentingPrintWriter append(char c) {
         return (IndentingPrintWriter) super.append(c);
     }
 
+    /// Returns the delegate writer as `String`.
+    ///
+    /// @return the delegate as String.
     @Override
     public String toString() {
         return out.toString();

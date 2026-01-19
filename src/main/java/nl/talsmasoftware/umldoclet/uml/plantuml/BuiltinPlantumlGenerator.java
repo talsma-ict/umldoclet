@@ -24,7 +24,12 @@ import java.io.OutputStream;
 
 /// Generator that uses the built-in PlantUML library to generate diagrams.
 public final class BuiltinPlantumlGenerator implements PlantumlGenerator {
-    /// Generate a PlantUML daigram using the built-in PlantUML code.
+    /// Constructor for [PlantumlGenerator] that uses the built-in PlantUML version.
+    public BuiltinPlantumlGenerator() {
+        super();
+    }
+
+    /// Generate a PlantUML diagram using the built-in PlantUML code.
     ///
     /// @param plantumlSource The plantuml source code for the diagram to generate
     /// @param format         The output format for the diagram.
