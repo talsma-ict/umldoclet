@@ -34,8 +34,11 @@ import static java.util.Objects.requireNonNull;
 ///
 /// @author Sjoerd Talsma
 public class TypeName {
+    /// Name of the package this type is defined in.
     public final String packagename;
+    /// The simple name of the type.
     public final String simple;
+    ///  The qualified name of the type.
     public final String qualified;
     private final TypeName[] generics;
 
