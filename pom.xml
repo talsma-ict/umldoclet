@@ -73,7 +73,7 @@
         <hamcrest.version>3.0</hamcrest.version>
         <mockito.version>5.21.0</mockito.version>
         <slf4j.version>2.0.17</slf4j.version>
-        <logback.version>1.5.25</logback.version>
+        <logback.version>1.5.26</logback.version>
         <testcontainers.version>2.0.3</testcontainers.version>
         <maven-invoker.version>3.3.0</maven-invoker.version>
     </properties>
