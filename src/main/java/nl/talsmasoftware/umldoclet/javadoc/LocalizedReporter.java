@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,11 +28,9 @@ import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
-/**
- * Doclet reporter using a specific {@link Locale} to reporte to a delegate {@link Reporter}.
- *
- * @author Sjoerd Talsma
- */
+/// Doclet reporter using a specific [Locale] to reporte to a delegate [Reporter].
+///
+/// @author Sjoerd Talsma
 final class LocalizedReporter implements Reporter, Logger {
     private final DocletConfig config;
     private final Reporter delegate;

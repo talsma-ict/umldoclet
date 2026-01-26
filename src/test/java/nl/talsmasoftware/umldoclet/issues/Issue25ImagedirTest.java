@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,15 +25,13 @@ import java.util.spi.ToolProvider;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-/**
- * Tests <a href="https://github.com/talsma-ict/umldoclet/issues/25">enhancement 25</a>:
- * Send images to a single directory.
- * <p>
- * The maven job is configured so that it creates a directory called <code>test-content</code> in the target
- * where images should be located in a single <code>images</code> directory.
- *
- * @author Sjoerd Talsma
- */
+/// Tests <a href="https://github.com/talsma-ict/umldoclet/issues/25">enhancement 25</a>:
+/// Send images to a single directory.
+///
+/// The maven job is configured so that it creates a directory called `test-content` in the target
+/// where images should be located in a single `images` directory.
+///
+/// @author Sjoerd Talsma
 public class Issue25ImagedirTest {
 
     @BeforeAll

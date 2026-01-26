@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,14 +39,10 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.fail;
 
-/**
- * @author Sjoerd Talsma
- */
+/// @author Sjoerd Talsma
 public final class TestUtil {
 
-    /**
-     * Determine the newline for this OS.
-     */
+        /// Determine the newline for this OS.
     public static final String NEWLINE;
 
     static {
@@ -72,13 +68,11 @@ public final class TestUtil {
         }
     }
 
-    /**
-     * Reads a file with a relative path from the test-content "umldoclet" path.
-     *
-     * @param name the relative path to the file from the "umldoclet" directory.
-     * @return The content of the file (using UTF-8 encoding).
-     * @deprecated Test different directories too
-     */
+        /// Reads a file with a relative path from the test-content "umldoclet" path.
+    ///
+    /// @param name the relative path to the file from the "umldoclet" directory.
+    /// @return The content of the file (using UTF-8 encoding).
+    /// @deprecated Test different directories too
     @Deprecated
     public static String readFile(String name) {
         return read(new File("target/test-content/nl/talsmasoftware/umldoclet", name));
@@ -127,11 +121,9 @@ public final class TestUtil {
         return dir;
     }
 
-    /**
-     * Creates a new, empty file (if it doesn't already exist).
-     *
-     * @param file The file to create.
-     */
+        /// Creates a new, empty file (if it doesn't already exist).
+    ///
+    /// @param file The file to create.
     public static void touch(File file) {
         write(file, "");
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,27 +24,47 @@ import java.util.Optional;
 import static java.util.Locale.ENGLISH;
 import static java.util.Objects.requireNonNull;
 
+/// Model object for a Type in an UML diagram.
+///
+/// A type represents a class, interface, enum, or annotation.
+///
+/// @author Sjoerd Talsma
 public class Type extends UMLNode {
-    /**
-     * Classification of a UML Type.
-     *
-     * @author Sjoerd Talsma
-     */
+    /// Classification of a UML Type.
+    ///
+    /// @author Sjoerd Talsma
     public enum Classification {
-        ENUM, INTERFACE, ANNOTATION, ABSTRACT_CLASS, CLASS;
+        /// An enumeration type.
+        ENUM,
+        /// An interface type.
+        INTERFACE,
+        /// An annotation type.
+        ANNOTATION,
+        /// An abstract class.
+        ABSTRACT_CLASS,
+        /// A regular class.
+        CLASS;
 
+        /// Returns the UML representation of this classification.
+        ///
+        /// @return The UML representation.
         public String toUml() {
             return name().toLowerCase(ENGLISH).replace('_', ' ');
         }
     }
 
-    private Namespace packageNamespace;
-    private Classification classfication;
+    private final Namespace packageNamespace;
+    private final Classification classfication;
     private TypeName name;
     private boolean isDeprecated;
     private boolean includePackagename;
     private Link link;
 
+    /// Creates a new type.
+    ///
+    /// @param namespace      The package namespace this type belongs to.
+    /// @param classification The classification of this type.
+    /// @param name           The name of this type.
     public Type(Namespace namespace, Classification classification, TypeName name) {
         this(namespace, classification, name, false, false, null);
     }
@@ -60,10 +80,16 @@ public class Type extends UMLNode {
         if (children != null) children.forEach(this::addChild);
     }
 
+    /// Return the name of this type.
+    ///
+    /// @return The name of this type.
     public TypeName getName() {
         return name;
     }
 
+    /// Updates the generic type variables of this type.
+    ///
+    /// @param name The new name including potentially updated generic type variables.
     public void updateGenericTypeVariables(TypeName name) {
         if (name != null && name.qualified.equals(this.name.qualified)) {
             final TypeName[] generics = this.name.getGenerics();
@@ -85,23 +111,40 @@ public class Type extends UMLNode {
         return link;
     }
 
+    /// Marks this type as deprecated.
+    ///
+    /// @return This type instance.
     public Type deprecated() {
         this.isDeprecated = true;
         return this;
     }
 
+    /// Sets whether the package name should be included in the type name.
+    ///
+    /// @param include `true` if the package name should be included.
     public void setIncludePackagename(boolean include) {
         this.includePackagename = include;
     }
 
+    /// Return the module name of this type, or [Optional#empty()] if no module name was set.
+    ///
+    /// @return The module name of this type, if available.
     public Optional<String> getModulename() {
         return packageNamespace.getModuleName();
     }
 
+    /// Return the package name of this type.
+    ///
+    /// Package name is required, although it may be _empty_ for the unnamed package.
+    ///
+    /// @return The package name of this type.
     public String getPackagename() {
         return packageNamespace.name;
     }
 
+    /// Return the classification of this type.
+    ///
+    /// @return The classification of this type.
     public Classification getClassfication() {
         return classfication;
     }
@@ -120,6 +163,10 @@ public class Type extends UMLNode {
         return output;
     }
 
+    /// Write the type to the UML output.
+    ///
+    /// @param output The output to write to.
+    /// @return The output for chaining purposes.
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         output.append(classfication.toUml()).whitespace();
@@ -131,6 +178,10 @@ public class Type extends UMLNode {
         return output;
     }
 
+    /// Writes the type members to the UML.
+    ///
+    /// @param output The output to write the children to.
+    /// @return The output for chaining purposes.
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
         if (!getChildren().isEmpty() && !Classification.ANNOTATION.equals(classfication)) {
@@ -141,11 +192,17 @@ public class Type extends UMLNode {
         return output;
     }
 
+    /// Returns a hashcode for this type, based on its [name][#getName()].
+    ///
+    /// @return hashcode based on the type [name][#getName()].
     @Override
     public int hashCode() {
         return name.hashCode();
     }
 
+    /// Determine equality with another object.
+    ///
+    /// @return `true` if the other object is also a type with the same name, or `false` otherwise.
     @Override
     public boolean equals(Object other) {
         return this == other || (other instanceof Type && this.name.equals(((Type) other).name));
