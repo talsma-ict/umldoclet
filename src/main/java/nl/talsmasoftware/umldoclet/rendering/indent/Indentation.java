@@ -43,12 +43,20 @@ public final class Indentation implements CharSequence, Serializable {
     /// A reusable constant for no indentation at all (even after calls to [#increase()]).
     public static final Indentation NONE = new Indentation(0, ' ', 0);
 
-    // All fields of Indentation class are final.
+    /// The width of a single indentation unit, >= 0.
     private final int width;
+    /// The level of indentations, >= 0.
     private final int level;
+    /// The indentation character.
     private final char ch;
+    /// The full string for this indentation so it doesn't need to be recalculated each time.
     private final transient String value;
 
+    /// Private constructor for new Indentation instance.
+    ///
+    /// @param width The width of a single indentation unit.
+    /// @param ch    The indentation character.
+    /// @param level The number of indentation units to be prefixed.
     private Indentation(final int width, final char ch, final int level) {
         this.width = max(width, 0);
         this.level = max(level, 0);
