@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,9 +29,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
-/**
- * Test that properties can be rendered as fields with the option {@code -umlPropertiesAsFields true}.
- */
+/// Test that properties can be rendered as fields with the option `-umlPropertiesAsFields true`.
 public class Issue124PropertiesAsFieldsTest {
     private static final File outputdir = new File("target/issues/124");
 

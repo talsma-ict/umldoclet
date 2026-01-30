@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,11 +30,9 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
-/**
- * Tests the Doclet Config parsing.
- *
- * @author Sjoerd Talsma
- */
+/// Tests the Doclet Config parsing.
+///
+/// @author Sjoerd Talsma
 public class DocletConfigTest {
     private static final String UTF_8 = "UTF-8";
 
@@ -59,13 +57,11 @@ public class DocletConfigTest {
         }
     }
 
-    /**
-     * Tests whether there were any undocumented options added to the doclet.
-     *
-     * <p>
-     * Please add documentation for the new option(s)
-     * in the {@code nl.talsmasoftware.umldoclet.UMLDoclet} resource bundle.
-     */
+        /// Tests whether there were any undocumented options added to the doclet.
+    ///
+    ///
+    /// Please add documentation for the new option(s)
+    /// in the `nl.talsmasoftware.umldoclet.UMLDoclet` resource bundle.
     @Test
     public void testForUndocumentedMissingKeys() {
         assertThat(getDocletHelpOutput(), not(containsString("<MISSING KEY>")));

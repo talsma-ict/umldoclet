@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Utility {@code UML} functionality.
- *
- * <p>
- * This package contains an UML post processors factory.
- * Currently the only postprocessor is a {@linkplain nl.talsmasoftware.umldoclet.uml.Type} consumer
- * that can replace getter/setter methods from JavaBeans by coresponding UML fields.
- */
+/// Utility `UML` functionality.
+///
+///
+/// This package contains an UML post processors factory.
+/// Currently the only postprocessor is a {@linkplain nl.talsmasoftware.umldoclet.uml.Type} consumer
+/// that can replace getter/setter methods from JavaBeans by coresponding UML fields.
 package nl.talsmasoftware.umldoclet.uml.util;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Package containing the model to generate {@code PlantUML} diagrams with.
- *
- * <p>
- * The UML model abstractions are very similar to the Object Oriented paradigm
- * and the Java syntax; therefore closely resemble the model behind the JavaDoc tool itself.
- * Despite this, it helps to separate the actual Java syntax model (as provided by the Javadoc tool)
- * from the one containing just the necessary UML model.
- */
+/// Package containing the model to generate `PlantUML` diagrams with.
+///
+///
+/// The UML model abstractions are very similar to the Object Oriented paradigm
+/// and the Java syntax; therefore closely resemble the model behind the JavaDoc tool itself.
+/// Despite this, it helps to separate the actual Java syntax model (as provided by the Javadoc tool)
+/// from the one containing just the necessary UML model.
 package nl.talsmasoftware.umldoclet.uml;

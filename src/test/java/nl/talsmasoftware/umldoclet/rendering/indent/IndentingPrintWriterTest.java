@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,13 +29,11 @@ import static org.hamcrest.Matchers.hasToString;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * Tests for the intenting print writer.
- * By unit-testing this class, we effectively also test the IndentingWriter implementation
- * that provides the actual indenting functionality.
- *
- * @author Sjoerd Talsma
- */
+/// Tests for the intenting print writer.
+/// By unit-testing this class, we effectively also test the IndentingWriter implementation
+/// that provides the actual indenting functionality.
+///
+/// @author Sjoerd Talsma
 public class IndentingPrintWriterTest {
 
     @Test
@@ -123,9 +121,7 @@ public class IndentingPrintWriterTest {
         assertThrows(NullPointerException.class, writer::indent);
     }
 
-    /**
-     * IndendingPrintWriter that allows tests to set its {@code out} field.
-     */
+        /// IndendingPrintWriter that allows tests to set its `out` field.
     private static class SettableIndentingPrintWriter extends IndentingPrintWriter {
         private SettableIndentingPrintWriter(Appendable writer, Indentation indentation) {
             super(writer, indentation);

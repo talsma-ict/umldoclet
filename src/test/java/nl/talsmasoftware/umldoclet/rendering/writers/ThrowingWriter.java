@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,9 @@ package nl.talsmasoftware.umldoclet.rendering.writers;
 import java.io.IOException;
 import java.io.Writer;
 
-/**
- * Writer that throws exceptions when writing, flushing or closing.
- *
- * @author Sjoerd Talsma
- */
+/// Writer that throws exceptions when writing, flushing or closing.
+///
+/// @author Sjoerd Talsma
 public class ThrowingWriter extends Writer {
 
     private final Throwable throwable;

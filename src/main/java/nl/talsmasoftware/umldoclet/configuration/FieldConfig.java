@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,27 +15,21 @@
  */
 package nl.talsmasoftware.umldoclet.configuration;
 
-/**
- * Configuration how Fields are rendered in the UML.
- *
- * @author Sjoerd Talsma
- */
+/// Configuration how Fields are rendered in the UML.
+///
+/// @author Sjoerd Talsma
 public interface FieldConfig {
 
-    /**
-     * Set how field types are rendered in the UML diagram.
-     *
-     * @return How field types are rendered.
-     */
+    /// Set how field types are rendered in the UML diagram.
+    ///
+    /// @return How field types are rendered.
     TypeDisplay typeDisplay();
 
-    /**
-     * Whether to include fields with the specified {@link Visibility} in the UML diagram.
-     *
-     * @param fieldVisibility The visibility of the evaluated field.
-     * @return {@code true} if fields with the requested visibility must be included in the UML diagram
-     * or {@code false} otherwise.
-     */
+    /// Whether to include fields with the specified [Visibility] in the UML diagram.
+    ///
+    /// @param fieldVisibility The visibility of the evaluated field.
+    /// @return `true` if fields with the requested visibility must be included in the UML diagram
+    /// or `false` otherwise.
     boolean include(Visibility fieldVisibility);
 
 }

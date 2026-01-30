@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,9 +28,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
-/**
- * @author Sjoerd Talsma
- */
+/// @author Sjoerd Talsma
 public class Bug74DuplicateGenericsTest {
     private static final String packageAsPath = Bug74DuplicateGenericsTest.class.getPackageName().replace('.', '/');
     private static final File outputDir = new File("target/issues/74");

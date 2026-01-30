@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,19 +22,27 @@ import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
-/**
- * Model object for a Field or Method in a UML class.
- *
- * @author Sjoerd Talsma
- */
+/// Model object for a Field or Method in a UML class.
+///
+/// @author Sjoerd Talsma
 public abstract class TypeMember extends UMLNode {
 
+    /// Name of the type member.
     public final String name;
+    /// Type of the type member.
     public TypeName type;
+    /// Visibility of the type member.
     private Visibility visibility;
+    /// Whether the member is a static field or method.
     public boolean isStatic;
+    /// Whether the member is deprecated.
     public boolean isDeprecated;
 
+    /// Creates a new type member.
+    ///
+    /// @param containingType The type that contains this member.
+    /// @param name           The name of the member.
+    /// @param type           The type of the member.
     protected TypeMember(Type containingType, String name, TypeName type) {
         super(containingType);
         this.name = requireNonNull(name, "Member name is <null>.").trim();
@@ -42,14 +50,25 @@ public abstract class TypeMember extends UMLNode {
         this.type = type;
     }
 
+    /// Return the visibility of this member.
+    ///
+    /// @return The visibility of this member.
     public Visibility getVisibility() {
         return visibility == null ? Visibility.PUBLIC : visibility;
     }
 
+    /// Sets the visibility of this member.
+    ///
+    /// @param visibility The visibility to set.
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
     }
 
+    /// Writes the type of this member to the output.
+    ///
+    /// @param output The output to write to.
+    /// @param <IPW>  The type of the output object.
+    /// @return The same output instance for method chaining.
     protected <IPW extends IndentingPrintWriter> IPW writeTypeTo(IPW output) {
         if (type != null) {
             output.append(": ").append(type.toString());
@@ -57,16 +76,29 @@ public abstract class TypeMember extends UMLNode {
         return output;
     }
 
+    /// Replaces a parameterized type with another type.
+    ///
+    /// @param from The type to replace.
+    /// @param to   The new type.
     void replaceParameterizedType(TypeName from, TypeName to) {
         if (from != null && from.equals(this.type)) {
             this.type = to;
         }
     }
 
+    /// Writes the parameters of this member to the output.
+    ///
+    /// @param output The output to write to.
+    /// @param <IPW>  The type of the output object.
+    /// @return The same output instance for method chaining.
     protected <IPW extends IndentingPrintWriter> IPW writeParametersTo(IPW output) {
         return output;
     }
 
+    /// Write this type member to the UML diagram.
+    ///
+    /// @param output The output to write to.
+    /// @return The output for chaining purposes.
     @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         if (isStatic) output.append("{static}").whitespace();
@@ -92,11 +124,18 @@ public abstract class TypeMember extends UMLNode {
         }
     }
 
+    /// The hashcode for this type member.
+    ///
+    /// @return The hashcode for this type member.
     @Override
     public int hashCode() {
         return Objects.hash(getParent(), name);
     }
 
+    /// Determine equality with another object.
+    ///
+    /// @param other The other object to compare with.
+    /// @return Whether this object is equal to the other object.
     @Override
     public boolean equals(Object other) {
         return this == other || (other != null && getClass().equals(other.getClass())

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,7 @@ import java.io.File;
 
 import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
 
-/**
- * @author Sjoerd Talsma
- */
+/// @author Sjoerd Talsma
 final class PackageDiagramInserter extends DiagramFile {
 
     private final String extension, pathToCompare;

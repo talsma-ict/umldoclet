@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,9 @@ import java.util.concurrent.Callable;
 
 import static nl.talsmasoftware.umldoclet.util.FileUtils.fileNameOf;
 
+/// Postprocessor to insert UML diagrams into an HTML file.
+///
+/// This class implements [Callable] to be executed in parallel by an executor service.
 final class Postprocessor implements Callable<Boolean> {
 
     private final HtmlFile htmlFile;
@@ -35,6 +38,10 @@ final class Postprocessor implements Callable<Boolean> {
     private final String relativePath;
     private final String diagramFileName;
 
+    /// Creates a new postprocessor.
+    ///
+    /// @param htmlFile   The HTML file to process.
+    /// @param umlDiagram The UML diagram to insert.
     Postprocessor(HtmlFile htmlFile, DiagramFile umlDiagram) {
         this.htmlFile = htmlFile;
         this.umlDiagram = umlDiagram;
