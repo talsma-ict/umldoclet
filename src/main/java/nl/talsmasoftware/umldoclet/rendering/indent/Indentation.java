@@ -92,10 +92,10 @@ public final class Indentation implements CharSequence, Serializable {
 
     /// Internal 'factory' method that tries to resolve a constant indentation instance before returning a new object.
     ///
-    /// @param width The indentation width for one indentation unit
-    /// @param ch    The character used in the indentation
-    /// @param level The numer of logical indentations to apply
-    /// @return the requested indentation either as a resolved constant instance or a new object
+    /// @param width The indentation width for one indentation unit.
+    /// @param ch    The character used in the indentation.
+    /// @param level The number of logical indentations to apply.
+    /// @return The requested indentation either as a resolved constant instance or a new object.
     private static Indentation resolve(final int width, final char ch, final int level) {
         return width == 0 ? NONE
                 : ch == ' ' ? spaces(width, level)

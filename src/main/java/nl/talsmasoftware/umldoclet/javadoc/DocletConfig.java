@@ -114,8 +114,6 @@ public class DocletConfig implements Configuration {
 
     List<String> customPlantumlDirectives = new ArrayList<>();
 
-    private final Indentation indentation = Indentation.DEFAULT;
-
     /// Creates a new doclet configuration.
     public DocletConfig() {
         this.options = new UMLOptions(this);
@@ -155,7 +153,7 @@ public class DocletConfig implements Configuration {
 
     @Override
     public Indentation indentation() {
-        return indentation;
+        return Indentation.DEFAULT;
     }
 
     @Override

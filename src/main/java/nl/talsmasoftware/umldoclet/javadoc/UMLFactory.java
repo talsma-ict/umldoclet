@@ -43,7 +43,7 @@ import static javax.lang.model.element.ElementKind.ENUM;
 
 /// One big factory to produce UML from analyzed Javadoc elements.
 ///
-/// TODO: This should be refactored into ClassDiagram and PackageDiagram visitor implementations.
+/// Ideally, this should be refactored into ClassDiagram and PackageDiagram visitor implementations.
 /// This increases flexibility in supporting future language features however may introduce additional risk
 /// with regard to unbounded recursion (see [Issue 75](https://github.com/talsma-ict/umldoclet/issues/75)
 /// for example).
