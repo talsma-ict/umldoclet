@@ -35,9 +35,7 @@ abstract class DiagramFile {
     ///
     /// @param htmlFile The html file being visited.
     /// @return Whether the diagram should be inserted in the specified HTML file.
-    protected boolean matches(HtmlFile htmlFile) {
-        return false;
-    }
+    protected abstract boolean matches(HtmlFile htmlFile);
 
     public abstract Postprocessor.Inserter newInserter(String relativePathToDiagram);
 
