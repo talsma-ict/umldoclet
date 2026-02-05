@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ final class PackageDependenciesInserter extends DiagramFile {
     }
 
     @Override
-    boolean matches(HtmlFile htmlFile) {
+    protected boolean matches(HtmlFile htmlFile) {
         final Path path = htmlFile.path;
         return index.equals(path) || overviewSummary.equals(path) || moduleSummary.equals(path);
     }

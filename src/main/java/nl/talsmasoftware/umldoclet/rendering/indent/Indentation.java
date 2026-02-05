@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,9 @@ import java.util.Objects;
 
 import static java.lang.Math.max;
 
-/**
- * Type to capture the indentation as an immutable type containing a pre-filled buffer to quickly be written.
- *
- * @author Sjoerd Talsma
- */
+/// Type to capture the indentation as an immutable type containing a pre-filled buffer to quickly be written.
+///
+/// @author Sjoerd Talsma
 public final class Indentation implements CharSequence, Serializable {
 
     // Cache of the first 5 instances of: 2, 4 spaces + tabs indentations.
@@ -39,22 +37,26 @@ public final class Indentation implements CharSequence, Serializable {
         for (int lvl = 0; lvl < TABS.length; lvl++) TABS[lvl] = new Indentation(1, '\t', lvl);
     }
 
-    /**
-     * The default indentation is four spaces, initially at level 0.
-     */
+    /// The default indentation is four spaces, initially at level 0.
     public static final Indentation DEFAULT = FOUR_SPACES[0];
 
-    /**
-     * A reusable constant for no indentation at all (even after calls to {@link #increase()}).
-     */
+    /// A reusable constant for no indentation at all (even after calls to [#increase()]).
     public static final Indentation NONE = new Indentation(0, ' ', 0);
 
-    // All fields of Indentation class are final.
+    /// The width of a single indentation unit, >= 0.
     private final int width;
+    /// The level of indentations, >= 0.
     private final int level;
+    /// The indentation character.
     private final char ch;
+    /// The full string for this indentation so it doesn't need to be recalculated each time.
     private final transient String value;
 
+    /// Private constructor for new Indentation instance.
+    ///
+    /// @param width The width of a single indentation unit.
+    /// @param ch    The indentation character.
+    /// @param level The number of indentation units to be prefixed.
     private Indentation(final int width, final char ch, final int level) {
         this.width = max(width, 0);
         this.level = max(level, 0);
@@ -64,26 +66,22 @@ public final class Indentation implements CharSequence, Serializable {
         this.value = String.valueOf(buf);
     }
 
-    /**
-     * Returns an indentation of <code>level</code> tabs, increasing or decreasing
-     * by one tab at a time.
-     *
-     * @param level The number of tabs for this indentation.
-     * @return The indentation of <code>level</code> tabs.
-     */
+    /// Returns an indentation of `level` tabs, increasing or decreasing
+    /// by one tab at a time.
+    ///
+    /// @param level The number of tabs for this indentation.
+    /// @return The indentation of `level` tabs.
     public static Indentation tabs(final int level) {
         return level < TABS.length ? TABS[max(level, 0)] : new Indentation(1, '\t', level);
     }
 
-    /**
-     * Returns an indentation of <code>width</code> spaces, initially indented at
-     * <code>width * level</code> spaces.
-     * This indentation increases or decreases by <code>width</code> spaces at a time.
-     *
-     * @param width The number of spaces for a single indentation level (often 2 or 4).
-     * @param level The current indentation level (multiply this with the width for the initial number of spaces).
-     * @return The indentation level as <code>level</code> multiples of <code>width</code> spaces.
-     */
+    /// Returns an indentation of `width` spaces, initially indented at
+    /// `width * level` spaces.
+    /// This indentation increases or decreases by `width` spaces at a time.
+    ///
+    /// @param width The number of spaces for a single indentation level (often 2 or 4).
+    /// @param level The current indentation level (multiply this with the width for the initial number of spaces).
+    /// @return The indentation level as `level` multiples of `width` spaces.
     public static Indentation spaces(int width, int level) {
         return width < 0 ? spaces(DEFAULT.ch == ' ' ? DEFAULT.width : 4, level)
                 : width == 0 ? NONE
@@ -92,14 +90,12 @@ public final class Indentation implements CharSequence, Serializable {
                 : new Indentation(width, ' ', level);
     }
 
-    /**
-     * Internal 'factory' method that tries to resolve a constant indentation instance before returning a new object.
-     *
-     * @param width The indentation width for one indentation unit
-     * @param ch    The character used in the indentation
-     * @param level The numer of logical indentations to apply
-     * @return the requested indentation either as a resolved constant instance or a new object
-     */
+    /// Internal 'factory' method that tries to resolve a constant indentation instance before returning a new object.
+    ///
+    /// @param width The indentation width for one indentation unit.
+    /// @param ch    The character used in the indentation.
+    /// @param level The number of logical indentations to apply.
+    /// @return The requested indentation either as a resolved constant instance or a new object.
     private static Indentation resolve(final int width, final char ch, final int level) {
         return width == 0 ? NONE
                 : ch == ' ' ? spaces(width, level)
@@ -107,42 +103,38 @@ public final class Indentation implements CharSequence, Serializable {
                 : new Indentation(width, ch, level);
     }
 
-    /**
-     * @return An indentation instance with the level increased by one.
-     */
+    /// Return an indentation instance with the level increased by one.
+    ///
+    /// @return An indentation instance with the level increased by one.
     public Indentation increase() {
         return resolve(width, ch, level + 1);
     }
 
-    /**
-     * @return An indentation instance with the level decreased by one (if there was indentation left to decrease).
-     */
+    /// Return an indentation instance with the level decreased by one.
+    ///
+    /// If the level is already `0`, it will _not_ be decreased further.
+    ///
+    /// @return An indentation instance with the level decreased by one (if there was indentation left to decrease).
     public Indentation decrease() {
         return level == 0 ? this : resolve(width, ch, level - 1);
     }
 
-    /**
-     * Makes sure that after deserialization, the constant instances are resolved where possible.
-     *
-     * @return The deserialized object from the cache if possible or a new instance otherwise.
-     */
+    /// Makes sure that after deserialization, the constant instances are resolved where possible.
+    ///
+    /// @return The deserialized object from the cache if possible or a new instance otherwise.
     private Object readResolve() {
         return resolve(width, ch, level);
     }
 
-    /**
-     * @return hashCode of this indentation object.
-     */
+    /// @return The hash code of this indentation object.
     public int hashCode() {
         return Objects.hash(width, ch, level);
     }
 
-    /**
-     * Whether the other object represents the exact same indentation object.
-     *
-     * @param other The other indentation object to compare with.
-     * @return <code>true</code> if the other object is the same indentation object.
-     */
+    /// Compares this indentation with another object for equality.
+    ///
+    /// @param other The other object to compare with.
+    /// @return `true` if the other object is an [Indentation] with the same width, character, and level.
     public boolean equals(Object other) {
         return this == other || (other instanceof Indentation
                 && width == ((Indentation) other).width
@@ -151,11 +143,17 @@ public final class Indentation implements CharSequence, Serializable {
         );
     }
 
+    /// The number of characters in this indentation.
+    ///
+    /// @return The length in characters for this indentation level.
     @Override
     public int length() {
         return value.length();
     }
 
+    /// Return the character at the requested index.
+    ///
+    /// @return The character at the requested index.
     @Override
     public char charAt(int index) {
         return value.charAt(index);
@@ -166,9 +164,7 @@ public final class Indentation implements CharSequence, Serializable {
         return value.substring(start, end);
     }
 
-    /**
-     * @return The indentation as a string.
-     */
+    /// @return The indentation as a string.
     public String toString() {
         return value;
     }

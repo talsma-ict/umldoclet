@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,24 +27,34 @@ import static java.util.Collections.emptySet;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toCollection;
 
-/**
- * Reference between two types.
- * <p>
- * The following reference types are currently supported:
- * <ul>
- * <li>The 'extends' reference: {@code "--|>"}</li>
- * <li>The 'implements' reference: {@code "..|>"}</li>
- * <li>The 'inner class' reference: {@code "+--"}</li>
- * </ul>
- *
- * @author Sjoerd Talsma
- */
+/// Reference between two types.
+///
+/// The following reference types are currently supported:
+///
+/// - The 'extends' reference: `"--|>"`
+/// - The 'implements' reference: `"..|>"`
+/// - The 'inner class' reference: `"+--"`
+///
+/// @author Sjoerd Talsma
 public class Reference extends UMLNode {
+    /// The 'from' side of the reference.
     public final Side from;
+    /// The 'to' side of the reference.
     public final Side to;
+    /// The type of the reference:
+    /// - 'extends': `"--|>"`
+    /// - 'implements': `"..|>"`
+    /// - 'inner class': `"+--"`
     public final String type;
+    /// Optional notes that are 'attached' to the reference.
     public final Collection<String> notes;
 
+    /// Constructor for a new reference.
+    ///
+    /// @param from  The 'from' side of the reference.
+    /// @param type  The [#type] of the reference.
+    /// @param to    The 'to' side of the reference.
+    /// @param notes Any notes that may be attached to the reference.
     public Reference(Side from, String type, Side to, String... notes) {
         this(from, type, to, notes == null ? emptySet() : asList(notes));
     }
@@ -61,18 +71,35 @@ public class Reference extends UMLNode {
                 .collect(toCollection(LinkedHashSet::new));
     }
 
+    /// Creates a 'from' side of a reference.
+    ///
+    /// @param qualifiedName The qualified name of the 'from' element.
+    /// @param cardinality   Optional cardinality of this side of the reference.
+    /// @return The new 'from' side.
     public static Side from(String qualifiedName, String cardinality) {
         return new Side(qualifiedName, cardinality, true);
     }
 
+    /// Creates a 'to' side of a reference.
+    ///
+    /// @param qualifiedName The qualified name of the 'to' element.
+    /// @param cardinality   Optional cardinality of this side of the reference.
+    /// @return The new 'to' side.
     public static Side to(String qualifiedName, String cardinality) {
         return new Side(qualifiedName, cardinality, false);
     }
 
+    /// Return whether the reference is a 'self-reference', i.e. the [#from] and [#to] sides are the same.
+    ///
+    /// @return `true` if this reference contains the same [#from] and [#to] sides, otherwise `false`.
     public boolean isSelfReference() {
         return from.qualifiedName.equals(to.qualifiedName);
     }
 
+    /// Adds a new note to this reference.
+    ///
+    /// @param note The note to be added to this reference.
+    /// @return The new reference with the note added to it.
     public Reference addNote(final String note) {
         final String trimmed = note != null ? note.trim() : "";
         if (trimmed.isEmpty() || notes.contains(trimmed)) return this;
@@ -82,6 +109,9 @@ public class Reference extends UMLNode {
         return new Reference(from, type, to, newNotes);
     }
 
+    /// The same reference with the sides and the operator reversed.
+    ///
+    /// @return A new reference that has [#to] and [#from] reversed, as well as the type.
     private Reference inverse() {
         return new Reference(from(to.qualifiedName, to.cardinality),
                 reverseType(),
@@ -89,9 +119,11 @@ public class Reference extends UMLNode {
                 this.notes);
     }
 
-    /**
-     * @return The canonical type that can be used for equality matching.
-     */
+    /// Determine the canonical reference.
+    ///
+    /// This is used in equality matching, pointing all arrows in the 'same direction'.
+    ///
+    /// @return The canonical reference that can be used for equality matching.
     public Reference canonical() {
         return type.startsWith("<-") || type.startsWith("<..")
                 || type.endsWith("-|>") || type.endsWith("..|>")
@@ -113,12 +145,10 @@ public class Reference extends UMLNode {
         return output;
     }
 
-    /**
-     * Returns whether or not this reference contains the requested type.
-     *
-     * @param typeName The name of a type to check.
-     * @return Whether either {@code from} or {@code to} matches {@code typeName}.
-     */
+    /// Returns whether this reference contains the requested type.
+    ///
+    /// @param typeName The name of a type to check.
+    /// @return Whether either `from` or `to` matches `typeName`.
     public boolean contains(TypeName typeName) {
         return from.matches(typeName) || to.matches(typeName);
     }
@@ -155,6 +185,7 @@ public class Reference extends UMLNode {
                 : ch;
     }
 
+    /// One side of a reference.
     public static final class Side {
         private final boolean nameFirst;
         private final String qualifiedName;
@@ -200,13 +231,11 @@ public class Reference extends UMLNode {
             return toString(null);
         }
 
-        /**
-         * The index of the searched character or the length of the string if not found.
-         *
-         * @param value The string to search in
-         * @param ch    The character to search for
-         * @return The index of the character in the string or the length of the string if not found.
-         */
+        /// The index of the searched character or the length of the string if not found.
+        ///
+        /// @param value The string to search in
+        /// @param ch    The character to search for
+        /// @return The index of the character in the string or the length of the string if not found.
         private static int indexOrLengthOf(String value, char ch) {
             int idx = value.indexOf(ch);
             return idx >= 0 ? idx : value.length();

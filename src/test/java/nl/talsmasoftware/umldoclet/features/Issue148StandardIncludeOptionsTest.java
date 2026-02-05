@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,25 +32,23 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
-/**
- * Test the include options by the Standard doclet.
- *
- * <p>
- * Verify that the visibility is interpreted the same by the UML doclet.
- *
- * <p>
- * The options to be supported:
- * <ul>
- * <li>{@code -package}
- * <li>{@code -private}
- * <li>{@code -protected}
- * <li>{@code -public}
- * <li>{@code --show-types [private|protected|package|all]}
- * <li>{@code --show-members [private|protected|package|all]}
- * </ul>
- *
- * @author Sjoerd Talsma
- */
+/// Test the include options by the Standard doclet.
+///
+///
+/// Verify that the visibility is interpreted the same by the UML doclet.
+///
+///
+/// The options to be supported:
+/// <ul>
+/// <li>`-package`
+/// <li>`-private`
+/// <li>`-protected`
+/// <li>`-public`
+/// <li>`--show-types [private|protected|package|all]`
+/// <li>`--show-members [private|protected|package|all]`
+/// </ul>
+///
+/// @author Sjoerd Talsma
 public class Issue148StandardIncludeOptionsTest {
     private static final String packageName = Issue148StandardIncludeOptionsTest.class.getPackageName();
     private static final File outputdir = new File("target/issues/148");

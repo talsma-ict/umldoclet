@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,11 +35,9 @@ import java.util.regex.Pattern;
 import static java.util.Collections.unmodifiableCollection;
 import static nl.talsmasoftware.umldoclet.configuration.ImageConfig.Format.SVG;
 
-/**
- * Collects all generated diagram files from the output directory.
- *
- * @author Sjoerd Talsma
- */
+/// Collects all generated diagram files from the output directory.
+///
+/// @author Sjoerd Talsma
 final class DiagramCollector extends SimpleFileVisitor<Path> {
     private static final Pattern PACKAGE_DIAGRAM_PATTERN = Pattern.compile("package\\.[a-z]+$");
     private static final Pattern PACKAGE_DEPENDENCY_DIAGRAM_PATTERN = Pattern.compile("package-dependencies\\.[a-z]+$");
@@ -56,12 +54,10 @@ final class DiagramCollector extends SimpleFileVisitor<Path> {
                 .map(imagesDir -> new File(config.destinationDirectory(), imagesDir));
     }
 
-    /**
-     * Collects all generated diagram files by walking the specified path.
-     *
-     * @return The collected diagrams
-     * @throws IOException In case there were I/O errors walking the path
-     */
+    /// Collects all generated diagram files by walking the specified path.
+    ///
+    /// @return The collected diagrams
+    /// @throws IOException In case there were I/O errors walking the path
     Collection<DiagramFile> collectDiagrams() throws IOException {
         if (!imageFormat.isPresent()) return Collections.emptySet();
         try {

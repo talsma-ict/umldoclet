@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,10 @@ import java.util.regex.Pattern;
 
 import static java.util.Objects.requireNonNull;
 
+/// Generator that uses a remote PlantUML server to generate diagrams.
 @SuppressFBWarnings(value = "URLCONNECTION_SSRF_FD", justification = "We only allow http(s) urls.")
 public class RemotePlantumlGenerator implements PlantumlGenerator {
+    /// Pattern to match http and https URLs.
     public static final Pattern HTTP_URLS = Pattern.compile("^https?://");
 
     private static final String DEFAULT_PLANTUML_BASE_URL = "https://www.plantuml.com/plantuml/";
@@ -42,6 +44,9 @@ public class RemotePlantumlGenerator implements PlantumlGenerator {
 
     private final String baseUrl;
 
+    /// Creates a new [RemotePlantumlGenerator] with the given base URL.
+    ///
+    /// @param baseUrl The base URL of the remote PlantUML server.
     public RemotePlantumlGenerator(final String baseUrl) {
         String url = Objects.toString(baseUrl, DEFAULT_PLANTUML_BASE_URL);
         if (!HTTP_URLS.matcher(url).find()) {

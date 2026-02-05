@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,9 @@ package nl.talsmasoftware.umldoclet.rendering;
 
 import java.io.IOException;
 
-/**
- * An appendable that throws an {@link IOException} at the first opportunity it gets written to.
- *
- * @author Sjoerd Talsma
- */
+/// An appendable that throws an [IOException] at the first opportunity it gets written to.
+///
+/// @author Sjoerd Talsma
 final class ThrowingAppendable implements Appendable {
     @Override
     public Appendable append(CharSequence csq) throws IOException {

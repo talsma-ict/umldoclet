@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,18 @@ import net.sourceforge.plantuml.SourceStringReader;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/// Generator that uses the built-in PlantUML library to generate diagrams.
 public final class BuiltinPlantumlGenerator implements PlantumlGenerator {
+    /// Constructor for [PlantumlGenerator] that uses the built-in PlantUML version.
+    public BuiltinPlantumlGenerator() {
+        super();
+    }
+
+    /// Generate a PlantUML diagram using the built-in PlantUML code.
+    ///
+    /// @param plantumlSource The plantuml source code for the diagram to generate
+    /// @param format         The output format for the diagram.
+    /// @param out            Stream to write the output to. Must be writeable.
     @Override
     public void generatePlantumlDiagramFromSource(String plantumlSource, FileFormat format, OutputStream out) throws IOException {
         new SourceStringReader(plantumlSource).outputImage(out, new FileFormatOption(format));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.testing.deprecation;
 
-/**
- * This class itself is not deprecated, but contains several items that are (in various ways).
- */
+/// This class itself is not deprecated, but contains several items that are (in various ways).
 public class ClassWithDeprecatedItems {
 
     public int notDeprecatedField;
@@ -25,9 +23,7 @@ public class ClassWithDeprecatedItems {
     @Deprecated
     public String deprecatedFieldByAnnotation;
 
-    /**
-     * @deprecated Javadoc deprecation
-     */
+        /// @deprecated Javadoc deprecation
     public Object deprecatedFieldByJavadoc;
 
     public int notDeprecatedMethod() {
@@ -39,19 +35,15 @@ public class ClassWithDeprecatedItems {
         return deprecatedFieldByAnnotation;
     }
 
-    /**
-     * @deprecated Again, method deprecation by using javadoc.
-     */
+        /// @deprecated Again, method deprecation by using javadoc.
     public Object deprecatedMethodByJavadoc() {
         return deprecatedFieldByJavadoc;
     }
 
-    /**
-     * Deprecated static method.
-     *
-     * @return Nothing, always throws an exception.
-     * @deprecated Static method deprecation.
-     */
+        /// Deprecated static method.
+    ///
+    /// @return Nothing, always throws an exception.
+    /// @deprecated Static method deprecation.
     @Deprecated
     public static Object deprecatedStaticMethod() {
         throw new UnsupportedOperationException("Not implemented.");

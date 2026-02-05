@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Class to test JavaDoc generation from the default package.
- */
+/// Class to test JavaDoc generation from the default package.
 @SuppressWarnings("PMD") // The absence of package definition in intentional in this case
 public class Foo {
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,30 +20,42 @@ import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.io.File;
 
-/**
- * UML diagram for a single class.
- */
+/// UML diagram for a single class.
 public class ClassDiagram extends Diagram {
 
     private File pumlFile = null;
 
+    /// Creates a new UML diagram for a single class.
+    ///
+    /// @param config The configuration to use.
+    /// @param type   The type to generate the diagram for.
     public ClassDiagram(Configuration config, Type type) {
         super(config);
         addChild(type);
     }
 
+    /// Return the type information of the class for which this diagram is generated.
+    ///
+    /// @return The type for which this diagram is generated.
     public Type getType() {
         return getChildren().stream()
                 .filter(Type.class::isInstance).map(Type.class::cast)
                 .findFirst().orElseThrow(() -> new IllegalStateException("No Type defined in Class diagram!"));
     }
 
+    /// Adds a new child to this class diagram.
+    ///
+    /// @param child The child to add to this diagram.
     @Override
     public void addChild(UMLNode child) {
         super.addChild(child);
         if (child instanceof Type) ((Type) child).setIncludePackagename(true);
     }
 
+    /// Write the child UML nodes for the diagram.
+    ///
+    /// @param output The output to write to.
+    /// @return The output for chaining purposes.
     @Override
     protected <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
         output.append("set namespaceSeparator none").newline()
@@ -53,6 +65,9 @@ public class ClassDiagram extends Diagram {
         return super.writeChildrenTo(output);
     }
 
+    /// Returns the file for the PlantUML code.
+    ///
+    /// @return The file containing the PlantUML code.
     @Override
     protected File getPlantUmlFile() {
         if (pumlFile == null) {

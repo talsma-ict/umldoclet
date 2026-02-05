@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,17 +24,20 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
-/**
- * UML diagram representing the dependencies between the documented Java packages.
- */
+/// UML diagram representing the dependencies between the documented Java packages.
 public class DependencyDiagram extends Diagram {
     private static final String BACKGROUNDCOLOR_DIRECTIVE = "skinparam backgroundcolor";
     private static final String DEFAULT_BACKGROUNDCOLOR = "transparent";
 
-    private String moduleName;
-    private String pumlFileName;
+    private final String moduleName;
+    private final String pumlFileName;
     private File pumlFile = null;
 
+    /// Creates a new dependency diagram.
+    ///
+    /// @param config       The configuration to use.
+    /// @param moduleName   The name of the module, if applicable.
+    /// @param pumlFileName The name of the PlantUML file to generate.
     public DependencyDiagram(Configuration config, String moduleName, String pumlFileName) {
         super(config);
         this.moduleName = moduleName;
@@ -48,6 +51,10 @@ public class DependencyDiagram extends Diagram {
         return exclusionFiltered.isEmpty() ? children : exclusionFiltered;
     }
 
+    /// Adds a package dependency to the diagram.
+    ///
+    /// @param fromPackage The name of the package that depends on another package.
+    /// @param toPackage   The name of the package that is being depended upon.
     public void addPackageDependency(String fromPackage, String toPackage) {
         if (fromPackage != null && toPackage != null) {
             this.addChild(new Reference(

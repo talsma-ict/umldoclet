@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Package defining an {@linkplain nl.talsmasoftware.umldoclet.rendering.indent.Indentation} concept.
- *
- * <p>
- * This makes it easier to generate human-readable {@code PlantUML} sources.
- */
+/// Package defining an {@linkplain nl.talsmasoftware.umldoclet.rendering.indent.Indentation} concept.
+///
+///
+/// This makes it easier to generate human-readable `PlantUML` sources.
 package nl.talsmasoftware.umldoclet.rendering.indent;

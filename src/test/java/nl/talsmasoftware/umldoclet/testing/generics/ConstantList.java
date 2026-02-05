@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by sjoerd on 02-03-16.
- */
+/// Created by sjoerd on 02-03-16.
 public class ConstantList<T, X extends CharSequence> extends AbstractList<T> {
 
     public final List<T> delegate;

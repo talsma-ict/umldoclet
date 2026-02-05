@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Package dedicated to the HTML postprocessing required to embed UML diagrams into the documentation.
- *
- * <p>
- * This package is implemented as a standalone {@linkplain nl.talsmasoftware.umldoclet.html.HtmlPostprocessor} that
- * uses the {@code Configuration} to find the locations of both
- * the generated HTML and the generated UML diagrams.<br>
- * Using these locations and knowledge of the naming conventions results in relative paths to
- * the various diagrams from the HTML that documents them.
- * The HTML files are then modified by inserting these relative diagram references.
- *
- * <p>
- * Scalable Vector Graphics ({@code SVG} diagrams) are inserted as {@code <object>} tags,
- * which makes their links clickable from the document.
- * All other images are inserted as normal {@code <img>} tags.
- */
+/// Package dedicated to the HTML postprocessing required to embed UML diagrams into the documentation.
+///
+///
+/// This package is implemented as a standalone {@linkplain nl.talsmasoftware.umldoclet.html.HtmlPostprocessor} that
+/// uses the `Configuration` to find the locations of both
+/// the generated HTML and the generated UML diagrams.
+/// Using these locations and knowledge of the naming conventions results in relative paths to
+/// the various diagrams from the HTML that documents them.
+/// The HTML files are then modified by inserting these relative diagram references.
+///
+///
+/// Scalable Vector Graphics (`SVG` diagrams) are inserted as `<object>` tags,
+/// which makes their links clickable from the document.
+/// All other images are inserted as normal `<img>` tags.
 package nl.talsmasoftware.umldoclet.html;

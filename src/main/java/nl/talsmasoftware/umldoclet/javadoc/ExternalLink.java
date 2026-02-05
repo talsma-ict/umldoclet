@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,15 +41,13 @@ import static nl.talsmasoftware.umldoclet.util.FileUtils.openReaderTo;
 import static nl.talsmasoftware.umldoclet.util.UriUtils.addHttpParam;
 import static nl.talsmasoftware.umldoclet.util.UriUtils.addPathComponent;
 
-/**
- * Processes {@code -link} and {@code -linkoffline} javadoc options
- * and contains functionality to read a set of externally documented packages.
- * <p>
- * Since the {@code -link} option only has a single URI parameter,
- * this uri must be used as both {@code docUri} and {@code packageListUri}.
- *
- * @author Sjoerd Talsma
- */
+/// Processes `-link` and `-linkoffline` javadoc options
+/// and contains functionality to read a set of externally documented packages.
+///
+/// Since the `-link` option only has a single URI parameter,
+/// this uri must be used as both `docUri` and `packageListUri`.
+///
+/// @author Sjoerd Talsma
 final class ExternalLink {
     private static final PackagenameValidator PACKAGENAME_VALIDATOR = new PackagenameValidator();
     private final Configuration config;

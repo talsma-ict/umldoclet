@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,7 @@ import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
 
 import java.io.File;
 
-/**
- * @author Sjoerd Talsma
- */
+/// @author Sjoerd Talsma
 abstract class DiagramFile {
 
     final File basedir, diagramFile;
@@ -33,15 +31,11 @@ abstract class DiagramFile {
         this.format = format;
     }
 
-    /**
-     * Evaluate whether this diagram matches with the specified HTML file.
-     *
-     * @param htmlFile The html file being visited.
-     * @return Whether the diagram should be inserted in the specified HTML file.
-     */
-    boolean matches(HtmlFile htmlFile) {
-        return false;
-    }
+    /// Evaluate whether this diagram matches with the specified HTML file.
+    ///
+    /// @param htmlFile The html file being visited.
+    /// @return Whether the diagram should be inserted in the specified HTML file.
+    protected abstract boolean matches(HtmlFile htmlFile);
 
     public abstract Postprocessor.Inserter newInserter(String relativePathToDiagram);
 
