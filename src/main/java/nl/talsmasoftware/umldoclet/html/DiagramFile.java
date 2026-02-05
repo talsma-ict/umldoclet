@@ -35,7 +35,7 @@ abstract class DiagramFile {
     ///
     /// @param htmlFile The html file being visited.
     /// @return Whether the diagram should be inserted in the specified HTML file.
-    boolean matches(HtmlFile htmlFile) {
+    protected boolean matches(HtmlFile htmlFile) {
         return false;
     }
 

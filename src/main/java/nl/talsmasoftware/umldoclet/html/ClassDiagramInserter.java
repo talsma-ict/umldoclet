@@ -56,7 +56,7 @@ final class ClassDiagramInserter extends DiagramFile {
     }
 
     @Override
-    boolean matches(HtmlFile html) {
+    protected boolean matches(HtmlFile html) {
         return pathToCompare.equals(changeHtmlFileNameExtension(relativePath(basedir, html.path.toFile())));
     }
 

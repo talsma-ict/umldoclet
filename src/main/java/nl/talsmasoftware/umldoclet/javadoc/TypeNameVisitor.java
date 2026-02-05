@@ -26,7 +26,6 @@ import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
-import javax.lang.model.type.TypeVisitor;
 import javax.lang.model.type.WildcardType;
 import javax.lang.model.util.SimpleTypeVisitor9;
 import java.util.Collections;
@@ -34,7 +33,7 @@ import java.util.EnumSet;
 import java.util.IdentityHashMap;
 import java.util.Set;
 
-/// The UML type name implemented as [TypeVisitor].
+/// The UML type name implemented as [TypeVisitor][javax.lang.model.type.TypeVisitor].
 ///
 /// @author Sjoerd Talsma
 final class TypeNameVisitor extends SimpleTypeVisitor9<TypeName, Void> {

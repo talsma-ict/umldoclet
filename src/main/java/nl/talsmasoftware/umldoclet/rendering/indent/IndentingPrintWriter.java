@@ -17,12 +17,11 @@ package nl.talsmasoftware.umldoclet.rendering.indent;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
 
 import static java.util.Objects.requireNonNull;
 
 /// PrintWriter implementation that will indent each new line with a specified number of whitespace
-/// characters. The writing itself can be delegated to any other [Writer] implementation.
+/// characters. The writing itself can be delegated to any other [Writer][java.io.Writer] implementation.
 ///
 /// Care was taken to ensure that not only lines ended by calls to [#println()] methods trigger indentation,
 /// but any other newline characters as well.
@@ -32,7 +31,7 @@ public class IndentingPrintWriter extends PrintWriter {
 
     /// Constructor for new [PrintWriter] with indentation.
     ///
-    /// @param writer Delegate writer to send output to.
+    /// @param writer      Delegate writer to send output to.
     /// @param indentation Initial indentation to start out on.
     protected IndentingPrintWriter(Appendable writer, Indentation indentation) {
         super(IndentingWriter.wrap(writer, indentation));
@@ -45,7 +44,7 @@ public class IndentingPrintWriter extends PrintWriter {
     ///
     /// @param delegate    The delegate to turn into an indenting printwriter.
     /// @param indentation The indentation to use for the indenting printwriter
-    ///                    (optional, specify `null` to use the default indentation).
+    ///                                       (optional, specify `null` to use the default indentation).
     /// @return The indenting delegate writer.
     /// @see Indentation#DEFAULT
     public static IndentingPrintWriter wrap(Appendable delegate, Indentation indentation) {
@@ -124,9 +123,9 @@ public class IndentingPrintWriter extends PrintWriter {
     ///
     /// When printing new lines, the writer will apply the current [indentation][#getIndentation()].
     ///
-    /// @param csq The character sequence to append.
+    /// @param csq   The character sequence to append.
     /// @param start The index of the first character to be appended.
-    /// @param end The index after the last character to append.
+    /// @param end   The index after the last character to append.
     /// @return Reference to this indenting [PrintWriter] for chaining purposes.
     @Override
     public IndentingPrintWriter append(CharSequence csq, int start, int end) {
