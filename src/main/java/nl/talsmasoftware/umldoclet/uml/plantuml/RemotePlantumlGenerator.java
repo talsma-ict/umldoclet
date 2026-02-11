@@ -15,7 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.uml.plantuml;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+// import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.code.ArobaseStringCompressor;
 import net.sourceforge.plantuml.code.AsciiEncoder;
@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 import static java.util.Objects.requireNonNull;
 
 /// Generator that uses a remote PlantUML server to generate diagrams.
-@SuppressFBWarnings(value = "URLCONNECTION_SSRF_FD", justification = "We only allow http(s) urls.")
+// @SuppressFBWarnings(value = "URLCONNECTION_SSRF_FD", justification = "We only allow http(s) urls.")
 public class RemotePlantumlGenerator implements PlantumlGenerator {
     /// Pattern to match http and https URLs.
     public static final Pattern HTTP_URLS = Pattern.compile("^https?://");
