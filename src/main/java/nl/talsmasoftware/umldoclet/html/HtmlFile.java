@@ -55,6 +55,7 @@ final class HtmlFile {
     boolean process(Collection<DiagramFile> diagrams) {
         return diagrams.stream()
                 .filter(diagram -> diagram.matches(this))
+                .filter(diagram -> !diagram.excludedBy(config))
                 .map(diagram -> new Postprocessor(this, diagram))
                 .map(this::process)
                 .reduce(Boolean.FALSE, Boolean::logicalOr)
