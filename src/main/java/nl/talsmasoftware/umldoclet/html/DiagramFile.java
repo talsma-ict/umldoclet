@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.html;
 
+import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
 
 import java.io.File;
@@ -38,5 +39,18 @@ abstract class DiagramFile {
     protected abstract boolean matches(HtmlFile htmlFile);
 
     public abstract Postprocessor.Inserter newInserter(String relativePathToDiagram);
+
+	public boolean excludedBy(Configuration config) {
+		if (this instanceof PackageDiagramInserter) {
+			return config.excludePackageDiagram();
+		}
+		if (this instanceof PackageDependenciesInserter) {
+			return config.excludePackageDependencies();
+		}
+		if (this instanceof ClassDiagramInserter) {
+			return config.excludeClassDiagrams();
+		}
+		return false;
+	}
 
 }
