@@ -16,5 +16,4 @@
 module nl.talsmasoftware.umldoclet {
 	requires jdk.javadoc;
 	requires net.sourceforge.plantuml;
-	requires findbugs.annotations;
 }
