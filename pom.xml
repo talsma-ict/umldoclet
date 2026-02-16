@@ -75,7 +75,6 @@
         <slf4j.version>2.0.17</slf4j.version>
         <logback.version>1.5.31</logback.version>
         <testcontainers.version>2.0.3</testcontainers.version>
-        <maven-invoker.version>3.3.0</maven-invoker.version>
     </properties>
 
     <build>
@@ -459,12 +458,6 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven.shared</groupId>
-            <artifactId>maven-invoker</artifactId>
-            <version>${maven-invoker.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
