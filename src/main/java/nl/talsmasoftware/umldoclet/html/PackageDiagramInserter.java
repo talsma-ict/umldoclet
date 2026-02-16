@@ -91,7 +91,7 @@ final class PackageDiagramInserter extends DiagramFile {
 
 	@Override
 	protected boolean excludedBy(Configuration config) {
-		return config.excludePackageDiagram();
+		return config.excludePackageDiagrams();
 	}
 
 }
