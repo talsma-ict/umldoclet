@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import nl.talsmasoftware.umldoclet.html.HtmlPostprocessor;
 import nl.talsmasoftware.umldoclet.javadoc.DocletConfig;
 import nl.talsmasoftware.umldoclet.javadoc.dependencies.DependenciesElementScanner;
 import nl.talsmasoftware.umldoclet.logging.Logger;
-import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingWriter;
 import nl.talsmasoftware.umldoclet.rendering.writers.DelegatingWriter;
 import nl.talsmasoftware.umldoclet.uml.UMLNode;
 import nl.talsmasoftware.umldoclet.util.FileUtils;
@@ -47,7 +47,7 @@ public class Issue164PackageDependenciesTest {
             DocletConfig.class.getPackageName(),
             DependenciesElementScanner.class.getPackageName(),
             Logger.class.getPackageName(),
-            Indentation.class.getPackageName(),
+            IndentingWriter.class.getPackageName(),
             DelegatingWriter.class.getPackageName(),
             UMLNode.class.getPackageName(),
             FileUtils.class.getPackageName()

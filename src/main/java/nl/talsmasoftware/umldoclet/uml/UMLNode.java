@@ -15,8 +15,8 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
+import nl.talsmasoftware.indentation.Indentation;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.io.StringWriter;
@@ -151,7 +151,7 @@ public abstract class UMLNode {
         try {
             return requireNonNull(getConfiguration().indentation());
         } catch (RuntimeException noConfig) {
-            return Indentation.DEFAULT;
+            return Indentation.TABS;
         }
     }
 }

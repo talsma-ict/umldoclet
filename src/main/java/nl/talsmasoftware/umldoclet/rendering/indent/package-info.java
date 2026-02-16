@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/// Package defining an {@linkplain nl.talsmasoftware.umldoclet.rendering.indent.Indentation} concept.
+/// Package defining an Indentation concept.
 ///
 ///
 /// This makes it easier to generate human-readable `PlantUML` sources.

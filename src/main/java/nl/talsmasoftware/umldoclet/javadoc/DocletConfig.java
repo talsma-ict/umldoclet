@@ -17,6 +17,7 @@ package nl.talsmasoftware.umldoclet.javadoc;
 
 import jdk.javadoc.doclet.Doclet;
 import jdk.javadoc.doclet.Reporter;
+import nl.talsmasoftware.indentation.Indentation;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.FieldConfig;
 import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
@@ -25,7 +26,6 @@ import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
 import nl.talsmasoftware.umldoclet.configuration.Visibility;
 import nl.talsmasoftware.umldoclet.logging.Logger;
 import nl.talsmasoftware.umldoclet.logging.Message;
-import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 
 import java.net.URI;
 import java.nio.charset.Charset;
@@ -153,7 +153,7 @@ public class DocletConfig implements Configuration {
 
     @Override
     public Indentation indentation() {
-        return Indentation.DEFAULT;
+        return Indentation.TABS;
     }
 
     @Override

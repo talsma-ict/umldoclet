@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,11 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
+import nl.talsmasoftware.indentation.Indentation;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
 import nl.talsmasoftware.umldoclet.logging.Message;
 import nl.talsmasoftware.umldoclet.logging.TestLogger;
-import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -114,7 +114,7 @@ public class DiagramTest {
         when(config.customPlantumlDirectives()).thenReturn(singletonList("skinparam handwritten true"));
         StringWriter output = new StringWriter();
         Diagram testDiagram = new TestDiagram(config, new File("target/test-classes/custom-directive.puml"));
-        IndentingPrintWriter writer = IndentingPrintWriter.wrap(output, Indentation.NONE);
+        IndentingPrintWriter writer = IndentingPrintWriter.wrap(output, Indentation.EMPTY);
         String footer = logger.localize(Message.DOCLET_UML_FOOTER, Message.DOCLET_VERSION);
 
         // execute
@@ -131,7 +131,7 @@ public class DiagramTest {
         when(config.customPlantumlDirectives()).thenReturn(singletonList("skinparam backgroundcolor green"));
         StringWriter output = new StringWriter();
         Diagram testDiagram = new TestDiagram(config, new File("target/test-classes/custom-directive.puml"));
-        IndentingPrintWriter writer = IndentingPrintWriter.wrap(output, Indentation.NONE);
+        IndentingPrintWriter writer = IndentingPrintWriter.wrap(output, Indentation.EMPTY);
         String footer = logger.localize(Message.DOCLET_UML_FOOTER, Message.DOCLET_VERSION);
 
         // execute

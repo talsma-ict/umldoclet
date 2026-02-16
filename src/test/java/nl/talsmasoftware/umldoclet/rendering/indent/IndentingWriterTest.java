@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2025 Talsma ICT
+ * Copyright 2016-2026 Talsma ICT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.rendering.indent;
 
+import nl.talsmasoftware.indentation.Indentation;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -30,30 +31,31 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class IndentingWriterTest {
+    static final Indentation DEFAULT_INDENTATION = Indentation.FOUR_SPACES;
 
     @Test
     public void testWritingFromNonZeroOffset() throws IOException {
         StringWriter output = new StringWriter();
-        new IndentingWriter(output, Indentation.DEFAULT).write("1234".toCharArray(), 1, 2);
+        new IndentingWriter(output, DEFAULT_INDENTATION).write("1234".toCharArray(), 1, 2);
         assertThat(output, hasToString("23"));
     }
 
     @Test
     public void testUnindentFromZero() {
-        IndentingWriter indentingWriter = new IndentingWriter(new StringWriter(), Indentation.DEFAULT);
+        IndentingWriter indentingWriter = new IndentingWriter(new StringWriter(), DEFAULT_INDENTATION);
         assertThat(indentingWriter.unindent(), is(sameInstance(indentingWriter)));
     }
 
     @Test
     public void testIndent() {
-        assertThat(new IndentingWriter(new StringWriter(), Indentation.DEFAULT).indent().getIndentation(),
-                is(equalTo(Indentation.DEFAULT.increase())));
+        assertThat(new IndentingWriter(new StringWriter(), DEFAULT_INDENTATION).indent().getIndentation(),
+                is(equalTo(DEFAULT_INDENTATION.indent())));
     }
 
     @Test
     public void testNoFlushingTerminatingWhitespace() throws IOException {
         StringWriter output = new StringWriter();
-        IndentingWriter indentingWriter = new IndentingWriter(output, Indentation.DEFAULT);
+        IndentingWriter indentingWriter = new IndentingWriter(output, DEFAULT_INDENTATION);
 
         indentingWriter.write("Some content");
         indentingWriter.whitespace();
@@ -68,7 +70,7 @@ public class IndentingWriterTest {
 
     @Test
     public void testToStringDelegation() throws IOException {
-        IndentingWriter indentingWriter = new IndentingWriter(new StringWriter(), Indentation.DEFAULT);
+        IndentingWriter indentingWriter = new IndentingWriter(new StringWriter(), DEFAULT_INDENTATION);
         indentingWriter.write("first line\n");
         indentingWriter.indent().write("second line");
         assertThat(indentingWriter, hasToString("first line\n    second line"));
@@ -79,7 +81,7 @@ public class IndentingWriterTest {
         final RuntimeException runtimeException = new RuntimeException("Runtime exception!");
         assertThat(
                 assertThrows(RuntimeException.class, () ->
-                        new IndentingWriter(throwing(runtimeException), Indentation.DEFAULT).close()),
+                        new IndentingWriter(throwing(runtimeException), DEFAULT_INDENTATION).close()),
                 is(sameInstance(runtimeException)));
     }
 
@@ -87,7 +89,7 @@ public class IndentingWriterTest {
     public void testCloseRethrowingIOExceptions() {
         IOException ioException = new IOException("I/O exception!");
         try {
-            new IndentingWriter(throwing(ioException), Indentation.DEFAULT).close();
+            new IndentingWriter(throwing(ioException), DEFAULT_INDENTATION).close();
             fail("I/O exception expected.");
         } catch (IOException expected) {
             assertThat(expected, is(sameInstance(ioException)));
@@ -98,7 +100,7 @@ public class IndentingWriterTest {
     public void testCloseWrappingCheckedExceptions() throws IOException {
         Exception checkedException = new Exception("Checked exception!");
         try {
-            new IndentingWriter(throwing(checkedException), Indentation.DEFAULT).close();
+            new IndentingWriter(throwing(checkedException), DEFAULT_INDENTATION).close();
             fail("Runtime exception expected.");
         } catch (RuntimeException expected) {
             assertThat(expected.getCause(), is(sameInstance(checkedException)));

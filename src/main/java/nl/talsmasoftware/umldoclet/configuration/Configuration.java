@@ -15,8 +15,8 @@
  */
 package nl.talsmasoftware.umldoclet.configuration;
 
+import nl.talsmasoftware.indentation.Indentation;
 import nl.talsmasoftware.umldoclet.logging.Logger;
-import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
 
 import java.net.URI;
 import java.nio.charset.Charset;

@@ -15,6 +15,9 @@
  */
 package nl.talsmasoftware.umldoclet.rendering.indent;
 
+import nl.talsmasoftware.indentation.Indentation;
+import nl.talsmasoftware.indentation.io.IndentingWriter;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -28,13 +31,16 @@ import static java.util.Objects.requireNonNull;
 ///
 /// @author Sjoerd Talsma
 public class IndentingPrintWriter extends PrintWriter {
-
     /// Constructor for new [PrintWriter] with indentation.
     ///
     /// @param writer      Delegate writer to send output to.
     /// @param indentation Initial indentation to start out on.
     protected IndentingPrintWriter(Appendable writer, Indentation indentation) {
         super(IndentingWriter.wrap(writer, indentation));
+    }
+
+    private static IndentingWriter wrapAppendable(Appendable appendable, Indentation indentation) {
+        return appendable instanceof IndentingWriter ? ((IndentingWriter)  appendable). : new IndentingWriter(appendable, indentation);
     }
 
     /// Returns an indenting printwriter around the given `delegate`.
@@ -44,9 +50,8 @@ public class IndentingPrintWriter extends PrintWriter {
     ///
     /// @param delegate    The delegate to turn into an indenting printwriter.
     /// @param indentation The indentation to use for the indenting printwriter
-    ///                                       (optional, specify `null` to use the default indentation).
+    ///                                                          (optional, specify `null` to use the default indentation).
     /// @return The indenting delegate writer.
-    /// @see Indentation#DEFAULT
     public static IndentingPrintWriter wrap(Appendable delegate, Indentation indentation) {
         return delegate instanceof IndentingPrintWriter
                 ? ((IndentingPrintWriter) delegate).withIndentation(indentation)
@@ -77,14 +82,14 @@ public class IndentingPrintWriter extends PrintWriter {
     ///
     /// @return A new indenting print writer with increased indentation.
     public IndentingPrintWriter indent() {
-        return withIndentation(getIndentation().increase());
+        return withIndentation(getIndentation().indent());
     }
 
     /// Returns a new indenting print writer with the indentation level decreased by one.
     ///
     /// @return A new indenting print writer with decreased indentation.
     public IndentingPrintWriter unindent() {
-        return withIndentation(getIndentation().decrease());
+        return withIndentation(getIndentation().unindent());
     }
 
     /// Adds a single whitespace character to the output, but only if the previous character was not a whitespace character.

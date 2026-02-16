@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.rendering.indent;
 
+import nl.talsmasoftware.indentation.Indentation;
 import nl.talsmasoftware.umldoclet.rendering.writers.ThrowingWriter;
 import org.junit.jupiter.api.Test;
 
@@ -35,11 +36,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 ///
 /// @author Sjoerd Talsma
 public class IndentingPrintWriterTest {
+    static final Indentation DEFAULT_INDENTATION = Indentation.FOUR_SPACES;
 
     @Test
     public void testIndentingPrintWriterNullWriter() {
         NullPointerException expected = assertThrows(NullPointerException.class, () ->
-                new IndentingPrintWriter(null, Indentation.DEFAULT));
+                new IndentingPrintWriter(null, DEFAULT_INDENTATION));
         assertThat("Exception message", expected.getMessage(), notNullValue());
     }
 
@@ -72,7 +74,7 @@ public class IndentingPrintWriterTest {
     @Test
     public void testWhitespaceRenderingBeforeNewlines() {
         StringWriter output = new StringWriter();
-        final IndentingPrintWriter writer = IndentingPrintWriter.wrap(output, Indentation.DEFAULT);
+        final IndentingPrintWriter writer = IndentingPrintWriter.wrap(output, DEFAULT_INDENTATION);
         writer.append('-').whitespace().append('\n').flush();
         assertThat(output, hasToString(equalTo("-\n")));
         clear(output);
@@ -85,7 +87,7 @@ public class IndentingPrintWriterTest {
     @Test
     public void testWhitespaceRenderingAfterNewlines() {
         StringWriter output = new StringWriter();
-        final IndentingPrintWriter writer = IndentingPrintWriter.wrap(output, Indentation.DEFAULT);
+        final IndentingPrintWriter writer = IndentingPrintWriter.wrap(output, DEFAULT_INDENTATION);
         writer.append('\n').whitespace().append('-').flush();
         assertThat(output, hasToString(equalTo("\n-")));
         clear(output);
@@ -98,7 +100,7 @@ public class IndentingPrintWriterTest {
     @Test
     public void testWhitespaceModifiedUnderlyingWriter() {
         final StringWriter output = new StringWriter();
-        SettableIndentingPrintWriter writer = new SettableIndentingPrintWriter(output, Indentation.DEFAULT);
+        SettableIndentingPrintWriter writer = new SettableIndentingPrintWriter(output, DEFAULT_INDENTATION);
         writer.setOut(output);
 
         writer.append('\n').whitespace().append('-').flush();
@@ -108,7 +110,7 @@ public class IndentingPrintWriterTest {
 
     @Test
     public void testWhitespaceIoeByUnderlyingWriter() {
-        SettableIndentingPrintWriter writer = new SettableIndentingPrintWriter(new StringWriter(), Indentation.DEFAULT);
+        SettableIndentingPrintWriter writer = new SettableIndentingPrintWriter(new StringWriter(), DEFAULT_INDENTATION);
         writer.setOut(ThrowingWriter.throwing(new IOException("Buffer is full!")));
         assertThrows(RuntimeException.class, writer::whitespace);
     }
@@ -116,7 +118,7 @@ public class IndentingPrintWriterTest {
     @Test
     public void testIndentModifiedUnderlyingWriter() {
         final StringWriter output = new StringWriter();
-        SettableIndentingPrintWriter writer = new SettableIndentingPrintWriter(output, Indentation.DEFAULT);
+        SettableIndentingPrintWriter writer = new SettableIndentingPrintWriter(output, DEFAULT_INDENTATION);
         writer.setOut(output);
         assertThrows(NullPointerException.class, writer::indent);
     }

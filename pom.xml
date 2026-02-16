@@ -337,6 +337,7 @@
                     <artifactSet>
                         <includes>
                             <include>net.sourceforge.plantuml:plantuml-asl</include>
+                            <include>nl.talsmasoftware.indentation:indentation</include>
                         </includes>
                     </artifactSet>
                     <minimizeJar>true</minimizeJar>
@@ -417,6 +418,11 @@
             <artifactId>plantuml-asl</artifactId>
             <version>${plantuml-asl.version}</version>
         </dependency>
+        <dependency>
+            <groupId>nl.talsmasoftware.indentation</groupId>
+            <artifactId>indentation</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
 
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
@@ -479,6 +485,20 @@
             <url>https://central.sonatype.com/repository/maven-snapshots</url>
         </snapshotRepository>
     </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>central-snapshots</id>
+            <url>https://central.sonatype.com/repository/maven-snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <profiles>
         <profile>
