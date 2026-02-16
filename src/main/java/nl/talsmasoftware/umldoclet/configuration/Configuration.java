@@ -155,17 +155,17 @@ public interface Configuration {
     /// @return The charset used for Javadoc HTML files.
     Charset htmlCharset();
 
-    /// Hides the package diagram altogether.
+    /// Hides the package diagrams altogether.
     ///
     /// @return `true` if the package diagram should be hidden, otherwise `false` to show the package diagram (with or without excluded packages).
-    boolean excludePackageDiagram();
+    boolean excludePackageDiagrams();
     
     /// Hides the package dependencies diagram altogether.
     ///
     /// @return `true` if the package dependencies diagram should be hidden, otherwise `false` to show the package dependencies diagram (with or without excluded packages).
     boolean excludePackageDependencies();
 
-    /// Hides the class diagrams diagram altogether.
+    /// Hides the class diagrams altogether.
     ///
     /// @return `true` if the class level UML diagram should be hidden, otherwise `false` to show the class UML diagram.
     boolean excludeClassDiagrams();
