@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.html;
 
+import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
 
 import java.io.File;
@@ -137,4 +138,9 @@ final class ClassDiagramInserter extends DiagramFile {
             return name;
         }
     }
+
+	@Override
+	protected boolean excludedBy(Configuration config) {
+		 return config.excludeClassDiagrams();
+	}
 }

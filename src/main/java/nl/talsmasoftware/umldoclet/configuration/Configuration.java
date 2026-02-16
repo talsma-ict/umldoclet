@@ -114,6 +114,8 @@ public interface Configuration {
     /// @return `true` if a detected package dependency cycle must be considered as an error,
     /// or `false` if it should be reported as merely a warning.
     boolean failOnCyclicPackageDependencies();
+    
+
 
     /// Resolves an external link to the specified type.
     ///
@@ -152,5 +154,20 @@ public interface Configuration {
     ///
     /// @return The charset used for Javadoc HTML files.
     Charset htmlCharset();
+
+    /// Hides the package diagram altogether.
+    ///
+    /// @return `true` if the package diagram should be hidden, otherwise `false` to show the package diagram (with or without excluded packages).
+    boolean excludePackageDiagram();
+    
+    /// Hides the package dependencies diagram altogether.
+    ///
+    /// @return `true` if the package dependencies diagram should be hidden, otherwise `false` to show the package dependencies diagram (with or without excluded packages).
+    boolean excludePackageDependencies();
+
+    /// Hides the class diagrams diagram altogether.
+    ///
+    /// @return `true` if the class level UML diagram should be hidden, otherwise `false` to show the class UML diagram.
+    boolean excludeClassDiagrams();
 
 }

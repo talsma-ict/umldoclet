@@ -113,6 +113,9 @@ public class DocletConfig implements Configuration {
     List<ExternalLink> externalLinks = new ArrayList<>();
 
     List<String> customPlantumlDirectives = new ArrayList<>();
+	 boolean excludePackageDiagram = false;
+	 boolean excludePackageDependencies = false;
+	boolean excludeClassDiagrams = false;
 
     /// Creates a new doclet configuration.
     public DocletConfig() {
@@ -195,6 +198,21 @@ public class DocletConfig implements Configuration {
     public boolean failOnCyclicPackageDependencies() {
         return failOnCyclicPackageDependencies;
     }
+    
+    @Override
+	 public boolean excludePackageDiagram() {
+	     return excludePackageDiagram;
+	 }
+    
+    @Override
+	 public boolean excludePackageDependencies() {
+	     return excludePackageDependencies;
+	 }
+    
+ 	@Override
+ 	public boolean excludeClassDiagrams() {
+ 		return excludeClassDiagrams;
+ 	}
 
     @Override
     public Optional<URI> resolveExternalLinkToType(String packageName, String type) {
@@ -332,4 +350,8 @@ public class DocletConfig implements Configuration {
             return javaBeanPropertiesAsFields;
         }
     }
+
+
+
+	
 }
