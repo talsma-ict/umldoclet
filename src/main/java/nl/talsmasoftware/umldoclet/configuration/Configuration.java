@@ -114,7 +114,6 @@ public interface Configuration {
     /// @return `true` if a detected package dependency cycle must be considered as an error,
     /// or `false` if it should be reported as merely a warning.
     boolean failOnCyclicPackageDependencies();
-    
 
 
     /// Resolves an external link to the specified type.
@@ -159,7 +158,7 @@ public interface Configuration {
     ///
     /// @return `true` if the package diagram should be hidden, otherwise `false` to show the package diagram (with or without excluded packages).
     boolean excludePackageDiagrams();
-    
+
     /// Hides the package dependencies diagram altogether.
     ///
     /// @return `true` if the package dependencies diagram should be hidden, otherwise `false` to show the package dependencies diagram (with or without excluded packages).
@@ -170,4 +169,10 @@ public interface Configuration {
     /// @return `true` if the class level UML diagram should be hidden, otherwise `false` to show the class UML diagram.
     boolean excludeClassDiagrams();
 
+    /// Whether empty diagrams must be rendered.
+    ///
+    /// An example of empty diagrams is a package diagram that does not contain classes itself, just sub-packages.
+    ///
+    /// @return `true` if empty diagrams must be rendered, this option should be `false` by default.
+    boolean renderEmptyDiagrams();
 }

@@ -113,6 +113,15 @@ public abstract class UMLNode {
         return children.removeIf(condition);
     }
 
+    /// Whether this UML node is empty.
+    ///
+    /// By default, this is considered `true` if all [children][#getChildren()] in the node are empty.
+    ///
+    /// @return `true` if the node is empty, otherwise `false`.
+    public boolean isEmpty() {
+        return getChildren().stream().allMatch(UMLNode::isEmpty);
+    }
+
     /// Obtain the doclet configuration from the diagram this node is part of
     ///
     /// @return The doclet configuration.

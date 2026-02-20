@@ -236,6 +236,12 @@ This does not prevent _generating_ the diagrams, so it is still possible to manu
 them at your discretion by placing a manual `<img>` tag somewhere in your documentation.  
 The default for this setting is `false`.
 
+#### -umlRenderEmptyDiagrams (true|_false_)
+
+Render diagrams, even when they are empty.  
+An example of an empty diagram is a package diagram for a package containing
+no classes by itself, just sub-packages.  
+The default for this setting is `false`.
 
 
 [maven-img]: https://img.shields.io/maven-central/v/nl.talsmasoftware/umldoclet.svg

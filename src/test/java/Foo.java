@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/// Class to test JavaDoc generation from the default package.
-@SuppressWarnings("PMD") // The absence of package definition in intentional in this case
+
+/// Class to test Javadoc generation from the default package.
+@SuppressWarnings({"PMD", "java:S1220"}) // The absence of package definition is intentional in this case.
 public class Foo {
 }

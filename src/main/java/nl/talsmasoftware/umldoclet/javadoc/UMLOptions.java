@@ -108,6 +108,8 @@ final class UMLOptions {
            args -> config.excludePackageDiagrams = asBoolean(args.get(0))));
         this.options.add(new Option("--uml-exclude-class-diagrams -umlExcludeClassDiagrams", 1, Kind.STANDARD,
            args -> config.excludeClassDiagrams = asBoolean(args.get(0))));
+        this.options.add(new Option("--uml-render-empty-diagrams -umlRenderEmptyDiagrams", 1, Kind.STANDARD,
+                args -> config.renderEmptyDiagrams = asBoolean(args.get(0))));
     }
 
     /// Merges the UML options with the given standard options.
