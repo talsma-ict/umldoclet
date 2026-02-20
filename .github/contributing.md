@@ -12,7 +12,7 @@ https://github.com/talsma-ict/umldoclet/issues
 If you have code or a bugfix you would like to contribute,
 please feel free to create a [GitHub pull request](https://help.github.com/articles/creating-a-pull-request-from-a-fork/)
 from [your own fork](https://help.github.com/articles/about-forks/) of this repository.
-Please make sure to request the merge towards the `develop` branch.
+Please make sure to request the merge towards the `main` branch.
 
 ## Signing off
 

@@ -102,6 +102,12 @@ final class UMLOptions {
         this.options.add(new Option("--uml-java-bean-properties-as-fields -umlJavaBeanPropertiesAsFields", 0, Kind.STANDARD,
                 args -> config.methodConfig.javaBeanPropertiesAsFields = true));
         this.options.add(new Option("--uml-timeout -umlTimeout", 1, Kind.STANDARD, this::setTimeout));
+        this.options.add(new Option("--uml-exclude-package-dependencies -umlExcludePackageDependencies", 1, Kind.STANDARD,
+                args -> config.excludePackageDependencies = asBoolean(args.get(0))));
+        this.options.add(new Option("--uml-exclude-package-diagrams -umlExcludePackageDiagrams", 1, Kind.STANDARD,
+           args -> config.excludePackageDiagrams = asBoolean(args.get(0))));
+        this.options.add(new Option("--uml-exclude-class-diagrams -umlExcludeClassDiagrams", 1, Kind.STANDARD,
+           args -> config.excludeClassDiagrams = asBoolean(args.get(0))));
     }
 
     /// Merges the UML options with the given standard options.

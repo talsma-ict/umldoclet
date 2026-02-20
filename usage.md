@@ -215,21 +215,35 @@ If any are found, javadoc will print a warning, listing the dependency cycles fo
 This option makes the javadoc task fail by turning this warning into an error.
 The default for this setting is `false`.
 
+#### -umlExcludePackageDependencies (true|_false_)
+
+Exclude package dependency diagram from the overview Javadoc page.  
+This does not prevent _generating_ the diagram, so it is still possible to manually include
+it at your discretion by placing a manual `<img>` tag somewhere in your documentation.  
+The default for this setting is `false`.
+
+#### -umlExcludePackageDiagrams (true|_false_)
+
+Exclude package diagrams from being automatically inserted into package Javadoc pages.  
+This does not prevent _generating_ the diagrams, so it is still possible to manually include
+them at your discretion by placing a manual `<img>` tag somewhere in your documentation.  
+The default for this setting is `false`.
+
+#### -umlExcludeClassDiagrams (true|_false_)
+
+Exclude class diagrams from being automatically inserted into class Javadoc pages.  
+This does not prevent _generating_ the diagrams, so it is still possible to manually include
+them at your discretion by placing a manual `<img>` tag somewhere in your documentation.  
+The default for this setting is `false`.
+
+
 
 [maven-img]: https://img.shields.io/maven-central/v/nl.talsmasoftware/umldoclet.svg
-
 [maven]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22nl.talsmasoftware%22%20AND%20a%3A%22umldoclet%22
-
 [javadoc-wiki]: https://en.wikipedia.org/wiki/Javadoc
-
 [javadoc-oracle]: https://docs.oracle.com/javase/9/javadoc/javadoc.htm
-
 [javadoc-command]: https://docs.oracle.com/javase/9/javadoc/javadoc-command.htm
-
 [doclet-api]: https://docs.oracle.com/javase/10/docs/api/jdk/javadoc/doclet/package-summary.html
-
 [plantuml]: http://plantuml.com
-
 [usage-v1]: https://github.com/talsma-ict/umldoclet/blob/develop-v1/docs/USAGE.md
-
 [ivy]: http://ant.apache.org/ivy

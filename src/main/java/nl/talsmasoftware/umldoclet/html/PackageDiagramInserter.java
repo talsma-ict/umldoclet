@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.html;
 
+import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
 
 import java.io.File;
@@ -87,5 +88,10 @@ final class PackageDiagramInserter extends DiagramFile {
             return "<img src=\"" + relativePath + "\" alt=\"Package summary UML Diagram\" " + CENTER_STYLE + "/>";
         }
     }
+
+	@Override
+	protected boolean excludedBy(Configuration config) {
+		return config.excludePackageDiagrams();
+	}
 
 }

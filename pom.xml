@@ -25,7 +25,7 @@
     <!-- Artifact identification -->
     <groupId>nl.talsmasoftware</groupId>
     <artifactId>umldoclet</artifactId>
-    <version>2.2.5-SNAPSHOT</version>
+    <version>2.2.6-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <!-- Project information -->
@@ -69,13 +69,12 @@
         <plantuml-asl.version>1.2026.1</plantuml-asl.version>
 
         <!-- test -->
-        <junit.version>6.0.2</junit.version>
+        <junit.version>6.0.3</junit.version>
         <hamcrest.version>3.0</hamcrest.version>
         <mockito.version>5.21.0</mockito.version>
         <slf4j.version>2.0.17</slf4j.version>
-        <logback.version>1.5.27</logback.version>
+        <logback.version>1.5.32</logback.version>
         <testcontainers.version>2.0.3</testcontainers.version>
-        <maven-invoker.version>3.3.0</maven-invoker.version>
     </properties>
 
     <build>
@@ -467,12 +466,6 @@
             <version>${logback.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.maven.shared</groupId>
-            <artifactId>maven-invoker</artifactId>
-            <version>${maven-invoker.version}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <distributionManagement>
@@ -549,7 +542,7 @@
                         <configuration>
                             <publishingServerId>central</publishingServerId>
                             <autoPublish>true</autoPublish>
-                            <waitUntil>published</waitUntil>
+                            <!--<waitUntil>published</waitUntil>-->
                         </configuration>
                     </plugin>
                 </plugins>
