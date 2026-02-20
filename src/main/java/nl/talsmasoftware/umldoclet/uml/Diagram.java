@@ -152,15 +152,6 @@ public abstract class Diagram extends UMLNode {
         return new File(base.getParent(), base.getName() + format.getFileSuffix());
     }
 
-    /// Whether this diagram is empty.
-    ///
-    /// By default, this is determined by whether there are [children][#getChildren()] in the diagram.
-    ///
-    /// @return `true` if the diagram is empty, otherwise `false`.
-    public boolean isEmpty() {
-        return getChildren().isEmpty();
-    }
-
     /// Renders this diagram to the configured output formats.
     public void render() {
         // Skips rendering empty diagrams per configuration

@@ -58,6 +58,11 @@ public class Parameters extends UMLNode {
     }
 
     @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         return writeChildrenTo(output);
     }

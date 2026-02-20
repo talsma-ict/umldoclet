@@ -35,6 +35,11 @@ public class UmlCharacters extends UMLNode {
         this.content = content;
     }
 
+    @Override
+    public boolean isEmpty() {
+        return content == null || content.trim().isEmpty();
+    }
+
     /// Writes the literal UML characters to the output.
     ///
     /// @param output The output to write to.

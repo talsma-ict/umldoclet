@@ -61,12 +61,6 @@ public class PackageDiagram extends Diagram {
         return super.writeCustomDirectives(directives, output);
     }
 
-    public boolean isEmpty() {
-        boolean result = super.isEmpty();
-        getConfiguration().logger().debug("Package diagram empty? {0}, children: {1}.", result, getChildren());
-        return result;
-    }
-
     @Override
     protected File getPlantUmlFile() {
         if (pumlFile == null) {
