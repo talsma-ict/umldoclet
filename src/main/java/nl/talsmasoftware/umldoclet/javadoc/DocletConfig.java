@@ -108,9 +108,7 @@ public class DocletConfig implements Configuration {
     List<String> excludedPackageDependencies = new ArrayList<>(asList(
             "java", "javax"));
 
-//    boolean failOnCyclicPackageDependencies = false;
-
-    // Valid values: ignore, warn, error
+    // Valid values: ignore, warn, error|fail
     String cyclicPackageDependencies;
 
     List<ExternalLink> externalLinks = new ArrayList<>();

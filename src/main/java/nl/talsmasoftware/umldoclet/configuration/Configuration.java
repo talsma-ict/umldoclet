@@ -27,7 +27,7 @@ import java.util.Optional;
 ///
 /// @author Sjoerd Talsma
 public interface Configuration {
-    enum Action {IGNORE, WARN, ERROR};
+    enum Action {IGNORE, WARN, ERROR}
 
     /// The base URL of the [PlantUML server](https://www.plantuml.com/plantuml) to generate diagrams with.
     ///

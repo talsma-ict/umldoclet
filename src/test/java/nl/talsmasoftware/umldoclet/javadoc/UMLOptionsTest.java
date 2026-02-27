@@ -121,4 +121,10 @@ class UMLOptionsTest {
         processOption("--uml-cyclic-package-dependencies", singletonList("warn"));
         assertThat(config.onCyclicPackageDependencies(), is(Configuration.Action.WARN));
     }
+
+    @Test
+    void testFailCyclicPackageDependencies() {
+        processOption("--uml-cyclic-package-dependencies", singletonList("failure"));
+        assertThat(config.onCyclicPackageDependencies(), is(Configuration.Action.ERROR));
+    }
 }
