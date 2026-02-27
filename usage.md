@@ -206,14 +206,15 @@ svg _objects_ in the documentation to enable links in the diagrams. To include
 You can generate _multiple_ images per diagram by specifying a comma-separated
 list of formats or providing the option multiple times.
 
-#### -failOnCyclicPackageDependencies (true|_false_)
+#### -umlCyclicPackageDependencies (ignore|_warn_|error)
 
-Since the _package dependencies_ diagram was introduced to the UML doclet,
-it can analyze these dependencies to verify there are
-[no cyclic package dependencies](https://en.wikipedia.org/wiki/Acyclic_dependencies_principle).
-If any are found, javadoc will print a warning, listing the dependency cycles found between the packages.  
-This option makes the javadoc task fail by turning this warning into an error.
-The default for this setting is `false`.
+The action to take when package-dependency cycles are detected.  
+Since the _package dependencies_ diagram was introduced,
+it can be analyzed to verify there are
+[no cyclic package dependencies](https://en.wikipedia.org/wiki/Acyclic_dependencies_principle).  
+The value `ignore` skips this check.  
+The value `error` replaces the old `-failOnCyclicPackageDependencies=true`.  
+The default for this setting is `warn`.
 
 #### -umlExcludePackageDependencies (true|_false_)
 
@@ -245,11 +246,19 @@ The default for this setting is `false`.
 
 
 [maven-img]: https://img.shields.io/maven-central/v/nl.talsmasoftware/umldoclet.svg
+
 [maven]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22nl.talsmasoftware%22%20AND%20a%3A%22umldoclet%22
+
 [javadoc-wiki]: https://en.wikipedia.org/wiki/Javadoc
+
 [javadoc-oracle]: https://docs.oracle.com/javase/9/javadoc/javadoc.htm
+
 [javadoc-command]: https://docs.oracle.com/javase/9/javadoc/javadoc-command.htm
+
 [doclet-api]: https://docs.oracle.com/javase/10/docs/api/jdk/javadoc/doclet/package-summary.html
+
 [plantuml]: http://plantuml.com
+
 [usage-v1]: https://github.com/talsma-ict/umldoclet/blob/develop-v1/docs/USAGE.md
+
 [ivy]: http://ant.apache.org/ivy

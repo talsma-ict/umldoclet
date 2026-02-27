@@ -18,6 +18,7 @@ package nl.talsmasoftware.umldoclet;
 import jdk.javadoc.doclet.DocletEnvironment;
 import jdk.javadoc.doclet.Reporter;
 import jdk.javadoc.doclet.StandardDoclet;
+import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.html.HtmlPostprocessor;
 import nl.talsmasoftware.umldoclet.javadoc.DocletConfig;
 import nl.talsmasoftware.umldoclet.javadoc.UMLFactory;
@@ -31,6 +32,7 @@ import nl.talsmasoftware.umldoclet.uml.Diagram;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
@@ -153,13 +155,17 @@ public class UMLDoclet extends StandardDoclet {
     }
 
     private Set<PackageDependencyCycle> detectPackageDependencyCycles(Set<PackageDependency> packageDependencies) {
-        Set<PackageDependencyCycle> cycles = PackageDependencyCycle.detectCycles(packageDependencies);
-        if (!cycles.isEmpty()) {
-            String cyclesString = cycles.stream().map(cycle -> " - " + cycle).collect(joining(lineSeparator(), lineSeparator(), ""));
-            if (config.failOnCyclicPackageDependencies()) {
-                config.logger().error(Message.WARNING_PACKAGE_DEPENDENCY_CYCLES, cyclesString);
-            } else {
-                config.logger().warn(Message.WARNING_PACKAGE_DEPENDENCY_CYCLES, cyclesString);
+        Set<PackageDependencyCycle> cycles = Collections.emptySet();
+        Configuration.Action action = config.onCyclicPackageDependencies();
+        if (action != Configuration.Action.IGNORE) {
+            cycles = PackageDependencyCycle.detectCycles(packageDependencies);
+            if (!cycles.isEmpty()) {
+                String cyclesString = cycles.stream().map(cycle -> " - " + cycle).collect(joining(lineSeparator(), lineSeparator(), ""));
+                if (action == Configuration.Action.ERROR) {
+                    config.logger().error(Message.WARNING_PACKAGE_DEPENDENCY_CYCLES, cyclesString);
+                } else {
+                    config.logger().warn(Message.WARNING_PACKAGE_DEPENDENCY_CYCLES, cyclesString);
+                }
             }
         }
         return cycles;

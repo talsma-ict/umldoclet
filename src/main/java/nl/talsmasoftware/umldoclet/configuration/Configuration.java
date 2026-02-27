@@ -27,6 +27,7 @@ import java.util.Optional;
 ///
 /// @author Sjoerd Talsma
 public interface Configuration {
+    enum Action {IGNORE, WARN, ERROR};
 
     /// The base URL of the [PlantUML server](https://www.plantuml.com/plantuml) to generate diagrams with.
     ///
@@ -109,12 +110,10 @@ public interface Configuration {
     /// @return The packages (including subpackages) excluded from the package dependencies.
     List<String> excludedPackageDependencies();
 
-    /// Whether a detected package dependency cycle must result in an error (instead of a warning).
+    /// What to do when a cyclic package dependency is detected.
     ///
-    /// @return `true` if a detected package dependency cycle must be considered as an error,
-    /// or `false` if it should be reported as merely a warning.
-    boolean failOnCyclicPackageDependencies();
-
+    /// @return The action to be taken for detected package-dependency cycles.
+    Action onCyclicPackageDependencies();
 
     /// Resolves an external link to the specified type.
     ///

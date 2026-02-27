@@ -108,7 +108,10 @@ public class DocletConfig implements Configuration {
     List<String> excludedPackageDependencies = new ArrayList<>(asList(
             "java", "javax"));
 
-    boolean failOnCyclicPackageDependencies = false;
+//    boolean failOnCyclicPackageDependencies = false;
+
+    // Valid values: ignore, warn, error
+    String cyclicPackageDependencies;
 
     List<ExternalLink> externalLinks = new ArrayList<>();
 
@@ -196,8 +199,16 @@ public class DocletConfig implements Configuration {
     }
 
     @Override
-    public boolean failOnCyclicPackageDependencies() {
-        return failOnCyclicPackageDependencies;
+    public Action onCyclicPackageDependencies() {
+        if (cyclicPackageDependencies != null) {
+            String value = cyclicPackageDependencies.toLowerCase().trim();
+            if (value.startsWith("ignore")) {
+                return Action.IGNORE;
+            } else if (value.startsWith("error") || value.startsWith("fail")) {
+                return Action.ERROR;
+            }
+        }
+        return Action.WARN;
     }
 
     @Override
