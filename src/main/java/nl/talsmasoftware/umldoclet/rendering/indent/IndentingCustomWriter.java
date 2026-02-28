@@ -21,26 +21,17 @@ import nl.talsmasoftware.indentation.io.IndentingWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import static java.util.Objects.requireNonNull;
-
 /// PrintWriter implementation that will indent each new line with a specified number of whitespace
 /// characters. The writing itself can be delegated to any other [Writer][java.io.Writer] implementation.
 ///
-/// Care was taken to ensure that not only lines ended by calls to [#println()] methods trigger indentation,
-/// but any other newline characters as well.
-///
 /// @author Sjoerd Talsma
-public class IndentingPrintWriter extends PrintWriter {
+public class IndentingCustomWriter extends IndentingWriter {
     /// Constructor for new [PrintWriter] with indentation.
     ///
     /// @param writer      Delegate writer to send output to.
     /// @param indentation Initial indentation to start out on.
-    protected IndentingPrintWriter(Appendable writer, Indentation indentation) {
-        super(IndentingWriter.wrap(writer, indentation));
-    }
-
-    private static IndentingWriter wrapAppendable(Appendable appendable, Indentation indentation) {
-        return appendable instanceof IndentingWriter ? ((IndentingWriter)  appendable). : new IndentingWriter(appendable, indentation);
+    protected IndentingCustomWriter(Appendable writer, Indentation indentation) {
+        super(writer, indentation);
     }
 
     /// Returns an indenting printwriter around the given `delegate`.
@@ -50,67 +41,56 @@ public class IndentingPrintWriter extends PrintWriter {
     ///
     /// @param delegate    The delegate to turn into an indenting printwriter.
     /// @param indentation The indentation to use for the indenting printwriter
-    ///                                                          (optional, specify `null` to use the default indentation).
+    ///                                                                                                                   (optional, specify `null` to use the default indentation).
     /// @return The indenting delegate writer.
-    public static IndentingPrintWriter wrap(Appendable delegate, Indentation indentation) {
-        return delegate instanceof IndentingPrintWriter
-                ? ((IndentingPrintWriter) delegate).withIndentation(indentation)
-                : new IndentingPrintWriter(delegate, indentation);
+    public static IndentingCustomWriter wrap(Appendable delegate, Indentation indentation) {
+        if (delegate instanceof IndentingCustomWriter) {
+            delegate = ((IndentingCustomWriter) delegate).getDelegate();
+        }
+        return new IndentingCustomWriter(delegate, indentation);
     }
 
     /// Return the delegate writer as an [IndentingWriter].
     ///
     /// @return Delegate writer.
-    protected IndentingWriter getDelegate() {
-        return (IndentingWriter) super.out;
+    protected Appendable getDelegate() {
+        return (Appendable) lock;
     }
 
-    /// The indentation; must be non-`null` in all practical instances of this object.
-    ///
-    /// @return The indentation (non-`null`).
-    private Indentation getIndentation() {
-        return requireNonNull(out instanceof IndentingWriter ? ((IndentingWriter) out).getIndentation() : null,
-                "No indentation detected in IndentingPrintWriter!");
-    }
-
-    private IndentingPrintWriter withIndentation(Indentation indentation) {
-        return indentation == null || indentation.equals(getIndentation()) ? this
-                : new IndentingPrintWriter(out, indentation);
+    private IndentingCustomWriter withIndentation(Indentation indentation) {
+        super.setIndentation(indentation);
+        return this;
     }
 
     /// Returns a new indenting print writer with the indentation level increased by one.
     ///
     /// @return A new indenting print writer with increased indentation.
-    public IndentingPrintWriter indent() {
+    public IndentingCustomWriter indent() {
         return withIndentation(getIndentation().indent());
     }
 
     /// Returns a new indenting print writer with the indentation level decreased by one.
     ///
     /// @return A new indenting print writer with decreased indentation.
-    public IndentingPrintWriter unindent() {
+    public IndentingCustomWriter unindent() {
         return withIndentation(getIndentation().unindent());
     }
 
     /// Adds a single whitespace character to the output, but only if the previous character was not a whitespace character.
     ///
     /// @return Reference to this print writer for method chaining.
-    public IndentingPrintWriter whitespace() {
-        try {
-            if (out instanceof IndentingWriter) ((IndentingWriter) out).whitespace();
-            else out.append(' ');
-            return this;
-        } catch (IOException ioe) {
-            throw new IllegalStateException("Error writing whitespace: " + ioe.getMessage(), ioe);
+    public IndentingCustomWriter whitespace() {
+        if (getLastWritten() != ' ') {
+            append(' ');
         }
+        return this;
     }
 
     /// Adds a newline character to the output.
     ///
     /// @return Reference to this print writer for method chaining.
-    public IndentingPrintWriter newline() {
-        super.println();
-        return this;
+    public IndentingCustomWriter newline() {
+        return append(System.lineSeparator());
     }
 
     /// Append the specified character sequence.
@@ -120,8 +100,12 @@ public class IndentingPrintWriter extends PrintWriter {
     /// @param csq The character sequence to append.
     /// @return Reference to this indenting [PrintWriter] for chaining purposes.
     @Override
-    public IndentingPrintWriter append(CharSequence csq) {
-        return (IndentingPrintWriter) super.append(csq);
+    public IndentingCustomWriter append(CharSequence csq) {
+        try {
+            return (IndentingCustomWriter) super.append(csq);
+        } catch (IOException ioe) {
+            throw new IllegalStateException("Error appending characters: " + ioe.getMessage(), ioe);
+        }
     }
 
     /// Append the specified characters.
@@ -133,8 +117,12 @@ public class IndentingPrintWriter extends PrintWriter {
     /// @param end   The index after the last character to append.
     /// @return Reference to this indenting [PrintWriter] for chaining purposes.
     @Override
-    public IndentingPrintWriter append(CharSequence csq, int start, int end) {
-        return (IndentingPrintWriter) super.append(csq, start, end);
+    public IndentingCustomWriter append(CharSequence csq, int start, int end) {
+        try {
+            return (IndentingCustomWriter) super.append(csq, start, end);
+        } catch (IOException ioe) {
+            throw new IllegalStateException("Error appending characters: " + ioe.getMessage(), ioe);
+        }
     }
 
     /// Append a single character.
@@ -144,16 +132,11 @@ public class IndentingPrintWriter extends PrintWriter {
     /// @param c The character to append.
     /// @return Reference to this indenting [PrintWriter] for chaining purposes.
     @Override
-    public IndentingPrintWriter append(char c) {
-        return (IndentingPrintWriter) super.append(c);
+    public IndentingCustomWriter append(char c) {
+        try {
+            return (IndentingCustomWriter) super.append(c);
+        } catch (IOException ioe) {
+            throw new IllegalStateException("Error appending character: " + ioe.getMessage(), ioe);
+        }
     }
-
-    /// Returns the delegate writer as `String`.
-    ///
-    /// @return the delegate as String.
-    @Override
-    public String toString() {
-        return out.toString();
-    }
-
 }

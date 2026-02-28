@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingCustomWriter;
 
 import java.io.File;
 import java.util.List;
@@ -88,11 +88,11 @@ public class DependencyDiagram extends Diagram {
     }
 
     @Override
-    protected <IPW extends IndentingPrintWriter> IPW writeCustomDirectives(List<String> customDirectives, IPW output) {
+    protected <IPW extends IndentingCustomWriter> IPW writeCustomDirectives(List<String> customDirectives, IPW output) {
         boolean backgroundcolorAlreadySet = false;
         for (String customDirective : customDirectives) {
             backgroundcolorAlreadySet |= customDirective.contains(BACKGROUNDCOLOR_DIRECTIVE);
-            output.println(customDirective);
+            output.append(customDirective).append(System.lineSeparator());
         }
         if (!backgroundcolorAlreadySet) {
             output.append(BACKGROUNDCOLOR_DIRECTIVE).whitespace().append(DEFAULT_BACKGROUNDCOLOR).newline();
@@ -101,7 +101,7 @@ public class DependencyDiagram extends Diagram {
     }
 
     @Override
-    protected IndentingPrintWriter writeChildrenTo(IndentingPrintWriter output) {
+    protected IndentingCustomWriter writeChildrenTo(IndentingCustomWriter output) {
         output.append("set namespaceSeparator none").newline()
                 .append("hide circle").newline()
                 .append("hide empty fields").newline()
@@ -111,8 +111,8 @@ public class DependencyDiagram extends Diagram {
         return output;
     }
 
-    private IndentingPrintWriter writePackageLinksTo(IndentingPrintWriter output) {
-        output.println("' Package links");
+    private IndentingCustomWriter writePackageLinksTo(IndentingCustomWriter output) {
+        output.append("' Package links").append(System.lineSeparator());
         getChildren(Reference.class).stream()
                 .flatMap(reference -> Stream.of(reference.from.toString(), reference.to.toString()))
                 .distinct().map(packageName -> new Namespace(this, packageName, moduleName))
@@ -120,7 +120,7 @@ public class DependencyDiagram extends Diagram {
         return output;
     }
 
-    private IndentingPrintWriter writePackageLinkTo(IndentingPrintWriter output, Namespace namespace) {
+    private IndentingCustomWriter writePackageLinkTo(IndentingCustomWriter output, Namespace namespace) {
         String link = Link.forPackage(namespace).toString().trim();
         if (!link.isEmpty()) {
             output.append("class \"").append(namespace.name).append("\" ").append(link)

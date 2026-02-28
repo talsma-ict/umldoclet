@@ -15,7 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingCustomWriter;
 
 import java.util.Optional;
 
@@ -59,7 +59,7 @@ public class Namespace extends UMLNode {
     /// @param output The output to append the package name to.
     /// @param <IPW>  The type of the output object.
     /// @return The same output instance for method chaining.
-    private <IPW extends IndentingPrintWriter> IPW writeNameTo(IPW output) {
+    private <IPW extends IndentingCustomWriter> IPW writeNameTo(IPW output) {
         output.append(name.isEmpty() ? "unnamed" : name).whitespace();
         return output;
     }
@@ -69,7 +69,7 @@ public class Namespace extends UMLNode {
     /// @param output The output to write to.
     /// @return The output for chaining purposes.
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+    public <IPW extends IndentingCustomWriter> IPW writeTo(IPW output) {
         writeNameTo(output.append("package").whitespace()).append('{').newline();
         writeChildrenTo(output.indent());
         output.append('}').newline();

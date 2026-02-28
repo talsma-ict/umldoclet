@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.configuration.Visibility;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingCustomWriter;
 
 import java.util.Objects;
 
@@ -69,7 +69,7 @@ public abstract class TypeMember extends UMLNode {
     /// @param output The output to write to.
     /// @param <IPW>  The type of the output object.
     /// @return The same output instance for method chaining.
-    protected <IPW extends IndentingPrintWriter> IPW writeTypeTo(IPW output) {
+    protected <IPW extends IndentingCustomWriter> IPW writeTypeTo(IPW output) {
         if (type != null) {
             output.append(": ").append(type.toString());
         }
@@ -91,7 +91,7 @@ public abstract class TypeMember extends UMLNode {
     /// @param output The output to write to.
     /// @param <IPW>  The type of the output object.
     /// @return The same output instance for method chaining.
-    protected <IPW extends IndentingPrintWriter> IPW writeParametersTo(IPW output) {
+    protected <IPW extends IndentingCustomWriter> IPW writeParametersTo(IPW output) {
         return output;
     }
 
@@ -105,7 +105,7 @@ public abstract class TypeMember extends UMLNode {
     /// @param output The output to write to.
     /// @return The output for chaining purposes.
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+    public <IPW extends IndentingCustomWriter> IPW writeTo(IPW output) {
         if (isStatic) output.append("{static}").whitespace();
         output.append(umlVisibility());
         if (isDeprecated) output.append("--").append(name).append("--");

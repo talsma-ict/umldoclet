@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingCustomWriter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -54,7 +54,7 @@ public class PackageDiagram extends Diagram {
     }
 
     @Override
-    protected <IPW extends IndentingPrintWriter> IPW writeCustomDirectives(List<String> customDirectives, IPW output) {
+    protected <IPW extends IndentingCustomWriter> IPW writeCustomDirectives(List<String> customDirectives, IPW output) {
         final List<String> directives = new ArrayList<>(customDirectives == null ? Collections.emptyList() : customDirectives);
         directives.removeIf(directive -> directive.startsWith(SEPARATOR_DIRECTIVE));
         directives.add(SEPARATOR_DIRECTIVE + SEPARATOR);

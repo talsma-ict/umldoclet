@@ -15,6 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
+import nl.talsmasoftware.indentation.Indentation;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
 import nl.talsmasoftware.umldoclet.logging.TestLogger;
@@ -48,6 +49,7 @@ public class ClassDiagramTest {
         when(config.renderPumlFile()).thenReturn(true);
         when(config.logger()).thenReturn(new TestLogger());
         when(config.umlCharset()).thenReturn(Charset.forName("UTF-8"));
+        when(config.indentation()).thenReturn(Indentation.TABS);
         when(images.formats()).thenReturn(singleton(SVG));
         when(images.directory()).thenReturn(Optional.empty());
     }

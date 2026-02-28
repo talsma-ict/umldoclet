@@ -20,7 +20,7 @@ import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
 import nl.talsmasoftware.umldoclet.logging.Message;
 import nl.talsmasoftware.umldoclet.logging.TestLogger;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingCustomWriter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -114,7 +114,7 @@ public class DiagramTest {
         when(config.customPlantumlDirectives()).thenReturn(singletonList("skinparam handwritten true"));
         StringWriter output = new StringWriter();
         Diagram testDiagram = new TestDiagram(config, new File("target/test-classes/custom-directive.puml"));
-        IndentingPrintWriter writer = IndentingPrintWriter.wrap(output, Indentation.EMPTY);
+        IndentingCustomWriter writer = IndentingCustomWriter.wrap(output, Indentation.EMPTY);
         String footer = logger.localize(Message.DOCLET_UML_FOOTER, Message.DOCLET_VERSION);
 
         // execute
@@ -131,7 +131,7 @@ public class DiagramTest {
         when(config.customPlantumlDirectives()).thenReturn(singletonList("skinparam backgroundcolor green"));
         StringWriter output = new StringWriter();
         Diagram testDiagram = new TestDiagram(config, new File("target/test-classes/custom-directive.puml"));
-        IndentingPrintWriter writer = IndentingPrintWriter.wrap(output, Indentation.EMPTY);
+        IndentingCustomWriter writer = IndentingCustomWriter.wrap(output, Indentation.EMPTY);
         String footer = logger.localize(Message.DOCLET_UML_FOOTER, Message.DOCLET_VERSION);
 
         // execute

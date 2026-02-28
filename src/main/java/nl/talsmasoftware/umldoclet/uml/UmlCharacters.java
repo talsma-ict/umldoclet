@@ -15,7 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingCustomWriter;
 
 /// A literal piece of UML.
 ///
@@ -45,7 +45,7 @@ public class UmlCharacters extends UMLNode {
     /// @param output The output to write to.
     /// @return The output for chaining purposes.
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+    public <IPW extends IndentingCustomWriter> IPW writeTo(IPW output) {
         output.append(content);
         return output;
     }
@@ -60,7 +60,7 @@ public class UmlCharacters extends UMLNode {
         /// @param output The output to write to.
         /// @return The output for chaining purposes.
         @Override
-        public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+        public <IPW extends IndentingCustomWriter> IPW writeTo(IPW output) {
             super.writeTo(output).newline();
             return output;
         }

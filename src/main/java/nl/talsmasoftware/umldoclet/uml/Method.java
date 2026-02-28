@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingCustomWriter;
 
 import java.util.Objects;
 
@@ -59,19 +59,19 @@ public class Method extends TypeMember {
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+    public <IPW extends IndentingCustomWriter> IPW writeTo(IPW output) {
         if (!getConfiguration().methods().include(getVisibility())) return output;
         if (isAbstract) output.append("{abstract}").whitespace();
         return super.writeTo(output);
     }
 
     @Override
-    protected <IPW extends IndentingPrintWriter> IPW writeParametersTo(IPW output) {
+    protected <IPW extends IndentingCustomWriter> IPW writeParametersTo(IPW output) {
         return getOrCreateParameters().writeTo(output);
     }
 
     @Override
-    protected <IPW extends IndentingPrintWriter> IPW writeTypeTo(IPW output) {
+    protected <IPW extends IndentingCustomWriter> IPW writeTypeTo(IPW output) {
         TypeDisplay returnTypeDisplay = getConfiguration().methods().returnType();
         if (type != null && !TypeDisplay.NONE.equals(returnTypeDisplay)) {
             output.append(": ").append(type.toUml(returnTypeDisplay, null));

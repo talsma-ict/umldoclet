@@ -15,7 +15,7 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingCustomWriter;
 
 import static nl.talsmasoftware.umldoclet.uml.Type.Classification.ENUM;
 
@@ -46,7 +46,7 @@ public class Field extends TypeMember {
     /// @param output The output to write to.
     /// @return The output for chaining purposes.
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+    public <IPW extends IndentingCustomWriter> IPW writeTo(IPW output) {
         if (!getConfiguration().fields().include(getVisibility())) return output;
         return super.writeTo(output);
     }
@@ -56,7 +56,7 @@ public class Field extends TypeMember {
     /// @param output The output to write to.
     /// @return The output for chaining purposes.
     @Override
-    protected <IPW extends IndentingPrintWriter> IPW writeTypeTo(IPW output) {
+    protected <IPW extends IndentingCustomWriter> IPW writeTypeTo(IPW output) {
         return isEnumType() ? output : super.writeTypeTo(output);
     }
 

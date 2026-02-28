@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingCustomWriter;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -149,7 +149,7 @@ public class Type extends UMLNode {
         return classfication;
     }
 
-    private <IPW extends IndentingPrintWriter> IPW writeNameTo(IPW output) {
+    private <IPW extends IndentingCustomWriter> IPW writeNameTo(IPW output) {
         if (includePackagename && name.qualified.startsWith(this.packageNamespace.name + '.')) {
             String nameInPackage = name.qualified.substring(this.packageNamespace.name.length() + 1);
             output.append("\"<size:14>").append(nameInPackage)
@@ -168,7 +168,7 @@ public class Type extends UMLNode {
     /// @param output The output to write to.
     /// @return The output for chaining purposes.
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+    public <IPW extends IndentingCustomWriter> IPW writeTo(IPW output) {
         output.append(classfication.toUml()).whitespace();
         writeNameTo(output).whitespace();
         if (isDeprecated) output.append("<<deprecated>>").whitespace();
@@ -183,7 +183,7 @@ public class Type extends UMLNode {
     /// @param output The output to write the children to.
     /// @return The output for chaining purposes.
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
+    public <IPW extends IndentingCustomWriter> IPW writeChildrenTo(IPW output) {
         if (!getChildren().isEmpty() && !Classification.ANNOTATION.equals(classfication)) {
             output.append('{').newline();
             super.writeChildrenTo(output.indent());

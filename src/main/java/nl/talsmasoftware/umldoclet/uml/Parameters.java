@@ -17,7 +17,7 @@ package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.configuration.MethodConfig;
 import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingCustomWriter;
 
 /// Model object for the parameters of a method in a UML diagram.
 ///
@@ -63,12 +63,12 @@ public class Parameters extends UMLNode {
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+    public <IPW extends IndentingCustomWriter> IPW writeTo(IPW output) {
         return writeChildrenTo(output);
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
+    public <IPW extends IndentingCustomWriter> IPW writeChildrenTo(IPW output) {
         output.append('(');
         String sep = "";
         for (UMLNode param : getChildren()) {
@@ -104,7 +104,7 @@ public class Parameters extends UMLNode {
         }
 
         @Override
-        public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
+        public <IPW extends IndentingCustomWriter> IPW writeTo(IPW output) {
             String sep = "";
             MethodConfig methodConfig = getConfiguration().methods();
             if (name != null && MethodConfig.ParamNames.BEFORE_TYPE.equals(methodConfig.paramNames())) {

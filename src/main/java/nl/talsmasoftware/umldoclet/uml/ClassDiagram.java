@@ -16,7 +16,7 @@
 package nl.talsmasoftware.umldoclet.uml;
 
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.umldoclet.rendering.indent.IndentingCustomWriter;
 
 import java.io.File;
 
@@ -57,7 +57,7 @@ public class ClassDiagram extends Diagram {
     /// @param output The output to write to.
     /// @return The output for chaining purposes.
     @Override
-    protected <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
+    protected <IPW extends IndentingCustomWriter> IPW writeChildrenTo(IPW output) {
         output.append("set namespaceSeparator none").newline()
                 .append("hide empty fields").newline()
                 .append("hide empty methods").newline()
