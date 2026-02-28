@@ -36,6 +36,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
 import static java.util.Locale.ENGLISH;
 import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 import static java.util.stream.Collectors.toList;
 
 /// Type that serves as an 'anti-corruption' facade between our Doclet
@@ -97,8 +98,10 @@ final class UMLOptions {
                 args -> config.excludedPackageDependencies = splitToList(args.get(0))));
         this.options.add(new Option("--uml-custom-directive -umlCustomDirective", 1, Kind.STANDARD,
                 args -> config.customPlantumlDirectives.add(args.get(0))));
+        this.options.add(new Option("--uml-cyclic-package-dependencies -umlCyclicPackageDependencies", 1, Kind.STANDARD,
+                args -> config.cyclicPackageDependencies = args.get(0)));
         this.options.add(new Option("--fail-on-cyclic-package-dependencies -failOnCyclicPackageDependencies", 1, Kind.STANDARD,
-                args -> config.failOnCyclicPackageDependencies = asBoolean(args.get(0))));
+                args -> config.cyclicPackageDependencies = requireNonNullElse(config.cyclicPackageDependencies, asBoolean(args.get(0)) ? "error" : "warning")));
         this.options.add(new Option("--uml-java-bean-properties-as-fields -umlJavaBeanPropertiesAsFields", 0, Kind.STANDARD,
                 args -> config.methodConfig.javaBeanPropertiesAsFields = true));
         this.options.add(new Option("--uml-timeout -umlTimeout", 1, Kind.STANDARD, this::setTimeout));
@@ -108,6 +111,8 @@ final class UMLOptions {
            args -> config.excludePackageDiagrams = asBoolean(args.get(0))));
         this.options.add(new Option("--uml-exclude-class-diagrams -umlExcludeClassDiagrams", 1, Kind.STANDARD,
            args -> config.excludeClassDiagrams = asBoolean(args.get(0))));
+        this.options.add(new Option("--uml-render-empty-diagrams -umlRenderEmptyDiagrams", 1, Kind.STANDARD,
+                args -> config.renderEmptyDiagrams = asBoolean(args.get(0))));
     }
 
     /// Merges the UML options with the given standard options.

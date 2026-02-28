@@ -27,6 +27,7 @@ import java.util.Optional;
 ///
 /// @author Sjoerd Talsma
 public interface Configuration {
+    enum Action {IGNORE, WARN, ERROR}
 
     /// The base URL of the [PlantUML server](https://www.plantuml.com/plantuml) to generate diagrams with.
     ///
@@ -109,13 +110,10 @@ public interface Configuration {
     /// @return The packages (including subpackages) excluded from the package dependencies.
     List<String> excludedPackageDependencies();
 
-    /// Whether a detected package dependency cycle must result in an error (instead of a warning).
+    /// What to do when a cyclic package dependency is detected.
     ///
-    /// @return `true` if a detected package dependency cycle must be considered as an error,
-    /// or `false` if it should be reported as merely a warning.
-    boolean failOnCyclicPackageDependencies();
-    
-
+    /// @return The action to be taken for detected package-dependency cycles.
+    Action onCyclicPackageDependencies();
 
     /// Resolves an external link to the specified type.
     ///
@@ -159,7 +157,7 @@ public interface Configuration {
     ///
     /// @return `true` if the package diagram should be hidden, otherwise `false` to show the package diagram (with or without excluded packages).
     boolean excludePackageDiagrams();
-    
+
     /// Hides the package dependencies diagram altogether.
     ///
     /// @return `true` if the package dependencies diagram should be hidden, otherwise `false` to show the package dependencies diagram (with or without excluded packages).
@@ -170,4 +168,10 @@ public interface Configuration {
     /// @return `true` if the class level UML diagram should be hidden, otherwise `false` to show the class UML diagram.
     boolean excludeClassDiagrams();
 
+    /// Whether empty diagrams must be rendered.
+    ///
+    /// An example of empty diagrams is a package diagram that does not contain classes itself, just sub-packages.
+    ///
+    /// @return `true` if empty diagrams must be rendered, this option should be `false` by default.
+    boolean renderEmptyDiagrams();
 }

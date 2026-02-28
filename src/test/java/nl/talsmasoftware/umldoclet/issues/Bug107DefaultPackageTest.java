@@ -35,6 +35,7 @@ public class Bug107DefaultPackageTest {
                 "-d", "target/issues/107",
                 "-doclet", UMLDoclet.class.getName(),
                 "-createPumlFiles",
+                "--uml-render-empty-diagrams", "true",
                 "src/test/java/Foo.java"
         ), is(0));
 

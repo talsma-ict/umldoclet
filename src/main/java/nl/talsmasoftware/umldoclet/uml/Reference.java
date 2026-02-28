@@ -133,6 +133,11 @@ public class Reference extends UMLNode {
     }
 
     @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
     public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
         // Namespace aware compensation
         final Namespace namespace = findParent(Namespace.class).orElse(null);

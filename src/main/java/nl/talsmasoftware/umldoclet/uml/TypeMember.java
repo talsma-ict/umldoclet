@@ -95,6 +95,11 @@ public abstract class TypeMember extends UMLNode {
         return output;
     }
 
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
     /// Write this type member to the UML diagram.
     ///
     /// @param output The output to write to.

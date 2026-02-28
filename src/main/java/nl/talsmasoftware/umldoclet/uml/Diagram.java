@@ -154,6 +154,14 @@ public abstract class Diagram extends UMLNode {
 
     /// Renders this diagram to the configured output formats.
     public void render() {
+        // Skips rendering empty diagrams per configuration
+        if (this.isEmpty() && !config.renderEmptyDiagrams()) {
+            if (formats.length > 0) {
+                config.logger().debug("Skipping empty diagram: {0}", getDiagramFile(formats[0]));
+            }
+            return;
+        }
+
         try {
             // 1. Render UML sources
             String plantumlSource = renderPlantumlSource();
