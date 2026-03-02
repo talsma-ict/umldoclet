@@ -177,8 +177,7 @@ public class Type extends UMLNode {
             if (isDeprecated) output.append("<<deprecated>> ");
             String linkUml = link().toString();
             if (!linkUml.isEmpty()) output.append(linkUml).append(' ');
-            writeChildrenTo(output);
-            return output.writeln("");
+            return writeChildrenTo(output);
         } catch (IOException ioe) {
             throw new UncheckedIOException(ioe);
         }
