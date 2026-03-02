@@ -134,7 +134,7 @@ public class DependencyDiagram extends Diagram {
         try {
             String link = Link.forPackage(namespace).toString().trim();
             if (!link.isEmpty()) {
-                output.writeln(String.format("class \"%s\" %s {", namespace.name, link), "}");
+                output.writeln(String.format("class \"%s\" %s", namespace.name, link));
             }
             return output;
         } catch (IOException ioe) {
