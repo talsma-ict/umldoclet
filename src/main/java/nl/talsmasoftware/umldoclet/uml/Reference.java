@@ -198,7 +198,7 @@ public class Reference extends UMLNode {
     /// One side of a reference.
     public static final class Side {
         private final boolean nameFirst;
-        private final String qualifiedName;
+        public final String qualifiedName;
         private final String cardinality;
 
         private Side(String qualifiedName, String cardinality, boolean nameFirst) {

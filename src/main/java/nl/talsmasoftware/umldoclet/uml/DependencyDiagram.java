@@ -20,9 +20,9 @@ import nl.talsmasoftware.umldoclet.configuration.Configuration;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UncheckedIOException;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 
@@ -90,20 +90,16 @@ public class DependencyDiagram extends Diagram {
     }
 
     @Override
-    protected IndentingWriter writeCustomDirectives(List<String> customDirectives, IndentingWriter output) {
-        try {
-            boolean backgroundcolorAlreadySet = false;
-            for (String customDirective : customDirectives) {
-                backgroundcolorAlreadySet |= customDirective.contains(BACKGROUNDCOLOR_DIRECTIVE);
-                output.writeln(customDirective);
-            }
-            if (!backgroundcolorAlreadySet) {
-                output.writeln(BACKGROUNDCOLOR_DIRECTIVE + ' ' + DEFAULT_BACKGROUNDCOLOR);
-            }
-            return output;
-        } catch (IOException ioe) {
-            throw new UncheckedIOException(ioe);
+    protected IndentingWriter writeCustomDirectives(List<String> customDirectives, IndentingWriter output) throws IOException {
+        boolean backgroundcolorAlreadySet = false;
+        for (String customDirective : customDirectives) {
+            backgroundcolorAlreadySet |= customDirective.contains(BACKGROUNDCOLOR_DIRECTIVE);
+            output.writeln(customDirective);
         }
+        if (!backgroundcolorAlreadySet) {
+            output.writeln(BACKGROUNDCOLOR_DIRECTIVE + ' ' + DEFAULT_BACKGROUNDCOLOR);
+        }
+        return output;
     }
 
     @Override
@@ -117,28 +113,23 @@ public class DependencyDiagram extends Diagram {
         return writePackageLinksTo(output.writeln(""));
     }
 
-    private IndentingWriter writePackageLinksTo(IndentingWriter output) {
-        try {
-            output.writeln("' Package links");
-            getChildren(Reference.class).stream()
-                    .flatMap(reference -> Stream.of(reference.from.toString(), reference.to.toString()))
-                    .distinct().map(packageName -> new Namespace(this, packageName, moduleName))
-                    .forEach(namespace -> writePackageLinkTo(output, namespace));
-            return output;
-        } catch (IOException ioe) {
-            throw new UncheckedIOException(ioe);
+    private IndentingWriter writePackageLinksTo(IndentingWriter output) throws IOException {
+        output.writeln("' Package links");
+        final Set<String> distinctPackageNames = new LinkedHashSet<>();
+        for (Reference reference : getChildren(Reference.class)) {
+            for (String packageName : List.of(reference.from.qualifiedName, reference.to.qualifiedName)) {
+                if (distinctPackageNames.add(packageName)) {
+                    writePackageLinkTo(output, new Namespace(this, packageName, moduleName));
+                }
+            }
         }
+        return output;
     }
 
-    private IndentingWriter writePackageLinkTo(IndentingWriter output, Namespace namespace) {
-        try {
-            String link = Link.forPackage(namespace).toString().trim();
-            if (!link.isEmpty()) {
-                output.writeln(String.format("class \"%s\" %s", namespace.name, link));
-            }
-            return output;
-        } catch (IOException ioe) {
-            throw new UncheckedIOException(ioe);
+    private void writePackageLinkTo(IndentingWriter output, Namespace namespace) throws IOException {
+        String link = Link.forPackage(namespace).toString().trim();
+        if (!link.isEmpty()) {
+            output.writeln(String.format("class \"%s\" %s", namespace.name, link));
         }
     }
 
