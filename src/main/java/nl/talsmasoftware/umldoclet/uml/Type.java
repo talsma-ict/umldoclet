@@ -15,9 +15,11 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
+import nl.talsmasoftware.indentation.io.IndentingWriter;
 import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingCustomWriter;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -149,7 +151,7 @@ public class Type extends UMLNode {
         return classfication;
     }
 
-    private <IPW extends IndentingCustomWriter> IPW writeNameTo(IPW output) {
+    private IndentingWriter writeNameTo(IndentingWriter output) throws IOException {
         if (includePackagename && name.qualified.startsWith(this.packageNamespace.name + '.')) {
             String nameInPackage = name.qualified.substring(this.packageNamespace.name.length() + 1);
             output.append("\"<size:14>").append(nameInPackage)
@@ -168,14 +170,18 @@ public class Type extends UMLNode {
     /// @param output The output to write to.
     /// @return The output for chaining purposes.
     @Override
-    public <IPW extends IndentingCustomWriter> IPW writeTo(IPW output) {
-        output.append(classfication.toUml()).whitespace();
-        writeNameTo(output).whitespace();
-        if (isDeprecated) output.append("<<deprecated>>").whitespace();
-        link().writeTo(output).whitespace();
-        writeChildrenTo(output);
-        output.newline();
-        return output;
+    public IndentingWriter writeTo(IndentingWriter output) {
+        try {
+            output.append(classfication.toUml()).append(' ');
+            writeNameTo(output).append(' ');
+            if (isDeprecated) output.append("<<deprecated>> ");
+            String linkUml = link().toString();
+            if (!linkUml.isEmpty()) output.append(linkUml).append(' ');
+            writeChildrenTo(output);
+            return output.writeln("");
+        } catch (IOException ioe) {
+            throw new UncheckedIOException(ioe);
+        }
     }
 
     /// Writes the type members to the UML.
@@ -183,13 +189,13 @@ public class Type extends UMLNode {
     /// @param output The output to write the children to.
     /// @return The output for chaining purposes.
     @Override
-    public <IPW extends IndentingCustomWriter> IPW writeChildrenTo(IPW output) {
+    public IndentingWriter writeChildrenTo(IndentingWriter output) throws IOException {
         if (!getChildren().isEmpty() && !Classification.ANNOTATION.equals(classfication)) {
-            output.append('{').newline();
-            super.writeChildrenTo(output.indent());
-            output.append('}');
+            output.append('{').writeln().indent();
+            super.writeChildrenTo(output);
+            output.unindent().writeln("}");
         }
-        return output;
+        return output.writeln();
     }
 
     /// Returns a hashcode for this type, based on its [name][#getName()].

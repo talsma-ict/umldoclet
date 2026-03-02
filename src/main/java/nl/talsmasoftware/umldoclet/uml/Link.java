@@ -15,9 +15,11 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingCustomWriter;
+import nl.talsmasoftware.indentation.io.IndentingWriter;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.util.Objects;
 import java.util.Optional;
@@ -109,11 +111,15 @@ public class Link extends UMLNode {
     }
 
     @Override
-    public <IPW extends IndentingCustomWriter> IPW writeTo(IPW output) {
-        if (target != null) {
-            output.append("[[").append(relativeTarget().orElseGet(target::toASCIIString)).append("]]");
+    public IndentingWriter writeTo(IndentingWriter output) {
+        try {
+            if (target != null) {
+                output.append("[[").append(relativeTarget().orElseGet(target::toASCIIString)).append("]]");
+            }
+            return output;
+        } catch (IOException ioe) {
+            throw new UncheckedIOException(ioe);
         }
-        return output;
     }
 
 }

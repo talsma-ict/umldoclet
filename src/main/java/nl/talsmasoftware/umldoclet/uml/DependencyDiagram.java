@@ -15,10 +15,12 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
+import nl.talsmasoftware.indentation.io.IndentingWriter;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingCustomWriter;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -88,45 +90,56 @@ public class DependencyDiagram extends Diagram {
     }
 
     @Override
-    protected <IPW extends IndentingCustomWriter> IPW writeCustomDirectives(List<String> customDirectives, IPW output) {
-        boolean backgroundcolorAlreadySet = false;
-        for (String customDirective : customDirectives) {
-            backgroundcolorAlreadySet |= customDirective.contains(BACKGROUNDCOLOR_DIRECTIVE);
-            output.append(customDirective).append(System.lineSeparator());
+    protected IndentingWriter writeCustomDirectives(List<String> customDirectives, IndentingWriter output) {
+        try {
+            boolean backgroundcolorAlreadySet = false;
+            for (String customDirective : customDirectives) {
+                backgroundcolorAlreadySet |= customDirective.contains(BACKGROUNDCOLOR_DIRECTIVE);
+                output.writeln(customDirective);
+            }
+            if (!backgroundcolorAlreadySet) {
+                output.writeln(BACKGROUNDCOLOR_DIRECTIVE + ' ' + DEFAULT_BACKGROUNDCOLOR);
+            }
+            return output;
+        } catch (IOException ioe) {
+            throw new UncheckedIOException(ioe);
         }
-        if (!backgroundcolorAlreadySet) {
-            output.append(BACKGROUNDCOLOR_DIRECTIVE).whitespace().append(DEFAULT_BACKGROUNDCOLOR).newline();
-        }
-        return output;
     }
 
     @Override
-    protected IndentingCustomWriter writeChildrenTo(IndentingCustomWriter output) {
-        output.append("set namespaceSeparator none").newline()
-                .append("hide circle").newline()
-                .append("hide empty fields").newline()
-                .append("hide empty methods").newline().newline();
+    protected IndentingWriter writeChildrenTo(IndentingWriter output) throws IOException {
+        output.writeln("set namespaceSeparator none",
+                "hide circle",
+                "hide empty fields",
+                "hide empty methods",
+                "");
         super.writeChildrenTo(output);
-        writePackageLinksTo(output.newline());
-        return output;
+        return writePackageLinksTo(output.writeln(""));
     }
 
-    private IndentingCustomWriter writePackageLinksTo(IndentingCustomWriter output) {
-        output.append("' Package links").append(System.lineSeparator());
-        getChildren(Reference.class).stream()
-                .flatMap(reference -> Stream.of(reference.from.toString(), reference.to.toString()))
-                .distinct().map(packageName -> new Namespace(this, packageName, moduleName))
-                .forEach(namespace -> writePackageLinkTo(output, namespace));
-        return output;
-    }
-
-    private IndentingCustomWriter writePackageLinkTo(IndentingCustomWriter output, Namespace namespace) {
-        String link = Link.forPackage(namespace).toString().trim();
-        if (!link.isEmpty()) {
-            output.append("class \"").append(namespace.name).append("\" ").append(link)
-                    .append(" {").newline().append('}').newline();
+    private IndentingWriter writePackageLinksTo(IndentingWriter output) {
+        try {
+            output.writeln("' Package links");
+            getChildren(Reference.class).stream()
+                    .flatMap(reference -> Stream.of(reference.from.toString(), reference.to.toString()))
+                    .distinct().map(packageName -> new Namespace(this, packageName, moduleName))
+                    .forEach(namespace -> writePackageLinkTo(output, namespace));
+            return output;
+        } catch (IOException ioe) {
+            throw new UncheckedIOException(ioe);
         }
-        return output;
+    }
+
+    private IndentingWriter writePackageLinkTo(IndentingWriter output, Namespace namespace) {
+        try {
+            String link = Link.forPackage(namespace).toString().trim();
+            if (!link.isEmpty()) {
+                output.writeln(String.format("class \"%s\" %s {", namespace.name, link), "}");
+            }
+            return output;
+        } catch (IOException ioe) {
+            throw new UncheckedIOException(ioe);
+        }
     }
 
     private static String unnamedIfEmpty(String packageName) {
