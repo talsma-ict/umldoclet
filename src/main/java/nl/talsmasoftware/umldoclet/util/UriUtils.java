@@ -63,7 +63,7 @@ public final class UriUtils {
         if (uri != null && name != null && value != null && ("http".equals(uri.getScheme()) || "https".equals(uri.getScheme()))) {
             final String base = uri.toASCIIString();
             final int queryIdx = base.indexOf('?');
-            final int fragmentIdx = base.indexOf('#', queryIdx < 0 ? 0 : queryIdx);
+            final int fragmentIdx = base.indexOf('#', Math.max(0, queryIdx));
             StringBuilder newUri = new StringBuilder(fragmentIdx >= 0 ? base.substring(0, fragmentIdx) : base);
             newUri.append(queryIdx < 0 ? '?' : '&');
             appendEncoded(newUri, name);
