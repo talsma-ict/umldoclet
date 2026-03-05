@@ -15,9 +15,11 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
+import nl.talsmasoftware.indentation.io.IndentingWriter;
 import nl.talsmasoftware.umldoclet.configuration.Visibility;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
@@ -67,9 +69,8 @@ public abstract class TypeMember extends UMLNode {
     /// Writes the type of this member to the output.
     ///
     /// @param output The output to write to.
-    /// @param <IPW>  The type of the output object.
     /// @return The same output instance for method chaining.
-    protected <IPW extends IndentingPrintWriter> IPW writeTypeTo(IPW output) {
+    protected IndentingWriter writeTypeTo(IndentingWriter output) throws IOException {
         if (type != null) {
             output.append(": ").append(type.toString());
         }
@@ -89,9 +90,8 @@ public abstract class TypeMember extends UMLNode {
     /// Writes the parameters of this member to the output.
     ///
     /// @param output The output to write to.
-    /// @param <IPW>  The type of the output object.
     /// @return The same output instance for method chaining.
-    protected <IPW extends IndentingPrintWriter> IPW writeParametersTo(IPW output) {
+    protected IndentingWriter writeParametersTo(IndentingWriter output) {
         return output;
     }
 
@@ -105,15 +105,18 @@ public abstract class TypeMember extends UMLNode {
     /// @param output The output to write to.
     /// @return The output for chaining purposes.
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-        if (isStatic) output.append("{static}").whitespace();
-        output.append(umlVisibility());
-        if (isDeprecated) output.append("--").append(name).append("--");
-        else output.append(name);
-        writeParametersTo(output);
-        writeTypeTo(output);
-        output.newline();
-        return output;
+    public IndentingWriter writeTo(IndentingWriter output) {
+        try {
+            if (isStatic) output.append("{static} ");
+            output.append(umlVisibility());
+            if (isDeprecated) output.append("--").append(name).append("--");
+            else output.append(name);
+            writeParametersTo(output);
+            writeTypeTo(output);
+            return output.writeln();
+        } catch (IOException ioe) {
+            throw new UncheckedIOException(ioe);
+        }
     }
 
     private String umlVisibility() {

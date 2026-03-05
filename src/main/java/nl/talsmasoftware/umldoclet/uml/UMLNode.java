@@ -15,10 +15,11 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
+import nl.talsmasoftware.indentation.Indentation;
+import nl.talsmasoftware.indentation.io.IndentingWriter;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.rendering.indent.Indentation;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
@@ -32,12 +33,12 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
-/// Part of an UML diagram that can render itself to the diagram by
-/// [writing to][#writeTo(IndentingPrintWriter)] an indenting writer.
+/// Part of a UML diagram that can render itself to the diagram by
+/// [writing to][#writeTo(IndentingWriter)] an indenting writer.
 /// It serves as a reusable base-class for all specific UML nodes.
 ///
 ///
-/// UML nodes are capable of rendering themselves to [IndentingPrintWriter].
+/// UML nodes are capable of rendering themselves to [IndentingWriter].
 ///
 /// @author Sjoerd Talsma
 public abstract class UMLNode {
@@ -68,15 +69,15 @@ public abstract class UMLNode {
 
     /// Finds a parent node of a particular type.
     ///
-    /// @param nodeType The type of parent node to find.
-    /// @param <U>      The type of parent node to find.
-    /// @return The parent node of the specified type, if found.
+    /// @param nodeType The type of ancestor to find.
+    /// @param <U>      The type of ancestor to find.
+    /// @return The ancestor of the specified type, if found.
     protected <U extends UMLNode> Optional<U> findParent(Class<U> nodeType) {
         final Set<UMLNode> traversed = newSetFromMap(new IdentityHashMap<>());
-        for (UMLNode parent = getParent();
-             parent != null && traversed.add(parent);
-             parent = parent.getParent()) {
-            if (nodeType.isInstance(parent)) return Optional.of(nodeType.cast(parent));
+        for (UMLNode ancestor = getParent();
+             ancestor != null && traversed.add(ancestor);
+             ancestor = ancestor.getParent()) {
+            if (nodeType.isInstance(ancestor)) return Optional.of(nodeType.cast(ancestor));
         }
         return Optional.empty();
     }
@@ -122,7 +123,7 @@ public abstract class UMLNode {
         return getChildren().stream().allMatch(UMLNode::isEmpty);
     }
 
-    /// Obtain the doclet configuration from the diagram this node is part of
+    /// Get the doclet configuration from the diagram this node is part of
     ///
     /// @return The doclet configuration.
     protected Configuration getConfiguration() {
@@ -133,17 +134,16 @@ public abstract class UMLNode {
 
     /// Renders this object to the given indenting `output`.
     ///
-    /// @param <IPW>  The subclass of indenting print writer being written to.
     /// @param output The output to render this object to.
     /// @return A reference to the output for method chaining purposes.
-    protected abstract <IPW extends IndentingPrintWriter> IPW writeTo(IPW output);
+    protected abstract IndentingWriter writeTo(IndentingWriter output);
 
     /// Helper method to write all children to the specified output.
     ///
-    /// @param <IPW>  The subclass of indenting print writer being written to.
     /// @param output The output to write the children to.
     /// @return A reference to the output for method chaining purposes.
-    protected <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
+    @SuppressWarnings("java:S1130") // IOException is not superfluous. It avoids subclass catch & rethrows.
+    protected IndentingWriter writeChildrenTo(IndentingWriter output) throws IOException {
         getChildren().forEach(child -> child.writeTo(output));
         return output;
     }
@@ -152,7 +152,7 @@ public abstract class UMLNode {
     ///
     /// @return The rendered content of this renderer.
     public String toString() {
-        return writeTo(IndentingPrintWriter.wrap(new StringWriter(), indentation())).toString();
+        return writeTo(new IndentingWriter(new StringWriter(), indentation())).toString();
     }
 
     /// @return never-null indentation for use in toString
@@ -160,7 +160,7 @@ public abstract class UMLNode {
         try {
             return requireNonNull(getConfiguration().indentation());
         } catch (RuntimeException noConfig) {
-            return Indentation.DEFAULT;
+            return Indentation.TABS;
         }
     }
 }

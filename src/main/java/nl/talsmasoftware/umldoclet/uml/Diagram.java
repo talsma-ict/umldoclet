@@ -17,10 +17,10 @@ package nl.talsmasoftware.umldoclet.uml;
 
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.version.Version;
+import nl.talsmasoftware.indentation.io.IndentingWriter;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
 import nl.talsmasoftware.umldoclet.logging.Message;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 import nl.talsmasoftware.umldoclet.rendering.writers.StringBufferingWriter;
 import nl.talsmasoftware.umldoclet.uml.plantuml.PlantumlGenerator;
 
@@ -28,7 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -68,27 +68,30 @@ public abstract class Diagram extends UMLNode {
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-        output.append("@startuml").newline();
-        IndentingPrintWriter indented = output.indent();
-        writeCopyrightStatement(indented);
-        writeCustomDirectives(config.customPlantumlDirectives(), indented);
-        writeChildrenTo(indented);
-        writeFooterTo(indented);
-        output.append("@enduml").newline();
-        return output;
+    public IndentingWriter writeTo(IndentingWriter output) {
+        try {
+            IndentingWriter indented = output.writeln("@startuml").indent();
+            writeCopyrightStatement(indented);
+            writeCustomDirectives(config.customPlantumlDirectives(), indented);
+            writeChildrenTo(indented);
+            writeFooterTo(indented);
+            return indented.unindent().writeln("@enduml");
+        } catch (IOException ioe) {
+            throw new UncheckedIOException(ioe);
+        }
     }
 
     /// Writes custom directives to the diagram.
     ///
     /// @param customDirectives The custom directives to write.
     /// @param output           The output to write to.
-    /// @param <IPW>            The type of the output object.
     /// @return The same output instance for method chaining.
-    protected <IPW extends IndentingPrintWriter> IPW writeCustomDirectives(List<String> customDirectives, IPW output) {
-        customDirectives.forEach(output::println);
+    protected IndentingWriter writeCustomDirectives(List<String> customDirectives, IndentingWriter output) throws IOException {
+        for (String customDirective : customDirectives) {
+            output.writeln(customDirective);
+        }
         if (!customDirectives.isEmpty()) {
-            output.newline();
+            output.writeln("");
         }
         return output;
     }
@@ -96,20 +99,18 @@ public abstract class Diagram extends UMLNode {
     /// Writes the footer to the diagram.
     ///
     /// @param output The output to write to.
-    /// @param <IPW>  The type of the output object.
     /// @return The same output instance for method chaining.
-    private <IPW extends IndentingPrintWriter> IPW writeFooterTo(IPW output) {
+    private IndentingWriter writeFooterTo(IndentingWriter output) throws IOException {
         String footerText = config.logger().localize(Message.DOCLET_UML_FOOTER, Message.DOCLET_VERSION);
         String footerLink = "https://github.com/talsma-ict/umldoclet";
-        output.newline().append("<style>").indent().newline()
-                .append("footer {").indent().newline()
-                .append("HyperLinkColor #8").newline() // default footer FontColor
-                .append("HyperLinkUnderlineThickness 0").newline()
-                .unindent().append("}").newline()
-                .unindent().append("</style>").newline()
-                .append("footer").whitespace()
-                .append("\\n[[").append(footerLink).whitespace().append(footerText).append("]]").newline()
-                .append("' Generated ").append(ZonedDateTime.now().toString()).newline();
+        output.writeln("", "<style>").indent()
+                .writeln("footer {").indent()
+                .writeln("HyperLinkColor #8", // default footer FontColor
+                        "HyperLinkUnderlineThickness 0")
+                .unindent().writeln("}")
+                .unindent().writeln("</style>")
+                .writeln(String.format("footer \\n[[%s %s]]", footerLink, footerText),
+                        "' Generated " + ZonedDateTime.now());
         return output;
     }
 
@@ -199,7 +200,7 @@ public abstract class Diagram extends UMLNode {
         ensureParentDir(pumlFile);
         Link.linkFrom(pumlFile.getParent());
         try (StringBufferingWriter writer = createBufferingPlantumlFileWriter(pumlFile)) {
-            writeTo(IndentingPrintWriter.wrap(writer, config.indentation()));
+            writeTo(new IndentingWriter(writer, config.indentation()));
             return writer.getBuffer().toString();
         }
     }
@@ -247,14 +248,14 @@ public abstract class Diagram extends UMLNode {
         return null;
     }
 
-    private void writeCopyrightStatement(PrintWriter output) {
+    private void writeCopyrightStatement(IndentingWriter output) throws IOException {
         String version = Message.DOCLET_VERSION.toString(Locale.ENGLISH);
-        int year = LocalDate.now().getYear();
-        output.println("' Copyright to this UML and generated images belongs to the author of the corresponding Java sources.");
-        output.println();
-        output.println("' This UML was generated by UMLDoclet (C) Copyright 2016-" + year + " Talsma ICT.");
-        output.println("' UMLDoclet " + version + " is licensed under the Apache License, version 2.0");
-        output.println("' and contains parts of PlantUML " + Version.versionString() + " (ASL) Copyright 2009-" + year + ", Arnaud Roques.");
-        output.println();
+        final int year = LocalDate.now().getYear();
+        output.writeln("' Copyright to this UML and generated images belongs to the author of the corresponding Java sources.",
+                "",
+                "' This UML was generated by UMLDoclet (C) Copyright 2016-" + year + " Talsma ICT.",
+                "' UMLDoclet " + version + " is licensed under the Apache License, version 2.0",
+                "' and contains parts of PlantUML " + Version.versionString() + " (ASL) Copyright 2009-" + year + ", Arnaud Roques.",
+                "");
     }
 }

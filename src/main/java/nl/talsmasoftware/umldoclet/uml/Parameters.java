@@ -15,9 +15,12 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
+import nl.talsmasoftware.indentation.io.IndentingWriter;
 import nl.talsmasoftware.umldoclet.configuration.MethodConfig;
 import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
 
 /// Model object for the parameters of a method in a UML diagram.
 ///
@@ -63,20 +66,23 @@ public class Parameters extends UMLNode {
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-        return writeChildrenTo(output);
+    public IndentingWriter writeTo(IndentingWriter output) {
+        try {
+            return writeChildrenTo(output);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeChildrenTo(IPW output) {
+    public IndentingWriter writeChildrenTo(IndentingWriter output) throws IOException {
         output.append('(');
         String sep = "";
         for (UMLNode param : getChildren()) {
             param.writeTo(output.append(sep));
             sep = ", ";
         }
-        output.append(')');
-        return output;
+        return output.append(')');
     }
 
     /// Replaces a parameterized type with another type in all parameters.
@@ -104,23 +110,27 @@ public class Parameters extends UMLNode {
         }
 
         @Override
-        public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-            String sep = "";
-            MethodConfig methodConfig = getConfiguration().methods();
-            if (name != null && MethodConfig.ParamNames.BEFORE_TYPE.equals(methodConfig.paramNames())) {
-                output.append(name);
-                sep = ": ";
+        public IndentingWriter writeTo(IndentingWriter output) {
+            try {
+                String sep = "";
+                MethodConfig methodConfig = getConfiguration().methods();
+                if (name != null && MethodConfig.ParamNames.BEFORE_TYPE.equals(methodConfig.paramNames())) {
+                    output.append(name);
+                    sep = ": ";
+                }
+                if (type != null && !TypeDisplay.NONE.equals(methodConfig.paramTypes())) {
+                    String typeUml = type.toUml(methodConfig.paramTypes(), null);
+                    if (varargs && typeUml.endsWith("[]")) typeUml = typeUml.substring(0, typeUml.length() - 2) + "...";
+                    output.append(sep).append(typeUml);
+                    sep = " ";
+                }
+                if (name != null && MethodConfig.ParamNames.AFTER_TYPE.equals(methodConfig.paramNames())) {
+                    output.append(sep).append(name);
+                }
+                return output;
+            } catch (IOException ioe) {
+                throw new UncheckedIOException(ioe);
             }
-            if (type != null && !TypeDisplay.NONE.equals(methodConfig.paramTypes())) {
-                String typeUml = type.toUml(methodConfig.paramTypes(), null);
-                if (varargs && typeUml.endsWith("[]")) typeUml = typeUml.substring(0, typeUml.length() - 2) + "...";
-                output.append(sep).append(typeUml);
-                sep = " ";
-            }
-            if (name != null && MethodConfig.ParamNames.AFTER_TYPE.equals(methodConfig.paramNames())) {
-                output.append(sep).append(name);
-            }
-            return output;
         }
     }
 }

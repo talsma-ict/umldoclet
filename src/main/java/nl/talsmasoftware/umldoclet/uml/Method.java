@@ -15,9 +15,11 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
+import nl.talsmasoftware.indentation.io.IndentingWriter;
 import nl.talsmasoftware.umldoclet.configuration.TypeDisplay;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Objects;
 
 /// UML representation of a method.
@@ -59,19 +61,25 @@ public class Method extends TypeMember {
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-        if (!getConfiguration().methods().include(getVisibility())) return output;
-        if (isAbstract) output.append("{abstract}").whitespace();
-        return super.writeTo(output);
+    public IndentingWriter writeTo(IndentingWriter output) {
+        try {
+            if (getConfiguration().methods().include(getVisibility())) {
+                if (isAbstract) output.append("{abstract} ");
+                return super.writeTo(output);
+            }
+            return output;
+        } catch (IOException ioe) {
+            throw new UncheckedIOException(ioe);
+        }
     }
 
     @Override
-    protected <IPW extends IndentingPrintWriter> IPW writeParametersTo(IPW output) {
+    protected IndentingWriter writeParametersTo(IndentingWriter output) {
         return getOrCreateParameters().writeTo(output);
     }
 
     @Override
-    protected <IPW extends IndentingPrintWriter> IPW writeTypeTo(IPW output) {
+    protected IndentingWriter writeTypeTo(IndentingWriter output) throws IOException {
         TypeDisplay returnTypeDisplay = getConfiguration().methods().returnType();
         if (type != null && !TypeDisplay.NONE.equals(returnTypeDisplay)) {
             output.append(": ").append(type.toUml(returnTypeDisplay, null));

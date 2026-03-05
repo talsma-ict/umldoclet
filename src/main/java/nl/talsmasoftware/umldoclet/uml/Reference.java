@@ -15,8 +15,10 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.indentation.io.IndentingWriter;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -138,16 +140,19 @@ public class Reference extends UMLNode {
     }
 
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-        // Namespace aware compensation
-        final Namespace namespace = findParent(Namespace.class).orElse(null);
+    public IndentingWriter writeTo(IndentingWriter output) {
+        try {
+            // Namespace aware compensation
+            final Namespace namespace = findParent(Namespace.class).orElse(null);
 
-        output.append(from.toString(namespace)).whitespace()
-                .append(type).whitespace()
-                .append(to.toString(namespace));
-        if (!notes.isEmpty()) output.append(": ").append(String.join("\\n", notes));
-        output.newline();
-        return output;
+            output.append(from.toString(namespace)).append(' ')
+                    .append(type).append(' ')
+                    .append(to.toString(namespace));
+            if (!notes.isEmpty()) output.append(": ").append(String.join("\\n", notes));
+            return output.writeln();
+        } catch (IOException ioe) {
+            throw new UncheckedIOException(ioe);
+        }
     }
 
     /// Returns whether this reference contains the requested type.
@@ -193,7 +198,7 @@ public class Reference extends UMLNode {
     /// One side of a reference.
     public static final class Side {
         private final boolean nameFirst;
-        private final String qualifiedName;
+        public final String qualifiedName;
         private final String cardinality;
 
         private Side(String qualifiedName, String cardinality, boolean nameFirst) {

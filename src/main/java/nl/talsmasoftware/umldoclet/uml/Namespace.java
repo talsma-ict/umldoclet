@@ -15,8 +15,10 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.indentation.io.IndentingWriter;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
@@ -51,29 +53,21 @@ public class Namespace extends UMLNode {
         return Optional.ofNullable(moduleName);
     }
 
-    /// Adds the package name to the diagram.
-    ///
-    /// Re: bug 107: If the package name is empty (i.e. the 'default' package),
-    /// render `"unnamed"` because an empty name is not valid in PlantUML.
-    ///
-    /// @param output The output to append the package name to.
-    /// @param <IPW>  The type of the output object.
-    /// @return The same output instance for method chaining.
-    private <IPW extends IndentingPrintWriter> IPW writeNameTo(IPW output) {
-        output.append(name.isEmpty() ? "unnamed" : name).whitespace();
-        return output;
-    }
-
     /// Write the java package to the diagram output.
     ///
     /// @param output The output to write to.
     /// @return The output for chaining purposes.
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-        writeNameTo(output.append("package").whitespace()).append('{').newline();
-        writeChildrenTo(output.indent());
-        output.append('}').newline();
-        return output;
+    public IndentingWriter writeTo(IndentingWriter output) {
+        try {
+            /// Re: bug 107: If the package name is empty (i.e. the 'default' package),
+            /// render `"unnamed"` because an empty name is not valid in PlantUML.
+            output.writeln(String.format("package %s {", name.isEmpty() ? "unnamed" : name)).indent();
+            writeChildrenTo(output);
+            return output.unindent().writeln("}");
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     /// Check whether this package contains the specified type.

@@ -15,7 +15,10 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
+import nl.talsmasoftware.indentation.io.IndentingWriter;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
 
 /// A literal piece of UML.
 ///
@@ -45,9 +48,12 @@ public class UmlCharacters extends UMLNode {
     /// @param output The output to write to.
     /// @return The output for chaining purposes.
     @Override
-    public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-        output.append(content);
-        return output;
+    public IndentingWriter writeTo(IndentingWriter output) {
+        try {
+            return output.append(content);
+        } catch (IOException ioe) {
+            throw new UncheckedIOException(ioe);
+        }
     }
 
     private static class UmlLine extends UmlCharacters {
@@ -60,9 +66,12 @@ public class UmlCharacters extends UMLNode {
         /// @param output The output to write to.
         /// @return The output for chaining purposes.
         @Override
-        public <IPW extends IndentingPrintWriter> IPW writeTo(IPW output) {
-            super.writeTo(output).newline();
-            return output;
+        public IndentingWriter writeTo(IndentingWriter output) {
+            try {
+                return super.writeTo(output).writeln("");
+            } catch (IOException ioe) {
+                throw new UncheckedIOException(ioe);
+            }
         }
     }
 }

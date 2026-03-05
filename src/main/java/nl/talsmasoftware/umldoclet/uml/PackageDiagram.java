@@ -15,10 +15,11 @@
  */
 package nl.talsmasoftware.umldoclet.uml;
 
+import nl.talsmasoftware.indentation.io.IndentingWriter;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
-import nl.talsmasoftware.umldoclet.rendering.indent.IndentingPrintWriter;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -54,7 +55,7 @@ public class PackageDiagram extends Diagram {
     }
 
     @Override
-    protected <IPW extends IndentingPrintWriter> IPW writeCustomDirectives(List<String> customDirectives, IPW output) {
+    protected IndentingWriter writeCustomDirectives(List<String> customDirectives, IndentingWriter output) throws IOException {
         final List<String> directives = new ArrayList<>(customDirectives == null ? Collections.emptyList() : customDirectives);
         directives.removeIf(directive -> directive.startsWith(SEPARATOR_DIRECTIVE));
         directives.add(SEPARATOR_DIRECTIVE + SEPARATOR);
