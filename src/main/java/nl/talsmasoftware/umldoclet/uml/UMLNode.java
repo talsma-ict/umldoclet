@@ -33,7 +33,7 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
-/// Part of an UML diagram that can render itself to the diagram by
+/// Part of a UML diagram that can render itself to the diagram by
 /// [writing to][#writeTo(IndentingWriter)] an indenting writer.
 /// It serves as a reusable base-class for all specific UML nodes.
 ///
@@ -69,15 +69,15 @@ public abstract class UMLNode {
 
     /// Finds a parent node of a particular type.
     ///
-    /// @param nodeType The type of parent node to find.
-    /// @param <U>      The type of parent node to find.
-    /// @return The parent node of the specified type, if found.
+    /// @param nodeType The type of ancestor to find.
+    /// @param <U>      The type of ancestor to find.
+    /// @return The ancestor of the specified type, if found.
     protected <U extends UMLNode> Optional<U> findParent(Class<U> nodeType) {
         final Set<UMLNode> traversed = newSetFromMap(new IdentityHashMap<>());
-        for (UMLNode parent = getParent();
-             parent != null && traversed.add(parent);
-             parent = parent.getParent()) {
-            if (nodeType.isInstance(parent)) return Optional.of(nodeType.cast(parent));
+        for (UMLNode ancestor = getParent();
+             ancestor != null && traversed.add(ancestor);
+             ancestor = ancestor.getParent()) {
+            if (nodeType.isInstance(ancestor)) return Optional.of(nodeType.cast(ancestor));
         }
         return Optional.empty();
     }
@@ -123,7 +123,7 @@ public abstract class UMLNode {
         return getChildren().stream().allMatch(UMLNode::isEmpty);
     }
 
-    /// Obtain the doclet configuration from the diagram this node is part of
+    /// Get the doclet configuration from the diagram this node is part of
     ///
     /// @return The doclet configuration.
     protected Configuration getConfiguration() {
@@ -142,6 +142,7 @@ public abstract class UMLNode {
     ///
     /// @param output The output to write the children to.
     /// @return A reference to the output for method chaining purposes.
+    @SuppressWarnings("java:S1130") // IOException is not superfluous. It avoids subclass catch & rethrows.
     protected IndentingWriter writeChildrenTo(IndentingWriter output) throws IOException {
         getChildren().forEach(child -> child.writeTo(output));
         return output;

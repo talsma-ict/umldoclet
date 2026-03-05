@@ -19,7 +19,6 @@ import nl.talsmasoftware.indentation.Indentation;
 import nl.talsmasoftware.indentation.io.IndentingWriter;
 import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
-import nl.talsmasoftware.umldoclet.logging.Message;
 import nl.talsmasoftware.umldoclet.logging.TestLogger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,14 +48,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-public class DiagramTest {
-    private Configuration config;
-    private ImageConfig imageconfig;
-    private TestLogger logger;
-    private Collection<ImageConfig.Format> formats = new ArrayList<>(singleton(SVG));
+class DiagramTest {
+    Configuration config;
+    ImageConfig imageconfig;
+    TestLogger logger;
+    Collection<ImageConfig.Format> formats = new ArrayList<>(singleton(SVG));
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         config = mock(Configuration.class);
         imageconfig = mock(ImageConfig.class);
         logger = new TestLogger();
@@ -69,7 +68,7 @@ public class DiagramTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         verify(config, atLeast(0)).plantumlServerUrl();
         verify(config, atLeast(0)).images();
         verify(config, atLeast(0)).destinationDirectory();
@@ -80,20 +79,20 @@ public class DiagramTest {
     }
 
     @Test
-    public void testDiagramWithoutConfiguration() {
+    void testDiagramWithoutConfiguration() {
         NullPointerException expected = assertThrows(NullPointerException.class, () ->
                 new TestDiagram(null, null));
         assertThat("Expected exception message", expected.getMessage(), notNullValue());
     }
 
     @Test
-    public void testDiagramToString() {
+    void testDiagramToString() {
         assertThat(new TestDiagram(config, new File("target/test-classes/foo/bar.puml")),
                 hasToString(equalTo("target/test-classes/images/foo.bar.svg")));
     }
 
     @Test
-    public void testWithoutImageDir() {
+    void testWithoutImageDir() {
         reset(imageconfig);
         when(imageconfig.formats()).thenReturn(formats);
         when(imageconfig.directory()).thenReturn(Optional.empty());
@@ -102,14 +101,14 @@ public class DiagramTest {
     }
 
     @Test
-    public void testDiagramToStringMultipleFormats() {
+    void testDiagramToStringMultipleFormats() {
         formats.add(PNG);
         assertThat(new TestDiagram(config, new File("target/test-classes/foo/bar.puml")),
                 hasToString(equalTo("target/test-classes/images/foo.bar.[svg,png]")));
     }
 
     @Test
-    public void testCustomDirective() {
+    void testCustomDirective() {
         // prepare
         when(config.customPlantumlDirectives()).thenReturn(singletonList("skinparam handwritten true"));
         StringWriter output = new StringWriter();
@@ -125,7 +124,7 @@ public class DiagramTest {
     }
 
     @Test
-    public void testCustomBackgroundcolor() {
+    void testCustomBackgroundcolor() {
         // prepare
         when(config.customPlantumlDirectives()).thenReturn(singletonList("skinparam backgroundcolor green"));
         StringWriter output = new StringWriter();
@@ -141,9 +140,9 @@ public class DiagramTest {
     }
 
     static class TestDiagram extends Diagram {
-        private final File plantumlFile;
+        final File plantumlFile;
 
-        private TestDiagram(Configuration config, File plantumlFile) {
+        TestDiagram(Configuration config, File plantumlFile) {
             super(config);
             this.plantumlFile = plantumlFile;
         }
