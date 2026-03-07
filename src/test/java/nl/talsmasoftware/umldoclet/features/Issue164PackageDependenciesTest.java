@@ -34,12 +34,10 @@ import java.util.List;
 import java.util.spi.ToolProvider;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class Issue164PackageDependenciesTest {
-    private static List<String> packageNames = asList(
+class Issue164PackageDependenciesTest {
+    static List<String> packageNames = asList(
             UMLDoclet.class.getPackageName(),
             Configuration.class.getPackageName(),
             HtmlPostprocessor.class.getPackageName(),
@@ -50,28 +48,27 @@ public class Issue164PackageDependenciesTest {
             UMLNode.class.getPackageName(),
             FileUtils.class.getPackageName()
     );
-    private static final File outputdir = new File("target/issues/164");
+    static final File outputdir = new File("target/issues/164");
 
     @BeforeAll
-    public static void createJavaDoc() {
+    static void createJavaDoc() {
         List<String> args = new ArrayList<>(asList(
                 "-d", outputdir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet", "-createPumlFiles",
                 "-sourcepath", "src/main/java"));
         args.addAll(packageNames);
-        assertThat("Javadoc result", ToolProvider.findFirst("javadoc").get().run(
-                System.out, System.err, args.toArray(new String[0])), is(0));
+        assertThat(ToolProvider.findFirst("javadoc").get().run(
+                System.out, System.err, args.toArray(new String[0]))).as("Javadoc result").isZero();
     }
 
     @Test
-    public void testPackageDependencies() {
+    void testPackageDependencies() {
         String packageDependencies = TestUtil.read(new File(outputdir, "package-dependencies.puml"));
 
-        assertThat("Doclet superclass dependency", packageDependencies,
-                containsString("nl.talsmasoftware.umldoclet --> jdk.javadoc.doclet"));
-        assertThat("UML contains package-summary links", packageDependencies,
-                containsString("\"nl.talsmasoftware.umldoclet\" [[nl/talsmasoftware/umldoclet/package-summary.html]]"));
+        assertThat(packageDependencies).as("Package dependencies diagram")
+                .contains("nl.talsmasoftware.umldoclet --> jdk.javadoc.doclet",
+                        "\"nl.talsmasoftware.umldoclet\" [[nl/talsmasoftware/umldoclet/package-summary.html]]");
     }
 
 }

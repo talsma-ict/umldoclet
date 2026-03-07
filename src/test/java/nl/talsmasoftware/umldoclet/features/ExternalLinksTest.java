@@ -23,11 +23,9 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.spi.ToolProvider;
 
-import static java.util.Arrays.asList;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
 import static nl.talsmasoftware.umldoclet.util.TestUtil.createDirectory;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.stringContainsInOrder;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /// Tests the 'external links' feature
 ///
@@ -43,17 +41,17 @@ import static org.hamcrest.Matchers.stringContainsInOrder;
 /// </dl>
 ///
 /// @author Sjoerd Talsma
-public class ExternalLinksTest {
+class ExternalLinksTest {
 
     static final File testoutput = TestUtil.deleteRecursive(new File("target/issues/96"));
     static final String packageAsPath = ExternalLinksTest.class.getPackageName().replace('.', '/');
 
     @SuppressWarnings("unused")
-    public static class TestClass implements Serializable {
+    static class TestClass implements Serializable {
     }
 
     @Test
-    public void testRelativeExternalLink() {
+    void testRelativeExternalLink() {
         File externalDir = createDirectory(new File(testoutput, "externalApidocs"));
         TestUtil.write(new File(externalDir, "package-list"), Serializable.class.getPackageName());
         TestUtil.write(new File(externalDir, "java/io/package-summary.html"), "<html></html>");
@@ -73,12 +71,12 @@ public class ExternalLinksTest {
         String uml = TestUtil.read(packageUml);
 
         // Check link to Serializable javadoc
-        assertThat(uml, stringContainsInOrder(asList("interface", "Serializable",
-                "[[" + relativePath(packageUml, externalDir) + "/java/io/Serializable.html]]")));
+        assertThat(uml).contains("interface", "Serializable",
+                "[[" + relativePath(packageUml, externalDir) + "/java/io/Serializable.html]]");
     }
 
     @Test
-    public void testOnlineExternalLink() {
+    void testOnlineExternalLink() {
         File outputdir = createDirectory(new File(testoutput, "link-online"));
 
         File packageUml = new File(outputdir, packageAsPath + "/package.puml");
@@ -94,12 +92,12 @@ public class ExternalLinksTest {
 
         String uml = TestUtil.read(packageUml);
         // Check link to Serializable javadoc
-        assertThat(uml, stringContainsInOrder(asList("interface", "Serializable",
-                "[[https://docs.oracle.com/javase/9/docs/api/java/io/Serializable.html?is-external=true]]")));
+        assertThat(uml).contains("interface", "Serializable",
+                "[[https://docs.oracle.com/javase/9/docs/api/java/io/Serializable.html?is-external=true]]");
     }
 
     @Test
-    public void testOfflineExternalLink() {
+    void testOfflineExternalLink() {
         File externalDir = createDirectory(new File(testoutput, "externalApidocs"));
         File packageList = TestUtil.write(new File(externalDir, "package-list"), Serializable.class.getPackageName());
         File outputdir = createDirectory(new File(testoutput, "link-offline"));
@@ -117,8 +115,8 @@ public class ExternalLinksTest {
 
         String uml = TestUtil.read(packageUml);
         // Check link to Serializable javadoc
-        assertThat(uml, stringContainsInOrder(asList("interface", "Serializable",
-                "[[https://docs.oracle.com/javase/9/docs/api/java/io/Serializable.html?is-external=true]]")));
+        assertThat(uml).contains("interface", "Serializable",
+                "[[https://docs.oracle.com/javase/9/docs/api/java/io/Serializable.html?is-external=true]]");
     }
 
 }

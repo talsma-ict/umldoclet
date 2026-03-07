@@ -23,19 +23,15 @@ import java.io.File;
 import java.util.spi.ToolProvider;
 import java.util.stream.Stream;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class Issue152InnerClassIncludeVisibilityTest {
-    private static final String packageName = Issue152InnerClassIncludeVisibilityTest.class.getPackageName();
-    private static final File outputdir = new File("target/issues/152");
+class Issue152InnerClassIncludeVisibilityTest {
+    static final String packageName = Issue152InnerClassIncludeVisibilityTest.class.getPackageName();
+    static final File outputdir = new File("target/issues/152");
 
     @Test
-    public void testPublicInnerClassVisibility() {
-        assertThat("Javadoc result", ToolProvider.findFirst("javadoc").get().run(
+    void testPublicInnerClassVisibility() {
+        assertThat(ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
                 "-d", outputdir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
@@ -43,28 +39,27 @@ public class Issue152InnerClassIncludeVisibilityTest {
                 "--show-types", "public",
                 "-sourcepath", "src/test/java",
                 packageName
-        ), is(0));
+        )).as("Javadoc result").isZero();
         File dir = new File(outputdir, packageName.replace('.', '/'));
 
         String packageUml = TestUtil.read(new File(dir, "package.puml"));
-        assertThat("Package uml", packageUml, allOf(
-                containsString("PublicClass.PublicInnerClass"),
-                not(containsString("PublicClass.ProtectedInnerClass")),
-                not(containsString("PublicClass.PackageProtectedInnerClass")),
-                not(containsString("PublicClass.PrivateInnerClass"))
-        ));
+        assertThat(packageUml).as("Package uml")
+                .contains("PublicClass.PublicInnerClass")
+                .doesNotContain("PublicClass.ProtectedInnerClass",
+                        "PublicClass.PackageProtectedInnerClass",
+                        "PublicClass.PrivateInnerClass");
         String classUml = TestUtil.read(new File(dir, "PublicClass.puml"));
-        assertThat("Class uml", classUml, allOf(
-                containsString("PublicClass.PublicInnerClass"),
-                not(containsString("PublicClass.ProtectedInnerClass")),
-                not(containsString("PublicClass.PackageProtectedInnerClass")),
-                not(containsString("PublicClass.PrivateInnerClass"))
-        ));
+        assertThat(classUml).as("Class diagram uml")
+                .contains("PublicClass.PublicInnerClass")
+                .doesNotContain("PublicClass.ProtectedInnerClass",
+                        "PublicClass.PackageProtectedInnerClass",
+                        "PublicClass.PrivateInnerClass");
+
         Stream.of(".html", ".puml", ".svg").forEach(extension -> {
-            assertThat("public innerclass " + extension, new File(dir, "PublicClass.PublicInnerClass" + extension).exists(), is(true));
-            assertThat("protected innerclass " + extension, new File(dir, "PublicClass.ProtectedInnerClass" + extension).exists(), is(false));
-            assertThat("package innerclass " + extension, new File(dir, "PublicClass.PackageProtectedInnerClass" + extension).exists(), is(false));
-            assertThat("private innerclass " + extension, new File(dir, "PublicClass.PrivateInnerClass" + extension).exists(), is(false));
+            assertThat(new File(dir, "PublicClass.PublicInnerClass" + extension)).exists();
+            assertThat(new File(dir, "PublicClass.ProtectedInnerClass" + extension)).doesNotExist();
+            assertThat(new File(dir, "PublicClass.PackageProtectedInnerClass" + extension)).doesNotExist();
+            assertThat(new File(dir, "PublicClass.PrivateInnerClass" + extension)).doesNotExist();
         });
     }
 }

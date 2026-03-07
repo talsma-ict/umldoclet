@@ -24,34 +24,32 @@ import java.util.Comparator;
 import java.util.function.Function;
 import java.util.spi.ToolProvider;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class Bug75StackOverflowTest {
-    private static final String packageAsPath = Bug75StackOverflowTest.class.getPackageName().replace('.', '/');
-    private static final File outputDir = new File("target/issues/75");
+class Bug75StackOverflowTest {
+    static final String packageAsPath = Bug75StackOverflowTest.class.getPackageName().replace('.', '/');
+    static final File outputDir = new File("target/issues/75");
 
-    public interface Comparable<T> {
+    interface Comparable<T> {
         <U extends Comparable<? super U>> Comparator<T> thenComparing(Function<? super T, ? extends U> keyExtractor);
     }
 
     @Test
-    public void testInifiniteRecursionIsBounded() {
+    void testInifiniteRecursionIsBounded() {
         String classAsPath = packageAsPath + '/' + Bug75StackOverflowTest.class.getSimpleName();
-        assertThat("Javadoc result", ToolProvider.findFirst("javadoc").get().run(
+        int javadocResult = ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
                 "-d", outputDir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet",
                 "-createPumlFiles",
                 "src/test/java/" + Bug75StackOverflowTest.class.getName().replace('.', '/') + ".java"
-        ), is(0));
+        );
+        assertThat(javadocResult).as("Javadoc result").isZero();
         TestUtil.read(new File(outputDir, classAsPath + ".puml"));
         String packageUml = TestUtil.read(new File(outputDir, packageAsPath + "/package.puml"));
 
-        assertThat(packageUml, not(containsString("? extends Comparable<? super Comparable<? super Comparable")));
+        assertThat(packageUml).doesNotContain("? extends Comparable<? super Comparable<? super Comparable");
     }
 
 }

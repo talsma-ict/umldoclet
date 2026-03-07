@@ -28,50 +28,51 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.Matchers.startsWith;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
-public class HtmlFileTest {
+class HtmlFileTest {
 
-    private static File tempdir;
+    static File tempdir;
 
     @BeforeAll
-    public static void createTempdir() throws IOException {
+    static void createTempdir() throws IOException {
         tempdir = Files.createTempDirectory("HtmlFile-test").toFile();
-        assertThat("Create tempdir", tempdir.isDirectory(), is(true));
+        assertThat(tempdir).as("Temporary directory").isDirectory();
     }
 
     @AfterAll
-    public static void deleteTempdir() {
+    static void deleteTempdir() {
         for (File f : tempdir.listFiles()) f.delete();
-        assertThat("Delete temporary directory", tempdir.delete(), is(true));
+        assertThat(tempdir.delete()).as("Delete result").isTrue();
     }
 
     @Test
-    public void testTooShortTempfile() throws IOException {
+    void testTooShortTempfile() throws IOException {
         Configuration config = mock(Configuration.class);
         Path path = new File(tempdir, "Eq.html").toPath();
         File newTempFile = new HtmlFile(config, path).createNewTempFile();
-        assertThat(newTempFile.getName(), startsWith("Eq-")); // Note padding for length < 3
-        assertThat(newTempFile.getName(), endsWith(".html"));
+        assertThat(newTempFile.getName())
+                .startsWith("Eq-") // Note padding for length < 3
+                .endsWith(".html");
     }
 
-        /// In reality all HtmlFile instances should have the `.html` extension
+    /// In reality all HtmlFile instances should have the `.html` extension
     @Test
-    public void testTempfileForFileWithoutExtension() throws IOException {
+    void testTempfileForFileWithoutExtension() throws IOException {
         Configuration config = mock(Configuration.class);
         Path path = new File(tempdir, "X").toPath();
         File newTempFile = new HtmlFile(config, path).createNewTempFile();
-        assertThat(newTempFile.getName(), startsWith("X--")); // Padding for length < 3
-        assertThat(newTempFile.getName(), endsWith(".tmp")); // Java's default extension for temp files
+        assertThat(newTempFile.getName())
+                .startsWith("X--") // Padding for length < 3
+                .endsWith(".tmp"); // Java's default extension for temp files
     }
 
     @Test
-    public void testReplaceBy() throws IOException {
+    void testReplaceBy() throws IOException {
         // prepare
         TestLogger testLogger = new TestLogger();
         Configuration config = mock(Configuration.class);
@@ -84,16 +85,16 @@ public class HtmlFileTest {
         new HtmlFile(config, path).replaceBy(fox.toFile());
 
         // verify
-        assertThat(Files.readAllLines(path, UTF_8), contains("The quick brown fox jumps over the lazy dog"));
-        assertThat(fox.toFile().exists(), is(false));
+        assertThat(Files.readAllLines(path, UTF_8)).contains("The quick brown fox jumps over the lazy dog");
+        assertThat(fox.toFile()).doesNotExist();
         verify(config).logger();
-        assertThat(testLogger.countMessages(Message.DEBUG_REPLACING_BY::equals), is(1));
+        assertThat(testLogger.countMessages(Message.DEBUG_REPLACING_BY::equals)).isOne();
         Files.delete(path);
         verifyNoMoreInteractions(config);
     }
 
     @Test
-    public void testReplaceByNull() throws IOException {
+    void testReplaceByNull() throws IOException {
         // prepare
         Configuration config = mock(Configuration.class);
         Path path = tempdir.toPath().resolve("test.html");
@@ -107,7 +108,7 @@ public class HtmlFileTest {
     }
 
     @Test
-    public void testReplaceByNonFile() throws IOException {
+    void testReplaceByNonFile() throws IOException {
         // prepare
         Configuration config = mock(Configuration.class);
         Path path = tempdir.toPath().resolve("test.html");

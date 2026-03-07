@@ -24,39 +24,37 @@ import java.io.File;
 import java.util.function.Supplier;
 import java.util.spi.ToolProvider;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /// @author Sjoerd Talsma
-public class Bug74DuplicateGenericsTest {
-    private static final String packageAsPath = Bug74DuplicateGenericsTest.class.getPackageName().replace('.', '/');
-    private static final File outputDir = new File("target/issues/74");
-    private static String classUml;
-    private static String packageUml;
+class Bug74DuplicateGenericsTest {
+    static final String packageAsPath = Bug74DuplicateGenericsTest.class.getPackageName().replace('.', '/');
+    static final File outputDir = new File("target/issues/74");
+    static String classUml;
+    static String packageUml;
 
-    public interface MySupplier<T> extends Supplier<T> {
+    interface MySupplier<T> extends Supplier<T> {
     }
 
     @BeforeAll
-    public static void createJavadoc() {
+    static void createJavadoc() {
         String classAsPath = packageAsPath + '/' + Bug74DuplicateGenericsTest.class.getSimpleName();
-        assertThat("Javadoc result", ToolProvider.findFirst("javadoc").get().run(
+        int javadocResult = ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
                 "-d", outputDir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet",
                 "-createPumlFiles",
                 "src/test/java/" + Bug74DuplicateGenericsTest.class.getName().replace('.', '/') + ".java"
-        ), is(0));
+        );
+        assertThat(javadocResult).as("Javadoc result").isZero();
         classUml = TestUtil.read(new File(outputDir, classAsPath + ".MySupplier.puml"));
         packageUml = TestUtil.read(new File(outputDir, packageAsPath + "/package.puml"));
     }
 
     @Test
-    public void testGenericsNotDuplicated() {
-        assertThat(classUml, containsString("as java.util.function.Supplier<T>"));
-        assertThat(classUml, containsString("<size:14>Supplier\\n"));
+    void testGenericsNotDuplicated() {
+        assertThat(classUml).contains("as java.util.function.Supplier<T>", "<size:14>Supplier\\n");
     }
 
 }
