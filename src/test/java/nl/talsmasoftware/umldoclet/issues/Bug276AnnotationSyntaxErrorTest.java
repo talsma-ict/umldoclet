@@ -25,10 +25,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 import java.util.spi.ToolProvider;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class Bug276AnnotationSyntaxErrorTest {
 
@@ -43,20 +40,21 @@ public class Bug276AnnotationSyntaxErrorTest {
 
     @BeforeAll
     static void generateUml() {
-        assertThat(ToolProvider.findFirst("javadoc").get().run(
+        int javadocResult = ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
                 "-d", "target/issues/276",
                 "-doclet", UMLDoclet.class.getName(),
                 "-createPumlFiles",
                 "src/test/java/nl/talsmasoftware/umldoclet/issues/Bug276AnnotationSyntaxErrorTest.java"
-        ), is(0));
+        );
+        assertThat(javadocResult).as("Javadoc result").isZero();
     }
 
     @Test
     void testAnnotationDiagramHasNoSyntaxError() {
         String pkgPath = "target/issues/276/" + getClass().getPackageName().replace('.', '/');
-        assertThat(TestUtil.read(new File(pkgPath + "/Bug276AnnotationSyntaxErrorTest.Generated.svg")),
-                not(containsString("Syntax Error")));
+        String svgFileData = TestUtil.read(new File(pkgPath + "/Bug276AnnotationSyntaxErrorTest.Generated.svg"));
+        assertThat(svgFileData).as("Generated svg file").doesNotContain("Syntax Error");
     }
 
 }

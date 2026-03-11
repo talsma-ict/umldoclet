@@ -259,8 +259,8 @@ class Issue148StandardIncludeOptionsTest {
         assertThat(packageUml).as("Package diagram UML")
                 .doesNotContain("[[Access.PrivateClass.html]]", "[[PackageProtectedClass.html]]")
                 .contains("[[Access.ProtectedClass.html]]", "[[PublicClass.html]]")
-                .doesNotContain("-privateField", "~packageProtectedField")
-                .contains("#protectedField", "+publicField")
+                .doesNotContain("-privateField")
+                .contains("~packageProtectedField", "#protectedField", "+publicField")
                 .doesNotContain("-getPrivateValue()")
                 .contains("~getPackageProtectedValue()", "#getProtectedValue()", "+getPublicValue()");
 

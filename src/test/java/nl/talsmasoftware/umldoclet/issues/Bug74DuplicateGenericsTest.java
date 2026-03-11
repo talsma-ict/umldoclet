@@ -27,17 +27,17 @@ import java.util.spi.ToolProvider;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /// @author Sjoerd Talsma
-class Bug74DuplicateGenericsTest {
-    static final String packageAsPath = Bug74DuplicateGenericsTest.class.getPackageName().replace('.', '/');
-    static final File outputDir = new File("target/issues/74");
-    static String classUml;
-    static String packageUml;
+public class Bug74DuplicateGenericsTest {
+    private static final String packageAsPath = Bug74DuplicateGenericsTest.class.getPackageName().replace('.', '/');
+    private static final File outputDir = new File("target/issues/74");
+    private static String classUml;
+    private static String packageUml;
 
-    interface MySupplier<T> extends Supplier<T> {
+    public interface MySupplier<T> extends Supplier<T> {
     }
 
     @BeforeAll
-    static void createJavadoc() {
+    public static void createJavadoc() {
         String classAsPath = packageAsPath + '/' + Bug74DuplicateGenericsTest.class.getSimpleName();
         int javadocResult = ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
@@ -53,7 +53,7 @@ class Bug74DuplicateGenericsTest {
     }
 
     @Test
-    void testGenericsNotDuplicated() {
+    public void testGenericsNotDuplicated() {
         assertThat(classUml).contains("as java.util.function.Supplier<T>", "<size:14>Supplier\\n");
     }
 

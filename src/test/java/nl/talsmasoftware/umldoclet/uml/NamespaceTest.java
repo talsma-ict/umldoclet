@@ -24,9 +24,13 @@ import org.junit.jupiter.api.Test;
 import static java.util.Collections.singleton;
 import static nl.talsmasoftware.umldoclet.configuration.ImageConfig.Format.SVG;
 import static nl.talsmasoftware.umldoclet.util.TestUtil.randomString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class NamespaceTest {
 
@@ -52,11 +56,12 @@ public class NamespaceTest {
     public void testEquals() {
         PackageDiagram packageUml = new PackageDiagram(config, "a.b.c", randomString());
         Namespace namespace = new Namespace(packageUml, "a.b.c", randomString());
+        assertThat(namespace.equals(namespace)).isTrue();
 
-        assertThat(namespace.equals(namespace), is(true));
-        assertThat(namespace, is(equalTo(new Namespace(null, "a.b.c", randomString()))));
-        assertThat(namespace, is(equalTo(new Namespace(packageUml, "a.b.c", randomString()))));
-        assertThat(namespace, is(not(equalTo(new Namespace(packageUml, "A.B.C", randomString())))));
+        assertThat(namespace)
+                .isEqualTo(new Namespace(null, "a.b.c", randomString()))
+                .isEqualTo(new Namespace(packageUml, "a.b.c", randomString()))
+                .isNotEqualTo(new Namespace(packageUml, "A.B.C", randomString()));
         verify(config, atLeastOnce()).plantumlServerUrl();
     }
 

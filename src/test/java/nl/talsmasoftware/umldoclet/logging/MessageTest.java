@@ -19,10 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasToString;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class MessageTest {
     private static final Locale DUTCH = new Locale("nl", "NL");
@@ -30,14 +27,14 @@ public class MessageTest {
     @Test
     public void testAllMessageAvailability() {
         for (Message message : Message.values()) {
-            assertThat(message.name(), message, hasToString(notNullValue()));
+            assertThat(message.toString()).as(message.name() + ".toString()").isNotNull();
         }
     }
 
     @Test
     public void testAllMessagesInDutch() {
         for (Message message : Message.values()) {
-            assertThat("Dutch " + message.name(), message.toString(DUTCH), is(notNullValue()));
+            assertThat(message.toString(DUTCH)).as("Dutch " + message.name() + ".toString()").isNotNull();
         }
     }
 

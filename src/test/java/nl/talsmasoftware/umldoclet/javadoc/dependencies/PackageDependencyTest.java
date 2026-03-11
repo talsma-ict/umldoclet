@@ -17,41 +17,38 @@ package nl.talsmasoftware.umldoclet.javadoc.dependencies;
 
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasToString;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class PackageDependencyTest {
     @Test
     public void testDependencyWithoutFromPackage() {
-        NullPointerException expected = assertThrows(NullPointerException.class, () -> new PackageDependency(null, "b"));
-        assertThat(expected.getMessage(), notNullValue());
+        assertThatThrownBy(() -> new PackageDependency(null, "b"))
+                .isInstanceOf(NullPointerException.class)
+                .message().isNotBlank();
     }
 
     @Test
     public void testDependencyWithoutToPackage() {
-        NullPointerException expected = assertThrows(NullPointerException.class, () -> new PackageDependency("a", null));
-        assertThat(expected.getMessage(), notNullValue());
+        assertThatThrownBy(() -> new PackageDependency("a", null))
+                .isInstanceOf(NullPointerException.class)
+                .message().isNotBlank();
     }
 
     @Test
     public void testHashCode() {
-        assertThat(new PackageDependency("a", "b").hashCode(), is(new PackageDependency("a", "b").hashCode()));
+        assertThat(new PackageDependency("a", "b")).hasSameHashCodeAs(new PackageDependency("a", "b"));
     }
 
     @Test
     public void testEquals() {
-        assertThat(new PackageDependency("a", "b"), is(equalTo(new PackageDependency("a", "b"))));
-        assertThat(new PackageDependency("a", "b"), not(equalTo(new PackageDependency("a", "a"))));
-        assertThat(new PackageDependency("a", "b"), not(equalTo(new PackageDependency("b", "b"))));
+        assertThat(new PackageDependency("a", "b")).isEqualTo(new PackageDependency("a", "b"));
+        assertThat(new PackageDependency("a", "b")).isNotEqualTo(new PackageDependency("a", "a"));
+        assertThat(new PackageDependency("a", "b")).isNotEqualTo(new PackageDependency("b", "b"));
     }
 
     @Test
     public void testToString() {
-        assertThat(new PackageDependency("a", "b"), hasToString("a->b"));
+        assertThat(new PackageDependency("a", "b")).hasToString("a->b");
     }
 }

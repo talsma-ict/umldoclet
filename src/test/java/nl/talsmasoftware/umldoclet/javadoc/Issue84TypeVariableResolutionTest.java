@@ -20,18 +20,17 @@ import nl.talsmasoftware.umldoclet.util.TestUtil;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.spi.ToolProvider;
 
-import static java.util.Arrays.asList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.stringContainsInOrder;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class Issue84TypeVariableResolutionTest {
 
     @Test
-    public void testTypeMemberImplementsComparableTypeMember() throws FileNotFoundException {
+    public void testTypeMemberImplementsComparableTypeMember() throws IOException {
         TestUtil.createDirectory(new File("target/issues/84"));
         String testObjectPath = TestObject.class.getName().replace('.', '/');
         ToolProvider.findFirst("javadoc").get().run(
@@ -42,10 +41,8 @@ public class Issue84TypeVariableResolutionTest {
                 "src/test/java/" + testObjectPath + ".java"
         );
 
-        assertThat(TestUtil.readUml(new FileInputStream("target/issues/84/" + testObjectPath + ".puml")),
-                stringContainsInOrder(asList(
-                        "java.lang.Comparable<TestObject>",
-                        "{abstract} +compareTo(TestObject): int")));
+        assertThat(TestUtil.readUml(Files.newInputStream(Paths.get("target/issues/84/" + testObjectPath + ".puml"))))
+                .contains("java.lang.Comparable<TestObject>", "{abstract} +compareTo(TestObject): int");
     }
 
 }

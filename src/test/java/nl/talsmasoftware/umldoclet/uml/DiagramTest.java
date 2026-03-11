@@ -27,20 +27,16 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
 import static nl.talsmasoftware.umldoclet.configuration.ImageConfig.Format.PNG;
 import static nl.talsmasoftware.umldoclet.configuration.ImageConfig.Format.SVG;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasToString;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -80,15 +76,15 @@ class DiagramTest {
 
     @Test
     void testDiagramWithoutConfiguration() {
-        NullPointerException expected = assertThrows(NullPointerException.class, () ->
-                new TestDiagram(null, null));
-        assertThat("Expected exception message", expected.getMessage(), notNullValue());
+        assertThatThrownBy(() -> new TestDiagram(null, null))
+                .isInstanceOf(NullPointerException.class)
+                .message().isNotBlank();
     }
 
     @Test
     void testDiagramToString() {
-        assertThat(new TestDiagram(config, new File("target/test-classes/foo/bar.puml")),
-                hasToString(equalTo("target/test-classes/images/foo.bar.svg")));
+        assertThat(new TestDiagram(config, new File("target/test-classes/foo/bar.puml")))
+                .hasToString("target/test-classes/images/foo.bar.svg");
     }
 
     @Test
@@ -96,15 +92,15 @@ class DiagramTest {
         reset(imageconfig);
         when(imageconfig.formats()).thenReturn(formats);
         when(imageconfig.directory()).thenReturn(Optional.empty());
-        assertThat(new TestDiagram(config, new File("target/test-classes/foo/bar.puml")),
-                hasToString(equalTo("target/test-classes/foo/bar.svg")));
+        assertThat(new TestDiagram(config, new File("target/test-classes/foo/bar.puml")))
+                .hasToString("target/test-classes/foo/bar.svg");
     }
 
     @Test
     void testDiagramToStringMultipleFormats() {
         formats.add(PNG);
-        assertThat(new TestDiagram(config, new File("target/test-classes/foo/bar.puml")),
-                hasToString(equalTo("target/test-classes/images/foo.bar.[svg,png]")));
+        assertThat(new TestDiagram(config, new File("target/test-classes/foo/bar.puml")))
+                .hasToString("target/test-classes/images/foo.bar.[svg,png]");
     }
 
     @Test
@@ -119,7 +115,7 @@ class DiagramTest {
         testDiagram.writeTo(writer);
 
         // verify
-        assertThat(asList(output.toString().split("\\n")), hasItem("skinparam handwritten true"));
+        assertThat(Arrays.asList(output.toString().split("\\n"))).contains("skinparam handwritten true");
         verify(config).customPlantumlDirectives();
     }
 
@@ -135,7 +131,7 @@ class DiagramTest {
         testDiagram.writeTo(writer);
 
         // verify
-        assertThat(asList(output.toString().split("\\n")), hasItem("skinparam backgroundcolor green"));
+        assertThat(Arrays.asList(output.toString().split("\\n"))).contains("skinparam backgroundcolor green");
         verify(config).customPlantumlDirectives();
     }
 

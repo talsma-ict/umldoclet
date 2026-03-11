@@ -22,26 +22,25 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.util.spi.ToolProvider;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class Bug107DefaultPackageTest {
+class Bug107DefaultPackageTest {
 
     @Test
-    public void testDefaultPackageDocumentation() {
-        assertThat(ToolProvider.findFirst("javadoc").get().run(
+    void testDefaultPackageDocumentation() {
+        int javadocResult = ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
                 "-d", "target/issues/107",
                 "-doclet", UMLDoclet.class.getName(),
                 "-createPumlFiles",
                 "--uml-render-empty-diagrams", "true",
                 "src/test/java/Foo.java"
-        ), is(0));
+        );
+        assertThat(javadocResult).as("Javadoc result").isZero();
 
         String uml = TestUtil.read(new File("target/issues/107/package.puml"));
-        assertThat(uml, containsString("package unnamed"));
-        assertThat(uml, containsString("class Foo"));
+        assertThat(uml).as("Package documentation")
+                .contains("package unnamed", "class Foo");
     }
 
 }

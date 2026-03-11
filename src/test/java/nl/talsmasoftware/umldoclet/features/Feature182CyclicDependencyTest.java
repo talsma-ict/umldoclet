@@ -27,15 +27,15 @@ import java.util.spi.ToolProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class Feature182CyclicDependencyTest {
-    static final File outputdir = new File("target/issues/182");
+public class Feature182CyclicDependencyTest {
+    private static final File outputdir = new File("target/issues/182");
 
-    void cycle(CyclicDependencyClass dummy) {
+    public void cycle(CyclicDependencyClass dummy) {
         // Method intentionally causing a cyclic package dependency.
     }
 
     @Test
-    void testCyclicDependencyWarning() throws UnsupportedEncodingException {
+    public void testCyclicDependencyWarning() throws UnsupportedEncodingException {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         String myPackage = Feature182CyclicDependencyTest.class.getPackageName();
         String cyclicPackage = CyclicDependencyClass.class.getPackageName();
@@ -55,7 +55,7 @@ class Feature182CyclicDependencyTest {
     }
 
     @Test
-    void testCyclicDependencyFailure() throws UnsupportedEncodingException {
+    public void testCyclicDependencyFailure() throws UnsupportedEncodingException {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         String myPackage = Feature182CyclicDependencyTest.class.getPackageName();
         String cyclicPackage = CyclicDependencyClass.class.getPackageName();

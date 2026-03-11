@@ -16,15 +16,13 @@
 package nl.talsmasoftware.umldoclet.issues;
 
 import nl.talsmasoftware.umldoclet.UMLDoclet;
-import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.spi.ToolProvider;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class Issue70ConfigurableFormatTest {
     private static final String CLASS_AS_PATH = Issue70ConfigurableFormatTest.class.getName().replace('.', '/');
@@ -37,9 +35,13 @@ public class Issue70ConfigurableFormatTest {
         outputDir = new File("target/issues/70");
     }
 
-    private void assertImageExists(String type, Matcher<Boolean> matcher) {
+    private void assertImageExists(String type, boolean expected) {
         File image = new File(outputDir, CLASS_AS_PATH + "." + type);
-        assertThat(image.getPath() + " exists and is a file?", image.isFile(), matcher);
+        if (expected) {
+            assertThat(image).exists().isFile();
+        } else {
+            assertThat(image).doesNotExist();
+        }
     }
 
     @Test
@@ -53,12 +55,12 @@ public class Issue70ConfigurableFormatTest {
                 SOURCE_FILE
         );
 
-        assertImageExists("svg", is(true));
-        assertImageExists("png", is(false));
-        assertImageExists("eps", is(false));
-        assertImageExists("pdf", is(false));
-        assertImageExists("xml", is(false));
-        assertImageExists("avi", is(false));
+        assertImageExists("svg", true);
+        assertImageExists("png", false);
+        assertImageExists("eps", false);
+        assertImageExists("pdf", false);
+        assertImageExists("xml", false);
+        assertImageExists("avi", false);
     }
 
     @Test
@@ -73,12 +75,12 @@ public class Issue70ConfigurableFormatTest {
                 SOURCE_FILE
         );
 
-        assertImageExists("svg", is(false));
-        assertImageExists("png", is(false));
-        assertImageExists("eps", is(false));
-        assertImageExists("pdf", is(false));
-        assertImageExists("xml", is(false));
-        assertImageExists("avi", is(false));
+        assertImageExists("svg", false);
+        assertImageExists("png", false);
+        assertImageExists("eps", false);
+        assertImageExists("pdf", false);
+        assertImageExists("xml", false);
+        assertImageExists("avi", false);
     }
 
     @Test
@@ -93,9 +95,9 @@ public class Issue70ConfigurableFormatTest {
                 SOURCE_FILE
         );
 
-        assertImageExists("svg", is(true));
-        assertImageExists("png", is(false));
-        assertImageExists("eps", is(false));
+        assertImageExists("svg", true);
+        assertImageExists("png", false);
+        assertImageExists("eps", false);
     }
 
     @Test
@@ -110,9 +112,9 @@ public class Issue70ConfigurableFormatTest {
                 SOURCE_FILE
         );
 
-        assertImageExists("svg", is(false));
-        assertImageExists("png", is(true));
-        assertImageExists("eps", is(false));
+        assertImageExists("svg", false);
+        assertImageExists("png", true);
+        assertImageExists("eps", false);
     }
 
     @Test
@@ -129,9 +131,9 @@ public class Issue70ConfigurableFormatTest {
                 SOURCE_FILE
         );
 
-        assertImageExists("svg", is(true));
-        assertImageExists("png", is(true));
-        assertImageExists("eps", is(true));
+        assertImageExists("svg", true);
+        assertImageExists("png", true);
+        assertImageExists("eps", true);
     }
 
     @Test
@@ -146,9 +148,9 @@ public class Issue70ConfigurableFormatTest {
                 SOURCE_FILE
         );
 
-        assertImageExists("svg", is(false));
-        assertImageExists("png", is(false));
-        assertImageExists("eps", is(true));
+        assertImageExists("svg", false);
+        assertImageExists("png", false);
+        assertImageExists("eps", true);
     }
 
     @Test
@@ -163,13 +165,12 @@ public class Issue70ConfigurableFormatTest {
                 SOURCE_FILE
         );
 
-        assertImageExists("svg", is(false));
-        assertImageExists("png", is(false));
-        assertImageExists("eps", is(false));
-        assertImageExists("pdf", is(false));
-        assertImageExists("xml", is(false));
-        assertImageExists("avi", is(false));
+        assertImageExists("svg", false);
+        assertImageExists("png", false);
+        assertImageExists("eps", false);
+        assertImageExists("pdf", false);
+        assertImageExists("xml", false);
+        assertImageExists("avi", false);
     }
-
 
 }

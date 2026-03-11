@@ -19,11 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import static nl.talsmasoftware.umldoclet.uml.Reference.from;
 import static nl.talsmasoftware.umldoclet.uml.Reference.to;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasToString;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /// @author Sjoerd Talsma
 public class ReferenceTest {
@@ -31,18 +27,18 @@ public class ReferenceTest {
     @Test
     public void testSelfReference() {
         Reference ref = new Reference(from(getClass().getName(), null), "-->", to(getClass().getName(), null));
-        assertThat(ref.isSelfReference(), is(true));
+        assertThat(ref.isSelfReference()).isTrue();
     }
 
     @Test
     public void testCanonical() {
         Reference ref1 = new Reference(from("type1", null), "-->", to("type2", "*"));
         Reference ref2 = new Reference(from("type2", "*"), "<--", to("type1", null));
-        assertThat(ref1, is(equalTo(ref2)));
-        assertThat(ref2, is(equalTo(ref1)));
-        assertThat(ref1, hasToString(containsString("type1 --> \"*\" type2")));
-        assertThat(ref2, hasToString(containsString("type2 \"*\" <-- type1")));
-        assertThat(ref2.canonical(), hasToString(equalTo(ref1.toString())));
+        assertThat(ref1).isEqualTo(ref2);
+        assertThat(ref2).isEqualTo(ref1);
+        assertThat(ref1.toString()).contains("type1 --> \"*\" type2");
+        assertThat(ref2.toString()).contains("type2 \"*\" <-- type1");
+        assertThat(ref2.canonical()).hasToString(ref1.toString());
     }
 
 }

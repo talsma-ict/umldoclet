@@ -26,10 +26,8 @@ import java.util.List;
 
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class UMLOptionsTest {
     DocletConfig config;
@@ -54,35 +52,33 @@ class UMLOptionsTest {
         processOption("--uml-timeout", singletonList("1800"));
 
         // verify
-        assertThat(GlobalConfig.getInstance().value(GlobalConfigKey.TIMEOUT_MS), is(1000L * 1800));
+        assertThat(GlobalConfig.getInstance().value(GlobalConfigKey.TIMEOUT_MS)).isEqualTo(1000L * 1800);
     }
 
     @Test
     void testIllegalUmlTimeoutOption() {
-        // execute
-        IllegalArgumentException expected = assertThrows(IllegalArgumentException.class, () ->
-                processOption("--uml-timeout", singletonList("30 minutes")));
-
-        // verify
-        assertThat(expected.getMessage(), containsString("timeout value"));
+        List<String> arguments = List.of("30 minutes");
+        assertThatThrownBy(() -> processOption("--uml-timeout", arguments))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("timeout value");
     }
 
     @Test
     void testExcludePackageDependencies() {
         processOption("--uml-exclude-package-dependencies", singletonList("true"));
-        assertThat(config.excludePackageDependencies(), is(true));
+        assertThat(config.excludePackageDependencies()).isTrue();
     }
 
     @Test
     void testExcludePackageDiagrams() {
         processOption("--uml-exclude-package-diagrams", singletonList("true"));
-        assertThat(config.excludePackageDiagrams(), is(true));
+        assertThat(config.excludePackageDiagrams()).isTrue();
     }
 
     @Test
     void testExcludeClassDiagrams() {
         processOption("--uml-exclude-class-diagrams", singletonList("true"));
-        assertThat(config.excludeClassDiagrams(), is(true));
+        assertThat(config.excludeClassDiagrams()).isTrue();
     }
 
     @Test
@@ -91,7 +87,7 @@ class UMLOptionsTest {
         processOption("--fail-on-cyclic-package-dependencies", singletonList("true"));
 
         // then
-        assertThat(config.onCyclicPackageDependencies(), is(Configuration.Action.ERROR));
+        assertThat(config.onCyclicPackageDependencies()).isEqualTo(Configuration.Action.ERROR);
     }
 
     @Test
@@ -99,32 +95,32 @@ class UMLOptionsTest {
         processOption("--uml-cyclic-package-dependencies", singletonList("warn"));
         processOption("--fail-on-cyclic-package-dependencies", singletonList("true"));
 
-        assertThat(config.onCyclicPackageDependencies(), is(Configuration.Action.WARN));
+        assertThat(config.onCyclicPackageDependencies()).isEqualTo(Configuration.Action.WARN);
     }
 
     @Test
     void testUmlCyclicPackageDependenciesOverridesFailConfiguration() {
         processOption("--fail-on-cyclic-package-dependencies", singletonList("false"));
-        assertThat(config.onCyclicPackageDependencies(), is(Configuration.Action.WARN));
+        assertThat(config.onCyclicPackageDependencies()).isEqualTo(Configuration.Action.WARN);
         processOption("--uml-cyclic-package-dependencies", singletonList("ignore"));
-        assertThat(config.onCyclicPackageDependencies(), is(Configuration.Action.IGNORE));
+        assertThat(config.onCyclicPackageDependencies()).isEqualTo(Configuration.Action.IGNORE);
     }
 
     @Test
     void testIgnoreCyclicPackageDependencies() {
         processOption("--uml-cyclic-package-dependencies", singletonList("ignore"));
-        assertThat(config.onCyclicPackageDependencies(), is(Configuration.Action.IGNORE));
+        assertThat(config.onCyclicPackageDependencies()).isEqualTo(Configuration.Action.IGNORE);
     }
 
     @Test
     void testWarnCyclicPackageDependencies() {
         processOption("--uml-cyclic-package-dependencies", singletonList("warn"));
-        assertThat(config.onCyclicPackageDependencies(), is(Configuration.Action.WARN));
+        assertThat(config.onCyclicPackageDependencies()).isEqualTo(Configuration.Action.WARN);
     }
 
     @Test
     void testFailCyclicPackageDependencies() {
         processOption("--uml-cyclic-package-dependencies", singletonList("failure"));
-        assertThat(config.onCyclicPackageDependencies(), is(Configuration.Action.ERROR));
+        assertThat(config.onCyclicPackageDependencies()).isEqualTo(Configuration.Action.ERROR);
     }
 }

@@ -27,9 +27,7 @@ import java.util.Set;
 import java.util.spi.ToolProvider;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.not;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class Issue266Test {
     private static final String packageAsPath = Issue266Test.class.getPackageName().replace('.', '/');
@@ -60,7 +58,7 @@ public class Issue266Test {
     @Test
     public void testBug266Rendering() {
         // verify that no 'of' relation was rendered.
-        assertThat(classUml, not(containsString(": of")));
-        assertThat(packageUml, not(containsString(": of")));
+        assertThat(classUml).as("Class diagram").doesNotContain(": of");
+        assertThat(packageUml).as("Package diagram").doesNotContain(": of");
     }
 }

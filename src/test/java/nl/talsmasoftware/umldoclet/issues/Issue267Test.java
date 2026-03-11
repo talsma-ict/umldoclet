@@ -30,10 +30,7 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class Issue267Test {
@@ -56,12 +53,10 @@ public class Issue267Test {
         }).toLowerCase();
 
         // verify
-        assertThat(svgDiagram.isFile(), is(true));
-        assertThat(output, not(containsString("error")));
-        assertThat(output, not(containsString("exception")));
+        assertThat(svgDiagram).isFile();
+        assertThat(output).as("Diagram output").doesNotContain("error", "exception");
         String svgcontent = TestUtil.read(svgDiagram).toLowerCase();
-        assertThat(svgcontent, not(containsString("error")));
-        assertThat(svgcontent, not(containsString("exception")));
+        assertThat(svgcontent).as("SVC diagram content").doesNotContain("error", "exception");
     }
 
     private static synchronized String interceptSystemOut(Runnable runnable) {

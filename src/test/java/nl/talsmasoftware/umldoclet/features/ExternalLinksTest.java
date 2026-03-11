@@ -41,17 +41,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 /// </dl>
 ///
 /// @author Sjoerd Talsma
-class ExternalLinksTest {
+public class ExternalLinksTest {
 
     static final File testoutput = TestUtil.deleteRecursive(new File("target/issues/96"));
     static final String packageAsPath = ExternalLinksTest.class.getPackageName().replace('.', '/');
 
     @SuppressWarnings("unused")
-    static class TestClass implements Serializable {
+    public static class TestClass implements Serializable {
     }
 
     @Test
-    void testRelativeExternalLink() {
+    public void testRelativeExternalLink() {
         File externalDir = createDirectory(new File(testoutput, "externalApidocs"));
         TestUtil.write(new File(externalDir, "package-list"), Serializable.class.getPackageName());
         TestUtil.write(new File(externalDir, "java/io/package-summary.html"), "<html></html>");
@@ -76,7 +76,7 @@ class ExternalLinksTest {
     }
 
     @Test
-    void testOnlineExternalLink() {
+    public void testOnlineExternalLink() {
         File outputdir = createDirectory(new File(testoutput, "link-online"));
 
         File packageUml = new File(outputdir, packageAsPath + "/package.puml");
@@ -97,7 +97,7 @@ class ExternalLinksTest {
     }
 
     @Test
-    void testOfflineExternalLink() {
+    public void testOfflineExternalLink() {
         File externalDir = createDirectory(new File(testoutput, "externalApidocs"));
         File packageList = TestUtil.write(new File(externalDir, "package-list"), Serializable.class.getPackageName());
         File outputdir = createDirectory(new File(testoutput, "link-offline"));

@@ -27,9 +27,7 @@ import java.util.Iterator;
 import java.util.spi.ToolProvider;
 
 import static java.util.Collections.emptySet;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.not;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /// Test that any generic `EmptySet<T>` doesn't get rendered in UML as
 /// `EmptySet<T extends Object>`.
@@ -66,16 +64,17 @@ public class Issue64ExtendsObjectTest {
 
     @Test
     public void testIssue64_TextendsObject() {
-        assertThat(emptySetUml, not(containsString("EmptySet<T extends Object>")));
-        assertThat(emptySetUml, containsString("EmptySet<T>"));
+        assertThat(emptySetUml).as("EmptySet class diagram")
+                .doesNotContain("EmptySet<T extends Object>")
+                .contains("EmptySet<T>");
     }
 
     @Test
     public void testIssue82_ContainingClassReference() {
-        assertThat(emptySetUml, containsString(
-                Issue64ExtendsObjectTest.class.getName()
+        assertThat(emptySetUml).as("EmptySet class diagram")
+                .contains(Issue64ExtendsObjectTest.class.getName()
                         + " +-- "
-                        + EmptySet.class.getName().replace('$', '.')));
+                        + EmptySet.class.getName().replace('$', '.'));
     }
 
 }

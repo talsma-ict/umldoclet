@@ -24,8 +24,7 @@ import java.io.File;
 import java.net.URI;
 import java.util.Optional;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasToString;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -52,7 +51,7 @@ class LinkTest {
 
         Link subject = Link.forType(type);
 
-        assertThat(subject, hasToString(""));
+        assertThat(subject).hasToString("");
     }
 
     @Test
@@ -65,7 +64,7 @@ class LinkTest {
 
         Link subject = Link.forType(type);
 
-        assertThat(subject, hasToString("[[" + url + "]]"));
+        assertThat(subject).hasToString("[[" + url + "]]");
     }
 
     Type classType(String qualifiedName) {

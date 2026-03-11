@@ -15,34 +15,21 @@
  */
 package nl.talsmasoftware.umldoclet.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
 import java.util.UUID;
 
 import static java.lang.reflect.Modifier.FINAL;
 import static java.lang.reflect.Modifier.PRIVATE;
-import static java.util.Arrays.asList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /// @author Sjoerd Talsma
 public final class TestUtil {
 
-        /// Determine the newline for this OS.
+    /// Determine the newline for this OS.
     public static final String NEWLINE;
 
     static {
@@ -52,23 +39,18 @@ public final class TestUtil {
     }
 
     public static void assertUnsupportedConstructor(Class<?> utilityClass) {
-        assertThat("Class is final", utilityClass.getModifiers() & FINAL, is(FINAL));
-        assertThat("Constructors", asList(utilityClass.getDeclaredConstructors()), hasSize(1));
+        assertThat(utilityClass.getModifiers() & FINAL).as("Class must be final").isEqualTo(FINAL);
+        assertThat(utilityClass.getDeclaredConstructors()).as("Declared constructors").hasSize(1);
         Constructor<?> constructor = utilityClass.getDeclaredConstructors()[0];
-        assertThat("Constructor parameters", asList(constructor.getParameterTypes()), is(empty()));
-        assertThat("Constructor is private", constructor.getModifiers() & PRIVATE, is(PRIVATE));
+        assertThat(constructor.getParameterTypes()).as("Constructor parameters").isEmpty();
+        assertThat(constructor.getModifiers() & PRIVATE).as("Constructor must be private").isEqualTo(PRIVATE);
         constructor.setAccessible(true);
-        try {
-            constructor.newInstance();
-            fail("Exception expected");
-        } catch (InvocationTargetException expected) {
-            assertThat("Expected cause", expected.getCause(), is(instanceOf(UnsupportedOperationException.class)));
-        } catch (ReflectiveOperationException roe) {
-            throw new AssertionError(roe.getMessage(), roe);
-        }
+        assertThatThrownBy(constructor::newInstance)
+                .isInstanceOf(InvocationTargetException.class)
+                .cause().isInstanceOf(UnsupportedOperationException.class);
     }
 
-        /// Reads a file with a relative path from the test-content "umldoclet" path.
+    /// Reads a file with a relative path from the test-content "umldoclet" path.
     ///
     /// @param name the relative path to the file from the "umldoclet" directory.
     /// @return The content of the file (using UTF-8 encoding).
@@ -79,7 +61,7 @@ public final class TestUtil {
     }
 
     public static String read(File file) {
-        try (InputStream in = new FileInputStream(file)) {
+        try (InputStream in = Files.newInputStream(file.toPath())) {
             return readUml(in);
         } catch (Exception e) {
             throw new IllegalStateException(String.format("Cannot read from \"%s\": %s.", file, e.getMessage()), e);
@@ -121,7 +103,7 @@ public final class TestUtil {
         return dir;
     }
 
-        /// Creates a new, empty file (if it doesn't already exist).
+    /// Creates a new, empty file (if it doesn't already exist).
     ///
     /// @param file The file to create.
     public static void touch(File file) {

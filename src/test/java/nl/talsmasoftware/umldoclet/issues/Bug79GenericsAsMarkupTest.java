@@ -24,10 +24,7 @@ import java.io.File;
 import java.util.Optional;
 import java.util.spi.ToolProvider;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class Bug79GenericsAsMarkupTest {
     private static final String packageAsPath = Bug79GenericsAsMarkupTest.class.getPackageName().replace('.', '/');
@@ -49,27 +46,26 @@ public class Bug79GenericsAsMarkupTest {
     @BeforeAll
     public static void createJavadoc() {
         String classAsPath = packageAsPath + '/' + Bug79GenericsAsMarkupTest.class.getSimpleName();
-        assertThat("Javadoc result", ToolProvider.findFirst("javadoc").get().run(
+        int javadocResult = ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
                 "-d", outputdir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet",
                 "-createPumlFiles",
                 "src/test/java/" + Bug79GenericsAsMarkupTest.class.getName().replace('.', '/') + ".java"
-        ), is(0));
+        );
+        assertThat(javadocResult).as("Javadoc result").isZero();
         classUml = TestUtil.read(new File(outputdir, classAsPath + ".puml"));
     }
 
     @Test
     public void testNoMarkup() {
-        assertThat(classUml, not(containsString("Optional<U>")));
-        assertThat(classUml, not(containsString("Optional<I>")));
-        assertThat(classUml, not(containsString("Optional<B>")));
+        assertThat(classUml).as("Class diagram UML")
+                .doesNotContain("Optional<U>", "Optional<I>", "Optional<B>");
 
         String stripped = classUml.replace('\u200B', '?'); // Make zero-width-space 'visible' for test
-        assertThat(stripped, containsString("Optional<?U>"));
-        assertThat(stripped, containsString("Optional<?I>"));
-        assertThat(stripped, containsString("Optional<?B>"));
+        assertThat(stripped).as("Class diagram with zero-width-space visible")
+                .contains("Optional<?U>", "Optional<?I>", "Optional<?B>");
     }
 
 }

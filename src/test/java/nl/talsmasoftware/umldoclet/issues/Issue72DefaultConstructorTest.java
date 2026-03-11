@@ -23,9 +23,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.util.spi.ToolProvider;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.not;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class Issue72DefaultConstructorTest {
     private static final String packageAsPath = Issue72DefaultConstructorTest.class.getPackageName().replace('.', '/');
@@ -50,8 +48,8 @@ public class Issue72DefaultConstructorTest {
 
     @Test
     public void testDefaultConstructorShouldBeHidden() {
-        assertThat(classUml, not(containsString("+Issue72DefaultConstructorTest()")));
-        assertThat(packageUml, not(containsString("+Issue72DefaultConstructorTest()")));
+        assertThat(classUml).as("Class diagram").doesNotContain("+Issue72DefaultConstructorTest()");
+        assertThat(packageUml).as("Package diagram").doesNotContain("+Issue72DefaultConstructorTest()");
     }
 
 }

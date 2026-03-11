@@ -26,16 +26,16 @@ import java.util.spi.ToolProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class Bug75StackOverflowTest {
-    static final String packageAsPath = Bug75StackOverflowTest.class.getPackageName().replace('.', '/');
-    static final File outputDir = new File("target/issues/75");
+public class Bug75StackOverflowTest {
+    private static final String packageAsPath = Bug75StackOverflowTest.class.getPackageName().replace('.', '/');
+    private static final File outputDir = new File("target/issues/75");
 
-    interface Comparable<T> {
+    public interface Comparable<T> {
         <U extends Comparable<? super U>> Comparator<T> thenComparing(Function<? super T, ? extends U> keyExtractor);
     }
 
     @Test
-    void testInifiniteRecursionIsBounded() {
+    public void testInifiniteRecursionIsBounded() {
         String classAsPath = packageAsPath + '/' + Bug75StackOverflowTest.class.getSimpleName();
         int javadocResult = ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
