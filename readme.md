@@ -16,7 +16,7 @@ and link to package and class documentation where available.
 
 ### Package dependency diagram
 
-<p align="center" width="100%"><a href="https://www.javadoc.io/doc/nl.talsmasoftware/umldoclet"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/2.2.5/package-dependencies.svg" width="60%" /></a></p>
+<p align="center" width="100%"><a href="https://www.javadoc.io/doc/nl.talsmasoftware/umldoclet"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/2.3.0/package-dependencies.svg" width="60%" /></a></p>
 
 _The UML Doclet will warn about (and optionally fail on) cyclic package dependencies._
 
@@ -24,13 +24,13 @@ The dependency diagram links to package documentation containing:
 
 ### Package diagram
 
-<p align="center" width="100%"><a href="https://www.javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/uml/package-summary.html"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/2.2.5/nl/talsmasoftware/umldoclet/uml/package.svg" width="60%"/></a></p>
+<p align="center" width="100%"><a href="https://www.javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/uml/package-summary.html"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/2.3.0/nl/talsmasoftware/umldoclet/uml/package.svg" width="60%"/></a></p>
 
 The package diagram links to class documentation containing:
 
 ### Class diagram
 
-<p align="center" width="100%"><a href="https://www.javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/javadoc/dependencies/PackageDependencyCycle.html"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/2.2.5/nl/talsmasoftware/umldoclet/javadoc/dependencies/PackageDependencyCycle.svg" width="60%"/></a></p>
+<p align="center" width="100%"><a href="https://www.javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/javadoc/dependencies/PackageDependencyCycle.html"><img src="https://javadoc.io/page/nl.talsmasoftware/umldoclet/2.3.0/nl/talsmasoftware/umldoclet/javadoc/dependencies/PackageDependencyCycle.svg" width="60%"/></a></p>
 
 (These examples are from the [latest UML Doclet javadoc][javadoc] page. Please feel free to take a look to get an idea of the final result)
 
