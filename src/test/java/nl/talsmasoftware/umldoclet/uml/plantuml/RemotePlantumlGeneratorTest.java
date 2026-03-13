@@ -25,14 +25,12 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.sameInstance;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doThrow;
@@ -55,7 +53,8 @@ class RemotePlantumlGeneratorTest {
 
     @Test
     void nonHttpBaseUrlsAreRejected() {
-        assertThrows(IllegalArgumentException.class, () -> new RemotePlantumlGenerator("file:///etc/passwd"));
+        assertThatThrownBy(() -> new RemotePlantumlGenerator("file:///etc/passwd"))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -67,12 +66,12 @@ class RemotePlantumlGeneratorTest {
         testDiagram.delete();
 
         // execute
-        try (OutputStream out = new FileOutputStream(testDiagram)) {
+        try (OutputStream out = Files.newOutputStream(testDiagram.toPath())) {
             subject.generatePlantumlDiagramFromSource(testUml, FileFormat.SVG, out);
         }
 
         // verify
-        assertThat(testDiagram.isFile(), is(true));
+        assertThat(testDiagram).isFile();
     }
 
     @Test
@@ -81,10 +80,8 @@ class RemotePlantumlGeneratorTest {
         IOException ioException = new IOException("Stream already closed!");
         doThrow(ioException).when(mockOutput).write(any(byte[].class), anyInt(), anyInt());
 
-        RuntimeException expected = assertThrows(RuntimeException.class, () ->
-                subject.generatePlantumlDiagramFromSource(testUml, FileFormat.SVG, mockOutput));
-
-        assertThat(expected.getCause(), sameInstance(ioException));
+        assertThatThrownBy(() -> subject.generatePlantumlDiagramFromSource(testUml, FileFormat.SVG, mockOutput))
+                .isInstanceOf(RuntimeException.class).cause().isSameAs(ioException);
     }
 
 }

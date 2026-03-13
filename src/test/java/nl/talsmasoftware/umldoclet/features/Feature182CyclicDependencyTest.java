@@ -25,9 +25,7 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.spi.ToolProvider;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class Feature182CyclicDependencyTest {
     private static final File outputdir = new File("target/issues/182");
@@ -52,10 +50,8 @@ public class Feature182CyclicDependencyTest {
                 myPackage, cyclicPackage
         );
         err.flush();
-        assertThat("Javadoc result", resultcode, is(0));
-
-        assertThat(output.toString("UTF-8"),
-                containsString(myPackage + " > " + cyclicPackage + " > " + myPackage));
+        assertThat(resultcode).as("Javadoc result").isZero();
+        assertThat(output.toString("UTF-8")).contains(myPackage + " > " + cyclicPackage + " > " + myPackage);
     }
 
     @Test
@@ -75,10 +71,9 @@ public class Feature182CyclicDependencyTest {
                 myPackage, cyclicPackage
         );
         err.flush();
-        assertThat("Javadoc result", resultcode, is(1));
+        assertThat(resultcode).as("Javadoc result").isOne();
 
-        assertThat(output.toString("UTF-8"),
-                containsString(myPackage + " > " + cyclicPackage + " > " + myPackage));
+        assertThat(output.toString("UTF-8")).contains(myPackage + " > " + cyclicPackage + " > " + myPackage);
     }
 
 }

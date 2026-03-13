@@ -31,10 +31,13 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.util.Optional;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class ExternalLinkTest {
     private Configuration config;
@@ -46,7 +49,7 @@ public class ExternalLinkTest {
         logger = new TestLogger();
         config = mock(Configuration.class);
         tempdir = Files.createTempDirectory("umldoclet-externallink-test").toFile();
-        assertThat("Create tempdir", tempdir.isDirectory(), is(true));
+        assertThat(tempdir).as("Created tempdirectory").isDirectory();
         when(config.logger()).thenReturn(logger);
     }
 
@@ -63,23 +66,23 @@ public class ExternalLinkTest {
 
     @Test
     public void testExternalLinkWithoutConfig() {
-        NullPointerException expected = assertThrows(NullPointerException.class, () ->
-                new ExternalLink(null, "apidoc", "packageList"));
-        assertThat(expected.getMessage(), notNullValue());
+        assertThatThrownBy(() -> new ExternalLink(null, "apidoc", "packageList"))
+                .isInstanceOf(NullPointerException.class)
+                .message().isNotBlank();
     }
 
     @Test
     public void testExternalLinkWithoutApidoc() {
-        NullPointerException expected = assertThrows(NullPointerException.class, () ->
-                new ExternalLink(config, null, "packageList"));
-        assertThat(expected.getMessage(), notNullValue());
+        assertThatThrownBy(() -> new ExternalLink(config, null, "packageList"))
+                .isInstanceOf(NullPointerException.class)
+                .message().isNotBlank();
     }
 
     @Test
     public void testExternalLinkWithoutPackageListLocation() {
-        NullPointerException expected = assertThrows(NullPointerException.class, () ->
-                new ExternalLink(config, "apidoc", null));
-        assertThat(expected.getMessage(), notNullValue());
+        assertThatThrownBy(() -> new ExternalLink(config, "apidoc", null))
+                .isInstanceOf(NullPointerException.class)
+                .message().isNotBlank();
     }
 
     @Test
@@ -88,17 +91,17 @@ public class ExternalLinkTest {
         ExternalLink externalLink = new ExternalLink(config, "doesn't-exist", "doesn't-exist");
 
         Optional<URI> resolved = externalLink.resolveType("com.my.package", "MyBeautifulClass");
-        assertThat(resolved, is(Optional.empty()));
+        assertThat(resolved).isEmpty();
 
-        assertThat(logger.countMessages(Message.WARNING_CANNOT_READ_PACKAGE_LIST::equals), is(1));
+        assertThat(logger.countMessages(Message.WARNING_CANNOT_READ_PACKAGE_LIST::equals)).isOne();
         verify(config, atLeast(1)).destinationDirectory();
     }
 
     @Test
     public void testIllegalUrls() {
-        IllegalArgumentException expected = assertThrows(IllegalArgumentException.class, () ->
-                new ExternalLink(config, "https://www.google.com?\nq=query", ""));
-        assertThat(expected.getMessage(), notNullValue());
+        assertThatThrownBy(() -> new ExternalLink(config, "https://www.google.com?\nq=query", ""))
+                .isInstanceOf(IllegalArgumentException.class)
+                .message().isNotBlank();
     }
 
     @Test
@@ -109,7 +112,7 @@ public class ExternalLinkTest {
         ExternalLink externalLink = new ExternalLink(config, "https://www.google.com/apidocs", tempdir.getPath());
 
         Optional<URI> resolved = externalLink.resolveType("java.lang", "Object");
-        assertThat(resolved, is(Optional.empty()));
+        assertThat(resolved).isEmpty();
         verify(config, atLeast(1)).destinationDirectory();
     }
 
@@ -121,7 +124,7 @@ public class ExternalLinkTest {
         ExternalLink externalLink = new ExternalLink(config, "https://www.google.com/apidocs", tempdir.getPath());
 
         Optional<URI> resolved = externalLink.resolveType("java.lang", "Object");
-        assertThat(resolved, is(Optional.empty()));
+        assertThat(resolved).isEmpty();
         verify(config, atLeast(1)).destinationDirectory();
     }
 
@@ -132,13 +135,13 @@ public class ExternalLinkTest {
         URI toUri = file.toURI();
         URI uriFromPath = URI.create(file.getPath());
 
-        assertThat(toUri.isAbsolute(), is(true));
-        assertThat(toUri.getScheme(), is("file"));
-        assertThat(new File(toUri).isFile(), is(true));
+        assertThat(toUri.isAbsolute()).isTrue();
+        assertThat(toUri.getScheme()).isEqualTo("file");
+        assertThat(new File(toUri)).isFile();
 
-        assertThat(uriFromPath.isAbsolute(), is(false));
-        assertThat(uriFromPath.getScheme(), is(nullValue()));
-        assertThat(new File(uriFromPath.toString()).isFile(), is(true));
+        assertThat(uriFromPath.isAbsolute()).isFalse();
+        assertThat(uriFromPath.getScheme()).isNull();
+        assertThat(new File(uriFromPath.toString())).isFile();
     }
 
 }

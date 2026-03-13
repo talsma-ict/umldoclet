@@ -20,8 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class PackagenameValidatorTest {
 
@@ -34,25 +33,25 @@ class PackagenameValidatorTest {
 
     @Test
     void unnamed_package_must_be_valid() {
-        assertThat(subject.test(""), is(true));
+        assertThat(subject.test("")).isTrue();
     }
 
     @ParameterizedTest
     @ValueSource(strings = {".", ".prefixed", "suffixed."})
     void must_not_start_or_end_with_dot(String candidatePackageName) {
-        assertThat(subject.test(candidatePackageName), is(false));
+        assertThat(subject.test(candidatePackageName)).isFalse();
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"my package", "my-package"})
     void package_may_not_contain_spaces_or_dashes(String candidatePackageName) {
-        assertThat(subject.test(candidatePackageName), is(false));
+        assertThat(subject.test(candidatePackageName)).isFalse();
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"nl.talsmasoftware.umldoclet", "nl.talsma_software", "no_dot"})
     void valid_package_names_must_pass_validation(String candidatePackageName) {
-        assertThat(subject.test(candidatePackageName), is(true));
+        assertThat(subject.test(candidatePackageName)).isTrue();
     }
 
 }

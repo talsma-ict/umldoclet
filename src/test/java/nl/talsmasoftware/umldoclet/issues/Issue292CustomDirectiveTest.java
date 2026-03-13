@@ -23,8 +23,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.util.spi.ToolProvider;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class Issue292CustomDirectiveTest {
     private static final String packageAsPath = Issue292CustomDirectiveTest.class.getPackageName().replace('.', '/');
@@ -51,17 +50,17 @@ public class Issue292CustomDirectiveTest {
 
     @Test
     public void testCustomDirectiveInClassDiagram() {
-        assertThat(classUml, containsString("skinparam handwritten true"));
+        assertThat(classUml).as("Class diagram").contains("skinparam handwritten true");
     }
 
     @Test
     public void testCustomDirectiveInPackageDiagram() {
-        assertThat(packageUml, containsString("skinparam handwritten true"));
+        assertThat(packageUml).as("Package diagram").contains("skinparam handwritten true");
     }
 
     @Test
     public void testCustomDirectiveInPackageDependenciesDiagram() {
-        assertThat(packageDependenciesUml, containsString("skinparam handwritten true"));
+        assertThat(packageDependenciesUml).as("Dependencies diagram").contains("skinparam handwritten true");
     }
 
 }

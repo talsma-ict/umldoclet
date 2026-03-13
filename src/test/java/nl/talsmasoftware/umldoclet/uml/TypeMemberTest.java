@@ -17,17 +17,16 @@ package nl.talsmasoftware.umldoclet.uml;
 
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TypeMemberTest {
 
     @Test
     public void testMinimalTypeMemberInstance() {
         TypeMember minimalInstance = new MinimalTypeMember("name");
-        assertThat(minimalInstance.hashCode(), is(new MinimalTypeMember("name").hashCode()));
-        assertThat(minimalInstance, is(equalTo(new MinimalTypeMember("name"))));
+        assertThat(minimalInstance)
+                .hasSameHashCodeAs(new MinimalTypeMember("name"))
+                .isEqualTo(new MinimalTypeMember("name"));
         // TODO: newline rendering should be in the writeChildren logic, not the child itself
 //        assertThat(minimalInstance, hasToString("+name"));
     }

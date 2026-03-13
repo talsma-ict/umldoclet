@@ -22,8 +22,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.util.spi.ToolProvider;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /// Tests <a href="https://github.com/talsma-ict/umldoclet/issues/25">enhancement 25</a>:
 /// Send images to a single directory.
@@ -48,16 +47,13 @@ public class Issue25ImagedirTest {
     @Test
     public void testImagesDirectoryPresence() {
         File imagesDir = new File("target/issues/25/images");
-        assertThat("images dir exists", imagesDir.exists(), is(true));
-        assertThat("images dir is directory", imagesDir.isDirectory(), is(true));
+        assertThat(imagesDir).as("Images directory").exists().isDirectory();
     }
 
     @Test
     public void testEnhancement25ImagePresence() {
         File imageFile = new File("target/issues/25/images/" + getClass().getName() + ".svg");
-        assertThat("image " + imageFile + " exists", imageFile.exists(), is(true));
-        assertThat("image is directory", imageFile.isDirectory(), is(false));
-        assertThat("image is file", imageFile.isFile(), is(true));
+        assertThat(imageFile).as("Image file").exists().isFile();
     }
 
 }

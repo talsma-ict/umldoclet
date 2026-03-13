@@ -21,40 +21,40 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.util.spi.ToolProvider;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.io.FileMatchers.anExistingFileOrDirectory;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Fail.fail;
 
-public class Issue194SkipStandardDocletTest {
-    private static final File outputdir = new File("target/issues/194");
+class Issue194SkipStandardDocletTest {
+    static final File outputdir = new File("target/issues/194");
 
     @Test
-    public void testNoStandardDocletDelegation() {
-        assertThat("Javadoc result", ToolProvider.findFirst("javadoc").get().run(
-                System.out, System.err,
-                "-d", outputdir.getPath(),
-                "-sourcepath", "src/test/java",
-                "-doclet", UMLDoclet.class.getName(),
-                "-quiet",
-                "--delegate-doclet", "false",
-                "--uml-image-directory", ".",
-                Issue194SkipStandardDocletTest.class.getPackageName()
-        ), is(0));
+    void testNoStandardDocletDelegation() {
+        int javadocResult = ToolProvider.findFirst("javadoc")
+                .orElseGet(() -> fail("No javadoc implementation available"))
+                .run(System.out, System.err,
+                        "-d", outputdir.getPath(),
+                        "-sourcepath", "src/test/java",
+                        "-doclet", UMLDoclet.class.getName(),
+                        "-quiet",
+                        "--delegate-doclet", "false",
+                        "--uml-image-directory", ".",
+                        Issue194SkipStandardDocletTest.class.getPackageName());
+        assertThat(javadocResult).as("Javadoc result").isZero();
 
-        assertThat(new File(outputdir, "index.html"), not(anExistingFileOrDirectory()));
+        assertThat(new File(outputdir, "index.html")).doesNotExist();
     }
 
     @Test
-    public void testUsupportedDelegateDoclet() {
-        assertThat("Delegate doclets currently unsupported", ToolProvider.findFirst("javadoc").get().run(
-                System.out, System.err,
-                "-d", outputdir.getPath(),
-                "-sourcepath", "src/test/java",
-                "-doclet", UMLDoclet.class.getName(),
-                "-quiet",
-                "--delegate-doclet", "foo.bar.DummyDoclet",
-                Issue194SkipStandardDocletTest.class.getPackageName()
-        ), is(1));
+    void testUsupportedDelegateDoclet() {
+        int javadocResult = ToolProvider.findFirst("javadoc")
+                .orElseGet(() -> fail("No javadoc implementation available"))
+                .run(System.out, System.err,
+                        "-d", outputdir.getPath(),
+                        "-sourcepath", "src/test/java",
+                        "-doclet", UMLDoclet.class.getName(),
+                        "-quiet",
+                        "--delegate-doclet", "foo.bar.DummyDoclet",
+                        Issue194SkipStandardDocletTest.class.getPackageName());
+        assertThat(javadocResult).as("Delegate doclets currently unsupported").isOne();
     }
 }

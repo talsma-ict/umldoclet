@@ -24,11 +24,7 @@ import nl.talsmasoftware.umldoclet.uml.TypeName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class UmlPostProcessorsTest {
@@ -54,10 +50,10 @@ public class UmlPostProcessorsTest {
     public void testJavaBeanPropertiesAsFieldsPostProcessorAcceptsEmptyType() {
         Type emptyType = new Type(UNNAMED, Classification.CLASS, typeName("EmptyType"));
         postProcessors.javaBeanPropertiesAsFieldsPostProcessor().accept(emptyType);
-        assertThat(emptyType.getPackagename(), equalTo(""));
-        assertThat(emptyType.getClassfication(), is(Classification.CLASS));
-        assertThat(emptyType.getName(), equalTo(typeName("EmptyType")));
-        assertThat(emptyType.getChildren(), is(empty()));
+        assertThat(emptyType.getPackagename()).isEmpty();
+        assertThat(emptyType.getClassfication()).isEqualTo(Classification.CLASS);
+        assertThat(emptyType.getName()).isEqualTo(typeName("EmptyType"));
+        assertThat(emptyType.getChildren()).isEmpty();
     }
 
     @Test
@@ -71,14 +67,14 @@ public class UmlPostProcessorsTest {
         simpleBean.addChild(setter);
         simpleBean.addChild(businessMethod);
 
-        assertThat(simpleBean.getChildren(Method.class), hasSize(3));
-        assertThat(simpleBean.getChildren(Field.class), is(empty()));
+        assertThat(simpleBean.getChildren(Method.class)).hasSize(3);
+        assertThat(simpleBean.getChildren(Field.class)).isEmpty();
 
         postProcessors.javaBeanPropertiesAsFieldsPostProcessor().accept(simpleBean);
-        assertThat(simpleBean.getChildren(Method.class), hasSize(1));
-        assertThat(simpleBean.getChildren(Method.class).get(0).name, equalTo("someBusinessMethod"));
-        assertThat(simpleBean.getChildren(Field.class), hasSize(1));
-        assertThat(simpleBean.getChildren(Field.class).get(0).name, equalTo("stringValue"));
+        assertThat(simpleBean.getChildren(Method.class)).singleElement()
+                .hasFieldOrPropertyWithValue("name", "someBusinessMethod");
+        assertThat(simpleBean.getChildren(Field.class)).singleElement()
+                .hasFieldOrPropertyWithValue("name", "stringValue");
     }
 
     private static TypeName typeName(String qualified) {

@@ -29,8 +29,7 @@ import javax.lang.model.element.Element;
 import javax.tools.Diagnostic;
 import java.util.Locale;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.stringContainsInOrder;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -178,6 +177,6 @@ public class LocalizedReporterTest {
     @Test
     void testLocalizeMessageParameter() {
         String result = localizedReporter.localize(Message.INFO_GENERATING_FILE, Message.PLANTUML_COPYRIGHT);
-        assertThat(result, stringContainsInOrder("Generating", "This software uses PlantUML"));
+        assertThat(result).contains("Generating", "This software uses PlantUML");
     }
 }

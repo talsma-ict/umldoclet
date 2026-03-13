@@ -22,11 +22,8 @@ import java.io.IOException;
 
 import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
 import static nl.talsmasoftware.umldoclet.util.TestUtil.assertUnsupportedConstructor;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class FileUtilsTest {
 
@@ -43,50 +40,45 @@ public class FileUtilsTest {
             final char sep = File.separatorChar;
 
             // relitive to tempfile means relative to tempdir
-            assertThat(relativePath(tempfile,
-                    new File(tempdir, "testfile.adoc")),
-                    is("testfile.adoc"));
-            assertThat(relativePath(tempdir,
-                    new File(tempdir, "testfile.adoc")),
-                    is("testfile.adoc"));
-            assertThat(relativePath(tempdir,
-                    new File(tempdir, "subdir1" + sep + "testfile.adoc")),
-                    is("subdir1/testfile.adoc"));
-            assertThat(relativePath(tempdir,
-                    new File(tempdir, "subdir1" + sep + "subdir2" + sep + "testfile.adoc")),
-                    is("subdir1/subdir2/testfile.adoc"));
+            assertThat(relativePath(tempfile, new File(tempdir, "testfile.adoc"))).isEqualTo("testfile.adoc");
+            assertThat(relativePath(tempdir, new File(tempdir, "testfile.adoc"))).isEqualTo("testfile.adoc");
+            assertThat(relativePath(tempdir, new File(tempdir, "subdir1" + sep + "testfile.adoc")))
+                    .isEqualTo("subdir1/testfile.adoc");
+            assertThat(relativePath(tempdir, new File(tempdir, "subdir1" + sep + "subdir2" + sep + "testfile.adoc")))
+                    .isEqualTo("subdir1/subdir2/testfile.adoc");
 
         } finally {
-            assertThat("Tempfile opruimen", tempfile.delete(), is(true));
+            assertThat(tempfile.delete()).isTrue();
         }
     }
 
     @Test
     public void testRelativePathFromNull() {
-        assertThat(relativePath(null, new File("testfile.adoc")), is(nullValue()));
+        assertThat(relativePath(null, new File("testfile.adoc"))).isNull();
     }
 
     @Test
     public void testRelativePathToNull() {
-        assertThat(relativePath(new File("."), null), is(nullValue()));
+        assertThat(relativePath(new File("."), null)).isNull();
     }
 
     @Test
     public void testCreateParentDirWhenParentIsFile() throws IOException {
         File tempFile = File.createTempFile("umldoclet-", "-test.tmp");
-        assertThrows(IllegalStateException.class, () -> FileUtils.ensureParentDir(new File(tempFile, "sub-file")));
+        File subfile = new File(tempFile, "sub-file");
+        assertThatThrownBy(() -> FileUtils.ensureParentDir(subfile)).isInstanceOf(IllegalStateException.class);
         tempFile.delete();
     }
 
     @Test
     public void testWithoutExtension() {
-        assertThat(FileUtils.withoutExtension(null), is(nullValue()));
-        assertThat(FileUtils.withoutExtension(""), equalTo(""));
-        assertThat(FileUtils.withoutExtension("foo.bar"), equalTo("foo"));
-        assertThat(FileUtils.withoutExtension("foo/bar.ext"), equalTo("foo/bar"));
-        assertThat(FileUtils.withoutExtension("foo.ext/bar.ext"), equalTo("foo.ext/bar"));
-        assertThat(FileUtils.withoutExtension("Outer.InnerClass.html"), equalTo("Outer.InnerClass"));
-        assertThat(FileUtils.withoutExtension("foo.bar/ext"), equalTo("foo.bar/ext"));
+        assertThat(FileUtils.withoutExtension(null)).isNull();
+        assertThat(FileUtils.withoutExtension("")).isEmpty();
+        assertThat(FileUtils.withoutExtension("foo.bar")).isEqualTo("foo");
+        assertThat(FileUtils.withoutExtension("foo/bar.ext")).isEqualTo("foo/bar");
+        assertThat(FileUtils.withoutExtension("foo.ext/bar.ext")).isEqualTo("foo.ext/bar");
+        assertThat(FileUtils.withoutExtension("Outer.InnerClass.html")).isEqualTo("Outer.InnerClass");
+        assertThat(FileUtils.withoutExtension("foo.bar/ext")).isEqualTo("foo.bar/ext");
     }
 
 }

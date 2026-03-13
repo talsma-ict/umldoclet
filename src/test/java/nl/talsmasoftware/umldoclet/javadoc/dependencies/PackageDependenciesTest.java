@@ -23,10 +23,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.util.spi.ToolProvider;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class PackageDependenciesTest {
     private static final File testDir = new File("target/test-uml/package-dependencies");
@@ -34,26 +31,26 @@ public class PackageDependenciesTest {
     @Test
     public void testPackageDependenciesDefaultExclusions() {
         File output = TestUtil.createDirectory(new File(testDir, "default-exclusions"));
-        assertThat("Javadoc result", ToolProvider.findFirst("javadoc").get().run(
+        int javadocResult = ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
                 "-d", output.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet", "-createPumlFiles",
                 "-umlImageFormat", "none",
                 "src/main/java/" + DependenciesElementScanner.class.getName().replace('.', '/') + ".java"
-        ), is(0));
+        );
+        assertThat(javadocResult).as("Javadoc result").isZero();
 
-        String puml = TestUtil.read(new File(output, "package-dependencies.puml"));
-        assertThat(puml, containsString("nl.talsmasoftware.umldoclet.javadoc.dependencies --> jdk.javadoc.doclet"));
-        assertThat(puml, not(containsString("java.lang")));
-        assertThat(puml, not(containsString("javax.lang")));
-        assertThat(puml, not(containsString("java.util")));
+        assertThat(TestUtil.read(new File(output, "package-dependencies.puml")))
+                .as("Package dependencies")
+                .contains("nl.talsmasoftware.umldoclet.javadoc.dependencies --> jdk.javadoc.doclet")
+                .doesNotContain("java.lang", "javax.lang", "java.util");
     }
 
     @Test
     public void testPackageDependenciesWithoutExclusions() {
         File output = TestUtil.createDirectory(new File(testDir, "without-exclusions"));
-        assertThat("Javadoc result", ToolProvider.findFirst("javadoc").get().run(
+        int javadocResult = ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
                 "-d", output.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
@@ -61,19 +58,20 @@ public class PackageDependenciesTest {
                 "-umlImageFormat", "none",
                 "-umlExcludedPackageDependencies", "",
                 "src/main/java/" + DependenciesElementScanner.class.getName().replace('.', '/') + ".java"
-        ), is(0));
+        );
+        assertThat(javadocResult).as("Javadoc result").isZero();
 
-        String puml = TestUtil.read(new File(output, "package-dependencies.puml"));
-        assertThat(puml, containsString("nl.talsmasoftware.umldoclet.javadoc.dependencies --> java.lang"));
-        assertThat(puml, containsString("nl.talsmasoftware.umldoclet.javadoc.dependencies --> javax.lang.model.type"));
-        assertThat(puml, containsString("nl.talsmasoftware.umldoclet.javadoc.dependencies --> jdk.javadoc.doclet"));
-        assertThat(puml, containsString("nl.talsmasoftware.umldoclet.javadoc.dependencies --> java.util"));
+        assertThat(TestUtil.read(new File(output, "package-dependencies.puml"))).as("Package dependencies")
+                .contains("nl.talsmasoftware.umldoclet.javadoc.dependencies --> java.lang",
+                        "nl.talsmasoftware.umldoclet.javadoc.dependencies --> javax.lang.model.type",
+                        "nl.talsmasoftware.umldoclet.javadoc.dependencies --> jdk.javadoc.doclet",
+                        "nl.talsmasoftware.umldoclet.javadoc.dependencies --> java.util");
     }
 
     @Test
     public void testPackageDependenciesCustomExclusions() {
         File output = TestUtil.createDirectory(new File(testDir, "custom-exclusions"));
-        assertThat("Javadoc result", ToolProvider.findFirst("javadoc").get().run(
+        int javadocResult = ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
                 "-d", output.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
@@ -81,29 +79,31 @@ public class PackageDependenciesTest {
                 "-umlImageFormat", "none",
                 "-umlExcludedPackageDependencies", "jdk.javadoc",
                 "src/main/java/" + DependenciesElementScanner.class.getName().replace('.', '/') + ".java"
-        ), is(0));
+        );
+        assertThat(javadocResult).as("Javadoc result").isZero();
 
-        String puml = TestUtil.read(new File(output, "package-dependencies.puml"));
-        assertThat(puml, not(containsString("jdk.javadoc")));
-        assertThat(puml, containsString("nl.talsmasoftware.umldoclet.javadoc.dependencies --> java.lang"));
-        assertThat(puml, containsString("nl.talsmasoftware.umldoclet.javadoc.dependencies --> javax.lang.model.type"));
-        assertThat(puml, containsString("nl.talsmasoftware.umldoclet.javadoc.dependencies --> java.util"));
+        assertThat(TestUtil.read(new File(output, "package-dependencies.puml"))).as("Package dependencies")
+                .doesNotContain("jdk.javadoc")
+                .contains("nl.talsmasoftware.umldoclet.javadoc.dependencies --> java.lang",
+                        "nl.talsmasoftware.umldoclet.javadoc.dependencies --> javax.lang.model.type",
+                        "nl.talsmasoftware.umldoclet.javadoc.dependencies --> java.util");
     }
 
     @Test
     public void testPackageDependenciesIncludeExceptions() throws TestException {
         String expectedPackageDependency = getClass().getPackageName() + " --> " + TestException.class.getPackageName();
         File output = TestUtil.createDirectory(new File(testDir, "exception-dependencies"));
-        assertThat("Javadoc reult", ToolProvider.findFirst("javadoc").get().run(
+        int javadocResult = ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
                 "-d", output.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet", "-createPumlFiles",
-                "src/test/java/" +PackageDependenciesTest.class.getName().replace('.', '/') + ".java"
-        ), is(0));
+                "src/test/java/" + PackageDependenciesTest.class.getName().replace('.', '/') + ".java"
+        );
+        assertThat(javadocResult).as("Javadoc result").isZero();
 
-        String puml = TestUtil.read(new File(output, "package-dependencies.puml"));
-        assertThat(puml, containsString(expectedPackageDependency));
+        assertThat(TestUtil.read(new File(output, "package-dependencies.puml"))).as("Package dependencies")
+                .contains(expectedPackageDependency);
     }
 
 }

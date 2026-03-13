@@ -24,10 +24,7 @@ import java.util.Comparator;
 import java.util.function.Function;
 import java.util.spi.ToolProvider;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class Bug75StackOverflowTest {
     private static final String packageAsPath = Bug75StackOverflowTest.class.getPackageName().replace('.', '/');
@@ -40,18 +37,19 @@ public class Bug75StackOverflowTest {
     @Test
     public void testInifiniteRecursionIsBounded() {
         String classAsPath = packageAsPath + '/' + Bug75StackOverflowTest.class.getSimpleName();
-        assertThat("Javadoc result", ToolProvider.findFirst("javadoc").get().run(
+        int javadocResult = ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
                 "-d", outputDir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet",
                 "-createPumlFiles",
                 "src/test/java/" + Bug75StackOverflowTest.class.getName().replace('.', '/') + ".java"
-        ), is(0));
+        );
+        assertThat(javadocResult).as("Javadoc result").isZero();
         TestUtil.read(new File(outputDir, classAsPath + ".puml"));
         String packageUml = TestUtil.read(new File(outputDir, packageAsPath + "/package.puml"));
 
-        assertThat(packageUml, not(containsString("? extends Comparable<? super Comparable<? super Comparable")));
+        assertThat(packageUml).doesNotContain("? extends Comparable<? super Comparable<? super Comparable");
     }
 
 }

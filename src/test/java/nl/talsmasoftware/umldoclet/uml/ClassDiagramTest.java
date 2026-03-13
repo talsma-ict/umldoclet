@@ -30,9 +30,11 @@ import java.util.Optional;
 
 import static java.util.Collections.singleton;
 import static nl.talsmasoftware.umldoclet.configuration.ImageConfig.Format.SVG;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ClassDiagramTest {
 
@@ -82,9 +84,8 @@ public class ClassDiagramTest {
                 Reference.to("foo.bar.Bar", null)));
 
         classDiagram.render();
-        String uml = TestUtil.read(new File(testdir + "/foo/bar/Bar.puml"));
-        assertThat(uml, containsString("foo.bar.Bar [[Bar.html]]"));
-        assertThat(uml, containsString("foo.Foo [[../Foo.html]]"));
+        assertThat(TestUtil.read(new File(testdir + "/foo/bar/Bar.puml")))
+                .contains("foo.bar.Bar [[Bar.html]]", "foo.Foo [[../Foo.html]]");
     }
 
 }

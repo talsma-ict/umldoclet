@@ -23,9 +23,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.util.spi.ToolProvider;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /// This is a test for <a href="https://github.com/talsma-ict/umldoclet/issues/245">bug 245</a> where
 /// a sub-interface relationship is incorrectly rendered with a dotted line,
@@ -48,33 +46,32 @@ public class Bug245SubInterfaceTest {
     @BeforeAll
     public static void generateUmlForIssue245() {
         String pathToTest = Bug245SubInterfaceTest.class.getName().replace('.', '/');
-        assertThat(ToolProvider.findFirst("javadoc").get().run(
+        int javadocResult = ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
                 "-d", "target/issues/245",
                 "-doclet", UMLDoclet.class.getName(),
                 "-createPumlFiles",
                 "src/test/java/" + pathToTest + ".java"
-        ), is(0));
+        );
+        assertThat(javadocResult).as("Javadoc result").isZero();
 
         umlFile = "target/issues/245/" + pathToTest + ".puml";
     }
 
-        /// Test that the bug is fixed; interfase extension with solid line, not dotted.
+    /// Test that the bug is fixed; interfase extension with solid line, not dotted.
     @Test
     public void testExtensionOfInterfaseWithSolidLine() {
         String uml = TestUtil.read(new File(umlFile.replace(".puml", ".SubInterface.puml")));
-        assertThat("SubInterfase extends ParentInterface", uml,
-                containsString(getClass().getName() + ".ParentInterface"
-                        + " <|-- " + getClass().getName() + ".SubInterface"));
+        assertThat(uml).as("Subinterface UML diagram")
+                .contains(getClass().getName() + ".ParentInterface" + " <|-- " + getClass().getName() + ".SubInterface");
     }
 
-        /// Tests that there is no new regression bug from this fix.
+    /// Tests that there is no new regression bug from this fix.
     @Test
     public void testImplementationOfInterfaceWithDottedLine() {
         String uml = TestUtil.read(new File(umlFile.replace(".puml", ".Implementation.puml")));
-        assertThat("Implementation implements ParentInterface", uml,
-                containsString(getClass().getName() + ".ParentInterface"
-                        + " <|.. " + getClass().getName() + ".Implementation"));
+        assertThat(uml).as("Implementation UML diagram")
+                .contains(getClass().getName() + ".ParentInterface" + " <|.. " + getClass().getName() + ".Implementation");
     }
 
 }

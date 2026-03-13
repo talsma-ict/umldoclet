@@ -21,34 +21,34 @@ import java.util.Collection;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasToString;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class PackageDependencyCycleTest {
 
     @Test
     public void testEmptyDependencyCycle() {
-        IllegalArgumentException expected = assertThrows(IllegalArgumentException.class, PackageDependencyCycle::new);
-        assertThat(expected.getMessage(), notNullValue());
+        assertThatThrownBy(PackageDependencyCycle::new)
+                .isInstanceOf(IllegalArgumentException.class)
+                .message().isNotBlank();
     }
 
     @Test
     public void testIncompleteCycle() {
-        IllegalArgumentException expected = assertThrows(IllegalArgumentException.class, () ->
-                new PackageDependencyCycle(new PackageDependency("a", "b"), new PackageDependency("b", "c")));
-        assertThat(expected.getMessage(), notNullValue());
+        PackageDependency ab = new PackageDependency("a", "b");
+        PackageDependency bc = new PackageDependency("b", "c");
+        assertThatThrownBy(() -> new PackageDependencyCycle(ab, bc))
+                .isInstanceOf(IllegalArgumentException.class)
+                .message().isNotBlank();
     }
 
     @Test
     public void testDependencyCycleToString() {
         assertThat(new PackageDependencyCycle(
-                        new PackageDependency("a", "b"),
-                        new PackageDependency("b", "c"),
-                        new PackageDependency("c", "a")),
-                hasToString("a > b > c > a"));
+                new PackageDependency("a", "b"),
+                new PackageDependency("b", "c"),
+                new PackageDependency("c", "a")))
+                .hasToString("a > b > c > a");
     }
 
     @Test
@@ -57,7 +57,7 @@ public class PackageDependencyCycleTest {
         PackageDependency ba = new PackageDependency("b", "a");
 
         Collection<PackageDependencyCycle> cycles = PackageDependencyCycle.detectCycles(asList(ab, ba));
-        assertThat(cycles, hasItem(new PackageDependencyCycle(ab, ba)));
+        assertThat(cycles).contains(new PackageDependencyCycle(ab, ba));
     }
 
     @Test
@@ -74,10 +74,11 @@ public class PackageDependencyCycleTest {
         List<PackageDependency> alldeps = asList(ab, bc, bd, cd, de, ba, ca, ea);
 
         Collection<PackageDependencyCycle> cycles = PackageDependencyCycle.detectCycles(alldeps);
-        assertThat(cycles, hasItem(new PackageDependencyCycle(ab, ba)));
-        assertThat(cycles, hasItem(new PackageDependencyCycle(ab, bc, ca)));
-        assertThat(cycles, hasItem(new PackageDependencyCycle(ab, bc, cd, de, ea)));
-        assertThat(cycles, hasItem(new PackageDependencyCycle(ab, bd, de, ea)));
+        assertThat(cycles)
+                .contains(new PackageDependencyCycle(ab, ba),
+                        new PackageDependencyCycle(ab, bc, ca),
+                        new PackageDependencyCycle(ab, bc, cd, de, ea),
+                        new PackageDependencyCycle(ab, bd, de, ea));
     }
 
 }

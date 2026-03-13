@@ -19,19 +19,17 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasToString;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /// @author Sjoerd Talsma
 public class StringBufferingWriterTest {
 
     @Test
     public void createWithNullDelegate() {
-        NullPointerException expected = assertThrows(NullPointerException.class, () ->
-                new StringBufferingWriter(null));
-        assertThat(expected.getMessage(), notNullValue());
+        assertThatThrownBy(() -> new StringBufferingWriter(null))
+                .isInstanceOf(NullPointerException.class)
+                .message().isNotBlank();
     }
 
     @Test
@@ -41,12 +39,12 @@ public class StringBufferingWriterTest {
 
         writer.write("The quick brown fox jumps over the lazy dog");
         writer.flush();
-        assertThat(buffer, hasToString("The quick brown fox jumps over the lazy dog"));
+        assertThat(buffer).hasToString("The quick brown fox jumps over the lazy dog");
     }
 
     @Test
     public void testToString() {
-        assertThat(new StringBufferingWriter(new NoopWriter()), hasToString("StringBufferingWriter{NoopWriter}"));
+        assertThat(new StringBufferingWriter(new NoopWriter())).hasToString("StringBufferingWriter{NoopWriter}");
     }
 
 }

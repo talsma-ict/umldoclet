@@ -24,16 +24,14 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.util.spi.ToolProvider;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class Feature236ExcludedTypeReferencesTest {
-    private static final File outputdir = new File("target/issues/236");
+class Feature236ExcludedTypeReferencesTest {
+    static final File outputdir = new File("target/issues/236");
 
     @BeforeAll
-    public static void generateBeansPackageJavadoc() {
-        assertThat("Javadoc result", ToolProvider.findFirst("javadoc").get().run(
+    static void generateBeansPackageJavadoc() {
+        assertThat(ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
                 "-d", outputdir.getPath(),
                 "-sourcepath", "src/test/java",
@@ -41,14 +39,14 @@ public class Feature236ExcludedTypeReferencesTest {
                 "-quiet", "-createPumlFiles",
                 "-umlExcludedTypeReferences", "none",
                 StandardJavaBean.class.getPackageName()
-        ), is(0));
+        )).as("Javadoc result").isZero();
     }
 
     @Test
-    public void testImplicitSuperclassObjectIsNotExcluded() {
+    void testImplicitSuperclassObjectIsNotExcluded() {
         String umlFileName = StandardJavaBean.class.getName().replace('.', '/') + ".puml";
         String uml = TestUtil.read(new File(outputdir, umlFileName));
-        assertThat(uml, containsString("java.lang.Object <|-- " + StandardJavaBean.class.getName()));
+        assertThat(uml).contains("java.lang.Object <|-- " + StandardJavaBean.class.getName());
     }
 
 }

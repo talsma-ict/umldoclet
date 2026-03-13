@@ -23,11 +23,9 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.spi.ToolProvider;
 
-import static java.util.Arrays.asList;
 import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
 import static nl.talsmasoftware.umldoclet.util.TestUtil.createDirectory;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.stringContainsInOrder;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /// Tests the 'external links' feature
 ///
@@ -73,8 +71,8 @@ public class ExternalLinksTest {
         String uml = TestUtil.read(packageUml);
 
         // Check link to Serializable javadoc
-        assertThat(uml, stringContainsInOrder(asList("interface", "Serializable",
-                "[[" + relativePath(packageUml, externalDir) + "/java/io/Serializable.html]]")));
+        assertThat(uml).contains("interface", "Serializable",
+                "[[" + relativePath(packageUml, externalDir) + "/java/io/Serializable.html]]");
     }
 
     @Test
@@ -94,8 +92,8 @@ public class ExternalLinksTest {
 
         String uml = TestUtil.read(packageUml);
         // Check link to Serializable javadoc
-        assertThat(uml, stringContainsInOrder(asList("interface", "Serializable",
-                "[[https://docs.oracle.com/javase/9/docs/api/java/io/Serializable.html?is-external=true]]")));
+        assertThat(uml).contains("interface", "Serializable",
+                "[[https://docs.oracle.com/javase/9/docs/api/java/io/Serializable.html?is-external=true]]");
     }
 
     @Test
@@ -117,8 +115,8 @@ public class ExternalLinksTest {
 
         String uml = TestUtil.read(packageUml);
         // Check link to Serializable javadoc
-        assertThat(uml, stringContainsInOrder(asList("interface", "Serializable",
-                "[[https://docs.oracle.com/javase/9/docs/api/java/io/Serializable.html?is-external=true]]")));
+        assertThat(uml).contains("interface", "Serializable",
+                "[[https://docs.oracle.com/javase/9/docs/api/java/io/Serializable.html?is-external=true]]");
     }
 
 }

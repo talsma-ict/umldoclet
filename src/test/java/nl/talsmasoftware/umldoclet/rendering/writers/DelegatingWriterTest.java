@@ -21,12 +21,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasToString;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.sameInstance;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -38,7 +34,7 @@ public class DelegatingWriterTest {
         delegatingWriter.write("The quick brown fox jumps over the lazy dog");
         delegatingWriter.flush();
         delegatingWriter.close();
-        assertThat(delegatingWriter, hasToString("DelegatingWriter[]"));
+        assertThat(delegatingWriter).hasToString("DelegatingWriter[]");
     }
 
     @Test
@@ -48,27 +44,25 @@ public class DelegatingWriterTest {
         delegatingWriter.write("The quick brown fox jumps over the lazy dog");
         delegatingWriter.flush();
         delegatingWriter.close();
-        assertThat(stringDelegate, hasToString("The quick brown fox jumps over the lazy dog"));
+        assertThat(stringDelegate).hasToString("The quick brown fox jumps over the lazy dog");
     }
 
     @Test
     public void testWriteSingleIOException() throws IOException {
         final IOException ioException = new IOException("IO error!");
         DelegatingWriter delegatingWriter = new DelegatingWriter(ThrowingWriter.throwing(ioException));
-        assertThat(
-                assertThrows(IOException.class, () ->
-                        delegatingWriter.write("The quick brown fox jumps over the lazy dog")),
-                is(sameInstance(ioException)));
+        assertThatThrownBy(() -> delegatingWriter.write("The quick brown fox jumps over the lazy dog"))
+                .isInstanceOf(IOException.class)
+                .isSameAs(ioException);
     }
 
     @Test
     public void testWriteSingleRuntimeException() throws IOException {
         final RuntimeException runtimeException = new IllegalStateException("Illegal state!");
         DelegatingWriter delegatingWriter = new DelegatingWriter(ThrowingWriter.throwing(runtimeException));
-        assertThat(
-                assertThrows(RuntimeException.class, () ->
-                        delegatingWriter.write("The quick brown fox jumps over the lazy dog")),
-                is(sameInstance(runtimeException)));
+        assertThatThrownBy(() -> delegatingWriter.write("The quick brown fox jumps over the lazy dog"))
+                .isInstanceOf(RuntimeException.class)
+                .isSameAs(runtimeException);
     }
 
     @Test
@@ -77,13 +71,10 @@ public class DelegatingWriterTest {
         RuntimeException expectedException2 = new IllegalStateException("Illegal state!");
         DelegatingWriter delegatingWriter = new DelegatingWriter(
                 ThrowingWriter.throwing(expectedException1), ThrowingWriter.throwing(expectedException2));
-        IOException ioe = assertThrows(IOException.class, () ->
-                delegatingWriter.write("The quick brown fox jumps over the lazy dog"));
-        Throwable[] suppressed = ioe.getSuppressed();
-        assertThat(suppressed, is(notNullValue()));
-        assertThat(suppressed.length, is(2));
-        assertThat(suppressed[0], is(sameInstance(expectedException1)));
-        assertThat(suppressed[1], is(sameInstance(expectedException2)));
+        assertThatThrownBy(() -> delegatingWriter.write("The quick brown fox jumps over the lazy dog"))
+                .isInstanceOf(IOException.class)
+                .hasSuppressedException(expectedException1)
+                .hasSuppressedException(expectedException2);
     }
 
     @Test
@@ -91,28 +82,24 @@ public class DelegatingWriterTest {
         ThrowingWriter throwingWriter = ThrowingWriter.throwing(new IllegalStateException("Illegal state!"));
         StringWriter stringWriter = new StringWriter();
         DelegatingWriter delegatingWriter = new DelegatingWriter(throwingWriter, stringWriter);
-        final RuntimeException expected = assertThrows(RuntimeException.class, () ->
-                delegatingWriter.write("The quick brown fox jumps over the lazy dog"));
-        assertThat(expected.getMessage(), is("Illegal state!"));
-        assertThat(stringWriter, hasToString("The quick brown fox jumps over the lazy dog"));
+        assertThatThrownBy(() -> delegatingWriter.write("The quick brown fox jumps over the lazy dog"))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("Illegal state!");
+        assertThat(stringWriter).hasToString("The quick brown fox jumps over the lazy dog");
     }
 
     @Test
     public void testFlushSingleIOException() throws IOException {
         final IOException ioException = new IOException("IO error!");
         DelegatingWriter delegatingWriter = new DelegatingWriter(ThrowingWriter.throwing(ioException));
-        assertThat(
-                assertThrows(IOException.class, delegatingWriter::flush),
-                is(sameInstance(ioException)));
+        assertThatThrownBy(delegatingWriter::flush).isInstanceOf(IOException.class).isSameAs(ioException);
     }
 
     @Test
     public void testFlushSingleRuntimeException() throws IOException {
         final RuntimeException runtimeException = new IllegalStateException("Illegal state!");
         DelegatingWriter delegatingWriter = new DelegatingWriter(ThrowingWriter.throwing(runtimeException));
-        assertThat(
-                assertThrows(RuntimeException.class, delegatingWriter::flush),
-                is(sameInstance(runtimeException)));
+        assertThatThrownBy(delegatingWriter::flush).isInstanceOf(RuntimeException.class).isSameAs(runtimeException);
     }
 
     @Test
@@ -121,12 +108,10 @@ public class DelegatingWriterTest {
         RuntimeException expectedException2 = new IllegalStateException("Illegal state!");
         DelegatingWriter delegatingWriter = new DelegatingWriter(
                 ThrowingWriter.throwing(expectedException1), ThrowingWriter.throwing(expectedException2));
-        final IOException ioe = assertThrows(IOException.class, delegatingWriter::flush);
-        Throwable[] suppressed = ioe.getSuppressed();
-        assertThat(suppressed, is(notNullValue()));
-        assertThat(suppressed.length, is(2));
-        assertThat(suppressed[0], is(sameInstance(expectedException1)));
-        assertThat(suppressed[1], is(sameInstance(expectedException2)));
+        assertThatThrownBy(delegatingWriter::flush)
+                .isInstanceOf(IOException.class)
+                .hasSuppressedException(expectedException1)
+                .hasSuppressedException(expectedException2);
     }
 
     @Test
@@ -134,8 +119,7 @@ public class DelegatingWriterTest {
         ThrowingWriter throwingWriter = ThrowingWriter.throwing(new IllegalStateException("Illegal state!"));
         Writer mockWriter = mock(Writer.class);
         DelegatingWriter delegatingWriter = new DelegatingWriter(throwingWriter, mockWriter);
-        final RuntimeException expected = assertThrows(RuntimeException.class, delegatingWriter::flush);
-        assertThat(expected.getMessage(), is("Illegal state!"));
+        assertThatThrownBy(delegatingWriter::flush).isInstanceOf(RuntimeException.class).hasMessage("Illegal state!");
         verify(mockWriter).flush();
     }
 
@@ -143,18 +127,14 @@ public class DelegatingWriterTest {
     public void testCloseSingleIOException() throws IOException {
         final IOException ioException = new IOException("IO error!");
         DelegatingWriter delegatingWriter = new DelegatingWriter(ThrowingWriter.throwing(ioException));
-        assertThat(
-                assertThrows(IOException.class, delegatingWriter::close),
-                is(sameInstance(ioException)));
+        assertThatThrownBy(delegatingWriter::close).isInstanceOf(IOException.class).isSameAs(ioException);
     }
 
     @Test
     public void testCloseSingleRuntimeException() throws IOException {
         final RuntimeException runtimeException = new IllegalStateException("Illegal state!");
         DelegatingWriter delegatingWriter = new DelegatingWriter(ThrowingWriter.throwing(runtimeException));
-        assertThat(
-                assertThrows(RuntimeException.class, delegatingWriter::close),
-                is(sameInstance(runtimeException)));
+        assertThatThrownBy(delegatingWriter::close).isInstanceOf(RuntimeException.class).isSameAs(runtimeException);
     }
 
     @Test
@@ -163,12 +143,10 @@ public class DelegatingWriterTest {
         RuntimeException expectedException2 = new IllegalStateException("Illegal state!");
         DelegatingWriter delegatingWriter = new DelegatingWriter(
                 ThrowingWriter.throwing(expectedException1), ThrowingWriter.throwing(expectedException2));
-        final IOException ioe = assertThrows(IOException.class, delegatingWriter::close);
-        Throwable[] suppressed = ioe.getSuppressed();
-        assertThat(suppressed, is(notNullValue()));
-        assertThat(suppressed.length, is(2));
-        assertThat(suppressed[0], is(sameInstance(expectedException1)));
-        assertThat(suppressed[1], is(sameInstance(expectedException2)));
+        assertThatThrownBy(delegatingWriter::close)
+                .isInstanceOf(IOException.class)
+                .hasSuppressedException(expectedException1)
+                .hasSuppressedException(expectedException2);
     }
 
     @Test
@@ -176,8 +154,7 @@ public class DelegatingWriterTest {
         ThrowingWriter throwingWriter = ThrowingWriter.throwing(new IllegalStateException("Illegal state!"));
         Writer mockWriter = mock(Writer.class);
         DelegatingWriter delegatingWriter = new DelegatingWriter(throwingWriter, mockWriter);
-        final RuntimeException expected = assertThrows(RuntimeException.class, delegatingWriter::close);
-        assertThat(expected.getMessage(), is("Illegal state!"));
+        assertThatThrownBy(delegatingWriter::close).isInstanceOf(RuntimeException.class).hasMessage("Illegal state!");
         verify(mockWriter).close();
     }
 }

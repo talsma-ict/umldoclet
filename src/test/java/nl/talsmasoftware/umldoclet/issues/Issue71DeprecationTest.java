@@ -23,10 +23,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.util.spi.ToolProvider;
 
-import static nl.talsmasoftware.umldoclet.testing.PatternMatcher.containsPattern;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Sjoerd Talsma
@@ -86,48 +83,50 @@ public class Issue71DeprecationTest {
 
     @Test
     public void testClassDeprecatedByAnnotation() {
-        assertThat(classUml, containsPattern("class (\".*\" as )?" + getClass().getName() + " <<deprecated>>"));
+        assertThat(classUml).as("Class uml diagram")
+                .containsPattern("class (\".*\" as )?" + getClass().getName() + " <<deprecated>>");
     }
 
     @Test
     public void testClassDeprecatedByJavadoc() {
-        assertThat(packageUml, containsString("class " + getClass().getSimpleName() + ".MoreDeprecation <<deprecated>>"));
+        assertThat(packageUml).as("Package uml diagram")
+                .contains("class " + getClass().getSimpleName() + ".MoreDeprecation <<deprecated>>");
     }
 
     @Test
     public void testConstructorDeprecatedByAnnotation() {
-        assertThat(packageUml, containsString("+--MoreDeprecation--(String)"));
+        assertThat(packageUml).as("Package uml diagram").contains("+--MoreDeprecation--(String)");
     }
 
     @Test
     public void testConstructorDeprecatedByJavadoc() {
-        assertThat(packageUml, containsString("+--MoreDeprecation--()"));
+        assertThat(packageUml).as("Package diagram").contains("+--MoreDeprecation--()");
     }
 
     @Test
     public void testFieldDeprecatedByAnnotation() {
-        assertThat(classUml, containsString("+--deprecatedByAnnotation--: String"));
+        assertThat(classUml).as("Class diagram").contains("+--deprecatedByAnnotation--: String");
     }
 
     @Test
     public void testFieldDeprecatedByJavadoc() {
-        assertThat(classUml, containsString("+--deprecatedByJavadocTag--: String"));
+        assertThat(classUml).as("Class diagram").contains("+--deprecatedByJavadocTag--: String");
     }
 
     @Test
     public void testMethodDeprecatedByAnnotation() {
-        assertThat(classUml, containsString("+--getDeprecatedByAnnotation--(): void"));
+        assertThat(classUml).as("Class diagram").contains("+--getDeprecatedByAnnotation--(): void");
     }
 
     @Test
     public void testMethodDeprecatedByJavadoc() {
-        assertThat(classUml, containsString("+--getDeprecatedByJavadocTag--(): void"));
+        assertThat(classUml).as("Class diagram").contains("+--getDeprecatedByJavadocTag--(): void");
     }
 
     @Test
     public void testIssue73InnerClassImageName() {
         File innerClassFile = new File(outputDir, "nl/talsmasoftware/umldoclet/issues/Issue71DeprecationTest.MoreDeprecation.svg");
-        assertThat(innerClassFile + " exists?", innerClassFile.exists(), is(true));
+        assertThat(innerClassFile).exists();
     }
 
     /**

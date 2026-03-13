@@ -25,10 +25,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.spi.ToolProvider;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /// Tests the Doclet Config parsing.
 ///
@@ -57,19 +54,19 @@ public class DocletConfigTest {
         }
     }
 
-        /// Tests whether there were any undocumented options added to the doclet.
+    /// Tests whether there were any undocumented options added to the doclet.
     ///
     ///
     /// Please add documentation for the new option(s)
     /// in the `nl.talsmasoftware.umldoclet.UMLDoclet` resource bundle.
     @Test
     public void testForUndocumentedMissingKeys() {
-        assertThat(getDocletHelpOutput(), not(containsString("<MISSING KEY>")));
+        assertThat(getDocletHelpOutput()).doesNotContain("<MISSING KEY>");
     }
 
     private void assertMemberVisibility(Visibility visibility, boolean expected) {
-        assertThat(config.fieldConfig.visibilities.contains(visibility), is(expected));
-        assertThat(config.methodConfig.visibilities.contains(visibility), is(expected));
+        assertThat(config.fieldConfig.visibilities.contains(visibility)).isEqualTo(expected);
+        assertThat(config.methodConfig.visibilities.contains(visibility)).isEqualTo(expected);
     }
 
     @Test
@@ -129,19 +126,18 @@ public class DocletConfigTest {
 
     @Test
     public void testOptionDocExcludedPackageDependencies() {
-        String help = getDocletHelpOutput();
-        assertThat(help, containsString("-umlExcludedPackageDependencies <package>(,<package>)*"));
-        assertThat(help, containsString("Defaults to 'java,javax'"));
+        assertThat(getDocletHelpOutput())
+                .contains("-umlExcludedPackageDependencies <package>(,<package>)*", "Defaults to 'java,javax'");
     }
 
     @Test
     public void testRenderPumlFileWhenVerbose() {
-        assertThat("No puml files by default", config.renderPumlFile(), is(false));
+        assertThat(config.renderPumlFile()).as("renderPumlFile default").isFalse();
         config.verbose = true;
-        assertThat("Puml files when verbose", config.renderPumlFile(), is(true));
+        assertThat(config.renderPumlFile()).as("renderPumlFile when verbose").isTrue();
         config.quiet = true;
-        assertThat("No puml files when both verbose and quiet", config.renderPumlFile(), is(false));
+        assertThat(config.renderPumlFile()).as("renderPumlFile when both verbose and quiet").isFalse();
         config.renderPumlFile = true;
-        assertThat("Puml files when explicitly set even when quiet", config.renderPumlFile(), is(true));
+        assertThat(config.renderPumlFile()).as("renderPumlFile when explicitly set even when quiet").isTrue();
     }
 }

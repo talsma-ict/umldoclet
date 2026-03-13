@@ -23,47 +23,39 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.util.spi.ToolProvider;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.not;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class Bug146SkipSuperclassTest {
-    private static final String packageAsPath = Bug146SkipSuperclassTest.class.getPackageName().replace('.', '/');
-    private static final File outputdir = new File("target/issues/146");
-    private static String classUml;
-    private static String packageUml;
+class Bug146SkipSuperclassTest {
+    static final String PACKAGE_AS_PATH = Bug146SkipSuperclassTest.class.getPackageName().replace('.', '/');
+    static final File OUTPUT_DIRECTORY = new File("target/issues/146");
+    static String classUml;
+    static String packageUml;
 
     @BeforeAll
-    public static void generateJavadoc() {
-        String classAsPath = packageAsPath + '/' + PublicTestClass.class.getSimpleName();
+    static void generateJavadoc() {
+        String classAsPath = PACKAGE_AS_PATH + '/' + PublicTestClass.class.getSimpleName();
         ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
-                "-d", outputdir.getPath(),
+                "-d", OUTPUT_DIRECTORY.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet",
                 "-createPumlFiles",
                 "src/test/java/" + classAsPath + ".java"
         );
-        classUml = TestUtil.read(new File(outputdir, classAsPath + ".puml"));
-        packageUml = TestUtil.read(new File(outputdir, packageAsPath + "/package.puml"));
+        classUml = TestUtil.read(new File(OUTPUT_DIRECTORY, classAsPath + ".puml"));
+        packageUml = TestUtil.read(new File(OUTPUT_DIRECTORY, PACKAGE_AS_PATH + "/package.puml"));
     }
 
     @Test
-    public void testPackageProtectedSuperclassShouldBeSkipped() {
-        assertThat(packageUml, allOf(
-                containsString("java.util::AbstractList <|-- " + getClass().getPackageName() + "::PublicTestClass"),
-                not(containsString("PackageProtectedSuperclass"))
-        ));
-        assertThat(classUml, allOf(
-                containsString(
-                        "java.util.AbstractList " +
-                                "<|-- nl.talsmasoftware.umldoclet.issues.bug146.PublicTestClass"),
-                not(containsString(
-                        "nl.talsmasoftware.umldoclet.issues.bug146.PackageProtectedSuperclass " +
-                                "<|-- nl.talsmasoftware.umldoclet.issues.bug146.PublicTestClass")
-                )));
-    }
+    void testPackageProtectedSuperclassShouldBeSkipped() {
+        assertThat(packageUml)
+                .contains("java.util::AbstractList <|-- " + getClass().getPackageName() + "::PublicTestClass")
+                .doesNotContain("PackageProtectedSuperclass");
 
+        assertThat(classUml)
+                .contains("java.util.AbstractList <|-- nl.talsmasoftware.umldoclet.issues.bug146.PublicTestClass")
+                .doesNotContain("nl.talsmasoftware.umldoclet.issues.bug146.PackageProtectedSuperclass " +
+                        "<|-- nl.talsmasoftware.umldoclet.issues.bug146.PublicTestClass");
+    }
 
 }

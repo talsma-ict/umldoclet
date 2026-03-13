@@ -22,9 +22,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.util.spi.ToolProvider;
 
-import static java.util.Arrays.asList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.stringContainsInOrder;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /// @author Sjoerd Talsma
 public class Issue69LinksTest {
@@ -48,10 +46,9 @@ public class Issue69LinksTest {
         );
 
         String uml = TestUtil.read(packageUml);
-        // Check link to test class
-        assertThat(uml, stringContainsInOrder(asList("Issue69LinksTest", "[[Issue69LinksTest.html]]")));
-        // Check link to inner class
-        assertThat(uml, stringContainsInOrder(asList("InnerClass", "[[Issue69LinksTest.InnerClass.html]]")));
+        assertThat(uml).as("This test class uml")
+                .contains("Issue69LinksTest", "[[Issue69LinksTest.html]]") // Check link to test class
+                .contains("InnerClass", "[[Issue69LinksTest.InnerClass.html]]"); // Check link to inner class
     }
 
 }

@@ -22,10 +22,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.util.spi.ToolProvider;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.either;
-import static org.hamcrest.Matchers.not;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /// Test correct substitution of JavaBean properties by UML references.
 ///
@@ -64,15 +61,14 @@ public class Issue30JavaBeanPropertiesTest {
         String nameInPackage = getClass().getPackageName() + "::" + simpleName;
 
         // someProperty should have been replaced by referene:
-        assertThat(uml, not(containsString("+getSomeProperty()")));
-        assertThat(uml, not(containsString("+setSomeProperty")));
-        assertThat(uml, either(containsString(simpleName + " --> " + simpleName + ": someProperty"))
-                .or(containsString(nameInPackage + " --> " + nameInPackage + ": someProperty")));
-
-        // someValue must not be replaced by reference:
-        assertThat(uml, containsString("+getSomeValue(Boolean): " + simpleName));
-        assertThat(uml, not(either(containsString(simpleName + " --> " + simpleName + ": someValue"))
-                .or(containsString(nameInPackage + " --> " + nameInPackage + ": someValue"))));
+        assertThat(uml).as("Package UML diagram")
+                .doesNotContain("+getSomeProperty()", "+setSomeProperty")
+                .containsAnyOf(simpleName + " --> " + simpleName + ": someProperty",
+                        nameInPackage + " --> " + nameInPackage + ": someProperty")
+                // someValue must not be replaced by reference:
+                .contains("+getSomeValue(Boolean): " + simpleName)
+                .doesNotContain(simpleName + " --> " + simpleName + ": someValue",
+                        nameInPackage + " --> " + nameInPackage + ": someValue");
     }
 
 }
