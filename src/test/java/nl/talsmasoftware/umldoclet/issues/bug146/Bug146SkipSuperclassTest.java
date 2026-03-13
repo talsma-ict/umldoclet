@@ -26,24 +26,24 @@ import java.util.spi.ToolProvider;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class Bug146SkipSuperclassTest {
-    static final String packageAsPath = Bug146SkipSuperclassTest.class.getPackageName().replace('.', '/');
-    static final File outputdir = new File("target/issues/146");
+    static final String PACKAGE_AS_PATH = Bug146SkipSuperclassTest.class.getPackageName().replace('.', '/');
+    static final File OUTPUT_DIRECTORY = new File("target/issues/146");
     static String classUml;
     static String packageUml;
 
     @BeforeAll
     static void generateJavadoc() {
-        String classAsPath = packageAsPath + '/' + PublicTestClass.class.getSimpleName();
+        String classAsPath = PACKAGE_AS_PATH + '/' + PublicTestClass.class.getSimpleName();
         ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
-                "-d", outputdir.getPath(),
+                "-d", OUTPUT_DIRECTORY.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet",
                 "-createPumlFiles",
                 "src/test/java/" + classAsPath + ".java"
         );
-        classUml = TestUtil.read(new File(outputdir, classAsPath + ".puml"));
-        packageUml = TestUtil.read(new File(outputdir, packageAsPath + "/package.puml"));
+        classUml = TestUtil.read(new File(OUTPUT_DIRECTORY, classAsPath + ".puml"));
+        packageUml = TestUtil.read(new File(OUTPUT_DIRECTORY, PACKAGE_AS_PATH + "/package.puml"));
     }
 
     @Test

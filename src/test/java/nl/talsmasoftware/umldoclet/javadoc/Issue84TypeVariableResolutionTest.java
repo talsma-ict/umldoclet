@@ -30,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class Issue84TypeVariableResolutionTest {
 
     @Test
-    public void testTypeMemberImplementsComparableTypeMember() throws IOException {
+    void testTypeMemberImplementsComparableTypeMember() throws IOException {
         TestUtil.createDirectory(new File("target/issues/84"));
         String testObjectPath = TestObject.class.getName().replace('.', '/');
         ToolProvider.findFirst("javadoc").get().run(

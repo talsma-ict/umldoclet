@@ -26,21 +26,21 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class Issue152InnerClassIncludeVisibilityTest {
-    static final String packageName = Issue152InnerClassIncludeVisibilityTest.class.getPackageName();
-    static final File outputdir = new File("target/issues/152");
+    static final String PACKAGE_NAME = Issue152InnerClassIncludeVisibilityTest.class.getPackageName();
+    static final File OUTPUT_DIRECTORY = new File("target/issues/152");
 
     @Test
     void testPublicInnerClassVisibility() {
         assertThat(ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
-                "-d", outputdir.getPath(),
+                "-d", OUTPUT_DIRECTORY.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
                 "-quiet", "-createPumlFiles",
                 "--show-types", "public",
                 "-sourcepath", "src/test/java",
-                packageName
+                PACKAGE_NAME
         )).as("Javadoc result").isZero();
-        File dir = new File(outputdir, packageName.replace('.', '/'));
+        File dir = new File(OUTPUT_DIRECTORY, PACKAGE_NAME.replace('.', '/'));
 
         String packageUml = TestUtil.read(new File(dir, "package.puml"));
         assertThat(packageUml).as("Package uml")

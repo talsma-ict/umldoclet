@@ -46,11 +46,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 ///
 /// @author Sjoerd Talsma
 class Issue148StandardIncludeOptionsTest {
-    static final String packageName = Issue148StandardIncludeOptionsTest.class.getPackageName();
-    static final File outputdir = new File("target/issues/148");
+    static final String PACKAGE_NAME = Issue148StandardIncludeOptionsTest.class.getPackageName();
+    static final File OUTPUT_DIRECTORY = new File("target/issues/148");
 
     static File createJavadoc(String... options) {
-        File dir = new File(outputdir, String.join("-", options));
+        File dir = new File(OUTPUT_DIRECTORY, String.join("-", options));
         List<String> args = new ArrayList<>(asList(
                 "-d", dir.getPath(),
                 "-doclet", UMLDoclet.class.getName(),
@@ -59,14 +59,14 @@ class Issue148StandardIncludeOptionsTest {
         args.addAll(asList(options));
         args.addAll(asList(
                 "-sourcepath", "src/test/java",
-                packageName
+                PACKAGE_NAME
         ));
         assertThat(ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
                 args.toArray(new String[0])
         )).as("Javadoc result").isZero();
 
-        File result = new File(dir, packageName.replace('.', '/'));
+        File result = new File(dir, PACKAGE_NAME.replace('.', '/'));
         Stream.of("Access.PrivateClass",
                         "PackageProtectedClass",
                         "Access.ProtectedClass",
