@@ -15,59 +15,101 @@
  */
 package nl.talsmasoftware.umldoclet.features;
 
-@SuppressWarnings("unused")
+/// Class to test different Access modifiers in Javadoc.
+@SuppressWarnings("unused") // used in Javadoc.
 public class Access {
+    /// Private inner class.
     private static class PrivateClass {
+        /// Private field.
         private String privateField;
+        /// Package-protected field.
         String packageProtectedField;
+        /// Protected field.
         protected String protectedField;
+        /// Public field.
         public String publicField;
 
+        /// Private constructor.
         private PrivateClass() {
             this.privateField = packageProtectedField = protectedField = publicField = null;
         }
 
+        /// Private getter.
+        ///
+        /// @return the private value.
         private String getPrivateValue() {
             return privateField;
         }
 
+        /// Package-protected getter.
+        ///
+        /// @return the package-protected value.
         String getPackageProtectedValue() {
             return packageProtectedField;
         }
 
+        /// Protected getter.
+        ///
+        /// @return the protected value.
         protected String getProtectedValue() {
             return protectedField;
         }
 
+        /// Public getter.
+        ///
+        /// @return the public value.
         public String getPublicValue() {
             return publicField;
         }
     }
 
+    /// Protected inner class.
     protected static class ProtectedClass {
+        /// Private field.
         private String privateField;
+        /// Package-protected field.
         String packageProtectedField;
+        /// Protected field.
         protected String protectedField;
+        /// Public field.
         public String publicField;
 
+        /// Protected constructor.
         protected ProtectedClass() {
             this.privateField = packageProtectedField = protectedField = publicField = null;
         }
 
+        /// Private getter.
+        ///
+        /// @return the private value.
         private String getPrivateValue() {
             return privateField;
         }
 
+        /// Package-protected getter.
+        ///
+        /// @return the package-protected value.
         String getPackageProtectedValue() {
             return packageProtectedField;
         }
 
+        /// Protected getter.
+        ///
+        /// @return the protected value.
         protected String getProtectedValue() {
             return protectedField;
         }
 
+        /// Public getter.
+        ///
+        /// @return the public value.
         public String getPublicValue() {
             return publicField;
         }
+    }
+
+    /// Default constructor.
+    public Access() {
+        super();
     }
 }

@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Collections.singleton;
@@ -52,6 +53,7 @@ public class ClassDiagramTest {
         when(config.logger()).thenReturn(new TestLogger());
         when(config.umlCharset()).thenReturn(Charset.forName("UTF-8"));
         when(config.indentation()).thenReturn(Indentation.TABS);
+        when(config.customPlantumlDirectives()).thenReturn(List.of("!pragma layout smetana")); // Avoid Graphviz dependency
         when(images.formats()).thenReturn(singleton(SVG));
         when(images.directory()).thenReturn(Optional.empty());
     }

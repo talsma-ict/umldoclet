@@ -26,9 +26,17 @@ import java.util.spi.ToolProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/// Test for excluded type references.
 class Feature236ExcludedTypeReferencesTest {
+    /// The directory to write the Javadoc to.
     static final File outputdir = new File("target/issues/236");
 
+    /// Default constructor.
+    Feature236ExcludedTypeReferencesTest() {
+        super();
+    }
+
+    /// Setup code generating the Javadoc and UML.
     @BeforeAll
     static void generateBeansPackageJavadoc() {
         assertThat(ToolProvider.findFirst("javadoc").get().run(
@@ -42,6 +50,7 @@ class Feature236ExcludedTypeReferencesTest {
         )).as("Javadoc result").isZero();
     }
 
+    /// Test that implicit superclass type `java.lang.Object` is not excluded with value `'none'`.
     @Test
     void testImplicitSuperclassObjectIsNotExcluded() {
         String umlFileName = StandardJavaBean.class.getName().replace('.', '/') + ".puml";

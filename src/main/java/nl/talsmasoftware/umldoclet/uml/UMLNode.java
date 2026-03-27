@@ -42,8 +42,9 @@ import static java.util.stream.Collectors.toList;
 ///
 /// @author Sjoerd Talsma
 public abstract class UMLNode {
-
+    /// The parent node, or `null` for diagrams.
     private UMLNode parent;
+    /// The child nodes.
     private final List<UMLNode> children = new ArrayList<>();
 
     /// Constructor for a new UML node with reference to its `parent`.
@@ -142,6 +143,8 @@ public abstract class UMLNode {
     ///
     /// @param output The output to write the children to.
     /// @return A reference to the output for method chaining purposes.
+    /// @throws IOException If a concrete subclass node throws an I/O exception while writing.
+    /// Declared here to avoid the need for catch + rethrows in subclasses.
     @SuppressWarnings("java:S1130") // IOException is not superfluous. It avoids subclass catch & rethrows.
     protected IndentingWriter writeChildrenTo(IndentingWriter output) throws IOException {
         getChildren().forEach(child -> child.writeTo(output));

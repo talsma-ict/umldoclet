@@ -15,29 +15,43 @@
  */
 package nl.talsmasoftware.umldoclet.features;
 
-@SuppressWarnings("unused")
+/// Package-protected class.
+@SuppressWarnings("unused") // Used in Javadoc testing.
 class PackageProtectedClass {
+    /// Private field.
     private String privateField;
+    /// Package-protected field.
     String packageProtectedField;
+    /// Protected field.
     protected String protectedField;
+    /// Public field
     public String publicField;
 
+    /// Package-protected constructor.
     PackageProtectedClass() {
         this.privateField = packageProtectedField = protectedField = publicField = null;
     }
 
+    /// Private getter.
+    /// @return the private value.
     private String getPrivateValue() {
         return privateField;
     }
 
+    /// Package-protected getter.
+    /// @return the package-protected value.
     String getPackageProtectedValue() {
         return packageProtectedField;
     }
 
+    /// Protected getter.
+    /// @return the protected value.
     protected String getProtectedValue() {
         return protectedField;
     }
 
+    /// Public getter.
+    /// @return the public value.
     public String getPublicValue() {
         return publicField;
     }

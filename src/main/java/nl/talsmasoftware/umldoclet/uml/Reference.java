@@ -197,8 +197,11 @@ public class Reference extends UMLNode {
 
     /// One side of a reference.
     public static final class Side {
+        /// Whether the name is printed first (before the type)
         private final boolean nameFirst;
+        /// The qualified name for this side of the reference.
         public final String qualifiedName;
+        /// The cardinality on this side of the reference, if any. Otherwise `null`.
         private final String cardinality;
 
         private Side(String qualifiedName, String cardinality, boolean nameFirst) {

@@ -24,9 +24,17 @@ import java.util.spi.ToolProvider;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
 
+/// Test feature to skip the standard Javadoc generation altogether.
 class Issue194SkipStandardDocletTest {
+    /// Directory to write the output to.
     static final File outputdir = new File("target/issues/194");
 
+    /// Default constructor.
+    Issue194SkipStandardDocletTest() {
+        super();
+    }
+
+    /// Test that no Javadoc HTML get generated with `--delegate-doclet false` option.
     @Test
     void testNoStandardDocletDelegation() {
         int javadocResult = ToolProvider.findFirst("javadoc")
@@ -44,6 +52,7 @@ class Issue194SkipStandardDocletTest {
         assertThat(new File(outputdir, "index.html")).doesNotExist();
     }
 
+    /// Test for unsupported alternative delegate doclet.
     @Test
     void testUsupportedDelegateDoclet() {
         int javadocResult = ToolProvider.findFirst("javadoc")

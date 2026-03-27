@@ -28,8 +28,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /// Test that properties can be rendered as fields with the option `-umlPropertiesAsFields true`.
 class Issue124PropertiesAsFieldsTest {
+    /// The output directory to write Javadoc and UML Diagrams to.
     static final File outputdir = new File("target/issues/124");
 
+    /// Set-up generating the Javadoc and UML diagrams for this test.
     @BeforeAll
     static void generateBeansPackageJavadoc() {
         assertThat(ToolProvider.findFirst("javadoc").get().run(
@@ -43,6 +45,12 @@ class Issue124PropertiesAsFieldsTest {
         )).as("Javadoc result").isZero();
     }
 
+    /// Default constructor.
+    Issue124PropertiesAsFieldsTest() {
+        super();
+    }
+
+    /// Test that getter and setter methods are rendered as properties.
     @Test
     void testPropertiesAsFieldsForPublicClass() {
         String umlFileName = StandardJavaBean.class.getName().replace('.', '/') + ".puml";
@@ -62,6 +70,7 @@ class Issue124PropertiesAsFieldsTest {
                         "setChild(");
     }
 
+    /// Test that getter and setter methods are rendered as properties in package diagrams.
     @Test
     void testPropertiesAsFieldsForPackageDiagram() {
         String umlFileName = StandardJavaBean.class.getPackageName().replace('.', '/') + "/package.puml";
