@@ -28,21 +28,34 @@ import static org.assertj.core.api.Assertions.assertThat;
 ///
 /// @author Sjoerd Talsma
 public class Issue30JavaBeanPropertiesTest {
+    /// Default constructor.
+    public Issue30JavaBeanPropertiesTest() {
+        super();
+    }
 
-    // Method that should not be seen as a bean property.
+    /// Method that should not be seen as a bean property.
+    ///
+    /// @param withArgument The argument that prevents the method from getting detected as getter.
+    /// @return `this` as a return value.
     public Issue30JavaBeanPropertiesTest getSomeValue(Boolean withArgument) {
         return this;
     }
 
-    // Method that SHOULD be seen as a bean property.
+    /// Method that SHOULD be seen as a bean property.
+    ///
+    /// @return `this` as a return value.
     public Issue30JavaBeanPropertiesTest getSomeProperty() {
         return this;
     }
 
+    /// Public setter.
+    ///
+    /// @param someProperty some public property.
     public void setSomeProperty(Issue30JavaBeanPropertiesTest someProperty) {
         // Empty body, just to simulate a setter method
     }
 
+    /// Test correct property detection.
     @Test
     public void testIssue30() {
         String packageAsPath = getClass().getPackage().getName().replace('.', '/');

@@ -17,14 +17,19 @@ package nl.talsmasoftware.umldoclet.javadoc;
 
 import java.util.Objects;
 
+/// Test object for Javadoc and UML Diagrams.
 public class TestObject implements Comparable<TestObject> {
-
+    /// Private field.
     private final String value;
 
+    /// Public constructor.
+    ///
+    /// @param value The value for this test object.
     public TestObject(String value) {
         this.value = value;
     }
 
+    /// {@inheritDoc}
     @Override
     public int compareTo(TestObject other) {
         String otherValue = other == null ? null : other.value;
@@ -37,16 +42,19 @@ public class TestObject implements Comparable<TestObject> {
         return diff == 0 ? value.compareTo(other.value) : diff;
     }
 
+    /// {@inheritDoc}
     @Override
     public int hashCode() {
         return Objects.hash(value);
     }
 
+    /// {@inheritDoc}
     @Override
     public boolean equals(Object other) {
         return this == other || (other instanceof TestObject && this.compareTo((TestObject) other) == 0);
     }
 
+    /// {@inheritDoc}
     @Override
     public String toString() {
         return getClass().getSimpleName() + "{value=" + value + '}';

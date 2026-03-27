@@ -25,9 +25,17 @@ import java.util.spi.ToolProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/// Test for package dependencies.
 public class PackageDependenciesTest {
+    /// Directory to write Javadoc and UML Diagrams to for this test.
     private static final File testDir = new File("target/test-uml/package-dependencies");
 
+    /// Default constructor.
+    public PackageDependenciesTest() {
+        super();
+    }
+
+    /// Test the default exclusions for package diagrams.
     @Test
     public void testPackageDependenciesDefaultExclusions() {
         File output = TestUtil.createDirectory(new File(testDir, "default-exclusions"));
@@ -47,6 +55,7 @@ public class PackageDependenciesTest {
                 .doesNotContain("java.lang", "javax.lang", "java.util");
     }
 
+    /// Test package dependencies without exclusions.
     @Test
     public void testPackageDependenciesWithoutExclusions() {
         File output = TestUtil.createDirectory(new File(testDir, "without-exclusions"));
@@ -68,6 +77,7 @@ public class PackageDependenciesTest {
                         "nl.talsmasoftware.umldoclet.javadoc.dependencies --> java.util");
     }
 
+    /// Test package dependencies with custom exclusions.
     @Test
     public void testPackageDependenciesCustomExclusions() {
         File output = TestUtil.createDirectory(new File(testDir, "custom-exclusions"));
@@ -89,6 +99,7 @@ public class PackageDependenciesTest {
                         "nl.talsmasoftware.umldoclet.javadoc.dependencies --> java.util");
     }
 
+    /// Test that package dependencies include declared exception packages.
     @Test
     public void testPackageDependenciesIncludeExceptions() throws TestException {
         String expectedPackageDependency = getClass().getPackageName() + " --> " + TestException.class.getPackageName();

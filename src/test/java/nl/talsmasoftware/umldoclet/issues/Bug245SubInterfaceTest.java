@@ -25,24 +25,32 @@ import java.util.spi.ToolProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/// This is a test for <a href="https://github.com/talsma-ict/umldoclet/issues/245">bug 245</a> where
+/// This is a test for [bug 245](https://github.com/talsma-ict/umldoclet/issues/245) where
 /// a sub-interface relationship is incorrectly rendered with a dotted line,
 /// which should be a solid line instead.
 public class Bug245SubInterfaceTest {
+    /// The generated UML file in this test.
     private static String umlFile;
 
+    /// A parent interface defined as inner-class.
     public interface ParentInterface {
 
     }
 
+    /// A sub-interface defined as inner-class.
     public interface SubInterface extends ParentInterface {
 
     }
 
+    /// An implementation inner-class.
     public static final class Implementation implements ParentInterface {
-
+        /// Default constructor.
+        public Implementation() {
+            super();
+        }
     }
 
+    /// Set-up; generate UML diagram to test the bugfix.
     @BeforeAll
     public static void generateUmlForIssue245() {
         String pathToTest = Bug245SubInterfaceTest.class.getName().replace('.', '/');
@@ -58,9 +66,14 @@ public class Bug245SubInterfaceTest {
         umlFile = "target/issues/245/" + pathToTest + ".puml";
     }
 
+    /// Default constructor.
+    public Bug245SubInterfaceTest() {
+        super();
+    }
+
     /// Test that the bug is fixed; interfase extension with solid line, not dotted.
     @Test
-    public void testExtensionOfInterfaseWithSolidLine() {
+    public void testExtensionOfInterfaceWithSolidLine() {
         String uml = TestUtil.read(new File(umlFile.replace(".puml", ".SubInterface.puml")));
         assertThat(uml).as("Subinterface UML diagram")
                 .contains(getClass().getName() + ".ParentInterface" + " <|-- " + getClass().getName() + ".SubInterface");

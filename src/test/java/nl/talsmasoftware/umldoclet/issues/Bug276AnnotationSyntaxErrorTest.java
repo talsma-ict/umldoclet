@@ -27,17 +27,28 @@ import java.util.spi.ToolProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/// Test fix for bug creating syntax error for children in annotations.
 public class Bug276AnnotationSyntaxErrorTest {
-
+    /// Test annotation with members.
     @Target(ElementType.TYPE)
     public @interface Generated {
+        /// Default 'value' field of annotation.
+        ///
+        /// @return the values.
         String[] value();
 
+        /// Extra `date` field of annotation.
+        ///
+        /// @return the date string.
         String date();
 
+        /// Extra `comments` field of annotations.
+        ///
+        /// @return the comments string.
         String comments();
     }
 
+    /// Set-up, generate Javadoc and UML Diagrams for this test.
     @BeforeAll
     static void generateUml() {
         int javadocResult = ToolProvider.findFirst("javadoc").get().run(
@@ -50,6 +61,12 @@ public class Bug276AnnotationSyntaxErrorTest {
         assertThat(javadocResult).as("Javadoc result").isZero();
     }
 
+    /// Default constructor.
+    Bug276AnnotationSyntaxErrorTest() {
+        super();
+    }
+
+    /// Test that the generated UML diagram does not contain members in the annotations.
     @Test
     void testAnnotationDiagramHasNoSyntaxError() {
         String pkgPath = "target/issues/276/" + getClass().getPackageName().replace('.', '/');
