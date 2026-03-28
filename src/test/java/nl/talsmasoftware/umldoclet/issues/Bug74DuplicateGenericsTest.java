@@ -26,6 +26,8 @@ import java.util.spi.ToolProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/// Test fix for [bug 74](https://github.com/talsma-ict/umldoclet/issues/74).
+///
 /// @author Sjoerd Talsma
 public class Bug74DuplicateGenericsTest {
     private static final String packageAsPath = Bug74DuplicateGenericsTest.class.getPackageName().replace('.', '/');
@@ -33,11 +35,13 @@ public class Bug74DuplicateGenericsTest {
     private static String classUml;
     private static String packageUml;
 
+    /// Public inner sub-interface for generics testing.
+    /// @param <T> The generic type being supplied.
     public interface MySupplier<T> extends Supplier<T> {
     }
 
     @BeforeAll
-    public static void createJavadoc() {
+    static void createJavadoc() {
         String classAsPath = packageAsPath + '/' + Bug74DuplicateGenericsTest.class.getSimpleName();
         int javadocResult = ToolProvider.findFirst("javadoc").get().run(
                 System.out, System.err,
@@ -52,9 +56,15 @@ public class Bug74DuplicateGenericsTest {
         packageUml = TestUtil.read(new File(outputDir, packageAsPath + "/package.puml"));
     }
 
+    /// Default constructor.
+    Bug74DuplicateGenericsTest() {
+        super();
+    }
+
     @Test
-    public void testGenericsNotDuplicated() {
+    void testGenericsNotDuplicated() {
         assertThat(classUml).contains("as java.util.function.Supplier<T>", "<size:14>Supplier\\n");
+        assertThat(packageUml).contains("interface Supplier<T>");
     }
 
 }

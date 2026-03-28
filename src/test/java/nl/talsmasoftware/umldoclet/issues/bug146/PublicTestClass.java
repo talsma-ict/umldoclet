@@ -15,5 +15,12 @@
  */
 package nl.talsmasoftware.umldoclet.issues.bug146;
 
+/// Public class for testing, extending a package-protected superclass.
 public class PublicTestClass extends PackageProtectedSuperclass {
+
+    /// Default constructor.
+    PublicTestClass() {
+        super();
+    }
+
 }

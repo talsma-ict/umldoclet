@@ -34,6 +34,11 @@ public class Issue70ConfigurableFormatTest {
     /// The directory to write output to.
     private File outputDir = null;
 
+    /// Default constructor.
+    Issue70ConfigurableFormatTest() {
+        super();
+    }
+
     /// Set-up to reset the common output directory.
     @BeforeEach
     public void resetCommonOutputDir() {
@@ -150,6 +155,7 @@ public class Issue70ConfigurableFormatTest {
         assertImageExists("eps", true);
     }
 
+    /// Test `-umlImageFormat eps` setting.
     @Test
     public void testImageFormatEps() {
         outputDir = new File(outputDir, "eps");
