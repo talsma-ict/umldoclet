@@ -34,8 +34,14 @@ public class Bug75StackOverflowTest {
     private static final File outputDir = new File("target/issues/75");
 
     /// public interface defined as inner-class.
+    ///
+    /// @param <T> Type being compared.
     public interface Comparable<T> {
-        /// {@inheritDoc}
+        /// A new comparator that first applies `this` and _then_ the natural order comparator of the given key.
+        ///
+        /// @param keyExtractor The function extracting the value compared next.
+        /// @param <U>          The type of the other object.
+        /// @return Comparator.
         <U extends Comparable<? super U>> Comparator<T> thenComparing(Function<? super T, ? extends U> keyExtractor);
     }
 
