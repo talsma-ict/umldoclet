@@ -35,6 +35,7 @@ public class Issue64ExtendsObjectTest {
     private static String emptySetUml;
 
     /// Generic test class to generate a diagram to test the bugfix.
+    /// @param <T> The generic element type of the empty set.
     public static class EmptySet<T> extends AbstractSet<T> {
         /// Default constructor.
         EmptySet() {
