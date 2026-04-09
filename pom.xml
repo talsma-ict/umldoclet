@@ -67,6 +67,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.release>9</maven.compiler.release>
         <plantuml-asl.version>1.2026.2</plantuml-asl.version>
+        <indentation.version>0.1.0</indentation.version>
+        <findbugs-annotations.version>3.0.1</findbugs-annotations.version>
 
         <!-- test -->
         <junit.version>6.0.3</junit.version>
@@ -420,13 +422,13 @@
         <dependency>
             <groupId>nl.talsmasoftware.indentation</groupId>
             <artifactId>indentation</artifactId>
-            <version>0.1.0</version>
+            <version>${indentation.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>findbugs-annotations</artifactId>
-            <version>3.0.1</version>
+            <version>${findbugs-annotations.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -441,6 +443,12 @@
             <artifactId>testcontainers-junit-jupiter</artifactId>
             <version>${testcontainers.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
@@ -542,7 +550,6 @@
                         <configuration>
                             <publishingServerId>central</publishingServerId>
                             <autoPublish>true</autoPublish>
-                            <!--<waitUntil>published</waitUntil>-->
                         </configuration>
                     </plugin>
                 </plugins>
