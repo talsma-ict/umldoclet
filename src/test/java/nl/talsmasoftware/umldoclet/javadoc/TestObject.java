@@ -29,7 +29,11 @@ public class TestObject implements Comparable<TestObject> {
         this.value = value;
     }
 
-    /// {@inheritDoc}
+    /// Compares this object to the other object.
+    ///
+    /// @param other The other object to compare with.
+    /// @return a negative integer, zero, or a positive integer
+    /// as this object is less than, equal to, or greater than the specified object.
     @Override
     public int compareTo(TestObject other) {
         String otherValue = other == null ? null : other.value;
@@ -42,19 +46,26 @@ public class TestObject implements Comparable<TestObject> {
         return diff == 0 ? value.compareTo(other.value) : diff;
     }
 
-    /// {@inheritDoc}
+    /// Calculate a hash code for the test object.
+    ///
+    /// @return The hash code for the test object.
     @Override
     public int hashCode() {
         return Objects.hash(value);
     }
 
-    /// {@inheritDoc}
+    /// Checks whether this object is equal to the other object.
+    ///
+    /// @param other the other object to compare with.
+    /// @return `true` if this object equals the other object, otherwise `false`.
     @Override
     public boolean equals(Object other) {
         return this == other || (other instanceof TestObject && this.compareTo((TestObject) other) == 0);
     }
 
-    /// {@inheritDoc}
+    /// String representation for this test object.
+    ///
+    /// @return the string represtentation for the test object.
     @Override
     public String toString() {
         return getClass().getSimpleName() + "{value=" + value + '}';
