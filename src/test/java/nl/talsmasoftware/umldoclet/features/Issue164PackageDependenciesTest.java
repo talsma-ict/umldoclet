@@ -36,7 +36,9 @@ import java.util.spi.ToolProvider;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
+/// Test for the package dependencies feature.
 class Issue164PackageDependenciesTest {
+    /// Names of packages to generate documentation and UML diagrams for.
     static List<String> packageNames = asList(
             UMLDoclet.class.getPackageName(),
             Configuration.class.getPackageName(),
@@ -48,8 +50,10 @@ class Issue164PackageDependenciesTest {
             UMLNode.class.getPackageName(),
             FileUtils.class.getPackageName()
     );
+    /// Output directory to write documentation and UML diagrams to.
     static final File outputdir = new File("target/issues/164");
 
+    /// Set-up code to generate Javdoc and UML Diagrams.
     @BeforeAll
     static void createJavaDoc() {
         List<String> args = new ArrayList<>(asList(
@@ -62,6 +66,12 @@ class Issue164PackageDependenciesTest {
                 System.out, System.err, args.toArray(new String[0]))).as("Javadoc result").isZero();
     }
 
+    /// Default constructor.
+    Issue164PackageDependenciesTest() {
+        super();
+    }
+
+    /// Test that the package diagram is rendered properly.
     @Test
     void testPackageDependencies() {
         String packageDependencies = TestUtil.read(new File(outputdir, "package-dependencies.puml"));

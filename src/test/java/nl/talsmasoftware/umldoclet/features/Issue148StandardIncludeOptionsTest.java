@@ -46,9 +46,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 ///
 /// @author Sjoerd Talsma
 class Issue148StandardIncludeOptionsTest {
+    /// Name of the java package being tested.
     static final String PACKAGE_NAME = Issue148StandardIncludeOptionsTest.class.getPackageName();
+    /// Output directory to write Javadoc and UML Diagrams to.
     static final File OUTPUT_DIRECTORY = new File("target/issues/148");
 
+    /// Utility method to create Javadoc with custom options.
+    ///
+    /// @param options Custom options to use for Javadoc creation.
+    /// @return the directory containing the Javadoc and UML Diagrams.
     static File createJavadoc(String... options) {
         File dir = new File(OUTPUT_DIRECTORY, String.join("-", options));
         List<String> args = new ArrayList<>(asList(
@@ -77,6 +83,12 @@ class Issue148StandardIncludeOptionsTest {
         return result;
     }
 
+    /// Default constructor.
+    Issue148StandardIncludeOptionsTest() {
+        super();
+    }
+
+    /// Test the `-private` option.
     @Test
     void testOptionPrivate() {
         File dir = createJavadoc("-private");
@@ -95,6 +107,7 @@ class Issue148StandardIncludeOptionsTest {
                 .contains("-getPrivateValue()", "~getPackageProtectedValue()", "#getProtectedValue()", "+getPublicValue()");
     }
 
+    /// Test the `-package` option.
     @Test
     void testOptionPackage() {
         File dir = createJavadoc("-package");
@@ -115,6 +128,7 @@ class Issue148StandardIncludeOptionsTest {
                 .contains("~getPackageProtectedValue()", "#getProtectedValue()", "+getPublicValue()");
     }
 
+    /// Test the `-protected` option.
     @Test
     void testOptionProtected() {
         File dir = createJavadoc("-protected");
@@ -135,6 +149,7 @@ class Issue148StandardIncludeOptionsTest {
                 .contains("#getProtectedValue()", "+getPublicValue()");
     }
 
+    /// Test the `-public` option.
     @Test
     void testOptionPublic() {
         File dir = createJavadoc("-public");
@@ -155,6 +170,7 @@ class Issue148StandardIncludeOptionsTest {
                 .contains("+getPublicValue()");
     }
 
+    /// Test the `--show-types private` option.
     @Test
     void testOptionShowTypesPrivate() {
         File dir = createJavadoc("--show-types", "private");
@@ -176,6 +192,7 @@ class Issue148StandardIncludeOptionsTest {
                 .contains("#getProtectedValue()", "+getPublicValue()");
     }
 
+    /// Test the `--show-types package` option.
     @Test
     void testOptionShowTypesPackage() {
         File dir = createJavadoc("--show-types", "package");
@@ -196,6 +213,7 @@ class Issue148StandardIncludeOptionsTest {
                 .contains("#getProtectedValue()", "+getPublicValue()");
     }
 
+    /// Test the `--show-types protected` option.
     @Test
     void testOptionShowTypesProtected() {
         File dir = createJavadoc("--show-types", "protected");
@@ -216,6 +234,7 @@ class Issue148StandardIncludeOptionsTest {
                 .contains("#getProtectedValue()", "+getPublicValue()");
     }
 
+    /// Test the `--show-types public` option.
     @Test
     void testOptionShowTypesPublic() {
         File dir = createJavadoc("--show-types", "public");
@@ -236,6 +255,7 @@ class Issue148StandardIncludeOptionsTest {
                 .contains("#getProtectedValue()", "+getPublicValue()");
     }
 
+    /// Test the `--show-members private` option.
     @Test
     void testOptionShowMembersPrivate() {
         File dir = createJavadoc("--show-members", "private");
@@ -252,6 +272,7 @@ class Issue148StandardIncludeOptionsTest {
                 .contains("-getPrivateValue()", "~getPackageProtectedValue()", "#getProtectedValue()", "+getPublicValue()");
     }
 
+    /// Test the `--show-members package` option.
     @Test
     void testOptionShowMembersPackage() {
         File dir = createJavadoc("--show-members", "package");
@@ -272,6 +293,7 @@ class Issue148StandardIncludeOptionsTest {
                 .contains("~getPackageProtectedValue()", "#getProtectedValue()", "+getPublicValue()");
     }
 
+    /// Test the `--show-members protected` option.
     @Test
     void testOptionShowMembersProtected() {
         File dir = createJavadoc("--show-members", "protected");
@@ -292,6 +314,7 @@ class Issue148StandardIncludeOptionsTest {
                 .contains("#getProtectedValue()", "+getPublicValue()");
     }
 
+    /// Test the `--show-members public` option.
     @Test
     void testOptionShowMembersPublic() {
         File dir = createJavadoc("--show-members", "public");

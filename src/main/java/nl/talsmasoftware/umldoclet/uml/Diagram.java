@@ -86,6 +86,7 @@ public abstract class Diagram extends UMLNode {
     /// @param customDirectives The custom directives to write.
     /// @param output           The output to write to.
     /// @return The same output instance for method chaining.
+    /// @throws IOException If an I/O exception happens when writing.
     protected IndentingWriter writeCustomDirectives(List<String> customDirectives, IndentingWriter output) throws IOException {
         for (String customDirective : customDirectives) {
             output.writeln(customDirective);
@@ -100,6 +101,7 @@ public abstract class Diagram extends UMLNode {
     ///
     /// @param output The output to write to.
     /// @return The same output instance for method chaining.
+    /// @throws IOException If an I/O exception happens when writing.
     private IndentingWriter writeFooterTo(IndentingWriter output) throws IOException {
         String footerText = config.logger().localize(Message.DOCLET_UML_FOOTER, Message.DOCLET_VERSION);
         String footerLink = "https://github.com/talsma-ict/umldoclet";

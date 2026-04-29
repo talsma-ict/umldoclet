@@ -33,6 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /// @author Sjoerd Talsma
 public class Issue25ImagedirTest {
 
+    /// Set-up to create Javadoc and UML Diagrams.
     @BeforeAll
     public static void createJavadoc() {
         ToolProvider.findFirst("javadoc").get().run(
@@ -44,12 +45,19 @@ public class Issue25ImagedirTest {
         );
     }
 
+    /// Default constructor.
+    Issue25ImagedirTest() {
+        super();
+    }
+
+    /// Test that the images directory was created.
     @Test
     public void testImagesDirectoryPresence() {
         File imagesDir = new File("target/issues/25/images");
         assertThat(imagesDir).as("Images directory").exists().isDirectory();
     }
 
+    /// Test that the image was generated in the correct directory.
     @Test
     public void testEnhancement25ImagePresence() {
         File imageFile = new File("target/issues/25/images/" + getClass().getName() + ".svg");

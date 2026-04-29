@@ -26,23 +26,34 @@ import java.util.spi.ToolProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/// Test for fix of [bug 97](https://github.com/talsma-ict/umldoclet/issues/97) generics that have equivalent html tags.
 public class Bug79GenericsAsMarkupTest {
     private static final String packageAsPath = Bug79GenericsAsMarkupTest.class.getPackageName().replace('.', '/');
     private static final File outputdir = new File("target/issues/79");
     private static String classUml;
 
+    /// Method for testing no underline HTML tag gets rendered as generic.
+    /// @param <U> The generic type alias `U` to test difference with HTML underline tag.
+    /// @return Always empty
     public <U> Optional<U> underlineMarkup() {
         return Optional.empty();
     }
 
+    /// Method for testing no italic HTML tag gets rendered as generic.
+    /// @param <I> The generic type alias `I` to test difference with HTML underline tag.
+    /// @return Always empty
     public <I> Optional<I> italicMarkup() {
         return Optional.empty();
     }
 
+    /// Method for testing no bold HTML tag gets rendered as generic.
+    /// @param <B> The generic type alias `B` to test difference with HTML bold tag.
+    /// @return Always empty
     public <B> Optional<B> boldMarkup() {
         return Optional.empty();
     }
 
+    /// Set-up to create Javadoc and UML Diagrams for this test.
     @BeforeAll
     public static void createJavadoc() {
         String classAsPath = packageAsPath + '/' + Bug79GenericsAsMarkupTest.class.getSimpleName();
@@ -58,6 +69,12 @@ public class Bug79GenericsAsMarkupTest {
         classUml = TestUtil.read(new File(outputdir, classAsPath + ".puml"));
     }
 
+    /// Default constructor.
+    Bug79GenericsAsMarkupTest() {
+        super();
+    }
+
+    /// Test that the generated UML generics do not contain HTML tag values.
     @Test
     public void testNoMarkup() {
         assertThat(classUml).as("Class diagram UML")

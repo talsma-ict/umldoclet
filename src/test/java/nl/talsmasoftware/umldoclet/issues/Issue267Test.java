@@ -33,8 +33,16 @@ import java.nio.charset.StandardCharsets;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
+/// Test for [bugfix 267](https://github.com/talsma-ict/umldoclet/issues/267)
 public class Issue267Test {
+    /// Default constructor.
+    Issue267Test() {
+        super();
+    }
 
+    /// Test that generating a diagram with nested namespace does not throw IllegalStateException.
+    ///
+    /// @throws IOException if I/O errors happen during rendering.
     @Test
     public void testDiagramWithNestedNamespace() throws IOException {
         // prepare

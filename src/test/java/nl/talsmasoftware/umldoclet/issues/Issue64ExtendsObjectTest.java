@@ -29,24 +29,45 @@ import java.util.spi.ToolProvider;
 import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
 
-/// Test that any generic `EmptySet<T>` doesn't get rendered in UML as
-/// `EmptySet<T extends Object>`.
+/// Test [bugfix 64](https://github.com/talsma-ict/umldoclet/issues/64)
+/// that any generic `EmptySet<T>` doesn't get rendered in UML as `EmptySet<T extends Object>`.
 public class Issue64ExtendsObjectTest {
     private static String emptySetUml;
 
+    /// Generic test class to generate a diagram to test the bugfix.
+    /// @param <T> The generic element type of the empty set.
     public static class EmptySet<T> extends AbstractSet<T> {
+        /// Default constructor.
+        EmptySet() {
+            super();
+        }
+
+        /// Empty iterator.
+        ///
+        /// @return iterator, always empty.
         @Override
         @SuppressWarnings("unchecked")
         public Iterator<T> iterator() {
             return (Iterator<T>) emptySet().iterator();
         }
 
+        /// Size of empty set.
+        ///
+        /// @return size, always zero (`0`).
         @Override
         public int size() {
             return 0;
         }
     }
 
+    /// Default constructor.
+    Issue64ExtendsObjectTest() {
+        super();
+    }
+
+    /// Set-up to generate Javadoc and UML Diagrams for this test.
+    ///
+    /// @throws IOException when I/O errors occur during rendering.
     @BeforeAll
     public static void produceUml() throws IOException {
         ToolProvider.findFirst("javadoc").get().run(
@@ -62,6 +83,7 @@ public class Issue64ExtendsObjectTest {
                 "target/issues/64/nl/talsmasoftware/umldoclet/issues/Issue64ExtendsObjectTest.EmptySet.puml"));
     }
 
+    /// Test that `<T extends Object>` is no longer generated.
     @Test
     public void testIssue64_TextendsObject() {
         assertThat(emptySetUml).as("EmptySet class diagram")
@@ -69,6 +91,8 @@ public class Issue64ExtendsObjectTest {
                 .contains("EmptySet<T>");
     }
 
+    /// Test [bugfix 82](https://github.com/talsma-ict/umldoclet/issues/82)
+    /// to check correct names of inner-classes.
     @Test
     public void testIssue82_ContainingClassReference() {
         assertThat(emptySetUml).as("EmptySet class diagram")

@@ -15,42 +15,76 @@
  */
 package nl.talsmasoftware.umldoclet.features;
 
-@SuppressWarnings("unused")
+/// Public class used to test Javadoc creation.
+@SuppressWarnings("unused") // Used in Javadoc testing.
 public class PublicClass {
+    /// Private field.
     private String privateField;
+    /// Package-protected field.
     String packageProtectedField;
+    /// Protected field.
     protected String protectedField;
+    /// Public field.
     public String publicField;
 
+    /// Default constructor.
     public PublicClass() {
         this.privateField = packageProtectedField = protectedField = publicField = null;
     }
 
+    /// Private getter.
+    /// @return the private value.
     private String getPrivateValue() {
         return privateField;
     }
 
+    /// Package-protected getter.
+    /// @return the package-protected value.
     String getPackageProtectedValue() {
         return packageProtectedField;
     }
 
+    /// Protected getter.
+    /// @return the protected value.
     protected String getProtectedValue() {
         return protectedField;
     }
 
+    /// Public getter.
+    /// @return the public value.
     public String getPublicValue() {
         return publicField;
     }
 
+    /// Private inner class.
     private static final class PrivateInnerClass {
+        /// Private default constructor.
+        private PrivateInnerClass() {
+            super();
+        }
     }
 
+    /// Package-protected inner class.
     static final class PackageProtectedInnerClass {
+        /// Package-protected default constructor.
+        PackageProtectedInnerClass() {
+            super();
+        }
     }
 
+    /// Protected inner class.
     protected static final class ProtectedInnerClass {
+        /// Protected default constructor.
+        protected ProtectedInnerClass() {
+            super();
+        }
     }
 
+    /// Public inner class.
     public static final class PublicInnerClass {
+        /// Default constructor.
+        public PublicInnerClass() {
+            super();
+        }
     }
 }

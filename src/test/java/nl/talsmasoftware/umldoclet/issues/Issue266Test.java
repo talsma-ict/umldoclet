@@ -29,12 +29,14 @@ import java.util.spi.ToolProvider;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
+/// Test for [issue 266](https://github.com/talsma-ict/umldoclet/issues/266) JavaBean property detection.
 public class Issue266Test {
     private static final String packageAsPath = Issue266Test.class.getPackageName().replace('.', '/');
     private static final File outputDir = new File("target/issues/266");
     private static String classUml;
     private static String packageUml;
 
+    /// Set-up to generate Javadoc and UML Diagrams for this test.
     @BeforeAll
     public static void prepareJavadocWithPumlFiles() {
         String classAsPath = packageAsPath + "/Issue266Test.TesterUtil";
@@ -49,12 +51,27 @@ public class Issue266Test {
         packageUml = TestUtil.read(new File(outputDir, packageAsPath + "/package.puml"));
     }
 
+    /// Default constructor.
+    Issue266Test() {
+        super();
+    }
+
+    /// Inner class to be documented to check that no incorrect property is detected.
     public static class TesterUtil {
+        /// Default constructor.
+        TesterUtil() {
+            super();
+        }
+
+        /// Method that should _not_ be renddered as a property.
+        /// @param testers vararg parameter
+        /// @return a return value.
         public static Set<TesterUtil> setOf(TesterUtil... testers) {
             return Collections.unmodifiableSet(new LinkedHashSet<>(asList(testers)));
         }
     }
 
+    /// Test that non-property `set` methods do not get rendered as property.
     @Test
     public void testBug266Rendering() {
         // verify that no 'of' relation was rendered.

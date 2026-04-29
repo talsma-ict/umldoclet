@@ -25,12 +25,14 @@ import java.util.spi.ToolProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/// Test for [issue 72](https://github.com/talsma-ict/umldoclet/issues/72) about hiding implicit default constructors.
 public class Issue72DefaultConstructorTest {
     private static final String packageAsPath = Issue72DefaultConstructorTest.class.getPackageName().replace('.', '/');
     private static final File outputDir = new File("target/issues/72");
     private static String classUml;
     private static String packageUml;
 
+    /// Set-up generating both class and package UML diagrams.
     @BeforeAll
     public static void prepareJavadocWithPumlFiles() {
         String classAsPath = packageAsPath + '/' + Issue72DefaultConstructorTest.class.getSimpleName();
@@ -46,6 +48,12 @@ public class Issue72DefaultConstructorTest {
         packageUml = TestUtil.read(new File(outputDir, packageAsPath + "/package.puml"));
     }
 
+    /// Default constructor.
+    public Issue72DefaultConstructorTest() {
+        super();
+    }
+
+    /// Test that the default constructor should be hidden.
     @Test
     public void testDefaultConstructorShouldBeHidden() {
         assertThat(classUml).as("Class diagram").doesNotContain("+Issue72DefaultConstructorTest()");

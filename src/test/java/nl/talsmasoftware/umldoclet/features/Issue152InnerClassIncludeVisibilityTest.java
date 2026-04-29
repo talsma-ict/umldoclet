@@ -25,10 +25,19 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/// Test that the visibility of inner classes is checked properly.
 class Issue152InnerClassIncludeVisibilityTest {
+    /// The package name to generate Javadoc and UMl diagrams for.
     static final String PACKAGE_NAME = Issue152InnerClassIncludeVisibilityTest.class.getPackageName();
+    /// The output directory for the Javadoc and UML diagrams.
     static final File OUTPUT_DIRECTORY = new File("target/issues/152");
 
+    /// Default constructor.
+    Issue152InnerClassIncludeVisibilityTest() {
+        super();
+    }
+
+    /// Test public visiblity with inner classes.
     @Test
     void testPublicInnerClassVisibility() {
         assertThat(ToolProvider.findFirst("javadoc").get().run(

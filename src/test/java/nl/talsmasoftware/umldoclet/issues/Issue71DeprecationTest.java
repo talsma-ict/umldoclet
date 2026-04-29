@@ -25,9 +25,9 @@ import java.util.spi.ToolProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * @author Sjoerd Talsma
- */
+/// Test for deprecation [issue 71](https://github.com/talsma-ict/umldoclet/issues/71).
+///
+/// @author Sjoerd Talsma
 @Deprecated
 public class Issue71DeprecationTest {
     private static final String packageAsPath = Issue71DeprecationTest.class.getPackageName().replace('.', '/');
@@ -35,9 +35,11 @@ public class Issue71DeprecationTest {
     private static String classUml;
     private static String packageUml;
 
+    /// Public field deprecated by java annotation, **no** Javadoc tag.
     @Deprecated
     public String deprecatedByAnnotation;
 
+    /// Public static field deprecated by java annotation, **no** Javadoc tag.
     @Deprecated
     public static String deprecatedStaticField;
 
@@ -46,6 +48,12 @@ public class Issue71DeprecationTest {
      */
     public String deprecatedByJavadocTag;
 
+    /// Default constructor.
+    Issue71DeprecationTest() {
+        super();
+    }
+
+    /// Public method deprecated by annotation, **no** Javadoc tag.
     @Deprecated
     public void getDeprecatedByAnnotation() {
         // Empty method to test UML generation.
@@ -66,6 +74,7 @@ public class Issue71DeprecationTest {
         // Empty method to test UML generation.
     }
 
+    /// Set-up generating Javadoc and UML Diagrams.
     @BeforeAll
     public static void prepareJavadocWithPumlFiles() {
         String classAsPath = packageAsPath + '/' + Issue71DeprecationTest.class.getSimpleName();
@@ -81,48 +90,57 @@ public class Issue71DeprecationTest {
         packageUml = TestUtil.read(new File(outputDir, packageAsPath + "/package.puml"));
     }
 
+    /// Test deprecated class by annotation.
     @Test
     public void testClassDeprecatedByAnnotation() {
         assertThat(classUml).as("Class uml diagram")
                 .containsPattern("class (\".*\" as )?" + getClass().getName() + " <<deprecated>>");
     }
 
+    /// Test deprecated class by Javadoc tag.
     @Test
     public void testClassDeprecatedByJavadoc() {
         assertThat(packageUml).as("Package uml diagram")
                 .contains("class " + getClass().getSimpleName() + ".MoreDeprecation <<deprecated>>");
     }
 
+    /// Test deprecated constructor by annotation.
     @Test
     public void testConstructorDeprecatedByAnnotation() {
         assertThat(packageUml).as("Package uml diagram").contains("+--MoreDeprecation--(String)");
     }
 
+    /// Test deprecated constructor by Javadoc tag.
     @Test
     public void testConstructorDeprecatedByJavadoc() {
         assertThat(packageUml).as("Package diagram").contains("+--MoreDeprecation--()");
     }
 
+    /// Test field deprecated by annotation.
     @Test
     public void testFieldDeprecatedByAnnotation() {
         assertThat(classUml).as("Class diagram").contains("+--deprecatedByAnnotation--: String");
     }
 
+    /// Test field deprecated by Javadoc tag.
     @Test
     public void testFieldDeprecatedByJavadoc() {
         assertThat(classUml).as("Class diagram").contains("+--deprecatedByJavadocTag--: String");
     }
 
+    /// Test method deprecated by annotation.
     @Test
     public void testMethodDeprecatedByAnnotation() {
         assertThat(classUml).as("Class diagram").contains("+--getDeprecatedByAnnotation--(): void");
     }
 
+    /// Test method deprecated by Javadoc tag.
     @Test
     public void testMethodDeprecatedByJavadoc() {
         assertThat(classUml).as("Class diagram").contains("+--getDeprecatedByJavadocTag--(): void");
     }
 
+    /// Test [issue 73](https://github.com/talsma-ict/umldoclet/issues/73) about the image name of inner classes.
     @Test
     public void testIssue73InnerClassImageName() {
         File innerClassFile = new File(outputDir, "nl/talsmasoftware/umldoclet/issues/Issue71DeprecationTest.MoreDeprecation.svg");
@@ -130,20 +148,27 @@ public class Issue71DeprecationTest {
     }
 
     /**
-     * @deprecated Testing deprecation by JavaDoc tag with a comment.
+     * Inner class for more deprecation testing.
+     *
+     * @deprecated Testing deprecation by Javadoc tag with a comment.
      */
     public static class MoreDeprecation {
         /**
+         * Default constructor for deprecation testing.
+         *
          * @deprecated Testing deprecation by JavaDoc tag with a comment.
          */
         public MoreDeprecation() {
             this(null);
         }
 
-        @SuppressWarnings("unused")
+        /// Constructor with parameter for deprecation tests.
+        ///
+        /// @param ignored The parameter.
+        @SuppressWarnings("unused") // Used by UML Diagram generation.
         @Deprecated
         public MoreDeprecation(String ignored) {
-            // Empty method to test UML generation.
+            super();
         }
     }
 }

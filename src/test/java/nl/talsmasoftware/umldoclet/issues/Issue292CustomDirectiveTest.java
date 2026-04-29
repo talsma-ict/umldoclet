@@ -25,6 +25,8 @@ import java.util.spi.ToolProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/// Test for [feature 292](https://github.com/talsma-ict/umldoclet/issues/292)
+/// to add custom lines to generated UML.
 public class Issue292CustomDirectiveTest {
     private static final String packageAsPath = Issue292CustomDirectiveTest.class.getPackageName().replace('.', '/');
     private static final File outputDir = new File("target/issues/292");
@@ -32,6 +34,12 @@ public class Issue292CustomDirectiveTest {
     private static String packageUml;
     private static String packageDependenciesUml;
 
+    /// Default constructor.
+    Issue292CustomDirectiveTest() {
+        super();
+    }
+
+    /// Set-up generating diagrams for this test.
     @BeforeAll
     public static void prepareJavadocWithPumlFiles() {
         String classAsPath = packageAsPath + '/' + Issue292CustomDirectiveTest.class.getSimpleName();
@@ -48,16 +56,19 @@ public class Issue292CustomDirectiveTest {
         packageDependenciesUml = TestUtil.read(new File(outputDir, "package-dependencies.puml"));
     }
 
+    /// Test a custom directive in a class diagram.
     @Test
     public void testCustomDirectiveInClassDiagram() {
         assertThat(classUml).as("Class diagram").contains("skinparam handwritten true");
     }
 
+    /// Test a custom directive in a package diagram.
     @Test
     public void testCustomDirectiveInPackageDiagram() {
         assertThat(packageUml).as("Package diagram").contains("skinparam handwritten true");
     }
 
+    /// Test a custom directive in a package-dependencies diagram.
     @Test
     public void testCustomDirectiveInPackageDependenciesDiagram() {
         assertThat(packageDependenciesUml).as("Dependencies diagram").contains("skinparam handwritten true");

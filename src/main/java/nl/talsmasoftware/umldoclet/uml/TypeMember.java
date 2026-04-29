@@ -70,6 +70,7 @@ public abstract class TypeMember extends UMLNode {
     ///
     /// @param output The output to write to.
     /// @return The same output instance for method chaining.
+    /// @throws IOException If an I/O exception happens when writing.
     protected IndentingWriter writeTypeTo(IndentingWriter output) throws IOException {
         if (type != null) {
             output.append(": ").append(type.toString());

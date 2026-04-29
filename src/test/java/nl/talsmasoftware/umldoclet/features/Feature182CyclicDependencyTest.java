@@ -27,15 +27,26 @@ import java.util.spi.ToolProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/// Class for cyclic dependency testing.
 public class Feature182CyclicDependencyTest {
+    /// Directory to write Javadoc and UML Diagrams to.
     private static final File outputdir = new File("target/issues/182");
 
-    public void cycle(CyclicDependencyClass dummy) {
-        // Method intentionally causing a cyclic package dependency.
+    /// Default constructor.
+    public Feature182CyclicDependencyTest() {
+        super();
     }
 
+    /// Method to intentionally cause a cyclic package dependency.
+    /// @param ignored Just here to cause a cyclic package dependency.
+    public void cycle(CyclicDependencyClass ignored) {
+        // no-op, the parameter triggers a cyclic package dependency.
+    }
+
+    /// Test the warning about cyclic dependencies.
+    /// @throws UnsupportedEncodingException If java doesn't support `UTF-8` encoding, i.e., never.
     @Test
-    public void testCyclicDependencyWarning() throws UnsupportedEncodingException {
+    public void testCyclicDependencyWarning() throws UnsupportedEncodingException{
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         String myPackage = Feature182CyclicDependencyTest.class.getPackageName();
         String cyclicPackage = CyclicDependencyClass.class.getPackageName();
@@ -54,6 +65,8 @@ public class Feature182CyclicDependencyTest {
         assertThat(output.toString("UTF-8")).contains(myPackage + " > " + cyclicPackage + " > " + myPackage);
     }
 
+    /// Test the failure for cyclic package dependencies.
+    /// @throws UnsupportedEncodingException If java doesn't support `UTF-8` encoding, i.e., never.
     @Test
     public void testCyclicDependencyFailure() throws UnsupportedEncodingException {
         ByteArrayOutputStream output = new ByteArrayOutputStream();

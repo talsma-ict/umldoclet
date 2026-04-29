@@ -24,14 +24,29 @@ import java.util.spi.ToolProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/// Test for the links feature in v2 [issue 69](https://github.com/talsma-ict/umldoclet/issues/69).
+///
 /// @author Sjoerd Talsma
 public class Issue69LinksTest {
+    /// Output directory for test Javadoc and UML Diagrams.
     static final File testoutput = new File("target/issues/69");
+    /// The package name in path format with slashes.
     static final String packageAsPath = Issue69LinksTest.class.getPackageName().replace('.', '/');
 
+    /// Public inner class.
     public static class InnerClass {
+        /// Default constructor.
+        InnerClass() {
+            super();
+        }
     }
 
+    /// Default constructor.
+    Issue69LinksTest() {
+        super();
+    }
+
+    /// Test links to objects in the same directory.
     @Test
     public void testLinkSameDirectory() {
         File outputdir = new File(testoutput, "same-dir");

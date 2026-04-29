@@ -26,14 +26,31 @@ import java.util.spi.ToolProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/// Test fix for [bug 75](https://github.com/talsma-ict/umldoclet/issues/75).
 public class Bug75StackOverflowTest {
+    /// The package as a path with slashes.
     private static final String packageAsPath = Bug75StackOverflowTest.class.getPackageName().replace('.', '/');
+    /// The directory to generate Javadoc and UML Diagrams for this test.
     private static final File outputDir = new File("target/issues/75");
 
+    /// public interface defined as inner-class.
+    ///
+    /// @param <T> Type being compared.
     public interface Comparable<T> {
+        /// A new comparator that first applies `this` and _then_ the natural order comparator of the given key.
+        ///
+        /// @param keyExtractor The function extracting the value compared next.
+        /// @param <U>          The type of the other object.
+        /// @return Comparator.
         <U extends Comparable<? super U>> Comparator<T> thenComparing(Function<? super T, ? extends U> keyExtractor);
     }
 
+    /// Default constructor.
+    public Bug75StackOverflowTest() {
+        super();
+    }
+
+    /// Test that infinite recursion is bounded to prevent StackOverflowException.
     @Test
     public void testInifiniteRecursionIsBounded() {
         String classAsPath = packageAsPath + '/' + Bug75StackOverflowTest.class.getSimpleName();

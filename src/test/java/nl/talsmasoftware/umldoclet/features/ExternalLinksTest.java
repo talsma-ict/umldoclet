@@ -42,14 +42,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 ///
 /// @author Sjoerd Talsma
 public class ExternalLinksTest {
-
+    /// Output directory to write Javadoc and UML Diagrams. to.
     static final File testoutput = TestUtil.deleteRecursive(new File("target/issues/96"));
+    /// The package name as a file path with forward slashes.
     static final String packageAsPath = ExternalLinksTest.class.getPackageName().replace('.', '/');
 
-    @SuppressWarnings("unused")
+    /// A test class for inner-class testing.
+    @SuppressWarnings("unused") // used for javadoc testing
     public static class TestClass implements Serializable {
+        /// Default constructor.
+        public TestClass() {
+            super();
+        }
     }
 
+    /// Default constructor.
+    public ExternalLinksTest() {
+        super();
+    }
+
+    /// Test relative external link support.
     @Test
     public void testRelativeExternalLink() {
         File externalDir = createDirectory(new File(testoutput, "externalApidocs"));
@@ -75,6 +87,7 @@ public class ExternalLinksTest {
                 "[[" + relativePath(packageUml, externalDir) + "/java/io/Serializable.html]]");
     }
 
+    /// Test online external link support.
     @Test
     public void testOnlineExternalLink() {
         File outputdir = createDirectory(new File(testoutput, "link-online"));
@@ -96,6 +109,7 @@ public class ExternalLinksTest {
                 "[[https://docs.oracle.com/javase/9/docs/api/java/io/Serializable.html?is-external=true]]");
     }
 
+    /// Test for offline external link support.
     @Test
     public void testOfflineExternalLink() {
         File externalDir = createDirectory(new File(testoutput, "externalApidocs"));
