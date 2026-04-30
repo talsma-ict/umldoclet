@@ -1,4 +1,3 @@
-[![Build Status][ci-img]][ci]
 [![Released Version][maven-img]][maven]
 
 # UMLDoclet
@@ -45,7 +44,5 @@ Or, look at the [the generated plantuml source file](../example/rendering-packag
 _Thanks for using the doclet, I hope it may be of benefit to your project!_  
 _Also a big thank you goes to the developers of the excellent [PlantUML project](http://plantuml.com/)._
 
-  [ci-img]: https://img.shields.io/travis/talsma-ict/umldoclet/develop-v1.svg
-  [ci]: https://travis-ci.org/talsma-ict/umldoclet/branches
   [maven-img]: https://img.shields.io/maven-central/v/nl.talsmasoftware/umldoclet/1.svg
   [maven]: http://mvnrepository.com/artifact/nl.talsmasoftware/umldoclet
