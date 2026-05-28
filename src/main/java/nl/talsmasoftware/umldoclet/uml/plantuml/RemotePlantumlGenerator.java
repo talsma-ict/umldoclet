@@ -17,7 +17,7 @@ package nl.talsmasoftware.umldoclet.uml.plantuml;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.sourceforge.plantuml.FileFormat;
-import net.sourceforge.plantuml.code.ArobaseStringCompressor;
+import net.sourceforge.plantuml.code.ArobaseStringCompressor2;
 import net.sourceforge.plantuml.code.AsciiEncoder;
 import net.sourceforge.plantuml.code.CompressionZlib;
 import net.sourceforge.plantuml.code.Transcoder;
@@ -40,7 +40,7 @@ public class RemotePlantumlGenerator implements PlantumlGenerator {
 
     private static final String DEFAULT_PLANTUML_BASE_URL = "https://www.plantuml.com/plantuml/";
     private static final Transcoder TRANSCODER =
-            TranscoderImpl.utf8(new AsciiEncoder(), new ArobaseStringCompressor(), new CompressionZlib());
+            TranscoderImpl.utf8(new AsciiEncoder(), new ArobaseStringCompressor2(), new CompressionZlib());
 
     private final String baseUrl;
 
