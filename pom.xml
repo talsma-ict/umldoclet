@@ -67,7 +67,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.release>9</maven.compiler.release>
         <plantuml-asl.version>1.2026.6</plantuml-asl.version>
-        <indentation.version>0.1.0</indentation.version>
+        <indentation.version>0.1.1</indentation.version>
         <findbugs-annotations.version>3.0.1</findbugs-annotations.version>
 
         <!-- test -->
@@ -165,6 +165,14 @@
                         </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <offlineLinks>
+                        <offlineLink>
+                            <location>${project.basedir}/.mvn/javadoc/indentation</location>
+                            <url>https://www.javadoc.io/page/nl.talsmasoftware.indentation/indentation/${indentation.version}</url>
+                        </offlineLink>
+                    </offlineLinks>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
