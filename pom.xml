@@ -171,6 +171,10 @@
                             <location>${project.basedir}/.mvn/javadoc/indentation</location>
                             <url>https://www.javadoc.io/page/nl.talsmasoftware.indentation/indentation/${indentation.version}</url>
                         </offlineLink>
+                        <offlineLink>
+                            <location>${project.basedir}/.mvn/javadoc/plantuml-asl</location>
+                            <url>https://www.javadoc.io/page/net.sourceforge.plantuml/plantuml-asl/${plantuml-asl.version}</url>
+                        </offlineLink>
                     </offlineLinks>
                 </configuration>
             </plugin>
