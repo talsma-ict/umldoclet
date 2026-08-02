@@ -15,7 +15,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v7
       - name: Set up JDK and Maven Central deployment
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v5.6.0
         with:
           distribution: temurin
           java-version: |
