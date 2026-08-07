@@ -19,6 +19,7 @@ import nl.talsmasoftware.umldoclet.configuration.Configuration;
 import nl.talsmasoftware.umldoclet.configuration.ImageConfig;
 
 import java.io.File;
+import java.util.List;
 
 import static nl.talsmasoftware.umldoclet.util.FileUtils.relativePath;
 
@@ -123,11 +124,14 @@ final class ClassDiagramInserter extends DiagramFile {
         /// @param line The line to check for the right place to add clear:right style to.
         /// @return The modified line with the added style or `null` if the line was not the right place to do so.
         private String addClearRightStyle(String line) {
-            final String summaryDiv = "<div class=\"summary\"";
-            int idx = line.indexOf(summaryDiv);
-            if (idx < 0) return null;
-            int ins = idx + summaryDiv.length();
-            return line.substring(0, ins) + " style=\"clear:right;\"" + line.substring(ins);
+            for (String summaryElement : List.of("<div class=\"summary\"", "<section class=\"summary\"")) {
+                int idx = line.indexOf(summaryElement);
+                if (idx >= 0) {
+                    int insertAt = idx + summaryElement.length();
+                    return line.substring(0, insertAt) + " style=\"clear:right;\"" + line.substring(insertAt);
+                }
+            }
+            return null;
         }
 
         /// @return The diagram name to use for the IMG alt tag
