@@ -23,25 +23,25 @@
 ///
 /// This doclet uses JavaDoc metadata available to automatically generate the following
 /// [UML diagrams](http://plantuml.com/) and add them to your documentation:
-/// <ul>
-/// <li>Class diagrams
-/// <li>Package diagrams
-/// <li>A package dependency diagram
-/// </ul>
+///
+/// - Class diagrams
+/// - Package diagrams
+/// - A package dependency diagram
+///
 /// The doclet will warn about (and optionally fail on) cyclic package dependencies.
 ///
-/// <h2>Usage</h2>
+/// ## Usage
 ///
 /// Please see the separate [Usage page](https://github.com/talsma-ict/umldoclet/blob/main/usage.md)
 /// on how to use the UML doclet in your own Java projects.
 ///
-/// <h2>Examples</h2>
+/// ## Examples
 ///
 /// The javadoc of the UMLDoclet itself is probably a decent example of what the default settings provide for you:
-/// <ul>
-/// <li>[Main javadoc page](https://javadoc.io/doc/nl.talsmasoftware/umldoclet)
-/// <li>[Simple package example: *nl.talsmasoftware.umldoclet.rendering.writers*](https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/writers/package-summary.html)
-/// <li>[Complex package example: *nl.talsmasoftware.umldoclet.uml*](https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/uml/package-summary.html)
-/// <li>[Class example: *nl.talsmasoftware.umldoclet.rendering.indent.Indentation*](https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/indent/Indentation.html)
-/// </ul>
+///
+/// - [Main javadoc page](https://javadoc.io/doc/nl.talsmasoftware/umldoclet)
+/// - [Simple package example: *nl.talsmasoftware.umldoclet.rendering.writers*](https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/writers/package-summary.html)
+/// - [Complex package example: *nl.talsmasoftware.umldoclet.uml*](https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/uml/package-summary.html)
+/// - [Class example: *nl.talsmasoftware.umldoclet.rendering.indent.Indentation*](https://javadoc.io/page/nl.talsmasoftware/umldoclet/latest/nl/talsmasoftware/umldoclet/rendering/indent/Indentation.html)
+///
 package nl.talsmasoftware.umldoclet;
