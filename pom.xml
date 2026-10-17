@@ -51,6 +51,7 @@
         <developer>
             <id>sjoerd</id>
             <name>Sjoerd Talsma</name>
+            <email>sjoerdtalsma@users.noreply.github.com</email>
             <url>https://github.com/sjoerdtalsma</url>
         </developer>
     </developers>
@@ -419,7 +420,7 @@
                 <plugin>
                     <groupId>org.sonatype.central</groupId>
                     <artifactId>central-publishing-maven-plugin</artifactId>
-                    <version>0.11.0</version>
+                    <version>0.12.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -652,4 +653,5 @@
             </build>
         </profile>
     </profiles>
+
 </project>
