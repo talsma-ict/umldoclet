@@ -25,14 +25,12 @@ jobs:
             jdk8
             jdk25
           cache: maven
-          server-id: central
-          server-username: MAVEN_CENTRAL_USERNAME
-          server-password: MAVEN_CENTRAL_TOKEN
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+          mvn-server-credentials: central:MAVEN_CENTRAL_USERNAME:MAVEN_CENTRAL_TOKEN
+          gpg-passphrase-env-var: MAVEN_GPG_PASSPHRASE
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
       - name: Publish to Apache Maven Central
         env:
           MAVEN_CENTRAL_USERNAME: ${{ secrets.SONATYPE_USER }}
           MAVEN_CENTRAL_TOKEN: ${{ secrets.SONATYPE_PASSWORD }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        run: ./mvnw --batch-mode --no-snapshot-updates deploy -DskipTests -DskipLicenseCheck
+        run: ./mvnw --batch-mode --no-snapshot-updates deploy -DskipTests -DskipLicenseCheck -Dmaven.repository.credentialScope=id
