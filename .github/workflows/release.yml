@@ -62,8 +62,9 @@ jobs:
           name: Release ${{ env.VERSION }}
           draft: true
           files: |
-            target/*.jar
-            target/*.jar.asc
+            target/umldoclet-*.jar
+            target/umldoclet-${{ env.VERSION }}.jar.asc
+            target/umldoclet-${{ env.VERSION }}-full.jar.asc
       - name: Set next snapshot version
         run: |
           read base minor suffix <<<$(echo "${VERSION}" | perl -pe 's/^(.*?)([0-9]+)([^0-9]*)$/\1 \2 \3/')
