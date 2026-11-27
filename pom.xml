@@ -322,7 +322,6 @@
                                         <exclude>**/plantuml/salt/T*.*</exclude>
                                         <exclude>**/plantuml/stats/**</exclude>
                                         <exclude>**/plantuml/swing/**</exclude>
-                                        <exclude>**/plantuml/tikz/**</exclude>
                                         <exclude>**/plantuml/vizjs/**</exclude>
                                         <exclude>**/plantuml/wbs/C*.*</exclude>
                                         <exclude>**/plantuml/wbs/F*.*</exclude>
